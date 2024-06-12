@@ -5,7 +5,12 @@ const jestConfig: JestConfigWithTsJest = {
   testEnvironment: 'node',
   testMatch: ['**/test/**/*.test.ts'],
   collectCoverage: true,
-  collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts',
+    '!<rootDir>/src/**/index.ts',
+    '!<rootDir>/src/**/base/*.ts',
+  ],
+  testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
 };
 
 export default jestConfig;

@@ -21,6 +21,9 @@
     "types": {
       "dependsOn": ["^types"]
     },
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
