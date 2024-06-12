@@ -5,12 +5,19 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "lint:check": "turbo lint:check",
+    "format": "turbo format",
+    "format:check": "turbo format:check",
+    "types": "turbo types",
+    "lint:core": "pnpm -C packages/core lint",
+    "format:core": "pnpm -C packages/core format",
+    "types:core": "pnpm -C packages/core types"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@commitlint/types": "^19.0.3",
+    "lefthook": "^1.6.15",
     "prettier": "^3.2.5",
     "turbo": "latest",
     "typescript": "^5.4.5"
