@@ -1,10 +1,11 @@
 {
-  "name": "core",
+  "name": "@repo/utils",
   "version": "0.0.0",
   "private": true,
   "os": [
     "linux"
   ],
+  "main": "src/index.ts",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watchAll --collectCoverage",
@@ -14,15 +15,9 @@
     "format:check": "prettier --check ./src/**/*.ts",
     "types": "tsc --noEmit --skipLibCheck"
   },
-  "dependencies": {
-    "@repo/utils": "workspace:*",
-    "uuid": "^10.0.0",
-    "lodash": "file:../../../node_modules/lodash"
-  },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "@types/uuid": "^9.0.8"
+    "@repo/typescript-config": "workspace:*"
   }
 }

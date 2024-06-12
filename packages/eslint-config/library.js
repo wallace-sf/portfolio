@@ -1,5 +1,6 @@
 const { resolve } = require("node:path");
 
+const root = resolve(process.cwd(), "../../");
 const project = resolve(process.cwd(), "tsconfig.json");
 
 /** @type {import("eslint").Linter.Config} */
@@ -21,6 +22,9 @@ module.exports = {
         project,
       },
       node: true,
+      lodash: {
+        project: resolve(root, "../../node_modules/@types/lodash/index.d.ts"),
+      },
     },
   },
   ignorePatterns: [
