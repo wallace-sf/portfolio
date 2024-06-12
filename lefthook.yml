@@ -12,3 +12,5 @@ pre-commit:
       run: pnpm format:core
     types:core:
       run: pnpm types:core
+    test:core:
+      run: pnpm test:core

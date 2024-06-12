@@ -9,14 +9,17 @@
     "format": "turbo format",
     "format:check": "turbo format:check",
     "types": "turbo types",
+    "test": "turbo test",
     "lint:core": "pnpm -C packages/core lint",
     "format:core": "pnpm -C packages/core format",
-    "types:core": "pnpm -C packages/core types"
+    "types:core": "pnpm -C packages/core types",
+    "test:core": "pnpm -C packages/core test"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@commitlint/types": "^19.0.3",
+    "@types/lodash": "^4.17.5",
     "lefthook": "^1.6.15",
     "prettier": "^3.2.5",
     "turbo": "latest",
@@ -25,5 +28,8 @@
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }
