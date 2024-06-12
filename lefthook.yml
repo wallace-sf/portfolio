@@ -14,3 +14,11 @@ pre-commit:
       run: pnpm types:core
     test:core:
       run: pnpm test:core
+    lint:utils:
+      run: pnpm lint:utils
+    format:utils:
+      run: pnpm format:utils
+    types:utils:
+      run: pnpm types:utils
+    test:utils:
+      run: pnpm test:utils
