@@ -14,7 +14,7 @@ describe('Id', () => {
       expect(() => Id.new('')).toThrow(new Error(Id.ERROR_INVALID_ID));
     });
 
-    it('should be valid when has not param', () => {
+    it('should be valid when id does not have param', () => {
       const id = Id.new();
 
       expect(id.isNew).toBe(true);

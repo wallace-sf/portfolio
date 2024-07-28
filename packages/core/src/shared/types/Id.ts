@@ -23,12 +23,4 @@ export class Id extends ValueObject<string> {
 
     if (!isValid) throw new Error(Id.ERROR_INVALID_ID);
   }
-
-  get value(): string {
-    return this._props.value;
-  }
-
-  get isNew(): boolean {
-    return this._props.isNew;
-  }
 }
