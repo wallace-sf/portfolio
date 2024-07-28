@@ -2,12 +2,7 @@ import { v4 as uuid, validate } from 'uuid';
 
 import { ValueObject } from '../base';
 
-interface IdProps {
-  value: string;
-  isNew: boolean;
-}
-
-export class Id extends ValueObject<IdProps> {
+export class Id extends ValueObject<string> {
   static readonly ERROR_INVALID_ID = 'ERROR_INVALID_ID';
 
   private constructor(value?: string) {
