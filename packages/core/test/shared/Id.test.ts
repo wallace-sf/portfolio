@@ -1,4 +1,4 @@
-import { Id } from '../../../src';
+import { Id } from '../../src';
 
 describe('Id', () => {
   describe('when is new', () => {
