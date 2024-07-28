@@ -4,7 +4,7 @@ export class Description extends ValueObject<string> {
   static readonly ERROR_INVALID_DESCRIPTION = 'ERROR_INVALID_DESCRIPTION';
 
   private constructor(value: string) {
-    super({ value: value.trim(), isNew: value == null });
+    super({ value: value.trim(), isNew: false });
     this._validate(this._props.value);
   }
 
