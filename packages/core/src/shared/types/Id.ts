@@ -1,8 +1,8 @@
 import { v4 as uuid, validate } from 'uuid';
 
-import { ValueObject } from '../base';
+import { ValueObject } from '../base/ValueObject';
 
-export class Id extends ValueObject<string> {
+export class Id extends ValueObject<Id, string> {
   static readonly ERROR_INVALID_ID = 'ERROR_INVALID_ID';
 
   private constructor(value?: string) {

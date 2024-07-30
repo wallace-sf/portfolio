@@ -1,22 +1,20 @@
-import _isEqual from 'lodash/isEqual';
-
 interface IValueObjectProps<TValue> {
   value: TValue;
   isNew: boolean;
 }
 
-export abstract class ValueObject<TValue> {
+export abstract class ValueObject<TValueObject, TValue> {
   protected readonly _props: Readonly<IValueObjectProps<TValue>>;
 
   protected constructor(props: IValueObjectProps<TValue>) {
     this._props = Object.freeze(props);
   }
 
-  public equals(vo: ValueObject<TValue>): boolean {
-    return vo != null && _isEqual(this._props, vo._props);
+  public equals(vo: ValueObject<TValueObject, TValue>): boolean {
+    return vo != null && this.value === vo.value;
   }
 
-  public diff(vo: ValueObject<TValue>): boolean {
+  public diff(vo: ValueObject<TValueObject, TValue>): boolean {
     return !this.equals(vo);
   }
 

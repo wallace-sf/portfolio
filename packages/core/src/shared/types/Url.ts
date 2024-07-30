@@ -1,6 +1,6 @@
 import { ValueObject } from '../base/ValueObject';
 
-export class Url extends ValueObject<string> {
+export class Url extends ValueObject<Url, string> {
   static readonly ERROR_INVALID_URL = 'ERROR_INVALID_URL';
 
   private constructor(value: string) {
