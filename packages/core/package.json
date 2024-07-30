@@ -16,8 +16,7 @@
   },
   "dependencies": {
     "@repo/utils": "workspace:*",
-    "uuid": "^10.0.0",
-    "lodash": "file:../../../node_modules/lodash"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
