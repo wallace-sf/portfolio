@@ -1,6 +1,6 @@
 import { ValueObject } from '../base/ValueObject';
 
-export class Description extends ValueObject<Description, string> {
+export class Description extends ValueObject<string> {
   static readonly ERROR_INVALID_DESCRIPTION = 'ERROR_INVALID_DESCRIPTION';
 
   private constructor(value: string) {

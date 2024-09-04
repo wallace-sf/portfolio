@@ -1,6 +1,6 @@
 import { ValueObject } from '../base/ValueObject';
 
-export class Name extends ValueObject<Name, string> {
+export class Name extends ValueObject<string> {
   static readonly ERROR_INVALID_NAME = 'ERROR_INVALID_NAME';
 
   private constructor(value: string) {
