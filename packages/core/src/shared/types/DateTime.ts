@@ -1,6 +1,6 @@
 import { ValueObject } from '../base/ValueObject';
 
-export class DateTime extends ValueObject<DateTime, string> {
+export class DateTime extends ValueObject<string> {
   static readonly ERROR_INVALID_DATETIME = 'ERROR_INVALID_DATETIME';
 
   private constructor(value?: string) {

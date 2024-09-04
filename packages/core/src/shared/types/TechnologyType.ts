@@ -12,10 +12,7 @@ export enum TechnologyTypeEnum {
   TOOL = 'TOOL',
 }
 
-export class TechnologyType extends ValueObject<
-  TechnologyType,
-  TechnologyTypeEnum
-> {
+export class TechnologyType extends ValueObject<TechnologyTypeEnum> {
   static readonly ERROR_INVALID_TECHNOLOGY_TYPE =
     'ERROR_INVALID_TECHNOLOGY_TYPE';
 
