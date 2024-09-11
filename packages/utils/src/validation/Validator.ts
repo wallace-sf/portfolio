@@ -1,7 +1,8 @@
-export type Validation = () => string | null;
+import { isLength, isAlpha } from '../validations';
 
+export type Validation = <TValue>(value: TValue) => boolean;
 export class Validator {
-  private readonly _validations: Validation[];
+  private readonly _validations: Array<[Validation, string]>;
   private _error: string | null = null;
 
   private constructor() {
@@ -13,22 +14,22 @@ export class Validator {
     return new Validator();
   }
 
-  public push(validation: Validation): Validator {
-    this._validations.push(validation);
+  private append(validation: Validation, error: string) {
+    this._validations.push([validation, error]);
 
     return this;
   }
 
-  public validate() {
-    for (const validation of this._validations) {
-      const error = validation();
+  public validate<TValue>(value: TValue) {
+    for (const [validation, error] of this._validations) {
+      const isValid = validation(value);
 
-      this._error = error;
+      this._error = isValid ? null : error;
 
       if (this._error) break;
     }
 
-    return this;
+    return { isValid: this.isValid, error: this.error };
   }
 
   get error(): string | null {
@@ -37,5 +38,17 @@ export class Validator {
 
   get isValid(): boolean {
     return this._error == null;
+  }
+
+  public length(min: number, max: number, error: string): Validator {
+    this.append((value) => isLength(value as string, { min, max }), error);
+
+    return this;
+  }
+
+  public alpha(error: string): Validator {
+    this.append((value) => isAlpha(value as string), error);
+
+    return this;
   }
 }
