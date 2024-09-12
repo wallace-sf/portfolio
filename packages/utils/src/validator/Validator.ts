@@ -1,4 +1,13 @@
-import { isLength, isAlpha } from '../validations';
+import {
+  isAlpha,
+  isDateTime,
+  isEmpty,
+  isLength,
+  isNil,
+  isString,
+  isUUID,
+  isUrl,
+} from '../validations';
 
 export type Validation = <TValue>(value: TValue) => boolean;
 export class Validator {
@@ -48,6 +57,42 @@ export class Validator {
 
   public alpha(error: string): Validator {
     this.append((value) => isAlpha(value as string), error);
+
+    return this;
+  }
+
+  public empty(error: string): Validator {
+    this.append((value) => isEmpty(value as string), error);
+
+    return this;
+  }
+
+  public nil(error: string): Validator {
+    this.append((value) => isNil(value), error);
+
+    return this;
+  }
+
+  public string(error: string): Validator {
+    this.append((value) => isString(value), error);
+
+    return this;
+  }
+
+  public uuid(error: string): Validator {
+    this.append((value) => isUUID(value as string), error);
+
+    return this;
+  }
+
+  public url(error: string): Validator {
+    this.append((value) => isUrl(value as string), error);
+
+    return this;
+  }
+
+  public datetime(error: string): Validator {
+    this.append((value) => isDateTime(value as string), error);
 
     return this;
   }
