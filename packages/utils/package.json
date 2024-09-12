@@ -18,6 +18,12 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "@types/luxon": "^3.4.2",
+    "@types/validator": "^13.12.1"
+  },
+  "dependencies": {
+    "luxon": "^3.5.0",
+    "validator": "^13.12.0"
   }
 }
