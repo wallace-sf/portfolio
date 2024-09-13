@@ -11,8 +11,16 @@ describe('Name', () => {
     });
 
     it('should be invalid when param is invalid', () => {
-      expect(() => Name.new('')).toThrow(new Error(Name.ERROR_INVALID_NAME));
-      expect(() => Name.new()).toThrow(new Error(Name.ERROR_INVALID_NAME));
+      expect(() => Name.new('')).toThrow(new Error(Name.ERROR_CODE));
+      expect(() => Name.new()).toThrow(new Error(Name.ERROR_CODE));
+      expect(() => Name.new('@')).toThrow(new Error(Name.ERROR_CODE));
+      expect(() => Name.new('Nome_com_&*%$')).toThrow(
+        new Error(Name.ERROR_CODE),
+      );
+
+      expect(() =>
+        Name.new('Nome com mais de 100 caracteres'.repeat(10)),
+      ).toThrow(new Error(Name.ERROR_CODE));
     });
   });
 
@@ -38,6 +46,26 @@ describe('Name', () => {
     it('should be invalid when param is empty', () => {
       expect(Name.isValid('')).toBe(false);
       expect(Name.isValid()).toBe(false);
+    });
+  });
+
+  describe('asserts normalized', () => {
+    it('compare normalized value', () => {
+      const param = 'Aliaune   Damala Bouga   Time Bongo ';
+
+      const name = Name.new(param);
+
+      expect(name.normalized).toBe('Aliaune Damala Bouga Time Bongo');
+    });
+  });
+
+  describe('assets capitalized', () => {
+    it('compare capitalized value', () => {
+      const param = 'aliaune damala bouga time bongo';
+
+      const name = Name.new(param);
+
+      expect(name.capitalized).toBe('Aliaune Damala Bouga Time Bongo');
     });
   });
 });
