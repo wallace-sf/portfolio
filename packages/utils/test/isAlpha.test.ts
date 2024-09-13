@@ -3,6 +3,7 @@ import { isAlpha } from '../src';
 describe('isAlpha', () => {
   it('should validate', () => {
     expect(isAlpha('abcdef')).toBe(true);
+    expect(isAlpha('ABCDEF ADWÉW ÃO')).toBe(true);
   });
 
   it('should not validate', () => {
