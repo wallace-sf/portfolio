@@ -1,9 +1,10 @@
-import { v4 as uuid, validate } from 'uuid';
+import { Validator } from '@repo/utils';
+import { v4 as uuid } from 'uuid';
 
 import { ValueObject } from '../base/ValueObject';
 
 export class Id extends ValueObject<string> {
-  static readonly ERROR_INVALID_ID = 'ERROR_INVALID_ID';
+  static readonly ERROR_CODE = 'ERROR_INVALID_ID';
 
   private constructor(value?: string) {
     super({ value: value ?? uuid(), isNew: value == null });
@@ -15,12 +16,13 @@ export class Id extends ValueObject<string> {
   }
 
   static isValid(value = ''): boolean {
-    return validate(value);
+    return Validator.new().uuid('O id deve ser um UUID').validate(value)
+      .isValid;
   }
 
   private _validate(value?: string): void {
     const isValid = Id.isValid(value);
 
-    if (!isValid) throw new Error(Id.ERROR_INVALID_ID);
+    if (!isValid) throw new Error(Id.ERROR_CODE);
   }
 }
