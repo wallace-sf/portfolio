@@ -1,7 +1,9 @@
+import { Validator } from '@repo/utils';
+
 import { ValueObject } from '../base/ValueObject';
 
 export class DateTime extends ValueObject<string> {
-  static readonly ERROR_INVALID_DATETIME = 'ERROR_INVALID_DATETIME';
+  static readonly ERROR_CODE = 'ERROR_INVALID_DATETIME';
 
   private constructor(value?: string) {
     super({ value: value ?? new Date().toISOString(), isNew: value == null });
@@ -13,12 +15,14 @@ export class DateTime extends ValueObject<string> {
   }
 
   static isValid(value = ''): boolean {
-    return !isNaN(new Date(value).getTime()); // Use date validator from DateValidator class
+    return Validator.new()
+      .datetime('O valor deve ser uma data e hora válida.')
+      .validate(value).isValid;
   }
 
   private _validate(value?: string): void {
     const isValid = DateTime.isValid(value);
 
-    if (!isValid) throw new Error(DateTime.ERROR_INVALID_DATETIME);
+    if (!isValid) throw new Error(DateTime.ERROR_CODE);
   }
 }
