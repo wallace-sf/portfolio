@@ -11,9 +11,7 @@ describe('DateTime', () => {
     });
 
     it('should be invalid when param is invalid', () => {
-      expect(() => DateTime.new('')).toThrow(
-        new Error(DateTime.ERROR_INVALID_DATETIME),
-      );
+      expect(() => DateTime.new('')).toThrow(new Error(DateTime.ERROR_CODE));
     });
 
     it('should be valid when it does not have param', () => {
