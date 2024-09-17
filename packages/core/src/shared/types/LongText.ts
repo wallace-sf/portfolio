@@ -1,7 +1,9 @@
+import { Validator } from '@repo/utils';
+
 import { ValueObject } from '../base/ValueObject';
 
 export class LongText extends ValueObject<string> {
-  static readonly ERROR_INVALID_LONG_TEXT = 'ERROR_INVALID_LONG_TEXT';
+  static readonly ERROR_CODE = 'ERROR_INVALID_LONG_TEXT';
 
   private constructor(value: string) {
     super({ value: value.trim(), isNew: false });
@@ -13,12 +15,14 @@ export class LongText extends ValueObject<string> {
   }
 
   static isValid(value = ''): boolean {
-    return value.length >= 3 && value.length <= 125000;
+    return Validator.new()
+      .length(3, 125000, 'O texto deve ter entre 3 e 125000 caracteres')
+      .validate(value).isValid;
   }
 
   private _validate(value?: string): void {
     const isValid = LongText.isValid(value);
 
-    if (!isValid) throw new Error(LongText.ERROR_INVALID_LONG_TEXT);
+    if (!isValid) throw new Error(LongText.ERROR_CODE);
   }
 }

@@ -11,12 +11,8 @@ describe('ShortText', () => {
     });
 
     it('should be invalid when text is invalid', () => {
-      expect(() => LongText.new('')).toThrow(
-        new Error(LongText.ERROR_INVALID_LONG_TEXT),
-      );
-      expect(() => LongText.new()).toThrow(
-        new Error(LongText.ERROR_INVALID_LONG_TEXT),
-      );
+      expect(() => LongText.new('')).toThrow(new Error(LongText.ERROR_CODE));
+      expect(() => LongText.new()).toThrow(new Error(LongText.ERROR_CODE));
     });
   });
 
