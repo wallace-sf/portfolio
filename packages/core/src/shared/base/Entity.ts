@@ -1,5 +1,5 @@
-import { DateTime } from '../types/DateTime';
-import { Id } from '../types/Id';
+import { DateTime } from '../vo/DateTime';
+import { Id } from '../vo/Id';
 export interface IEntityProps {
   created_at?: string;
   deleted_at?: string | null;
