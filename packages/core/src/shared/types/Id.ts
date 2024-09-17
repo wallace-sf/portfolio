@@ -16,7 +16,7 @@ export class Id extends ValueObject<string> {
   }
 
   static isValid(value = ''): boolean {
-    return Validator.new().uuid('O id deve ser um UUID').validate(value)
+    return Validator.new().uuid('O id deve ser um UUID.').validate(value)
       .isValid;
   }
 

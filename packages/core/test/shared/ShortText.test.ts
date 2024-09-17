@@ -11,17 +11,13 @@ describe('ShortText', () => {
     });
 
     it('should be invalid when text is invalid', () => {
-      expect(() => ShortText.new('')).toThrow(
-        new Error(ShortText.ERROR_INVALID_SHORT_TEXT),
-      );
-      expect(() => ShortText.new()).toThrow(
-        new Error(ShortText.ERROR_INVALID_SHORT_TEXT),
-      );
+      expect(() => ShortText.new('')).toThrow(new Error(ShortText.ERROR_CODE));
+      expect(() => ShortText.new()).toThrow(new Error(ShortText.ERROR_CODE));
       expect(() =>
         ShortText.new(
           `Lorem ipsum odor amet, consectetuer adipiscing elit. Justo cras risus rutrum; eget dis leo. Enim tristique mauris venenatis quisque congue gravida tellus cras. Massa risus proin duis nunc vitae adipiscing malesuada senectus. Lorem vivamus molestie morbi placerat nibh accumsan hendrerit non dolor. Sed dignissim sociosqu natoque eu litora tempus interdum eleifend. Nulla consectetur duis ligula ante risus ac mattis. Litora tincidunt curae tempor viverra aenean venenatis eu. Non cursus nisl viverra sit imperdiet. Aptent ultrices gravida, curae a semper justo volutpat dui gravida. Conubia sagittis congue iaculis dapibus lacinia montes magnis quis. Maximus imperdiet montes gravida sollicitudin dolor malesuada purus. Aenean euismod vehicula parturient sodales vestibulum cras platea. Penatibus sollicitudin ante; nullam torquent lobortis iaculis morbi. Dolor efficitur natoque magna; porta cras euismod.`,
         ),
-      ).toThrow(new Error(ShortText.ERROR_INVALID_SHORT_TEXT));
+      ).toThrow(new Error(ShortText.ERROR_CODE));
     });
   });
 
