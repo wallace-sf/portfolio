@@ -1,7 +1,9 @@
+import { Validator } from '@repo/utils';
+
 import { ValueObject } from '../base/ValueObject';
 
 export class ShortText extends ValueObject<string> {
-  static readonly ERROR_INVALID_SHORT_TEXT = 'ERROR_INVALID_SHORT_TEXT';
+  static readonly ERROR_CODE = 'ERROR_INVALID_SHORT_TEXT';
 
   private constructor(value: string) {
     super({ value: value.trim(), isNew: false });
@@ -13,12 +15,14 @@ export class ShortText extends ValueObject<string> {
   }
 
   static isValid(value = ''): boolean {
-    return value.length >= 3 && value.length <= 300;
+    return Validator.new()
+      .length(3, 300, 'O texto deve ter entre 3 e 300 caracteres.')
+      .validate(value).isValid;
   }
 
   private _validate(value?: string): void {
     const isValid = ShortText.isValid(value);
 
-    if (!isValid) throw new Error(ShortText.ERROR_INVALID_SHORT_TEXT);
+    if (!isValid) throw new Error(ShortText.ERROR_CODE);
   }
 }

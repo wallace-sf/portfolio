@@ -16,7 +16,7 @@ export class LongText extends ValueObject<string> {
 
   static isValid(value = ''): boolean {
     return Validator.new()
-      .length(3, 125000, 'O texto deve ter entre 3 e 125000 caracteres')
+      .length(3, 125000, 'O texto deve ter entre 3 e 125000 caracteres.')
       .validate(value).isValid;
   }
 
