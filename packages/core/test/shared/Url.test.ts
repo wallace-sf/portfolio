@@ -11,9 +11,9 @@ describe('Url', () => {
     });
 
     it('should be invalid when param is invalid', () => {
-      expect(() => Url.new()).toThrow(new Error(Url.ERROR_INVALID_URL));
-      expect(() => Url.new('')).toThrow(new Error(Url.ERROR_INVALID_URL));
-      expect(() => Url.new('#')).toThrow(new Error(Url.ERROR_INVALID_URL));
+      expect(() => Url.new()).toThrow(new Error(Url.ERROR_CODE));
+      expect(() => Url.new('')).toThrow(new Error(Url.ERROR_CODE));
+      expect(() => Url.new('#')).toThrow(new Error(Url.ERROR_CODE));
     });
   });
 

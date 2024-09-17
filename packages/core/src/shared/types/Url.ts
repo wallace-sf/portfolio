@@ -1,7 +1,9 @@
+import { Validator } from '@repo/utils';
+
 import { ValueObject } from '../base/ValueObject';
 
 export class Url extends ValueObject<string> {
-  static readonly ERROR_INVALID_URL = 'ERROR_INVALID_URL';
+  static readonly ERROR_CODE = 'ERROR_INVALID_URL';
 
   private constructor(value: string) {
     super({ value, isNew: false });
@@ -13,12 +15,14 @@ export class Url extends ValueObject<string> {
   }
 
   static isValid(value = ''): boolean {
-    return /^https?:\/\//.test(value);
+    return Validator.new()
+      .url('O valor deve ser uma URL válida.')
+      .validate(value).isValid;
   }
 
   private _validate(value?: string): void {
     const isValid = Url.isValid(value);
 
-    if (!isValid) throw new Error(Url.ERROR_INVALID_URL);
+    if (!isValid) throw new Error(Url.ERROR_CODE);
   }
 }
