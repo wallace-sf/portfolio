@@ -1,4 +1,4 @@
-import { Validator } from '@repo/utils';
+import { Validator, ValidationError } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
 
@@ -14,17 +14,15 @@ export class Name extends ValueObject<string> {
     return new Name(value ?? '');
   }
 
-  static isValid(value = ''): boolean {
-    return Validator.new()
-      .length(3, 100, 'O nome deve estar entre 3 e 100 caracteres.')
-      .alpha('Nome deve conter apenas letras.')
-      .validate(value).isValid;
-  }
-
   private _validate(value?: string): void {
-    const isValid = Name.isValid(value);
+    const { error, isValid } = Validator.new()
+      .alpha('Nome deve conter apenas letras.')
+      .length(3, 100, 'O nome deve estar entre 3 e 100 caracteres.')
+      .validate(value);
 
-    if (!isValid) throw new Error(Name.ERROR_CODE);
+    const ERROR_CODE = Name.ERROR_CODE;
+
+    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
   }
 
   public get normalized(): string {

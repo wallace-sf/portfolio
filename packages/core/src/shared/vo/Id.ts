@@ -1,4 +1,4 @@
-import { Validator } from '@repo/utils';
+import { Validator, ValidationError } from '@repo/utils';
 import { v4 as uuid } from 'uuid';
 
 import { ValueObject } from '../base/ValueObject';
@@ -15,14 +15,13 @@ export class Id extends ValueObject<string> {
     return new Id(value);
   }
 
-  static isValid(value = ''): boolean {
-    return Validator.new().uuid('O id deve ser um UUID.').validate(value)
-      .isValid;
-  }
-
   private _validate(value?: string): void {
-    const isValid = Id.isValid(value);
+    const { error, isValid } = Validator.new()
+      .uuid('O id deve ser um UUID.')
+      .validate(value);
 
-    if (!isValid) throw new Error(Id.ERROR_CODE);
+    const ERROR_CODE = Id.ERROR_CODE;
+
+    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
   }
 }
