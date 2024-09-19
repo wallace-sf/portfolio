@@ -1,3 +1,5 @@
+import { ValidationError } from '@repo/utils';
+
 import { ShortText } from '../../src';
 
 describe('ShortText', () => {
@@ -11,13 +13,28 @@ describe('ShortText', () => {
     });
 
     it('should be invalid when text is invalid', () => {
-      expect(() => ShortText.new('')).toThrow(new Error(ShortText.ERROR_CODE));
-      expect(() => ShortText.new()).toThrow(new Error(ShortText.ERROR_CODE));
+      expect(() => ShortText.new('')).toThrow(
+        new ValidationError(
+          ShortText.ERROR_CODE,
+          'O texto deve ter entre 3 e 300 caracteres.',
+        ),
+      );
+      expect(() => ShortText.new()).toThrow(
+        new ValidationError(
+          ShortText.ERROR_CODE,
+          'O texto deve ter entre 3 e 300 caracteres.',
+        ),
+      );
       expect(() =>
         ShortText.new(
-          `Lorem ipsum odor amet, consectetuer adipiscing elit. Justo cras risus rutrum; eget dis leo. Enim tristique mauris venenatis quisque congue gravida tellus cras. Massa risus proin duis nunc vitae adipiscing malesuada senectus. Lorem vivamus molestie morbi placerat nibh accumsan hendrerit non dolor. Sed dignissim sociosqu natoque eu litora tempus interdum eleifend. Nulla consectetur duis ligula ante risus ac mattis. Litora tincidunt curae tempor viverra aenean venenatis eu. Non cursus nisl viverra sit imperdiet. Aptent ultrices gravida, curae a semper justo volutpat dui gravida. Conubia sagittis congue iaculis dapibus lacinia montes magnis quis. Maximus imperdiet montes gravida sollicitudin dolor malesuada purus. Aenean euismod vehicula parturient sodales vestibulum cras platea. Penatibus sollicitudin ante; nullam torquent lobortis iaculis morbi. Dolor efficitur natoque magna; porta cras euismod.`,
+          'Lorem ipsum odor amet, consectetuer adipiscing elit. Justo cras risus rutrum; eget dis leo. Enim tristique mauris venenatis quisque congue gravida tellus cras. Massa risus proin duis nunc vitae adipiscing malesuada senectus. Lorem vivamus molestie morbi placerat nibh accumsan hendrerit non dolor. Sed dignissim sociosqu natoque eu litora tempus interdum eleifend. Nulla consectetur duis ligula ante risus ac mattis. Litora tincidunt curae tempor viverra aenean venenatis eu. Non cursus nisl viverra sit imperdiet. Aptent ultrices gravida, curae a semper justo volutpat dui gravida. Conubia sagittis congue iaculis dapibus lacinia montes magnis quis. Maximus imperdiet montes gravida sollicitudin dolor malesuada purus. Aenean euismod vehicula parturient sodales vestibulum cras platea. Penatibus sollicitudin ante; nullam torquent lobortis iaculis morbi. Dolor efficitur natoque magna; porta cras euismod.',
         ),
-      ).toThrow(new Error(ShortText.ERROR_CODE));
+      ).toThrow(
+        new ValidationError(
+          ShortText.ERROR_CODE,
+          'O texto deve ter entre 3 e 300 caracteres.',
+        ),
+      );
     });
   });
 
@@ -30,19 +47,6 @@ describe('ShortText', () => {
 
       expect(shortText1.equals(shortText2)).toBe(true);
       expect(shortText1.diff(shortText2)).toBe(false);
-    });
-  });
-
-  describe('asserts static method isValid', () => {
-    it('should be valid when param is a text', () => {
-      const text = 'Lorem ipsum odor amet, consectetuer adipiscing elit.';
-
-      expect(ShortText.isValid(text)).toBe(true);
-    });
-
-    it('should be invalid when param is empty', () => {
-      expect(ShortText.isValid('')).toBe(false);
-      expect(ShortText.isValid()).toBe(false);
     });
   });
 });

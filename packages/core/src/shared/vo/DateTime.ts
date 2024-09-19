@@ -1,4 +1,4 @@
-import { Validator } from '@repo/utils';
+import { Validator, ValidationError } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
 
@@ -14,15 +14,13 @@ export class DateTime extends ValueObject<string> {
     return new DateTime(value);
   }
 
-  static isValid(value = ''): boolean {
-    return Validator.new()
-      .datetime('O valor deve ser uma data e hora válida.')
-      .validate(value).isValid;
-  }
-
   private _validate(value?: string): void {
-    const isValid = DateTime.isValid(value);
+    const { error, isValid } = Validator.new()
+      .datetime('O valor deve ser uma data e hora válida.')
+      .validate(value);
 
-    if (!isValid) throw new Error(DateTime.ERROR_CODE);
+    const ERROR_CODE = DateTime.ERROR_CODE;
+
+    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
   }
 }

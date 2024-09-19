@@ -1,6 +1,8 @@
+import { ValidationError } from '@repo/utils';
+
 import { LongText } from '../../src';
 
-describe('ShortText', () => {
+describe('LongText', () => {
   describe('when is new', () => {
     const text = 'Lorem ipsum odor amet, consectetuer adipiscing elit.';
     const longText = LongText.new(text);
@@ -11,8 +13,13 @@ describe('ShortText', () => {
     });
 
     it('should be invalid when text is invalid', () => {
-      expect(() => LongText.new('')).toThrow(new Error(LongText.ERROR_CODE));
-      expect(() => LongText.new()).toThrow(new Error(LongText.ERROR_CODE));
+      const error = new ValidationError(
+        LongText.ERROR_CODE,
+        'O texto deve ter entre 3 e 125000 caracteres.',
+      );
+
+      expect(() => LongText.new('')).toThrow(error);
+      expect(() => LongText.new()).toThrow(error);
     });
   });
 
@@ -25,19 +32,6 @@ describe('ShortText', () => {
 
       expect(longText1.equals(longText2)).toBe(true);
       expect(longText1.diff(longText2)).toBe(false);
-    });
-  });
-
-  describe('asserts static method isValid', () => {
-    it('should be valid when param is a text', () => {
-      const text = 'Lorem ipsum odor amet, consectetuer adipiscing elit.';
-
-      expect(LongText.isValid(text)).toBe(true);
-    });
-
-    it('should be invalid when param is empty', () => {
-      expect(LongText.isValid('')).toBe(false);
-      expect(LongText.isValid()).toBe(false);
     });
   });
 });

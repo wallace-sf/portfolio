@@ -1,4 +1,4 @@
-import { Validator } from '@repo/utils';
+import { Validator, ValidationError } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
 
@@ -14,15 +14,13 @@ export class Url extends ValueObject<string> {
     return new Url(value ?? '');
   }
 
-  static isValid(value = ''): boolean {
-    return Validator.new()
-      .url('O valor deve ser uma URL válida.')
-      .validate(value).isValid;
-  }
-
   private _validate(value?: string): void {
-    const isValid = Url.isValid(value);
+    const { error, isValid } = Validator.new()
+      .url('O valor deve ser uma URL válida.')
+      .validate(value);
 
-    if (!isValid) throw new Error(Url.ERROR_CODE);
+    const ERROR_CODE = Url.ERROR_CODE;
+
+    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
   }
 }

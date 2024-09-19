@@ -1,3 +1,5 @@
+import { ValidationError } from '@repo/utils';
+
 import { DateTime } from '../../src';
 
 describe('DateTime', () => {
@@ -11,7 +13,12 @@ describe('DateTime', () => {
     });
 
     it('should be invalid when param is invalid', () => {
-      expect(() => DateTime.new('')).toThrow(new Error(DateTime.ERROR_CODE));
+      expect(() => DateTime.new('')).toThrow(
+        new ValidationError(
+          DateTime.ERROR_CODE,
+          'O valor deve ser uma data e hora válida.',
+        ),
+      );
     });
 
     it('should be valid when it does not have param', () => {
@@ -31,22 +38,6 @@ describe('DateTime', () => {
 
       expect(dateTime1.equals(dateTime2)).toBe(true);
       expect(dateTime1.diff(dateTime2)).toBe(false);
-    });
-  });
-
-  describe('assert static method isValid', () => {
-    it('should be valid when param is iso string', () => {
-      const param = '2020-01-01T00:00:00.000Z';
-
-      expect(DateTime.isValid(param)).toBe(true);
-    });
-
-    it('should be invalid when param is invalid', () => {
-      expect(DateTime.isValid('#')).toBe(false);
-    });
-
-    it('should be invalid when param is empty', () => {
-      expect(DateTime.isValid()).toBe(false);
     });
   });
 });

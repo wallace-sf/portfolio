@@ -1,3 +1,5 @@
+import { ValidationError } from '@repo/utils';
+
 import { Url } from '../../src';
 
 describe('Url', () => {
@@ -11,9 +13,15 @@ describe('Url', () => {
     });
 
     it('should be invalid when param is invalid', () => {
-      expect(() => Url.new()).toThrow(new Error(Url.ERROR_CODE));
-      expect(() => Url.new('')).toThrow(new Error(Url.ERROR_CODE));
-      expect(() => Url.new('#')).toThrow(new Error(Url.ERROR_CODE));
+      expect(() => Url.new()).toThrow(
+        new ValidationError(Url.ERROR_CODE, 'O valor deve ser uma URL válida.'),
+      );
+      expect(() => Url.new('')).toThrow(
+        new ValidationError(Url.ERROR_CODE, 'O valor deve ser uma URL válida.'),
+      );
+      expect(() => Url.new('#')).toThrow(
+        new ValidationError(Url.ERROR_CODE, 'O valor deve ser uma URL válida.'),
+      );
     });
   });
 
@@ -26,22 +34,6 @@ describe('Url', () => {
 
       expect(url1.equals(url2)).toBe(true);
       expect(url1.diff(url2)).toBe(false);
-    });
-  });
-
-  describe('assert static method isValid', () => {
-    it('should be valid when param is url', () => {
-      const param = 'https://example.com';
-
-      expect(Url.isValid(param)).toBe(true);
-    });
-
-    it('should be invalid when param is invalid', () => {
-      expect(Url.isValid('#')).toBe(false);
-    });
-
-    it('should be invalid when param is empty', () => {
-      expect(Url.isValid()).toBe(false);
     });
   });
 });
