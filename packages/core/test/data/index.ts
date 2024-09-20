@@ -1,2 +1,2 @@
-export * from './Builder';
 export * from './bases';
+export * from './LanguageBuilder';
