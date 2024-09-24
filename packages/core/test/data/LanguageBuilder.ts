@@ -13,6 +13,7 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
     return new LanguageBuilder({
       name: Data.language.valid(),
       fluency: faker.lorem.word({ length: 3 }),
+      locale: faker.lorem.word({ length: 3 }),
     });
   }
 
@@ -36,6 +37,12 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
     return this;
   }
 
+  public withLocale(locale: string): LanguageBuilder {
+    this._props.locale = locale;
+
+    return this;
+  }
+
   public withoutName(): LanguageBuilder {
     this._props.name = undefined;
 
@@ -44,6 +51,12 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
 
   public withoutFluency(): LanguageBuilder {
     this._props.fluency = undefined;
+
+    return this;
+  }
+
+  public withoutLocale(): LanguageBuilder {
+    this._props.locale = undefined;
 
     return this;
   }

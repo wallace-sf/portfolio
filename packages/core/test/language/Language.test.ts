@@ -20,11 +20,13 @@ describe('Language', () => {
     const language = LanguageBuilder.build()
       .withName('Português')
       .withFluency('Nativo')
+      .withLocale('pt-BR')
       .now();
 
     expect(language).toBeInstanceOf(Language);
     expect(language.name.value).toBe('Português');
     expect(language.fluency.value).toBe('Nativo');
+    expect(language.locale.value).toBe('pt-BR');
   });
 
   it('should create multiple languages from valid props', () => {
