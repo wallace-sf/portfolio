@@ -28,7 +28,7 @@ describe('Name', () => {
       expect(() => Name.new('João da silva'.repeat(10))).toThrow(
         new ValidationError(
           Name.ERROR_CODE,
-          'O nome deve estar entre 2 e 100 caracteres.',
+          'O nome deve estar entre 3 e 100 caracteres.',
         ),
       );
     });
