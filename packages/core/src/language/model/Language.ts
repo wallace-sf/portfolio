@@ -1,4 +1,4 @@
-import { Entity, IEntityProps, Name, ShortText } from '../../shared';
+import { Entity, IEntityProps, Name, Text } from '../../shared';
 
 export interface ILanguageProps extends IEntityProps {
   name: string;
@@ -8,13 +8,13 @@ export interface ILanguageProps extends IEntityProps {
 
 export class Language extends Entity<Language, ILanguageProps> {
   public readonly name: Name;
-  public readonly fluency: ShortText;
-  public readonly locale: ShortText;
+  public readonly fluency: Text;
+  public readonly locale: Text;
 
   constructor(props: ILanguageProps) {
     super(props);
     this.name = Name.new(props.name);
-    this.fluency = ShortText.new(props.fluency);
-    this.locale = ShortText.new(props.locale);
+    this.fluency = Text.new(props.fluency);
+    this.locale = Text.new(props.locale, { min: 2, max: 50 });
   }
 }
