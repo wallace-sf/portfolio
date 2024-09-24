@@ -1,3 +1,5 @@
+import { render } from 'mustache';
+
 import {
   isAlpha,
   isDateTime,
@@ -50,7 +52,12 @@ export class Validator {
   }
 
   public length(min: number, max: number, error: string): Validator {
-    this.append((value) => isLength(value as string, { min, max }), error);
+    const config = { min, max };
+
+    this.append(
+      (value) => isLength(value as string, config),
+      render(error, config),
+    );
 
     return this;
   }
