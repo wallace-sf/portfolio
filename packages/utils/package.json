@@ -20,10 +20,12 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/luxon": "^3.4.2",
+    "@types/mustache": "^4.2.5",
     "@types/validator": "^13.12.1"
   },
   "dependencies": {
     "luxon": "^3.5.0",
+    "mustache": "^4.2.0",
     "validator": "^13.12.0"
   }
 }
