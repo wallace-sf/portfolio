@@ -1,7 +1,7 @@
-import isURL from 'validator/lib/isURL';
+import validate from 'validator/lib/isURL';
 
 import { isString } from './isString';
 
 export const isUrl = (value: string): boolean => {
-  return isString(value) && isURL(value, { require_protocol: true });
+  return isString(value) && validate(value, { require_protocol: true });
 };

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { Language, ILanguageProps } from '../../src';
+import { Language, ILanguageProps, FluencyValue } from '../../src';
 import { Data } from './bases';
 import { EntityBuilder } from './EntityBuilder';
 
@@ -12,7 +12,7 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
   static build(): LanguageBuilder {
     return new LanguageBuilder({
       name: Data.language.valid(),
-      fluency: faker.lorem.word({ length: 3 }),
+      fluency: Data.fluency.valid(),
       locale: faker.lorem.word({ length: 3 }),
     });
   }
@@ -31,7 +31,7 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
     return this;
   }
 
-  public withFluency(fluency: string): LanguageBuilder {
+  public withFluency(fluency: FluencyValue): LanguageBuilder {
     this._props.fluency = fluency;
 
     return this;
