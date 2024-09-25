@@ -4,6 +4,7 @@ import {
   isAlpha,
   isDateTime,
   isEmpty,
+  isIn,
   isLength,
   isNil,
   isString,
@@ -100,6 +101,12 @@ export class Validator {
 
   public datetime(error: string): Validator {
     this.append((value) => isDateTime(value as string), error);
+
+    return this;
+  }
+
+  public in(values: string[], error: string): Validator {
+    this.append((value) => isIn(value as string, values), error);
 
     return this;
   }

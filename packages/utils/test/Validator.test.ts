@@ -167,4 +167,25 @@ describe('Validator', () => {
       expect(validator.isValid).toBe(false);
     });
   });
+
+  describe('in', () => {
+    it('should validate', () => {
+      const validator = Validator.new()
+        .in(['foo', 'bar'], 'IN_ERROR')
+        .validate('foo');
+
+      expect(validator.error).toBeNull();
+      expect(validator.isValid).toBe(true);
+    });
+
+    it('should not validate', () => {
+      const error = 'IN_ERROR';
+      const validator = Validator.new()
+        .in(['foo', 'bar'], error)
+        .validate('x03');
+
+      expect(validator.error).toBe(error);
+      expect(validator.isValid).toBe(false);
+    });
+  });
 });

@@ -1,6 +1,7 @@
 export * from './isAlpha';
 export * from './isDateTime';
 export * from './isEmpty';
+export * from './isIn';
 export * from './isLength';
 export * from './isNil';
 export * from './isString';
