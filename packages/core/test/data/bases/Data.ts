@@ -1,7 +1,7 @@
 import { FluencyData } from './FluencyData';
-import { LanguageData } from './LanguageData';
+import { NameData } from './NameData';
 
 export class Data {
   static fluency = FluencyData;
-  static language = LanguageData;
+  static name = NameData;
 }
