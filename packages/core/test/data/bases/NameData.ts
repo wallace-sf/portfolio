@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-export class NameData {
+export class TextData {
   static language(): string {
     return [
       'English',
@@ -29,5 +29,22 @@ export class NameData {
     return ['pt-BR', 'en-US', 'es-ES', 'fr-FR', 'it-IT'][
       faker.number.int({ min: 0, max: 4 })
     ] as string;
+  }
+
+  static icon(): string {
+    return [
+      'house',
+      'envelope',
+      'user',
+      'phone',
+      'map',
+      'lock',
+      'key',
+      'image',
+      'camera',
+      'file',
+      'file-text',
+      'file-alt',
+    ][faker.number.int({ min: 0, max: 11 })] as string;
   }
 }

@@ -9,9 +9,9 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
 
   static build(): LanguageBuilder {
     return new LanguageBuilder({
-      name: Data.name.language(),
+      name: Data.text.language(),
       fluency: Data.fluency.valid(),
-      locale: Data.name.locale(),
+      locale: Data.text.locale(),
     });
   }
 

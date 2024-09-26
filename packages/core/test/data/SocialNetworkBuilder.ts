@@ -11,8 +11,8 @@ export class SocialNetworkBuilder extends EntityBuilder<ISocialNetworkProps> {
 
   static build(): SocialNetworkBuilder {
     return new SocialNetworkBuilder({
-      name: Data.name.socialNetwork(),
-      icon: faker.internet.url(),
+      name: Data.text.socialNetwork(),
+      icon: Data.text.icon(),
       url: faker.internet.url(),
     });
   }
