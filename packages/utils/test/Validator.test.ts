@@ -132,6 +132,23 @@ describe('Validator', () => {
     });
   });
 
+  describe('notNil', () => {
+    it('should validate', () => {
+      const validator = Validator.new().notNil('NOT_NILL_ERROR').validate(0);
+
+      expect(validator.error).toBeNull();
+      expect(validator.isValid).toBe(true);
+    });
+
+    it('should not validate', () => {
+      const error = 'NOT_NILL_ERROR';
+      const validator = Validator.new().notNil(error).validate(null);
+
+      expect(validator.error).toBe(error);
+      expect(validator.isValid).toBe(false);
+    });
+  });
+
   describe('empty', () => {
     it('should validate', () => {
       const validator = Validator.new().empty('EMPTY_ERROR').validate('');

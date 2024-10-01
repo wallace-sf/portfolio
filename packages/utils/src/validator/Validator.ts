@@ -7,6 +7,7 @@ import {
   isIn,
   isLength,
   isNil,
+  isNotNil,
   isString,
   isUUID,
   isUrl,
@@ -77,6 +78,12 @@ export class Validator {
 
   public nil(error: string): Validator {
     this.append((value) => isNil(value), error);
+
+    return this;
+  }
+
+  public notNil(error: string): Validator {
+    this.append((value) => isNotNil(value), error);
 
     return this;
   }
