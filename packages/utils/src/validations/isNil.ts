@@ -1,1 +1,1 @@
-export const isNil = (value: unknown): boolean => value == null;
+export const isNil = <T>(value: T): boolean => value == null;

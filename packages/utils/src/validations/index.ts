@@ -4,6 +4,7 @@ export * from './isEmpty';
 export * from './isIn';
 export * from './isLength';
 export * from './isNil';
+export * from './isNotNil';
 export * from './isString';
 export * from './isUUID';
 export * from './isUrl';
