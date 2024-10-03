@@ -1,6 +1,9 @@
 import { faker } from '@faker-js/faker';
 
 export class TextData {
+  static description(): string {
+    return faker.lorem.sentences().slice(0, 50);
+  }
   static language(): string {
     return [
       'English',

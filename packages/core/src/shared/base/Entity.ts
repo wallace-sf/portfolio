@@ -36,12 +36,4 @@ export abstract class Entity<TEntity, TProps extends IEntityProps> {
 
     return new entity({ ...this.props, ...props });
   }
-
-  public bulk(props: TProps[]): TEntity[] {
-    return props.map((p) => {
-      const entity = this.constructor as new (props: TProps) => TEntity;
-
-      return new entity(p);
-    });
-  }
 }
