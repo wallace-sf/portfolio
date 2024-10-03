@@ -2,9 +2,9 @@ import { Validator, ValidationError } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
 
-export type SkillValue = Readonly<typeof SkillType.SKILLS>[number];
+export type SkillTypeValue = Readonly<typeof SkillType.SKILLS>[number];
 
-export class SkillType extends ValueObject<SkillValue> {
+export class SkillType extends ValueObject<SkillTypeValue> {
   static readonly ERROR_CODE = 'ERROR_INVALID_SKILL_TYPE';
   static readonly SKILLS = [
     'EDUCATION',
@@ -14,12 +14,12 @@ export class SkillType extends ValueObject<SkillValue> {
     'OTHER',
   ] as const;
 
-  private constructor(value: SkillValue) {
+  private constructor(value: SkillTypeValue) {
     super({ value, isNew: false });
     this._validate(value);
   }
 
-  static new(value: SkillValue): SkillType {
+  static new(value: SkillTypeValue): SkillType {
     return new SkillType(value);
   }
 
