@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-
 import { IProfessionalValueProps, ProfessionalValue } from '../../src';
 import { Data } from './bases';
 import { EntityBuilder } from './EntityBuilder';
@@ -13,7 +11,7 @@ export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValuePr
   static build(): ProfessionalValueBuilder {
     return new ProfessionalValueBuilder({
       icon: Data.text.icon(),
-      content: faker.lorem.text(),
+      content: Data.text.text(),
     });
   }
 

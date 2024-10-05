@@ -1,6 +1,18 @@
 import { faker } from '@faker-js/faker';
 
 export class TextData {
+  static text(): string {
+    return faker.lorem.text();
+  }
+
+  static title(): string {
+    return faker.lorem.words(3).slice(0, 60);
+  }
+
+  static caption(): string {
+    return faker.lorem.sentences().slice(0, 200);
+  }
+
   static description(): string {
     return faker.lorem.sentences().slice(0, 50);
   }
