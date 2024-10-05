@@ -6,3 +6,4 @@ export * from './Name';
 export * from './SkillType';
 export * from './Text';
 export * from './Url';
+export * from './EmploymentType';
