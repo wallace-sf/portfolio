@@ -19,6 +19,10 @@ export class SkillBuilder extends EntityBuilder<ISkillProps> {
     return [...Array(count)].map(() => SkillBuilder.build().now());
   }
 
+  static listToProps(count: number): ISkillProps[] {
+    return [...Array(count)].map(() => SkillBuilder.build().toProps());
+  }
+
   public now(): Skill {
     return new Skill(this._props as ISkillProps);
   }
