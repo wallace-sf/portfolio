@@ -18,12 +18,12 @@ export class LocationType extends ValueObject<LocationTypeValue> {
   }
 
   private _validate(value: string): void {
-    const { error, isValid } = Validator.new()
+    const { error, isValid } = Validator.new(value)
       .in(
         [...LocationType.LOCATIONS],
         'O valor deve ser um tipo localização válido.',
       )
-      .validate(value);
+      .validate();
 
     const ERROR_CODE = LocationType.ERROR_CODE;
 

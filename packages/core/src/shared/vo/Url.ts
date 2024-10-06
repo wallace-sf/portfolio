@@ -15,9 +15,9 @@ export class Url extends ValueObject<string> {
   }
 
   private _validate(value?: string): void {
-    const { error, isValid } = Validator.new()
+    const { error, isValid } = Validator.new(value)
       .url('O valor deve ser uma URL válida.')
-      .validate(value);
+      .validate();
 
     const ERROR_CODE = Url.ERROR_CODE;
 

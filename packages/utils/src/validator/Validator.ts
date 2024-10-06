@@ -14,17 +14,36 @@ import {
 } from '../validations';
 
 export type Validation = <TValue>(value: TValue) => boolean;
-export class Validator {
+export class Validator<TValue> {
   private readonly _validations: Array<[Validation, string]>;
   private _error: string | null = null;
+  private _value: TValue;
 
-  private constructor() {
+  private constructor(value: TValue) {
     this._validations = [];
     this._error = null;
+    this._value = value;
   }
 
-  static new(): Validator {
-    return new Validator();
+  static new<TValue>(value: TValue): Validator<TValue> {
+    return new Validator<TValue>(value);
+  }
+
+  static combine<TValue>(...validators: Validator<TValue>[]) {
+    let isValid = true;
+    let error: string | null = null;
+
+    for (const validation of validators) {
+      const { isValid: validationValid, error: validationError } =
+        validation.validate();
+
+      isValid = validationValid;
+      error = validationError;
+
+      if (!isValid) break;
+    }
+
+    return { isValid, error };
   }
 
   private append(validation: Validation, error: string) {
@@ -33,9 +52,9 @@ export class Validator {
     return this;
   }
 
-  public validate<TValue>(value: TValue) {
+  public validate() {
     for (const [validation, error] of this._validations) {
-      const isValid = validation(value);
+      const isValid = validation(this._value);
 
       this._error = isValid ? null : error;
 
@@ -53,7 +72,7 @@ export class Validator {
     return this._error == null;
   }
 
-  public length(min: number, max: number, error: string): Validator {
+  public length(min: number, max: number, error: string): Validator<TValue> {
     const config = { min, max };
 
     this.append(
@@ -64,55 +83,55 @@ export class Validator {
     return this;
   }
 
-  public alpha(error: string): Validator {
+  public alpha(error: string): Validator<TValue> {
     this.append((value) => isAlpha(value as string), error);
 
     return this;
   }
 
-  public empty(error: string): Validator {
+  public empty(error: string): Validator<TValue> {
     this.append((value) => isEmpty(value as string), error);
 
     return this;
   }
 
-  public nil(error: string): Validator {
+  public nil(error: string): Validator<TValue> {
     this.append((value) => isNil(value), error);
 
     return this;
   }
 
-  public notNil(error: string): Validator {
+  public notNil(error: string): Validator<TValue> {
     this.append((value) => isNotNil(value), error);
 
     return this;
   }
 
-  public string(error: string): Validator {
+  public string(error: string): Validator<TValue> {
     this.append((value) => isString(value), error);
 
     return this;
   }
 
-  public uuid(error: string): Validator {
+  public uuid(error: string): Validator<TValue> {
     this.append((value) => isUUID(value as string), error);
 
     return this;
   }
 
-  public url(error: string): Validator {
+  public url(error: string): Validator<TValue> {
     this.append((value) => isUrl(value as string), error);
 
     return this;
   }
 
-  public datetime(error: string): Validator {
+  public datetime(error: string): Validator<TValue> {
     this.append((value) => isDateTime(value as string), error);
 
     return this;
   }
 
-  public in(values: string[], error: string): Validator {
+  public in(values: string[], error: string): Validator<TValue> {
     this.append((value) => isIn(value as string, values), error);
 
     return this;

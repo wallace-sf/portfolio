@@ -15,10 +15,10 @@ export class Name extends ValueObject<string> {
   }
 
   private _validate(value?: string): void {
-    const { error, isValid } = Validator.new()
+    const { error, isValid } = Validator.new(value)
       .alpha('Nome deve conter apenas letras.')
       .length(3, 100, 'O nome deve estar entre 3 e 100 caracteres.')
-      .validate(value);
+      .validate();
 
     const ERROR_CODE = Name.ERROR_CODE;
 
