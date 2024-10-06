@@ -22,9 +22,9 @@ export class Text extends ValueObject<string, ITextConfig> {
   private _validate(value?: string): void {
     const { min = 3, max = 50 } = this._config;
 
-    const { error, isValid } = Validator.new()
+    const { error, isValid } = Validator.new(value)
       .length(min, max, 'O texto deve ter entre {{min}} e {{max}} caracteres.')
-      .validate(value);
+      .validate();
 
     const ERROR_CODE = Text.ERROR_CODE;
 

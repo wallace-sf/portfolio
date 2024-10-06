@@ -29,12 +29,12 @@ export class EmploymentType extends ValueObject<EmploymentTypeValue> {
   }
 
   private _validate(value: string): void {
-    const { error, isValid } = Validator.new()
+    const { error, isValid } = Validator.new(value)
       .in(
         [...EmploymentType.EMPLOYMENTS],
         'O valor deve ser um tipo de emprego válido.',
       )
-      .validate(value);
+      .validate();
 
     const ERROR_CODE = EmploymentType.ERROR_CODE;
 

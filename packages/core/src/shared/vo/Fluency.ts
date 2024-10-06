@@ -25,9 +25,9 @@ export class Fluency extends ValueObject<FluencyValue> {
   }
 
   private _validate(value: string): void {
-    const { error, isValid } = Validator.new()
+    const { error, isValid } = Validator.new(value)
       .in([...Fluency.LEVELS], 'O valor deve ser um nível de fluência válido.')
-      .validate(value);
+      .validate();
 
     const ERROR_CODE = Fluency.ERROR_CODE;
 

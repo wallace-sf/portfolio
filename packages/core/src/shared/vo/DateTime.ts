@@ -15,9 +15,9 @@ export class DateTime extends ValueObject<string> {
   }
 
   private _validate(value?: string): void {
-    const { error, isValid } = Validator.new()
+    const { error, isValid } = Validator.new(value)
       .datetime('O valor deve ser uma data e hora válida.')
-      .validate(value);
+      .validate();
 
     const ERROR_CODE = DateTime.ERROR_CODE;
 
