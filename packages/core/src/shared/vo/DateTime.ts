@@ -23,4 +23,8 @@ export class DateTime extends ValueObject<string> {
 
     if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
   }
+
+  get ms(): number {
+    return new Date(this.value).getTime();
+  }
 }

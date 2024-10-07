@@ -1,6 +1,8 @@
 import { render } from 'mustache';
 
 import {
+  greaterThan,
+  greaterThanOrEqual,
   isAlpha,
   isDateTime,
   isEmpty,
@@ -11,6 +13,8 @@ import {
   isString,
   isUUID,
   isUrl,
+  lessThan,
+  lessThanOrEqual,
 } from '../validations';
 
 export type Validation = <TValue>(value: TValue) => boolean;
@@ -133,6 +137,33 @@ export class Validator<TValue> {
 
   public in(values: string[], error: string): Validator<TValue> {
     this.append((value) => isIn(value as string, values), error);
+
+    return this;
+  }
+
+  public gt(valueB: number, error: string): Validator<TValue> {
+    this.append((valueA) => greaterThan(valueA as number, valueB), error);
+
+    return this;
+  }
+
+  public gte(valueB: number, error: string): Validator<TValue> {
+    this.append(
+      (valueA) => greaterThanOrEqual(valueA as number, valueB),
+      error,
+    );
+
+    return this;
+  }
+
+  public lt(valueB: number, error: string): Validator<TValue> {
+    this.append((valueA) => lessThan(valueA as number, valueB), error);
+
+    return this;
+  }
+
+  public lte(valueB: number, error: string): Validator<TValue> {
+    this.append((valueA) => lessThanOrEqual(valueA as number, valueB), error);
 
     return this;
   }

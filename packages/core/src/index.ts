@@ -1,3 +1,4 @@
+export * from './experience';
 export * from './language';
 export * from './professional-value';
 export * from './project';
