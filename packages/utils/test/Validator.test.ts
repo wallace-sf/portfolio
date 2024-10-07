@@ -228,4 +228,72 @@ describe('Validator', () => {
       expect(validator.isValid).toBe(false);
     });
   });
+
+  describe('lt', () => {
+    it('should validate', () => {
+      const validator = Validator.new(0).lt(1, 'LT_ERROR').validate();
+
+      expect(validator.error).toBeNull();
+      expect(validator.isValid).toBe(true);
+    });
+
+    it('should not validate', () => {
+      const error = 'LT_ERROR';
+      const validator = Validator.new(1).lt(0, error).validate();
+
+      expect(validator.error).toBe(error);
+      expect(validator.isValid).toBe(false);
+    });
+  });
+
+  describe('lte', () => {
+    it('should validate', () => {
+      const validator = Validator.new(0).lte(0, 'LTE_ERROR').validate();
+
+      expect(validator.error).toBeNull();
+      expect(validator.isValid).toBe(true);
+    });
+
+    it('should not validate', () => {
+      const error = 'LTE_ERROR';
+      const validator = Validator.new(1).lt(0, error).validate();
+
+      expect(validator.error).toBe(error);
+      expect(validator.isValid).toBe(false);
+    });
+  });
+
+  describe('gt', () => {
+    it('should validate', () => {
+      const validator = Validator.new(1).gt(0, 'GT_ERROR').validate();
+
+      expect(validator.error).toBeNull();
+      expect(validator.isValid).toBe(true);
+    });
+
+    it('should not validate', () => {
+      const error = 'GT_ERROR';
+      const validator = Validator.new(0).gt(1, error).validate();
+
+      expect(validator.error).toBe(error);
+      expect(validator.isValid).toBe(false);
+    });
+  });
+
+  describe('gte', () => {
+    it('should validate', () => {
+      const validator = Validator.new(0).gte(0, 'GTE_ERROR').validate();
+
+      expect(validator.error).toBeNull();
+      expect(validator.isValid).toBe(true);
+    });
+
+    it('should not validate', () => {
+      const error = 'GTE_ERROR';
+      const validator = Validator.new(0).gte(1, error).validate();
+
+      expect(validator.error).toBe(error);
+      expect(validator.isValid).toBe(false);
+    });
+  });
 });

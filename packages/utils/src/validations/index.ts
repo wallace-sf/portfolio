@@ -1,3 +1,5 @@
+export * from './greaterThan';
+export * from './greaterThanOrEqual';
 export * from './isAlpha';
 export * from './isDateTime';
 export * from './isEmpty';
@@ -8,3 +10,5 @@ export * from './isNotNil';
 export * from './isString';
 export * from './isUUID';
 export * from './isUrl';
+export * from './lessThan';
+export * from './lessThanOrEqual';

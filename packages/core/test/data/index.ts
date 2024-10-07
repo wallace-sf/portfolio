@@ -1,3 +1,4 @@
+export * from './ExperienceBuilder';
 export * from './LanguageBuilder';
 export * from './ProfessionalValueBuilder';
 export * from './ProjectBuilder';
