@@ -22,3 +22,11 @@ pre-commit:
       run: pnpm types:utils
     test:utils:
       run: pnpm test:utils
+    lint:web:
+      run: pnpm lint:web
+    format:web:
+      run: pnpm format:web
+    types:web:
+      run: pnpm types:web
+    test:web:
+      run: pnpm test:web
