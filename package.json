@@ -17,7 +17,11 @@
     "types:core": "pnpm -C packages/core types",
     "types:utils": "pnpm -C packages/utils types",
     "test:core": "pnpm -C packages/core test",
-    "test:utils": "pnpm -C packages/utils test"
+    "test:utils": "pnpm -C packages/utils test",
+    "lint:web": "pnpm -C apps/web lint",
+    "format:web": "pnpm -C apps/web format",
+    "types:web": "pnpm -C apps/web types",
+    "test:web": "pnpm -C apps/web test"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
