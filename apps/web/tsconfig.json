@@ -2,7 +2,9 @@
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "~components/*": ["./src/components/*"],
+      "~components": ["./src/components/index.ts"]
     },
     "plugins": [
       {
@@ -17,7 +19,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "jest.config.ts",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "tailwind.config.ts"
   ],
   "exclude": ["node_modules"]
 }
