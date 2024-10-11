@@ -35,10 +35,18 @@ export const SideNavigation: FC = () => {
         />
       </header>
       <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:pt-15 lg:px-0">
-        <MenuItem.Base href="/">Home</MenuItem.Base>
-        <MenuItem.Base href="/">Portfólio</MenuItem.Base>
-        <MenuItem.Base href="/">Sobre</MenuItem.Base>
-        <MenuItem.Base href="/">Currículo</MenuItem.Base>
+        <MenuItem.Base href="/" icon="material-symbols:home">
+          Home
+        </MenuItem.Base>
+        <MenuItem.Base href="/" icon="material-symbols:deployed-code">
+          Portfólio
+        </MenuItem.Base>
+        <MenuItem.Base href="/" icon="material-symbols:person">
+          Sobre
+        </MenuItem.Base>
+        <MenuItem.Base href="/" icon="material-symbols:description">
+          Currículo
+        </MenuItem.Base>
       </ul>
       <Divider className="mx-6 lg:hidden" />
     </nav>
