@@ -23,6 +23,7 @@ const config: Config = {
         'dark-700': '#8d8d8d',
         'dark-800': '#a4a4a4',
         'dark-900': '#bababa',
+        'dark-1000': '#d9d9d9',
         accent: '#8efb9d',
         dark: '#1C1C1C',
         primary: '#4452ff',
