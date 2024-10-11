@@ -35,20 +35,39 @@ export const SideNavigation: FC = () => {
         />
       </header>
       <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:pt-15 lg:px-0">
-        <MenuItem.Base href="/" icon="material-symbols:home">
+        <MenuItem.Default href="/" icon="material-symbols:home">
           Home
-        </MenuItem.Base>
-        <MenuItem.Base href="/" icon="material-symbols:deployed-code">
+        </MenuItem.Default>
+        <MenuItem.Default href="/" icon="material-symbols:deployed-code">
           Portfólio
-        </MenuItem.Base>
-        <MenuItem.Base href="/" icon="material-symbols:person">
+        </MenuItem.Default>
+        <MenuItem.Default href="/" icon="material-symbols:person">
           Sobre
-        </MenuItem.Base>
-        <MenuItem.Base href="/" icon="material-symbols:description">
+        </MenuItem.Default>
+        <MenuItem.Default href="/" icon="material-symbols:description">
           Currículo
-        </MenuItem.Base>
+        </MenuItem.Default>
       </ul>
       <Divider className="mx-6 lg:hidden" />
+      <ul className="flex flex-col gap-y-3 px-6 lg:pt-15 lg:px-0">
+        <MenuItem.GhostLink.Default href="/" icon="devicon:linkedin">
+          Linkedin
+        </MenuItem.GhostLink.Default>
+        <MenuItem.GhostLink.Default
+          href="/"
+          icon="mdi:github"
+          iconClassName="text-white"
+        >
+          GitHub
+        </MenuItem.GhostLink.Default>
+        <MenuItem.GhostLink.Default
+          href="/"
+          icon="material-symbols:language"
+          iconClassName="text-white"
+        >
+          Idioma
+        </MenuItem.GhostLink.Default>
+      </ul>
     </nav>
   );
 };

@@ -1,4 +1,6 @@
-import { Base } from './Base';
+import { Default } from './Default';
+import { GhostLink } from './GhostLink';
+import { Icon } from './Icon';
 import { Root } from './Root';
 
-export const MenuItem = { Root, Base };
+export const MenuItem = { Default, GhostLink, Icon, Root };
