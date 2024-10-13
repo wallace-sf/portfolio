@@ -1,6 +1,5 @@
-import { Default } from './Default';
-import { GhostLink } from './GhostLink';
 import { Icon } from './Icon';
-import { Root } from './Root';
+import { Item1 } from './Item1';
+import { Item2 } from './Item2';
 
-export const MenuItem = { Default, GhostLink, Icon, Root };
+export const MenuItem = { Icon, Item1, Item2 };
