@@ -1,31 +1,37 @@
+'use client';
+
 import { FC } from 'react';
 
 import classNames from 'classnames';
+import Link from 'next/link';
 
-import { Icon, IconProps } from '../Icon';
-import { Root, IRootProps } from '../Root';
+import { Icon } from '../Icon';
 import { Text } from '../Text';
+import { IGhostLinkProps } from '../types';
 
-export interface IDefaultProps extends IRootProps {
-  icon?: IconProps['icon'];
-}
-
-export const Default: FC<IDefaultProps> = ({
+export const Item1: FC<IGhostLinkProps> = ({
   children,
-  href,
   className,
+  href,
   icon,
+  iconClassName,
+  newTab = false,
 }) => {
   return (
-    <Root
+    <Link
       href={href}
       className={classNames(
         'flex flex-row items-center hover:bg-dark-300 active:bg-dark-400 transition-all px-4 py-3 gap-4 rounded-lg [&>span]:hover:font-bold [&>span]:active:font-bold [&>*]:active:!text-white',
         className,
       )}
+      target={newTab ? '_blank' : '_self'}
+      rel={newTab ? 'noopener noreferrer' : undefined}
     >
-      <Icon className="text-dark-900" icon={icon} />
+      <Icon
+        className={classNames('text-dark-900', iconClassName)}
+        icon={icon}
+      />
       <Text className="!text-dark-900">{children}</Text>
-    </Root>
+    </Link>
   );
 };

@@ -18,6 +18,7 @@ import {
 } from '../validations';
 
 export type Validation = <TValue>(value: TValue) => boolean;
+
 export class Validator<TValue> {
   private readonly _validations: Array<[Validation, string]>;
   private _error: string | null = null;

@@ -1,3 +1,5 @@
+'use client';
+
 import { FC, createElement } from 'react';
 
 import { Icon as Iconify, IconifyIcon as IconifyProps } from '@iconify/react';
@@ -5,7 +7,7 @@ import classNames from 'classnames';
 
 export interface IconProps {
   icon?: IconifyProps | string;
-  className?: string;
+  className?: classNames.Argument;
 }
 
 export const Icon: FC<IconProps> = ({ icon, className }) => {

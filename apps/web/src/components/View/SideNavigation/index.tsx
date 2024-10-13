@@ -35,38 +35,46 @@ export const SideNavigation: FC = () => {
         />
       </header>
       <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:pt-15 lg:px-0">
-        <MenuItem.Default href="/" icon="material-symbols:home">
+        <MenuItem.Item1 href="/" icon="material-symbols:home">
           Home
-        </MenuItem.Default>
-        <MenuItem.Default href="/" icon="material-symbols:deployed-code">
+        </MenuItem.Item1>
+        <MenuItem.Item1 href="/" icon="material-symbols:deployed-code">
           Portfólio
-        </MenuItem.Default>
-        <MenuItem.Default href="/" icon="material-symbols:person">
+        </MenuItem.Item1>
+        <MenuItem.Item1 href="/" icon="material-symbols:person">
           Sobre
-        </MenuItem.Default>
-        <MenuItem.Default href="/" icon="material-symbols:description">
+        </MenuItem.Item1>
+        <MenuItem.Item1 href="/" icon="material-symbols:description">
           Currículo
-        </MenuItem.Default>
+        </MenuItem.Item1>
       </ul>
       <Divider className="mx-6 lg:hidden" />
       <ul className="flex flex-col gap-y-3 px-6 lg:pt-15 lg:px-0">
-        <MenuItem.GhostLink.Default href="/" icon="devicon:linkedin">
+        <MenuItem.Item2.Link
+          href="https://www.linkedin.com/in/wallace-silva-ferreira/"
+          icon="devicon:linkedin"
+          newTab
+        >
           Linkedin
-        </MenuItem.GhostLink.Default>
-        <MenuItem.GhostLink.Default
-          href="/"
+        </MenuItem.Item2.Link>
+        <MenuItem.Item2.Link
+          href="https://github.com/wallace-sf"
           icon="mdi:github"
           iconClassName="text-white"
+          newTab
         >
           GitHub
-        </MenuItem.GhostLink.Default>
-        <MenuItem.GhostLink.Default
-          href="/"
+        </MenuItem.Item2.Link>
+        <MenuItem.Item2.Expandable
+          title="Idioma"
           icon="material-symbols:language"
           iconClassName="text-white"
         >
-          Idioma
-        </MenuItem.GhostLink.Default>
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem maxime
+          minus laborum animi odit cumque sunt aspernatur provident perspiciatis
+          doloribus sint, perferendis deleniti amet adipisci rerum praesentium
+          eaque aliquid? Earum.
+        </MenuItem.Item2.Expandable>
       </ul>
     </nav>
   );
