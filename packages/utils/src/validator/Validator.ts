@@ -1,4 +1,4 @@
-import { render } from 'mustache';
+import Mustache from 'mustache';
 
 import {
   greaterThan,
@@ -82,7 +82,7 @@ export class Validator<TValue> {
 
     this.append(
       (value) => isLength(value as string, config),
-      render(error, config),
+      Mustache.render(error, config),
     );
 
     return this;

@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import { Accordion } from '~components/Control';
 
-import { Icon } from '../../Icon';
+import { Icon } from '../../../../Imagery/Icon';
 import { Text } from '../../Text';
 import { IMenuItemProps } from '../../types';
 import { ROOT_STYLE } from '../constants';
