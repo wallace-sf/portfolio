@@ -5,7 +5,8 @@ import { FC } from 'react';
 import classNames from 'classnames';
 import NextLink from 'next/link';
 
-import { Icon } from '../../Icon';
+import { Icon } from '~components/Imagery/Icon';
+
 import { Text } from '../../Text';
 import { IGhostLinkProps } from '../../types';
 import { ROOT_STYLE } from '../constants';

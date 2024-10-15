@@ -1,16 +1,53 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import Image from 'next/image';
 
 import logoDesktop from '~assets/images/logo-desktop.svg';
 import logoMobile from '~assets/images/logo-mobile.svg';
+import { useLanguage } from '~hooks';
 
+import {
+  RadioGroup,
+  Radio,
+  RadioGroupProps,
+  RadioGroupChildrenFn,
+} from '../../Control';
 import { Divider } from '../Divider';
 import { MenuItem } from '../MenuItem';
+import { LANGUAGES_OPTIONS } from './constants';
 
 export const SideNavigation: FC = () => {
+  const [language, setLanguage] = useLanguage();
+
+  const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
+    (event) => {
+      setLanguage(event.target.value);
+    },
+    [setLanguage],
+  );
+
+  const renderRadio = useCallback<RadioGroupChildrenFn>(
+    ({ name, value, onChange }) => {
+      return LANGUAGES_OPTIONS.map(({ label, icon, option }) => (
+        <li key={option} className="flex flex-row gap-x-3">
+          <Radio
+            id={option}
+            name={name}
+            value={value}
+            onChange={onChange}
+            option={option}
+            icon={icon}
+          >
+            {label}
+          </Radio>
+        </li>
+      ));
+    },
+    [],
+  );
+
   return (
     <nav
       id="side-navigation"
@@ -70,10 +107,15 @@ export const SideNavigation: FC = () => {
           icon="material-symbols:language"
           iconClassName="text-white"
         >
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem maxime
-          minus laborum animi odit cumque sunt aspernatur provident perspiciatis
-          doloribus sint, perferendis deleniti amet adipisci rerum praesentium
-          eaque aliquid? Earum.
+          <RadioGroup
+            name="language"
+            value={language}
+            onChange={onChangeLanguage}
+            containerElementType="ul"
+            className="pt-3"
+          >
+            {renderRadio}
+          </RadioGroup>
         </MenuItem.Item2.Expandable>
       </ul>
     </nav>

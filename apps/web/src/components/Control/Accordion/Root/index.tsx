@@ -6,10 +6,10 @@ import { useToggle } from 'usehooks-ts';
 
 import { AccordionProvider, IAccordionContext } from '../AccordionContext';
 
-export type ChildrenFn = (context: IAccordionContext) => JSX.Element;
+export type AccordionChildrenFn = (context: IAccordionContext) => JSX.Element;
 
 export interface IAccordionRootProps {
-  children?: ChildrenFn | ReactNode;
+  children?: AccordionChildrenFn | ReactNode;
 }
 
 export const Root: FC<IAccordionRootProps> = ({ children }) => {

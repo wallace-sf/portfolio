@@ -1,4 +1,4 @@
-import { Icon } from './Icon';
+import { Icon } from '../../Imagery/Icon';
 import { Item1 } from './Item1';
 import { Item2 } from './Item2';
 
