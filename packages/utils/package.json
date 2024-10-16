@@ -19,13 +19,12 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/lodash": "^4.17.9",
+    "@types/lodash": "*",
     "@types/luxon": "^3.4.2",
     "@types/mustache": "^4.2.5",
     "@types/validator": "^13.12.1"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "mustache": "^4.2.0",
     "validator": "^13.12.0"

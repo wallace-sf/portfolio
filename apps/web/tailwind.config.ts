@@ -12,6 +12,10 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'sans-serif', ...defaultTheme.fontFamily.sans],
       },
+      height: {
+        'sidenav-desktop': 'calc(100vh - var(--header-height-desktop))',
+        'sidenav-mobile': 'calc(100vh - var(--header-height-mobile))',
+      },
       colors: {
         'blue-dark': '#323dcd',
         'blue-light': '#a1a8ff',
@@ -37,6 +41,8 @@ const config: Config = {
         6: '0px 12px 34px 0px rgba(13, 10, 44, 0.08), 0px 34px 26px 0px rgba(13, 10, 44, 0.05)',
       },
       spacing: {
+        'header-desktop': 'var(--header-height-desktop)',
+        'header-mobile': 'var(--header-height-mobile)',
         15: '3.75rem',
       },
     },

@@ -1,9 +1,5 @@
-import { SideNavigation } from '~components';
+import { AppLayout } from '~components';
 
 export default function Home() {
-  return (
-    <>
-      <SideNavigation />
-    </>
-  );
+  return <AppLayout />;
 }

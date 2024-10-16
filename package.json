@@ -40,5 +40,9 @@
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.17.9",
+    "lodash": "^4.17.21"
   }
 }

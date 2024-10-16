@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --header-height-desktop: 104px;
+  --header-height-mobile: 68px;
+}
+
 @layer base {
   h1 {
     @apply text-5xl font-bold leading-[67.2px] tracking-[0.24px] text-dark;
