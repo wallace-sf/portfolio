@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@types/lodash':
+        specifier: ^4.17.9
+        version: 4.17.9
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
       '@commitlint/cli':
         specifier: ^19.3.0
@@ -93,6 +100,9 @@ importers:
       '@testing-library/react':
         specifier: ^16.0.1
         version: 16.0.1(@testing-library/dom@10.4.0)(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1)(react@18.3.1)
+      '@types/lodash':
+        specifier: '*'
+        version: 4.17.9
       '@types/node':
         specifier: ^20
         version: 20.14.2
@@ -209,9 +219,6 @@ importers:
 
   packages/utils:
     dependencies:
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       luxon:
         specifier: ^3.5.0
         version: 3.5.0
@@ -232,7 +239,7 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/lodash':
-        specifier: ^4.17.9
+        specifier: '*'
         version: 4.17.9
       '@types/luxon':
         specifier: ^3.4.2
@@ -1451,7 +1458,6 @@ packages:
 
   /@types/lodash@4.17.9:
     resolution: {integrity: sha512-w9iWudx1XWOHW5lQRS9iKpK/XuRhnN+0T7HvdCCd802FYkT1AMTnxndJHGrNJwRoRHkslGr4S29tjm1cT7x/7w==}
-    dev: true
 
   /@types/luxon@3.4.2:
     resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}

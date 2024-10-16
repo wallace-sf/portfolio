@@ -2,24 +2,24 @@
 
 import { FC, useCallback } from 'react';
 
-import Image from 'next/image';
-
-import logoDesktop from '~assets/images/logo-desktop.svg';
-import logoMobile from '~assets/images/logo-mobile.svg';
-import { useLanguage } from '~hooks';
+import classNames from 'classnames';
 
 import {
   RadioGroup,
   Radio,
   RadioGroupProps,
   RadioGroupChildrenFn,
-} from '../../Control';
-import { Divider } from '../Divider';
-import { MenuItem } from '../MenuItem';
+} from '~components/Control';
+import { Divider } from '~components/View';
+import { useLanguage } from '~hooks';
+
+import { useLayout } from '../useLayout';
 import { LANGUAGES_OPTIONS } from './constants';
+import { MenuItem } from './MenuItem';
 
 export const SideNavigation: FC = () => {
   const [language, setLanguage] = useLanguage();
+  const { open } = useLayout();
 
   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
     (event) => {
@@ -51,26 +51,11 @@ export const SideNavigation: FC = () => {
   return (
     <nav
       id="side-navigation"
-      className="absolute top-0 left-0 h-screen w-full lg:w-60 lg:px-4 lg:py-10 dark:bg-dark-200 z-40 flex-col shadow-1 border-0"
+      className={classNames(
+        'h-sidenav-mobile lg:h-sidenav-desktop left-0 w-full lg:w-60 lg:px-4 dark:bg-dark-200 z-40 flex-col border-0 duration-300 ease-linear lg:!translate-x-0',
+        open ? 'translate-x-0' : '-translate-x-full',
+      )}
     >
-      <header className="flex items-center lg:justify-center bg-dark-300 lg:bg-transparent px-4 py-3 lg:px-0 lg:py-0">
-        <Image
-          src={logoDesktop}
-          width={179}
-          height={66}
-          alt="Logo"
-          className="hidden lg:block"
-          priority
-        />
-        <Image
-          src={logoMobile}
-          width={120}
-          height={44}
-          alt="Logo"
-          className="block lg:hidden"
-          priority
-        />
-      </header>
       <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:pt-15 lg:px-0">
         <MenuItem.Item1 href="/" icon="material-symbols:home">
           Home

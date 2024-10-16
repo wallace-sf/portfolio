@@ -5,7 +5,7 @@ import { FC } from 'react';
 import classNames from 'classnames';
 import Link from 'next/link';
 
-import { Icon } from '../../../Imagery/Icon';
+import { Icon } from '../../../../Imagery/Icon';
 import { Text } from '../Text';
 import { IGhostLinkProps } from '../types';
 
