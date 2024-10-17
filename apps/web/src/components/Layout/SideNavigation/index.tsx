@@ -52,7 +52,7 @@ export const SideNavigation: FC = () => {
     <nav
       id="side-navigation"
       className={classNames(
-        'h-sidenav-mobile lg:h-sidenav-desktop left-0 w-full lg:w-60 lg:px-4 dark:bg-dark-200 z-40 flex-col border-0 duration-300 ease-linear lg:!translate-x-0',
+        'h-sidenav-mobile lg:h-sidenav-desktop left-0 w-full lg:w-60 lg:px-4 dark:bg-dark-200 flex-col border-0 duration-300 ease-linear lg:!translate-x-0 z-9999',
         open ? 'translate-x-0' : '-translate-x-full',
       )}
     >

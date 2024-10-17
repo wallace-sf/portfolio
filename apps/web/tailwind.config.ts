@@ -9,6 +9,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      aspectRatio: {
+        '319/180': '319 / 180',
+        '465/244': '465 / 244',
+        '7/5': '7 / 5',
+      },
       fontFamily: {
         sans: ['Inter', 'sans-serif', ...defaultTheme.fontFamily.sans],
       },
@@ -44,6 +49,15 @@ const config: Config = {
         'header-desktop': 'var(--header-height-desktop)',
         'header-mobile': 'var(--header-height-mobile)',
         15: '3.75rem',
+      },
+      zIndex: {
+        999999: '999999',
+        99999: '99999',
+        9999: '9999',
+        999: '999',
+        99: '99',
+        9: '9',
+        1: '1',
       },
     },
   },
