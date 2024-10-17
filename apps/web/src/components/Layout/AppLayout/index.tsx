@@ -4,6 +4,7 @@ import { FC, useMemo } from 'react';
 
 import { useBoolean, useEventListener } from 'usehooks-ts';
 
+import { ProjectCard } from '~components/View';
 import { useThrottleFn } from '~hooks';
 import { BREAKPOINTS_NUMBERS } from '~utils';
 
@@ -30,6 +31,15 @@ export const AppLayout: FC = () => {
         <Header />
         <SideNavigation />
       </section>
+      <div className="flex flex-col h-auto ml-0 lg:ml-60 mt-header-mobile lg:mt-20">
+        <main className="container flex flex-col flex-1 mx-auto">
+          <ProjectCard
+            title="Fieldlink Enterprise"
+            caption="A Fieldlink é uma startup de tecnologia que oferece soluções de gestão de equipe de vendas, indicadores de cumprimentos de metas, definições de fluxos de trabalho, orientação de equipes externas e relatórios automatizados da produção."
+            view="row"
+          />
+        </main>
+      </div>
     </LayoutProvider>
   );
 };
