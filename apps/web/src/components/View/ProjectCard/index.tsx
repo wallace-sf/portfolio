@@ -42,16 +42,16 @@ export const ProjectCard: FC<IProjectCardProps> = ({
     >
       <header
         className={classNames('relative aspect-319/180 h-[180px]', {
-          'lg:aspect-7/5 lg:row-span-2 lg:static lg:max-w-[441px] lg:h-auto':
+          'lg:aspect-7/5 lg:row-span-2 lg:max-w-[441px] lg:h-auto':
             view === 'row',
         })}
       >
         <Image
-          src="https://cdn.pixabay.com/photo/2017/03/01/09/10/animals-2107902_1280.jpg"
-          layout="fill"
+          src="https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg"
+          fill
           alt="Imagem do projeto"
-          className="rounded-lg !w-full !h-full !static"
-          objectFit="cover"
+          className="rounded-lg object-cover"
+          sizes="100%"
         />
         <Button
           className="absolute top-2 right-2 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300"
