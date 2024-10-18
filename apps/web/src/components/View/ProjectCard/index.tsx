@@ -5,6 +5,7 @@ import { FC } from 'react';
 import { ISkillProps } from '@repo/core';
 import classNames from 'classnames';
 import Image from 'next/image';
+import { Tooltip } from 'react-tooltip';
 
 import { Button } from '~components/Control';
 import { Icon } from '~components/Imagery';
@@ -52,9 +53,15 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           className="rounded-lg !w-full !h-full !static"
           objectFit="cover"
         />
-        <Button className="absolute top-2 right-2 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300">
+        <Button
+          className="absolute top-2 right-2 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300"
+          data-tooltip-id="share-project-link"
+        >
           <Icon icon="material-symbols:share" className="text-xl" />
         </Button>
+        <Tooltip id="share-project-link" place="bottom">
+          Clique para copiar
+        </Tooltip>
       </header>
       <section className="flex flex-col gap-y-2">
         <h3 className="text-body-lg !font-bold !text-white">{title}</h3>
@@ -67,7 +74,12 @@ export const ProjectCard: FC<IProjectCardProps> = ({
         </p>
       </section>
       <footer className="flex flex-col gap-y-5">
-        <SkillGroup skills={skills} max={isLg ? 3 : 2} total={skills.length} />
+        <SkillGroup
+          skills={skills}
+          max={isLg ? 3 : 2}
+          initializeWithMax={2}
+          total={skills.length}
+        />
         <Button className="flex flex-row justify-center gap-x-2">
           Ver projeto
           <Icon icon="ic:round-arrow-forward" />
