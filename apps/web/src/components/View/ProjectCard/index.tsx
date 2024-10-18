@@ -2,17 +2,22 @@
 
 import { FC } from 'react';
 
+import { ISkillProps } from '@repo/core';
 import classNames from 'classnames';
 import Image from 'next/image';
 
 import { Button } from '~components/Control';
 import { Icon } from '~components/Imagery';
+import { useBreakpoint } from '~hooks';
+
+import { SkillGroup } from '../SkillGroup';
 
 export interface IProjectCardProps {
   view: 'grid' | 'row';
   title: string;
   caption: string;
   compact?: boolean;
+  skills: ISkillProps[];
 }
 
 export const ProjectCard: FC<IProjectCardProps> = ({
@@ -20,7 +25,10 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   title,
   caption,
   compact = false,
+  skills,
 }) => {
+  const isLg = useBreakpoint('lg');
+
   return (
     <article
       className={classNames(
@@ -58,7 +66,8 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           {caption}
         </p>
       </section>
-      <footer className="flex flex-col">
+      <footer className="flex flex-col gap-y-5">
+        <SkillGroup skills={skills} max={isLg ? 3 : 2} total={skills.length} />
         <Button className="flex flex-row justify-center gap-x-2">
           Ver projeto
           <Icon icon="ic:round-arrow-forward" />

@@ -5,6 +5,7 @@
   "os": [
     "linux"
   ],
+  "main": "src/index.ts",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watchAll --collectCoverage",
