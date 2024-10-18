@@ -45,9 +45,15 @@ const config: Config = {
         5: '0px 13px 40px 0px rgba(13, 10, 44, 0.12), 0px -8px 18px 0px rgba(13, 10, 44, 0.04)',
         6: '0px 12px 34px 0px rgba(13, 10, 44, 0.08), 0px 34px 26px 0px rgba(13, 10, 44, 0.05)',
       },
+      borderRadius: {
+        3.75: '0.9375rem',
+        2.5: '0.625rem',
+        4.5: '1.125rem',
+      },
       spacing: {
         'header-desktop': 'var(--header-height-desktop)',
         'header-mobile': 'var(--header-height-mobile)',
+        '2.5': '0.625rem',
         15: '3.75rem',
       },
       zIndex: {
