@@ -1,0 +1,15 @@
+{
+  "Clipboard": {
+    "copy": "Copiar al portapapeles"
+  },
+  "ProjectCard": {
+    "view_project": "Ver proyecto"
+  },
+  "SideNavigation": {
+    "home": "Inicio",
+    "projects": "Proyectos",
+    "about": "Sobre mí",
+    "resume": "Currículum",
+    "language": "Idioma"
+  }
+}
