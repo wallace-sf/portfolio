@@ -1,0 +1,15 @@
+{
+  "Clipboard": {
+    "copy": "Copiar para a área de transferência"
+  },
+  "ProjectCard": {
+    "view_project": "Ver projeto"
+  },
+  "SideNavigation": {
+    "home": "Início",
+    "projects": "Projetos",
+    "about": "Sobre mim",
+    "resume": "Currículo",
+    "language": "Idioma"
+  }
+}

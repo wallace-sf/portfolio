@@ -44,5 +44,11 @@
   "dependencies": {
     "@types/lodash": "^4.17.9",
     "lodash": "^4.17.21"
+  },
+  "pnpm": {
+    "overrides": {
+      "lodash": "$lodash",
+      "@types/lodash": "$@types/lodash"
+    }
   }
 }

@@ -2,6 +2,7 @@
 
 import { FC, useCallback, useId, type ReactNode } from 'react';
 
+import { useTranslations } from 'next-intl';
 import { Tooltip } from 'react-tooltip';
 import { useBoolean, useCopyToClipboard } from 'usehooks-ts';
 
@@ -23,6 +24,7 @@ export const Clipboard: FC<IButtonClipboardProps> = ({
   children,
   ...props
 }) => {
+  const t = useTranslations('Clipboard');
   const tooltipId = useId();
   const [, copy] = useCopyToClipboard();
   const {
@@ -56,7 +58,7 @@ export const Clipboard: FC<IButtonClipboardProps> = ({
         {children instanceof Function ? children(copied) : children}
       </ButtonBase>
       <Tooltip id={tooltipId} place="bottom" className="z-40">
-        Copy to clipboard
+        {t('copy')}
       </Tooltip>
     </>
   );

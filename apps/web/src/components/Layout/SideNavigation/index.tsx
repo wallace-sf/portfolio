@@ -3,6 +3,7 @@
 import { FC, useCallback } from 'react';
 
 import classNames from 'classnames';
+import { useTranslations, useLocale } from 'next-intl';
 
 import {
   RadioGroup,
@@ -11,21 +12,23 @@ import {
   RadioGroupChildrenFn,
 } from '~components/Control';
 import { Divider } from '~components/View';
-import { useLanguage } from '~hooks';
+import { useRouter } from '~i18n/routing';
 
 import { useLayout } from '../useLayout';
 import { LANGUAGES_OPTIONS } from './constants';
 import { MenuItem } from './MenuItem';
 
 export const SideNavigation: FC = () => {
-  const [language, setLanguage] = useLanguage();
   const { open } = useLayout();
+  const t = useTranslations('SideNavigation');
+  const locale = useLocale();
+  const { replace } = useRouter();
 
   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
     (event) => {
-      setLanguage(event.target.value);
+      replace(event.target.value);
     },
-    [setLanguage],
+    [replace],
   );
 
   const renderRadio = useCallback<RadioGroupChildrenFn>(
@@ -58,16 +61,16 @@ export const SideNavigation: FC = () => {
     >
       <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:pt-15 lg:px-0">
         <MenuItem.Item1 href="/" icon="material-symbols:home">
-          Home
+          {t('home')}
         </MenuItem.Item1>
         <MenuItem.Item1 href="/" icon="material-symbols:deployed-code">
-          Portfólio
+          {t('projects')}
         </MenuItem.Item1>
         <MenuItem.Item1 href="/" icon="material-symbols:person">
-          Sobre
+          {t('about')}
         </MenuItem.Item1>
         <MenuItem.Item1 href="/" icon="material-symbols:description">
-          Currículo
+          {t('resume')}
         </MenuItem.Item1>
       </ul>
       <Divider className="mx-6 lg:hidden" />
@@ -88,13 +91,13 @@ export const SideNavigation: FC = () => {
           GitHub
         </MenuItem.Item2.Link>
         <MenuItem.Item2.Expandable
-          title="Idioma"
+          title={t('language')}
           icon="material-symbols:language"
           iconClassName="text-white"
         >
           <RadioGroup
             name="language"
-            value={language}
+            value={locale}
             onChange={onChangeLanguage}
             containerElementType="ul"
             className="pt-3"

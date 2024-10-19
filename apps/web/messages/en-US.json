@@ -1,0 +1,15 @@
+{
+  "Clipboard": {
+    "copy": "Copy to clipboard"
+  },
+  "ProjectCard": {
+    "view_project": "View Project"
+  },
+  "SideNavigation": {
+    "home": "Home",
+    "projects": "Projects",
+    "about": "About",
+    "resume": "Resume",
+    "language": "Language"
+  }
+}
