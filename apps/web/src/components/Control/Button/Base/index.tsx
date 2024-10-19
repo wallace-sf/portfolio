@@ -6,12 +6,13 @@ import classNames from 'classnames';
 
 type Variant = 'large' | 'small';
 
-export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IButtonBaseProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   unstyled?: boolean;
 }
 
-export const Button: FC<IButtonProps> = ({
+export const ButtonBase: FC<IButtonBaseProps> = ({
   children,
   className,
   variant = 'large',

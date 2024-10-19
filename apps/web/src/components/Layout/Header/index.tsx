@@ -32,7 +32,7 @@ export const Header: FC = () => {
         className="block lg:hidden"
         priority
       />
-      <Button
+      <Button.Base
         className="flex items-center justify-center h-10 w-10 !bg-dark-600 hover:!bg-dark-500 !rounded !p-0 lg:hidden"
         onClick={toggle}
       >
@@ -41,7 +41,7 @@ export const Header: FC = () => {
         ) : (
           <Icon icon="ic:round-menu" className="!text-dark-900" />
         )}
-      </Button>
+      </Button.Base>
     </header>
   );
 };
