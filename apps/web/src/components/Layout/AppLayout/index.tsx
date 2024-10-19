@@ -6,7 +6,7 @@ import { ISkillProps } from '@repo/core';
 import { useBoolean, useEventListener } from 'usehooks-ts';
 
 import { ProjectCard } from '~components/View';
-import { useThrottleFn } from '~hooks';
+import { useThrottle } from '~hooks';
 import { BREAKPOINTS_NUMBERS } from '~utils';
 
 import { Header } from '../Header';
@@ -61,7 +61,7 @@ const SKILLS: ISkillProps[] = [
 export const AppLayout: FC = () => {
   const { value: open, setFalse: close, toggle } = useBoolean(false);
 
-  const throttle = useThrottleFn(() => {
+  const throttle = useThrottle(() => {
     close();
   }, 500);
 

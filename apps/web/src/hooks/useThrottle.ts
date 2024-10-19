@@ -9,7 +9,7 @@ interface ThrottleSettings {
   trailing?: boolean;
 }
 
-export const useThrottleFn = <T extends NoopFunction>(
+export const useThrottle = <T extends NoopFunction>(
   fn: T,
   interval = 500,
   options?: ThrottleSettings,
