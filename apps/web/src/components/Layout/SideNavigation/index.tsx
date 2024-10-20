@@ -63,13 +63,13 @@ export const SideNavigation: FC = () => {
         <MenuItem.Item1 href="/" icon="material-symbols:home">
           {t('home')}
         </MenuItem.Item1>
-        <MenuItem.Item1 href="/" icon="material-symbols:deployed-code">
+        <MenuItem.Item1 href="/projects" icon="material-symbols:deployed-code">
           {t('projects')}
         </MenuItem.Item1>
-        <MenuItem.Item1 href="/" icon="material-symbols:person">
+        <MenuItem.Item1 href="/about" icon="material-symbols:person">
           {t('about')}
         </MenuItem.Item1>
-        <MenuItem.Item1 href="/" icon="material-symbols:description">
+        <MenuItem.Item1 href="/resume" icon="material-symbols:description">
           {t('resume')}
         </MenuItem.Item1>
       </ul>
