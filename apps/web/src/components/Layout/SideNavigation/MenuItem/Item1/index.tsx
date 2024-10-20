@@ -3,9 +3,10 @@
 import { FC } from 'react';
 
 import classNames from 'classnames';
-import Link from 'next/link';
 
-import { Icon } from '../../../../Imagery/Icon';
+import { Icon } from '~components/Imagery/Icon';
+import { Link } from '~i18n/routing';
+
 import { Text } from '../Text';
 import { IGhostLinkProps } from '../types';
 

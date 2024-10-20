@@ -1,5 +1,3 @@
-import { AppLayout } from '~components';
-
 export default function Home() {
-  return <AppLayout />;
+  return <h1 className="text-white">This is the root page.</h1>;
 }
