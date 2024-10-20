@@ -30,8 +30,8 @@ export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
         <Header />
         <SideNavigation />
       </section>
-      <div className="flex flex-col h-auto ml-0 lg:ml-60 mt-header-mobile lg:mt-20">
-        <main className="container flex flex-col flex-1 mx-auto">
+      <div className="flex h-full flex-col ml-0 lg:ml-60 mt-header-mobile lg:mt-20">
+        <main className="container h-full flex flex-col flex-1 2xl:px-49">
           {children}
         </main>
       </div>

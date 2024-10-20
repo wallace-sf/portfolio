@@ -37,6 +37,9 @@ const config: Config = {
         dark: '#1C1C1C',
         primary: '#4452ff',
       },
+      container: {
+        center: true,
+      },
       boxShadow: {
         1: '0px 1px 3px 0px rgba(166, 175, 195, 0.40)',
         2: '0px 5px 12px 0px rgba(0, 0, 0, 0.10)',
@@ -55,6 +58,8 @@ const config: Config = {
         'header-mobile': 'var(--header-height-mobile)',
         '2.5': '0.625rem',
         15: '3.75rem',
+        49: '12.25rem',
+        50: '12.5rem',
       },
       zIndex: {
         999999: '999999',
