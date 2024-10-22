@@ -2,9 +2,10 @@
 
 import { FC, useMemo, PropsWithChildren } from 'react';
 
+import classNames from 'classnames';
 import { useBoolean, useEventListener } from 'usehooks-ts';
 
-import { useThrottle } from '~hooks';
+import { useThrottle, useBodyClass } from '~hooks';
 import { BREAKPOINTS_NUMBERS } from '~utils';
 
 import { Header } from '../Header';
@@ -24,9 +25,11 @@ export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
     if (window.innerWidth < BREAKPOINTS_NUMBERS.lg) throttle();
   });
 
+  useBodyClass(classNames({ 'overflow-hidden': open }));
+
   return (
     <LayoutProvider value={value}>
-      <section className="absolute top-0 left-0 shadow-1 w-full lg:w-auto">
+      <section className="fixed top-0 left-0 shadow-1 w-full lg:w-auto z-50">
         <Header />
         <SideNavigation />
       </section>
