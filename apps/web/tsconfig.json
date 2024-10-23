@@ -1,6 +1,18 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"],
+      "~components/*": ["./src/components/*"],
+      "~components": ["./src/components/index.ts"],
+      "~assets/*": ["./src/assets/*"],
+      "~hooks": ["./src/hooks/index.ts"],
+      "~hooks/*": ["./src/hooks/*"],
+      "~utils": ["./src/utils/index.ts"],
+      "~types": ["./src/types.ts"],
+      "~i18n/*": ["./src/i18n/*"]
+    },
     "plugins": [
       {
         "name": "next"
@@ -12,7 +24,10 @@
     "next.config.js",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "jest.config.ts",
+    "test/**/*.ts",
+    "tailwind.config.ts"
   ],
   "exclude": ["node_modules"]
 }
