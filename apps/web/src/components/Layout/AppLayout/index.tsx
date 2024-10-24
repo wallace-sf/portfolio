@@ -29,12 +29,12 @@ export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <LayoutProvider value={value}>
-      <section className="fixed top-0 left-0 shadow-1 w-full lg:w-auto z-50">
+      <section className="fixed top-0 left-0 shadow-1 w-full xl:w-auto z-50">
         <Header />
         <SideNavigation />
       </section>
-      <div className="flex h-full flex-col ml-0 lg:ml-60 mt-header-mobile lg:mt-20">
-        <main className="container h-full flex flex-col flex-1 2xl:px-49">
+      <div className="flex h-full flex-col ml-0 xl:ml-60 mt-header-mobile xl:mt-20">
+        <main className="max-w-[1114px] mx-auto h-full flex flex-col flex-1">
           {children}
         </main>
       </div>

@@ -113,10 +113,10 @@ export default function Home() {
         alt="Professional Picture 1 of Wallace Ferreira"
         imageClassName="object-cover"
       />
-      <h4 className="text-white mt-8 mb-4 ml-4 lg:mt-20 lg:mb-8 lg:mx-[97px]">
+      <h4 className="text-white mt-8 mb-4 ml-4 xl:mt-20 xl:mb-8 xl:mx-[97px]">
         Projetos
       </h4>
-      <ProjectList projects={PROJECTS} view="grid" className="pb-8 lg:pb-20" />
+      <ProjectList projects={PROJECTS} view="grid" className="pb-8 xl:pb-20" />
     </>
   );
 }

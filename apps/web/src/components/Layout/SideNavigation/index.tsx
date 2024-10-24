@@ -55,11 +55,11 @@ export const SideNavigation: FC = () => {
     <nav
       id="side-navigation"
       className={classNames(
-        'h-sidenav-mobile lg:h-sidenav-desktop left-0 w-full lg:w-60 lg:px-4 dark:bg-dark-200 flex-col border-0 duration-300 ease-linear lg:!translate-x-0 z-9999',
+        'h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 dark:bg-dark-200 flex-col border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
         open ? 'translate-x-0' : '-translate-x-full',
       )}
     >
-      <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:pt-15 lg:px-0">
+      <ul className="flex flex-col gap-y-3 px-6 pt-10 xl:pt-15 xl:px-0">
         <MenuItem.Item1 href="/" icon="material-symbols:home">
           {t('home')}
         </MenuItem.Item1>
@@ -73,8 +73,8 @@ export const SideNavigation: FC = () => {
           {t('resume')}
         </MenuItem.Item1>
       </ul>
-      <Divider className="mx-6 lg:hidden" />
-      <ul className="flex flex-col gap-y-3 px-6 lg:pt-15 lg:px-0">
+      <Divider className="mx-6 xl:hidden" />
+      <ul className="flex flex-col gap-y-3 px-6 xl:pt-15 xl:px-0">
         <MenuItem.Item2.Link
           href="https://www.linkedin.com/in/wallace-silva-ferreira/"
           icon="devicon:linkedin"
