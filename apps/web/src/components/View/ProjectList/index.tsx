@@ -40,7 +40,7 @@ export const ProjectList: FC<IProjectListProps> = ({
         'mx-auto grid max-w-237.5 gap-y-6',
         {
           'grid-cols-1': view === 'row',
-          'lg:grid-cols-2 lg:gap-x-6': view === 'grid',
+          'xl:grid-cols-2 xl:gap-x-6': view === 'grid',
         },
         className,
       )}

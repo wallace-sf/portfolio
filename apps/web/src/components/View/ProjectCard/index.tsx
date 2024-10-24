@@ -34,14 +34,14 @@ export const ProjectCard: FC<IProjectCardProps> = ({
       className={classNames(
         'relative bg-dark-300 px-3 pt-3 pb-6 rounded-lg w-full flex flex-col gap-y-4 max-w-[343px]',
         {
-          'lg:grid lg:grid-cols-2 lg:auto-rows-max lg:pb-3 lg:gap-x-9 lg:max-w-[950px] lg:max-h-[339px]':
+          'xl:grid xl:grid-cols-2 xl:auto-rows-max xl:pb-3 xl:gap-x-9 xl:max-w-[950px] xl:max-h-[339px]':
             view === 'row',
         },
       )}
     >
       <Button.Clipboard
         text="This is the text copied from project card."
-        className="absolute z-40 top-5 right-5 lg:top-3 lg:right-3 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300"
+        className="absolute z-40 top-5 right-5 xl:top-3 xl:right-3 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300"
       >
         {(copied) =>
           copied ? (
@@ -53,7 +53,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
       </Button.Clipboard>
       <header
         className={classNames('relative aspect-319/180 h-[180px]', {
-          'lg:aspect-7/5 lg:row-span-2 lg:max-w-[441px] lg:h-auto':
+          'xl:aspect-7/5 xl:row-span-2 xl:max-w-[441px] xl:h-auto':
             view === 'row',
         })}
       >
