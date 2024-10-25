@@ -34,7 +34,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
       className={classNames(
         'relative bg-dark-300 px-3 pt-3 pb-6 rounded-lg w-full flex flex-col gap-y-4 max-w-[343px]',
         {
-          'xl:grid xl:grid-cols-2 xl:auto-rows-max xl:pb-3 xl:gap-x-9 xl:max-w-[950px] xl:max-h-[339px]':
+          'xl:grid xl:grid-cols-2 xl:auto-rows-max xl:pb-3 xl:gap-x-9 xl:max-w-237.5 xl:max-h-[339px]':
             view === 'row',
         },
       )}
