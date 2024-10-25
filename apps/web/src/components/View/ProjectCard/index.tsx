@@ -32,7 +32,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   return (
     <article
       className={classNames(
-        'relative bg-dark-300 px-3 pt-3 pb-6 rounded-lg w-full flex flex-col gap-y-4 max-w-[343px]',
+        'relative bg-dark-300 px-3 pt-3 pb-6 rounded-lg w-full flex flex-col gap-y-4 max-w-[343px] xl:max-w-[465px]',
         {
           'xl:grid xl:grid-cols-2 xl:auto-rows-max xl:pb-3 xl:gap-x-9 xl:max-w-237.5 xl:max-h-[339px]':
             view === 'row',
@@ -52,10 +52,13 @@ export const ProjectCard: FC<IProjectCardProps> = ({
         }
       </Button.Clipboard>
       <header
-        className={classNames('relative aspect-319/180 h-[180px]', {
-          'xl:aspect-7/5 xl:row-span-2 xl:max-w-[441px] xl:h-auto':
-            view === 'row',
-        })}
+        className={classNames(
+          'relative aspect-319/180 h-[180px] xl:h-[244px]',
+          {
+            'xl:aspect-7/5 xl:row-span-2 xl:max-w-[441px] xl:h-auto':
+              view === 'row',
+          },
+        )}
       >
         <Image
           src="https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg"

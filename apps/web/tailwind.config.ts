@@ -58,10 +58,14 @@ const config: Config = {
         'header-mobile': 'var(--header-height-mobile)',
         '2.5': '0.625rem',
         15: '3.75rem',
+        24.5: '6.125rem',
         49: '12.25rem',
         50: '12.5rem',
         237.5: '59.375rem',
         278.5: '69.625rem',
+      },
+      fontSize: {
+        // '3.5xl': '1.875rem',
       },
       zIndex: {
         999999: '999999',
