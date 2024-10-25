@@ -37,10 +37,10 @@ export const ProjectList: FC<IProjectListProps> = ({
   return (
     <ul
       className={classNames(
-        'mx-auto grid max-w-237.5 gap-y-6',
+        'mx-auto grid max-w-237.5 gap-4',
         {
           'grid-cols-1': view === 'row',
-          'xl:grid-cols-2 xl:gap-x-6': view === 'grid',
+          'md:grid-cols-2 xl:gap-6': view === 'grid',
         },
         className,
       )}
