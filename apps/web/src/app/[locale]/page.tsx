@@ -111,7 +111,7 @@ export default function Home() {
         caption="Software Engineer"
         content="Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla."
         alt="Professional Picture 1 of Wallace Ferreira"
-        imageClassName="object-cover"
+        imageClassName="object-contain 2xl:object-cover"
       />
       <h4 className="text-white mt-8 mb-4 ml-4 xl:mt-20 xl:mb-8 xl:mx-[97px]">
         Projetos
