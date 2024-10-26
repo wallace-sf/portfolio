@@ -52,6 +52,7 @@ const config: Config = {
         3.75: '0.9375rem',
         2.5: '0.625rem',
         4.5: '1.125rem',
+        5: '1.25rem',
       },
       spacing: {
         'header-desktop': 'var(--header-height-desktop)',
