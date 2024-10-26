@@ -116,7 +116,12 @@ export default function Home() {
       <h4 className="text-white mt-8 mb-4 ml-4 md:mx-[33px] lg:mx-[124px] xl:mt-20 xl:mb-8 xl:mx-[97px]">
         Projetos
       </h4>
-      <ProjectList projects={PROJECTS} view="grid" className="pb-8 xl:pb-20" />
+      <ProjectList
+        projects={PROJECTS}
+        view="grid"
+        className="pb-8 xl:pb-20"
+        compact
+      />
     </>
   );
 }
