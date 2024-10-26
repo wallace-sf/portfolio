@@ -55,7 +55,7 @@ export const SideNavigation: FC = () => {
     <nav
       id="side-navigation"
       className={classNames(
-        'h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 dark:bg-dark-200 flex-col border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
+        'h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 dark:bg-dark-200 flex flex-col border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
         open ? 'translate-x-0' : '-translate-x-full',
       )}
     >
@@ -74,7 +74,7 @@ export const SideNavigation: FC = () => {
         </MenuItem.Item1>
       </ul>
       <Divider className="mx-6 xl:hidden" />
-      <ul className="flex flex-col gap-y-3 px-6 xl:pt-15 xl:px-0">
+      <ul className="flex flex-col h-full gap-y-3 px-6 xl:pb-8 xl:px-0 xl:justify-end">
         <MenuItem.Item2.Link
           href="https://www.linkedin.com/in/wallace-silva-ferreira/"
           icon="devicon:linkedin"

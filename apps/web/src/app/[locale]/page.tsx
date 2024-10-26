@@ -10,7 +10,32 @@ const PROJECTS: IProjectProps[] = [
     caption:
       'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
+    skills: [
+      {
+        id: '1',
+        description: 'React.js',
+        icon: 'devicon:react',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '2',
+        description: 'Angular',
+        icon: 'devicon:angular',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '3',
+        description: 'Typescript',
+        icon: 'devicon:typescript',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '4',
+        description: 'Electron',
+        icon: 'devicon:electron',
+        type: 'TECHNOLOGY',
+      },
+    ],
   },
   {
     id: '2',
@@ -34,7 +59,32 @@ const PROJECTS: IProjectProps[] = [
     caption:
       'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
+    skills: [
+      {
+        id: '1',
+        description: 'Next.js',
+        icon: 'devicon:nextjs',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '2',
+        description: 'TailwindCSS',
+        icon: 'devicon:tailwindcss',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '3',
+        description: 'Material UI',
+        icon: 'devicon:materialui',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '4',
+        description: 'Electron',
+        icon: 'devicon:electron',
+        type: 'TECHNOLOGY',
+      },
+    ],
   },
   {
     id: '5',
@@ -42,7 +92,32 @@ const PROJECTS: IProjectProps[] = [
     caption:
       'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
+    skills: [
+      {
+        id: '1',
+        description: 'Git',
+        icon: 'devicon:git',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '2',
+        description: 'jQuery',
+        icon: 'devicon:jquery',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '3',
+        description: 'Docker',
+        icon: 'devicon:docker',
+        type: 'TECHNOLOGY',
+      },
+      {
+        id: '4',
+        description: 'Electron',
+        icon: 'devicon:electron',
+        type: 'TECHNOLOGY',
+      },
+    ],
   },
   {
     id: '6',
@@ -113,15 +188,10 @@ export default function Home() {
         alt="Professional Picture 1 of Wallace Ferreira"
         imageClassName="object-contain 2xl:object-cover"
       />
-      <h4 className="text-white mt-8 mb-4 ml-4 md:mx-[33px] lg:mx-[124px] xl:mt-20 xl:mb-8 xl:mx-[97px]">
+      <h4 className="text-white mt-8 mb-4 ml-4 md:mx-[33px] lg:mx-[124px] xl:mt-20 xl:mb-8 !text-xl xl:!text-[32px]">
         Projetos
       </h4>
-      <ProjectList
-        projects={PROJECTS}
-        view="grid"
-        className="pb-8 xl:pb-20"
-        compact
-      />
+      <ProjectList projects={PROJECTS} view="grid" className="pb-8 xl:pb-20" />
     </>
   );
 }
