@@ -24,6 +24,7 @@ const config: Config = {
       colors: {
         'blue-dark': '#323dcd',
         'blue-light': '#a1a8ff',
+        'dark-1000': '#d9d9d9',
         'dark-200': '#282828',
         'dark-300': '#323232',
         'dark-400': '#3e3e3e',
@@ -32,10 +33,11 @@ const config: Config = {
         'dark-700': '#8d8d8d',
         'dark-800': '#a4a4a4',
         'dark-900': '#bababa',
-        'dark-1000': '#d9d9d9',
         accent: '#8efb9d',
         dark: '#1C1C1C',
+        error: '#b45454',
         primary: '#4452ff',
+        success: '#34d399',
       },
       container: {
         center: true,
@@ -64,9 +66,6 @@ const config: Config = {
         50: '12.5rem',
         237.5: '59.375rem',
         278.5: '69.625rem',
-      },
-      fontSize: {
-        // '3.5xl': '1.875rem',
       },
       zIndex: {
         999999: '999999',
