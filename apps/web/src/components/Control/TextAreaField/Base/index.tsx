@@ -1,37 +1,41 @@
 'use client';
 
-import { forwardRef, ForwardRefRenderFunction } from 'react';
+import {
+  forwardRef,
+  ForwardRefRenderFunction,
+  type TextareaHTMLAttributes,
+} from 'react';
 
-import { isIn } from '@repo/utils';
-
-import { Input, InputProps } from '~components/Control/Input';
 import { withFormik } from '~hocs';
 import { IFieldProps } from '~types';
 import { createFieldClassName } from '~utils';
 
-export interface ITextFieldProps extends Omit<InputProps, 'type'>, IFieldProps {
-  type: 'text' | 'email' | 'password';
-}
+export interface ITextAreaFieldProps
+  extends TextareaHTMLAttributes<HTMLTextAreaElement>,
+    IFieldProps {}
 
 const Component: ForwardRefRenderFunction<
-  HTMLInputElement | null,
-  ITextFieldProps
+  HTMLTextAreaElement | null,
+  ITextAreaFieldProps
 > = (
   {
     className = '',
     error = false,
     errorBorder = true,
     touched = false,
-    type,
     unstyled = false,
     ...props
   },
   ref,
 ) => {
   return (
-    <Input
+    <textarea
+      aria-disabled={props.disabled}
+      aria-placeholder={props.placeholder}
       {...props}
-      type={isIn(type, ['text', 'email', 'password']) ? type : 'text'}
+      ref={ref}
+      onChange={props.disabled ? undefined : props.onChange}
+      onBlur={props.disabled ? undefined : props.onBlur}
       className={createFieldClassName({
         error,
         errorBorder,
@@ -39,12 +43,11 @@ const Component: ForwardRefRenderFunction<
         unstyled,
         className,
       })}
-      ref={ref}
     />
   );
 };
 
-Component.displayName = 'TextField.Base';
+Component.displayName = 'TextAreaField.Base';
 
 export const Base = forwardRef(Component);
 

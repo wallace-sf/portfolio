@@ -1,8 +1,8 @@
 {
   "ContactForm": {
     "title": "Entre em contato",
-    "message": "Mensagem",
     "submit": "Enviar",
+    "messagePlaceholder": "Sua mensagem aqui...",
     "subject": "Vamos conversar sobre um projeto?"
   },
   "Clipboard": {
