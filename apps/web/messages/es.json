@@ -1,4 +1,10 @@
 {
+  "ContactForm": {
+    "title": "Contáctenos",
+    "message": "Mensaje",
+    "submit": "Enviar",
+    "subject": "¿Hablamos sobre un proyecto?"
+  },
   "Clipboard": {
     "copy": "Copiar al portapapeles"
   },
@@ -11,5 +17,9 @@
     "about": "Sobre mí",
     "resume": "Currículum",
     "language": "Idioma"
+  },
+  "Validations": {
+    "required": "Campo obligatorio.",
+    "min": "Mínimo de 3 caracteres."
   }
 }

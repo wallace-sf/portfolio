@@ -1,4 +1,4 @@
-import { type FC, createElement, memo } from 'react';
+import { type FC, createElement, memo, ForwardRefRenderFunction } from 'react';
 
 import { useField } from 'formik';
 
@@ -39,7 +39,7 @@ const createEvents =
   };
 
 export const withFormik =
-  <P>(Component: FC<P>, hocsProps?: Partial<P>) =>
+  <P>(Component: FC<P> | ForwardRefRenderFunction<P>, hocsProps?: Partial<P>) =>
   (params: WithFormikParams) => {
     const DynamicComponent: FC<P> = (props) => {
       const [field, meta, helpers] = useField({
@@ -69,7 +69,7 @@ export const withFormik =
       } satisfies P);
     };
 
-    DynamicComponent.displayName = 'DynamicComponent';
+    DynamicComponent.displayName = 'WithFormikHOC';
 
     return memo(DynamicComponent);
   };
