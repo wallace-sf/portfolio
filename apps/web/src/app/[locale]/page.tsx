@@ -1,7 +1,7 @@
 import { IProjectProps } from '@repo/core';
 
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
-import { HeroBanner, ProjectList } from '~components/View';
+import { ContactForm, Divider, HeroBanner, ProjectList } from '~components';
 
 const PROJECTS: IProjectProps[] = [
   {
@@ -86,95 +86,6 @@ const PROJECTS: IProjectProps[] = [
       },
     ],
   },
-  {
-    id: '5',
-    title: 'Fieldlink Rotas',
-    caption:
-      'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [
-      {
-        id: '1',
-        description: 'Git',
-        icon: 'devicon:git',
-        type: 'TECHNOLOGY',
-      },
-      {
-        id: '2',
-        description: 'jQuery',
-        icon: 'devicon:jquery',
-        type: 'TECHNOLOGY',
-      },
-      {
-        id: '3',
-        description: 'Docker',
-        icon: 'devicon:docker',
-        type: 'TECHNOLOGY',
-      },
-      {
-        id: '4',
-        description: 'Electron',
-        icon: 'devicon:electron',
-        type: 'TECHNOLOGY',
-      },
-    ],
-  },
-  {
-    id: '6',
-    title: 'Fieldlink Rotas',
-    caption:
-      'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-  },
-  {
-    id: '7',
-    title: 'Fieldlink Rotas',
-    caption:
-      'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-  },
-  {
-    id: '8',
-    title: 'Fieldlink Rotas',
-    caption:
-      'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-  },
-  {
-    id: '9',
-    title: 'Fieldlink Rotas',
-    caption:
-      'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-  },
-  {
-    id: '10',
-    title: 'Fieldlink Rotas',
-    caption:
-      'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-  },
-  {
-    id: '11',
-    title: 'Fieldlink Rotas',
-    caption:
-      'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-  },
-  {
-    id: '12',
-    title: 'Fieldlink Rotas',
-    caption:
-      'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-  },
 ];
 
 export default function Home() {
@@ -192,6 +103,10 @@ export default function Home() {
         Projetos
       </h4>
       <ProjectList projects={PROJECTS} view="grid" className="pb-8 xl:pb-20" />
+      <Divider />
+      <section className="mx-4 xl:mx-auto xl:w-full xl:max-w-237.5">
+        <ContactForm />
+      </section>
     </>
   );
 }

@@ -1,4 +1,10 @@
 {
+  "ContactForm": {
+    "title": "Contact us",
+    "message": "Message",
+    "submit": "Send",
+    "subject": "Let's talk about a project?"
+  },
   "Clipboard": {
     "copy": "Copy to clipboard"
   },
@@ -11,5 +17,9 @@
     "about": "About",
     "resume": "Resume",
     "language": "Language"
+  },
+  "Validations": {
+    "required": "Required field.",
+    "min": "Minimum of 3 characters."
   }
 }
