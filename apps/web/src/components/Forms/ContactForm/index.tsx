@@ -6,7 +6,7 @@ import { Formik, Form } from 'formik';
 import { useTranslations } from 'next-intl';
 import { useIsClient } from 'usehooks-ts';
 
-import { TextField, Label, Button } from '~/components/Control';
+import { TextAreaField, Button } from '~/components/Control';
 
 import { IContactFormValues } from './types';
 import { INITIAL_VALUES, createValidationSchema } from './utils';
@@ -52,8 +52,13 @@ export const ContactForm: FC = () => {
       <Form>
         <h5 className="!text-white mb-6">{tContactForm('title')}</h5>
         <fieldset className="w-full mb-6">
-          <Label htmlFor="message">{tContactForm('message')}</Label>
-          <TextField.WithFormik id="message" name="message" type="text" />
+          <TextAreaField.WithFormik
+            id="message"
+            name="message"
+            maxLength={2000}
+            className="min-h-32"
+            placeholder={tContactForm('messagePlaceholder')}
+          />
         </fieldset>
         <Button.Base type="submit" className="w-full xl:max-w-50">
           {tContactForm('submit')}
