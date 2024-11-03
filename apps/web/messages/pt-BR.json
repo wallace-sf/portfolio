@@ -8,6 +8,9 @@
   "Clipboard": {
     "copy": "Copiar para a área de transferência"
   },
+  "Home": {
+    "projects_title": "Projetos"
+  },
   "ProjectCard": {
     "view_project": "Ver projeto"
   },
