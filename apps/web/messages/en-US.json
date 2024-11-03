@@ -8,6 +8,9 @@
   "Clipboard": {
     "copy": "Copy to clipboard"
   },
+  "Home": {
+    "projects_title": "Projects"
+  },
   "ProjectCard": {
     "view_project": "View Project"
   },

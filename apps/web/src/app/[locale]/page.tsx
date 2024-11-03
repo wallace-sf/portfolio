@@ -1,4 +1,5 @@
 import { IProjectProps } from '@repo/core';
+import { useTranslations } from 'next-intl';
 
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
 import { ContactForm, Divider, HeroBanner, ProjectList } from '~components';
@@ -89,6 +90,8 @@ const PROJECTS: IProjectProps[] = [
 ];
 
 export default function Home() {
+  const t = useTranslations('Home');
+
   return (
     <>
       <HeroBanner
@@ -99,14 +102,13 @@ export default function Home() {
         alt="Professional Picture 1 of Wallace Ferreira"
         imageClassName="object-contain 2xl:object-cover"
       />
-      <h4 className="text-white mt-8 mb-4 ml-4 md:mx-[33px] lg:mx-[124px] xl:mt-20 xl:mb-8 !text-xl xl:!text-[32px]">
-        Projetos
+      <h4 className="text-white mx-4 my-6 !text-xl xl:block xl:mx-auto xl:my-8 xl:w-full xl:!text-[32px] xl:max-w-237.5">
+        {t('projects_title')}
       </h4>
       <ProjectList projects={PROJECTS} view="grid" className="pb-8 xl:pb-20" />
-
       <section className="flex flex-col xl:flex-row mx-4 xl:mx-auto xl:w-full xl:max-w-237.5">
         <ContactForm />
-        <Divider />
+        <Divider className="xl:hidden" />
       </section>
     </>
   );
