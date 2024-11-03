@@ -103,9 +103,10 @@ export default function Home() {
         Projetos
       </h4>
       <ProjectList projects={PROJECTS} view="grid" className="pb-8 xl:pb-20" />
-      <Divider />
-      <section className="mx-4 xl:mx-auto xl:w-full xl:max-w-237.5">
+
+      <section className="flex flex-col xl:flex-row mx-4 xl:mx-auto xl:w-full xl:max-w-237.5">
         <ContactForm />
+        <Divider />
       </section>
     </>
   );

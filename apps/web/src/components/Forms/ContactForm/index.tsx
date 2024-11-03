@@ -49,7 +49,7 @@ export const ContactForm: FC = () => {
       onSubmit={onSubmit}
       validationSchema={validationSchema}
     >
-      <Form>
+      <Form className="w-full">
         <h5 className="!text-white mb-6">{tContactForm('title')}</h5>
         <fieldset className="w-full mb-6">
           <TextAreaField.WithFormik
