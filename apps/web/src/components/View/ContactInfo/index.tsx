@@ -2,8 +2,10 @@
 
 import { FC } from 'react';
 
+import { formatCellphone } from '@repo/utils';
 import { useTranslations } from 'next-intl';
 
+import { Icon } from '~/components/Imagery';
 import { Link } from '~i18n/routing';
 
 import { Divider } from '../Divider';
@@ -20,7 +22,7 @@ export const ContactInfo: FC = () => {
         </strong>
         <Link
           className="inline-block w-full text-body-sm !text-primary !underline not-italic mb-6"
-          href="mailto:nomesobrenome@email.com"
+          href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}
         >
           {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
         </Link>
@@ -28,12 +30,13 @@ export const ContactInfo: FC = () => {
           WhatsApp
         </strong>
         <Link
-          className="inline-block w-full text-body-sm !text-primary !underline not-italic"
+          className="flex flex-row items-center gap-x-2 w-full text-body-sm !text-primary !underline not-italic"
           href={process.env.NEXT_PUBLIC_WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
-          {process.env.NEXT_PUBLIC_CONTACT_NUMBER}
+          <Icon icon="twemoji:flag-brazil" />
+          {formatCellphone(process.env.NEXT_PUBLIC_CONTACT_NUMBER)}
         </Link>
       </address>
       <Divider className="!my-0" />

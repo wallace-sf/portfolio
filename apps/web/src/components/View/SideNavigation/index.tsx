@@ -73,8 +73,8 @@ export const SideNavigation: FC = () => {
           {t('resume')}
         </MenuItem.Item1>
       </ul>
-      <Divider className="mx-6 xl:hidden" />
-      <ul className="flex flex-col h-full gap-y-3 px-6 xl:pb-8 xl:px-0 xl:justify-end">
+      <Divider className="mx-6 xl:mx-0" />
+      <ul className="flex flex-col gap-y-3 px-6 xl:pb-8 xl:px-0 xl:justify-end">
         <MenuItem.Item2.Link
           href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
           icon="devicon:linkedin"
