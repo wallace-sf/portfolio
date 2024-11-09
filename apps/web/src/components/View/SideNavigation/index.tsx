@@ -11,12 +11,12 @@ import {
   RadioGroupProps,
   RadioGroupChildrenFn,
 } from '~components/Control';
-import { Divider } from '~components/View';
+import { useLayout } from '~hooks';
 import { useRouter } from '~i18n/routing';
 
-import { useLayout } from '../useLayout';
+import { Divider } from '../Divider';
+import { MenuItem } from '../MenuItem';
 import { LANGUAGES_OPTIONS } from './constants';
-import { MenuItem } from './MenuItem';
 
 export const SideNavigation: FC = () => {
   const { open } = useLayout();
@@ -76,14 +76,14 @@ export const SideNavigation: FC = () => {
       <Divider className="mx-6 xl:hidden" />
       <ul className="flex flex-col h-full gap-y-3 px-6 xl:pb-8 xl:px-0 xl:justify-end">
         <MenuItem.Item2.Link
-          href="https://www.linkedin.com/in/wallace-silva-ferreira/"
+          href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
           icon="devicon:linkedin"
           newTab
         >
           Linkedin
         </MenuItem.Item2.Link>
         <MenuItem.Item2.Link
-          href="https://github.com/wallace-sf"
+          href={process.env.NEXT_PUBLIC_GITHUB_URL}
           icon="mdi:github"
           iconClassName="text-white"
           newTab

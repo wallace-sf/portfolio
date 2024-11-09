@@ -2,7 +2,13 @@ import { IProjectProps } from '@repo/core';
 import { useTranslations } from 'next-intl';
 
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
-import { ContactForm, Divider, HeroBanner, ProjectList } from '~components';
+import {
+  ContactForm,
+  Divider,
+  HeroBanner,
+  ProjectList,
+  ContactInfo,
+} from '~components';
 
 const PROJECTS: IProjectProps[] = [
   {
@@ -106,9 +112,10 @@ export default function Home() {
         {t('projects_title')}
       </h4>
       <ProjectList projects={PROJECTS} view="grid" className="pb-8 xl:pb-20" />
-      <section className="flex flex-col xl:flex-row mx-4 xl:mx-auto xl:w-full xl:max-w-237.5">
+      <section className="flex flex-col gap-x-6 xl:flex-row mx-4 xl:mx-auto xl:w-full xl:max-w-237.5">
         <ContactForm />
         <Divider className="xl:hidden" />
+        <ContactInfo />
       </section>
     </>
   );

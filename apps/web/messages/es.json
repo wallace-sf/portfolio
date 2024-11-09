@@ -5,6 +5,11 @@
     "messagePlaceholder": "Su mensaje aquí...",
     "subject": "¿Hablamos sobre un proyecto?"
   },
+  "ContactInfo": {
+    "email": "Correo electrónico",
+    "paragraph1": "¿No te gusta llenar formularios? ¡No hay problema!",
+    "paragraph2": "No dudes en enviarme un mensaje por WhatsApp o enviarme un correo electrónico."
+  },
   "Clipboard": {
     "copy": "Copiar al portapapeles"
   },

@@ -6,10 +6,9 @@ import Image from 'next/image';
 
 import logoDesktop from '~assets/images/logo-desktop.svg';
 import logoMobile from '~assets/images/logo-mobile.svg';
-
-import { Button } from '../../Control';
-import { Icon } from '../../Imagery';
-import { useLayout } from '../useLayout';
+import { Button } from '~components/Control';
+import { Icon } from '~components/Imagery';
+import { useLayout } from '~hooks';
 
 export const Header: FC = () => {
   const { open, toggle } = useLayout();
