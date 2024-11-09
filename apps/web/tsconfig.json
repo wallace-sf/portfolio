@@ -6,6 +6,7 @@
       "~/*": ["./src/*"],
       "~components/*": ["./src/components/*"],
       "~components": ["./src/components/index.ts"],
+      "~contexts": ["./src/contexts/index.ts"],
       "~assets/*": ["./src/assets/*"],
       "~hocs": ["./src/hocs/index.ts"],
       "~hooks": ["./src/hooks/index.ts"],
@@ -28,7 +29,8 @@
     ".next/types/**/*.ts",
     "jest.config.ts",
     "test/**/*.ts",
-    "tailwind.config.ts"
+    "tailwind.config.ts",
+    "environment.d.ts"
   ],
   "exclude": ["node_modules"]
 }

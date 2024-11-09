@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react';
 
 import invariant from 'tiny-invariant';
 
-import { LayoutContext } from './LayoutContext';
+import { LayoutContext } from '~contexts';
 
 export const useLayout = () => {
   const context = useContext(LayoutContext);
