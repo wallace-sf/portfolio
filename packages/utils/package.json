@@ -25,6 +25,7 @@
     "@types/validator": "^13.12.1"
   },
   "dependencies": {
+    "imask": "^7.6.1",
     "luxon": "^3.5.0",
     "mustache": "^4.2.0",
     "validator": "^13.12.0"

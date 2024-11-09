@@ -2,6 +2,8 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "baseUrl": "src",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "paths": {
       "~/*": ["*"],
       "~components/*": ["components/*"]

@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, ForwardRefRenderFunction, useMemo } from 'react';
+import { forwardRef, ForwardRefRenderFunction } from 'react';
 
 import { isIn } from '@repo/utils';
 import classNames from 'classnames';
