@@ -1,8 +1,8 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const withNextIntl = createNextIntlPlugin();
-
-/** @type {*} */
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
   env: {
     NEXT_PUBLIC_CONTACT_EMAIL: process.env.NEXT_PUBLIC_CONTACT_EMAIL,
@@ -22,4 +22,4 @@ const nextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default createNextIntlPlugin()(nextConfig);
