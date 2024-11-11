@@ -4,6 +4,7 @@ import { FC, useCallback } from 'react';
 
 import classNames from 'classnames';
 import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 import {
   RadioGroup,
@@ -12,7 +13,7 @@ import {
   RadioGroupChildrenFn,
 } from '~components/Control';
 import { useLayout } from '~hooks';
-import { useRouter } from '~i18n/routing';
+import { usePathname } from '~i18n/routing';
 
 import { Divider } from '../Divider';
 import { MenuItem } from '../MenuItem';
@@ -23,12 +24,15 @@ export const SideNavigation: FC = () => {
   const t = useTranslations('SideNavigation');
   const locale = useLocale();
   const { replace } = useRouter();
+  const pathname = usePathname();
 
   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
     (event) => {
-      replace(event.target.value);
+      const { value } = event.target;
+
+      replace(pathname !== '/' ? `/${value}${pathname}` : value);
     },
-    [replace],
+    [replace, pathname],
   );
 
   const renderRadio = useCallback<RadioGroupChildrenFn>(
