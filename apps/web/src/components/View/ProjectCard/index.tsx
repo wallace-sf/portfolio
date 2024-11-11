@@ -27,21 +27,81 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   compact = false,
   skills,
 }) => {
-  const isLg = useBreakpoint('lg');
+  const isXL = useBreakpoint('xl');
 
   return (
     <article
       className={classNames(
-        'relative bg-dark-300 px-3 pt-3 pb-6 rounded-lg w-full flex flex-col gap-y-4 max-w-[343px]',
+        'relative bg-dark-300 p-3 rounded-5 w-full h-full max-w-[343px] xl:max-w-[465px]',
         {
-          'lg:grid lg:grid-cols-2 lg:auto-rows-max lg:pb-3 lg:gap-x-9 lg:max-w-[950px] lg:max-h-[339px]':
-            view === 'row',
+          'xl:!max-w-237.5 xl:!max-h-[339px]': view === 'row',
         },
       )}
     >
+      <section
+        className={classNames(
+          'flex flex-col h-full gap-y-4 rounded-lg overflow-hidden',
+          {
+            'xl:grid xl:grid-cols-2 xl:auto-rows-max xl:gap-x-9':
+              view === 'row',
+          },
+        )}
+      >
+        <header
+          className={classNames(
+            'relative aspect-319/180 h-[180px] xl:h-[244px] rounded-b-lg overflow-hidden',
+            {
+              'xl:aspect-7/5 xl:row-span-2 xl:max-w-[441px] xl:h-auto xl:rounded-tr-lg':
+                view === 'row',
+            },
+          )}
+        >
+          <Image
+            src="https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg"
+            fill
+            alt="Imagem do projeto"
+            className="object-cover"
+            sizes="100%"
+            priority
+          />
+        </header>
+        <section className="flex flex-col gap-y-2 flex-grow pr-8">
+          <h3 className="text-body-lg !font-bold !text-white line-clamp-1">
+            {title}
+          </h3>
+          <p
+            className={classNames('text-body-sm !text-dark-900', {
+              'line-clamp-2': compact,
+            })}
+          >
+            {caption}
+          </p>
+        </section>
+        <footer
+          className={classNames('flex flex-col gap-y-5', {
+            'xl:justify-end': view === 'row',
+          })}
+        >
+          <SkillGroup
+            skills={skills}
+            max={isXL ? 3 : 2}
+            initializeWithMax={2}
+            total={skills.length}
+          />
+          <Button.Base className="flex flex-row justify-center gap-x-2">
+            Ver projeto
+            <Icon icon="ic:round-arrow-forward" />
+          </Button.Base>
+        </footer>
+      </section>
       <Button.Clipboard
         text="This is the text copied from project card."
-        className="absolute z-40 top-5 right-5 lg:top-3 lg:right-3 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300"
+        className={classNames(
+          'absolute z-40 top-5 right-5 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300',
+          {
+            'xl:top-3 xl:right-3': view === 'row',
+          },
+        )}
       >
         {(copied) =>
           copied ? (
@@ -51,43 +111,6 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           )
         }
       </Button.Clipboard>
-      <header
-        className={classNames('relative aspect-319/180 h-[180px]', {
-          'lg:aspect-7/5 lg:row-span-2 lg:max-w-[441px] lg:h-auto':
-            view === 'row',
-        })}
-      >
-        <Image
-          src="https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg"
-          fill
-          alt="Imagem do projeto"
-          className="rounded-lg object-cover"
-          sizes="100%"
-          priority
-        />
-      </header>
-      <section className="flex flex-col gap-y-2">
-        <h3 className="text-body-lg !font-bold !text-white">{title}</h3>
-        <p
-          className={classNames('text-body-sm !text-dark-900', {
-            'line-clamp-2': compact,
-          })}
-        >
-          {caption}
-        </p>
-      </section>
-      <footer className="flex flex-col gap-y-5">
-        <SkillGroup
-          skills={skills}
-          max={isLg ? 3 : 2}
-          initializeWithMax={2}
-          total={skills.length}
-        />
-        <Button.Base className="flex flex-row justify-center gap-x-2">
-          Ver projeto
-          <Icon icon="ic:round-arrow-forward" />
-        </Button.Base>
-      </footer>
     </article>
   );
 };

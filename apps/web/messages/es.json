@@ -1,6 +1,20 @@
 {
+  "ContactForm": {
+    "title": "Contáctenos",
+    "submit": "Enviar",
+    "messagePlaceholder": "Su mensaje aquí...",
+    "subject": "¿Hablamos sobre un proyecto?"
+  },
+  "ContactInfo": {
+    "email": "Correo electrónico",
+    "paragraph1": "¿No te gusta llenar formularios? ¡No hay problema!",
+    "paragraph2": "No dudes en enviarme un mensaje por WhatsApp o enviarme un correo electrónico."
+  },
   "Clipboard": {
     "copy": "Copiar al portapapeles"
+  },
+  "Home": {
+    "projects_title": "Proyectos"
   },
   "ProjectCard": {
     "view_project": "Ver proyecto"
@@ -11,5 +25,9 @@
     "about": "Sobre mí",
     "resume": "Currículum",
     "language": "Idioma"
+  },
+  "Validations": {
+    "required": "Campo obligatorio.",
+    "min": "Mínimo de 3 caracteres."
   }
 }

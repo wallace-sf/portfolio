@@ -6,22 +6,21 @@ import Image from 'next/image';
 
 import logoDesktop from '~assets/images/logo-desktop.svg';
 import logoMobile from '~assets/images/logo-mobile.svg';
-
-import { Button } from '../../Control';
-import { Icon } from '../../Imagery';
-import { useLayout } from '../useLayout';
+import { Button } from '~components/Control';
+import { Icon } from '~components/Imagery';
+import { useLayout } from '~hooks';
 
 export const Header: FC = () => {
   const { open, toggle } = useLayout();
 
   return (
-    <header className="w-full lg:w-60 flex items-center lg:items-end justify-between lg:justify-center bg-dark-300 lg:!bg-dark-200 lg:bg-transparent px-4 py-3 lg:px-0 lg:py-0 transition-all duration-300 ease-linear h-header-mobile lg:h-header-desktop">
+    <header className="w-full xl:w-60 flex items-center xl:items-end justify-between xl:justify-center bg-dark-300 xl:!bg-dark-200 xl:bg-transparent px-4 py-3 xl:px-0 xl:py-0 transition-all duration-300 ease-linear h-header-mobile xl:h-header-desktop">
       <Image
         src={logoDesktop}
         width={179}
         height={66}
         alt="Logo"
-        className="hidden lg:block"
+        className="hidden xl:block"
         priority
       />
       <Image
@@ -29,11 +28,11 @@ export const Header: FC = () => {
         width={120}
         height={44}
         alt="Logo"
-        className="block lg:hidden"
+        className="block xl:hidden"
         priority
       />
       <Button.Base
-        className="flex items-center justify-center h-10 w-10 !bg-dark-600 hover:!bg-dark-500 !rounded !p-0 lg:hidden"
+        className="flex items-center justify-center h-10 w-10 !bg-dark-600 hover:!bg-dark-500 !rounded !p-0 xl:hidden"
         onClick={toggle}
       >
         {open ? (
