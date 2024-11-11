@@ -13,7 +13,6 @@ import {
   RadioGroupChildrenFn,
 } from '~components/Control';
 import { useLayout } from '~hooks';
-import { usePathname } from '~i18n/routing';
 
 import { Divider } from '../Divider';
 import { MenuItem } from '../MenuItem';
@@ -24,15 +23,12 @@ export const SideNavigation: FC = () => {
   const t = useTranslations('SideNavigation');
   const locale = useLocale();
   const { replace } = useRouter();
-  const pathname = usePathname();
 
   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
     (event) => {
-      const { value } = event.target;
-
-      replace(pathname !== '/' ? `/${value}${pathname}` : value);
+      replace(event.target.value);
     },
-    [replace, pathname],
+    [replace],
   );
 
   const renderRadio = useCallback<RadioGroupChildrenFn>(
