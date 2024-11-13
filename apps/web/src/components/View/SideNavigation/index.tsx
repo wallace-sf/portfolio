@@ -73,7 +73,11 @@ export const SideNavigation: FC = () => {
         <MenuItem.Item1 href="/about" icon="material-symbols:person">
           {t('about')}
         </MenuItem.Item1>
-        <MenuItem.Item1 href="/resume" icon="material-symbols:description">
+        <MenuItem.Item1
+          href={process.env.NEXT_PUBLIC_RESUME_URL}
+          icon="material-symbols:description"
+          newTab
+        >
           {t('resume')}
         </MenuItem.Item1>
       </ul>
