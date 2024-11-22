@@ -17,6 +17,7 @@
   "dependencies": {
     "@iconify/react": "^5.0.2",
     "@repo/core": "workspace:*",
+    "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "classnames": "^2.5.1",
     "formik": "^2.4.6",
