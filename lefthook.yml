@@ -30,3 +30,9 @@ pre-commit:
       run: pnpm types:web
     test:web:
       run: pnpm test:web
+    lint:ui:
+      run: pnpm lint:ui
+    format:ui:
+      run: pnpm format:ui
+    types:ui:
+      run: pnpm types:ui
