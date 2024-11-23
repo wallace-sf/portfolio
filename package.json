@@ -21,7 +21,10 @@
     "lint:web": "pnpm -C apps/web lint",
     "format:web": "pnpm -C apps/web format",
     "types:web": "pnpm -C apps/web types",
-    "test:web": "pnpm -C apps/web test"
+    "test:web": "pnpm -C apps/web test",
+    "lint:ui": "pnpm -C packages/ui lint",
+    "format:ui": "pnpm -C packages/ui format",
+    "types:ui": "pnpm -C packages/ui types"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
