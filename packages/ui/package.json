@@ -1,0 +1,25 @@
+{
+  "name": "@repo/ui",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "os": [
+    "linux"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts",
+    "dev": "tsup src/index.ts --watch"
+  },
+  "dependencies": {
+    "react": "^18"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^18",
+    "tsup": "^8.3.5"
+  }
+}
