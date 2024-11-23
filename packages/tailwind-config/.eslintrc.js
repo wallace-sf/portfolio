@@ -2,12 +2,12 @@
 module.exports = {
   root: true,
   extends: [
-    '@repo/eslint-config/react.js',
+    '@repo/eslint-config/library.js',
     'plugin:@typescript-eslint/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: true,
   },
-  ignorePatterns: ['*.mjs', 'dist/'],
+  ignorePatterns: ['*.mjs'],
 };
