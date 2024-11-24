@@ -24,7 +24,10 @@
     "test:web": "pnpm -C apps/web test",
     "lint:ui": "pnpm -C packages/ui lint",
     "format:ui": "pnpm -C packages/ui format",
-    "types:ui": "pnpm -C packages/ui types"
+    "types:ui": "pnpm -C packages/ui types",
+    "lint:tailwind": "pnpm -C packages/tailwind-config lint",
+    "format:tailwind": "pnpm -C packages/tailwind-config format",
+    "types:tailwind": "pnpm -C packages/tailwind-config types"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
