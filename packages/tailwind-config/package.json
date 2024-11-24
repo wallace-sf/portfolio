@@ -3,6 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "main": "index.ts",
+  "scripts": {
+    "lint": "eslint --fix --ext .ts ./index.ts",
+    "lint:check": "eslint --ext .ts ./index.ts",
+    "format": "prettier --write ./index.ts",
+    "format:check": "prettier --check ./index.ts",
+    "types": "tsc --noEmit --skipLibCheck"
+  },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
