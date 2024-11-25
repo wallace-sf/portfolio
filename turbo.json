@@ -9,6 +9,10 @@
     "web#build": {
       "env": ["NEXT_PUBLIC_*"]
     },
+    "storybook": {
+      "cache": false,
+      "persistent": true
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },

@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "storybook": "turbo storybook",
     "lint": "turbo lint",
     "lint:check": "turbo lint:check",
     "format": "turbo format",
@@ -27,7 +28,10 @@
     "types:ui": "pnpm -C packages/ui types",
     "lint:tailwind": "pnpm -C packages/tailwind-config lint",
     "format:tailwind": "pnpm -C packages/tailwind-config format",
-    "types:tailwind": "pnpm -C packages/tailwind-config types"
+    "types:tailwind": "pnpm -C packages/tailwind-config types",
+    "lint:storybooks": "pnpm -C apps/storybooks lint",
+    "format:storybooks": "pnpm -C apps/storybooks format",
+    "types:storybooks": "pnpm -C apps/storybooks types"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
