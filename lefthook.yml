@@ -42,3 +42,9 @@ pre-commit:
       run: pnpm format:tailwind
     types:tailwind:
       run: pnpm types:tailwind
+    lint:storybooks:
+      run: pnpm lint:storybooks
+    format:storybooks:
+      run: pnpm format:storybooks
+    types:storybooks:
+      run: pnpm types:storybooks
