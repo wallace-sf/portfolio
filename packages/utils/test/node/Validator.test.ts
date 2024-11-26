@@ -1,4 +1,4 @@
-import { Validator } from '../src';
+import { Validator } from '../../src';
 
 describe('Validator', () => {
   describe('alpha', () => {

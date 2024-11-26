@@ -1,4 +1,4 @@
-import { isString } from '../src';
+import { isString } from '../../src';
 
 describe('isString', () => {
   it('should validate', () => {

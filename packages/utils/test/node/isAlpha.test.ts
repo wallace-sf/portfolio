@@ -1,4 +1,4 @@
-import { isAlpha } from '../src';
+import { isAlpha } from '../../src';
 
 describe('isAlpha', () => {
   it('should validate', () => {

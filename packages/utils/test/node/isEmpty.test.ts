@@ -1,4 +1,4 @@
-import { isEmpty } from '../src';
+import { isEmpty } from '../../src';
 
 describe('isEmpty', () => {
   it('should validate', () => {

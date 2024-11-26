@@ -1,4 +1,4 @@
-import { lessThan } from '../src';
+import { lessThan } from '../../src';
 
 describe('lessThan', () => {
   it('should validate', () => {

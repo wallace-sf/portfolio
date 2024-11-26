@@ -1,4 +1,4 @@
-import { greaterThan } from '../src';
+import { greaterThan } from '../../src';
 
 describe('greaterThan', () => {
   it('should validate', () => {
