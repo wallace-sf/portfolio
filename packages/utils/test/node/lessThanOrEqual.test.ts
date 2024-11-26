@@ -1,4 +1,4 @@
-import { lessThanOrEqual } from '../src';
+import { lessThanOrEqual } from '../../src';
 
 describe('lessThanOrEqual', () => {
   it('should validate', () => {

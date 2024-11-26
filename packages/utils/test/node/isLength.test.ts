@@ -1,4 +1,4 @@
-import { isLength } from '../src';
+import { isLength } from '../../src';
 
 describe('isLength', () => {
   it('should validate', () => {

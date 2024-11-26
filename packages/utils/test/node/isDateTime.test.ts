@@ -1,4 +1,4 @@
-import { isDateTime } from '../src';
+import { isDateTime } from '../../src';
 
 describe('isDateTime', () => {
   it('should validate', () => {

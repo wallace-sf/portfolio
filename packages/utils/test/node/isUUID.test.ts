@@ -1,4 +1,4 @@
-import { isUUID } from '../src';
+import { isUUID } from '../../src';
 
 describe('isUUID', () => {
   it('should validate', () => {

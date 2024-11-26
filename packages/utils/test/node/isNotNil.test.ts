@@ -1,4 +1,4 @@
-import { isNotNil } from '../src';
+import { isNotNil } from '../../src';
 
 describe('isNotNil', () => {
   it('should validate', () => {

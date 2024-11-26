@@ -1,4 +1,4 @@
-import { ValidationError } from '../src';
+import { ValidationError } from '../../src';
 
 describe('ValidationError', () => {
   it('should return a valid validation error instance', () => {

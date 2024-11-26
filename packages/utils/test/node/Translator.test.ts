@@ -1,4 +1,4 @@
-import { Translator } from '../src/i18n';
+import { Translator } from '../../src/i18n';
 
 Translator.setLocales(['pt-BR', 'es', 'fr']);
 

@@ -1,4 +1,4 @@
-import { isIn } from '../src';
+import { isIn } from '../../src';
 
 describe('isIn', () => {
   it('should validate', () => {
