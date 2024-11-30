@@ -7,6 +7,10 @@
     "./Control": {
       "import": "./dist/Control/index.js",
       "require": "./dist/Control/index.js"
+    },
+    "./Imagery": {
+      "import": "./dist/Imagery/index.js",
+      "require": "./dist/Imagery/index.js"
     }
   },
   "os": [
@@ -25,6 +29,7 @@
     "types": "tsc -p ./tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@iconify/react": "^5.0.2",
     "@repo/utils": "workspace:*",
     "classnames": "^2.5.1",
     "formik": "^2.4.6",

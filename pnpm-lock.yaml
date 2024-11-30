@@ -329,6 +329,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@iconify/react':
+        specifier: ^5.0.2
+        version: 5.0.2(react@18.3.1)
       '@repo/utils':
         specifier: workspace:*
         version: link:../utils
