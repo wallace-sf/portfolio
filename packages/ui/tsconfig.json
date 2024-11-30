@@ -4,9 +4,11 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"],
+      "~control": ["./src/Control/index.ts"],
+      "~control/*": ["./src/Control/*"],
       "~hocs": ["./src/hocs/index.ts"],
-      "~components/*": ["./src/components/*"],
-      "~components": ["./src/components/index.ts"],
+      "~imagery": ["./src/Imagery/index.ts"],
+      "~imagery/*": ["./src/Imagery/*"],
       "~types": ["./src/types.ts"]
     }
   },
