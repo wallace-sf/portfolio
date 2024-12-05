@@ -1,5 +1,18 @@
 {
   "extends": "@repo/typescript-config/react.json",
-  "include": ["stories/**/*.ts", "stories/**/*.tsx", "tailwind.config.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~compositions/*": ["./compositions/*"],
+      "~compositions": ["./compositions/index.ts"]
+    }
+  },
+  "include": [
+    "stories/**/*.ts",
+    "stories/**/*.tsx",
+    "compositions/**/*.ts",
+    "compositions/**/*.tsx",
+    "tailwind.config.ts"
+  ],
   "exclude": ["dist", "build", "node_modules"]
 }
