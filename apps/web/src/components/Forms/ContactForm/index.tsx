@@ -2,11 +2,10 @@
 
 import { FC, useCallback, useMemo } from 'react';
 
+import { Button, TextArea } from '@repo/ui/Control';
 import { Formik, Form } from 'formik';
 import { useTranslations } from 'next-intl';
 import { useIsClient } from 'usehooks-ts';
-
-import { TextAreaField, Button } from '~/components/Control';
 
 import { IContactFormValues } from './types';
 import { INITIAL_VALUES, createValidationSchema } from './utils';
@@ -52,7 +51,7 @@ export const ContactForm: FC = () => {
       <Form className="w-full">
         <h5 className="!text-white mb-6">{tContactForm('title')}</h5>
         <fieldset className="w-full mb-6">
-          <TextAreaField.WithFormik
+          <TextArea.WithFormik
             id="message"
             name="message"
             maxLength={2000}

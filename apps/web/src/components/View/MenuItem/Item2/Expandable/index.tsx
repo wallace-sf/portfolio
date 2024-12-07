@@ -2,9 +2,9 @@
 
 import { FC } from 'react';
 
+import { Accordion } from '@repo/ui/Control';
 import classNames from 'classnames';
 
-import { Accordion } from '~components/Control';
 import { Icon } from '~components/Imagery';
 
 import { Text } from '../../Text';
