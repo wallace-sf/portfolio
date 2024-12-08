@@ -2,16 +2,16 @@
 
 import { FC, useCallback } from 'react';
 
+import {
+  Radio,
+  RadioGroup,
+  RadioGroupProps,
+  RadioGroupChildrenFn,
+} from '@repo/ui/Control';
 import classNames from 'classnames';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import {
-  RadioGroup,
-  Radio,
-  RadioGroupProps,
-  RadioGroupChildrenFn,
-} from '~components/Control';
 import { useLayout } from '~hooks';
 import { usePathname } from '~i18n/routing';
 
