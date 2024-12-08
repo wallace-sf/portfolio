@@ -108,7 +108,6 @@ export const SideNavigation: FC = () => {
             value={locale}
             onChange={onChangeLanguage}
             containerElementType="ul"
-            className="pt-3"
           >
             {renderRadio}
           </RadioGroup>
