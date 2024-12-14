@@ -4,8 +4,7 @@ import { FC } from 'react';
 
 import { IProfessionalValueProps } from '@repo/core';
 import { Icon } from '@repo/ui/Imagery';
-
-import { TextRich } from '../TextRich';
+import { TextRich } from '@repo/ui/View';
 
 export const ProfessionalValue: FC<IProfessionalValueProps> = ({
   icon,
