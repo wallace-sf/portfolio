@@ -3,8 +3,7 @@
 import { FC } from 'react';
 
 import { IProfessionalValueProps } from '@repo/core';
-
-import { Icon } from '~components/Imagery';
+import { Icon } from '@repo/ui/Imagery';
 
 import { TextRich } from '../TextRich';
 

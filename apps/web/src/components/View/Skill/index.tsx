@@ -3,8 +3,7 @@
 import { FC } from 'react';
 
 import { ISkillProps } from '@repo/core';
-
-import { Icon } from '~components/Imagery';
+import { Icon } from '@repo/ui/Imagery';
 
 export const Skill: FC<ISkillProps> = ({ icon, description }) => {
   return (

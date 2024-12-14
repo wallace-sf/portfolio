@@ -3,9 +3,8 @@
 import { FC } from 'react';
 
 import { Accordion } from '@repo/ui/Control';
+import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
-
-import { Icon } from '~components/Imagery';
 
 import { Text } from '../../Text';
 import { IMenuItemProps } from '../../types';

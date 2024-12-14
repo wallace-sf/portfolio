@@ -3,11 +3,11 @@
 import { FC } from 'react';
 
 import { Button } from '@repo/ui/Control';
+import { Icon } from '@repo/ui/Imagery';
 import Image from 'next/image';
 
 import logoDesktop from '~assets/images/logo-desktop.svg';
 import logoMobile from '~assets/images/logo-mobile.svg';
-import { Icon } from '~components/Imagery';
 import { useLayout } from '~hooks';
 
 export const Header: FC = () => {
