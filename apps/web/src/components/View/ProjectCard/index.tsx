@@ -4,11 +4,11 @@ import { FC } from 'react';
 
 import { ISkillProps } from '@repo/core';
 import { Button } from '@repo/ui/Control';
+import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
-import { Icon } from '~components/Imagery';
 import { useBreakpoint } from '~hooks';
 
 import { SkillGroup } from '../SkillGroup';

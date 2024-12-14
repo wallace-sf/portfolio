@@ -2,9 +2,9 @@
 
 import { FC } from 'react';
 
+import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 
-import { Icon } from '~components/Imagery';
 import { Link } from '~i18n/routing';
 
 import { Text } from '../Text';

@@ -2,10 +2,10 @@
 
 import { FC } from 'react';
 
+import { Icon } from '@repo/ui/Imagery';
 import { formatCellphone } from '@repo/utils';
 import { useTranslations } from 'next-intl';
 
-import { Icon } from '~/components/Imagery';
 import { Link } from '~i18n/routing';
 
 import { Divider } from '../Divider';
