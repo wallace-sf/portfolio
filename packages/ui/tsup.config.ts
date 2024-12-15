@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     'Control/index': 'src/Control/index.ts',
     'Imagery/index': 'src/Imagery/index.ts',
+    'View/index': 'src/View/index.ts',
   }, // Arquivo de entrada
   dts: true, // Gera o arquivo index.d.ts
   format: ['cjs', 'esm'], // Formatos de saída (opcional, pode ser ajustado)
