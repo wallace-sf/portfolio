@@ -8,6 +8,7 @@ import {
   RadioGroupProps,
   RadioGroupChildrenFn,
 } from '@repo/ui/Control';
+import { Divider } from '@repo/ui/View';
 import classNames from 'classnames';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -15,7 +16,6 @@ import { useRouter } from 'next/navigation';
 import { useLayout } from '~hooks';
 import { usePathname } from '~i18n/routing';
 
-import { Divider } from '../Divider';
 import { MenuItem } from '../MenuItem';
 import { LANGUAGES_OPTIONS } from './constants';
 

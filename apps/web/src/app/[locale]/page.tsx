@@ -1,14 +1,9 @@
 import { IProjectProps } from '@repo/core';
+import { Divider } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
-import {
-  ContactForm,
-  Divider,
-  HeroBanner,
-  ProjectList,
-  ContactInfo,
-} from '~components';
+import { ContactForm, HeroBanner, ProjectList, ContactInfo } from '~components';
 
 const PROJECTS: IProjectProps[] = [
   {
