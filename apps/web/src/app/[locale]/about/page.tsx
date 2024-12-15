@@ -1,8 +1,9 @@
 import { FC } from 'react';
 
 import { IProfessionalValueProps, IExperienceProps } from '@repo/core';
+import { Divider } from '@repo/ui/View';
 
-import { ProfessionalValue, ExperienceCard, Divider } from '~components/View';
+import { ProfessionalValue, ExperienceCard } from '~components/View';
 
 const PROFESSIONAL_VALUES: IProfessionalValueProps[] = [
   {
