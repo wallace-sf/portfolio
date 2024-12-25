@@ -13,11 +13,11 @@ import classNames from 'classnames';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import { useLayout } from '~hooks';
+import { useLayout, useTheme, Theme, useDarkMode } from '~hooks';
 import { usePathname } from '~i18n/routing';
 
 import { MenuItem } from '../MenuItem';
-import { LANGUAGES_OPTIONS } from './constants';
+import { LANGUAGES_OPTIONS, THEME_OPTIONS } from './constants';
 
 export const SideNavigation: FC = () => {
   const { open } = useLayout();
@@ -25,6 +25,8 @@ export const SideNavigation: FC = () => {
   const locale = useLocale();
   const { replace } = useRouter();
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const isDarkMode = useDarkMode();
 
   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
     (event) => {
@@ -35,7 +37,14 @@ export const SideNavigation: FC = () => {
     [replace, pathname],
   );
 
-  const renderRadio = useCallback<RadioGroupChildrenFn>(
+  const onChangeTheme = useCallback<RadioGroupProps['onChange']>(
+    (event) => {
+      setTheme(event.target.value as Theme);
+    },
+    [setTheme],
+  );
+
+  const renderLanguages = useCallback<RadioGroupChildrenFn>(
     ({ name, value, onChange }) => {
       return LANGUAGES_OPTIONS.map(({ label, icon, option }) => (
         <li key={option} className="flex flex-row gap-x-3">
@@ -53,6 +62,27 @@ export const SideNavigation: FC = () => {
       ));
     },
     [],
+  );
+
+  const renderThemes = useCallback<RadioGroupChildrenFn>(
+    ({ name, value, onChange }) => {
+      return THEME_OPTIONS.map(({ label, option, icon }) => (
+        <li key={option} className="flex flex-row gap-x-3">
+          <Radio
+            id={option}
+            name={name}
+            value={value}
+            onChange={onChange}
+            option={option}
+            icon={icon}
+            iconClassName={isDarkMode ? 'text-white' : 'text-black'}
+          >
+            {label}
+          </Radio>
+        </li>
+      ));
+    },
+    [isDarkMode],
   );
 
   return (
@@ -99,6 +129,21 @@ export const SideNavigation: FC = () => {
           GitHub
         </MenuItem.Item2.Link>
         <MenuItem.Item2.Expandable
+          title={t('theme')}
+          icon="material-symbols:contrast"
+          iconClassName="text-white"
+        >
+          <RadioGroup
+            name="theme"
+            value={theme}
+            onChange={onChangeTheme}
+            containerElementType="ul"
+            className="flex flex-col gap-y-2"
+          >
+            {renderThemes}
+          </RadioGroup>
+        </MenuItem.Item2.Expandable>
+        <MenuItem.Item2.Expandable
           title={t('language')}
           icon="material-symbols:language"
           iconClassName="text-white"
@@ -108,8 +153,9 @@ export const SideNavigation: FC = () => {
             value={locale}
             onChange={onChangeLanguage}
             containerElementType="ul"
+            className="flex flex-col gap-y-2"
           >
-            {renderRadio}
+            {renderLanguages}
           </RadioGroup>
         </MenuItem.Item2.Expandable>
       </ul>

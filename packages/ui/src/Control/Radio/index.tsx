@@ -11,6 +11,7 @@ export interface IRadioProps
     'type' | 'className' | 'children'
   > {
   icon?: IconProps['icon'];
+  iconClassName?: string;
   option: string;
   labelProps?: React.LabelHTMLAttributes<HTMLLabelElement>;
   children?:
@@ -24,6 +25,7 @@ export const Radio: FC<IRadioProps> = ({
   labelProps,
   children,
   icon,
+  iconClassName,
   ...props
 }) => {
   const checked = useMemo(() => value === option, [value, option]);
@@ -57,7 +59,7 @@ export const Radio: FC<IRadioProps> = ({
           <span className="pointer-events-none col-start-1 row-start-1 w-2 h-2 rounded-full peer-checked:bg-white peer-checked:peer-disabled:bg-gray-400" />
         ) : null}
       </div>
-      <Icon icon={icon} />
+      {icon != null ? <Icon icon={icon} className={iconClassName} /> : null}
       <span className="text-body-xs !text-white text-start">
         {children instanceof Function ? children({ checked }) : children}
       </span>

@@ -24,7 +24,8 @@
     "projects": "Projects",
     "about": "About",
     "resume": "Resume",
-    "language": "Language"
+    "language": "Language",
+    "theme": "Theme"
   },
   "Validations": {
     "required": "Required field.",
