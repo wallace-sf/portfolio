@@ -24,7 +24,8 @@
     "projects": "Projetos",
     "about": "Sobre mim",
     "resume": "Currículo",
-    "language": "Idioma"
+    "language": "Idioma",
+    "theme": "Tema"
   },
   "Validations": {
     "required": "Campo obrigatório.",

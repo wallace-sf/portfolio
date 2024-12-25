@@ -2,6 +2,7 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import plugin from 'tailwindcss/plugin';
 
 export default plugin(() => {}, {
+  darkMode: 'selector',
   theme: {
     extend: {
       aspectRatio: {
