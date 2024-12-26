@@ -1,23 +1,25 @@
-import type { Config } from "tailwindcss";
+import sharedConfig from '@repo/tailwind-config';
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    'node_modules/@repo/ui/dist/**/*.js',
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      height: {
+        'sidenav-desktop': 'calc(100vh - var(--header-height-desktop))',
+        'sidenav-mobile': 'calc(100vh - var(--header-height-mobile))',
       },
-      fontFamily: {
-        sans: ["var(--font-geist-sans)"],
-        mono: ["var(--font-geist-mono)"],
+      spacing: {
+        'header-desktop': 'var(--header-height-desktop)',
+        'header-mobile': 'var(--header-height-mobile)',
       },
     },
   },
-  plugins: [],
+  plugins: [sharedConfig],
 };
 export default config;

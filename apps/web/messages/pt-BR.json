@@ -1,0 +1,34 @@
+{
+  "ContactForm": {
+    "title": "Entre em contato",
+    "submit": "Enviar",
+    "messagePlaceholder": "Sua mensagem aqui...",
+    "subject": "Vamos conversar sobre um projeto?"
+  },
+  "ContactInfo": {
+    "email": "E-mail",
+    "paragraph1": "Não gosta de preencher formulário? Sem problemas!",
+    "paragraph2": "Sinta-se à vontade para me enviar uma mensagem no WhatsApp ou me enviar um e-mail."
+  },
+  "Clipboard": {
+    "copy": "Copiar para a área de transferência"
+  },
+  "Home": {
+    "projects_title": "Projetos"
+  },
+  "ProjectCard": {
+    "view_project": "Ver projeto"
+  },
+  "SideNavigation": {
+    "home": "Início",
+    "projects": "Projetos",
+    "about": "Sobre mim",
+    "resume": "Currículo",
+    "language": "Idioma",
+    "theme": "Tema"
+  },
+  "Validations": {
+    "required": "Campo obrigatório.",
+    "min": "Mínimo de 3 caracteres."
+  }
+}

@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --header-height-desktop: 104px;
+  --header-height-mobile: 68px;
+}
