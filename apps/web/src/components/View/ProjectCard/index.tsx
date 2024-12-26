@@ -3,11 +3,12 @@
 import { FC } from 'react';
 
 import { ISkillProps } from '@repo/core';
+import { Button } from '@repo/ui/Control';
+import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
-import { Button } from '~components/Control';
-import { Icon } from '~components/Imagery';
 import { useBreakpoint } from '~hooks';
 
 import { SkillGroup } from '../SkillGroup';
@@ -27,6 +28,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   compact = false,
   skills,
 }) => {
+  const t = useTranslations('Clipboard');
   const isXL = useBreakpoint('xl');
 
   return (
@@ -96,6 +98,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
       </section>
       <Button.Clipboard
         text="This is the text copied from project card."
+        tooltip={t('copy')}
         className={classNames(
           'absolute z-40 top-5 right-5 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300',
           {

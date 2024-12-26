@@ -2,13 +2,13 @@
 
 import { FC } from 'react';
 
+import { Icon } from '@repo/ui/Imagery';
+import { Divider } from '@repo/ui/View';
 import { formatCellphone } from '@repo/utils';
 import { useTranslations } from 'next-intl';
 
-import { Icon } from '~/components/Imagery';
 import { Link } from '~i18n/routing';
 
-import { Divider } from '../Divider';
 import { MenuItem } from '../MenuItem';
 
 export const ContactInfo: FC = () => {

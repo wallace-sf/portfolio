@@ -3,10 +3,8 @@
 import { FC } from 'react';
 
 import { IProfessionalValueProps } from '@repo/core';
-
-import { Icon } from '~components/Imagery';
-
-import { TextRich } from '../TextRich';
+import { Icon } from '@repo/ui/Imagery';
+import { TextRich } from '@repo/ui/View';
 
 export const ProfessionalValue: FC<IProfessionalValueProps> = ({
   icon,

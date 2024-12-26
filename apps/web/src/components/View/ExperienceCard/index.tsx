@@ -3,11 +3,11 @@
 import { FC } from 'react';
 
 import { IExperienceProps } from '@repo/core';
+import { TextRich } from '@repo/ui/View';
 
 import { useBreakpoint } from '~hooks';
 
 import { SkillGroup } from '../SkillGroup';
-import { TextRich } from '../TextRich';
 
 export const ExperienceCard: FC<IExperienceProps> = ({
   company,

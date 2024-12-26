@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 
 import { AppLayout } from '~components';
 
+import '@repo/tailwind-config/tailwind.css';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });

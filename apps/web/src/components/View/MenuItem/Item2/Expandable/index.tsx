@@ -2,10 +2,9 @@
 
 import { FC } from 'react';
 
+import { Accordion } from '@repo/ui/Control';
+import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
-
-import { Accordion } from '~components/Control';
-import { Icon } from '~components/Imagery';
 
 import { Text } from '../../Text';
 import { IMenuItemProps } from '../../types';
@@ -25,17 +24,9 @@ export const Expandable: FC<IExpandableProps> = ({
 }) => {
   return (
     <Accordion.Root>
-      {({ expanded, toggle }) => (
-        <div
-          className={classNames(
-            ROOT_STYLE,
-            'flex-col cursor-pointer',
-            className,
-          )}
-          onClick={toggle}
-          role="presentation"
-        >
-          <Accordion.Header className="w-full">
+      {({ expanded }) => (
+        <div className={classNames(ROOT_STYLE, 'flex-col !p-0', className)}>
+          <Accordion.Header className="w-full cursor-pointer !px-4 !py-3">
             <Container>
               <Icon icon={icon} className={iconClassName} />
               <Text className="!text-white">{title}</Text>
@@ -47,7 +38,13 @@ export const Expandable: FC<IExpandableProps> = ({
               })}
             />
           </Accordion.Header>
-          <Accordion.Body className="w-full">{children}</Accordion.Body>
+          <Accordion.Body
+            className={classNames('w-full !px-4', {
+              '!mb-3': expanded,
+            })}
+          >
+            {children}
+          </Accordion.Body>
         </div>
       )}
     </Accordion.Root>

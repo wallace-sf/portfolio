@@ -30,3 +30,21 @@ pre-commit:
       run: pnpm types:web
     test:web:
       run: pnpm test:web
+    lint:ui:
+      run: pnpm lint:ui
+    format:ui:
+      run: pnpm format:ui
+    types:ui:
+      run: pnpm types:ui
+    lint:tailwind:
+      run: pnpm lint:tailwind
+    format:tailwind:
+      run: pnpm format:tailwind
+    types:tailwind:
+      run: pnpm types:tailwind
+    lint:storybooks:
+      run: pnpm lint:storybooks
+    format:storybooks:
+      run: pnpm format:storybooks
+    types:storybooks:
+      run: pnpm types:storybooks

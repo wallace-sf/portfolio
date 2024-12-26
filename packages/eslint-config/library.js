@@ -1,6 +1,5 @@
 const { resolve } = require("node:path");
 
-const root = resolve(process.cwd(), "../../");
 const project = resolve(process.cwd(), "tsconfig.json");
 
 /** @type {import("eslint").Linter.Config} */
@@ -70,6 +69,10 @@ module.exports = {
           match: true,
         },
       },
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
     ],
     "import-helpers/order-imports": [
       "warn",
