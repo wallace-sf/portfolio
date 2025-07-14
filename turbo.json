@@ -9,7 +9,7 @@
     "web#build": {
       "env": ["NEXT_PUBLIC_*"]
     },
-    "storybook": {
+    "storybook#dev": {
       "cache": false,
       "persistent": true
     },
