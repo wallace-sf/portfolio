@@ -14,11 +14,9 @@ export const ToggleStandard: FC = () => {
 
   return (
     <Button.ToggleGroup value={value} onChange={onChange}>
-      <>
-        <Button.Toggle value="a">A</Button.Toggle>
-        <Button.Toggle value="b">B</Button.Toggle>
-        <Button.Toggle value="c">C</Button.Toggle>
-      </>
+      <Button.Toggle value="a">A</Button.Toggle>
+      <Button.Toggle value="b">B</Button.Toggle>
+      <Button.Toggle value="c">C</Button.Toggle>
     </Button.ToggleGroup>
   );
 };

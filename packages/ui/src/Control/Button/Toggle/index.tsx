@@ -19,7 +19,7 @@ export const Toggle: FC<IToggleProps> = ({ children, ...props }) => {
   );
 
   return (
-    <ButtonBase {...props} onClick={handleClick} unstyled>
+    <ButtonBase {...props} onClick={handleClick}>
       {children}
     </ButtonBase>
   );
