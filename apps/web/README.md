@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# apps/web — Front-end do portfolio
 
-## Getting Started
+Next.js 14 com App Router, **next-intl** (pt-BR, en-US, es), Tailwind e `@repo/core` / `@repo/ui` / `@repo/utils`.
 
-First, run the development server:
+---
+
+## Índice
+
+- [Como rodar](#como-rodar)
+- [Variáveis de ambiente](#variáveis-de-ambiente)
+- [Rotas e páginas](#rotas-e-páginas)
+- [i18n](#i18n)
+- [Scripts](#scripts)
+
+---
+
+## Como rodar
+
+Na **raiz do monorepo**:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ou só o web (a partir da raiz, após `pnpm install`):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   ```bash
+   pnpm -C apps/web dev
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **URL**: `http://localhost:3000`
+- **Locales**: `/`, `/pt-BR`, `/en-US`, `/es` (next-intl com `localeDetection` e prefixo opcional conforme [routing](src/i18n/routing.ts)).
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Variáveis de ambiente
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copie o exemplo e edite conforme necessário:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+cp apps/web/.env.example apps/web/.env.local
+```
 
-## Deploy on Vercel
+| Variável | Obrigatória | Uso |
+|----------|-------------|-----|
+| `NEXT_PUBLIC_CONTACT_EMAIL` | Não | E-mail de contato |
+| `NEXT_PUBLIC_CONTACT_NUMBER` | Não | Telefone |
+| `NEXT_PUBLIC_GITHUB_URL` | Não | Link GitHub |
+| `NEXT_PUBLIC_LINKEDIN_URL` | Não | Link LinkedIn |
+| `NEXT_PUBLIC_RESUME_URL` | Não | Link do currículo |
+| `NEXT_PUBLIC_WHATSAPP_URL` | Não | Link WhatsApp |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+O app funciona sem elas; links e contatos ficam vazios. **Não commitar** `.env` ou `.env.local`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Para Supabase (quando implementado), ver [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md) e [packages/infra/README.md](../../packages/infra/README.md).
+
+---
+
+## Rotas e páginas
+
+Estrutura sob `src/app/[locale]/`:
+
+| Rota | Arquivo | Descrição |
+|------|---------|-----------|
+| `/`, `/pt-BR`, `/en-US`, `/es` | `page.tsx` | Home: hero, projetos, formulário de contato |
+| `/[locale]/about` | `about/page.tsx` | Sobre mim |
+| `/[locale]/projects` | `projects/page.tsx` | Listagem de projetos |
+| `/[locale]/...rest` | `[...rest]/page.tsx` | Catch-all (ex.: 404) |
+
+`[locale]` é gerenciado pelo next-intl; `routing.locales`: `['en-US','es','pt-BR']`, `defaultLocale`: `'en-US'`.
+
+---
+
+## i18n
+
+- **Biblioteca**: [next-intl](https://next-intl-docs.vercel.app)
+- **Config**:
+  - `src/i18n/routing.ts` — locales, default, `createNavigation` (Link, redirect, usePathname, useRouter)
+  - `src/i18n/request.ts` — `getRequestConfig`, carrega `messages/{locale}.json`
+- **Mensagens**: `messages/pt-BR.json`, `messages/en-US.json`, `messages/es.json`
+- **Uso**: `useTranslations('Chave')` (ex.: `useTranslations('Home')`)
+
+Detalhes da estratégia (UI + domínio, LocalizedText, fallback): [docs/I18N.md](../../docs/I18N.md).
+
+---
+
+## Scripts
+
+| Comando | Descrição |
+|---------|-----------|
+| `pnpm dev` | `next dev` |
+| `pnpm build` | `next build` |
+| `pnpm start` | `next start` (pós-build) |
+| `pnpm lint` | ESLint com --fix |
+| `pnpm lint:check` | ESLint sem --fix |
+| `pnpm format` | Prettier em `src` |
+| `pnpm format:check` | Checagem Prettier |
+| `pnpm types` | `tsc --noEmit` |
+| `pnpm test` | Jest |
+
+Dev/build usam `NEXT_PUBLIC_*` (ver `turbo.json` na raiz).
