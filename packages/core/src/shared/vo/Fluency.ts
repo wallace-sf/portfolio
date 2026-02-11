@@ -1,8 +1,7 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../errors';
-
 import { ValueObject } from '../base/ValueObject';
+import { ValidationError } from '../errors';
 
 export type FluencyValue = Readonly<typeof Fluency.LEVELS>[number];
 
@@ -33,6 +32,7 @@ export class Fluency extends ValueObject<FluencyValue> {
 
     const ERROR_CODE = Fluency.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

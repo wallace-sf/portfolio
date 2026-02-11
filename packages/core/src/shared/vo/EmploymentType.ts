@@ -1,8 +1,7 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../errors';
-
 import { ValueObject } from '../base/ValueObject';
+import { ValidationError } from '../errors';
 
 export type EmploymentTypeValue = Readonly<
   typeof EmploymentType.EMPLOYMENTS
@@ -40,6 +39,7 @@ export class EmploymentType extends ValueObject<EmploymentTypeValue> {
 
     const ERROR_CODE = EmploymentType.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

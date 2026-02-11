@@ -1,8 +1,7 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../errors';
-
 import { ValueObject } from '../base/ValueObject';
+import { ValidationError } from '../errors';
 
 export class Name extends ValueObject<string> {
   static readonly ERROR_CODE = 'ERROR_INVALID_NAME';
@@ -24,7 +23,8 @@ export class Name extends ValueObject<string> {
 
     const ERROR_CODE = Name.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 
   public get normalized(): string {

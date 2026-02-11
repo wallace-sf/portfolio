@@ -1,8 +1,7 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../errors';
-
 import { ValueObject } from '../base/ValueObject';
+import { ValidationError } from '../errors';
 
 export type SkillTypeValue = Readonly<typeof SkillType.SKILLS>[number];
 
@@ -35,6 +34,7 @@ export class SkillType extends ValueObject<SkillTypeValue> {
 
     const ERROR_CODE = SkillType.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }
