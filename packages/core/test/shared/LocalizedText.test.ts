@@ -1,6 +1,4 @@
-import { ValidationError } from '@repo/utils';
-
-import { LocalizedText } from '../../src';
+import { LocalizedText, ValidationError } from '../../src';
 
 describe('LocalizedText', () => {
   describe('get(locale, fallback?)', () => {
@@ -73,16 +71,16 @@ describe('LocalizedText', () => {
     it('rejects missing pt-BR', () => {
       expect(() =>
         LocalizedText.new({ 'pt-BR': undefined as unknown as string }),
-      ).toThrow(new ValidationError(LocalizedText.ERROR_CODE, expectedMessage));
+      ).toThrow(new ValidationError({ code: LocalizedText.ERROR_CODE, message: expectedMessage }));
 
       expect(() => LocalizedText.new({ 'pt-BR': '' })).toThrow(
-        new ValidationError(LocalizedText.ERROR_CODE, expectedMessage),
+        new ValidationError({ code: LocalizedText.ERROR_CODE, message: expectedMessage }),
       );
     });
 
     it('rejects empty pt-BR after trim', () => {
       expect(() => LocalizedText.new({ 'pt-BR': '   ' })).toThrow(
-        new ValidationError(LocalizedText.ERROR_CODE, expectedMessage),
+        new ValidationError({ code: LocalizedText.ERROR_CODE, message: expectedMessage }),
       );
     });
   });

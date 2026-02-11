@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { ProfessionalValue, Text } from '../../src';
+import { ProfessionalValue, Text, ValidationError } from '../../src';
 import { ProfessionalValueBuilder } from '../data';
 
 describe('ProfessionalValue', () => {
@@ -12,10 +11,10 @@ describe('ProfessionalValue', () => {
 
   it('should be invalid when icon is invalid', () => {
     expect(() => ProfessionalValueBuilder.build().withoutIcon().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 2 e 50 caracteres.',
-      ),
+      new ValidationError({
+        code: Text.ERROR_CODE,
+        message: 'O texto deve ter entre 2 e 50 caracteres.',
+      }),
     );
   });
 
@@ -23,10 +22,10 @@ describe('ProfessionalValue', () => {
     expect(() =>
       ProfessionalValueBuilder.build().withoutContent().now(),
     ).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 1 e 125000 caracteres.',
-      ),
+      new ValidationError({
+        code: Text.ERROR_CODE,
+        message: 'O texto deve ter entre 1 e 125000 caracteres.',
+      }),
     );
   });
 

@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { ValidationError } from '@repo/utils';
 
 import {
   Experience,
@@ -7,6 +6,7 @@ import {
   LocationType,
   EmploymentType,
   DateTime,
+  ValidationError,
 } from '../../src';
 import { ExperienceBuilder, SkillBuilder } from '../data';
 
@@ -19,10 +19,7 @@ describe('Experience', () => {
 
   it('should be invalid when company is invalid', () => {
     expect(() => ExperienceBuilder.build().withoutCompany().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 3 e 100 caracteres.',
-      ),
+      new ValidationError({ code: Text.ERROR_CODE, message: 'O texto deve ter entre 3 e 100 caracteres.' }),
     );
   });
 
@@ -30,55 +27,37 @@ describe('Experience', () => {
     expect(() =>
       ExperienceBuilder.build().withoutEmploymentType().now(),
     ).toThrow(
-      new ValidationError(
-        EmploymentType.ERROR_CODE,
-        'O valor deve ser um tipo de emprego válido.',
-      ),
+      new ValidationError({ code: EmploymentType.ERROR_CODE, message: 'O valor deve ser um tipo de emprego válido.' }),
     );
   });
 
   it('should be invalid when end at is invalid', () => {
     expect(() => ExperienceBuilder.build().withEndAt('#').now()).toThrow(
-      new ValidationError(
-        DateTime.ERROR_CODE,
-        'O valor deve ser uma data e hora válida.',
-      ),
+      new ValidationError({ code: DateTime.ERROR_CODE, message: 'O valor deve ser uma data e hora válida.' }),
     );
   });
 
   it('should be invalid when start at is invalid', () => {
     expect(() => ExperienceBuilder.build().withStartAt('#').now()).toThrow(
-      new ValidationError(
-        DateTime.ERROR_CODE,
-        'O valor deve ser uma data e hora válida.',
-      ),
+      new ValidationError({ code: DateTime.ERROR_CODE, message: 'O valor deve ser uma data e hora válida.' }),
     );
   });
 
   it('should be invalid when position is invalid', () => {
     expect(() => ExperienceBuilder.build().withoutPosition().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 3 e 100 caracteres.',
-      ),
+      new ValidationError({ code: Text.ERROR_CODE, message: 'O texto deve ter entre 3 e 100 caracteres.' }),
     );
   });
 
   it('should be invalid when location is invalid', () => {
     expect(() => ExperienceBuilder.build().withoutLocation().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 3 e 100 caracteres.',
-      ),
+      new ValidationError({ code: Text.ERROR_CODE, message: 'O texto deve ter entre 3 e 100 caracteres.' }),
     );
   });
 
   it('should be invalid when location type is invalid', () => {
     expect(() => ExperienceBuilder.build().withoutLocationType().now()).toThrow(
-      new ValidationError(
-        LocationType.ERROR_CODE,
-        'O valor deve ser um tipo localização válido.',
-      ),
+      new ValidationError({ code: LocationType.ERROR_CODE, message: 'O valor deve ser um tipo localização válido.' }),
     );
   });
 
@@ -89,10 +68,7 @@ describe('Experience', () => {
         .withEndAt('2021-01-01')
         .now(),
     ).toThrow(
-      new ValidationError(
-        Experience.ERROR_CODE,
-        'O início da carreira deve ser menor ou igual ao final da carreira.',
-      ),
+      new ValidationError({ code: Experience.ERROR_CODE, message: 'O início da carreira deve ser menor ou igual ao final da carreira.' }),
     );
   });
 

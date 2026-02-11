@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { Language, Name, Fluency, Text } from '../../src';
+import { Language, Name, Fluency, Text, ValidationError } from '../../src';
 import { LanguageBuilder } from '../data';
 
 describe('Language', () => {
@@ -12,25 +11,25 @@ describe('Language', () => {
 
   it('should be invalid when name is invalid', () => {
     expect(() => LanguageBuilder.build().withoutName().now()).toThrow(
-      new ValidationError(Name.ERROR_CODE, 'Nome deve conter apenas letras.'),
+      new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
     );
   });
 
   it('should be invalid when fluency is invalid', () => {
     expect(() => LanguageBuilder.build().withoutFluency().now()).toThrow(
-      new ValidationError(
-        Fluency.ERROR_CODE,
-        'O valor deve ser um nível de fluência válido.',
-      ),
+      new ValidationError({
+        code: Fluency.ERROR_CODE,
+        message: 'O valor deve ser um nível de fluência válido.',
+      }),
     );
   });
 
   it('should be invalid when locale is invalid', () => {
     expect(() => LanguageBuilder.build().withoutLocale().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 2 e 50 caracteres.',
-      ),
+      new ValidationError({
+        code: Text.ERROR_CODE,
+        message: 'O texto deve ter entre 2 e 50 caracteres.',
+      }),
     );
   });
 

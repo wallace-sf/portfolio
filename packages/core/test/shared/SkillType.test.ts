@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { SkillType } from '../../src';
+import { SkillType, ValidationError } from '../../src';
 
 describe('SkillType', () => {
   describe('when is new', () => {
@@ -25,16 +24,10 @@ describe('SkillType', () => {
 
     it('should be invalid when param is invalid', () => {
       expect(() => SkillType.new('' as 'EDUCATION')).toThrow(
-        new ValidationError(
-          SkillType.ERROR_CODE,
-          'O valor deve ser um tipo de habilidade válido.',
-        ),
+        new ValidationError({ code: SkillType.ERROR_CODE, message: 'O valor deve ser um tipo de habilidade válido.' }),
       );
       expect(() => SkillType.new('#' as 'EDUCATION')).toThrow(
-        new ValidationError(
-          SkillType.ERROR_CODE,
-          'O valor deve ser um tipo de habilidade válido.',
-        ),
+        new ValidationError({ code: SkillType.ERROR_CODE, message: 'O valor deve ser um tipo de habilidade válido.' }),
       );
     });
   });
