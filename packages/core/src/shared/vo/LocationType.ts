@@ -1,8 +1,7 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../errors';
-
 import { ValueObject } from '../base/ValueObject';
+import { ValidationError } from '../errors';
 
 export type LocationTypeValue = Readonly<typeof LocationType.LOCATIONS>[number];
 
@@ -29,6 +28,7 @@ export class LocationType extends ValueObject<LocationTypeValue> {
 
     const ERROR_CODE = LocationType.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

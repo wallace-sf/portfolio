@@ -1,7 +1,5 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../shared/errors';
-
 import {
   EmploymentType,
   EmploymentTypeValue,
@@ -12,6 +10,7 @@ import {
   Text,
   DateTime,
 } from '../shared';
+import { ValidationError } from '../shared/errors';
 import { ISkillProps, Skill, SkillFactory } from '../skill';
 
 export interface IExperienceProps extends IEntityProps {
@@ -59,6 +58,7 @@ export class Experience extends Entity<Experience, IExperienceProps> {
 
     const ERROR_CODE = Experience.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }
