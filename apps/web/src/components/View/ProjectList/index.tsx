@@ -2,7 +2,7 @@
 
 import { FC, useMemo } from 'react';
 
-import { IProjectProps } from '@repo/core';
+import { IProjectProps } from '@repo/core/portfolio';
 import classNames from 'classnames';
 
 import { ProjectCard, IProjectCardProps } from '../ProjectCard';

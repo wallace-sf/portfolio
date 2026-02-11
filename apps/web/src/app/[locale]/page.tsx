@@ -1,4 +1,4 @@
-import { IProjectProps } from '@repo/core';
+import { IProjectProps } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 

@@ -74,6 +74,21 @@ module.exports = {
       "error",
       { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
     ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          "@repo/core/src",
+          "@repo/core/src/*",
+          "@repo/utils/src",
+          "@repo/utils/src/*",
+          "**/packages/core/src",
+          "**/packages/core/src/*",
+          "**/packages/utils/src",
+          "**/packages/utils/src/*",
+        ],
+      },
+    ],
     "import-helpers/order-imports": [
       "warn",
       {

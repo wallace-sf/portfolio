@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 
-import { IExperienceProps } from '@repo/core';
+import { IExperienceProps } from '@repo/core/portfolio';
 import { TextRich } from '@repo/ui/View';
 
 import { useBreakpoint } from '~hooks';
