@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 
-import { ISkillProps } from '@repo/core';
+import { ISkillProps } from '@repo/core/portfolio';
 import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';

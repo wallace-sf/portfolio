@@ -1,6 +1,9 @@
 import { FC } from 'react';
 
-import { IProfessionalValueProps, IExperienceProps } from '@repo/core';
+import {
+  IProfessionalValueProps,
+  IExperienceProps,
+} from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
 
 import { ProfessionalValue, ExperienceCard } from '~components/View';

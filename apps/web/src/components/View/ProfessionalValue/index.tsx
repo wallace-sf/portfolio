@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 
-import { IProfessionalValueProps } from '@repo/core';
+import { IProfessionalValueProps } from '@repo/core/portfolio';
 import { Icon } from '@repo/ui/Imagery';
 import { TextRich } from '@repo/ui/View';
 

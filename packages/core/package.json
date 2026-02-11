@@ -6,6 +6,13 @@
     "linux"
   ],
   "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./shared": "./src/shared/index.ts",
+    "./portfolio": "./src/portfolio/index.ts",
+    "./blog": "./src/blog/index.ts",
+    "./contact": "./src/contact/index.ts"
+  },
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watchAll --collectCoverage",

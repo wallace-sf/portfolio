@@ -2,7 +2,7 @@
 
 import { FC, useMemo, useState } from 'react';
 
-import { ISkillProps } from '@repo/core';
+import { ISkillProps } from '@repo/core/portfolio';
 import { useIsomorphicLayoutEffect } from 'usehooks-ts';
 
 import { Skill } from '../Skill';
