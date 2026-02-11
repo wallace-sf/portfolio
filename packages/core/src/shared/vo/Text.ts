@@ -1,8 +1,7 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../errors';
-
 import { ValueObject } from '../base/ValueObject';
+import { ValidationError } from '../errors';
 
 interface ITextConfig {
   min?: number;
@@ -30,6 +29,7 @@ export class Text extends ValueObject<string, ITextConfig> {
 
     const ERROR_CODE = Text.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

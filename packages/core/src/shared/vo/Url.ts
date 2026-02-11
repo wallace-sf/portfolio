@@ -1,8 +1,7 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../errors';
-
 import { ValueObject } from '../base/ValueObject';
+import { ValidationError } from '../errors';
 
 export class Url extends ValueObject<string> {
   static readonly ERROR_CODE = 'ERROR_INVALID_URL';
@@ -23,6 +22,7 @@ export class Url extends ValueObject<string> {
 
     const ERROR_CODE = Url.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

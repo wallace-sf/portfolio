@@ -1,8 +1,7 @@
 import { Validator } from '@repo/utils';
 
-import { ValidationError } from '../errors';
-
 import { ValueObject } from '../base/ValueObject';
+import { ValidationError } from '../errors';
 
 export class DateTime extends ValueObject<string> {
   static readonly ERROR_CODE = 'ERROR_INVALID_DATETIME';
@@ -23,7 +22,8 @@ export class DateTime extends ValueObject<string> {
 
     const ERROR_CODE = DateTime.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
+    if (!isValid && error)
+      throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 
   get ms(): number {
