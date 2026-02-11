@@ -1,4 +1,6 @@
-import { Validator, ValidationError } from '@repo/utils';
+import { Validator } from '@repo/utils';
+
+import { ValidationError } from '../errors';
 
 import { ValueObject } from '../base/ValueObject';
 
@@ -27,12 +29,12 @@ export class SkillType extends ValueObject<SkillTypeValue> {
     const { error, isValid } = Validator.new(value)
       .in(
         [...SkillType.SKILLS],
-        'O valor deve ser um tipo de habilidade válido.',
+        'O valor deve ser um tipo de habilidade válido.',
       )
       .validate();
 
     const ERROR_CODE = SkillType.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
+    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

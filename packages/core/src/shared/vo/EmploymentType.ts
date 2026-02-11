@@ -1,4 +1,6 @@
-import { Validator, ValidationError } from '@repo/utils';
+import { Validator } from '@repo/utils';
+
+import { ValidationError } from '../errors';
 
 import { ValueObject } from '../base/ValueObject';
 
@@ -32,12 +34,12 @@ export class EmploymentType extends ValueObject<EmploymentTypeValue> {
     const { error, isValid } = Validator.new(value)
       .in(
         [...EmploymentType.EMPLOYMENTS],
-        'O valor deve ser um tipo de emprego válido.',
+        'O valor deve ser um tipo de emprego válido.',
       )
       .validate();
 
     const ERROR_CODE = EmploymentType.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
+    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

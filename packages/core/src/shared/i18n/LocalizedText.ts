@@ -50,10 +50,10 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
   private static _validatePtBR(ptBR: string | undefined): void {
     const trimmed = ptBR?.trim();
     if (trimmed == null || trimmed === '') {
-      throw new ValidationError(
-        LocalizedText.ERROR_CODE,
-        'pt-BR is required and must be non-empty after trim.',
-      );
+      throw new ValidationError({
+        code: LocalizedText.ERROR_CODE,
+        message: 'pt-BR is required and must be non-empty after trim.',
+      });
     }
   }
 

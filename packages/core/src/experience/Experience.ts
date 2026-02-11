@@ -1,4 +1,6 @@
-import { Validator, ValidationError } from '@repo/utils';
+import { Validator } from '@repo/utils';
+
+import { ValidationError } from '../shared/errors';
 
 import {
   EmploymentType,
@@ -51,12 +53,12 @@ export class Experience extends Entity<Experience, IExperienceProps> {
     const { error, isValid } = Validator.combine(
       Validator.new(this.start_at.ms).lte(
         this.end_at?.value != null ? this.end_at.ms : this.start_at.ms,
-        'O início da carreira deve ser menor ou igual ao final da carreira.',
+        'O início da carreira deve ser menor ou igual ao final da carreira.',
       ),
     );
 
     const ERROR_CODE = Experience.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
+    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

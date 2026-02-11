@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { Url } from '../../src';
+import { Url, ValidationError } from '../../src';
 
 describe('Url', () => {
   describe('when is new', () => {
@@ -14,13 +13,13 @@ describe('Url', () => {
 
     it('should be invalid when param is invalid', () => {
       expect(() => Url.new()).toThrow(
-        new ValidationError(Url.ERROR_CODE, 'O valor deve ser uma URL válida.'),
+        new ValidationError({ code: Url.ERROR_CODE, message: 'O valor deve ser uma URL válida.' }),
       );
       expect(() => Url.new('')).toThrow(
-        new ValidationError(Url.ERROR_CODE, 'O valor deve ser uma URL válida.'),
+        new ValidationError({ code: Url.ERROR_CODE, message: 'O valor deve ser uma URL válida.' }),
       );
       expect(() => Url.new('#')).toThrow(
-        new ValidationError(Url.ERROR_CODE, 'O valor deve ser uma URL válida.'),
+        new ValidationError({ code: Url.ERROR_CODE, message: 'O valor deve ser uma URL válida.' }),
       );
     });
   });
