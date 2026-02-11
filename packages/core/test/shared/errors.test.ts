@@ -2,7 +2,7 @@ import {
   DomainError,
   NotFoundError,
   ValidationError,
-} from '../../src/shared/errors';
+} from '../../src';
 
 describe('DomainError', () => {
   it('stores code and details, has correct name', () => {
