@@ -1,4 +1,6 @@
-import { Validator, ValidationError } from '@repo/utils';
+import { Validator } from '@repo/utils';
+
+import { ValidationError } from '../errors';
 import { v4 as uuid } from 'uuid';
 
 import { ValueObject } from '../base/ValueObject';
@@ -22,6 +24,6 @@ export class Id extends ValueObject<string> {
 
     const ERROR_CODE = Id.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
+    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { EmploymentType } from '../../src';
+import { EmploymentType, ValidationError } from '../../src';
 
 describe('EmploymentType', () => {
   describe('when is new', () => {
@@ -34,16 +33,10 @@ describe('EmploymentType', () => {
 
     it('should be invalid when param is invalid', () => {
       expect(() => EmploymentType.new('' as 'APPRENTICE')).toThrow(
-        new ValidationError(
-          EmploymentType.ERROR_CODE,
-          'O valor deve ser um tipo de emprego válido.',
-        ),
+        new ValidationError({ code: EmploymentType.ERROR_CODE, message: 'O valor deve ser um tipo de emprego válido.' }),
       );
       expect(() => EmploymentType.new('#' as 'FREELANCE')).toThrow(
-        new ValidationError(
-          EmploymentType.ERROR_CODE,
-          'O valor deve ser um tipo de emprego válido.',
-        ),
+        new ValidationError({ code: EmploymentType.ERROR_CODE, message: 'O valor deve ser um tipo de emprego válido.' }),
       );
     });
   });

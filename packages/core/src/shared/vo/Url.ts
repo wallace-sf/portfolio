@@ -1,4 +1,6 @@
-import { Validator, ValidationError } from '@repo/utils';
+import { Validator } from '@repo/utils';
+
+import { ValidationError } from '../errors';
 
 import { ValueObject } from '../base/ValueObject';
 
@@ -16,11 +18,11 @@ export class Url extends ValueObject<string> {
 
   private _validate(value?: string): void {
     const { error, isValid } = Validator.new(value)
-      .url('O valor deve ser uma URL válida.')
+      .url('O valor deve ser uma URL válida.')
       .validate();
 
     const ERROR_CODE = Url.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
+    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { Name } from '../../src';
+import { Name, ValidationError } from '../../src';
 
 describe('Name', () => {
   describe('when is new', () => {
@@ -14,22 +13,22 @@ describe('Name', () => {
 
     it('should be invalid when param is invalid', () => {
       expect(() => Name.new()).toThrow(
-        new ValidationError(Name.ERROR_CODE, 'Nome deve conter apenas letras.'),
+        new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
       );
       expect(() => Name.new('')).toThrow(
-        new ValidationError(Name.ERROR_CODE, 'Nome deve conter apenas letras.'),
+        new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
       );
       expect(() => Name.new('@')).toThrow(
-        new ValidationError(Name.ERROR_CODE, 'Nome deve conter apenas letras.'),
+        new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
       );
       expect(() => Name.new('Nome_com_&*%$')).toThrow(
-        new ValidationError(Name.ERROR_CODE, 'Nome deve conter apenas letras.'),
+        new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
       );
       expect(() => Name.new('João da silva'.repeat(10))).toThrow(
-        new ValidationError(
-          Name.ERROR_CODE,
-          'O nome deve estar entre 3 e 100 caracteres.',
-        ),
+        new ValidationError({
+          code: Name.ERROR_CODE,
+          message: 'O nome deve estar entre 3 e 100 caracteres.',
+        }),
       );
     });
   });

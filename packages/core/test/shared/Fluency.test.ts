@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { Fluency } from '../../src';
+import { Fluency, ValidationError } from '../../src';
 
 describe('Fluency', () => {
   describe('when is new', () => {
@@ -28,16 +27,10 @@ describe('Fluency', () => {
 
     it('should be invalid when param is invalid', () => {
       expect(() => Fluency.new('' as 'BEGINNER')).toThrow(
-        new ValidationError(
-          Fluency.ERROR_CODE,
-          'O valor deve ser um nível de fluência válido.',
-        ),
+        new ValidationError({ code: Fluency.ERROR_CODE, message: 'O valor deve ser um nível de fluência válido.' }),
       );
       expect(() => Fluency.new('#' as 'BEGINNER')).toThrow(
-        new ValidationError(
-          Fluency.ERROR_CODE,
-          'O valor deve ser um nível de fluência válido.',
-        ),
+        new ValidationError({ code: Fluency.ERROR_CODE, message: 'O valor deve ser um nível de fluência válido.' }),
       );
     });
   });

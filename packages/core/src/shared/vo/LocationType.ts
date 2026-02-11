@@ -1,4 +1,6 @@
-import { Validator, ValidationError } from '@repo/utils';
+import { Validator } from '@repo/utils';
+
+import { ValidationError } from '../errors';
 
 import { ValueObject } from '../base/ValueObject';
 
@@ -21,12 +23,12 @@ export class LocationType extends ValueObject<LocationTypeValue> {
     const { error, isValid } = Validator.new(value)
       .in(
         [...LocationType.LOCATIONS],
-        'O valor deve ser um tipo localização válido.',
+        'O valor deve ser um tipo localização válido.',
       )
       .validate();
 
     const ERROR_CODE = LocationType.ERROR_CODE;
 
-    if (!isValid && error) throw new ValidationError(ERROR_CODE, error);
+    if (!isValid && error) throw new ValidationError({ code: ERROR_CODE, message: error });
   }
 }

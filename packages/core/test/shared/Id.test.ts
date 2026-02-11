@@ -1,6 +1,4 @@
-import { ValidationError } from '@repo/utils';
-
-import { Id } from '../../src';
+import { Id, ValidationError } from '../../src';
 
 describe('Id', () => {
   describe('when is new', () => {
@@ -14,7 +12,7 @@ describe('Id', () => {
 
     it('should be invalid when param is invalid', () => {
       expect(() => Id.new('')).toThrow(
-        new ValidationError(Id.ERROR_CODE, 'O id deve ser um UUID.'),
+        new ValidationError({ code: Id.ERROR_CODE, message: 'O id deve ser um UUID.' }),
       );
     });
 

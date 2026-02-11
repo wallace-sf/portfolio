@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { DateTime } from '../../src';
+import { DateTime, ValidationError } from '../../src';
 
 describe('DateTime', () => {
   describe('when is new', () => {
@@ -14,10 +13,7 @@ describe('DateTime', () => {
 
     it('should be invalid when param is invalid', () => {
       expect(() => DateTime.new('')).toThrow(
-        new ValidationError(
-          DateTime.ERROR_CODE,
-          'O valor deve ser uma data e hora válida.',
-        ),
+        new ValidationError({ code: DateTime.ERROR_CODE, message: 'O valor deve ser uma data e hora válida.' }),
       );
     });
 

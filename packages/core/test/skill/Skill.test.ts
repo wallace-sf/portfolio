@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { Skill, Text, SkillType } from '../../src';
+import { Skill, Text, SkillType, ValidationError } from '../../src';
 import { SkillBuilder } from '../data';
 describe('Skill', () => {
   it('should be valid when props are valid', () => {
@@ -11,28 +10,28 @@ describe('Skill', () => {
 
   it('should be invalid when description is invalid', () => {
     expect(() => SkillBuilder.build().withoutDescription().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 3 e 50 caracteres.',
-      ),
+      new ValidationError({
+        code: Text.ERROR_CODE,
+        message: 'O texto deve ter entre 3 e 50 caracteres.',
+      }),
     );
   });
 
   it('should be invalid when icon is invalid', () => {
     expect(() => SkillBuilder.build().withoutIcon().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 2 e 50 caracteres.',
-      ),
+      new ValidationError({
+        code: Text.ERROR_CODE,
+        message: 'O texto deve ter entre 2 e 50 caracteres.',
+      }),
     );
   });
 
   it('should be invalid when type is invalid', () => {
     expect(() => SkillBuilder.build().withoutType().now()).toThrow(
-      new ValidationError(
-        SkillType.ERROR_CODE,
-        'O valor deve ser um tipo de habilidade válido.',
-      ),
+      new ValidationError({
+        code: SkillType.ERROR_CODE,
+        message: 'O valor deve ser um tipo de habilidade válido.',
+      }),
     );
   });
 

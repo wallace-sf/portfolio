@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { ValidationError } from '@repo/utils';
 
-import { Project, Text } from '../../src';
+import { Project, Text, ValidationError } from '../../src';
 import { ProjectBuilder, SkillBuilder } from '../data';
 describe('Project', () => {
   it('should be valid when props are valid', () => {
@@ -12,28 +11,28 @@ describe('Project', () => {
 
   it('should be invalid when title is invalid', () => {
     expect(() => ProjectBuilder.build().withoutTitle().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 3 e 60 caracteres.',
-      ),
+      new ValidationError({
+        code: Text.ERROR_CODE,
+        message: 'O texto deve ter entre 3 e 60 caracteres.',
+      }),
     );
   });
 
   it('should be invalid when caption is invalid', () => {
     expect(() => ProjectBuilder.build().withoutCaption().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 3 e 200 caracteres.',
-      ),
+      new ValidationError({
+        code: Text.ERROR_CODE,
+        message: 'O texto deve ter entre 3 e 200 caracteres.',
+      }),
     );
   });
 
   it('should be invalid when content is invalid', () => {
     expect(() => ProjectBuilder.build().withoutContent().now()).toThrow(
-      new ValidationError(
-        Text.ERROR_CODE,
-        'O texto deve ter entre 3 e 12500 caracteres.',
-      ),
+      new ValidationError({
+        code: Text.ERROR_CODE,
+        message: 'O texto deve ter entre 3 e 12500 caracteres.',
+      }),
     );
   });
 

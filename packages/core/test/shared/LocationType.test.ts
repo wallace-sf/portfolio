@@ -1,6 +1,5 @@
-import { ValidationError } from '@repo/utils';
 
-import { LocationType } from '../../src';
+import { LocationType, ValidationError } from '../../src';
 
 describe('LocationType', () => {
   describe('when is new', () => {
@@ -19,16 +18,10 @@ describe('LocationType', () => {
 
     it('should be invalid when param is invalid', () => {
       expect(() => LocationType.new('' as 'HYBRID')).toThrow(
-        new ValidationError(
-          LocationType.ERROR_CODE,
-          'O valor deve ser um tipo localização válido.',
-        ),
+        new ValidationError({ code: LocationType.ERROR_CODE, message: 'O valor deve ser um tipo localização válido.' }),
       );
       expect(() => LocationType.new('#' as 'ON-SITE')).toThrow(
-        new ValidationError(
-          LocationType.ERROR_CODE,
-          'O valor deve ser um tipo localização válido.',
-        ),
+        new ValidationError({ code: LocationType.ERROR_CODE, message: 'O valor deve ser um tipo localização válido.' }),
       );
     });
   });
