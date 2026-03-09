@@ -1,6 +1,6 @@
-
 import { SocialNetwork, Name, Text, Url, ValidationError } from '../../src';
 import { SocialNetworkBuilder } from '../data';
+
 describe('SocialNetwork', () => {
   it('should be valid when props are valid', () => {
     const socialNetwork = SocialNetworkBuilder.build().now();
@@ -10,7 +10,7 @@ describe('SocialNetwork', () => {
 
   it('should be invalid when name is invalid', () => {
     expect(() => SocialNetworkBuilder.build().withoutName().now()).toThrow(
-      new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
+      new ValidationError({ code: Name.ERROR_CODE, message: 'The name must contain only letters.' }),
     );
   });
 
@@ -18,14 +18,14 @@ describe('SocialNetwork', () => {
     expect(() => SocialNetworkBuilder.build().withoutIcon().now()).toThrow(
       new ValidationError({
         code: Text.ERROR_CODE,
-        message: 'O texto deve ter entre 2 e 50 caracteres.',
+        message: 'The value must be between 2 and 50 characters.',
       }),
     );
   });
 
   it('should be invalid when url is invalid', () => {
     expect(() => SocialNetworkBuilder.build().withoutUrl().now()).toThrow(
-      new ValidationError({ code: Url.ERROR_CODE, message: 'O valor deve ser uma URL válida.' }),
+      new ValidationError({ code: Url.ERROR_CODE, message: 'The value must be a valid URL.' }),
     );
   });
 

@@ -1,5 +1,6 @@
 import { DateTime } from '../vo/DateTime';
 import { Id } from '../vo/Id';
+
 export interface IEntityProps {
   created_at?: string;
   deleted_at?: string | null;
@@ -15,12 +16,11 @@ export abstract class Entity<TEntity, TProps extends IEntityProps> {
   public readonly updated_at: DateTime;
 
   constructor(props: TProps) {
-    this.created_at = DateTime.new(props.created_at);
-    this.deleted_at = props.deleted_at ? DateTime.new(props.deleted_at) : null;
     this.id = Id.new(props.id);
+    this.created_at = DateTime.new(props.created_at);
     this.updated_at = DateTime.new(props.updated_at);
-    this.props = props;
-    this.props.id = this.id.value;
+    this.deleted_at = props.deleted_at ? DateTime.new(props.deleted_at) : null;
+    this.props = Object.freeze({ ...props, id: this.id.value }) as TProps;
   }
 
   public equals(entity: Entity<TEntity, TProps>): boolean {

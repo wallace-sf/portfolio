@@ -1,49 +1,48 @@
-
 import { Fluency, ValidationError } from '../../src';
 
 describe('Fluency', () => {
-  describe('when is new', () => {
-    it('should be valid when param is valid', () => {
-      const beginner = Fluency.new('BEGINNER');
-      const elementary = Fluency.new('ELEMENTARY');
-      const intermediate = Fluency.new('INTERMEDIATE');
-      const upperIntermediate = Fluency.new('UPPER-INTERMEDIATE');
-      const advanced = Fluency.new('ADVANCED');
-      const native = Fluency.new('NATIVE');
+  describe('when created from valid value', () => {
+    it('should return Right for every valid fluency level', () => {
+      const levels = Fluency.LEVELS;
 
-      expect(beginner.value).toBe('BEGINNER');
-      expect(elementary.value).toBe('ELEMENTARY');
-      expect(intermediate.value).toBe('INTERMEDIATE');
-      expect(upperIntermediate.value).toBe('UPPER-INTERMEDIATE');
-      expect(advanced.value).toBe('ADVANCED');
-      expect(native.value).toBe('NATIVE');
-      expect(beginner.isNew).toBe(false);
-      expect(elementary.isNew).toBe(false);
-      expect(intermediate.isNew).toBe(false);
-      expect(upperIntermediate.isNew).toBe(false);
-      expect(advanced.isNew).toBe(false);
-      expect(native.isNew).toBe(false);
-    });
-
-    it('should be invalid when param is invalid', () => {
-      expect(() => Fluency.new('' as 'BEGINNER')).toThrow(
-        new ValidationError({ code: Fluency.ERROR_CODE, message: 'O valor deve ser um nível de fluência válido.' }),
-      );
-      expect(() => Fluency.new('#' as 'BEGINNER')).toThrow(
-        new ValidationError({ code: Fluency.ERROR_CODE, message: 'O valor deve ser um nível de fluência válido.' }),
-      );
+      for (const level of levels) {
+        const result = Fluency.create(level);
+        expect(result.isRight()).toBe(true);
+        if (!result.isRight()) continue;
+        expect(result.value.value).toBe(level);
+      }
     });
   });
 
-  describe('when is compared', () => {
-    it('should be valid when two fluencies are equal', () => {
-      const param = 'BEGINNER';
+  describe('when created from invalid value', () => {
+    it('should return Left with ValidationError for empty string', () => {
+      const result = Fluency.create('' as 'BEGINNER');
 
-      const fluency1 = Fluency.new(param);
-      const fluency2 = Fluency.new(fluency1.value);
+      expect(result.isLeft()).toBe(true);
+      expect(result.value).toBeInstanceOf(ValidationError);
+      expect((result.value as ValidationError).code).toBe(Fluency.ERROR_CODE);
+      expect((result.value as ValidationError).message).toBe(
+        'The value must be a valid fluency level.',
+      );
+    });
 
-      expect(fluency1.equals(fluency2)).toBe(true);
-      expect(fluency1.diff(fluency2)).toBe(false);
+    it('should return Left for unrecognized value', () => {
+      const result = Fluency.create('#' as 'BEGINNER');
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Fluency.ERROR_CODE);
+    });
+  });
+
+  describe('when compared', () => {
+    it('should be equal when two fluencies have the same value', () => {
+      const r1 = Fluency.create('BEGINNER');
+      const r2 = Fluency.create('BEGINNER');
+
+      expect(r1.isRight() && r2.isRight()).toBe(true);
+      if (!r1.isRight() || !r2.isRight()) return;
+      expect(r1.value.equals(r2.value)).toBe(true);
+      expect(r1.value.diff(r2.value)).toBe(false);
     });
   });
 });

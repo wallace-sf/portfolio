@@ -49,7 +49,7 @@ describe('SkillFactory', () => {
     expectValidationError(
       () => SkillFactory.bulk(props),
       SkillType.ERROR_CODE,
-      'O valor deve ser um tipo de habilidade válido.',
+      'The value must be a valid skill type.',
     );
   });
 });

@@ -25,7 +25,7 @@ export interface IExperienceProps extends IEntityProps {
 }
 
 export class Experience extends Entity<Experience, IExperienceProps> {
-  static readonly ERROR_CODE = 'ERROR_INVALID_EXPERIENCE';
+  static readonly ERROR_CODE = 'INVALID_EXPERIENCE';
   public readonly company: Text;
   public readonly employment_type: EmploymentType;
   public readonly end_at?: DateTime;
@@ -52,7 +52,7 @@ export class Experience extends Entity<Experience, IExperienceProps> {
     const { error, isValid } = Validator.combine(
       Validator.new(this.start_at.ms).lte(
         this.end_at?.value != null ? this.end_at.ms : this.start_at.ms,
-        'O início da carreira deve ser menor ou igual ao final da carreira.',
+        'The start of the career must be less than or equal to the end of the career.',
       ),
     );
 

@@ -1,4 +1,3 @@
-
 import { Language, Name, Fluency, Text, ValidationError } from '../../src';
 import { LanguageBuilder } from '../data';
 
@@ -11,7 +10,7 @@ describe('Language', () => {
 
   it('should be invalid when name is invalid', () => {
     expect(() => LanguageBuilder.build().withoutName().now()).toThrow(
-      new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
+      new ValidationError({ code: Name.ERROR_CODE, message: 'The name must contain only letters.' }),
     );
   });
 
@@ -19,7 +18,7 @@ describe('Language', () => {
     expect(() => LanguageBuilder.build().withoutFluency().now()).toThrow(
       new ValidationError({
         code: Fluency.ERROR_CODE,
-        message: 'O valor deve ser um nível de fluência válido.',
+        message: 'The value must be a valid fluency level.',
       }),
     );
   });
@@ -28,7 +27,7 @@ describe('Language', () => {
     expect(() => LanguageBuilder.build().withoutLocale().now()).toThrow(
       new ValidationError({
         code: Text.ERROR_CODE,
-        message: 'O texto deve ter entre 2 e 50 caracteres.',
+        message: 'The value must be between 2 and 50 characters.',
       }),
     );
   });
