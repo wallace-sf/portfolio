@@ -1089,7 +1089,7 @@
           "1",
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1147,7 +1147,8 @@
             "testStrategy": "Execute full test suite with coverage reporting. Target 100% coverage for ValueObject.equals() and Entity constructor. Verify all 19 existing test files pass. Create specific test cases: (1) LocalizedText equality with identical objects returns true, (2) LocalizedText equality with different objects returns false, (3) Entity props mutation test, (4) Entity props freeze test. Document any edge cases discovered.",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-03-09T23:21:15.173Z"
       },
       {
         "id": "4",
@@ -1159,7 +1160,7 @@
         "dependencies": [
           "3"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1303,7 +1304,8 @@
             "testStrategy": "Run pnpm test in packages/core and verify all tests pass. Verify ERROR_MESSAGE.ts is deleted and no imports reference it. Check that all 19 test files use Either pattern consistently. Verify type checking passes with pnpm typecheck. Confirm test coverage remains at 100% for all VOs. Smoke test each VO's create() method returns Either type correctly.",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-03-09T23:21:30.560Z"
       },
       {
         "id": "5",
@@ -1315,7 +1317,7 @@
         "dependencies": [
           "4"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1323,9 +1325,10 @@
             "description": "Create the Slug VO in packages/core/src/shared/vo/Slug.ts with regex-based validation for kebab-case format, minimum length checks, and toPath() method",
             "dependencies": [],
             "details": "Implement Slug.ts extending ValueObject<string> with:\n- Private static SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/ for kebab-case validation\n- Private constructor taking normalized string value\n- Static create(raw: string) method with Either<ValidationError, Slug> return:\n  - Validate min 3 characters (return Left with INVALID_SLUG if violated)\n  - Normalize to lowercase and trim\n  - Test against SLUG_REGEX (return Left with INVALID_SLUG if fails)\n  - Return Right(new Slug(normalized)) on success\n- Public toPath(): string method returning `/${this.value}`\n- Import Either, left, right from '../either'\n- Import ValidationError from '../errors'\n- Import ValueObject from '../base/ValueObject'",
-            "status": "pending",
+            "status": "done",
             "testStrategy": null,
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T23:35:49.839Z"
           },
           {
             "id": 2,
@@ -1335,9 +1338,10 @@
               1
             ],
             "details": "Implement Image.ts extending ValueObject<{ url: Url; alt: LocalizedText }> with:\n- Private constructor taking url: Url and alt: LocalizedText parameters\n- Static create(urlStr: string, alt: Record<string, string>) method:\n  - Call Url.create(urlStr) and check if Left, return early with error\n  - Call LocalizedText.create(alt) and check if Left, return early with error\n  - Return Right(new Image(urlResult.value, altResult.value)) on success\n- Getter methods: get url(): Url and get alt(): LocalizedText\n- Properly handle Either composition from multiple VOs\n- Import Url and LocalizedText from their respective files\n- Import Either, left, right from '../either'\n- Import ValidationError from '../errors'\n- Import ValueObject from '../base/ValueObject'",
-            "status": "pending",
+            "status": "done",
             "testStrategy": null,
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T23:35:52.896Z"
           },
           {
             "id": 3,
@@ -1347,9 +1351,10 @@
               2
             ],
             "details": "Implement DateRange.ts extending ValueObject<{ startAt: DateTime; endAt?: DateTime }> with:\n- Private constructor taking startAt: DateTime and optional endAt?: DateTime\n- Static create(start: string, end?: string) method:\n  - Call DateTime.create(start), return Left if invalid\n  - If end provided, call DateTime.create(end), return Left if invalid\n  - Validate startAt.ms <= endAt.ms, return Left with INVALID_DATE_RANGE if violated\n  - Return Right(new DateRange(startResult.value, endAt)) on success\n- Public isActive(): boolean method returning true if endAt is undefined\n- Getter methods: get startAt(): DateTime and get endAt(): DateTime | undefined\n- Import DateTime from './DateTime'\n- Import Either, left, right from '../either'\n- Import ValidationError from '../errors'\n- Import ValueObject from '../base/ValueObject'",
-            "status": "pending",
+            "status": "done",
             "testStrategy": null,
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T23:35:55.935Z"
           },
           {
             "id": 4,
@@ -1359,9 +1364,10 @@
               1
             ],
             "details": "Create Slug.test.ts with describe block testing:\n- Valid kebab-case slugs ('my-slug', 'slug-123', 'abc') return Right\n- Invalid formats return Left with INVALID_SLUG:\n  - Uppercase letters ('My-Slug')\n  - Spaces ('my slug')\n  - Special characters ('my_slug', 'my.slug', 'my@slug')\n  - Leading/trailing hyphens ('-slug', 'slug-')\n  - Consecutive hyphens ('my--slug')\n- Min length validation:\n  - Strings < 3 chars ('ab', 'a') return Left\n  - Empty string and whitespace-only return Left\n- toPath() method returns '/slug-name' format\n- Edge cases: trim whitespace before validation\n- Use Vitest (describe, it, expect) with proper assertions\n- Test both isLeft() and isRight() type guards",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests with Vitest covering all validation rules, edge cases, and toPath() method. Verify Left returns contain proper ValidationError with INVALID_SLUG code.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T23:35:58.949Z"
           },
           {
             "id": 5,
@@ -1371,9 +1377,10 @@
               2
             ],
             "details": "Create Image.test.ts with describe block testing:\n- Valid composition: valid URL + valid LocalizedText returns Right\n- Invalid URL composition:\n  - Invalid URL string returns Left with Url's validation error\n  - Verify error is propagated from Url.create()\n- Invalid LocalizedText composition:\n  - Invalid localized text returns Left with LocalizedText's validation error\n  - Empty translations, missing required locales\n- Getter methods:\n  - image.url returns Url instance\n  - image.alt returns LocalizedText instance\n- Either chaining: verify both VOs are validated in sequence\n- Test with mock data for URLs and localized alt text\n- Use Vitest (describe, it, expect) with proper assertions\n- Verify Left returns contain appropriate ValidationError from composed VOs",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests with Vitest covering composition scenarios, error propagation from Url and LocalizedText, and getter methods. Test Either chaining with valid/invalid inputs.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T23:36:02.101Z"
           },
           {
             "id": 6,
@@ -1385,11 +1392,13 @@
               5
             ],
             "details": "Create DateRange.test.ts with describe block testing:\n- Valid range: start <= end returns Right\n- Invalid range: start > end returns Left with INVALID_DATE_RANGE\n- Optional end date: omitting end date returns Right\n- isActive() method:\n  - Returns true when endAt is undefined (ongoing period)\n  - Returns false when endAt is defined (completed period)\n- Getter methods: startAt and endAt return correct DateTime instances\n- Edge cases: same start and end date (valid), invalid DateTime strings\n\nCreate test data providers in packages/core/test/data/bases/:\n- SlugData.ts: valid slugs ('my-project', 'test-123'), invalid slugs ('My-Project', 'test_case')\n- ImageData.ts: valid Image objects with URLs and localized alt text\n- DateRangeData.ts: valid ranges, invalid ranges, active/inactive periods\n\nUse Vitest with proper assertions for all tests",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests with Vitest covering validation rules, boundary conditions, isActive() business logic, and getter methods. Create reusable test data providers for all three VOs to support testing across the codebase.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T23:36:05.196Z"
           }
-        ]
+        ],
+        "updatedAt": "2026-03-09T23:36:05.196Z"
       },
       {
         "id": "6",
@@ -2007,9 +2016,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-09T21:01:06.162Z",
+      "lastModified": "2026-03-09T23:36:05.196Z",
       "taskCount": 11,
-      "completedCount": 2,
+      "completedCount": 5,
       "tags": [
         "sprint-0"
       ]
