@@ -1,28 +1,48 @@
-# Arquitetura — DDD e Clean Architecture
+# Architecture — DDD and Clean Architecture
 
-Este documento descreve como **Clean Architecture** e **DDD** são aplicados no portfolio: camadas, dependências, bounded contexts e decisões principais.
+This document describes how **Clean Architecture** and **DDD** are applied in the portfolio: layers, dependencies, bounded contexts, and key decisions.
 
----
-
-## Índice
-
-- [Clean Architecture aplicada](#clean-architecture-aplicada)
-- [DDD no projeto](#ddd-no-projeto)
-- [Read Path do MVP](#read-path-do-mvp)
-- [Decisões importantes](#decisões-importantes)
+> This document mixes **current state** and **target architecture**. When they differ, treat the target architecture as the official direction for new code and the current state as migration context.
 
 ---
 
-## Clean Architecture aplicada
+## Index
 
-### Regra de dependência
+- [Applied Clean Architecture](#applied-clean-architecture)
+- [DDD in the Project](#ddd-in-the-project)
+- [MVP Read Path](#mvp-read-path)
+- [Key Decisions](#key-decisions)
 
-- **Core (domain)** não depende de infra, web ou API.
-- **Application** (use cases, ports) depende apenas do Core.
-- **Infra** implementa os *ports* definidos na Application.
-- **Web** e **API** consomem a Application (ou chamam use cases diretamente).
+---
 
-```
+## Applied Clean Architecture
+
+### Current State vs Target Architecture
+
+- **Current state**:
+  - `packages/core` exists and already concentrates the implemented domain.
+  - `packages/application` and `packages/infra` do not yet exist as real packages.
+  - Part of the read flow still happens with static data or directly in the web layer.
+  - The internal structure of the Core still contains legacy modules such as `project/model/Project.ts`, `experience/Experience.ts`, and `skill/factory/SkillFactory.ts`.
+- **Target architecture**:
+  - `core ← application ← infra ← web/api`
+  - `packages/application` orchestrates use cases and ports.
+  - `packages/infra` implements repositories and adapters.
+  - `packages/core` converges toward organization by bounded context, especially `portfolio/entities/...`, `shared-kernel/...`, and repositories defined in the domain.
+
+### Practical Rule
+
+- For **documentation and design**, use the target architecture as the reference.
+- For **local changes in existing code**, consider the current state and migrate incrementally.
+
+### Dependency Rule
+
+- **Core (domain)** does not depend on infra, web, or API.
+- **Application** (use cases, ports) depends only on Core.
+- **Infra** implements the ports defined by Application.
+- **Web** and **API** consume Application, or call use cases directly while Application is still being introduced.
+
+```text
      Web / API
           │
           ▼
@@ -35,105 +55,110 @@ Este documento descreve como **Clean Architecture** e **DDD** são aplicados no 
       Infra (adapters, repos)  ◄─── WIP
 ```
 
-### Camadas
+### Layers
 
-| Camada | Pacote / local | Responsabilidade |
-|--------|----------------|------------------|
-| **Domain** | `@repo/core` | Entidades, VOs, invariantes, agregações, shared kernel. Zero dependência de framework ou persistência. |
-| **Application** | `packages/application` ou `docs/APPLICATION.md` (WIP) | Use cases, ports (interfaces de repositório, serviços externos), view models. Orquestra o domínio. |
-| **Infra** | `packages/infra` (WIP) | Implementação de repositórios (Supabase), mappers (DB ↔ dominio), clientes externos. |
-| **Interface** | `apps/web`, `apps/api` (futuro) | HTTP, rotas, formulários, i18n de UI. Chama Application ou use cases. |
+| Layer | Package / location | Responsibility |
+|-------|--------------------|----------------|
+| **Domain** | `@repo/core` | Entities, Value Objects, invariants, aggregates, shared kernel. No framework or persistence dependency. |
+| **Application** | `packages/application` or `docs/APPLICATION.md` (WIP) | Use cases, ports, and view models. Orchestrates the domain. |
+| **Infra** | `packages/infra` (WIP) | Repository implementations, database mappers, and external clients. |
+| **Interface** | `apps/web`, `apps/api` (future) | HTTP, routes, forms, UI i18n. Calls Application or use cases. |
 
-### Core não depende de nada externo
+### Core Does Not Depend On External Frameworks
 
-- `@repo/core` importa apenas `@repo/utils` (Validator, ValidationError) e `uuid`.  
-- Não há import de Next, Supabase, React ou libs de HTTP.  
-- Erros de domínio usam **códigos** (ex.: `ERROR_INVALID_ID`, `ERROR_INVALID_TEXT`); a **tradução** e o mapeamento para HTTP ficam na borda (web/API). Ver [docs/ERROR_HANDLING.md](ERROR_HANDLING.md).
+- `@repo/core` currently imports only `@repo/utils` (for `Validator`, `ValidationError`) and `uuid`.
+- There are no imports from Next.js, Supabase, React, or HTTP clients inside the domain layer.
+- Domain errors use **stable codes** (for example, `ERROR_INVALID_ID`, `ERROR_INVALID_TEXT`); translation and HTTP mapping happen at the edge. See [ERROR_HANDLING.md](ERROR_HANDLING.md).
 
 ---
 
-## DDD no projeto
+## DDD in the Project
 
 ### Shared Kernel
 
-Elementos compartilhados entre bounded contexts, em `@repo/core`:
+Shared elements across bounded contexts in `@repo/core`:
 
 - **Base**: `Entity`, `ValueObject`, `IEntityProps`
-- **VOs comuns**: `Id`, `Text`, `DateTime`, `Url`, `Name`  
-- **Enums/Tipos**: `EmploymentType`, `LocationType`, `SkillType`, `Fluency`
-- **i18n de erros do domínio**: `ERROR_MESSAGE` (pt-BR, en-US) — códigos estáveis, mensagens traduzidas na borda
+- **Common VOs**: `Id`, `Text`, `DateTime`, `Url`, `Name`
+- **Enums / typed VOs**: `EmploymentType`, `LocationType`, `SkillType`, `Fluency`
+- **Domain error i18n**: `ERROR_MESSAGE` (`pt-BR`, `en-US`) with stable codes and translation handled at the edge
+
+> In the current state, some of these elements live under `shared/`, `shared/vo/`, and `shared/i18n/`. In the target architecture, part of them will converge into a more explicit shared kernel.
 
 ### Bounded Contexts
 
-| Contexto | Responsabilidade | Modelos principais | Estado |
-|----------|------------------|--------------------|--------|
-| **Portfolio** | Projetos, experiência, skills, perfil, valores | `Project`, `Experience`, `Skill`, `ProfessionalValue`, `Language`, `SocialNetwork` | Implementado no Core |
-| **Blog** | Posts, tags, publicação | `BlogPost`, `Tag` (a definir no Core) | WIP |
-| **Contact** | Formulário, envio de mensagem | DTOs / formulário (web) | Parcial (form; backend WIP) |
+| Context | Responsibility | Main models | Status |
+|---------|----------------|-------------|--------|
+| **Portfolio** | Projects, experiences, skills, profile, values | `Project`, `Experience`, `Skill`, `ProfessionalValue`, `Language`, `SocialNetwork` | Implemented in Core |
+| **Blog** | Posts, tags, publication | `BlogPost`, `Tag` (to be defined in Core) | WIP |
+| **Contact** | Contact form and message delivery | DTOs / form flow | Partial (frontend only; backend WIP) |
 
-Detalhes: [docs/BOUNDED_CONTEXTS.md](BOUNDED_CONTEXTS.md).
+Details: [BOUNDED_CONTEXTS.md](BOUNDED_CONTEXTS.md).
 
-### Agregados (atuais e planejados)
+### Aggregates (Current and Planned)
 
-- **Project** — raiz: `Project`; entidades associadas: `Skill` (como valor ou referência).
-- **Experience** — raiz: `Experience`; `Skill` associado.
-- **Skill** — pode ser raiz ou parte de Project/Experience.
-- **ProfessionalValue**, **Language**, **SocialNetwork** — entidades do contexto Portfolio.
-- **BlogPost** (WIP) — raiz; **Tag** como valor ou entidade dentro do agregado.
+- **Current state**:
+  - `Project`, `Experience`, `Skill`, `ProfessionalValue`, `Language`, and `SocialNetwork` already exist in Core.
+  - `Project` and `Experience` already compose `Skill[]`.
+- **Target architecture**:
+  - **Project** — aggregate root with slug, cover image, period, status, and localized fields.
+  - **Experience** — aggregate root that evolves to include `ExperienceSkill`, `DateRange`, logo, and description.
+  - **Profile** — main aggregate of the portfolio, enforcing a maximum of 6 featured projects.
+  - **BlogPost** (WIP) — aggregate root; **Tag** as a Value Object or entity inside the Blog context.
 
 ---
 
-## Read Path do MVP
+## MVP Read Path
 
-Fluxo de leitura (ex.: listar projetos) quando Application e Infra estiverem em uso:
+Read flow example (for example, listing projects) when Application and Infra are in place:
 
-```
+```text
 Web (page/route)
     │
     ▼
-Use case (ex.: GetProjects)
+Use case (for example, GetProjects)
     │
     ▼
-Port (ex.: IProjectRepository)
+Port (for example, IProjectRepository)
     │
     ▼
 Infra (ProjectRepositorySupabase)
-    │  └─ mapper: row DB → IProjectProps / Project
+    │  └─ mapper: DB row → IProjectProps / Project
     ▼
-Domain (Project, Skill, …)
+Domain (Project, Skill, ...)
     │
     ▼
-ViewModel (DTO ou entidade “serializável”)
+ViewModel (DTO or serializable domain projection)
     │
     ▼
-UI (componentes, next-intl para UI)
+UI (components, next-intl for UI)
 ```
 
-Hoje, parte do conteúdo (ex.: projetos) ainda vem de **dados estáticos** na própria página; o path acima é o alvo para dados em BD (Supabase).
+Today, part of the content (for example, projects) still comes from static data directly in the page. The flow above is the target for database-backed content.
 
 ---
 
-## Decisões importantes
+## Key Decisions
 
-### Conteúdo em BD via Supabase no MVP
+### Database Content via Supabase in the MVP
 
-- **Decisão**: Usar Supabase (e supabase-js) para Blog e, em seguida, para Projects/dados dinâmicos.
-- **Motivo**: Acelerar MVP com Auth, Realtime e Postgres sem operar servidor próprio. A Infra abstrai Supabase atrás de ports.
+- **Decision**: Use Supabase (and `supabase-js`) for Blog first, and then for Projects and other dynamic data.
+- **Reason**: Accelerate the MVP with Auth, Realtime, and Postgres without running custom infrastructure. Infra will abstract Supabase behind ports.
 
-### i18n: UI e domínio
+### i18n: UI and Domain
 
-- **UI**: next-intl; mensagens em `apps/web/messages/{pt-BR,en-US,es}.json`.
-- **Domínio**: códigos de erro no Core (`ERROR_MESSAGE`); mensagens traduzidas na borda (web/API) com base no locale.  
-- **Conteúdo de domínio** (ex.: descrições de projetos em vários idiomas): estratégia **LocalizedText** ou colunas `title_pt`, `title_en` etc. está em definição. Ver [docs/I18N.md](I18N.md).
+- **UI**: `next-intl`; messages live in `apps/web/messages/{pt-BR,en-US,es}.json`.
+- **Domain**: error codes live in the Core (`ERROR_MESSAGE`); translated messages are resolved at the edge based on request locale.
+- **Domain content** (for example, project descriptions in multiple languages): a strategy based on `LocalizedText` or locale-specific columns is still being defined. See [I18N.md](I18N.md).
 
-### Erros: códigos no Core, tradução na borda
+### Errors: Codes in the Core, Translation at the Edge
 
-- O domínio lança `ValidationError` (ou equivalente) com **código** estável (ex.: `ERROR_INVALID_ID`).
-- Core mantém `ERROR_MESSAGE` (ou mapa de códigos → chave i18n) para pt-BR e en-US; **es** a ser incluído.
-- Web/API: mapeiam código → HTTP status e → mensagem no locale do request. Ver [docs/ERROR_HANDLING.md](ERROR_HANDLING.md).
+- The domain throws `ValidationError` (or equivalent) with a stable **code** (for example, `ERROR_INVALID_ID`).
+- The Core maintains `ERROR_MESSAGE` (or a code-to-i18n-key map) for `pt-BR` and `en-US`; `es` is still to be added.
+- Web / API map domain code → HTTP status and code → localized message. See [ERROR_HANDLING.md](ERROR_HANDLING.md).
 
-### Validação: Zod na borda, invariantes no domínio
+### Validation: Zod at the Edge, Invariants in the Domain
 
-- **Borda (forms, API, decoding de rows)**: Zod (ou similar) para input, query, body e para “decodificar” linhas do BD.
-- **Domínio**: invariantes garantidos em construtores e métodos (ex.: `Experience`: `start_at <= end_at`); em caso de violação: `throw` com `ValidationError` e código.
-- **Migração**: o `Validator` em `@repo/utils` segue em uso no domínio; a borda deve migrar para Zod. Ver [docs/VALIDATION.md](VALIDATION.md).
+- **Edge (forms, API, row decoding)**: Zod (or equivalent) for input, query, body, and row decoding.
+- **Domain**: invariants enforced in constructors and methods (for example, `Experience: start_at <= end_at`); current violations still throw `ValidationError` with a stable code.
+- **Migration**: `Validator` in `@repo/utils` is still used in the domain today; new edge code should converge to Zod. See [VALIDATION.md](VALIDATION.md).

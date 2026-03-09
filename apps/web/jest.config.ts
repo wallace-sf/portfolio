@@ -3,7 +3,7 @@ import { type JestConfigWithTsJest } from 'ts-jest';
 const jestConfig: JestConfigWithTsJest = {
   clearMocks: true,
   preset: 'ts-jest',
-  testMatch: ['**/?(*.)+(spec|test).ts'],
+  testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',

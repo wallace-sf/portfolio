@@ -14,8 +14,9 @@
     "./contact": "./src/contact/index.ts"
   },
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watchAll --collectCoverage",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint --fix --ext .ts ./src",
     "lint:check": "eslint --ext .ts ./src",
     "format": "prettier --write ./src/**/*.ts",
@@ -31,6 +32,8 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/uuid": "^9.0.8"
+    "@types/uuid": "^9.0.8",
+    "@vitest/coverage-v8": "^3.0.0",
+    "vitest": "^3.0.0"
   }
 }

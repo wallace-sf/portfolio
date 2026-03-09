@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-
 import { Project, IProjectProps, ISkillProps } from '../../src';
 import { Data } from './bases';
 import { EntityBuilder } from './EntityBuilder';
@@ -15,7 +13,7 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
       title: Data.text.title(),
       caption: Data.text.caption(),
       content: Data.text.text(),
-      skills: SkillBuilder.listToProps(faker.number.int({ min: 0, max: 10 })),
+      skills: SkillBuilder.listToProps(2),
     });
   }
 

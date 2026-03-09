@@ -1,26 +1,45 @@
 import { ISkillProps, Skill, SkillTypeValue } from '../../src';
-import { Data } from './bases';
 import { EntityBuilder } from './EntityBuilder';
 
 export class SkillBuilder extends EntityBuilder<ISkillProps> {
+  private static readonly PRESETS: ReadonlyArray<ISkillProps> = [
+    {
+      description: 'TypeScript development',
+      icon: 'code',
+      type: 'TECHNOLOGY',
+    },
+    {
+      description: 'Team communication',
+      icon: 'users',
+      type: 'SOFT',
+    },
+    {
+      description: 'English language',
+      icon: 'language',
+      type: 'LANGUAGE',
+    },
+  ];
+
   private constructor(props: ISkillProps) {
     super(props);
   }
 
   static build(): SkillBuilder {
-    return new SkillBuilder({
-      description: Data.text.description(),
-      icon: Data.text.icon(),
-      type: Data.skill.valid(),
-    });
+    return new SkillBuilder(SkillBuilder.propsAt(0));
   }
 
   static list(count: number): Skill[] {
-    return [...Array(count)].map(() => SkillBuilder.build().now());
+    return [...Array(count)].map((_, index) => new Skill(SkillBuilder.propsAt(index)));
   }
 
   static listToProps(count: number): ISkillProps[] {
-    return [...Array(count)].map(() => SkillBuilder.build().toProps());
+    return [...Array(count)].map((_, index) => SkillBuilder.propsAt(index));
+  }
+
+  private static propsAt(index: number): ISkillProps {
+    const preset = SkillBuilder.PRESETS[index % SkillBuilder.PRESETS.length]!;
+
+    return { ...preset };
   }
 
   public now(): Skill {

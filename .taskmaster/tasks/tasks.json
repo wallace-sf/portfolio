@@ -1023,7 +1023,7 @@
         "testStrategy": "Validation:\n- Run `pnpm test` in packages/core and verify all existing tests pass\n- Run `pnpm test:watch` to verify watch mode works\n- Verify coverage reports are generated correctly\n- Check that coverage now includes base classes (Entity.ts, ValueObject.ts) since exclusion was removed",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1031,9 +1031,10 @@
             "description": "Clean up all Jest-related files and dependencies from packages/core to prepare for Vitest migration",
             "dependencies": [],
             "details": "1. Delete `packages/core/jest.config.ts` configuration file\n2. Remove Jest dependencies from `packages/core/package.json` devDependencies:\n   - `jest`\n   - `ts-jest`\n   - `@types/jest` (if present)\n3. Run `pnpm install` in packages/core to update lockfile\n4. Verify no Jest references remain in package.json\n5. Commit changes: 'chore(core): remove Jest configuration and dependencies'",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify jest.config.ts is deleted and Jest packages are removed from package.json devDependencies. Confirm lockfile is updated with pnpm install.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T21:01:06.143Z"
           },
           {
             "id": 2,
@@ -1043,9 +1044,10 @@
               1
             ],
             "details": "1. Add Vitest to `packages/core/package.json` devDependencies:\n   - `vitest` (latest version)\n   - `@vitest/coverage-v8` for coverage provider\n2. Create `packages/core/vitest.config.ts` with:\n   - `globals: true` for describe/it/expect without imports\n   - `environment: 'node'` for Node.js runtime\n   - `include: ['test/**/*.test.ts']` to match existing test file pattern\n   - Coverage configuration with v8 provider, text/json/html reporters\n   - Coverage includes src/**/*.ts, excludes src/**/index.ts\n   - Path alias `'~': path.resolve(__dirname, './src')` for imports\n3. Run `pnpm install` to add Vitest packages\n4. Commit changes: 'chore(core): add Vitest configuration with coverage setup'",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify vitest.config.ts exists with correct settings. Check that Vitest packages are in devDependencies. Ensure path aliases resolve correctly.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T21:01:06.150Z"
           },
           {
             "id": 3,
@@ -1055,9 +1057,10 @@
               2
             ],
             "details": "1. Update `packages/core/package.json` scripts section:\n   - Change `\"test\": \"jest\"` to `\"test\": \"vitest run\"`\n   - Change `\"test:watch\": \"jest --watchAll --collectCoverage\"` to `\"test:watch\": \"vitest\"`\n   - Add `\"test:coverage\": \"vitest run --coverage\"` for explicit coverage runs\n2. Review existing test files in test/**/*.test.ts:\n   - Verify no explicit Jest imports (Vitest globals mode handles describe/it/expect)\n   - Check for Jest-specific APIs that need replacement (rare with current test structure)\n3. Run `pnpm test` to execute all 19 existing test files\n4. Document any compatibility issues found\n5. Commit changes: 'chore(core): update test scripts to use Vitest'",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run `pnpm test` and verify all existing tests execute. Check that test output format is readable. Confirm no Jest-specific errors appear.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T21:01:06.156Z"
           },
           {
             "id": 4,
@@ -1067,11 +1070,13 @@
               3
             ],
             "details": "1. Run full test suite: `pnpm test` in packages/core\n   - Verify all 19 test files pass without errors\n   - Check for any timing or async handling differences from Jest\n2. Test watch mode: `pnpm test:watch`\n   - Verify file watching works correctly\n   - Test that changes trigger re-runs\n3. Generate coverage reports: `pnpm test:coverage`\n   - Verify coverage reports generate in text, json, and html formats\n   - Confirm base classes (Entity.ts, ValueObject.ts) are now included in coverage\n   - Check coverage thresholds are reasonable\n4. Fix any issues found:\n   - Adjust test syntax if Vitest behaves differently\n   - Update vitest.config.ts if coverage settings need tuning\n   - Document any breaking changes or behavioral differences\n5. Update root-level turbo.json if test task configuration needs changes\n6. Commit changes: 'test(core): validate Vitest migration and fix issues'\n7. Update task 2 with final validation results",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "All tests must pass with `pnpm test`. Watch mode must function correctly. Coverage reports must generate with v8 provider. Base classes must appear in coverage. No Jest-related errors in output.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-09T21:01:06.162Z"
           }
-        ]
+        ],
+        "updatedAt": "2026-03-09T21:01:06.162Z"
       },
       {
         "id": "3",
@@ -2002,9 +2007,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-09T02:47:44.496Z",
+      "lastModified": "2026-03-09T21:01:06.162Z",
       "taskCount": 11,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "sprint-0"
       ]

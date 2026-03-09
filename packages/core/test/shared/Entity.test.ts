@@ -1,4 +1,4 @@
-import { Entity, IEntityProps } from '../../src';
+import { DateTime, Entity, IEntityProps } from '../../src';
 
 interface IMyClassProps extends IEntityProps {
   name?: string;
@@ -21,6 +21,31 @@ class MyClass extends Entity<MyClass, IMyClassProps> {
 }
 
 describe('Entity', () => {
+  it('should initialize created_at and updated_at as DateTime when not provided', () => {
+    const e = MyClass.new({ name: 'John', age: 20 });
+
+    expect(e.created_at).toBeInstanceOf(DateTime);
+    expect(e.updated_at).toBeInstanceOf(DateTime);
+    expect(e.created_at.isNew).toBe(true);
+    expect(e.updated_at.isNew).toBe(true);
+  });
+
+  it('should accept provided created_at and updated_at timestamps', () => {
+    const timestamp = '2024-01-01T00:00:00.000Z';
+    const e = MyClass.new({ name: 'John', age: 20, created_at: timestamp, updated_at: timestamp });
+
+    expect(e.created_at.value).toBe(timestamp);
+    expect(e.updated_at.value).toBe(timestamp);
+    expect(e.created_at.isNew).toBe(false);
+    expect(e.updated_at.isNew).toBe(false);
+  });
+
+  it('should have null deleted_at by default', () => {
+    const e = MyClass.new({ name: 'John', age: 20 });
+
+    expect(e.deleted_at).toBeNull();
+  });
+
   it('should compare two different entities', () => {
     const e1 = MyClass.new({ name: 'John', age: 20 });
     const e2 = MyClass.new({ name: 'John', age: 20 });

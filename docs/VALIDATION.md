@@ -1,37 +1,52 @@
-# Validação — Zod na borda, invariantes no domínio e migração do Validator
+# Validation — Zod at the Edge, Invariants in the Domain, and Validator Migration
 
-Onde validar, com o quê e como evoluir o `Validator` atual em `@repo/utils`.
+This document explains where validation should happen, which tools should be used, and how the current `Validator` in `@repo/utils` can evolve.
 
----
-
-## Índice
-
-- [Resumo](#resumo)
-- [Zod na borda](#zod-na-borda)
-- [Invariantes no domínio](#invariantes-no-domínio)
-- [O que validar onde](#o-que-validar-onde)
-- [Migração do Validator](#migração-do-validator)
+> This document describes a **transition strategy**: part of it reflects the **current state** of the repository, while part of it defines the architectural direction for new code.
 
 ---
 
-## Resumo
+## Index
 
-- **Borda (API, forms, decoding)**: **Zod** — input HTTP, query, body, decoding de linhas do BD.
-- **Domínio**: **invariantes** em construtores e métodos; em falha, `throw new ValidationError(CODE, message)`.
-- **Validator** (`@repo/utils`): em uso **no domínio** (Core e utils); a **borda** deve migrar para Zod. O Validator pode permanecer no domínio ou ser gradualmente substituído por checagens explícitas + `ValidationError`.
+- [Summary](#summary)
+- [Zod at the Edge](#zod-at-the-edge)
+- [Domain Invariants](#domain-invariants)
+- [What To Validate Where](#what-to-validate-where)
+- [Validator Migration](#validator-migration)
 
 ---
 
-## Zod na borda
+## Summary
 
-- **Onde**: Route Handlers, formulários (substituindo ou complementando Yup), decode de rows do BD na Infra.
-- **Uso**:
-  - **API**: `bodySchema.parse(req.body)` ou `querySchema.parse(Object.fromEntries(req.nextUrl.searchParams))`; em falha, Zod lança; a borda converte em 400 com `{ "error": { "code": "VALIDATION_ERROR", "message": ... } }` ou em múltiplos `details` (formato a definir).
-  - **Forms**: schema Zod em vez de (ou em adição a) Yup; `form.validate()` ou `schema.safeParse(values)`.
-  - **Infra**: `rowSchema.parse(dbRow)` antes do mapper; garante que a linha tem a forma esperada antes de montar entidade/VO.
-- **Vantagens**: tipos inferidos, composição, mensagens customizáveis e i18n via `zod-i18n-map` ou mensagens no `.refine()`/`.superRefine()`.
+- **Current state**:
+  - `Validator` and `ValidationError` are still used in the domain and in some parts of the project.
+  - Web forms may still use `Formik` / `Yup` instead of `Zod`.
+- **Target direction**:
+  - Zod at the edge
+  - explicit invariants in the domain
+  - gradual migration away from `Validator` outside areas that still depend on it
 
-### Exemplo (API)
+- **Edge (API, forms, decoding)**: **Zod** — HTTP input, query, body, and database row decoding.
+- **Domain**: **invariants** in constructors and methods; current failures still throw `ValidationError(CODE, message)` in several parts of the codebase.
+- **Validator** (`@repo/utils`): still in use **inside the domain** (Core and utils); the **edge** should converge to Zod. `Validator` may remain in the domain for now or be gradually replaced by explicit checks plus stable error contracts.
+
+---
+
+## Zod at the Edge
+
+### Practical Rule
+
+- In **new edge code** (API, forms, external decoding), prefer `Zod`.
+- In **legacy code** that still uses `Yup` or `Validator`, migrate only when the change belongs to the task scope.
+
+- **Where**: Route Handlers, forms (replacing or complementing Yup), and row decoding in Infra.
+- **How**:
+  - **API**: `bodySchema.parse(req.body)` or `querySchema.parse(Object.fromEntries(req.nextUrl.searchParams))`; if parsing fails, Zod throws and the edge converts the failure to a `400` response.
+  - **Forms**: use a Zod schema instead of (or alongside) Yup; call `schema.safeParse(values)` or integrate it with form tooling.
+  - **Infra**: validate `dbRow` with `rowSchema.parse(dbRow)` before mapping rows into entities / Value Objects.
+- **Benefits**: inferred types, composition, custom messages, and structured validation results.
+
+### Example (API)
 
 ```ts
 const bodyContact = z.object({
@@ -45,67 +60,71 @@ const parsed = bodyContact.safeParse(await req.json());
 if (!parsed.success) {
   return Response.json(
     { error: { code: 'VALIDATION_ERROR', details: parsed.error.flatten() } },
-    { status: 400 }
+    { status: 400 },
   );
 }
 ```
 
 ---
 
-## Invariantes no domínio
+## Domain Invariants
 
-- **Onde**: construtores de entidades e VOs em `@repo/core` (e em métodos que alteram estado).
-- **Como**: checagens lógicas; em violação, `throw new ValidationError(ERROR_CODE, message)`.
-- **Exemplos**:
-  - **`Experience`**: `start_at <= end_at` (quando `end_at` existe) — já implementado com `Validator.combine` e `ValidationError(Experience.ERROR_CODE, error)`.
-  - **`Text`**, **`Id`**, **`DateTime`**, etc.: restrições de formato e tamanho nos construtores; usam `Validator` de `@repo/utils` e `ValidationError`.
-- O domínio **não** usa Zod; as regras são expressas com o `Validator` atual ou com `if/throw` puro. O que vem “de fora” (HTTP, BD) deve ser **decodificado/validado na borda** (Zod) antes de chegar ao domínio; assim o domínio recebe dados já “limpos” e só garante invariantes internas.
+- **Where**: constructors and methods of entities and Value Objects in `@repo/core`.
+- **How**: explicit checks; in the current implementation, failures often still throw `ValidationError(ERROR_CODE, message)`.
+- **Examples**:
+  - **`Experience`**: `start_at <= end_at` (when `end_at` exists) — currently implemented with `Validator.combine` and `ValidationError(Experience.ERROR_CODE, error)`.
+  - **`Text`**, **`Id`**, **`DateTime`**, etc.: format and length restrictions enforced in constructors with `Validator` and `ValidationError`.
+- The domain **does not** use Zod. Data coming from the outside world (HTTP, DB) should be decoded and validated at the edge before it reaches the domain.
 
----
-
-## O que validar onde
-
-| Camada | O quê | Ferramenta |
-|--------|-------|------------|
-| **API (body, query)** | Estrutura, tipos, formatos (email, UUID, datas), tamanhos | Zod |
-| **Formulários (web)** | Campos do form antes de submit | Zod (ou Yup durante migração) |
-| **Infra (decode de rows)** | Forma da linha do BD antes do mapper | Zod |
-| **Domínio (construtor, métodos)** | Invariantes (ex.: `start_at <= end_at`), regras de VO (UUID, min/max) | Validator (atual) ou `if/throw` + `ValidationError` |
+> If the target architecture evolves fully toward `Either` instead of `throw` for expected business errors, that transition should be treated as a separate structural migration, not as an ad hoc exception in new code.
 
 ---
 
-## Migração do Validator
+## What To Validate Where
 
-### Estado atual
+| Layer | What | Tool |
+|-------|------|------|
+| **API (body, query)** | Structure, types, formats (email, UUID, dates), lengths | Zod |
+| **Forms (web)** | Form fields before submission | Zod (or Yup during migration) |
+| **Infra (row decoding)** | Shape of DB rows before mapping | Zod |
+| **Domain (constructor, methods)** | Invariants (for example, `start_at <= end_at`), VO rules (UUID, min/max) | Current `Validator`, or explicit checks with a stable error contract |
 
-- **`Validator`** e **`ValidationError`** em `@repo/utils`.
-- **Uso**: `@repo/core` (Id, Text, DateTime, Experience, etc.) e possivelmente em `@repo/utils` (formatters, etc.).
-- **Validations** em `@repo/utils`: `isLength`, `isUUID`, `isDateTime`, `isIn`, `isUrl`, etc., usados pelo `Validator`.
+---
 
-### Estratégia
+## Validator Migration
 
-1. **Borda (API, forms, Infra)**  
-   - Introduzir **Zod** para:
-     - body/query em Route Handlers,
-     - schemas de form (substituir Yup aos poucos, se fizer sentido),
-     - decode de rows na Infra.
-   - **Não** usar o `Validator` em código de borda novo.
+### Current State
 
-2. **Domínio**  
-   - **Manter** o `Validator` no Core por enquanto: a migração para “só invariantes + `if/throw`” ou para outro padrão é mais invasiva e pode ser feita depois.
-   - Ou: em VOs/entidades novos, preferir checagens explícitas e `throw new ValidationError(CODE, message)` sem o `Validator`, se isso simplificar.
-   - O `Validator` tem **Mustache** para mensagens (ex.: `'O texto deve ter entre {{min}} e {{max}} caracteres.'`); isso é compatível com a ideia de códigos estáveis: o `message` no `ValidationError` pode ser a string interpolada “interna”; a borda pode, se quiser, ignorar e usar apenas o `code` + dicionário i18n.
+- **`Validator`** and **`ValidationError`** live in `@repo/utils`.
+- **Usage**: `@repo/core` (`Id`, `Text`, `DateTime`, `Experience`, etc.) and possibly `@repo/utils` itself.
+- **Validations** in `@repo/utils`: `isLength`, `isUUID`, `isDateTime`, `isIn`, `isUrl`, and others used by `Validator`.
 
-3. **Utils**  
-   - As funções puras (`isLength`, `isUUID`, etc.) podem continuar; Zod não as substitui necessariamente. O `Validator` em si pode ficar apenas como dependência do Core, ou ser marcado como “legacy” e deixar de ser usado em código novo na borda.
+### Strategy
 
-4. **Ordem sugerida**  
-   - (1) Zod na API (body/query).  
-   - (2) Zod no decode de rows na Infra (quando existir).  
-   - (3) Avaliar Zod nos forms (Contact, etc.) e migrar Yup → Zod se for o caso.  
-   - (4) Opcional: simplificar domínio removendo `Validator` e usando apenas `if/throw` + `ValidationError` em novos VOs; migrar os antigos gradualmente.
+1. **Edge (API, forms, Infra)**
+   - Introduce **Zod** for:
+     - body / query validation in Route Handlers
+     - form schemas (gradually replacing Yup where it makes sense)
+     - row decoding in Infra
+   - Do **not** use `Validator` in new edge code.
 
-### O que não fazer
+2. **Domain**
+   - Keep `Validator` in the Core for now if it reduces migration risk.
+   - In new VOs / entities, explicit invariant checks may be used if they simplify the code and still preserve stable error semantics.
+   - Avoid introducing Zod into `@repo/core`.
 
-- **Não** colocar Zod como dependência do `@repo/core`; o Core permanece sem libs de schema.
-- **Não** quebrar assinaturas ou `ERROR_CODE` em uso; a migração deve ser interna ou aditiva.
+3. **Utils**
+   - Pure validation functions such as `isLength`, `isUUID`, and similar may remain.
+   - `Validator` itself may eventually become Core-only legacy infrastructure or be phased out gradually.
+
+4. **Suggested order**
+   - (1) Zod in the API (body / query)
+   - (2) Zod in Infra row decoding
+   - (3) evaluate Zod in forms such as Contact
+   - (4) optionally simplify new domain code toward explicit invariants plus stable errors
+
+### What Not To Do
+
+- Do **not** add Zod as a dependency of `@repo/core`.
+- Do **not** break existing `ERROR_CODE` contracts during migration.
+- Do **not** mix unrelated validation migrations into tasks that are not already touching the validation boundary in question.

@@ -29,7 +29,7 @@ describe('SocialNetwork', () => {
     );
   });
 
-  it('should create new language from valid props', () => {
+  it('should create new social network from valid props', () => {
     const name = 'Linkedin';
     const icon = 'linkedin';
     const url = 'https://www.linkedin.com';
@@ -46,7 +46,7 @@ describe('SocialNetwork', () => {
     expect(socialNetwork.url.value).toBe(url);
   });
 
-  it('should create multiple languages from valid props', () => {
+  it('should create multiple social networks', () => {
     const socialNetworks = SocialNetworkBuilder.list(2);
 
     expect(socialNetworks).toHaveLength(2);
