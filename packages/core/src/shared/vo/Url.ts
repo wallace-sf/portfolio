@@ -1,28 +1,33 @@
 import { Validator } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
 
 export class Url extends ValueObject<string> {
-  static readonly ERROR_CODE = 'ERROR_INVALID_URL';
+  static readonly ERROR_CODE = 'INVALID_URL';
 
   private constructor(value: string) {
-    super({ value, isNew: false });
-    this._validate(value);
+    super({ value });
   }
 
-  static new(value?: string): Url {
-    return new Url(value ?? '');
-  }
-
-  private _validate(value?: string): void {
+  static create(value?: string): Either<ValidationError, Url> {
     const { error, isValid } = Validator.new(value)
-      .url('O valor deve ser uma URL válida.')
+      .url('The value must be a valid URL.')
       .validate();
 
-    const ERROR_CODE = Url.ERROR_CODE;
-
     if (!isValid && error)
-      throw new ValidationError({ code: ERROR_CODE, message: error });
+      return left(
+        new ValidationError({ code: Url.ERROR_CODE, message: error }),
+      );
+
+    return right(new Url(value ?? ''));
+  }
+
+  /** @deprecated Use Url.create() instead */
+  static new(value?: string): Url {
+    const result = Url.create(value);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 }

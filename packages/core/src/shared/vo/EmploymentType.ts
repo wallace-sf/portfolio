@@ -1,6 +1,7 @@
 import { Validator } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
 
 export type EmploymentTypeValue = Readonly<
@@ -8,7 +9,7 @@ export type EmploymentTypeValue = Readonly<
 >[number];
 
 export class EmploymentType extends ValueObject<EmploymentTypeValue> {
-  static readonly ERROR_CODE = 'ERROR_INVALID_EMPLOYMENT_TYPE';
+  static readonly ERROR_CODE = 'INVALID_EMPLOYMENT_TYPE';
   static readonly EMPLOYMENTS = [
     'FULL_TIME',
     'PART_TIME',
@@ -21,25 +22,34 @@ export class EmploymentType extends ValueObject<EmploymentTypeValue> {
   ] as const;
 
   private constructor(value: EmploymentTypeValue) {
-    super({ value, isNew: false });
-    this._validate(value);
+    super({ value });
   }
 
-  static new(value: EmploymentTypeValue): EmploymentType {
-    return new EmploymentType(value);
-  }
-
-  private _validate(value: string): void {
+  static create(
+    value: EmploymentTypeValue,
+  ): Either<ValidationError, EmploymentType> {
     const { error, isValid } = Validator.new(value)
       .in(
         [...EmploymentType.EMPLOYMENTS],
-        'O valor deve ser um tipo de emprego válido.',
+        'The value must be a valid employment type.',
       )
       .validate();
 
-    const ERROR_CODE = EmploymentType.ERROR_CODE;
-
     if (!isValid && error)
-      throw new ValidationError({ code: ERROR_CODE, message: error });
+      return left(
+        new ValidationError({
+          code: EmploymentType.ERROR_CODE,
+          message: error,
+        }),
+      );
+
+    return right(new EmploymentType(value));
+  }
+
+  /** @deprecated Use EmploymentType.create() instead */
+  static new(value: EmploymentTypeValue): EmploymentType {
+    const result = EmploymentType.create(value);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 }

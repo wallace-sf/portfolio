@@ -1,12 +1,13 @@
 import { Validator } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
 
 export type FluencyValue = Readonly<typeof Fluency.LEVELS>[number];
 
 export class Fluency extends ValueObject<FluencyValue> {
-  static readonly ERROR_CODE = 'ERROR_INVALID_FLUENCY';
+  static readonly ERROR_CODE = 'INVALID_FLUENCY';
   static readonly LEVELS = [
     'BEGINNER',
     'ELEMENTARY',
@@ -17,22 +18,26 @@ export class Fluency extends ValueObject<FluencyValue> {
   ] as const;
 
   private constructor(value: FluencyValue) {
-    super({ value, isNew: false });
-    this._validate(value);
+    super({ value });
   }
 
-  static new(value: FluencyValue): Fluency {
-    return new Fluency(value);
-  }
-
-  private _validate(value: string): void {
+  static create(value: FluencyValue): Either<ValidationError, Fluency> {
     const { error, isValid } = Validator.new(value)
-      .in([...Fluency.LEVELS], 'O valor deve ser um nível de fluência válido.')
+      .in([...Fluency.LEVELS], 'The value must be a valid fluency level.')
       .validate();
 
-    const ERROR_CODE = Fluency.ERROR_CODE;
-
     if (!isValid && error)
-      throw new ValidationError({ code: ERROR_CODE, message: error });
+      return left(
+        new ValidationError({ code: Fluency.ERROR_CODE, message: error }),
+      );
+
+    return right(new Fluency(value));
+  }
+
+  /** @deprecated Use Fluency.create() instead */
+  static new(value: FluencyValue): Fluency {
+    const result = Fluency.create(value);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 }

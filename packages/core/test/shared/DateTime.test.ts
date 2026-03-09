@@ -1,48 +1,58 @@
-
 import { DateTime, ValidationError } from '../../src';
 
 describe('DateTime', () => {
-  describe('when is new', () => {
-    it('should be valid when param is valid', () => {
+  describe('when created from valid value', () => {
+    it('should return Right with the provided ISO timestamp', () => {
       const param = '2020-01-01T00:00:00.000Z';
-      const dateTime = DateTime.new(param);
+      const result = DateTime.create(param);
 
-      expect(dateTime.value).toBe(param);
-      expect(dateTime.isNew).toBe(false);
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.value).toBe(param);
     });
+  });
 
-    it('should be invalid when param is invalid', () => {
-      expect(() => DateTime.new('')).toThrow(
-        new ValidationError({ code: DateTime.ERROR_CODE, message: 'O valor deve ser uma data e hora válida.' }),
-      );
+  describe('when created from invalid value', () => {
+    it('should return Left with ValidationError for empty string', () => {
+      const result = DateTime.create('');
+
+      expect(result.isLeft()).toBe(true);
+      expect(result.value).toBeInstanceOf(ValidationError);
+      expect((result.value as ValidationError).code).toBe(DateTime.ERROR_CODE);
+      expect((result.value as ValidationError).message).toBe('The value must be a valid date and time.');
     });
+  });
 
-    it('should be valid when it does not have param', () => {
-      const dateTime = DateTime.new();
+  describe('when generated via now()', () => {
+    it('should return a valid 24-character ISO timestamp', () => {
+      const dateTime = DateTime.now();
 
-      expect(dateTime.isNew).toBe(true);
       expect(dateTime.value).toHaveLength(24);
+      expect(DateTime.create(dateTime.value).isRight()).toBe(true);
     });
   });
 
   describe('when accessing ms getter', () => {
-    it('should return numeric timestamp in milliseconds via ms getter', () => {
+    it('should return numeric timestamp in milliseconds', () => {
       const param = '2020-01-01T00:00:00.000Z';
-      const dateTime = DateTime.new(param);
+      const result = DateTime.create(param);
 
-      expect(dateTime.ms).toBe(new Date(param).getTime());
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.ms).toBe(new Date(param).getTime());
     });
   });
 
-  describe('when is compared', () => {
-    it('should be valid when two dates are equal', () => {
+  describe('when compared', () => {
+    it('should be equal when two dates have the same value', () => {
       const param = '2020-01-01T00:00:00.000Z';
+      const r1 = DateTime.create(param);
+      const r2 = DateTime.create(param);
 
-      const dateTime1 = DateTime.new(param);
-      const dateTime2 = DateTime.new(dateTime1.value);
-
-      expect(dateTime1.equals(dateTime2)).toBe(true);
-      expect(dateTime1.diff(dateTime2)).toBe(false);
+      expect(r1.isRight() && r2.isRight()).toBe(true);
+      if (!r1.isRight() || !r2.isRight()) return;
+      expect(r1.value.equals(r2.value)).toBe(true);
+      expect(r1.value.diff(r2.value)).toBe(false);
     });
   });
 });

@@ -21,13 +21,13 @@ class MyClass extends Entity<MyClass, IMyClassProps> {
 }
 
 describe('Entity', () => {
-  it('should initialize created_at and updated_at as DateTime when not provided', () => {
+  it('should auto-generate created_at and updated_at when not provided', () => {
     const e = MyClass.new({ name: 'John', age: 20 });
 
     expect(e.created_at).toBeInstanceOf(DateTime);
     expect(e.updated_at).toBeInstanceOf(DateTime);
-    expect(e.created_at.isNew).toBe(true);
-    expect(e.updated_at.isNew).toBe(true);
+    expect(DateTime.create(e.created_at.value).isRight()).toBe(true);
+    expect(DateTime.create(e.updated_at.value).isRight()).toBe(true);
   });
 
   it('should accept provided created_at and updated_at timestamps', () => {
@@ -36,8 +36,6 @@ describe('Entity', () => {
 
     expect(e.created_at.value).toBe(timestamp);
     expect(e.updated_at.value).toBe(timestamp);
-    expect(e.created_at.isNew).toBe(false);
-    expect(e.updated_at.isNew).toBe(false);
   });
 
   it('should have null deleted_at by default', () => {
@@ -46,7 +44,22 @@ describe('Entity', () => {
     expect(e.deleted_at).toBeNull();
   });
 
-  it('should compare two different entities', () => {
+  it('should freeze props to prevent external mutation', () => {
+    const e = MyClass.new({ name: 'John', age: 20 });
+
+    expect(Object.isFrozen(e.props)).toBe(true);
+  });
+
+  it('should not mutate the original props object passed to constructor', () => {
+    const original: IMyClassProps = { name: 'John', age: 20 };
+    const before = { ...original };
+
+    MyClass.new(original);
+
+    expect(original).toEqual(before);
+  });
+
+  it('should compare two different entities as not equal', () => {
     const e1 = MyClass.new({ name: 'John', age: 20 });
     const e2 = MyClass.new({ name: 'John', age: 20 });
 
@@ -54,7 +67,7 @@ describe('Entity', () => {
     expect(e1.diff(e2)).toBe(true);
   });
 
-  it('should compare two equal entities with same props', () => {
+  it('should compare two entities with the same id as equal', () => {
     const e1 = MyClass.new({ name: 'John', age: 20 });
     const e2 = MyClass.new({ id: e1.id.value, name: 'Denis', age: 30 });
 
@@ -62,15 +75,12 @@ describe('Entity', () => {
     expect(e1.diff(e2)).toBe(false);
   });
 
-  it('should clone a entity with different props', () => {
-    const e2Name = 'Jane';
-    const e2Age = 25;
-
+  it('should clone entity preserving id while merging new props', () => {
     const e1 = MyClass.new({ name: 'John', age: 20 });
-    const e2 = e1.clone({ name: e2Name, age: e2Age });
+    const e2 = e1.clone({ name: 'Jane', age: 25 });
 
     expect(e2.equals(e1)).toBe(true);
-    expect(e2.name).toBe(e2Name);
-    expect(e2.age).toBe(e2Age);
+    expect(e2.name).toBe('Jane');
+    expect(e2.age).toBe(25);
   });
 });

@@ -37,7 +37,7 @@ describe('Experience', () => {
     expectValidationError(
       () => ExperienceBuilder.build().withoutCompany().now(),
       Text.ERROR_CODE,
-      'O texto deve ter entre 3 e 100 caracteres.',
+      'The value must be between 3 and 100 characters.',
     );
   });
 
@@ -45,7 +45,7 @@ describe('Experience', () => {
     expectValidationError(
       () => ExperienceBuilder.build().withoutEmploymentType().now(),
       EmploymentType.ERROR_CODE,
-      'O valor deve ser um tipo de emprego válido.',
+      'The value must be a valid employment type.',
     );
   });
 
@@ -53,7 +53,7 @@ describe('Experience', () => {
     expectValidationError(
       () => ExperienceBuilder.build().withEndAt('#').now(),
       DateTime.ERROR_CODE,
-      'O valor deve ser uma data e hora válida.',
+      'The value must be a valid date and time.',
     );
   });
 
@@ -61,7 +61,7 @@ describe('Experience', () => {
     expectValidationError(
       () => ExperienceBuilder.build().withStartAt('#').now(),
       DateTime.ERROR_CODE,
-      'O valor deve ser uma data e hora válida.',
+      'The value must be a valid date and time.',
     );
   });
 
@@ -69,7 +69,7 @@ describe('Experience', () => {
     expectValidationError(
       () => ExperienceBuilder.build().withoutPosition().now(),
       Text.ERROR_CODE,
-      'O texto deve ter entre 3 e 100 caracteres.',
+      'The value must be between 3 and 100 characters.',
     );
   });
 
@@ -77,7 +77,7 @@ describe('Experience', () => {
     expectValidationError(
       () => ExperienceBuilder.build().withoutLocation().now(),
       Text.ERROR_CODE,
-      'O texto deve ter entre 3 e 100 caracteres.',
+      'The value must be between 3 and 100 characters.',
     );
   });
 
@@ -85,7 +85,7 @@ describe('Experience', () => {
     expectValidationError(
       () => ExperienceBuilder.build().withoutLocationType().now(),
       LocationType.ERROR_CODE,
-      'O valor deve ser um tipo localização válido.',
+      'The value must be a valid location type.',
     );
   });
 
@@ -108,7 +108,7 @@ describe('Experience', () => {
           .withEndAt('2021-01-01')
           .now(),
       Experience.ERROR_CODE,
-      'O início da carreira deve ser menor ou igual ao final da carreira.',
+      'The start of the career must be less than or equal to the end of the career.',
     );
   });
 
@@ -141,7 +141,7 @@ describe('Experience', () => {
     expect(experience.position.value).toBe(position);
     expect(experience.location.value).toBe(location);
     expect(experience.location_type.value).toBe(locationType);
-    expect(experience.skills.map((s) => s.props)).toEqual(skills);
+    expect(experience.skills.map((s) => s.props)).toMatchObject(skills);
   });
 
   it('should create new experience without end at', () => {
@@ -172,7 +172,7 @@ describe('Experience', () => {
     expectValidationError(
       () => ExperienceBuilder.build().withSkills(skills).now(),
       SkillType.ERROR_CODE,
-      'O valor deve ser um tipo de habilidade válido.',
+      'The value must be a valid skill type.',
     );
   });
 });

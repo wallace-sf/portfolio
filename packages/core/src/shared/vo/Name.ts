@@ -1,30 +1,39 @@
 import { Validator } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
 
 export class Name extends ValueObject<string> {
-  static readonly ERROR_CODE = 'ERROR_INVALID_NAME';
+  static readonly ERROR_CODE = 'INVALID_NAME';
 
   private constructor(value: string) {
-    super({ value, isNew: false });
-    this._validate(this._props.value);
+    super({ value });
   }
 
-  static new(value?: string): Name {
-    return new Name(value ?? '');
-  }
-
-  private _validate(value?: string): void {
+  static create(value?: string): Either<ValidationError, Name> {
     const { error, isValid } = Validator.new(value)
-      .alpha('Nome deve conter apenas letras.')
-      .length(3, 100, 'O nome deve estar entre 3 e 100 caracteres.')
+      .alpha('The name must contain only letters.')
+      .length(
+        3,
+        100,
+        'The name must be between {{min}} and {{max}} characters.',
+      )
       .validate();
 
-    const ERROR_CODE = Name.ERROR_CODE;
-
     if (!isValid && error)
-      throw new ValidationError({ code: ERROR_CODE, message: error });
+      return left(
+        new ValidationError({ code: Name.ERROR_CODE, message: error }),
+      );
+
+    return right(new Name(value ?? ''));
+  }
+
+  /** @deprecated Use Name.create() instead */
+  static new(value?: string): Name {
+    const result = Name.create(value);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 
   public get normalized(): string {
