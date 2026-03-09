@@ -1,14 +1,30 @@
-import { faker } from '@faker-js/faker';
-
 import {
   Experience,
   Text,
   LocationType,
   EmploymentType,
   DateTime,
+  SkillType,
   ValidationError,
 } from '../../src';
 import { ExperienceBuilder, SkillBuilder } from '../data';
+
+const expectValidationError = (
+  action: () => unknown,
+  expectedCode: string,
+  expectedMessage?: string,
+): void => {
+  try {
+    action();
+    throw new Error('Expected a ValidationError to be thrown.');
+  } catch (error) {
+    expect(error).toBeInstanceOf(ValidationError);
+    expect((error as ValidationError).code).toBe(expectedCode);
+    if (expectedMessage) {
+      expect((error as ValidationError).message).toContain(expectedMessage);
+    }
+  }
+};
 
 describe('Experience', () => {
   it('should be valid when props are valid', () => {
@@ -18,57 +34,81 @@ describe('Experience', () => {
   });
 
   it('should be invalid when company is invalid', () => {
-    expect(() => ExperienceBuilder.build().withoutCompany().now()).toThrow(
-      new ValidationError({ code: Text.ERROR_CODE, message: 'O texto deve ter entre 3 e 100 caracteres.' }),
+    expectValidationError(
+      () => ExperienceBuilder.build().withoutCompany().now(),
+      Text.ERROR_CODE,
+      'O texto deve ter entre 3 e 100 caracteres.',
     );
   });
 
   it('should be invalid when employment type is invalid', () => {
-    expect(() =>
-      ExperienceBuilder.build().withoutEmploymentType().now(),
-    ).toThrow(
-      new ValidationError({ code: EmploymentType.ERROR_CODE, message: 'O valor deve ser um tipo de emprego válido.' }),
+    expectValidationError(
+      () => ExperienceBuilder.build().withoutEmploymentType().now(),
+      EmploymentType.ERROR_CODE,
+      'O valor deve ser um tipo de emprego válido.',
     );
   });
 
   it('should be invalid when end at is invalid', () => {
-    expect(() => ExperienceBuilder.build().withEndAt('#').now()).toThrow(
-      new ValidationError({ code: DateTime.ERROR_CODE, message: 'O valor deve ser uma data e hora válida.' }),
+    expectValidationError(
+      () => ExperienceBuilder.build().withEndAt('#').now(),
+      DateTime.ERROR_CODE,
+      'O valor deve ser uma data e hora válida.',
     );
   });
 
   it('should be invalid when start at is invalid', () => {
-    expect(() => ExperienceBuilder.build().withStartAt('#').now()).toThrow(
-      new ValidationError({ code: DateTime.ERROR_CODE, message: 'O valor deve ser uma data e hora válida.' }),
+    expectValidationError(
+      () => ExperienceBuilder.build().withStartAt('#').now(),
+      DateTime.ERROR_CODE,
+      'O valor deve ser uma data e hora válida.',
     );
   });
 
   it('should be invalid when position is invalid', () => {
-    expect(() => ExperienceBuilder.build().withoutPosition().now()).toThrow(
-      new ValidationError({ code: Text.ERROR_CODE, message: 'O texto deve ter entre 3 e 100 caracteres.' }),
+    expectValidationError(
+      () => ExperienceBuilder.build().withoutPosition().now(),
+      Text.ERROR_CODE,
+      'O texto deve ter entre 3 e 100 caracteres.',
     );
   });
 
   it('should be invalid when location is invalid', () => {
-    expect(() => ExperienceBuilder.build().withoutLocation().now()).toThrow(
-      new ValidationError({ code: Text.ERROR_CODE, message: 'O texto deve ter entre 3 e 100 caracteres.' }),
+    expectValidationError(
+      () => ExperienceBuilder.build().withoutLocation().now(),
+      Text.ERROR_CODE,
+      'O texto deve ter entre 3 e 100 caracteres.',
     );
   });
 
   it('should be invalid when location type is invalid', () => {
-    expect(() => ExperienceBuilder.build().withoutLocationType().now()).toThrow(
-      new ValidationError({ code: LocationType.ERROR_CODE, message: 'O valor deve ser um tipo localização válido.' }),
+    expectValidationError(
+      () => ExperienceBuilder.build().withoutLocationType().now(),
+      LocationType.ERROR_CODE,
+      'O valor deve ser um tipo localização válido.',
     );
   });
 
+  it('should be valid when start_at equals end_at', () => {
+    const date = new Date('2022-01-01').toISOString();
+
+    const experience = ExperienceBuilder.build()
+      .withStartAt(date)
+      .withEndAt(date)
+      .now();
+
+    expect(experience).toBeInstanceOf(Experience);
+  });
+
   it('should be invalid when start at is greather than end at', () => {
-    expect(() =>
-      ExperienceBuilder.build()
-        .withStartAt('2022-01-02')
-        .withEndAt('2021-01-01')
-        .now(),
-    ).toThrow(
-      new ValidationError({ code: Experience.ERROR_CODE, message: 'O início da carreira deve ser menor ou igual ao final da carreira.' }),
+    expectValidationError(
+      () =>
+        ExperienceBuilder.build()
+          .withStartAt('2022-01-02')
+          .withEndAt('2021-01-01')
+          .now(),
+      Experience.ERROR_CODE,
+      'O início da carreira deve ser menor ou igual ao final da carreira.',
     );
   });
 
@@ -80,9 +120,7 @@ describe('Experience', () => {
     const position = 'Software Engineer';
     const location = 'São Paulo, Brazil';
     const locationType = 'REMOTE';
-    const skills = SkillBuilder.listToProps(
-      faker.number.int({ min: 0, max: 10 }),
-    );
+    const skills = SkillBuilder.listToProps(2);
 
     const experience = ExperienceBuilder.build()
       .withCompany(company)
@@ -113,9 +151,28 @@ describe('Experience', () => {
     expect(experience.end_at?.value).toBeUndefined();
   });
 
-  it('should create multiple experiences from valid props', () => {
-    const experiences = ExperienceBuilder.list(2);
+  it('should allow experiences without related skills when the list is empty', () => {
+    const experience = ExperienceBuilder.build().withSkills([]).now();
 
-    expect(experiences).toHaveLength(2);
+    expect(experience.skills).toEqual([]);
+  });
+
+  it('should reject experiences when skills are not provided', () => {
+    expectValidationError(
+      () => ExperienceBuilder.build().withoutSkills().now(),
+      'ERROR_INVALID_SKILL_LIST',
+      'Skills must be provided as an array.',
+    );
+  });
+
+  it('should propagate nested skill validation errors', () => {
+    const skills = SkillBuilder.listToProps(2);
+    skills[0]!.type = '' as SkillType['value'];
+
+    expectValidationError(
+      () => ExperienceBuilder.build().withSkills(skills).now(),
+      SkillType.ERROR_CODE,
+      'O valor deve ser um tipo de habilidade válido.',
+    );
   });
 });

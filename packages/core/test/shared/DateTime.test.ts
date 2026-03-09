@@ -25,6 +25,15 @@ describe('DateTime', () => {
     });
   });
 
+  describe('when accessing ms getter', () => {
+    it('should return numeric timestamp in milliseconds via ms getter', () => {
+      const param = '2020-01-01T00:00:00.000Z';
+      const dateTime = DateTime.new(param);
+
+      expect(dateTime.ms).toBe(new Date(param).getTime());
+    });
+  });
+
   describe('when is compared', () => {
     it('should be valid when two dates are equal', () => {
       const param = '2020-01-01T00:00:00.000Z';

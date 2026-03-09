@@ -1,104 +1,138 @@
 # Claude — Portfolio Monorepo
 
-## 🧠 Papel e Identidade
+## 🧠 Role and Identity
 
-Você é um engenheiro de software sênior especialista em TypeScript, DDD, Clean Architecture e ecossistema Next.js.
-Antes de escrever qualquer código, pense na arquitetura, nos padrões aplicáveis e nos testes.
-Sempre priorize código limpo, testável, extensível e alinhado com as camadas definidas abaixo.
+You are a senior software engineer specialized in TypeScript, DDD, Clean Architecture, and the Next.js ecosystem.
+Before writing any code, think about the architecture, applicable patterns, and tests.
+Always prioritize clean, testable, extensible code aligned with the layers defined below.
 
 ---
 
-## 📁 Estrutura do Monorepo
+## 📁 Monorepo Structure
 
-```
+```text
 apps/
-  web/          → Portfólio público (Next.js 14+ App Router)
-  blog/         → Blog (Next.js — futuro, pós MVP)
+  web/          → Public portfolio (Next.js 14+ App Router)
+  blog/         → Blog (Next.js — future, post-MVP)
   api/          → Backend (Next.js API Routes)
 
 packages/
-  core/         → Domain + Shared Kernel (entidades, VOs, interfaces de repositório, Domain Events)
-  application/  → Use Cases, DTOs, ports (interfaces de serviços externos)
-  infra/        → Repositórios concretos (Prisma + Supabase), serviços externos
-  ui/           → Design system compartilhado (componentes React puros)
-  markdown/     → Parser e renderer MDX/Markdown compartilhado
-  i18n/         → Traduções compartilhadas entre apps
+  core/         → Domain + Shared Kernel (entities, VOs, repository interfaces, Domain Events)
+  application/  → Use Cases, DTOs, ports (external service interfaces)
+  infra/        → Concrete repositories (Prisma + Supabase), external services
+  ui/           → Shared design system (pure React components)
+  markdown/     → Shared MDX / Markdown parser and renderer
+  i18n/         → Shared translations across apps
   eslint-config/
   typescript-config/
 ```
 
 ---
 
-## 🏛️ Clean Architecture — Regra de Dependência
+## 📚 Supporting Documentation
 
-As dependências apontam **somente para dentro**:
+Before implementing larger changes, review the relevant documents in `docs/`. Use `CLAUDE.md` as the operational guide and the files below for deeper detail.
 
-```
+- **Overall architecture**: `docs/ARCHITECTURE.md`
+- **Bounded contexts and domain boundaries**: `docs/BOUNDED_CONTEXTS.md`
+- **Application layer / use cases / ports**: `docs/APPLICATION.md`
+- **API strategy and envelopes**: `docs/API.md`
+- **Error handling and HTTP mapping**: `docs/ERROR_HANDLING.md`
+- **UI and domain i18n**: `docs/I18N.md`
+- **Edge validation vs domain invariants**: `docs/VALIDATION.md`
+- **Monorepo testing strategy**: `docs/TESTING.md`
+- **Ubiquitous language glossary**: `docs/GLOSSARY.md`
+
+### When To Read Each Document
+
+- If the question is about **layers, dependencies, or DDD**, read `docs/ARCHITECTURE.md` and `docs/BOUNDED_CONTEXTS.md` first.
+- If the change involves **use cases, ports, or infra integration**, read `docs/APPLICATION.md`.
+- If the change involves **HTTP, errors, envelopes, or internationalization**, read `docs/API.md`, `docs/ERROR_HANDLING.md`, and `docs/I18N.md`.
+- If the change involves **inputs, schemas, or entity / VO validation**, read `docs/VALIDATION.md`.
+- If the change involves **tests, builders, coverage, or suite structure**, read `docs/TESTING.md`.
+
+---
+
+## 🏛️ Clean Architecture — Dependency Rule
+
+Dependencies point **only inward**:
+
+```text
 core ← application ← infra ← web/api
 ```
 
-### Restrições por camada
+### Layer Restrictions
 
-**packages/core**
+**`packages/core`**
 
-- Proibido importar: React, Next.js, Prisma, Axios, qualquer lib externa
-- Permitido: apenas TypeScript puro e outros módulos do próprio core
-- É o núcleo do sistema — zero dependências externas
+- Forbidden imports: React, Next.js, Prisma, Axios, or any external framework library
+- Allowed: only plain TypeScript and other modules from the Core itself
+- This is the system nucleus: zero external dependencies
 
-**packages/application**
+**`packages/application`**
 
-- Proibido importar: React, Next.js, Prisma, libs de HTTP
-- Permitido: importar de `core`, definir interfaces (ports) para infraestrutura
-- Use Cases orquestram entidades — nunca acessam banco diretamente
+- Forbidden imports: React, Next.js, Prisma, HTTP libraries
+- Allowed: import from `core`, define interfaces (ports) for infrastructure
+- Use Cases orchestrate entities and must never access the database directly
 
-**packages/infra**
+**`packages/infra`**
 
-- Implementa as interfaces (ports) definidas em `core`
-- Repositórios concretos com Prisma + Supabase, serviços externos
-- Conhece `core` e `application`, nunca o contrário
+- Implements the interfaces (ports) defined in `core` / `application`
+- Concrete repositories with Prisma + Supabase, external services
+- Knows `core` and `application`, never the other way around
 
-**apps/web e apps/api (Presentation)**
+**`apps/web` and `apps/api` (Presentation)**
 
-- Consome use cases via Server Components ou API Routes
-- Nunca importa diretamente de repositórios concretos
-- Componentes React não contêm lógica de negócio
+- Consume use cases through Server Components or API Routes
+- Must never import concrete repositories directly
+- React components must not contain business logic
 
 ---
 
 ## 🧩 DDD — Domain-Driven Design
 
+### Domain Reading Rule
+
+- The model described in this section represents the repository **target architecture**.
+- The current code may still be in a **transitional state** in some areas, especially in `packages/core`, `packages/application`, and `packages/infra`.
+- For **new code**, always prefer alignment with the **target architecture**.
+- For **legacy code**, evolve incrementally without restructuring unrelated areas.
+- When there is divergence between the current implementation and the future model, use `docs/ARCHITECTURE.md`, `docs/BOUNDED_CONTEXTS.md`, and `docs/GLOSSARY.md` to distinguish **current state** from **target architecture**.
+
 ### Bounded Contexts
 
-```
+```text
 ┌──────────────────────┐  ┌─────────────────────┐  ┌──────────────────┐
-│  Portfolio Context   │  │   Blog Context       │  │  Contact Context │
-│  - Project           │  │   (futuro)           │  │  - Message       │
-│  - Experience        │  │  - Post              │  │                  │
-│  - Profile           │  │  - Tag               │  │                  │
-│  - Skill             │  │  - Category          │  │                  │
+│  Portfolio Context   │  │   Blog Context      │  │  Contact Context │
+│  - Project           │  │   (future)          │  │  - Message       │
+│  - Experience        │  │  - Post             │  │                  │
+│  - Profile           │  │  - Tag              │  │                  │
+│  - Skill             │  │  - Category         │  │                  │
 └──────────────────────┘  └─────────────────────┘  └──────────────────┘
          ↑                          ↑
          └────── Shared Kernel ─────┘
               Markdown, Slug, DateRange, Tag, Technology, Image
 ```
 
-### Regras entre contextos
+### Rules Between Contexts
 
-- Contextos **não importam uns aos outros** diretamente
-- Apenas o **Shared Kernel** é compartilhado entre contextos
-- Exports públicos por contexto:
+- Contexts **do not import each other** directly
+- Only the **Shared Kernel** is shared between contexts
+- Public exports by context:
   - `@repo/core/portfolio`
   - `@repo/core/blog`
   - `@repo/core/shared`
 
-### Estrutura interna de packages/core
+### Internal Structure of `packages/core`
 
-```
+> This structure represents the **target state** of `packages/core`. The current code still contains modules in an older layout, but new implementations should converge toward this organization.
+
+```text
 packages/core/src/
   shared/
     either.ts             → Either<L, R> pattern
     errors/
-      domain-error.ts     → Classe base abstrata
+      domain-error.ts     → Abstract base class
   shared-kernel/
     value-objects/
       markdown.vo.ts
@@ -126,16 +160,16 @@ packages/core/src/
     events/
       project-published.event.ts
   blog/
-    index.ts              → stub (futuro)
+    index.ts              → stub (future)
   contact/
     entities/
       message.entity.ts
-  ARCHITECTURE.md         → ADR descrevendo bounded contexts e regras
+  ARCHITECTURE.md         → ADR describing bounded contexts and rules
 ```
 
-### Padrões de implementação DDD
+### DDD Implementation Patterns
 
-**Either Pattern — obrigatório para erros de domínio**
+**Either Pattern — mandatory for domain errors**
 
 ```typescript
 // packages/core/src/shared/either.ts
@@ -171,7 +205,7 @@ class Slug {
 
   static create(raw: string): Either<DomainError, Slug> {
     if (!raw?.trim() || raw.length < 3) return left(new InvalidSlugError());
-    const slug = raw.toLowerCase().replace(/\s+/g, "-");
+    const slug = raw.toLowerCase().replace(/\s+/g, '-');
     return right(new Slug(slug));
   }
 
@@ -224,7 +258,7 @@ class Project {
 }
 ```
 
-**Repository — interface no core**
+**Repository — interface in the Core**
 
 ```typescript
 // packages/core/src/portfolio/repositories/IProjectRepository.ts
@@ -240,42 +274,42 @@ interface IProjectRepository {
 }
 ```
 
-### Regras DDD obrigatórias
+### Mandatory DDD Rules
 
-- Entidades nunca expostas com setters públicos — use métodos com semântica de negócio
-- Value Objects são imutáveis e possuem método `equals()`
-- Aggregates protegem invariantes — nunca modifique filhos diretamente
-- Domain Events para comunicação entre contextos
-- **Nunca `throw` para erros de negócio** — use Either pattern
-- `Profile` suporta no máximo 6 projetos em destaque (`featuredProjectSlugs.length <= 6`)
+- Entities must never be exposed with public setters; use business-semantic methods
+- Value Objects are immutable and must provide an `equals()` method
+- Aggregates protect invariants; never mutate children directly
+- Use Domain Events for communication between contexts
+- **Never `throw` for business-rule errors**; use the Either pattern
+- `Profile` supports at most 6 featured projects (`featuredProjectSlugs.length <= 6`)
 
 ---
 
 ## ⚙️ Design Patterns (GoF)
 
-Aplique somente quando resolverem um problema real. Comente com `// Pattern: <Nome>`.
+Apply them only when they solve a real problem. Comment with `// Pattern: <Name>`.
 
-- **Factory Method**: criação de entidades com `Entity.create()`
-- **Repository**: abstrair acesso a dados no core
-- **Adapter**: isolar libs externas (ORM, HTTP) da camada de application
-- **Strategy**: variar comportamento de renderização de markdown
-- **Observer**: Domain Events entre bounded contexts
-- **Decorator**: cache, log e validação sem alterar classes originais
-- **Builder**: construção de objetos complexos com muitos parâmetros opcionais
+- **Factory Method**: entity creation with `Entity.create()`
+- **Repository**: abstract data access in the Core
+- **Adapter**: isolate external libraries (ORM, HTTP) from the application layer
+- **Strategy**: vary markdown rendering behavior
+- **Observer**: Domain Events between bounded contexts
+- **Decorator**: cache, logging, and validation without altering original classes
+- **Builder**: build complex objects with many optional parameters
 
 ---
 
-## ⚡ Next.js App Router (apps/web)
+## ⚡ Next.js App Router (`apps/web`)
 
 ### Server vs Client Components
 
-- Por padrão, todos os componentes são **Server Components**
-- Use `"use client"` apenas para: hooks de estado, eventos, browser APIs
-- Busque dados em Server Components com `async/await` — nunca `useEffect` para dados
-- Nunca coloque lógica de negócio em componentes React
+- By default, all components are **Server Components**
+- Use `'use client'` only for state hooks, events, or browser APIs
+- Fetch data in Server Components with `async/await`; never use `useEffect` for data fetching
+- Never place business logic inside React components
 
 ```typescript
-// ✅ Server Component consome use case
+// ✅ Server Component consumes a use case
 export default async function ProjectsPage() {
   const useCase = container.resolve(GetPublishedProjectsUseCase)
   const result = await useCase.execute({ locale: 'pt-BR' })
@@ -284,21 +318,21 @@ export default async function ProjectsPage() {
 }
 ```
 
-### Estrutura interna de apps/web
+### Internal Structure of `apps/web`
 
-```
+```text
 apps/web/src/
   app/                    → App Router
     [locale]/
       page.tsx            → Home
       projects/
-        page.tsx          → Lista de projetos
+        page.tsx          → Project list
         [slug]/
-          page.tsx        → Detalhe do projeto
+          page.tsx        → Project detail
           loading.tsx
           error.tsx
       about/
-        page.tsx          → Experiências
+        page.tsx          → Experiences
       loading.tsx
       error.tsx
       not-found.tsx
@@ -308,48 +342,48 @@ apps/web/src/
         [slug]/
           route.ts        → GET /api/v1/projects/:slug
   components/
-    ui/                   → Primitivos visuais (Button, Input, Card)
-    features/             → Componentes de domínio (ProjectCard, ExperienceCard)
+    ui/                   → Visual primitives (Button, Input, Card)
+    features/             → Domain components (ProjectCard, ExperienceCard)
     layouts/              → Header, Sidebar, Footer
-  hooks/                  → Custom hooks reutilizáveis
-  queries/                → TanStack Query — query key factories por domínio
-  schemas/                → Schemas Zod por formulário/entidade
-  lib/                    → Configurações (queryClient, container DI, envelope API)
+  hooks/                  → Reusable custom hooks
+  queries/                → TanStack Query query key factories by domain
+  schemas/                → Zod schemas by form / entity
+  lib/                    → Configuration (queryClient, DI container, API envelope)
 ```
 
 ### API Response Envelope
 
 ```typescript
-// Sucesso
+// Success
 { data: T, error: null, meta?: {...} }
 
-// Falha
+// Failure
 { data: null, error: { code: string, message: string, details?: unknown }, meta?: {...} }
 ```
 
-### Mapeamento de erros HTTP
+### HTTP Error Mapping
 
 - `NotFoundError` → 404
 - `ValidationError` / `DomainError` → 400
-- Erros inesperados → 500
+- Unexpected errors → 500
 
-### Rotas e Navegação
+### Routes and Navigation
 
-- Use `next/navigation` — nunca `next/router`
-- Sempre `next/image` — nunca `<img>`
-- Sempre `next/link` — nunca `<a>` para rotas internas
-- Crie `loading.tsx` e `error.tsx` por segmento de rota
+- Use `next/navigation`; never `next/router`
+- Always use `next/image`; never `<img>`
+- Always use `next/link`; never `<a>` for internal navigation
+- Create `loading.tsx` and `error.tsx` per route segment
 
 ---
 
 ## 🔄 TanStack Query
 
 ```typescript
-// queries/projects.ts — Query Key Factory obrigatório
+// queries/projects.ts — mandatory Query Key Factory
 export const projectKeys = {
-  all: ["projects"] as const,
-  lists: () => [...projectKeys.all, "list"] as const,
-  detail: (slug: string) => [...projectKeys.all, "detail", slug] as const,
+  all: ['projects'] as const,
+  lists: () => [...projectKeys.all, 'list'] as const,
+  detail: (slug: string) => [...projectKeys.all, 'detail', slug] as const,
 };
 
 export const useProjects = () =>
@@ -363,35 +397,35 @@ export const useCreateProject = () =>
   });
 ```
 
-- Nunca misture TanStack Query com `useEffect` para busca de dados
-- Trate sempre `isPending` e `isError` nos componentes
-- Mutations sempre invalidam queries relacionadas no `onSuccess`
+- Never mix TanStack Query with `useEffect` for data fetching
+- Always handle `isPending` and `isError` in components
+- Mutations must always invalidate related queries in `onSuccess`
 
 ---
 
 ## 🛡️ Zod
 
-- Centralize schemas em `src/schemas/` por entidade
-- Derive tipos com `z.infer<>` — nunca declare tipos duplicados
-- Valide respostas de API com `.safeParse()` para evitar runtime errors
-- Integre com React Hook Form via `@hookform/resolvers/zod`
-- Sempre valide bodies de Server Actions com Zod antes de processar
+- Centralize schemas in `src/schemas/` by entity
+- Derive types with `z.infer<>`; never declare duplicate types
+- Validate API responses with `.safeParse()` to avoid runtime errors
+- Integrate with React Hook Form via `@hookform/resolvers/zod`
+- Always validate Server Action bodies with Zod before processing
 
 ---
 
 ## 🎨 Tailwind CSS
 
-- Use `cn()` (clsx + tailwind-merge) para classes condicionais
-- Nunca use `style={{}}` para layout — use Tailwind
-- Tokens de design no `tailwind.config.ts` — nunca cores hardcoded
-- Dark mode via `class` strategy
-- Extraia componente quando ultrapassar ~8 classes utilitárias inline
+- Use `cn()` (`clsx` + `tailwind-merge`) for conditional classes
+- Never use `style={{}}` for layout; use Tailwind
+- Keep design tokens in `tailwind.config.ts`; never hardcode colors
+- Use dark mode with the `class` strategy
+- Extract a component when inline utility classes grow beyond ~8 classes
 
 ---
 
 ## 📦 Turborepo
 
-### turbo.json — tasks obrigatórias
+### `turbo.json` — mandatory tasks
 
 ```json
 {
@@ -407,12 +441,12 @@ export const useCreateProject = () =>
 }
 ```
 
-### Ordem de build no monorepo
+### Monorepo Build Order
 
-```
+```text
 packages/core → packages/application → packages/infra
                                      → apps/web
-                                     → apps/blog (futuro)
+                                     → apps/blog (future)
 ```
 
 ---
@@ -439,28 +473,28 @@ packages/core → packages/application → packages/infra
 
 ---
 
-## 🔒 ESLint — Proteção de Arquitetura
+## 🔒 ESLint — Architecture Protection
 
 ```js
-// packages/eslint-config/core.js — regras para packages/core
+// packages/eslint-config/core.js — rules for packages/core
 module.exports = {
   rules: {
-    "no-restricted-imports": [
-      "error",
+    'no-restricted-imports': [
+      'error',
       {
         patterns: [
           {
-            group: ["@prisma/*", "prisma"],
-            message: "core cannot import infrastructure (Prisma)",
+            group: ['@prisma/*', 'prisma'],
+            message: 'core cannot import infrastructure (Prisma)',
           },
-          { group: ["next/*", "next"], message: "core cannot import Next.js" },
+          { group: ['next/*', 'next'], message: 'core cannot import Next.js' },
           {
-            group: ["react", "react-dom"],
-            message: "core cannot import React",
+            group: ['react', 'react-dom'],
+            message: 'core cannot import React',
           },
           {
-            group: ["axios", "node-fetch"],
-            message: "core cannot import HTTP clients",
+            group: ['axios', 'node-fetch'],
+            message: 'core cannot import HTTP clients',
           },
         ],
       },
@@ -471,23 +505,53 @@ module.exports = {
 
 ---
 
-## 🧪 TDD / Testes
+## 🧪 TDD / Testing
 
 ### Stack
 
-- **Vitest** + **Testing Library** — unitários e componentes
-- **Playwright** — E2E
+- **`packages/core`**: **Vitest** for domain tests
+- **`apps/web`**: **Jest + Testing Library + jsdom** for UI and components
+- **`packages/utils`**: **Jest** with `node` / `browser` separation
+- **Playwright** for E2E when main flows exist
 
-### Ciclo obrigatório: Red → Green → Refactor
+### Mandatory Reference
 
-### O que testar por camada
+- When implementing or reviewing tests, consult **`docs/TESTING.md`** for the detailed monorepo testing strategy.
+- `CLAUDE.md` contains operational rules; `docs/TESTING.md` contains the full architecture, coverage, and quality criteria.
 
-- **core**: 100% de cobertura — entidades, VOs, regras de negócio
-- **application**: use cases com repositórios mockados
-- **web**: componentes críticos com Testing Library
-- **E2E**: fluxos principais com Playwright
+### Mandatory Cycle: Red → Green → Refactor
 
-### Template de teste
+### What To Test By Layer
+
+- **core**: invariants, VOs, entities, factories, composition, error propagation, and business rules
+- **application**: use cases with mocked repositories, focused on orchestration
+- **web**: critical components, rendering, interaction, and important visual contracts
+- **utils**: pure functions, edge cases, and environment compatibility
+- **E2E**: main flows with Playwright when functional surface area justifies it
+
+### Mandatory Testing Rules
+
+- Test **observable behavior**, not internal implementation details.
+- For **Value Objects**, cover: valid creation, invalid rejection, normalization, equality, and immutability.
+- For **Entities / Aggregates**, cover: invariants, VO composition, empty lists when valid, missing input handling, and error propagation from invalid children.
+- **Builders** are allowed for ergonomics, but they must use **deterministic** and semantically clear defaults.
+- **Never** use randomness by default in builders, fixtures, or test data providers.
+- Avoid “field echo” tests that only repeat that a property was copied without protecting a real rule.
+- When asserting errors, prefer this order:
+  1. error type
+  2. `code`
+  3. relevant `message` fragment, when needed
+- Every new test should make clear which rule it protects and which regression it detects.
+- Always run the changed package suite and, before concluding relevant work, run **`pnpm test`** at the root to validate `turbo` integration.
+
+### Organization Conventions
+
+- `packages/core/test/...` for domain tests
+- `packages/utils/test/node/...` and `packages/utils/test/browser/...` when environment changes behavior
+- `apps/web/tests/...` for web application tests
+- Name files as `*.test.ts` or `*.test.tsx`
+
+### Test Template
 
 ```typescript
 describe('Project entity', () => {
@@ -504,37 +568,37 @@ describe('Project entity', () => {
 })
 ```
 
-### Nomenclatura de testes
+### Test Naming
 
-`should <comportamento esperado> when <contexto>`
-
----
-
-## ✅ Padrões Gerais
-
-- `strict: true` em todos os tsconfigs
-- Evite `any` — use tipos explícitos ou `unknown`
-- Funções com responsabilidade única (SRP)
-- Nomes em **inglês** para código
-- Máximo **200 linhas por arquivo**
-- Imports organizados: libs externas → packages internos → relativos
+`should <expected behavior> when <context>`
 
 ---
 
-## 🚫 Anti-patterns — Nunca Fazer
+## ✅ General Standards
 
-- Lógica de negócio em componentes React, controllers ou repositórios
-- Importar Prisma/ORM dentro de `core` ou `application`
-- `useEffect` para busca de dados — use TanStack Query ou Server Components
-- `throw` para erros de domínio — use Either pattern
-- Setters públicos em entidades — use métodos com semântica de negócio
-- `any` em tipos de resposta de API — valide com Zod
-- `<img>` e `<a>` para navegação interna no Next.js
-- Strings mágicas — use enums ou constantes tipadas
-- Testes que testam implementação em vez de comportamento
-- Dependências circulares entre packages do monorepo
-- Imports diretos entre bounded contexts — use apenas Shared Kernel
+- `strict: true` in every `tsconfig`
+- Avoid `any`; use explicit types or `unknown`
+- Keep functions single-responsibility (SRP)
+- Use **English** names in code
+- Maximum **200 lines per file**
+- Organize imports as: external libs → internal packages → relative imports
+
+---
+
+## 🚫 Anti-Patterns — Never Do This
+
+- Business logic in React components, controllers, or repositories
+- Import Prisma / ORM inside `core` or `application`
+- Use `useEffect` for data fetching; use TanStack Query or Server Components
+- Use `throw` for domain business-rule errors; use the Either pattern
+- Public setters on entities; use business-semantic methods
+- `any` in API response types; validate with Zod
+- `<img>` and `<a>` for internal Next.js navigation
+- Magic strings; use enums or typed constants
+- Tests that verify implementation instead of behavior
+- Circular dependencies between monorepo packages
+- Direct imports between bounded contexts; use only the Shared Kernel
 
 ## Task Master AI Instructions
-**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+**Import Task Master's development workflow commands and guidelines, and treat them as if the import were in the main `CLAUDE.md` file.**
 @./.taskmaster/CLAUDE.md
