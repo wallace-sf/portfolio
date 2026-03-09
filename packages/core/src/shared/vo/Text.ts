@@ -1,6 +1,7 @@
 import { Validator } from '@repo/utils';
 
 import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
 
 interface ITextConfig {
@@ -9,27 +10,38 @@ interface ITextConfig {
 }
 
 export class Text extends ValueObject<string, ITextConfig> {
-  static readonly ERROR_CODE = 'ERROR_INVALID_TEXT';
+  static readonly ERROR_CODE = 'INVALID_TEXT';
 
   private constructor(value: string, config?: ITextConfig) {
-    super({ value: value.trim(), isNew: false }, config);
-    this._validate(this._props.value);
+    super({ value: value.trim() }, config);
   }
 
-  static new(value?: string, config?: ITextConfig): Text {
-    return new Text(value ?? '', config);
-  }
-
-  private _validate(value?: string): void {
-    const { min = 3, max = 50 } = this._config;
+  static create(
+    value?: string,
+    config?: ITextConfig,
+  ): Either<ValidationError, Text> {
+    const { min = 3, max = 50 } = config ?? {};
 
     const { error, isValid } = Validator.new(value)
-      .length(min, max, 'O texto deve ter entre {{min}} e {{max}} caracteres.')
+      .length(
+        min,
+        max,
+        'The value must be between {{min}} and {{max}} characters.',
+      )
       .validate();
 
-    const ERROR_CODE = Text.ERROR_CODE;
-
     if (!isValid && error)
-      throw new ValidationError({ code: ERROR_CODE, message: error });
+      return left(
+        new ValidationError({ code: Text.ERROR_CODE, message: error }),
+      );
+
+    return right(new Text(value ?? '', config));
+  }
+
+  /** @deprecated Use Text.create() instead */
+  static new(value?: string, config?: ITextConfig): Text {
+    const result = Text.create(value, config);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 }

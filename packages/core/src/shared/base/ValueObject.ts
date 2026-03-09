@@ -1,6 +1,5 @@
 interface IValueObjectProps<TValue> {
   value: TValue;
-  isNew: boolean;
 }
 
 export abstract class ValueObject<TValue, TConfig = Record<string, never>> {
@@ -16,7 +15,11 @@ export abstract class ValueObject<TValue, TConfig = Record<string, never>> {
   }
 
   public equals(vo: ValueObject<TValue, TConfig>): boolean {
-    return vo != null && this.value === vo.value;
+    if (vo == null) return false;
+    if (typeof this.value !== 'object' || this.value === null) {
+      return this.value === vo.value;
+    }
+    return JSON.stringify(this.value) === JSON.stringify(vo.value);
   }
 
   public diff(vo: ValueObject<TValue, TConfig>): boolean {
@@ -25,9 +28,5 @@ export abstract class ValueObject<TValue, TConfig = Record<string, never>> {
 
   public get value(): TValue {
     return this._props.value;
-  }
-
-  public get isNew(): boolean {
-    return this._props.isNew;
   }
 }

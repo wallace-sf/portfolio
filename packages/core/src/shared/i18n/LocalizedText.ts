@@ -1,4 +1,5 @@
 import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
 import type { Locale } from './Locale';
 
@@ -25,36 +26,40 @@ function normalizeInput(input: ILocalizedTextInput): LocalizedTextValue {
   const enUS = trimOrUndefined(input['en-US']);
   const es = trimOrUndefined(input.es);
 
-  const value: LocalizedTextValue = Object.freeze({
+  return Object.freeze({
     'pt-BR': ptBR,
     ...(enUS !== undefined && { 'en-US': enUS }),
     ...(es !== undefined && { es }),
   });
-
-  return Object.freeze(value);
 }
 
 export class LocalizedText extends ValueObject<LocalizedTextValue> {
-  static readonly ERROR_CODE = 'ERROR_INVALID_LOCALIZED_TEXT';
+  static readonly ERROR_CODE = 'INVALID_LOCALIZED_TEXT';
 
   private constructor(value: LocalizedTextValue) {
-    super({ value, isNew: false });
+    super({ value });
   }
 
-  static new(input: ILocalizedTextInput): LocalizedText {
-    LocalizedText._validatePtBR(input['pt-BR']);
-    const value = normalizeInput(input);
-    return new LocalizedText(value);
-  }
-
-  private static _validatePtBR(ptBR: string | undefined): void {
-    const trimmed = ptBR?.trim();
+  static create(
+    input: ILocalizedTextInput,
+  ): Either<ValidationError, LocalizedText> {
+    const trimmed = input['pt-BR']?.trim();
     if (trimmed == null || trimmed === '') {
-      throw new ValidationError({
-        code: LocalizedText.ERROR_CODE,
-        message: 'pt-BR is required and must be non-empty after trim.',
-      });
+      return left(
+        new ValidationError({
+          code: LocalizedText.ERROR_CODE,
+          message: 'pt-BR is required and must be non-empty after trim.',
+        }),
+      );
     }
+    return right(new LocalizedText(normalizeInput(input)));
+  }
+
+  /** @deprecated Use LocalizedText.create() instead */
+  static new(input: ILocalizedTextInput): LocalizedText {
+    const result = LocalizedText.create(input);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 
   /**

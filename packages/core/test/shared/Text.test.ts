@@ -1,74 +1,65 @@
-
 import { Text, ValidationError } from '../../src';
 
 describe('Text', () => {
-  describe('when is new', () => {
-    it('should be valid when text is valid', () => {
+  describe('when created from valid value', () => {
+    it('should return Right with the provided text', () => {
       const value = 'Lorem ipsum odor amet.';
-      const text = Text.new(value);
+      const result = Text.create(value);
 
-      expect(text.value).toBe(value);
-      expect(text.isNew).toBe(false);
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.value).toBe(value);
     });
 
-    it('should be valid when text is valid and using config', () => {
+    it('should return Right when using custom min/max config', () => {
       const value = 'Lorem ipsum odor amet.';
-      const text = Text.new(value, { min: 3, max: 22 });
+      const result = Text.create(value, { min: 3, max: 22 });
 
-      expect(text.value).toBe(value);
-      expect(text.isNew).toBe(false);
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.value).toBe(value);
+    });
+  });
+
+  describe('when created from invalid value', () => {
+    it('should return Left for empty string (default config)', () => {
+      const result = Text.create('');
+
+      expect(result.isLeft()).toBe(true);
+      expect(result.value).toBeInstanceOf(ValidationError);
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+      expect((result.value as ValidationError).message).toBe(
+        'The value must be between 3 and 50 characters.',
+      );
     });
 
-    it('should be invalid when text is invalid', () => {
-      expect(() => Text.new('')).toThrow(
-        new ValidationError({
-          code: Text.ERROR_CODE,
-          message: 'O texto deve ter entre 3 e 50 caracteres.',
-        }),
-      );
-      expect(() => Text.new()).toThrow(
-        new ValidationError({
-          code: Text.ERROR_CODE,
-          message: 'O texto deve ter entre 3 e 50 caracteres.',
-        }),
-      );
-      expect(() =>
-        Text.new(
-          'Lorem ipsum odor amet, consectetuer adipiscing elit. Justo cras risus rutrum; eget dis leo. Enim tristique mauris venenatis quisque congue gravida tellus cras. Massa risus proin duis nunc vitae adipiscing malesuada senectus. Lorem vivamus molestie morbi placerat nibh accumsan hendrerit non dolor. Sed dignissim sociosqu natoque eu litora tempus interdum eleifend. Nulla consectetur duis ligula ante risus ac mattis. Litora tincidunt curae tempor viverra aenean venenatis eu. Non cursus nisl viverra sit imperdiet. Aptent ultrices gravida, curae a semper justo volutpat dui gravida. Conubia sagittis congue iaculis dapibus lacinia montes magnis quis. Maximus imperdiet montes gravida sollicitudin dolor malesuada purus. Aenean euismod vehicula parturient sodales vestibulum cras platea. Penatibus sollicitudin ante; nullam torquent lobortis iaculis morbi. Dolor efficitur natoque magna; porta cras euismod.',
-        ),
-      ).toThrow(
-        new ValidationError({
-          code: Text.ERROR_CODE,
-          message: 'O texto deve ter entre 3 e 50 caracteres.',
-        }),
-      );
+    it('should return Left for undefined (default config)', () => {
+      const result = Text.create(undefined);
 
-      expect(() =>
-        Text.new(
-          'Lorem ipsum odor amet, consectetuer adipiscing elit. Justo cras risus rutrum; eget dis leo. Enim tristique mauris venenatis quisque congue gravida tellus cras. Massa risus proin duis nunc vitae adipiscing malesuada senectus. Lorem vivamus molestie morbi placerat nibh accumsan hendrerit non dolor. Sed dignissim sociosqu natoque eu litora tempus interdum eleifend. Nulla consectetur duis ligula ante risus ac mattis. Litora tincidunt curae tempor viverra aenean venenatis eu. Non cursus nisl viverra sit imperdiet. Aptent ultrices gravida, curae a semper justo volutpat dui gravida. Conubia sagittis congue iaculis dapibus lacinia montes magnis quis. Maximus imperdiet montes gravida sollicitudin dolor malesuada purus. Aenean euismod vehicula parturient sodales vestibulum cras platea. Penatibus sollicitudin ante; nullam torquent lobortis iaculis morbi. Dolor efficitur natoque magna; porta cras euismod.',
-          {
-            min: 3,
-            max: 20,
-          },
-        ),
-      ).toThrow(
-        new ValidationError({
-          code: Text.ERROR_CODE,
-          message: 'O texto deve ter entre 3 e 20 caracteres.',
-        }),
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+    });
+
+    it('should return Left with custom config message when exceeding max', () => {
+      const result = Text.create('This string is too long.', { min: 3, max: 20 });
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).message).toBe(
+        'The value must be between 3 and 20 characters.',
       );
     });
   });
 
-  describe('when is compared', () => {
-    it('should be valid when two short texts are equal', () => {
+  describe('when compared', () => {
+    it('should be equal when two texts have the same value', () => {
       const value = 'Lorem ipsum odor amet.';
+      const r1 = Text.create(value);
+      const r2 = Text.create(value);
 
-      const text1 = Text.new(value);
-      const text2 = Text.new(text1.value);
-
-      expect(text1.equals(text2)).toBe(true);
-      expect(text1.diff(text2)).toBe(false);
+      expect(r1.isRight() && r2.isRight()).toBe(true);
+      if (!r1.isRight() || !r2.isRight()) return;
+      expect(r1.value.equals(r2.value)).toBe(true);
+      expect(r1.value.diff(r2.value)).toBe(false);
     });
   });
 });

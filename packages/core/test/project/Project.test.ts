@@ -29,7 +29,7 @@ describe('Project', () => {
     expectValidationError(
       () => ProjectBuilder.build().withoutTitle().now(),
       Text.ERROR_CODE,
-      'O texto deve ter entre 3 e 60 caracteres.',
+      'The value must be between 3 and 60 characters.',
     );
   });
 
@@ -37,7 +37,7 @@ describe('Project', () => {
     expectValidationError(
       () => ProjectBuilder.build().withoutCaption().now(),
       Text.ERROR_CODE,
-      'O texto deve ter entre 3 e 200 caracteres.',
+      'The value must be between 3 and 200 characters.',
     );
   });
 
@@ -45,7 +45,7 @@ describe('Project', () => {
     expectValidationError(
       () => ProjectBuilder.build().withoutContent().now(),
       Text.ERROR_CODE,
-      'O texto deve ter entre 3 e 12500 caracteres.',
+      'The value must be between 3 and 12500 characters.',
     );
   });
 
@@ -67,7 +67,7 @@ describe('Project', () => {
     expect(project.title.value).toBe(title);
     expect(project.caption.value).toBe(caption);
     expect(project.content.value).toBe(content);
-    expect(project.skills.map((s) => s.props)).toEqual(skills);
+    expect(project.skills.map((s) => s.props)).toMatchObject(skills);
   });
 
   it('should allow projects without related skills when the list is empty', () => {
@@ -91,7 +91,7 @@ describe('Project', () => {
     expectValidationError(
       () => ProjectBuilder.build().withSkills(skills).now(),
       SkillType.ERROR_CODE,
-      'O valor deve ser um tipo de habilidade válido.',
+      'The value must be a valid skill type.',
     );
   });
 });

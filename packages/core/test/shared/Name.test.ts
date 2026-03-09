@@ -1,67 +1,85 @@
-
 import { Name, ValidationError } from '../../src';
 
 describe('Name', () => {
-  describe('when is new', () => {
-    const param = 'John';
-    const name = Name.new(param);
+  describe('when created from valid value', () => {
+    it('should return Right with the provided name', () => {
+      const result = Name.create('John');
 
-    it('should be valid when param is valid', () => {
-      expect(name.value).toBe(param);
-      expect(name.isNew).toBe(false);
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.value).toBe('John');
+    });
+  });
+
+  describe('when created from invalid value', () => {
+    it('should return Left for undefined', () => {
+      const result = Name.create(undefined);
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
+      expect((result.value as ValidationError).message).toBe('The name must contain only letters.');
     });
 
-    it('should be invalid when param is invalid', () => {
-      expect(() => Name.new()).toThrow(
-        new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
-      );
-      expect(() => Name.new('')).toThrow(
-        new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
-      );
-      expect(() => Name.new('@')).toThrow(
-        new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
-      );
-      expect(() => Name.new('Nome_com_&*%$')).toThrow(
-        new ValidationError({ code: Name.ERROR_CODE, message: 'Nome deve conter apenas letras.' }),
-      );
-      expect(() => Name.new('João da silva'.repeat(10))).toThrow(
-        new ValidationError({
-          code: Name.ERROR_CODE,
-          message: 'O nome deve estar entre 3 e 100 caracteres.',
-        }),
+    it('should return Left for empty string', () => {
+      const result = Name.create('');
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
+    });
+
+    it('should return Left for value with special characters', () => {
+      const result = Name.create('@');
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).message).toBe('The name must contain only letters.');
+    });
+
+    it('should return Left for value with underscores and symbols', () => {
+      const result = Name.create('Nome_com_&*%$');
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
+    });
+
+    it('should return Left for value exceeding 100 characters', () => {
+      const result = Name.create('João da silva'.repeat(10));
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).message).toBe(
+        'The name must be between 3 and 100 characters.',
       );
     });
   });
 
-  describe('when is compared', () => {
-    it('should be valid when two names are equal', () => {
-      const param = 'John';
+  describe('when compared', () => {
+    it('should be equal when two names have the same value', () => {
+      const r1 = Name.create('John');
+      const r2 = Name.create('John');
 
-      const name1 = Name.new(param);
-      const name2 = Name.new(name1.value);
-
-      expect(name1.equals(name2)).toBe(true);
-      expect(name1.diff(name2)).toBe(false);
+      expect(r1.isRight() && r2.isRight()).toBe(true);
+      if (!r1.isRight() || !r2.isRight()) return;
+      expect(r1.value.equals(r2.value)).toBe(true);
+      expect(r1.value.diff(r2.value)).toBe(false);
     });
   });
 
-  describe('asserts normalized', () => {
-    it('compare normalized value', () => {
-      const param = 'Aliaune   Damala Bouga   Time Bongo ';
+  describe('normalized getter', () => {
+    it('should collapse multiple spaces into one', () => {
+      const result = Name.create('Aliaune   Damala Bouga   Time Bongo');
 
-      const name = Name.new(param);
-
-      expect(name.normalized).toBe('Aliaune Damala Bouga Time Bongo');
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.normalized).toBe('Aliaune Damala Bouga Time Bongo');
     });
   });
 
-  describe('assets capitalized', () => {
-    it('compare capitalized value', () => {
-      const param = 'aliaune damala bouga time bongo';
+  describe('capitalized getter', () => {
+    it('should capitalize each word', () => {
+      const result = Name.create('aliaune damala bouga time bongo');
 
-      const name = Name.new(param);
-
-      expect(name.capitalized).toBe('Aliaune Damala Bouga Time Bongo');
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.capitalized).toBe('Aliaune Damala Bouga Time Bongo');
     });
   });
 });

@@ -1,55 +1,48 @@
-
 import { EmploymentType, ValidationError } from '../../src';
 
 describe('EmploymentType', () => {
-  describe('when is new', () => {
-    it('should be valid when param is valid', () => {
-      const apprentice = EmploymentType.new('APPRENTICE');
-      const freelance = EmploymentType.new('FREELANCE');
-      const fullTime = EmploymentType.new('FULL_TIME');
-      const internship = EmploymentType.new('INTERNSHIP');
-      const partTime = EmploymentType.new('PART_TIME');
-      const selfEmployed = EmploymentType.new('SELF_EMPLOYED');
-      const temporary = EmploymentType.new('TEMPORARY');
-      const trainee = EmploymentType.new('TRAINEE');
+  describe('when created from valid value', () => {
+    it('should return Right for every valid employment type', () => {
+      const types = EmploymentType.EMPLOYMENTS;
 
-      expect(apprentice.value).toBe('APPRENTICE');
-      expect(freelance.value).toBe('FREELANCE');
-      expect(fullTime.value).toBe('FULL_TIME');
-      expect(internship.value).toBe('INTERNSHIP');
-      expect(partTime.value).toBe('PART_TIME');
-      expect(selfEmployed.value).toBe('SELF_EMPLOYED');
-      expect(temporary.value).toBe('TEMPORARY');
-      expect(trainee.value).toBe('TRAINEE');
-      expect(apprentice.isNew).toBe(false);
-      expect(freelance.isNew).toBe(false);
-      expect(fullTime.isNew).toBe(false);
-      expect(internship.isNew).toBe(false);
-      expect(partTime.isNew).toBe(false);
-      expect(selfEmployed.isNew).toBe(false);
-      expect(temporary.isNew).toBe(false);
-      expect(trainee.isNew).toBe(false);
-    });
-
-    it('should be invalid when param is invalid', () => {
-      expect(() => EmploymentType.new('' as 'APPRENTICE')).toThrow(
-        new ValidationError({ code: EmploymentType.ERROR_CODE, message: 'O valor deve ser um tipo de emprego válido.' }),
-      );
-      expect(() => EmploymentType.new('#' as 'FREELANCE')).toThrow(
-        new ValidationError({ code: EmploymentType.ERROR_CODE, message: 'O valor deve ser um tipo de emprego válido.' }),
-      );
+      for (const type of types) {
+        const result = EmploymentType.create(type);
+        expect(result.isRight()).toBe(true);
+        if (!result.isRight()) continue;
+        expect(result.value.value).toBe(type);
+      }
     });
   });
 
-  describe('when is compared', () => {
-    it('should be valid when two employment types are equal', () => {
-      const param = 'APPRENTICE';
+  describe('when created from invalid value', () => {
+    it('should return Left with ValidationError for empty string', () => {
+      const result = EmploymentType.create('' as 'APPRENTICE');
 
-      const employmentType1 = EmploymentType.new(param);
-      const employmentType2 = EmploymentType.new(employmentType1.value);
+      expect(result.isLeft()).toBe(true);
+      expect(result.value).toBeInstanceOf(ValidationError);
+      expect((result.value as ValidationError).code).toBe(EmploymentType.ERROR_CODE);
+      expect((result.value as ValidationError).message).toBe(
+        'The value must be a valid employment type.',
+      );
+    });
 
-      expect(employmentType1.equals(employmentType2)).toBe(true);
-      expect(employmentType1.diff(employmentType2)).toBe(false);
+    it('should return Left for unrecognized value', () => {
+      const result = EmploymentType.create('#' as 'APPRENTICE');
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(EmploymentType.ERROR_CODE);
+    });
+  });
+
+  describe('when compared', () => {
+    it('should be equal when two employment types have the same value', () => {
+      const r1 = EmploymentType.create('APPRENTICE');
+      const r2 = EmploymentType.create('APPRENTICE');
+
+      expect(r1.isRight() && r2.isRight()).toBe(true);
+      if (!r1.isRight() || !r2.isRight()) return;
+      expect(r1.value.equals(r2.value)).toBe(true);
+      expect(r1.value.diff(r2.value)).toBe(false);
     });
   });
 });
