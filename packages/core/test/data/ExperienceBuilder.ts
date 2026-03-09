@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-
 import {
   Experience,
   IExperienceProps,
@@ -18,14 +16,14 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
 
   static build(): ExperienceBuilder {
     return new ExperienceBuilder({
-      location: faker.location.city(),
+      location: 'Sao Paulo, Brazil',
       employment_type: Data.employment.valid(),
-      position: faker.person.jobTitle(),
+      position: 'Software Engineer',
       location_type: Data.location.valid(),
-      company: faker.company.name(),
-      start_at: new Date().toISOString(),
-      end_at: new Date().toISOString(),
-      skills: SkillBuilder.listToProps(faker.number.int({ min: 0, max: 10 })),
+      company: 'Portfolio Inc',
+      start_at: '2022-01-01T00:00:00.000Z',
+      end_at: '2022-01-02T00:00:00.000Z',
+      skills: SkillBuilder.listToProps(2),
     });
   }
 

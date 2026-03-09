@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-
 import { ISocialNetworkProps, SocialNetwork } from '../../src';
 import { Data } from './bases';
 import { EntityBuilder } from './EntityBuilder';
@@ -13,7 +11,7 @@ export class SocialNetworkBuilder extends EntityBuilder<ISocialNetworkProps> {
     return new SocialNetworkBuilder({
       name: Data.text.socialNetwork(),
       icon: Data.text.icon(),
-      url: faker.internet.url(),
+      url: Data.text.url(),
     });
   }
 

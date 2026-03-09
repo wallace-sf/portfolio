@@ -1,65 +1,36 @@
-import { faker } from '@faker-js/faker';
-
 export class TextData {
   static text(): string {
-    return faker.lorem.text();
+    return 'Deterministic text fixture.';
   }
 
   static title(): string {
-    return faker.lorem.words(3).slice(0, 60);
+    return 'Portfolio Platform';
+  }
+
+  static url(): string {
+    return 'https://example.com';
   }
 
   static caption(): string {
-    return faker.lorem.sentences().slice(0, 200);
+    return 'A deterministic caption used to keep test scenarios stable.';
   }
 
   static description(): string {
-    return faker.lorem.sentences().slice(0, 50);
+    return 'Reusable skill fixture.';
   }
   static language(): string {
-    return [
-      'English',
-      'Português do Brasil',
-      'Espanõl',
-      'Français',
-      'Italiano',
-    ][faker.number.int({ min: 0, max: 4 })] as string;
+    return 'English';
   }
 
   static socialNetwork(): string {
-    return [
-      'Facebook',
-      'Twitter',
-      'Instagram',
-      'LinkedIn',
-      'GitHub',
-      'Google',
-      'YouTube',
-      'Bluesky',
-      'Flickr',
-    ][faker.number.int({ min: 0, max: 8 })] as string;
+    return 'LinkedIn';
   }
 
   static locale(): string {
-    return ['pt-BR', 'en-US', 'es-ES', 'fr-FR', 'it-IT'][
-      faker.number.int({ min: 0, max: 4 })
-    ] as string;
+    return 'en-US';
   }
 
   static icon(): string {
-    return [
-      'house',
-      'envelope',
-      'user',
-      'phone',
-      'map',
-      'lock',
-      'key',
-      'image',
-      'camera',
-      'file',
-      'file-text',
-      'file-alt',
-    ][faker.number.int({ min: 0, max: 11 })] as string;
+    return 'briefcase';
   }
 }

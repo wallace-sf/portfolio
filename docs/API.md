@@ -1,61 +1,79 @@
-# API REST — Planejada e atual
+# REST API — Planned and Current
 
-O projeto **não possui** `apps/api` nem servidor REST dedicado. Este documento descreve a **API planejada** para Projects e Blog e como ela se encaixa na arquitetura.
+The project **does not yet have** a dedicated `apps/api` app or standalone REST server. This document describes the **planned API** for Projects, Blog, and Contact, and how it fits into the target architecture.
 
----
-
-## Índice
-
-- [Visão geral](#visão-geral)
-- [Endpoints planejados](#endpoints-planejados)
-- [Formato de respostas](#formato-de-respostas)
-- [Erros](#erros)
-- [Autenticação e CORS](#autenticação-e-cors)
-- [Implementação futura](#implementação-futura)
+> This document primarily describes the **target API** of the monorepo. In the **current state**, behavior is still concentrated in `apps/web`, with part of the data coming from static sources and no dedicated `apps/api` package.
 
 ---
 
-## Visão geral
+## Index
 
-- **Objetivo**: Expor Projects e Blog (posts, tags) via REST para o front-end e possíveis integrações.
-- **Fonte de dados (planejado)**: Supabase (Postgres) via `packages/infra`; repositórios atrás de ports da Application.
-- **Stack sugerida**: Next.js Route Handlers (`app/api/...`) ou app dedicado (Node/Express/Fastify) no monorepo. A decisão será feita na implementação.
+- [Overview](#overview)
+- [Planned Endpoints](#planned-endpoints)
+- [Response Format](#response-format)
+- [Errors](#errors)
+- [Authentication and CORS](#authentication-and-cors)
+- [Future Implementation](#future-implementation)
 
 ---
 
-## Endpoints planejados
+## Overview
+
+### Current State vs Target API
+
+- **Current state**:
+  - There is no dedicated `apps/api` package.
+  - The repository does not yet expose a consolidated REST API for Portfolio and Blog.
+  - Part of the read flow still happens directly in the web layer.
+- **Target API**:
+  - Endpoints for Projects, Blog, and Contact.
+  - Use of `packages/application` and `packages/infra` as intermediate layers.
+  - Consistent success / error envelope and explicit mapping of domain codes.
+
+### Practical Rule
+
+- When **designing new routes**, use this document as the target contract.
+- When **reading current code**, assume REST implementation is still in transition.
+
+- **Goal**: expose Projects and Blog (posts, tags) via REST to the frontend and possible future integrations.
+- **Planned data source**: Supabase (Postgres) through `packages/infra`, with repositories behind Application ports.
+- **Suggested stack**: Next.js Route Handlers (`app/api/...`) or a dedicated app (Node / Express / Fastify) in the monorepo. The final decision should happen during implementation.
+
+---
+
+## Planned Endpoints
 
 ### Projects
 
-| Método | Caminho | Descrição |
-|--------|---------|-----------|
-| `GET` | `/api/projects` | Lista projetos (query: `?locale=pt-BR` para conteúdo localizado, se suportado) |
-| `GET` | `/api/projects/:id` | Projeto por ID (UUID) |
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/projects` | List projects (for example with `?locale=pt-BR` if localized content is supported) |
+| `GET` | `/api/projects/:id` | Get project by ID (UUID) |
 
 ### Blog
 
-| Método | Caminho | Descrição |
-|--------|---------|-----------|
-| `GET` | `/api/posts` | Lista posts (query: `?status=published`, `?tag=slug`, `?limit`, `?offset`) |
-| `GET` | `/api/posts/:slug` | Post por slug (apenas publicados) |
-| `GET` | `/api/tags` | Lista de tags |
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/posts` | List posts (for example with `?status=published`, `?tag=slug`, `?limit`, `?offset`) |
+| `GET` | `/api/posts/:slug` | Get post by slug (published only) |
+| `GET` | `/api/tags` | List tags |
 
 ### Contact (WIP)
 
-| Método | Caminho | Descrição |
-|--------|---------|-----------|
-| `POST` | `/api/contact` | Envio do formulário de contato (payload: nome, email, assunto, mensagem) |
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/contact` | Submit the contact form (`name`, `email`, `subject`, `message`) |
 
 ---
 
-## Formato de respostas
+## Response Format
 
-### Sucesso (200)
+### Success (200)
 
-- **Lista**: `{ "data": [...], "meta": { "total": number } }` (opcional)
-- **Item único**: `{ "data": { ... } }`
+- **List**: `{ "data": [...], "meta": { "total": number } }` (optional)
+- **Single item**: `{ "data": { ... } }`
 
-### Exemplo — `GET /api/projects`
+### Example — `GET /api/projects`
 
 ```json
 {
@@ -73,7 +91,7 @@ O projeto **não possui** `apps/api` nem servidor REST dedicado. Este documento 
 }
 ```
 
-### Exemplo — `GET /api/posts/:slug`
+### Example — `GET /api/posts/:slug`
 
 ```json
 {
@@ -90,29 +108,29 @@ O projeto **não possui** `apps/api` nem servidor REST dedicado. Este documento 
 
 ---
 
-## Erros
+## Errors
 
 - **Envelope**: `{ "error": { "code": "string", "message": "string" } }`
-- **Códigos**: estáveis (ex.: `ERROR_INVALID_ID`, `NOT_FOUND`); `message` traduzida conforme `Accept-Language` ou `?locale`.
-- **HTTP**: 400 (validação), 404 (recurso inexistente), 500 (erro interno).
+- **Codes**: stable (for example, `ERROR_INVALID_ID`, `NOT_FOUND`); `message` translated according to `Accept-Language` or `?locale`.
+- **HTTP**: `400` (validation), `404` (missing resource), `500` (internal error).
 
-Ver [docs/ERROR_HANDLING.md](ERROR_HANDLING.md) para códigos do Core e mapeamento na borda.
-
----
-
-## Autenticação e CORS
-
-- **Projects e Blog (leitura)**: Público; Supabase com RLS ou leitura anônima conforme política do projeto.
-- **Contact (POST)**: Avaliar rate limit e, se necessário, token/CAPTCHA; definição na implementação.
-- **CORS**: Permitir origem do front (ex.: mesmo domínio ou URLs de produção/staging).
+See [ERROR_HANDLING.md](ERROR_HANDLING.md) for Core error codes and edge mapping.
 
 ---
 
-## Implementação futura
+## Authentication and CORS
 
-1. **`packages/infra`**: Repositórios Supabase e mappers para Project, BlogPost, Tag.
-2. **`packages/application`** (ou equivalente): Use cases `GetProjects`, `GetProjectById`, `ListPosts`, `GetPostBySlug`, `ListTags`; port `IContactSender` para Contact.
-3. **Rotas**: Em `apps/web/app/api/...` (Route Handlers) ou em `apps/api` (futuro) que chame a Application.
-4. **Envio de Contact**: Integração com Supabase (tabela `contacts`), Resend, ou outro; atrás de `IContactSender`.
+- **Projects and Blog (read-only)**: public; Supabase may use RLS or anonymous read according to project policy.
+- **Contact (POST)**: evaluate rate limiting and, if needed, token / CAPTCHA; final decision belongs to implementation.
+- **CORS**: allow the frontend origin (same domain or production / staging URLs).
 
-Quando `apps/api` for criado, este doc será migrado ou referenciado em `apps/api/README.md`.
+---
+
+## Future Implementation
+
+1. **`packages/infra`**: Supabase repositories and mappers for Project, BlogPost, and Tag.
+2. **`packages/application`** (or equivalent): use cases such as `GetProjects`, `GetProjectById`, `ListPosts`, `GetPostBySlug`, `ListTags`; port `IContactSender` for Contact.
+3. **Routes**: either `apps/web/app/api/...` (Route Handlers) or a future `apps/api` app that calls Application.
+4. **Contact delivery**: integration with Supabase (`contacts` table), Resend, or another provider behind `IContactSender`.
+
+When `apps/api` is created, this document should either be migrated there or referenced from `apps/api/README.md`.

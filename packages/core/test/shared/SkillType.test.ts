@@ -33,7 +33,7 @@ describe('SkillType', () => {
   });
 
   describe('when is compared', () => {
-    it('should be valid when two fluencies are equal', () => {
+    it('should be equal when two skill types have the same value', () => {
       const param = 'EDUCATION';
 
       const skillType1 = SkillType.new(param);

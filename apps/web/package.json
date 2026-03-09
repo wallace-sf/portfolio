@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "node ./scripts/assert-test-discovery.mjs && jest",
     "test:watch": "jest --watchAll --collectCoverage",
     "dev": "next dev",
     "build": "next build",

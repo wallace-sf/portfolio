@@ -1,66 +1,76 @@
-# Bounded Contexts — Context Map e responsabilidades
+# Bounded Contexts — Context Map and Responsibilities
 
-Visão dos bounded contexts do portfolio, suas responsabilidades, modelos e integrações.
+Overview of the portfolio bounded contexts, their responsibilities, models, and integrations.
+
+> This document describes both the **current state** and the **target model**. When a concept is not yet implemented in code, treat it as part of the target architecture.
 
 ---
 
-## Context Map (resumo)
+## Context Map (Summary)
 
-| Contexto | Responsabilidade principal | Modelos-chave | Integrações |
-|----------|----------------------------|---------------|-------------|
-| **Portfolio** | Projetos, experiência, skills, perfil, valores profissionais | Project, Experience, Skill, ProfessionalValue, Language, SocialNetwork | Shared Kernel; futura API REST |
-| **Blog** | Posts, tags, publicação, listagem | BlogPost, Tag | Shared Kernel; Supabase; API REST (WIP) |
-| **Contact** | Captura e envio de mensagem de contato | DTOs, payload de formulário | Web (form); backend/Newsletter WIP |
-| **Shared Kernel** | Id, Text, DateTime, Entity, ValueObject, códigos de erro, enums | Id, Text, DateTime, Name, Url, EmploymentType, LocationType, SkillType, Fluency, ERROR_MESSAGE | Usado por Portfolio e Blog (e Contact se fizer sentido) |
+| Context | Main responsibility | Key models | Integrations |
+|---------|---------------------|------------|--------------|
+| **Portfolio** | Projects, experience, skills, profile, professional values | Project, Experience, Skill, ProfessionalValue, Language, SocialNetwork | Shared Kernel; future REST API |
+| **Blog** | Posts, tags, publication, listing | BlogPost, Tag | Shared Kernel; Supabase; REST API (WIP) |
+| **Contact** | Contact message capture and delivery | DTOs, form payload | Web form; backend / newsletter WIP |
+| **Shared Kernel** | Id, Text, DateTime, Entity, ValueObject, error codes, enums | Id, Text, DateTime, Name, Url, EmploymentType, LocationType, SkillType, Fluency, ERROR_MESSAGE | Used by Portfolio and Blog (and Contact where it makes sense) |
 
 ---
 
 ## Portfolio
 
-- **Responsabilidade**: Representar projetos (case studies), experiência profissional, skills, valores e perfil (idiomas, redes sociais).
-- **Modelos** (em `@repo/core`):
-  - `Project` — título, caption, conteúdo, skills
-  - `Experience` — empresa, cargo, período, local, tipo de emprego, skills
-  - `Skill` — descrição, ícone, tipo (TECHNOLOGY, etc.)
+- **Responsibility**: represent case studies, professional experience, skills, values, and profile information such as languages and social links.
+- **Models in the current state** (in `@repo/core`):
+  - `Project` — title, caption, content, skills
+  - `Experience` — company, role, period, location, employment type, skills
+  - `Skill` — description, icon, type (`TECHNOLOGY`, etc.)
   - `ProfessionalValue`, `Language`, `SocialNetwork`
-- **VOs e enums**: `Text`, `DateTime`, `EmploymentType`, `LocationType`, `SkillType`, `Fluency`, `Id`, `Name`, `Url`
-- **Integrações**: Consumido pela web (e, no futuro, pela API). Dados hoje em parte estáticos; persisting em Supabase (Infra) é planejado.
+- **Target model**:
+  - `Profile` as the main aggregate
+  - `Project` with slug, cover image, status, related projects, and localized content
+  - `Experience` with `ExperienceSkill`, `DateRange`, logo, and description
+  - new VOs such as `Slug`, `Image`, `DateRange`, `ProfileStat`
+- **VOs and typed enums**: `Text`, `DateTime`, `EmploymentType`, `LocationType`, `SkillType`, `Fluency`, `Id`, `Name`, `Url`
+- **Integrations**: consumed by the web today; later by the API as well. Data is still partly static; persistence through Supabase (Infra) is planned.
 
 ---
 
 ## Blog
 
-- **Responsabilidade**: Posts de blog, tags, estados de publicação (rascunho/publicado).
-- **Modelos (planejados)**:
-  - `BlogPost` — título, slug, corpo, data, tags, status
-  - `Tag` — nome, slug (como VO ou entidade)
-- **Integrações**: Supabase (tabelas `posts`, `tags`); API REST para listar e obter post por slug. Shared Kernel para `Id`, `DateTime`, `Text`, erros.
+- **Responsibility**: blog posts, tags, and publication states such as draft and published.
+- **Models in the target architecture**:
+  - `BlogPost` — title, slug, body, date, tags, status
+  - `Tag` — name, slug (as a VO or entity)
+- **Integrations**: Supabase tables such as `posts` and `tags`; REST API for listing and retrieving posts by slug. Shared Kernel for `Id`, `DateTime`, `Text`, and errors.
 
 ---
 
 ## Contact
 
-- **Responsabilidade**: Receber mensagem do formulário e (no futuro) enviar (e-mail, serviço externo ou Supabase).
-- **Modelos**: DTOs/payload (nome, e-mail, assunto, mensagem). Pode usar VOs do Shared Kernel (ex.: `Text`, `Name`) se houver regras de domínio.
-- **Integrações**: Web (Formik + Yup); backend/Newsletter WIP.
+- **Responsibility**: receive contact form submissions and, in the future, deliver them through email, an external service, or Supabase.
+- **Current state**: DTO / payload-oriented flow implemented at the edge.
+- **Target model**: `Message` entity or a dedicated application / infra flow with explicit rules and later persistence / delivery integration.
+- **Integrations**: Web (currently Formik + Yup in some areas); backend / newsletter WIP.
 
 ---
 
 ## Shared Kernel
 
-- **O que entra**:
+- **What belongs here**:
   - `Entity`, `ValueObject`, `IEntityProps`
   - `Id`, `Text`, `DateTime`, `Name`, `Url`
   - `EmploymentType`, `LocationType`, `SkillType`, `Fluency`
-  - `ERROR_MESSAGE` (códigos de erro do domínio; pt-BR, en-US; es planejado)
-- **O que não entra**: Regras específicas de um único contexto (ex.: “post só pode ser publicado com pelo menos uma tag” fica no contexto Blog).
-- **Onde vive**: `@repo/core` (em `shared/` e VOs compartilhados).
+  - `ERROR_MESSAGE` (domain error codes; `pt-BR`, `en-US`; `es` planned)
+- **What does not belong here**: rules specific to a single context (for example, “a post can only be published with at least one tag” belongs to Blog, not Shared Kernel).
+- **Where it lives today**: `@repo/core` (`shared/` and shared VOs).
+
+> In the current state, the shared kernel is not yet fully separated under `shared-kernel/`. The codebase is expected to migrate incrementally in that direction.
 
 ---
 
-## Diagrama de relação (ASCII)
+## Relationship Diagram (ASCII)
 
-```
+```text
                     ┌──────────────────┐
                     │  Shared Kernel   │
                     │  Id, Text, VO,   │
@@ -80,14 +90,19 @@ Visão dos bounded contexts do portfolio, suas responsabilidades, modelos e inte
         └───────────────────┼───────────────────┘
                             │
                     ┌───────▼───────┐
-                    │  Web / API    │
+                    │    Web / API  │
                     └───────────────┘
 ```
 
 ---
 
-## Convênios de integração
+## Integration Conventions
 
-- **Portfolio ↔ Web**: DTOs ou view models; domínio não expõe entidades “nuas” se houver necessidade de projeção (ex.: listagem resumida).
-- **Blog ↔ Supabase**: Repositórios em `packages/infra`; mappers convertem linhas em entidades/VOs do Core.
-- **Contact ↔ Backend**: WIP; contrato de API (payload, códigos de erro) a ser alinhado com [docs/ERROR_HANDLING.md](ERROR_HANDLING.md) e [docs/API.md](API.md).
+- **Portfolio ↔ Web**: DTOs or view models; the domain should not expose “raw” entities when a projection is needed (for example, summarized listing cards).
+- **Blog ↔ Supabase**: repositories in `packages/infra`; mappers convert rows into Core entities / VOs.
+- **Contact ↔ Backend**: WIP; API contract (payload and error codes) must align with [ERROR_HANDLING.md](ERROR_HANDLING.md) and [API.md](API.md).
+
+## Practical Rule
+
+- If the goal is to **understand the current codebase**, read the blocks marked as current state.
+- If the goal is to **design new code**, use the target model as the main direction.
