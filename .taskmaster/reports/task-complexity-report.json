@@ -1,0 +1,101 @@
+{
+	"meta": {
+		"generatedAt": "2026-03-09T01:14:16.800Z",
+		"tasksAnalyzed": 11,
+		"totalTasks": 11,
+		"analysisCount": 11,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Implement Either pattern for domain error handling",
+			"complexityScore": 3,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the Either pattern implementation into: (1) creating the core Either type with Left and Right classes including type guards, (2) implementing helper functions (left, right) and ensuring proper TypeScript type inference, (3) writing comprehensive unit tests covering all type narrowing scenarios and immutability guarantees.",
+			"reasoning": "This is a straightforward TypeScript implementation with clear requirements. The code is well-specified in the task details with complete implementation. Main complexity comes from ensuring proper TypeScript type inference with discriminated unions and type guards. No external dependencies, no existing code to refactor. Estimated 3 subtasks: implementation, export configuration, and comprehensive testing."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Migrate test runner from Jest to Vitest",
+			"complexityScore": 4,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Split the migration into: (1) removing Jest dependencies and configuration files, (2) adding Vitest configuration with proper coverage and alias setup, (3) updating package.json scripts and verifying test compatibility, (4) running full test suite validation and fixing any migration issues.",
+			"reasoning": "Moderate complexity due to testing infrastructure change. Current codebase has jest.config.ts and 19 existing test files that need validation. Package.json shows Jest is configured but @types/jest not listed, suggesting partial setup. Risk of test compatibility issues. The vitest.config.ts needs path aliases and coverage configuration. Estimated 4 subtasks covering removal, configuration, script updates, and validation."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Fix ValueObject and Entity base class bugs",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Organize fixes into: (1) removing isNew from ValueObject interface and implementation, (2) implementing deep equality comparison for ValueObject.equals() handling both primitives and objects, (3) fixing Entity constructor to prevent props mutation and making props private, (4) updating all 10 VOs that currently use isNew parameter, (5) comprehensive testing of equality, immutability, and ensuring no regression in 19 existing test files.",
+			"reasoning": "High complexity due to cascading changes across foundational base classes. Current code shows: ValueObject has isNew in interface (line 3) and getter (line 30-32), equals() uses shallow comparison (line 19), Entity mutates props (line 23), and props is public (line 14). Found 10 VOs extending ValueObject (Id, DateTime, Text, Name, Url, EmploymentType, Fluency, LocationType, SkillType, LocalizedText) - all need updating. Existing code like Id.ts (line 11) passes isNew. High risk of breaking 19 existing test files. Requires careful refactoring with comprehensive regression testing."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Migrate all Value Objects to Either pattern",
+			"complexityScore": 8,
+			"recommendedSubtasks": 12,
+			"expansionPrompt": "Break down by VO type: (1) migrate Id VO with both create() and generate() methods, (2) migrate DateTime VO, (3) migrate Text VO with config support, (4) migrate Name VO, (5) migrate Url VO, (6) migrate EmploymentType enum-based VO, (7) migrate Fluency enum-based VO, (8) migrate LocationType enum-based VO, (9) migrate SkillType enum-based VO, (10) migrate LocalizedText complex VO, (11) translate all error messages to English and standardize error codes, (12) delete ERROR_MESSAGE.ts and update all test files to Either pattern.",
+			"reasoning": "Very high complexity - this is the largest migration task affecting 10 VOs with 19 existing test files. Current implementation uses throw-based errors (e.g., Id.ts line 27, Text.ts line 33, LocalizedText.ts line 53). Each VO has different validation logic: Id uses uuid validation, Text has min/max config, LocalizedText has complex object validation. All constructors are currently private with static 'new()' methods that throw errors - need conversion to 'create()' returning Either. Special case: Id needs both create() and generate(). All error messages are in Portuguese (e.g., 'O id deve ser um UUID') and need English translation. Must rewrite all assertions in 19 test files from .toThrow() to Either pattern. High risk of missing edge cases. Estimated 12 subtasks due to scope."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Create missing Value Objects: Slug, Image, DateRange",
+			"complexityScore": 6,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Organize into: (1) implement Slug VO with kebab-case validation and regex matching, (2) implement Image VO composing Url and LocalizedText with proper error handling, (3) implement DateRange VO with start/end validation and isActive() method, (4) create comprehensive unit tests for Slug including edge cases, (5) create comprehensive unit tests for Image composition, (6) create comprehensive unit tests for DateRange including boundary conditions, and create test data providers.",
+			"reasoning": "Moderate-high complexity due to creating 3 new VOs from scratch with Either pattern. Slug requires regex validation (kebab-case pattern) and path conversion. Image is a composite VO requiring composition of Url and LocalizedText - must handle Either chaining from multiple VOs. DateRange is also composite with DateTime, includes business logic (start <= end validation, isActive() for ongoing periods). All must follow Either pattern established in Task 1. No existing code to reference - greenfield implementation. Each VO needs comprehensive tests covering validation rules, composition errors, and business logic. Need test data providers (SlugData.ts, ImageData.ts) in test/data/bases/. Estimated 6 subtasks for implementation and testing of 3 VOs."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Migrate all Entities to Either pattern and reorganize structure",
+			"complexityScore": 9,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "Break down by entity and concerns: (1) refactor Project entity to Either pattern and relocate to portfolio/entities/project/model/, (2) refactor Experience entity to Either pattern and relocate to portfolio/entities/experience/model/, (3) refactor Skill entity to Either pattern and relocate to portfolio/entities/skill/model/, (4) refactor Language entity to Either pattern and relocate, (5) refactor ProfessionalValue entity to Either pattern and relocate, (6) refactor SocialNetwork entity to Either pattern and relocate, (7) update SkillFactory.bulk() to return Either with indexed error messages, (8) reorganize directory structure and update all imports/exports across packages, (9) update all entity test builders to handle Either returns, (10) comprehensive testing ensuring all 6 entities work with Either pattern and directory reorganization doesn't break imports.",
+			"reasoning": "Very high complexity - major architectural refactoring affecting 6 entities. Current code shows entities have public constructors (e.g., Project.ts line 17, Experience.ts line 38, Skill.ts line 20) that directly instantiate VOs throwing errors. Must convert to private constructors with static create() returning Either. Found 6 entities: Project, Experience, Skill, Language, ProfessionalValue, SocialNetwork. Each entity needs: constructor privatization, Either-based factory method, cascading Either validation for all composed VOs. SkillFactory.bulk() (line 4-6) currently returns Skill[] directly - needs Either return with index tracking for error messages. Major directory reorganization: src/project/model/ → src/portfolio/entities/project/model/, src/experience/ → src/portfolio/entities/experience/model/, etc. Must update all imports across codebase and package.json exports. All test builders (ProjectBuilder, ExperienceBuilder, SkillBuilder, etc.) need refactoring. High risk of breaking existing tests. Estimated 10 subtasks due to scope and risk."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Create Profile entity with featured projects invariant",
+			"complexityScore": 7,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Structure implementation as: (1) create ProfileStat VO with LocalizedText composition and Either validation, (2) implement Profile entity skeleton with private constructor and IProfileProps interface, (3) implement Profile.create() with featured projects invariant validation (max 6), (4) implement VO composition for all Profile fields (name, headline, bio, photo), (5) implement stats array validation with indexed errors, (6) implement featuredProjectSlugs array validation, (7) create comprehensive tests for invariant violations, valid creation, and ProfileBuilder test utility.",
+			"reasoning": "High complexity - creating a new aggregate root entity from scratch with business invariants. Profile is the main aggregate with complex composition: Name, LocalizedText (headline, bio), Image (photo), array of ProfileStat VOs, array of Slug VOs. Must enforce invariant: featuredProjectSlugs.length <= 6 (business rule). ProfileStat is a new VO composing LocalizedText (label), string (value), and Text (icon) - needs separate implementation. Profile.create() must handle Either chaining for all fields plus array validations with indexed error messages. No existing Profile code to reference - complete greenfield. Depends on Task 6 completion for proper entity structure. Need ProfileBuilder in test/data/ for test fixtures. Estimated 7 subtasks covering ProfileStat, Profile implementation, invariant enforcement, and testing."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Update Project entity with complete Figma design fields",
+			"complexityScore": 8,
+			"recommendedSubtasks": 9,
+			"expansionPrompt": "Organize into: (1) create ProjectStatus enum in separate file, (2) update IProjectProps interface with all new fields (slug, coverImage, theme, summary, objectives, role, team, period, featured, status, relatedProjects), (3) convert title and caption from Text to LocalizedText, (4) implement all new VO fields in Project class (Slug, Image, LocalizedText fields, DateRange), (5) update Project.create() with Either-based validation for all new VOs, (6) implement relatedProjects array validation with Slug VOs, (7) update content validation with new min/max constraints, (8) update ProjectBuilder with factory methods for all statuses, (9) comprehensive testing of all new fields, validation rules, and ProjectStatus transitions.",
+			"reasoning": "Very high complexity - major entity expansion with 12+ new fields. Current Project entity (Project.ts) has only 4 fields: title, caption, content, skills. Task requires adding: slug (Slug VO), coverImage (Image VO), theme/summary/objectives/role (LocalizedText VOs - 4 new), team (string), period (DateRange VO), featured (boolean), status (ProjectStatus enum), relatedProjects (Slug[] array). Must convert existing title/caption from Text to LocalizedText - breaking change. Content validation changes from max 12500 to 500000 or unlimited. ProjectStatus enum needs separate file with DRAFT/PUBLISHED/ARCHIVED values. Each new VO adds Either validation complexity - 8+ VO validations to chain. RelatedProjects array needs indexed error handling like SkillFactory.bulk(). ProjectBuilder needs significant updates for all new fields and status factory methods. High risk of integration issues with dependent code. Estimated 9 subtasks covering enum, interface, implementation, and testing."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Update Experience entity and create ExperienceSkill VO",
+			"complexityScore": 7,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Break down into: (1) create ExperienceSkill VO composing Skill and LocalizedText for workDescription, (2) update IExperienceProps interface with logo, description, and updated skills field, (3) convert company, position, location from Text to LocalizedText in Experience entity, (4) add logo (Image) and description (LocalizedText) fields to Experience, (5) update skills field from Skill[] to ExperienceSkill[] with indexed validation, (6) remove date validation logic from Experience (delegate to DateRange VO), (7) update ExperienceBuilder and create comprehensive tests for ExperienceSkill and updated Experience.",
+			"reasoning": "High complexity - entity refactoring with new composite VO. Current Experience entity (Experience.ts lines 27-64) has 7 fields. Task requires: creating ExperienceSkill VO (new composite VO with Skill + LocalizedText), converting 3 Text fields to LocalizedText (company, position, location) - type changes affecting all usage, adding logo (Image) and description (LocalizedText). Skills field changes from ISkillProps[]/Skill[] to IExperienceSkillProps[]/ExperienceSkill[] - major refactoring. Current Experience has date validation logic (lines 51-63) that must be removed and delegated to DateRange VO. ExperienceSkill needs Either-based composition with indexed error handling. Must update Experience.create() to chain Either validations for all new fields. DateRange.create() (from Task 5) replaces manual date validation - dependency. ExperienceBuilder needs significant refactoring for new structure. Risk of test breakage. Estimated 7 subtasks covering VO creation, entity updates, validation delegation, and testing."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Define repository interfaces for infrastructure contracts",
+			"complexityScore": 4,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Organize into: (1) create IProjectRepository interface in portfolio/entities/project/repositories/ with 8 methods using domain types, (2) create IExperienceRepository interface in portfolio/entities/experience/repositories/ with 4 CRUD methods, (3) create IProfileRepository interface in portfolio/entities/profile/repositories/ with singleton pattern (find/save only), (4) create ISkillRepository interface in portfolio/entities/skill/repositories/ with 4 CRUD methods, (5) update portfolio/index.ts exports and validate architecture rules (no external imports, TypeScript compilation, proper exports).",
+			"reasoning": "Moderate complexity - pure interface definitions with clear contracts. Task involves creating 4 repository interfaces in new directory structure: IProjectRepository (8 methods: findAll, findPublished, findFeatured, findById, findBySlug, findRelated, save, delete), IExperienceRepository (4 CRUD methods), IProfileRepository (2 methods - singleton pattern), ISkillRepository (4 CRUD methods). All use domain types (entities and VOs) - no primitives, no external dependencies. Currently no repository interfaces exist - greenfield. Main complexity: ensuring proper directory structure (portfolio/entities/<entity>/repositories/), using correct domain types (ProjectId, Slug, Id VOs), and maintaining architectural purity (no Prisma/Supabase imports). IProfileRepository is singleton (find() not findAll()) - unique pattern. Need to update portfolio/index.ts exports. No unit tests needed - only TypeScript compilation and architecture validation. Estimated 5 subtasks for 4 interfaces plus validation."
+		},
+		{
+			"taskId": 11,
+			"taskTitle": "Create packages/core architecture documentation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Structure documentation into: (1) create ARCHITECTURE.md with bounded context map, dependency rules, and layer isolation guidelines, (2) create visual diagrams for context boundaries and package structure, (3) create GLOSSARY.md with ubiquitous language definitions for all domain concepts, (4) create ADR template (adr-template.md) in decisions/ directory, (5) write ADR-001 documenting repository interface placement decision with rationale, (6) integrate documentation references into root CLAUDE.md and validate completeness.",
+			"reasoning": "Moderate complexity - comprehensive technical documentation task. Requires creating 4-5 markdown files: ARCHITECTURE.md (bounded contexts: Portfolio, Blog, Contact, Shared Kernel; dependency rules; export structure @repo/core/portfolio, @repo/core/shared; layer isolation), GLOSSARY.md (define all domain terms: Project, Experience, Profile, Skill, and all VOs like Slug, Image, DateRange, LocalizedText with examples), decisions/adr-template.md, decisions/ADR-001-repository-interfaces-in-core.md (rationale for placing interfaces in core vs application layer). Need visual diagrams - can use ASCII art or mermaid syntax. Current portfolio/index.ts shows export structure already defined. Main complexity: synthesizing architectural decisions from codebase exploration, explaining bounded context relationships, documenting ubiquitous language consistently, and creating meaningful ADR with alternatives analysis. Lower technical risk but requires careful accuracy. Estimated 6 subtasks for structured documentation creation and integration."
+		}
+	]
+}
