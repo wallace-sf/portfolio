@@ -534,3 +534,7 @@ describe('Project entity', () => {
 - Testes que testam implementação em vez de comportamento
 - Dependências circulares entre packages do monorepo
 - Imports diretos entre bounded contexts — use apenas Shared Kernel
+
+## Task Master AI Instructions
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md
