@@ -1,261 +1,157 @@
-# Portfolio — Portfólio multilíngue com DDD e Clean Architecture
+# Wallace Ferreira — Portfolio
 
-[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue)](https://www.typescriptlang.org)
-[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)
-[![pnpm](https://img.shields.io/badge/pnpm-8-orange)](https://pnpm.io)
-[![Turborepo](https://img.shields.io/badge/Turborepo-latest-ef4444)](https://turbo.build)
+> Personal portfolio built with clean architecture, DDD, and modern web technologies. Designed to showcase professional experience and projects to an international audience.
 
-Monorepo de portfólio pessoal com conteúdo multilíngue (pt-BR, en-US, es), orientado a **DDD**, **Clean Architecture**, modularização e evolução incremental. Inclui (ou planeja): projetos, experiência, skills, blog com BD (Supabase) e API REST.
+🌐 **Live:** [portfolio-web-kohl-two.vercel.app](https://portfolio-web-kohl-two.vercel.app)
 
 ---
 
-## Índice
+## Overview
 
-- [O que é](#o-que-é)
-- [Por que existe](#por-que-existe)
-- [Features](#features)
-- [Arquitetura](#arquitetura)
-- [Estrutura do monorepo](#estrutura-do-monorepo)
-- [Stack](#stack)
-- [Como rodar local](#como-rodar-local)
-- [Variáveis de ambiente](#variáveis-de-ambiente)
-- [Scripts úteis](#scripts-úteis)
-- [Qualidade](#qualidade)
-- [Contribuição](#contribuição)
-- [Roadmap](#roadmap)
-- [Licença](#licença)
-- [English summary](#english-summary)
+This is a monorepo containing the portfolio web application and its supporting packages. The project intentionally applies **Domain-Driven Design (DDD)** and **Clean Architecture** principles — not just as buzzwords, but as a way to keep the codebase maintainable, testable, and extensible as new features (like a blog) are added over time.
 
 ---
 
-## O que é
+## Tech Stack
 
-Portfólio em formato de site com:
-
-- **Conteúdo multilíngue** (pt-BR, en-US, es) na UI e no domínio.
-- **Seções**: Projects (case studies), Experience, Skills, About, Contact.
-- **Blog** (posts em BD) — *MVP com Supabase*.
-- **API REST** para Projects, Blog e futuras integrações.
-
-## Por que existe
-
-Demonstrar domínio em: DDD, Clean Architecture, modularização, i18n, validação em camadas, tratamento de erros e evolução incremental — útil para recrutadores e para evolução técnica do projeto.
-
----
-
-## Features
-
-| Feature | Status |
-|--------|--------|
-| i18n UI (next-intl, pt/en/es) | ✅ |
-| Páginas: Home, Projects, About | ✅ |
-| Domínio: Project, Skill, Experience, etc. (`@repo/core`) | ✅ |
-| Componentes UI reutilizáveis (`@repo/ui`) | ✅ |
-| Formulário de contato (Formik + Yup) | ✅ |
-| API REST (Projects, Blog) | 🔲 WIP |
-| Blog com posts em BD (Supabase) | 🔲 WIP |
-| Camada de aplicação (use cases, ports) | 🔲 WIP |
-| Infra (Supabase, repositórios, mappers) | 🔲 WIP |
+| Layer         | Technology                                        |
+| ------------- | ------------------------------------------------- |
+| Monorepo      | Turborepo + pnpm workspaces                       |
+| Frontend      | Next.js 14 (App Router), TypeScript, Tailwind CSS |
+| Domain        | TypeScript (zero external dependencies)           |
+| Database      | Supabase (PostgreSQL) + Prisma ORM                |
+| Email         | Resend                                            |
+| i18n          | next-intl (pt-BR, en-US, es)                      |
+| Forms         | React Hook Form + Zod                             |
+| Data fetching | TanStack Query                                    |
+| Testing       | Vitest + Testing Library + Playwright             |
+| CI/CD         | GitHub Actions + Vercel                           |
 
 ---
 
-## Arquitetura
-
-Visão em camadas:
+## Monorepo Structure
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Web (Next.js) / API                                    │
-│  Consome application ou chama use cases                 │
-└─────────────────────────────────────────────────────────┘
-                            │
-┌─────────────────────────────────────────────────────────┐
-│  Application (use cases, ports, view models) — WIP      │
-│  Depende apenas do Core                                 │
-└─────────────────────────────────────────────────────────┘
-                            │
-┌─────────────────────────────────────────────────────────┐
-│  Core (domain)                                          │
-│  Entidades, VOs, invariantes. Zero deps de infra/web    │
-└─────────────────────────────────────────────────────────┘
-                            ▲
-┌─────────────────────────────────────────────────────────┐
-│  Infra (adapters, repos, Supabase, mappers) — WIP       │
-│  Implementa ports definidos na Application              │
-└─────────────────────────────────────────────────────────┘
+apps/
+  web/          → Public portfolio (Next.js 14)
+  blog/         → Blog — post-MVP
+
+packages/
+  core/         → Domain layer: entities, value objects, repository interfaces
+  application/  → Use cases, DTOs, service ports
+  infra/        → Concrete repositories (Prisma + Supabase), email service
+  ui/           → Shared React component library
+  eslint-config/
+  typescript-config/
 ```
 
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — Clean Architecture + DDD, limites e decisões.
-- **[docs/BOUNDED_CONTEXTS.md](docs/BOUNDED_CONTEXTS.md)** — Context Map e responsabilidades.
-- **[docs/APPLICATION.md](docs/APPLICATION.md)** — Use cases, ports e view models (WIP).
-- **[docs/API.md](docs/API.md)** — API REST planejada (Projects, Blog, Contact).
-- **[docs/I18N.md](docs/I18N.md)** — i18n (UI e domínio).
-- **[docs/ERROR_HANDLING.md](docs/ERROR_HANDLING.md)** — Erros (códigos, HTTP, i18n).
-- **[docs/VALIDATION.md](docs/VALIDATION.md)** — Validação (Zod, invariantes).
-
----
-
-## Estrutura do monorepo
+The dependency rule flows inward only:
 
 ```
-portfolio/
-├── apps/
-│   ├── web/          # Next.js (front-end, i18n, páginas)
-│   └── storybooks/   # Storybook para @repo/ui
-├── packages/
-│   ├── core/         # Domínio (entidades, VOs, shared kernel)
-│   ├── utils/        # Validator, validações, formatters, i18n helpers
-│   ├── ui/           # Componentes React reutilizáveis
-│   ├── infra/        # (WIP) Supabase, repositórios, mappers
-│   ├── eslint-config/
-│   ├── prettier-config/
-│   ├── tailwind-config/
-│   └── typescript-config/
-└── docs/             # Arquitetura, i18n, erros, validação, roadmap
+core ← application ← infra ← web
 ```
 
-- `apps/api` não existe; a API REST está planejada em **[docs/API.md](docs/API.md)**.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for a full explanation of each layer and the decisions behind them.
 
 ---
 
-## Stack
+## Getting Started
 
-- **Runtime**: Node ≥18
-- **Linguagem**: TypeScript 5.x
-- **Monorepo**: pnpm + Turborepo
-- **Front-end**: Next.js 14, React 18, Tailwind, next-intl
-- **Formulários**: Formik, Yup (validação na borda)
-- **Domínio**: `@repo/core` (Entity, ValueObject, entidades), `@repo/utils` (Validator, ValidationError)
-- **BD/Back-end (planejado)**: Supabase (supabase-js) para Blog e dados dinâmicos
+### Prerequisites
 
----
+- Node.js 20+
+- pnpm 9+
+- A [Supabase](https://supabase.com) project
 
-## Como rodar local
+### Installation
 
-### Pré-requisitos
+```bash
+# Clone the repository
+git clone https://github.com/wallace-sf/portfolio.git
+cd portfolio
 
-- **Node** ≥ 18  
-- **pnpm** 8.x (`corepack enable && corepack prepare pnpm@8.15.6 --activate` ou instalação global)
+# Install dependencies
+pnpm install
+```
 
-### Passo a passo
+### Environment Variables
 
-1. **Clonar e instalar dependências**
+Copy the example file and fill in your values:
 
-   ```bash
-   git clone <repo-url>
-   cd portfolio
-   pnpm install
-   ```
+```bash
+cp .env.example .env.local
+```
 
-2. **Variáveis de ambiente (opcional para rodar o web)**
+| Variable         | Description                                        |
+| ---------------- | -------------------------------------------------- |
+| `DATABASE_URL`   | Supabase PostgreSQL connection string (pooled)     |
+| `DIRECT_URL`     | Supabase direct connection string (for migrations) |
+| `RESEND_API_KEY` | Resend API key for contact form emails             |
 
-   Copie o exemplo e preencha conforme necessário:
+### Database Setup
 
-   ```bash
-   cp apps/web/.env.example apps/web/.env.local
-   ```
+```bash
+# Generate Prisma client
+pnpm db:generate
 
-   Para uso só local, o app roda sem as variáveis (links/contato podem ficar vazios). Para Supabase (quando implementado), veja [Variáveis de ambiente](#variáveis-de-ambiente).
+# Run migrations
+pnpm db:migrate
 
-3. **Desenvolvimento**
+# Seed initial data
+pnpm db:seed
+```
 
-   ```bash
-   pnpm dev
-   ```
+### Running Locally
 
-   O Next.js (`apps/web`) sobe em `http://localhost:3000`. Locales: `/pt-BR`, `/en-US`, `/es`.
+```bash
+# Run all apps and packages in development mode
+pnpm dev
 
-4. **Build**
-
-   ```bash
-   pnpm build
-   ```
-
-5. **Storybook (UI)**
-
-   ```bash
-   pnpm storybook
-   ```
+# Run only the web app
+pnpm dev --filter=web
+```
 
 ---
 
-## Variáveis de ambiente
+## Available Scripts
 
-### `apps/web`
-
-| Variável | Obrigatória | Descrição |
-|----------|-------------|-----------|
-| `NEXT_PUBLIC_CONTACT_EMAIL` | Não | E-mail de contato |
-| `NEXT_PUBLIC_CONTACT_NUMBER` | Não | Telefone |
-| `NEXT_PUBLIC_GITHUB_URL` | Não | URL do GitHub |
-| `NEXT_PUBLIC_LINKEDIN_URL` | Não | URL do LinkedIn |
-| `NEXT_PUBLIC_RESUME_URL` | Não | URL do currículo |
-| `NEXT_PUBLIC_WHATSAPP_URL` | Não | URL do WhatsApp |
-
-Exemplo: `apps/web/.env.example`. **Não commitar** `.env` ou `.env.local` com secrets.
-
-### Supabase (planejado, para Blog/API)
-
-Quando a infra existir, serão usadas (nomes a confirmar na implementação):
-
-- `SUPABASE_URL` — URL do projeto Supabase  
-- `SUPABASE_ANON_KEY` — Chave anônima (browser/edge)  
-- `SUPABASE_SERVICE_ROLE_KEY` — (apenas server-side, se necessário) — **nunca expor no client**
+| Script             | Description                         |
+| ------------------ | ----------------------------------- |
+| `pnpm dev`         | Start all apps in development mode  |
+| `pnpm build`       | Build all apps and packages         |
+| `pnpm lint`        | Lint all packages                   |
+| `pnpm typecheck`   | Type-check all packages             |
+| `pnpm test`        | Run all tests                       |
+| `pnpm db:generate` | Generate Prisma client              |
+| `pnpm db:migrate`  | Run database migrations             |
+| `pnpm db:seed`     | Seed the database with initial data |
 
 ---
 
-## Scripts úteis
+## Project Features (MVP)
 
-| Comando | Descrição |
-|---------|-----------|
-| `pnpm dev` | Sobe apps em modo desenvolvimento (Turbo) |
-| `pnpm build` | Build de todos os pacotes/apps |
-| `pnpm storybook` | Sobe Storybook |
-| `pnpm lint` | Lint em todo o monorepo |
-| `pnpm lint:check` | Lint sem --fix |
-| `pnpm format` | Formata com Prettier |
-| `pnpm format:check` | Verifica formatação |
-| `pnpm types` | Checagem de tipos (tsc) |
-| `pnpm test` | Testes (Turbo) |
-
-Scripts por pacote: `lint:web`, `lint:core`, `test:web`, `test:core`, etc. (ver `package.json` na raiz).
-
----
-
-## Qualidade
-
-- **Lint**: ESLint (config compartilhada em `@repo/eslint-config`)
-- **Formatação**: Prettier (`@repo/prettier-config`)
-- **Tipos**: `pnpm types` em cada pacote
-- **Testes**: Jest (core, utils, web, etc.)
-- **Hooks**: Lefthook — `commit-msg` (Commitlint) e `pre-commit` (lint, format, types, test dos pacotes)
-
----
-
-## Contribuição
-
-Mesmo sendo projeto pessoal, o padrão é mantido para consistência:
-
-- **Commits**: [Conventional Commits](https://www.conventionalcommits.org) (`feat:`, `fix:`, `docs:`, `chore:`, etc.) — validado por Commitlint.
-- **Branch naming**: `feature/descricao`, `fix/descricao`, `docs/descricao`.
-- **PRs**: Descrever o que muda e, se houver, linkar issue (`Closes #N`).
-- **Onde abrir PR**: `main` (ou branch principal definida no repositório).
-
----
+- 🌍 Multilingual support (pt-BR, en-US, es)
+- 🌙 Light / Dark / System theme
+- 💼 Professional experience with skill details per role
+- 🚀 Projects showcase with rich Markdown content
+- 📬 Contact form with email notification
+- 📄 Resume link
+- 🔗 GitHub and LinkedIn links
 
 ## Roadmap
 
-- **[docs/ROADMAP.md](docs/ROADMAP.md)** — MVP, Blog, API, Supabase e próximos passos, alinhado ao Project Board.
+- [ ] **V1** — Blog (posts, tags, categories)
+- [ ] **V2** — Admin panel for content management
+- [ ] **V3** — SEO improvements, OpenGraph, sitemap
 
 ---
 
-## Licença
+## Architecture
 
-All rights reserved. (Proprietário.)
+This project applies Clean Architecture and Domain-Driven Design. Read [ARCHITECTURE.md](./ARCHITECTURE.md) for the full architectural overview, bounded contexts, and layer responsibilities.
 
 ---
 
-## English summary
+## License
 
-This is a **multilingual personal portfolio** (pt-BR, en-US, es) built as a **Turborepo monorepo**. It showcases **DDD** and **Clean Architecture**: domain in `@repo/core`, shared utilities in `@repo/utils`, and a **Next.js** front-end with **next-intl**. Planned: **Supabase**-backed blog, **REST API** for projects and posts, and an application layer (use cases/ports). Run with `pnpm install && pnpm dev`; see [Variáveis de ambiente](#variáveis-de-ambiente) and [docs/](docs/) for architecture, i18n, validation, and error-handling.
+MIT
