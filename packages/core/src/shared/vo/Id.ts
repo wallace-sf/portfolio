@@ -1,4 +1,4 @@
-import { Validator } from '@repo/utils';
+import { Validator } from '@repo/utils/validator';
 import { v4 as uuid } from 'uuid';
 
 import { ValueObject } from '../base/ValueObject';
