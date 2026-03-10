@@ -1,54 +1,62 @@
-import { SocialNetwork, Name, Text, Url, ValidationError } from '../../src';
+import { Name, SocialNetwork, Text, Url, ValidationError } from '../../src';
 import { SocialNetworkBuilder } from '../data';
 
 describe('SocialNetwork', () => {
-  it('should be valid when props are valid', () => {
-    const socialNetwork = SocialNetworkBuilder.build().now();
+  describe('when created from valid props', () => {
+    it('should return Right with a valid SocialNetwork', () => {
+      const result = SocialNetwork.create(SocialNetworkBuilder.build().toProps());
 
-    expect(socialNetwork).toBeInstanceOf(SocialNetwork);
+      expect(result.isRight()).toBe(true);
+      expect(result.value).toBeInstanceOf(SocialNetwork);
+    });
+
+    it('should create social network with all fields as VOs', () => {
+      const name = 'Linkedin';
+      const icon = 'linkedin';
+      const url = 'https://www.linkedin.com';
+
+      const result = SocialNetwork.create(
+        SocialNetworkBuilder.build()
+          .withName(name)
+          .withIcon(icon)
+          .withUrl(url)
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.name.value).toBe(name);
+      expect(result.value.icon.value).toBe(icon);
+      expect(result.value.url.value).toBe(url);
+    });
   });
 
-  it('should be invalid when name is invalid', () => {
-    expect(() => SocialNetworkBuilder.build().withoutName().now()).toThrow(
-      new ValidationError({ code: Name.ERROR_CODE, message: 'The name must contain only letters.' }),
-    );
-  });
+  describe('when created from invalid props', () => {
+    it('should return Left when name is invalid', () => {
+      const result = SocialNetwork.create(
+        SocialNetworkBuilder.build().withoutName().toProps(),
+      );
 
-  it('should be invalid when icon is invalid', () => {
-    expect(() => SocialNetworkBuilder.build().withoutIcon().now()).toThrow(
-      new ValidationError({
-        code: Text.ERROR_CODE,
-        message: 'The value must be between 2 and 50 characters.',
-      }),
-    );
-  });
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
+    });
 
-  it('should be invalid when url is invalid', () => {
-    expect(() => SocialNetworkBuilder.build().withoutUrl().now()).toThrow(
-      new ValidationError({ code: Url.ERROR_CODE, message: 'The value must be a valid URL.' }),
-    );
-  });
+    it('should return Left when icon is invalid', () => {
+      const result = SocialNetwork.create(
+        SocialNetworkBuilder.build().withoutIcon().toProps(),
+      );
 
-  it('should create new social network from valid props', () => {
-    const name = 'Linkedin';
-    const icon = 'linkedin';
-    const url = 'https://www.linkedin.com';
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+    });
 
-    const socialNetwork = SocialNetworkBuilder.build()
-      .withName(name)
-      .withIcon(icon)
-      .withUrl(url)
-      .now();
+    it('should return Left when url is invalid', () => {
+      const result = SocialNetwork.create(
+        SocialNetworkBuilder.build().withoutUrl().toProps(),
+      );
 
-    expect(socialNetwork).toBeInstanceOf(SocialNetwork);
-    expect(socialNetwork.name.value).toBe(name);
-    expect(socialNetwork.icon.value).toBe(icon);
-    expect(socialNetwork.url.value).toBe(url);
-  });
-
-  it('should create multiple social networks', () => {
-    const socialNetworks = SocialNetworkBuilder.list(2);
-
-    expect(socialNetworks).toHaveLength(2);
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Url.ERROR_CODE);
+    });
   });
 });

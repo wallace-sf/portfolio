@@ -2,7 +2,6 @@ import { IProfessionalValueProps, ProfessionalValue } from '../../src';
 import { Data } from './bases';
 import { EntityBuilder } from './EntityBuilder';
 
-// eslint-disable-next-line max-len
 export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValueProps> {
   private constructor(props: IProfessionalValueProps) {
     super(props);
@@ -16,7 +15,11 @@ export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValuePr
   }
 
   public now(): ProfessionalValue {
-    return new ProfessionalValue(this._props as IProfessionalValueProps);
+    const result = ProfessionalValue.create(
+      this._props as IProfessionalValueProps,
+    );
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 
   static list(count: number): ProfessionalValue[] {

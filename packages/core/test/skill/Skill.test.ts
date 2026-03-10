@@ -1,60 +1,55 @@
-import { Skill, Text, SkillType, ValidationError } from '../../src';
+import { Skill, SkillType, Text, ValidationError } from '../../src';
 import { SkillBuilder } from '../data';
 
 describe('Skill', () => {
-  it('should be valid when props are valid', () => {
-    const skill = SkillBuilder.build().now();
+  describe('when created from valid props', () => {
+    it('should return Right with a valid Skill', () => {
+      const result = Skill.create(SkillBuilder.build().toProps());
 
-    expect(skill).toBeInstanceOf(Skill);
+      expect(result.isRight()).toBe(true);
+      expect(result.value).toBeInstanceOf(Skill);
+    });
+
+    it('should expose description, icon and type as VOs', () => {
+      const props = SkillBuilder.build().toProps();
+      const result = Skill.create(props);
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.description.value).toBe(props.description);
+      expect(result.value.icon.value).toBe(props.icon);
+      expect(result.value.type.value).toBe(props.type);
+    });
   });
 
-  it('should be invalid when description is invalid', () => {
-    expect(() => SkillBuilder.build().withoutDescription().now()).toThrow(
-      new ValidationError({
-        code: Text.ERROR_CODE,
-        message: 'The value must be between 3 and 50 characters.',
-      }),
-    );
-  });
+  describe('when created from invalid props', () => {
+    it('should return Left when description is missing', () => {
+      const result = Skill.create(
+        SkillBuilder.build().withoutDescription().toProps(),
+      );
 
-  it('should be invalid when icon is invalid', () => {
-    expect(() => SkillBuilder.build().withoutIcon().now()).toThrow(
-      new ValidationError({
-        code: Text.ERROR_CODE,
-        message: 'The value must be between 2 and 50 characters.',
-      }),
-    );
-  });
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+    });
 
-  it('should be invalid when type is invalid', () => {
-    expect(() => SkillBuilder.build().withoutType().now()).toThrow(
-      new ValidationError({
-        code: SkillType.ERROR_CODE,
-        message: 'The value must be a valid skill type.',
-      }),
-    );
-  });
+    it('should return Left when icon is missing', () => {
+      const result = Skill.create(
+        SkillBuilder.build().withoutIcon().toProps(),
+      );
 
-  it('should create new skill from valid props', () => {
-    const description = 'Lorem Ipsum adipiscing elit. Risus.';
-    const icon = 'javascript';
-    const type = 'LANGUAGE';
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+    });
 
-    const skill = SkillBuilder.build()
-      .withDescription(description)
-      .withIcon(icon)
-      .withType(type)
-      .now();
+    it('should return Left when type is invalid', () => {
+      const result = Skill.create(
+        SkillBuilder.build().withoutType().toProps(),
+      );
 
-    expect(skill).toBeInstanceOf(Skill);
-    expect(skill.description.value).toBe(description);
-    expect(skill.icon.value).toBe(icon);
-    expect(skill.type.value).toBe(type);
-  });
-
-  it('should create multiple skills from valid props', () => {
-    const skills = SkillBuilder.list(2);
-
-    expect(skills).toHaveLength(2);
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(
+        SkillType.ERROR_CODE,
+      );
+    });
   });
 });

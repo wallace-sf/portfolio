@@ -22,7 +22,9 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
   }
 
   public now(): Project {
-    return new Project(this._props as IProjectProps);
+    const result = Project.create(this._props as IProjectProps);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 
   public withTitle(title: string): ProjectBuilder {

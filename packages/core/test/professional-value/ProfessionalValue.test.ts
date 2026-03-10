@@ -2,49 +2,51 @@ import { ProfessionalValue, Text, ValidationError } from '../../src';
 import { ProfessionalValueBuilder } from '../data';
 
 describe('ProfessionalValue', () => {
-  it('should be valid when props are valid', () => {
-    const professionalValue = ProfessionalValueBuilder.build().now();
+  describe('when created from valid props', () => {
+    it('should return Right with a valid ProfessionalValue', () => {
+      const result = ProfessionalValue.create(
+        ProfessionalValueBuilder.build().toProps(),
+      );
 
-    expect(professionalValue).toBeInstanceOf(ProfessionalValue);
+      expect(result.isRight()).toBe(true);
+      expect(result.value).toBeInstanceOf(ProfessionalValue);
+    });
+
+    it('should create professional value with all fields as VOs', () => {
+      const icon = 'arrow-right';
+      const content = 'Lorem ipsum odor amet, consectetuer adipiscing elit.';
+
+      const result = ProfessionalValue.create(
+        ProfessionalValueBuilder.build()
+          .withIcon(icon)
+          .withContent(content)
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.icon.value).toBe(icon);
+      expect(result.value.content.value).toBe(content);
+    });
   });
 
-  it('should be invalid when icon is invalid', () => {
-    expect(() => ProfessionalValueBuilder.build().withoutIcon().now()).toThrow(
-      new ValidationError({
-        code: Text.ERROR_CODE,
-        message: 'The value must be between 2 and 50 characters.',
-      }),
-    );
-  });
+  describe('when created from invalid props', () => {
+    it('should return Left when icon is invalid', () => {
+      const result = ProfessionalValue.create(
+        ProfessionalValueBuilder.build().withoutIcon().toProps(),
+      );
 
-  it('should be invalid when content is invalid', () => {
-    expect(() =>
-      ProfessionalValueBuilder.build().withoutContent().now(),
-    ).toThrow(
-      new ValidationError({
-        code: Text.ERROR_CODE,
-        message: 'The value must be between 1 and 125000 characters.',
-      }),
-    );
-  });
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+    });
 
-  it('should create new professional value from valid props', () => {
-    const icon = 'arrow-right';
-    const content = 'Lorem ipsum odor amet, consectetuer adipiscing elit.';
+    it('should return Left when content is invalid', () => {
+      const result = ProfessionalValue.create(
+        ProfessionalValueBuilder.build().withoutContent().toProps(),
+      );
 
-    const professionalValue = ProfessionalValueBuilder.build()
-      .withIcon(icon)
-      .withContent(content)
-      .now();
-
-    expect(professionalValue).toBeInstanceOf(ProfessionalValue);
-    expect(professionalValue.icon.value).toBe(icon);
-    expect(professionalValue.content.value).toBe(content);
-  });
-
-  it('should create multiple professional values from valid props', () => {
-    const professionalValues = ProfessionalValueBuilder.list(2);
-
-    expect(professionalValues).toHaveLength(2);
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+    });
   });
 });

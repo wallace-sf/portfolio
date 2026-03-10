@@ -27,11 +27,4 @@ export class Id extends ValueObject<string> {
     return right(new Id(value));
   }
 
-  /** @deprecated Use Id.create() for validation or Id.generate() for new IDs */
-  static new(value?: string): Id {
-    if (value == null) return Id.generate();
-    const result = Id.create(value);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
 }

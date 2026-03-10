@@ -29,7 +29,11 @@ export class SkillBuilder extends EntityBuilder<ISkillProps> {
   }
 
   static list(count: number): Skill[] {
-    return [...Array(count)].map((_, index) => new Skill(SkillBuilder.propsAt(index)));
+    return [...Array(count)].map((_, index) => {
+      const result = Skill.create(SkillBuilder.propsAt(index));
+      if (result.isLeft()) throw result.value;
+      return result.value;
+    });
   }
 
   static listToProps(count: number): ISkillProps[] {
@@ -43,7 +47,9 @@ export class SkillBuilder extends EntityBuilder<ISkillProps> {
   }
 
   public now(): Skill {
-    return new Skill(this._props as ISkillProps);
+    const result = Skill.create(this._props as ISkillProps);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 
   public withDescription(description: string): SkillBuilder {

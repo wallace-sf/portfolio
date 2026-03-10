@@ -29,13 +29,6 @@ export class Name extends ValueObject<string> {
     return right(new Name(value ?? ''));
   }
 
-  /** @deprecated Use Name.create() instead */
-  static new(value?: string): Name {
-    const result = Name.create(value);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
-
   public get normalized(): string {
     return this.value.trim().replace(/\s+/g, ' ');
   }

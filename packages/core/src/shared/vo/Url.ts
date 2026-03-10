@@ -24,10 +24,4 @@ export class Url extends ValueObject<string> {
     return right(new Url(value ?? ''));
   }
 
-  /** @deprecated Use Url.create() instead */
-  static new(value?: string): Url {
-    const result = Url.create(value);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
 }
