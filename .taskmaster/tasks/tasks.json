@@ -1872,7 +1872,7 @@
           "8",
           "9"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1930,7 +1930,8 @@
             "testStrategy": "Automated checks: pnpm types returns exit code 0. Grep commands return no matches for external imports. Manual review: verify method signatures use domain types, confirm singleton pattern in IProfileRepository, validate export statements work correctly.",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-03-10T02:59:49.237Z"
       },
       {
         "id": "11",
@@ -2019,9 +2020,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-10T01:25:40.971Z",
+      "lastModified": "2026-03-10T02:59:49.237Z",
       "taskCount": 11,
-      "completedCount": 8,
+      "completedCount": 9,
       "tags": [
         "sprint-0"
       ]
