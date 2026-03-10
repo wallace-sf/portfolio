@@ -5,6 +5,7 @@
 export * from './entities/experience';
 export * from './entities/language';
 export * from './entities/professional-value';
+export * from './entities/profile';
 export * from './entities/project';
 export * from './entities/skill';
 export * from './entities/social-network';
