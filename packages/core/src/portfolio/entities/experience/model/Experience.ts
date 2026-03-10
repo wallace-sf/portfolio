@@ -1,114 +1,128 @@
 import {
-  DateTime,
+  DateRange,
   Either,
   EmploymentType,
   EmploymentTypeValue,
   Entity,
   IEntityProps,
-  left,
+  ILocalizedTextInput,
+  Image,
+  LocalizedText,
   LocationType,
   LocationTypeValue,
-  right,
-  Text,
   ValidationError,
+  left,
+  right,
 } from '../../../../shared';
-import { ISkillProps, Skill, SkillFactory } from '../../skill';
+import { ExperienceSkill, IExperienceSkillProps } from './ExperienceSkill';
+
+export interface IExperienceLogo {
+  url: string;
+  alt: ILocalizedTextInput;
+}
 
 export interface IExperienceProps extends IEntityProps {
-  company: string;
+  company: ILocalizedTextInput;
+  position: ILocalizedTextInput;
+  location: ILocalizedTextInput;
+  description: ILocalizedTextInput;
+  logo: IExperienceLogo;
   employment_type: EmploymentTypeValue;
-  end_at?: string;
-  location: string;
   location_type: LocationTypeValue;
-  position: string;
-  skills: ISkillProps[];
+  skills: IExperienceSkillProps[];
   start_at: string;
+  end_at?: string;
 }
 
 export class Experience extends Entity<Experience, IExperienceProps> {
   static readonly ERROR_CODE = 'INVALID_EXPERIENCE';
 
-  public readonly company: Text;
+  public readonly company: LocalizedText;
+  public readonly position: LocalizedText;
+  public readonly location: LocalizedText;
+  public readonly description: LocalizedText;
+  public readonly logo: Image;
   public readonly employment_type: EmploymentType;
-  public readonly end_at?: DateTime;
-  public readonly location: Text;
   public readonly location_type: LocationType;
-  public readonly position: Text;
-  public readonly skills: Skill[];
-  public readonly start_at: DateTime;
+  public readonly skills: ExperienceSkill[];
+  public readonly period: DateRange;
 
   private constructor(
     props: IExperienceProps,
-    company: Text,
+    company: LocalizedText,
+    position: LocalizedText,
+    location: LocalizedText,
+    description: LocalizedText,
+    logo: Image,
     employment_type: EmploymentType,
-    location: Text,
     location_type: LocationType,
-    position: Text,
-    skills: Skill[],
-    start_at: DateTime,
-    end_at?: DateTime,
+    skills: ExperienceSkill[],
+    period: DateRange,
   ) {
     super(props);
     this.company = company;
-    this.employment_type = employment_type;
-    this.location = location;
-    this.location_type = location_type;
     this.position = position;
+    this.location = location;
+    this.description = description;
+    this.logo = logo;
+    this.employment_type = employment_type;
+    this.location_type = location_type;
     this.skills = skills;
-    this.start_at = start_at;
-    this.end_at = end_at;
+    this.period = period;
   }
 
   static create(props: IExperienceProps): Either<ValidationError, Experience> {
-    const companyResult = Text.create(props.company, { min: 3, max: 100 });
+    const companyResult = LocalizedText.create(
+      props.company ?? { 'pt-BR': '' },
+    );
     if (companyResult.isLeft()) return left(companyResult.value);
+
+    const positionResult = LocalizedText.create(
+      props.position ?? { 'pt-BR': '' },
+    );
+    if (positionResult.isLeft()) return left(positionResult.value);
+
+    const locationResult = LocalizedText.create(
+      props.location ?? { 'pt-BR': '' },
+    );
+    if (locationResult.isLeft()) return left(locationResult.value);
+
+    const descriptionResult = LocalizedText.create(
+      props.description ?? { 'pt-BR': '' },
+    );
+    if (descriptionResult.isLeft()) return left(descriptionResult.value);
+
+    const logoResult = Image.create(props.logo?.url, props.logo?.alt);
+    if (logoResult.isLeft()) return left(logoResult.value);
 
     const employmentResult = EmploymentType.create(props.employment_type);
     if (employmentResult.isLeft()) return left(employmentResult.value);
 
-    const locationResult = Text.create(props.location, { min: 3, max: 100 });
-    if (locationResult.isLeft()) return left(locationResult.value);
-
     const locationTypeResult = LocationType.create(props.location_type);
     if (locationTypeResult.isLeft()) return left(locationTypeResult.value);
 
-    const positionResult = Text.create(props.position, { min: 3, max: 100 });
-    if (positionResult.isLeft()) return left(positionResult.value);
+    const periodResult = DateRange.create(props.start_at, props.end_at);
+    if (periodResult.isLeft()) return left(periodResult.value);
 
-    const startResult = DateTime.create(props.start_at);
-    if (startResult.isLeft()) return left(startResult.value);
-
-    let endAt: DateTime | undefined;
-    if (props.end_at !== undefined) {
-      const endResult = DateTime.create(props.end_at);
-      if (endResult.isLeft()) return left(endResult.value);
-      endAt = endResult.value;
-
-      if (startResult.value.ms > endAt.ms) {
-        return left(
-          new ValidationError({
-            code: Experience.ERROR_CODE,
-            message:
-              'The start of the career must be less than or equal to the end of the career.',
-          }),
-        );
-      }
+    const skills: ExperienceSkill[] = [];
+    for (const skillProps of props.skills ?? []) {
+      const skillResult = ExperienceSkill.create(skillProps);
+      if (skillResult.isLeft()) return left(skillResult.value);
+      skills.push(skillResult.value);
     }
-
-    const skillsResult = SkillFactory.bulk(props.skills);
-    if (skillsResult.isLeft()) return left(skillsResult.value);
 
     return right(
       new Experience(
         props,
         companyResult.value,
-        employmentResult.value,
-        locationResult.value,
-        locationTypeResult.value,
         positionResult.value,
-        skillsResult.value,
-        startResult.value,
-        endAt,
+        locationResult.value,
+        descriptionResult.value,
+        logoResult.value,
+        employmentResult.value,
+        locationTypeResult.value,
+        skills,
+        periodResult.value,
       ),
     );
   }
