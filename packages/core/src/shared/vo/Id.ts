@@ -23,8 +23,6 @@ export class Id extends ValueObject<string> {
 
     if (!isValid && error)
       return left(new ValidationError({ code: Id.ERROR_CODE, message: error }));
-
     return right(new Id(value));
   }
-
 }

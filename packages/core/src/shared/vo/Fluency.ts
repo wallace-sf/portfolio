@@ -30,8 +30,6 @@ export class Fluency extends ValueObject<FluencyValue> {
       return left(
         new ValidationError({ code: Fluency.ERROR_CODE, message: error }),
       );
-
     return right(new Fluency(value));
   }
-
 }
