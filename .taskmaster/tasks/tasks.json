@@ -1645,7 +1645,7 @@
         "dependencies": [
           "6"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1761,7 +1761,8 @@
             "testStrategy": "Test each builder method sets correct field. Test factory methods return projects with correct status. Test chaining multiple builder methods. Test that default ProjectBuilder creates valid project with all fields. Update all existing Project.test.ts tests to use new builder API.",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-03-10T01:25:40.971Z"
       },
       {
         "id": "9",
@@ -2018,9 +2019,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-10T00:51:02.841Z",
+      "lastModified": "2026-03-10T01:25:40.971Z",
       "taskCount": 11,
-      "completedCount": 7,
+      "completedCount": 8,
       "tags": [
         "sprint-0"
       ]

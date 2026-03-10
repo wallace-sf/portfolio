@@ -21,7 +21,9 @@ export class ProfileStat {
     this.icon = icon;
   }
 
-  static create(props: IProfileStatProps): Either<ValidationError, ProfileStat> {
+  static create(
+    props: IProfileStatProps,
+  ): Either<ValidationError, ProfileStat> {
     const labelResult = LocalizedText.create(props.label);
     if (labelResult.isLeft()) return left(labelResult.value);
 
@@ -32,7 +34,11 @@ export class ProfileStat {
     if (iconResult.isLeft()) return left(iconResult.value);
 
     return right(
-      new ProfileStat(labelResult.value, valueResult.value.value, iconResult.value),
+      new ProfileStat(
+        labelResult.value,
+        valueResult.value.value,
+        iconResult.value,
+      ),
     );
   }
 }
