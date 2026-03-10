@@ -28,8 +28,6 @@ export class LocationType extends ValueObject<LocationTypeValue> {
       return left(
         new ValidationError({ code: LocationType.ERROR_CODE, message: error }),
       );
-
     return right(new LocationType(value));
   }
-
 }

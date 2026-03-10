@@ -20,8 +20,6 @@ export class Url extends ValueObject<string> {
       return left(
         new ValidationError({ code: Url.ERROR_CODE, message: error }),
       );
-
     return right(new Url(value ?? ''));
   }
-
 }

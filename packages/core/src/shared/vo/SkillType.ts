@@ -29,8 +29,6 @@ export class SkillType extends ValueObject<SkillTypeValue> {
       return left(
         new ValidationError({ code: SkillType.ERROR_CODE, message: error }),
       );
-
     return right(new SkillType(value));
   }
-
 }
