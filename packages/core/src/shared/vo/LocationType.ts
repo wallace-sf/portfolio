@@ -32,10 +32,4 @@ export class LocationType extends ValueObject<LocationTypeValue> {
     return right(new LocationType(value));
   }
 
-  /** @deprecated Use LocationType.create() instead */
-  static new(value: LocationTypeValue): LocationType {
-    const result = LocationType.create(value);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
 }

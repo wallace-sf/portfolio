@@ -28,14 +28,6 @@ export class DateTime extends ValueObject<string> {
     return right(new DateTime(value));
   }
 
-  /** @deprecated Use DateTime.create() for validation or DateTime.now() for current time */
-  static new(value?: string): DateTime {
-    if (value == null) return DateTime.now();
-    const result = DateTime.create(value);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
-
   get ms(): number {
     return new Date(this.value).getTime();
   }

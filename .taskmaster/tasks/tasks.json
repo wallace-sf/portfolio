@@ -1410,7 +1410,7 @@
         "dependencies": [
           "5"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1535,7 +1535,8 @@
             "testStrategy": "Run pnpm test and verify 100% test pass rate. Run pnpm build and verify successful compilation. Run pnpm typecheck and verify no type errors. Manually test creating each entity with valid and invalid props. Verify error messages are descriptive and include error codes. Check coverage reports show >80% coverage for entity files. Verify no import errors in console. Test that downstream packages can import entities from @repo/core/portfolio.",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-03-10T00:20:53.027Z"
       },
       {
         "id": "7",
@@ -2016,9 +2017,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-09T23:36:05.196Z",
+      "lastModified": "2026-03-10T00:20:53.028Z",
       "taskCount": 11,
-      "completedCount": 5,
+      "completedCount": 6,
       "tags": [
         "sprint-0"
       ]

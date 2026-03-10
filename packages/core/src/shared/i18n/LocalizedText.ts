@@ -55,13 +55,6 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
     return right(new LocalizedText(normalizeInput(input)));
   }
 
-  /** @deprecated Use LocalizedText.create() instead */
-  static new(input: ILocalizedTextInput): LocalizedText {
-    const result = LocalizedText.create(input);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
-
   /**
    * Returns text for the requested locale, with optional fallback.
    * - Uses `locale` if available and non-empty.

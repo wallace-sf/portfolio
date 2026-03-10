@@ -32,7 +32,9 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
   }
 
   public now(): Experience {
-    return new Experience(this._props as IExperienceProps);
+    const result = Experience.create(this._props as IExperienceProps);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 
   public withLocation(location: string): ExperienceBuilder {

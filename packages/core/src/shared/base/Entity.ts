@@ -1,3 +1,5 @@
+import { Either, right } from '../either';
+import { ValidationError } from '../errors';
 import { DateTime } from '../vo/DateTime';
 import { Id } from '../vo/Id';
 
@@ -16,10 +18,33 @@ export abstract class Entity<TEntity, TProps extends IEntityProps> {
   public readonly updated_at: DateTime;
 
   constructor(props: TProps) {
-    this.id = Id.new(props.id);
-    this.created_at = DateTime.new(props.created_at);
-    this.updated_at = DateTime.new(props.updated_at);
-    this.deleted_at = props.deleted_at ? DateTime.new(props.deleted_at) : null;
+    const idResult: Either<ValidationError, Id> =
+      props.id != null ? Id.create(props.id) : right(Id.generate());
+    if (idResult.isLeft()) throw idResult.value;
+    this.id = idResult.value;
+
+    const createdAtResult: Either<ValidationError, DateTime> =
+      props.created_at != null
+        ? DateTime.create(props.created_at)
+        : right(DateTime.now());
+    if (createdAtResult.isLeft()) throw createdAtResult.value;
+    this.created_at = createdAtResult.value;
+
+    const updatedAtResult: Either<ValidationError, DateTime> =
+      props.updated_at != null
+        ? DateTime.create(props.updated_at)
+        : right(DateTime.now());
+    if (updatedAtResult.isLeft()) throw updatedAtResult.value;
+    this.updated_at = updatedAtResult.value;
+
+    if (props.deleted_at != null) {
+      const deletedAtResult = DateTime.create(props.deleted_at);
+      if (deletedAtResult.isLeft()) throw deletedAtResult.value;
+      this.deleted_at = deletedAtResult.value;
+    } else {
+      this.deleted_at = null;
+    }
+
     this.props = Object.freeze({ ...props, id: this.id.value }) as TProps;
   }
 

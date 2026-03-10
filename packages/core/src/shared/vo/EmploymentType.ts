@@ -46,10 +46,4 @@ export class EmploymentType extends ValueObject<EmploymentTypeValue> {
     return right(new EmploymentType(value));
   }
 
-  /** @deprecated Use EmploymentType.create() instead */
-  static new(value: EmploymentTypeValue): EmploymentType {
-    const result = EmploymentType.create(value);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
 }

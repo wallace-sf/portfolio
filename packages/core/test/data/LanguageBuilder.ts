@@ -16,7 +16,9 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
   }
 
   public now(): Language {
-    return new Language(this._props as ILanguageProps);
+    const result = Language.create(this._props as ILanguageProps);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 
   static list(count: number): Language[] {

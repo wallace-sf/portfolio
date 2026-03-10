@@ -1,55 +1,47 @@
 import { Skill, SkillFactory, SkillType, ValidationError } from '../../src';
 import { SkillBuilder } from '../data';
 
-const expectValidationError = (
-  action: () => unknown,
-  expectedCode: string,
-  expectedMessage?: string,
-): void => {
-  try {
-    action();
-    throw new Error('Expected a ValidationError to be thrown.');
-  } catch (error) {
-    expect(error).toBeInstanceOf(ValidationError);
-    expect((error as ValidationError).code).toBe(expectedCode);
-    if (expectedMessage) {
-      expect((error as ValidationError).message).toContain(expectedMessage);
-    }
-  }
-};
-
 describe('SkillFactory', () => {
-  it('should create multiple skills when all props are valid', () => {
-    const props = SkillBuilder.listToProps(3);
+  describe('bulk()', () => {
+    it('should return Right with skill list when all props are valid', () => {
+      const result = SkillFactory.bulk(SkillBuilder.listToProps(3));
 
-    const skills = SkillFactory.bulk(props);
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value).toHaveLength(3);
+      expect(result.value.every((s) => s instanceof Skill)).toBe(true);
+    });
 
-    expect(skills).toHaveLength(3);
-    expect(skills.every((s) => s instanceof Skill)).toBe(true);
-  });
+    it('should return Right with empty array when given empty array', () => {
+      const result = SkillFactory.bulk([]);
 
-  it('should return empty array when given empty array', () => {
-    const skills = SkillFactory.bulk([]);
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value).toHaveLength(0);
+    });
 
-    expect(skills).toHaveLength(0);
-  });
+    it('should return Left when input is not an array', () => {
+      const result = SkillFactory.bulk(undefined as unknown as never[]);
 
-  it('should reject skill lists when the input is not an array', () => {
-    expectValidationError(
-      () => SkillFactory.bulk(undefined as unknown as never[]),
-      'ERROR_INVALID_SKILL_LIST',
-      'Skills must be provided as an array.',
-    );
-  });
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(
+        SkillFactory.ERROR_CODE,
+      );
+      expect((result.value as ValidationError).message).toContain(
+        'Skills must be provided as an array.',
+      );
+    });
 
-  it('should throw validation error when one skill has invalid props', () => {
-    const props = SkillBuilder.listToProps(2);
-    props[0]!.type = '' as 'EDUCATION';
+    it('should return Left with index when one skill has invalid props', () => {
+      const props = SkillBuilder.listToProps(2);
+      props[0]!.type = '' as 'EDUCATION';
 
-    expectValidationError(
-      () => SkillFactory.bulk(props),
-      SkillType.ERROR_CODE,
-      'The value must be a valid skill type.',
-    );
+      const result = SkillFactory.bulk(props);
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(
+        SkillType.ERROR_CODE,
+      );
+    });
   });
 });
