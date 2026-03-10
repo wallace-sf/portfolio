@@ -25,8 +25,8 @@ export const ProjectList: FC<IProjectListProps> = ({
       <li key={project.id}>
         <ProjectCard
           skills={project.skills}
-          caption={project.caption}
-          title={project.title}
+          caption={project.caption?.['pt-BR'] ?? ''}
+          title={project.title?.['pt-BR'] ?? ''}
           compact={compact}
           view={view}
         />
