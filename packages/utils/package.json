@@ -6,6 +6,10 @@
     "linux"
   ],
   "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./validator": "./src/validator/index.ts"
+  },
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watchAll --collectCoverage",

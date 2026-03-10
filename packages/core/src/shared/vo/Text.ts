@@ -1,4 +1,4 @@
-import { Validator } from '@repo/utils';
+import { Validator } from '@repo/utils/validator';
 
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
