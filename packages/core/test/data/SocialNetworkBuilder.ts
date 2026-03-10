@@ -16,7 +16,9 @@ export class SocialNetworkBuilder extends EntityBuilder<ISocialNetworkProps> {
   }
 
   public now(): SocialNetwork {
-    return new SocialNetwork(this._props as ISocialNetworkProps);
+    const result = SocialNetwork.create(this._props as ISocialNetworkProps);
+    if (result.isLeft()) throw result.value;
+    return result.value;
   }
 
   static list(count: number): SocialNetwork[] {

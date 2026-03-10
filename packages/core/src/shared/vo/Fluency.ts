@@ -34,10 +34,4 @@ export class Fluency extends ValueObject<FluencyValue> {
     return right(new Fluency(value));
   }
 
-  /** @deprecated Use Fluency.create() instead */
-  static new(value: FluencyValue): Fluency {
-    const result = Fluency.create(value);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
 }

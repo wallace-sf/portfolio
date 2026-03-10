@@ -33,10 +33,4 @@ export class SkillType extends ValueObject<SkillTypeValue> {
     return right(new SkillType(value));
   }
 
-  /** @deprecated Use SkillType.create() instead */
-  static new(value: SkillTypeValue): SkillType {
-    const result = SkillType.create(value);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
 }

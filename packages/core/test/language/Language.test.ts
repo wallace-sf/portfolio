@@ -1,57 +1,62 @@
-import { Language, Name, Fluency, Text, ValidationError } from '../../src';
+import { Fluency, Language, Name, Text, ValidationError } from '../../src';
 import { LanguageBuilder } from '../data';
 
 describe('Language', () => {
-  it('should be valid when props are valid', () => {
-    const language = LanguageBuilder.build().now();
+  describe('when created from valid props', () => {
+    it('should return Right with a valid Language', () => {
+      const result = Language.create(LanguageBuilder.build().toProps());
 
-    expect(language).toBeInstanceOf(Language);
+      expect(result.isRight()).toBe(true);
+      expect(result.value).toBeInstanceOf(Language);
+    });
+
+    it('should create language with all fields as VOs', () => {
+      const name = 'Português';
+      const fluency = 'BEGINNER';
+      const locale = 'pt-BR';
+
+      const result = Language.create(
+        LanguageBuilder.build()
+          .withName(name)
+          .withFluency(fluency)
+          .withLocale(locale)
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.name.value).toBe(name);
+      expect(result.value.fluency.value).toBe(fluency);
+      expect(result.value.locale.value).toBe(locale);
+    });
   });
 
-  it('should be invalid when name is invalid', () => {
-    expect(() => LanguageBuilder.build().withoutName().now()).toThrow(
-      new ValidationError({ code: Name.ERROR_CODE, message: 'The name must contain only letters.' }),
-    );
-  });
+  describe('when created from invalid props', () => {
+    it('should return Left when name is invalid', () => {
+      const result = Language.create(
+        LanguageBuilder.build().withoutName().toProps(),
+      );
 
-  it('should be invalid when fluency is invalid', () => {
-    expect(() => LanguageBuilder.build().withoutFluency().now()).toThrow(
-      new ValidationError({
-        code: Fluency.ERROR_CODE,
-        message: 'The value must be a valid fluency level.',
-      }),
-    );
-  });
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
+    });
 
-  it('should be invalid when locale is invalid', () => {
-    expect(() => LanguageBuilder.build().withoutLocale().now()).toThrow(
-      new ValidationError({
-        code: Text.ERROR_CODE,
-        message: 'The value must be between 2 and 50 characters.',
-      }),
-    );
-  });
+    it('should return Left when fluency is invalid', () => {
+      const result = Language.create(
+        LanguageBuilder.build().withoutFluency().toProps(),
+      );
 
-  it('should create new language from valid props', () => {
-    const name = 'Português';
-    const fluency = 'BEGINNER';
-    const locale = 'pt-BR';
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Fluency.ERROR_CODE);
+    });
 
-    const language = LanguageBuilder.build()
-      .withName(name)
-      .withFluency(fluency)
-      .withLocale(locale)
-      .now();
+    it('should return Left when locale is invalid', () => {
+      const result = Language.create(
+        LanguageBuilder.build().withoutLocale().toProps(),
+      );
 
-    expect(language).toBeInstanceOf(Language);
-    expect(language.name.value).toBe(name);
-    expect(language.fluency.value).toBe(fluency);
-    expect(language.locale.value).toBe(locale);
-  });
-
-  it('should create multiple languages from valid props', () => {
-    const languages = LanguageBuilder.list(2);
-
-    expect(languages).toHaveLength(2);
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+    });
   });
 });

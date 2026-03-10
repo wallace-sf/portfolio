@@ -38,10 +38,4 @@ export class Text extends ValueObject<string, ITextConfig> {
     return right(new Text(value ?? '', config));
   }
 
-  /** @deprecated Use Text.create() instead */
-  static new(value?: string, config?: ITextConfig): Text {
-    const result = Text.create(value, config);
-    if (result.isLeft()) throw result.value;
-    return result.value;
-  }
 }
