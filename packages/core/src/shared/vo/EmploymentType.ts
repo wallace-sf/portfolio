@@ -42,8 +42,6 @@ export class EmploymentType extends ValueObject<EmploymentTypeValue> {
           message: error,
         }),
       );
-
     return right(new EmploymentType(value));
   }
-
 }
