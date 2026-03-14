@@ -1774,7 +1774,7 @@
         "dependencies": [
           "6"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1782,9 +1782,10 @@
             "description": "Create ExperienceSkill VO in packages/core/src/portfolio/entities/experience/model/ExperienceSkill.ts that composes Skill entity and LocalizedText VO for workDescription field using Either pattern",
             "dependencies": [],
             "details": "Create ExperienceSkill.ts extending ValueObject with:\n- IExperienceSkillProps interface (skill: ISkillProps, workDescription: Record<string, string>)\n- Private constructor accepting Skill and LocalizedText\n- Static create() returning Either<ValidationError, ExperienceSkill>\n- Chain Either validations: Skill.create() then LocalizedText.create()\n- Return left with ValidationError if either fails\n- Implement getters for skill and workDescription\n- Follow Either pattern from CLAUDE.md (never throw)\n- Export interface and class from experience index",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests in packages/core/test/portfolio/experience/ExperienceSkill.test.ts:\n- Valid creation with valid skill and workDescription → Right\n- Invalid skill props → Left with ValidationError\n- Invalid workDescription (empty/missing locale) → Left with ValidationError\n- Getters return correct Skill and LocalizedText instances\n- equals() method works correctly for deep comparison",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-14T23:14:14.464Z"
           },
           {
             "id": 2,
@@ -1794,9 +1795,10 @@
               1
             ],
             "details": "Modify IExperienceProps in packages/core/src/portfolio/entities/experience/model/Experience.ts:\n- Add logo field: { url: string; alt: Record<string, string> }\n- Add description field: Record<string, string> (LocalizedText props)\n- Change skills field type from ISkillProps[] to IExperienceSkillProps[]\n- Keep existing fields: company, position, location (still Record<string, string>), employment_type, location_type, start_at, end_at\n- Update imports to include IExperienceSkillProps from ExperienceSkill\n- Ensure interface extends IEntityProps",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Type checking:\n- Verify TypeScript compiles without errors\n- Test that Experience.create() accepts new interface structure\n- Verify IExperienceProps can be constructed with all required fields\n- Check that logo, description, and skills fields are properly typed",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-14T23:14:14.469Z"
           },
           {
             "id": 3,
@@ -1806,9 +1808,10 @@
               2
             ],
             "details": "Update Experience class in packages/core/src/portfolio/entities/experience/model/Experience.ts:\n- Change field types: company, position, location from Text to LocalizedText\n- Update constructor to accept LocalizedText instances\n- Update create() method to call LocalizedText.create() for company, position, location\n- Chain Either validations: if companyResult.isLeft() return left(companyResult.value)\n- Remove old Text.create() calls\n- Update imports to use LocalizedText from shared/vo\n- Ensure all validations follow Either pattern",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests in packages/core/test/portfolio/experience/Experience.test.ts:\n- Valid creation with LocalizedText props (Record<string, string>) → Right\n- Invalid company (missing locale) → Left with ValidationError\n- Invalid position (empty string) → Left with ValidationError\n- Invalid location → Left with ValidationError\n- Verify getters return LocalizedText instances\n- Test locale() method works correctly for all fields",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-14T23:14:14.474Z"
           },
           {
             "id": 4,
@@ -1818,9 +1821,10 @@
               3
             ],
             "details": "Update Experience class in packages/core/src/portfolio/entities/experience/model/Experience.ts:\n- Add public readonly fields: logo: Image, description: LocalizedText\n- Update constructor to accept and initialize logo and description\n- Add validation in create(): Image.create(props.logo.url, props.logo.alt)\n- Add validation in create(): LocalizedText.create(props.description)\n- Chain Either validations following pattern: if logoResult.isLeft() return left(logoResult.value)\n- Implement getters if needed\n- Update imports to include Image from shared/vo\n- Ensure all new validations return left with ValidationError on failure",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests in packages/core/test/portfolio/experience/Experience.test.ts:\n- Valid creation with logo and description → Right\n- Invalid logo URL → Left with ValidationError\n- Invalid logo alt text (missing locale) → Left with ValidationError\n- Invalid description (empty/missing locale) → Left with ValidationError\n- Verify logo and description getters return correct instances\n- Test that all fields are immutable",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-14T23:14:14.478Z"
           },
           {
             "id": 5,
@@ -1830,9 +1834,10 @@
               4
             ],
             "details": "Update Experience class skills field:\n- Change field type: public readonly skills: ExperienceSkill[]\n- Update create() method to iterate over props.skills (IExperienceSkillProps[])\n- For each skill, call ExperienceSkill.create(props.skills[i])\n- If validation fails, return left with ValidationError containing:\n  - code: 'INVALID_EXPERIENCE_SKILL'\n  - message: 'Invalid skill at index {i}'\n  - details: { index: i, error: skillResult.value }\n- Collect all valid ExperienceSkill instances in array\n- Pass array to constructor\n- Update constructor to accept ExperienceSkill[]\n- Remove old Skill[] logic",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests:\n- Valid creation with array of valid ExperienceSkills → Right\n- Invalid skill at index 0 → Left with INVALID_EXPERIENCE_SKILL and index 0\n- Invalid skill at index 2 → Left with error details showing index 2\n- Empty skills array → should succeed (if allowed)\n- Verify skills getter returns ExperienceSkill[]\n- Test that each ExperienceSkill has correct skill and workDescription",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-14T23:14:14.482Z"
           },
           {
             "id": 6,
@@ -1842,9 +1847,10 @@
               5
             ],
             "details": "Update Experience.create() method:\n- Locate date validation code block (currently lines 51-63 checking start_at/end_at)\n- Replace with single call: DateRange.create(props.start_at, props.end_at)\n- Chain Either validation: const periodResult = DateRange.create(props.start_at, props.end_at)\n- If periodResult.isLeft() return left(periodResult.value)\n- Remove all manual date parsing, comparison, and validation logic\n- DateRange VO (from Task 5 dependency) handles: required start_at, optional end_at, end >= start validation\n- Update constructor to accept DateRange instance\n- Ensure period field type is DateRange\n- Remove any date-related helper methods if they exist",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests:\n- Valid dates (start_at with end_at) → Right\n- Valid dates (start_at without end_at) → Right\n- Invalid dates (end_at before start_at) → Left with DateRange ValidationError\n- Invalid start_at format → Left with DateRange ValidationError\n- Missing start_at → Left with DateRange ValidationError\n- Verify Experience no longer has date validation logic\n- Ensure all date edge cases are covered by DateRange tests",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-14T23:14:14.486Z"
           },
           {
             "id": 7,
@@ -1854,11 +1860,13 @@
               6
             ],
             "details": "Update ExperienceBuilder:\n- Add withLogo(url: string, alt: Record<string, string>) method\n- Add withDescription(description: Record<string, string>) method\n- Update withSkills() to accept IExperienceSkillProps[] instead of ISkillProps[]\n- Update withCompany/Position/Location to accept Record<string, string> (LocalizedText props)\n- Ensure build() constructs valid IExperienceProps with all new fields\n- Provide sensible defaults for logo, description\n\nCreate test files:\n- ExperienceSkill.test.ts covering all scenarios from testStrategy above\n- Update Experience.test.ts with tests for logo, description, ExperienceSkill[] validation\n- Test all Either-based validations\n- Test indexed error handling for skills array\n- Test DateRange delegation\n- Verify all validation error codes and messages",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Builder tests:\n- ExperienceBuilder creates valid Experience with all new fields\n- Builder defaults work correctly\n- Builder methods are chainable\n\nIntegration tests:\n- Complete Experience creation flow with all fields\n- Test combinations of valid/invalid fields\n- Verify error messages are clear and in English\n- Run full test suite: pnpm test in packages/core\n- Ensure 100% coverage for Experience and ExperienceSkill",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-14T23:14:14.490Z"
           }
-        ]
+        ],
+        "updatedAt": "2026-03-14T23:14:14.490Z"
       },
       {
         "id": "10",
@@ -2020,9 +2028,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-10T02:59:49.237Z",
+      "lastModified": "2026-03-14T23:14:14.490Z",
       "taskCount": 11,
-      "completedCount": 9,
+      "completedCount": 10,
       "tags": [
         "sprint-0"
       ]
