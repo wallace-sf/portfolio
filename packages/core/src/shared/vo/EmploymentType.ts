@@ -28,7 +28,7 @@ export class EmploymentType extends ValueObject<EmploymentTypeValue> {
   static create(
     value: EmploymentTypeValue,
   ): Either<ValidationError, EmploymentType> {
-    const { error, isValid } = Validator.new(value)
+    const { error, isValid } = Validator.of(value)
       .in(
         [...EmploymentType.EMPLOYMENTS],
         'The value must be a valid employment type.',

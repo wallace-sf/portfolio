@@ -12,7 +12,7 @@ export class Name extends ValueObject<string> {
   }
 
   static create(value?: string): Either<ValidationError, Name> {
-    const { error, isValid } = Validator.new(value)
+    const { error, isValid } = Validator.of(value)
       .alpha('The name must contain only letters.')
       .length(
         3,

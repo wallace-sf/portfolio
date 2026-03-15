@@ -22,7 +22,7 @@ export class Fluency extends ValueObject<FluencyValue> {
   }
 
   static create(value: FluencyValue): Either<ValidationError, Fluency> {
-    const { error, isValid } = Validator.new(value)
+    const { error, isValid } = Validator.of(value)
       .in([...Fluency.LEVELS], 'The value must be a valid fluency level.')
       .validate();
 

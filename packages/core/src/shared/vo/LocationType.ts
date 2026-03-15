@@ -17,7 +17,7 @@ export class LocationType extends ValueObject<LocationTypeValue> {
   static create(
     value: LocationTypeValue,
   ): Either<ValidationError, LocationType> {
-    const { error, isValid } = Validator.new(value)
+    const { error, isValid } = Validator.of(value)
       .in(
         [...LocationType.LOCATIONS],
         'The value must be a valid location type.',
