@@ -1,5 +1,5 @@
 import { Name, SocialNetwork, Text, Url, ValidationError } from '../../src';
-import { SocialNetworkBuilder } from '../data';
+import { SocialNetworkBuilder } from '../helpers';
 
 describe('SocialNetwork', () => {
   describe('when created from valid props', () => {

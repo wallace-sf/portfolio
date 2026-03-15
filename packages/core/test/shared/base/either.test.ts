@@ -1,4 +1,4 @@
-import { Either, Left, Right, left, right } from '../../src/shared/either';
+import { Either, Left, Right, left, right } from '../../../src/shared/either';
 
 describe('left()', () => {
   it('should create a Left instance when called with a value', () => {

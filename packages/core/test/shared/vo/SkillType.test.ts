@@ -1,4 +1,4 @@
-import { SkillType, ValidationError } from '../../src';
+import { SkillType, ValidationError } from '../../../src';
 
 describe('SkillType', () => {
   describe('when created from valid value', () => {

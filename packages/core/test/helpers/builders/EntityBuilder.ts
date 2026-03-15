@@ -1,4 +1,4 @@
-import { IEntityProps } from '../../src';
+import { IEntityProps } from '../../../src';
 
 export abstract class EntityBuilder<TProps extends IEntityProps> {
   protected readonly _props: Partial<TProps>;

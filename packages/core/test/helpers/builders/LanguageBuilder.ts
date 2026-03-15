@@ -1,5 +1,5 @@
-import { Language, ILanguageProps, FluencyValue } from '../../src';
-import { Data } from './bases';
+import { Language, ILanguageProps, FluencyValue } from '../../../src';
+import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 
 export class LanguageBuilder extends EntityBuilder<ILanguageProps> {

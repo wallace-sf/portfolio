@@ -6,7 +6,7 @@ import {
 } from '../../src';
 import { Profile } from '../../src/portfolio/entities/profile/model/Profile';
 import { ProfileStat } from '../../src/portfolio/entities/profile/model/ProfileStat';
-import { Data } from '../data/bases';
+import { Data } from '../helpers/generators';
 
 const validStat = {
   label: { 'pt-BR': 'Anos de experiência' },

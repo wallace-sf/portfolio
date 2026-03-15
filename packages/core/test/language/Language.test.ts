@@ -1,5 +1,5 @@
 import { Fluency, Language, Name, Text, ValidationError } from '../../src';
-import { LanguageBuilder } from '../data';
+import { LanguageBuilder } from '../helpers';
 
 describe('Language', () => {
   describe('when created from valid props', () => {

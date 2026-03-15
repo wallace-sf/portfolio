@@ -6,8 +6,8 @@ import {
   ISkillProps,
   Project,
   ProjectStatus,
-} from '../../src';
-import { Data } from './bases';
+} from '../../../src';
+import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 import { SkillBuilder } from './SkillBuilder';
 

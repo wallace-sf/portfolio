@@ -6,7 +6,7 @@ import {
   SkillType,
   ValidationError,
 } from '../../src';
-import { ProjectBuilder, SkillBuilder } from '../data';
+import { ProjectBuilder, SkillBuilder } from '../helpers';
 
 describe('Project', () => {
   describe('when created from valid props', () => {

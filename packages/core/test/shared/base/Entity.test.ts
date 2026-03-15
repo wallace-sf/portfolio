@@ -1,4 +1,4 @@
-import { DateTime, Entity, IEntityProps } from '../../src';
+import { DateTime, Entity, IEntityProps } from '../../../src';
 
 interface IMyClassProps extends IEntityProps {
   name?: string;
