@@ -1,0 +1,85 @@
+{
+	"meta": {
+		"generatedAt": "2026-03-15T02:34:50.813Z",
+		"tasksAnalyzed": 9,
+		"totalTasks": 9,
+		"analysisCount": 9,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Create and configure packages/application",
+			"complexityScore": 4,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Break down the creation of packages/application into discrete configuration steps: (1) Create package.json with all dependencies and scripts, (2) Create tsconfig.json with path aliases, (3) Create vitest.config.ts mirroring core's structure, (4) Create directory structure (src/portfolio/, src/contact/, test/), (5) Create barrel export index.ts, (6) Create ESLint config application.js with architecture protection rules, (7) Update turbo.json build dependencies and verify pnpm workspace integration.",
+			"reasoning": "This is primarily configuration work with well-defined patterns already established in packages/core. The task involves creating 6-7 new files (package.json, tsconfig.json, vitest.config.ts, eslint config, index files, directory structure) with clear templates available. ESLint architecture protection rules are straightforward pattern matching. The main complexity comes from ensuring all integrations work correctly (turbo, pnpm workspace, path aliases). Testing verification is manual but simple. No domain logic or algorithm complexity involved."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Create output DTOs for Portfolio context",
+			"complexityScore": 3,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Create individual DTO interface files for Portfolio context: (1) ProjectSummaryDTO.ts with core project listing fields, (2) ProjectDetailDTO.ts extending ProjectSummaryDTO with full content fields, (3) ExperienceSkillDTO.ts with skill and workDescription, (4) ExperienceDTO.ts with all experience fields and skills array, (5) ProfileStatDTO.ts with label/value/icon, (6) SocialNetworkDTO.ts with id/name/url, (7) ProfileDTO.ts with all nested structures, (8) Create barrel exports (dtos/index.ts and portfolio/index.ts). Each DTO must use plain TypeScript interfaces with no methods, ISO 8601 strings for dates, and nested object structures matching domain entities.",
+			"reasoning": "This is straightforward TypeScript interface definition work with 7 distinct DTO files. The domain entities already exist in packages/core, providing clear structure to follow (Project.ts, Experience.ts, Profile.ts, etc.). Each DTO is a plain interface with no logic - just type definitions mapping domain entities to presentation layer. The main work is careful field mapping ensuring: (1) correct nesting (e.g., coverImage: { url, alt }), (2) ISO 8601 date strings instead of Date objects, (3) array structures for skills/stats/socialNetworks, (4) optional fields marked correctly. Testing is minimal - just TypeScript compilation and import verification. Low algorithmic complexity, mostly mechanical translation."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Create IEmailService port and ContactMessageDTO",
+			"complexityScore": 2,
+			"recommendedSubtasks": 0,
+			"expansionPrompt": "",
+			"reasoning": "This is the simplest task in the list. It involves creating only 2 files: (1) ContactMessageDTO.ts - a 3-field interface (name, email, message), (2) IEmailService.ts - a single-method interface returning Either<DomainError, void>. The Either pattern is already well-established in the codebase (packages/core/src/shared/either.ts). The port pattern follows Clean Architecture conventions already in use (see IProjectRepository, IExperienceRepository). Testing involves only TypeScript compilation and a simple mock implementation. No business logic, no complex dependencies, no integration challenges. Total ~30-40 lines of code across 2 files plus barrel exports. This can be completed in a single focused session without subtask breakdown."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Implement GetFeaturedProjects use case",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Implement GetFeaturedProjects use case in stages: (1) Create use case class structure with constructor DI for IProjectRepository and execute() method signature, (2) Implement repository orchestration - call findFeatured() with error handling using Either pattern, (3) Implement private toDTO() mapper method that transforms Project entity to ProjectSummaryDTO with locale handling for all localized fields (title, caption, coverImage.alt, theme, skills), (4) Create comprehensive test suite covering: happy path with DTO validation, empty results, locale handling, field mapping (all 8 DTO fields), and error propagation from repository.",
+			"reasoning": "This is the first use case implementation, establishing patterns for all subsequent use cases. Moderate complexity from: (1) First-time use case pattern setup (constructor DI, Either returns), (2) Entity-to-DTO mapping logic requiring careful locale handling (LocalizedText.get(locale) for title, caption, alt, theme, skills), (3) Nested object mapping (coverImage: { url, alt }), (4) Array transformation (skills.map()), (5) Date conversion (period.start.toISOString()). The repository interface already exists and is simple (findFeatured()). Main challenges are establishing clean mapping patterns and ensuring comprehensive tests. The DTO mapping function will be reused/adapted in other use cases. Tests need to cover 6+ scenarios including locale handling."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Implement GetPublishedProjects use case",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Implement GetPublishedProjects use case building on GetFeaturedProjects pattern: (1) Create use case class with IProjectRepository DI, implement execute() calling findPublished() with Either error handling, (2) Implement sorting logic - sort projects array by period.start descending using Date.getTime() comparison, (3) Reuse toDTO() mapper from GetFeaturedProjects (or create shared mapper if refactoring), create test suite covering: sorted results validation (newest first), empty array, single project, DTO field mapping, locale handling, and repository error propagation.",
+			"reasoning": "Lower complexity than Task 4 because it reuses the established use case pattern and DTO mapping logic from GetFeaturedProjects. New complexity: (1) Array sorting logic (sort by publishedAt DESC using period.start.toDate().getTime()), (2) Ensuring immutability ([...projects].sort() to avoid mutation). The repository call (findPublished()) is straightforward. DTO mapping is identical to Task 4 - can be extracted to shared private method or duplicated initially. Tests are similar to Task 4 but must verify sorting behavior (3-4 additional test cases for sort order). Overall simpler because the patterns are established and the business logic (sorting) is standard JavaScript."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Implement GetProjectBySlug use case",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Implement GetProjectBySlug use case with multiple error paths and related data: (1) Create use case structure with IProjectRepository DI and GetProjectBySlugInput interface, (2) Implement slug validation using Slug.create() with early return on Left(ValidationError), (3) Implement repository orchestration - findBySlug() with NotFoundError when null, findRelated() for related projects, (4) Implement two DTO mappers - toDetailDTO() for full project with all optional fields (content, summary, objectives, role, team, period with endAt) and toSummaryDTO() for related projects array, (5) Create comprehensive test suite covering: happy path with related projects, NotFoundError path, ValidationError for invalid slug, DTO field mapping (12+ fields), optional field handling, locale handling, and related projects limit verification.",
+			"reasoning": "Higher complexity due to: (1) Two error paths (ValidationError from Slug.create, NotFoundError from repository), (2) Two repository calls (findBySlug + findRelated), (3) Two DTO mappers (ProjectDetailDTO with 12+ fields including optional fields vs ProjectSummaryDTO), (4) More complex DTO mapping with optional fields (summary?, objectives?, role?, team?, period.endAt?), (5) Related projects orchestration (limit=3, array mapping). The Either return type has 3 possible Left types (NotFoundError | ValidationError | DomainError). Testing complexity is higher - need 8+ test scenarios covering both error paths, optional fields, related projects behavior, and full DTO validation. This use case demonstrates the full complexity of Clean Architecture orchestration."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Implement GetExperiences use case",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Implement GetExperiences use case with nested entity mapping: (1) Create use case class with IExperienceRepository DI, implement execute() calling findAll() with Either error handling, (2) Implement sorting logic by period.start descending (reuse pattern from GetPublishedProjects), (3) Implement toDTO() mapper handling all Experience fields including optional fields (description, logo, endAt), EmploymentType/LocationType toString() calls, and nested skills array, (4) Implement toSkillDTO() mapper for ExperienceSkill with localized workDescription, create test suite covering: sorted results, empty array, DTO mapping with all 10+ fields, nested skills array with workDescription, optional field handling, and locale verification for all localized fields.",
+			"reasoning": "Moderate-high complexity from: (1) Nested entity mapping - ExperienceDTO contains ExperienceSkillDTO[] requiring two mapper functions, (2) Multiple optional fields (description?, logo?, endAt?), (3) Value object toString() calls (EmploymentType, LocationType), (4) Complex locale handling across 5+ localized fields (position, description, logo?.alt, skill names, workDescription), (5) Sorting logic (same pattern as Task 5). The repository interface is simple (findAll()), but the DTO structure is more complex than Project due to nested skills. ExperienceSkill.workDescription is unique - contextual usage description that must be localized. Tests need to verify nested array mapping, optional fields, and locale propagation through two levels of nesting. Similar complexity to Task 4 but with added nesting complexity."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Implement GetProfile use case",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Implement GetProfile use case with multiple nested structures: (1) Create use case class with IProfileRepository DI and GetProfileInput interface, implement execute() calling find() with NotFoundError handling, (2) Implement main toDTO() mapper for Profile with 7 top-level fields and 3 nested arrays (stats, featuredProjectSlugs, socialNetworks), (3) Implement toStatDTO() mapper for ProfileStat with locale handling for label/value and non-localized icon, (4) Implement toSocialNetworkDTO() mapper for SocialNetwork with toString() calls, (5) Create comprehensive test suite covering: happy path with all nested arrays, NotFoundError path, all DTO fields including 3 nested structures, featuredProjectSlugs max 6 validation (domain invariant), locale handling for stats, and social network mapping.",
+			"reasoning": "Higher complexity due to: (1) Three nested array structures requiring three separate mapper functions (toDTO, toStatDTO, toSocialNetworkDTO), (2) Mixed localization - some fields localized (headline, bio, photo.alt, stat labels/values) others not (name, icon, social network name/url), (3) Array transformations with different patterns (stats.map(), featuredProjectSlugs.map(slug.toString()), socialNetworks.map()), (4) Domain invariant verification in tests (max 6 featured projects per Profile entity rule), (5) NotFoundError path (repository.find() returns null). The ProfileDTO has moderate field count but high structural complexity with 3 nested arrays of different types. Tests need 9+ scenarios covering NotFoundError, all nested structures, locale handling, and domain invariant edge cases. This is one of the most structurally complex use cases despite relatively simple business logic."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Implement SendContactMessage use case",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Implement SendContactMessage use case with comprehensive input validation: (1) Create use case class with IEmailService DI and SendContactMessageInput interface, implement execute() method signature returning Either<ValidationError | DomainError, void>, (2) Implement validation logic for name (required, non-whitespace), email (required, regex format validation), and message (required, non-whitespace) with early returns on ValidationError, (3) Implement DTO construction with trimmed values and emailService.send() orchestration with error propagation, (4) Create comprehensive test suite covering: happy path with successful send, 6+ validation error scenarios (empty name, whitespace-only name, empty email, invalid email formats, empty message, whitespace-only message), trimming verification, email service error propagation, and verification that emailService.send() is NOT called when validation fails.",
+			"reasoning": "Moderate complexity from: (1) Three independent validation rules (name, email, message) each requiring separate error handling, (2) Email regex validation pattern implementation and testing against multiple invalid formats (no @, no domain, @-only, etc.), (3) String trimming logic that must be applied before DTO construction, (4) Port orchestration with error propagation from IEmailService.send(), (5) Validation sequencing - must validate ALL fields before calling emailService, (6) Either pattern with two Left types (ValidationError | DomainError). Testing complexity is high - needs 10+ test cases covering all validation paths, trimming behavior, service error propagation, and ensuring service is not called prematurely. This is the first use case demonstrating input validation patterns (vs domain validation in Tasks 4-8). Different pattern from repository-based use cases."
+		}
+	]
+}
