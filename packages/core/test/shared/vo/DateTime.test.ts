@@ -1,4 +1,4 @@
-import { DateTime, ValidationError } from '../../src';
+import { DateTime, ValidationError } from '../../../src';
 
 describe('DateTime', () => {
   describe('when created from valid value', () => {

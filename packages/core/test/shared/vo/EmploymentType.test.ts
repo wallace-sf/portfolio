@@ -1,4 +1,4 @@
-import { EmploymentType, ValidationError } from '../../src';
+import { EmploymentType, ValidationError } from '../../../src';
 
 describe('EmploymentType', () => {
   describe('when created from valid value', () => {

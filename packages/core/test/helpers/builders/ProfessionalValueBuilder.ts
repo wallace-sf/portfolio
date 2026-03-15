@@ -1,5 +1,5 @@
-import { IProfessionalValueProps, ProfessionalValue } from '../../src';
-import { Data } from './bases';
+import { IProfessionalValueProps, ProfessionalValue } from '../../../src';
+import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 
 export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValueProps> {

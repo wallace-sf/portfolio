@@ -1,6 +1,6 @@
-import { IProfileProps, Profile } from '../../src';
-import { IProfileStatProps } from '../../src/portfolio/entities/profile/model/ProfileStat';
-import { Data } from './bases';
+import { IProfileProps, Profile } from '../../../src';
+import { IProfileStatProps } from '../../../src/portfolio/entities/profile/model/ProfileStat';
+import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 
 export class ProfileBuilder extends EntityBuilder<IProfileProps> {
