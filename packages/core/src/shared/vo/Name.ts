@@ -1,3 +1,5 @@
+import { Validator } from '@repo/utils/validator';
+
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
@@ -5,32 +7,26 @@ import { ValidationError } from '../errors';
 export class Name extends ValueObject<string> {
   static readonly ERROR_CODE = 'INVALID_NAME';
 
-  private static readonly ALPHA_REGEX = /^[\p{L}\s]+$/u;
-
   private constructor(value: string) {
     super({ value });
   }
 
   static create(value?: string): Either<ValidationError, Name> {
-    const trimmed = value?.trim() ?? '';
+    const { error, isValid } = Validator.new(value)
+      .alpha('The name must contain only letters.')
+      .length(
+        3,
+        100,
+        'The name must be between {{min}} and {{max}} characters.',
+      )
+      .validate();
 
-    if (!trimmed || !Name.ALPHA_REGEX.test(trimmed))
+    if (!isValid && error)
       return left(
-        new ValidationError({
-          code: Name.ERROR_CODE,
-          message: 'The name must contain only letters.',
-        }),
+        new ValidationError({ code: Name.ERROR_CODE, message: error }),
       );
 
-    if (trimmed.length < 3 || trimmed.length > 100)
-      return left(
-        new ValidationError({
-          code: Name.ERROR_CODE,
-          message: 'The name must be between 3 and 100 characters.',
-        }),
-      );
-
-    return right(new Name(trimmed));
+    return right(new Name(value ?? ''));
   }
 
   public get normalized(): string {

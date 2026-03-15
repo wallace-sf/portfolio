@@ -1,3 +1,5 @@
+import { Validator } from '@repo/utils/validator';
+
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
@@ -20,14 +22,14 @@ export class Fluency extends ValueObject<FluencyValue> {
   }
 
   static create(value: FluencyValue): Either<ValidationError, Fluency> {
-    if (!(Fluency.LEVELS as readonly string[]).includes(value))
-      return left(
-        new ValidationError({
-          code: Fluency.ERROR_CODE,
-          message: 'The value must be a valid fluency level.',
-        }),
-      );
+    const { error, isValid } = Validator.new(value)
+      .in([...Fluency.LEVELS], 'The value must be a valid fluency level.')
+      .validate();
 
+    if (!isValid && error)
+      return left(
+        new ValidationError({ code: Fluency.ERROR_CODE, message: error }),
+      );
     return right(new Fluency(value));
   }
 }
