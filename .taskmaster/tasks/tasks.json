@@ -2185,7 +2185,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -2193,9 +2193,10 @@
             "description": "Define the ProjectSummaryDTO interface for project listing views with core fields: id, slug, title, caption, coverImage, theme, skills, and publishedAt",
             "dependencies": [],
             "details": "Create `packages/application/src/portfolio/dtos/ProjectSummaryDTO.ts` with the following structure:\n\n```typescript\nexport interface ProjectSummaryDTO {\n  id: string;\n  slug: string;\n  title: string;\n  caption: string;\n  coverImage: { url: string; alt: string };\n  theme?: string;\n  skills: string[];\n  publishedAt: string; // ISO 8601\n}\n```\n\nEnsure:\n- coverImage uses nested object structure { url, alt }\n- publishedAt is string type for ISO 8601 serialization\n- theme is optional (marked with ?)\n- skills is array of strings\n- All fields match the Project entity from @repo/core/portfolio",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify TypeScript compilation with `pnpm -C packages/application types`. Confirm interface has no methods and uses only plain types (string, string[], nested objects).",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-15T22:01:34.737Z"
           },
           {
             "id": 2,
@@ -2205,9 +2206,10 @@
               1
             ],
             "details": "Create `packages/application/src/portfolio/dtos/ProjectDetailDTO.ts`:\n\n```typescript\nimport { ProjectSummaryDTO } from './ProjectSummaryDTO';\n\nexport interface ProjectDetailDTO extends ProjectSummaryDTO {\n  content: string; // Markdown content\n  summary?: string;\n  objectives?: string;\n  role?: string;\n  team?: string;\n  period: { startAt: string; endAt?: string }; // ISO 8601\n  relatedProjects: ProjectSummaryDTO[];\n}\n```\n\nEnsure:\n- Correctly extends ProjectSummaryDTO\n- period uses nested object with ISO 8601 strings\n- endAt is optional within period\n- relatedProjects is array of ProjectSummaryDTO\n- Optional fields: summary, objectives, role, team",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify TypeScript compilation. Check that ProjectDetailDTO includes all ProjectSummaryDTO fields plus detail-specific fields. Confirm period structure and relatedProjects array type.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-15T22:01:37.600Z"
           },
           {
             "id": 3,
@@ -2215,9 +2217,10 @@
             "description": "Define ExperienceSkillDTO for skills used in work context and ExperienceDTO for complete professional experience records with all employment details",
             "dependencies": [],
             "details": "Create two files:\n\n1. `packages/application/src/portfolio/dtos/ExperienceSkillDTO.ts`:\n```typescript\nexport interface ExperienceSkillDTO {\n  id: string;\n  name: string;\n  type: string; // e.g., 'frontend', 'backend', 'devops'\n  workDescription: string; // Localized context of how skill was used\n}\n```\n\n2. `packages/application/src/portfolio/dtos/ExperienceDTO.ts`:\n```typescript\nimport { ExperienceSkillDTO } from './ExperienceSkillDTO';\n\nexport interface ExperienceDTO {\n  id: string;\n  company: string;\n  position: string;\n  location: string;\n  description?: string;\n  logo?: { url: string; alt: string };\n  employmentType: string; // e.g., 'full-time', 'contract'\n  locationType: string; // e.g., 'remote', 'on-site', 'hybrid'\n  startAt: string; // ISO 8601\n  endAt?: string; // ISO 8601\n  skills: ExperienceSkillDTO[];\n}\n```\n\nEnsure logo uses same nested structure as coverImage, dates are ISO 8601 strings, skills is array of ExperienceSkillDTO.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify TypeScript compilation. Confirm ExperienceDTO correctly imports and uses ExperienceSkillDTO. Check optional fields (description, logo, endAt). Verify date string types.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-15T22:01:40.610Z"
           },
           {
             "id": 4,
@@ -2225,9 +2228,10 @@
             "description": "Define ProfileStatDTO for profile statistics display and SocialNetworkDTO for social media links",
             "dependencies": [],
             "details": "Create two files:\n\n1. `packages/application/src/portfolio/dtos/ProfileStatDTO.ts`:\n```typescript\nexport interface ProfileStatDTO {\n  label: string;\n  value: string;\n  icon: string; // Icon identifier for UI\n}\n```\n\n2. `packages/application/src/portfolio/dtos/SocialNetworkDTO.ts`:\n```typescript\nexport interface SocialNetworkDTO {\n  id: string;\n  name: string; // e.g., 'GitHub', 'LinkedIn'\n  url: string;\n}\n```\n\nEnsure:\n- ProfileStatDTO has all three required string fields\n- SocialNetworkDTO includes id, name, and url\n- Both are simple, flat interfaces with no nested structures",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify TypeScript compilation. Confirm both interfaces have correct field names and types. Test that they can be used in arrays (ProfileStatDTO[] and SocialNetworkDTO[]).",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-15T22:01:43.533Z"
           },
           {
             "id": 5,
@@ -2237,9 +2241,10 @@
               4
             ],
             "details": "Create `packages/application/src/portfolio/dtos/ProfileDTO.ts`:\n\n```typescript\nimport { ProfileStatDTO } from './ProfileStatDTO';\nimport { SocialNetworkDTO } from './SocialNetworkDTO';\n\nexport interface ProfileDTO {\n  id: string;\n  name: string;\n  headline: string;\n  bio: string;\n  photo: { url: string; alt: string };\n  stats: ProfileStatDTO[];\n  featuredProjectSlugs: string[]; // Max 6 per domain rule\n  socialNetworks: SocialNetworkDTO[];\n}\n```\n\nEnsure:\n- Correctly imports ProfileStatDTO and SocialNetworkDTO\n- photo uses nested object structure\n- stats is array of ProfileStatDTO\n- featuredProjectSlugs is array of strings (note: max 6 enforced by domain layer)\n- socialNetworks is array of SocialNetworkDTO",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify TypeScript compilation and correct imports. Confirm all nested array types (stats, featuredProjectSlugs, socialNetworks). Check photo structure matches other image fields.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-15T22:01:46.431Z"
           },
           {
             "id": 6,
@@ -2253,9 +2258,10 @@
               5
             ],
             "details": "Create `packages/application/src/portfolio/dtos/index.ts`:\n\n```typescript\nexport * from './ProjectSummaryDTO';\nexport * from './ProjectDetailDTO';\nexport * from './ExperienceSkillDTO';\nexport * from './ExperienceDTO';\nexport * from './ProfileStatDTO';\nexport * from './SocialNetworkDTO';\nexport * from './ProfileDTO';\n```\n\nThis allows consumers to import all DTOs from a single location:\n```typescript\nimport { ProjectSummaryDTO, ProfileDTO } from '@repo/application/portfolio/dtos';\n```",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify TypeScript compilation. Create test import statement `import { ProjectSummaryDTO, ProjectDetailDTO, ExperienceDTO, ProfileDTO, ProfileStatDTO, SocialNetworkDTO, ExperienceSkillDTO } from '@repo/application/portfolio/dtos'` and confirm all types resolve correctly.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-15T22:01:49.470Z"
           },
           {
             "id": 7,
@@ -2265,9 +2271,10 @@
               6
             ],
             "details": "Update or create `packages/application/src/portfolio/index.ts` to include:\n\n```typescript\nexport * from './dtos';\n```\n\nThis enables consumers to import DTOs directly from the portfolio module:\n```typescript\nimport { ProjectSummaryDTO, ProfileDTO } from '@repo/application/portfolio';\n```\n\nIf the file already exists with other exports (use-cases, ports), append the DTOs export to the existing content. If it doesn't exist, create it with just the dtos export for now.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify TypeScript compilation. Test top-level import: `import { ProjectSummaryDTO, ProjectDetailDTO, ExperienceDTO, ProfileDTO } from '@repo/application/portfolio'`. Confirm all DTO types are accessible without drilling into /dtos path.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-15T22:01:52.427Z"
           },
           {
             "id": 8,
@@ -2283,15 +2290,16 @@
               7
             ],
             "details": "Execute verification steps:\n\n1. Run `pnpm -C packages/application types` - must pass with zero errors\n2. Verify architectural compliance:\n   - All DTOs are plain TypeScript interfaces (no classes, no methods)\n   - All date fields use `string` type with ISO 8601 comment\n   - Nested objects use inline type definitions (e.g., `{ url: string; alt: string }`)\n   - Optional fields correctly marked with `?`\n   - Array types properly defined (e.g., `string[]`, `ExperienceSkillDTO[]`)\n3. Test barrel exports work correctly:\n   - Import from `@repo/application/portfolio` succeeds\n   - Import from `@repo/application/portfolio/dtos` succeeds\n4. Cross-reference with domain entities in `packages/core/src/portfolio/entities/` to ensure field mappings are complete and accurate",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Execute `pnpm -C packages/application types`. Create temporary test file with imports from both `@repo/application/portfolio` and `@repo/application/portfolio/dtos` to verify barrel exports. Review each DTO interface definition to confirm: (1) no methods/constructors, (2) date fields are strings, (3) nested structures correct, (4) optional markers present where needed.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-03-15T22:01:55.492Z"
           }
         ],
         "complexity": 3,
         "recommendedSubtasks": 8,
         "expansionPrompt": "Create individual DTO interface files for Portfolio context: (1) ProjectSummaryDTO.ts with core project listing fields, (2) ProjectDetailDTO.ts extending ProjectSummaryDTO with full content fields, (3) ExperienceSkillDTO.ts with skill and workDescription, (4) ExperienceDTO.ts with all experience fields and skills array, (5) ProfileStatDTO.ts with label/value/icon, (6) SocialNetworkDTO.ts with id/name/url, (7) ProfileDTO.ts with all nested structures, (8) Create barrel exports (dtos/index.ts and portfolio/index.ts). Each DTO must use plain TypeScript interfaces with no methods, ISO 8601 strings for dates, and nested object structures matching domain entities.",
-        "updatedAt": "2026-03-15T03:36:07.939Z"
+        "updatedAt": "2026-03-15T22:01:55.492Z"
       },
       {
         "id": "3",
@@ -2777,9 +2785,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-15T03:36:07.939Z",
+      "lastModified": "2026-03-15T22:01:55.492Z",
       "taskCount": 9,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "sprint-1"
       ]
