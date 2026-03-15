@@ -1,3 +1,5 @@
+import { Validator } from '@repo/utils/validator';
+
 import {
   Either,
   Entity,
@@ -54,14 +56,15 @@ export class Profile extends Entity<Profile, IProfileProps> {
   }
 
   static create(props: IProfileProps): Either<ValidationError, Profile> {
-    if (props.featuredProjectSlugs.length > Profile.MAX_FEATURED_PROJECTS) {
-      return left(
-        new ValidationError({
-          code: Profile.ERROR_CODE,
-          message: `Maximum ${Profile.MAX_FEATURED_PROJECTS} featured projects allowed, got ${props.featuredProjectSlugs.length}.`,
-        }),
-      );
-    }
+    const { error, isValid } = Validator.of(props.featuredProjectSlugs)
+      .refine(
+        (slugs) => slugs.length <= Profile.MAX_FEATURED_PROJECTS,
+        `Maximum ${Profile.MAX_FEATURED_PROJECTS} featured projects allowed, got ${props.featuredProjectSlugs.length}.`,
+      )
+      .validate();
+
+    if (!isValid && error)
+      return left(new ValidationError({ code: Profile.ERROR_CODE, message: error }));
 
     const nameResult = Name.create(props.name);
     if (nameResult.isLeft()) return left(nameResult.value);
