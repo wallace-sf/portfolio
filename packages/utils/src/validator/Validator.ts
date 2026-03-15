@@ -1,21 +1,8 @@
+import { DateTime as LuxonDateTime } from 'luxon';
 import Mustache from 'mustache';
+import { z } from 'zod';
 
-import {
-  greaterThan,
-  greaterThanOrEqual,
-  isAlpha,
-  isDateTime,
-  isEmpty,
-  isIn,
-  isLength,
-  isNil,
-  isNotNil,
-  isString,
-  isUUID,
-  isUrl,
-  lessThan,
-  lessThanOrEqual,
-} from '../validations';
+const ALPHA_REGEX = /^[A-ZÃÁÀÂÄÇÉÊËÍÏÕÓÔÖÚÜ\s]+$/i;
 
 export type Validation = <TValue>(value: TValue) => boolean;
 
@@ -30,7 +17,7 @@ export class Validator<TValue> {
     this._value = value;
   }
 
-  static new<TValue>(value: TValue): Validator<TValue> {
+  static of<TValue>(value: TValue): Validator<TValue> {
     return new Validator<TValue>(value);
   }
 
@@ -81,7 +68,7 @@ export class Validator<TValue> {
     const config = { min, max };
 
     this.append(
-      (value) => isLength(value as string, config),
+      (value) => z.string().min(min).max(max).safeParse(value).success,
       Mustache.render(error, config),
     );
 
@@ -89,68 +76,96 @@ export class Validator<TValue> {
   }
 
   public alpha(error: string): Validator<TValue> {
-    this.append((value) => isAlpha(value as string), error);
+    this.append(
+      (value) => z.string().regex(ALPHA_REGEX).safeParse(value).success,
+      error,
+    );
 
     return this;
   }
 
   public empty(error: string): Validator<TValue> {
-    this.append((value) => isEmpty(value as string), error);
+    this.append(
+      (value) => z.string().max(0).safeParse(value).success,
+      error,
+    );
+
+    return this;
+  }
+
+  public notEmpty(error: string): Validator<TValue> {
+    this.append(
+      (value) => z.string().min(1).safeParse(value).success,
+      error,
+    );
 
     return this;
   }
 
   public nil(error: string): Validator<TValue> {
-    this.append((value) => isNil(value), error);
+    this.append((value) => value == null, error);
 
     return this;
   }
 
   public notNil(error: string): Validator<TValue> {
-    this.append((value) => isNotNil(value), error);
+    this.append((value) => value != null, error);
 
     return this;
   }
 
   public string(error: string): Validator<TValue> {
-    this.append((value) => isString(value), error);
+    this.append((value) => z.string().safeParse(value).success, error);
 
     return this;
   }
 
   public uuid(error: string): Validator<TValue> {
-    this.append((value) => isUUID(value as string), error);
+    this.append((value) => z.string().uuid().safeParse(value).success, error);
 
     return this;
   }
 
   public url(error: string): Validator<TValue> {
-    this.append((value) => isUrl(value as string), error);
+    this.append((value) => z.string().url().safeParse(value).success, error);
 
     return this;
   }
 
   public datetime(error: string): Validator<TValue> {
-    this.append((value) => isDateTime(value as string), error);
+    this.append(
+      (value) =>
+        z.string().safeParse(value).success &&
+        LuxonDateTime.fromISO(value as string).isValid,
+      error,
+    );
 
     return this;
   }
 
   public in(values: string[], error: string): Validator<TValue> {
-    this.append((value) => isIn(value as string, values), error);
+    this.append(
+      (value) =>
+        z.string().safeParse(value).success &&
+        values.includes(value as string),
+      error,
+    );
 
     return this;
   }
 
   public gt(valueB: number, error: string): Validator<TValue> {
-    this.append((valueA) => greaterThan(valueA as number, valueB), error);
+    this.append(
+      (value) => z.number().gt(valueB).safeParse(value).success,
+      error,
+    );
 
     return this;
   }
 
   public gte(valueB: number, error: string): Validator<TValue> {
     this.append(
-      (valueA) => greaterThanOrEqual(valueA as number, valueB),
+      (value) => z.number().gte(valueB).safeParse(value).success,
       error,
     );
 
@@ -158,13 +173,37 @@ export class Validator<TValue> {
   }
 
   public lt(valueB: number, error: string): Validator<TValue> {
-    this.append((valueA) => lessThan(valueA as number, valueB), error);
+    this.append(
+      (value) => z.number().lt(valueB).safeParse(value).success,
+      error,
+    );
 
     return this;
   }
 
   public lte(valueB: number, error: string): Validator<TValue> {
-    this.append((valueA) => lessThanOrEqual(valueA as number, valueB), error);
+    this.append(
+      (value) => z.number().lte(valueB).safeParse(value).success,
+      error,
+    );
+
+    return this;
+  }
+
+  public regex(pattern: RegExp, error: string): Validator<TValue> {
+    this.append(
+      (value) => z.string().regex(pattern).safeParse(value).success,
+      error,
+    );
+
+    return this;
+  }
+
+  public refine(
+    predicate: (value: TValue) => boolean,
+    error: string,
+  ): Validator<TValue> {
+    this.append((value) => predicate(value as unknown as TValue), error);
 
     return this;
   }

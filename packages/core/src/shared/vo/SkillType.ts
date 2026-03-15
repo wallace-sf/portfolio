@@ -21,7 +21,7 @@ export class SkillType extends ValueObject<SkillTypeValue> {
   }
 
   static create(value: SkillTypeValue): Either<ValidationError, SkillType> {
-    const { error, isValid } = Validator.new(value)
+    const { error, isValid } = Validator.of(value)
       .in([...SkillType.SKILLS], 'The value must be a valid skill type.')
       .validate();
 

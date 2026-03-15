@@ -16,7 +16,7 @@ export class DateTime extends ValueObject<string> {
   }
 
   static create(value: string): Either<ValidationError, DateTime> {
-    const { error, isValid } = Validator.new(value)
+    const { error, isValid } = Validator.of(value)
       .datetime('The value must be a valid date and time.')
       .validate();
 
