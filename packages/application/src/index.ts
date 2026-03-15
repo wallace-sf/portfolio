@@ -1,1 +1,1 @@
-// exports added progressively as use cases and DTOs are implemented
+export * from "./portfolio";
