@@ -64,7 +64,9 @@ export class Profile extends Entity<Profile, IProfileProps> {
       .validate();
 
     if (!isValid && error)
-      return left(new ValidationError({ code: Profile.ERROR_CODE, message: error }));
+      return left(
+        new ValidationError({ code: Profile.ERROR_CODE, message: error }),
+      );
 
     const nameResult = Name.create(props.name);
     if (nameResult.isLeft()) return left(nameResult.value);
