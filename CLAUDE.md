@@ -612,16 +612,18 @@ describe('Project entity', () => {
 Follow this sequence for every piece of work, without exception:
 
 1. **Task Master tag** — ensure the task exists under the tag that matches the issue's Sprint (e.g. `sprint-1`). Switch with `task-master tags use <tag>` if needed.
-2. **Set status to In Progress** — run `task-master set-status --id=<id> --status=in-progress` before touching any code.
-3. **Create the branch from the GitHub issue** — always use `gh issue develop <issue-number> --checkout` so the branch name is derived from the issue. Never create branches manually for tracked issues.
-4. **Implement** — write code, tests, and commits on that branch.
-5. **Open PR against `develop`** — always target `develop`, never `master` or `staging`. Use `gh pr create --base develop`.
-6. **Set status to Done** — run `task-master set-status --id=<id> --status=done` after the PR is created.
+2. **Set Task Master status to In Progress** — run `task-master set-status --id=<id> --status=in-progress` before touching any code.
+3. **Move the GitHub issue to "In Progress"** — update the issue status in every linked GitHub Project board. This must happen at the same time as step 2, without exception.
+4. **Create the branch from the GitHub issue** — always use `gh issue develop <issue-number> --checkout` so the branch name is derived from the issue. Never create branches manually for tracked issues.
+5. **Implement** — write code, tests, and commits on that branch.
+6. **Open PR against `develop`** — always target `develop`, never `master` or `staging`. Use `gh pr create --base develop`.
+7. **Set Task Master status to Done** — run `task-master set-status --id=<id> --status=done` after the PR is created.
 
 ### Rules
 
 - One GitHub issue = one Task Master task (same Sprint tag).
-- The Task Master task status must mirror reality at all times: `pending → in-progress → done`.
+- The Task Master status AND the GitHub Projects board status must mirror reality at all times: `pending → in-progress → done`.
+- Both statuses must be updated together — never update one without the other.
 - PRs always point to `develop`, regardless of the Sprint or branch source.
 - If a rebase against `develop` is needed before pushing, resolve lock-file conflicts by checking out `develop`'s version (`git checkout --theirs pnpm-lock.yaml`) then running `pnpm install`.
 
