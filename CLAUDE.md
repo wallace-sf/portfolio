@@ -612,12 +612,13 @@ describe('Project entity', () => {
 Follow this sequence for every piece of work, without exception:
 
 1. **Task Master tag** — ensure the task exists under the tag that matches the issue's Sprint (e.g. `sprint-1`). Switch with `task-master tags use <tag>` if needed.
-2. **Set Task Master status to In Progress** — run `task-master set-status --id=<id> --status=in-progress` before touching any code.
-3. **Move the GitHub issue to "In Progress"** — update the issue status in every linked GitHub Project board. This must happen at the same time as step 2, without exception.
-4. **Create the branch from the GitHub issue** — always use `gh issue develop <issue-number> --checkout` so the branch name is derived from the issue. Never create branches manually for tracked issues.
-5. **Implement** — write code, tests, and commits on that branch.
-6. **Open PR against `develop`** — always target `develop`, never `master` or `staging`. Use `gh pr create --base develop`.
-7. **Set Task Master status to Done** — run `task-master set-status --id=<id> --status=done` after the PR is created.
+2. **Verify work hasn't already been done** — before touching any code, check: (a) `gh issue view <issue-number>` — if the issue is already **closed**, stop and investigate; (b) `gh pr list --state merged --search "<task title>"` — if a merged PR exists, the work is done; (c) `git log --all --oneline --grep="<task title>"` — confirm no commit already implements it; (d) `git branch -a | grep <issue-number>` — inspect any existing remote branch for that issue. Only proceed to implementation after confirming the work truly doesn't exist yet.
+3. **Set Task Master status to In Progress** — run `task-master set-status --id=<id> --status=in-progress` before touching any code.
+4. **Move the GitHub issue to "In Progress"** — update the issue status in every linked GitHub Project board. This must happen at the same time as step 3, without exception.
+5. **Create the branch from the GitHub issue** — always use `gh issue develop <issue-number> --checkout` so the branch name is derived from the issue. Never create branches manually for tracked issues.
+6. **Implement** — write code, tests, and commits on that branch.
+7. **Open PR against `develop`** — always target `develop`, never `master` or `staging`. Use `gh pr create --base develop`.
+8. **Set Task Master status to Done** — run `task-master set-status --id=<id> --status=done` after the PR is created.
 
 ### Rules
 
