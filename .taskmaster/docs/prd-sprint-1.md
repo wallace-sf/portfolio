@@ -31,11 +31,14 @@ The `packages/application` package:
 
 ## Goals
 
-1. Create and configure `packages/application` from scratch
-2. Define output DTOs for all aggregate roots (Project, Experience, Profile)
-3. Define the `IEmailService` output port for the contact use case
-4. Implement use cases: GetFeaturedProjects, GetPublishedProjects, GetProjectBySlug, GetExperiences, GetProfile, SendContactMessage
-5. Unit-test every use case with mocked repositories
+1. Refactor `Validator` in `@repo/utils` to use Zod internally and rename `new` → `of`
+2. Migrate all core Value Objects (Slug, LocalizedText, DateRange, Profile) to use the refactored Validator
+3. Refactor documentation: unify, deduplicate, and reorganize all `.md` files under `docs/`
+4. Create and configure `packages/application` from scratch
+5. Define output DTOs for all aggregate roots (Project, Experience, Profile)
+6. Define the `IEmailService` output port for the contact use case
+7. Implement use cases: GetFeaturedProjects, GetPublishedProjects, GetProjectBySlug, GetExperiences, GetProfile, SendContactMessage
+8. Unit-test every use case with mocked repositories
 
 ## Out of Scope
 
@@ -46,6 +49,85 @@ The `packages/application` package:
 ---
 
 ## Tasks
+
+### T-42 — Refactor Validator to use Zod and rename new→of
+
+**GitHub Issue**: #329
+**Priority**: Critical
+**Dependencies**: none
+
+Refactor `Validator` in `packages/utils` to use Zod internally, rename `Validator.new` to `Validator.of`, and add the methods required for migrating Value Objects away from manual `if` guards.
+
+**Acceptance Criteria**:
+
+- `zod` added as dependency in `packages/utils/package.json`
+- `Validator.new` renamed to `Validator.of` in `Validator.ts` and all 9 VOs that use it (Id, Text, Url, DateTime, Name, EmploymentType, Fluency, SkillType, LocationType)
+- Validator internals replaced with Zod schemas; external API (`{ isValid, error }` and "first error" behaviour) preserved
+- New methods added: `.regex(pattern, error)`, `.refine(predicate, error)`, `.notEmpty(error)`
+- `packages/utils/test/node/Validator.test.ts` updated to match renamed API
+- `pnpm test` passes at root
+
+**Files**:
+
+- `packages/utils/src/validator/Validator.ts` ← refactor
+- `packages/utils/package.json` ← add zod
+- 9 VOs in `packages/core` ← rename `Validator.new` → `Validator.of`
+- `packages/utils/test/node/Validator.test.ts` ← update
+
+---
+
+### T-43 — Migrate Slug, LocalizedText, DateRange and Profile to use Validator
+
+**GitHub Issue**: #330
+**Priority**: Critical
+**Dependencies**: T-42
+
+Eliminate all manual `if` validation guards in core Value Objects and the Profile entity. All validation rules must go through `Validator`.
+
+**Acceptance Criteria**:
+
+- `Slug.ts`: replace `if` guards with `Validator.of(raw).length(3, ...).regex(SLUG_REGEX, ...).validate()`
+- `LocalizedText.ts`: replace `if` guards with `Validator.of(input['pt-BR']).notNil(...).notEmpty(...)`
+- `DateRange.ts`: replace `if` guard with `Validator.of(...).refine(start <= end, ...)`
+- `Profile.ts`: replace `if` guard for `featuredProjectSlugs.length > 6` with `Validator.of(...).refine(...)`
+- All existing ERROR_CODEs and messages preserved
+- All tests passing
+
+**Files**:
+
+- `packages/core/src/shared/vo/Slug.ts` ← refactor
+- `packages/core/src/shared/i18n/LocalizedText.ts` ← refactor
+- `packages/core/src/shared/vo/DateRange.ts` ← refactor
+- `packages/core/src/portfolio/entities/profile/model/Profile.ts` ← refactor
+
+---
+
+### T-44 — Refactor documentation: unify, deduplicate and reorganize .md files
+
+**GitHub Issue**: #336
+**Priority**: Critical
+**Dependencies**: none
+
+The current documentation is scattered, redundant and lacks clear hierarchy. Consolidate everything into a numbered structure under `docs/`, slim down `CLAUDE.md` to ~200 lines, and ensure every concept appears exactly once.
+
+**Acceptance Criteria**:
+
+- `docs/INDEX.md` created as the single navigation entry point
+- `docs/00-INTRODUCTION.md` through `docs/10-GLOSSARY.md` created (prefixed for logical order)
+- `CLAUDE.md` reduced to ~200 lines (Role, Monorepo structure, link to INDEX, code templates, Workflow, Task Master)
+- No concept appears in more than one document
+- All internal links resolve
+- No document references a file that does not exist
+- Deprecated/duplicated docs removed
+
+**Files**:
+
+- `docs/INDEX.md` ← create
+- `docs/00-INTRODUCTION.md` through `docs/10-GLOSSARY.md` ← create
+- `CLAUDE.md` ← slim down
+- `docs/ARCHITECTURE.md`, `docs/BOUNDED_CONTEXTS.md`, etc. ← remove or merge
+
+---
 
 ### T-09 — Create and configure packages/application
 
@@ -273,14 +355,19 @@ Use case that validates and sends the contact form message via `IEmailService`.
 ## Execution Order
 
 ```
-T-09
-  ├── T-10
+T-42 (Validator + Zod)
+  └── T-43 (Migrate VOs)
+
+T-44 (Docs refactor — independent, can run in parallel)
+
+T-09 (packages/application scaffold)
+  ├── T-10 (Output DTOs)
   │     ├── T-12 (GetFeaturedProjects)
   │     ├── T-13 (GetPublishedProjects)
   │     ├── T-14 (GetProjectBySlug)
   │     ├── T-15 (GetExperiences)
   │     └── T-16 (GetProfile)
-  └── T-11
+  └── T-11 (IEmailService port)
         └── T-17 (SendContactMessage)
 ```
 
