@@ -6,8 +6,8 @@ import {
   LocationType,
   ValidationError,
 } from '../../src';
-import { ExperienceBuilder, SkillBuilder } from '../data';
-import { Data } from '../data/bases';
+import { ExperienceBuilder, SkillBuilder } from '../helpers';
+import { Data } from '../helpers/generators';
 
 describe('Experience', () => {
   describe('when created from valid props', () => {

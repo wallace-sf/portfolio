@@ -1,5 +1,5 @@
 import { ExperienceSkill, LocalizedText, ValidationError } from '../../src';
-import { SkillBuilder } from '../data';
+import { SkillBuilder } from '../helpers';
 
 describe('ExperienceSkill', () => {
   const validSkillProps = () => SkillBuilder.listToProps(1)[0]!;

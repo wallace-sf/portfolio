@@ -1,4 +1,4 @@
-import { LocationType, ValidationError } from '../../src';
+import { LocationType, ValidationError } from '../../../src';
 
 describe('LocationType', () => {
   describe('when created from valid value', () => {

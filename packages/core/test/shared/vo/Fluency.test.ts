@@ -1,4 +1,4 @@
-import { Fluency, ValidationError } from '../../src';
+import { Fluency, ValidationError } from '../../../src';
 
 describe('Fluency', () => {
   describe('when created from valid value', () => {

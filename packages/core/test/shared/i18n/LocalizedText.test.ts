@@ -1,4 +1,4 @@
-import { LocalizedText, ValidationError } from '../../src';
+import { LocalizedText, ValidationError } from '../../../src';
 
 describe('LocalizedText', () => {
   describe('get(locale, fallback?)', () => {

@@ -1,4 +1,4 @@
-import { Name, ValidationError } from '../../src';
+import { Name, ValidationError } from '../../../src';
 
 describe('Name', () => {
   describe('when created from valid value', () => {

@@ -1,5 +1,5 @@
 import { Skill, SkillType, Text, ValidationError } from '../../src';
-import { SkillBuilder } from '../data';
+import { SkillBuilder } from '../helpers';
 
 describe('Skill', () => {
   describe('when created from valid props', () => {

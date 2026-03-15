@@ -1,5 +1,5 @@
 import { ProfessionalValue, Text, ValidationError } from '../../src';
-import { ProfessionalValueBuilder } from '../data';
+import { ProfessionalValueBuilder } from '../helpers';
 
 describe('ProfessionalValue', () => {
   describe('when created from valid props', () => {

@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, isLocale, LOCALES } from '../../src';
+import { DEFAULT_LOCALE, isLocale, LOCALES } from '../../../src';
 
 describe('Locale', () => {
   it('should export DEFAULT_LOCALE as "pt-BR"', () => {
