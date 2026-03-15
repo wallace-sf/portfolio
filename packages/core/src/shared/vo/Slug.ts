@@ -25,7 +25,9 @@ export class Slug extends ValueObject<string> {
       .validate();
 
     if (!isValid && error)
-      return left(new ValidationError({ code: Slug.ERROR_CODE, message: error }));
+      return left(
+        new ValidationError({ code: Slug.ERROR_CODE, message: error }),
+      );
 
     return right(new Slug(normalized));
   }
