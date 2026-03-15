@@ -1,5 +1,3 @@
-import { Validator } from '@repo/utils/validator';
-
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
@@ -17,17 +15,14 @@ export class LocationType extends ValueObject<LocationTypeValue> {
   static create(
     value: LocationTypeValue,
   ): Either<ValidationError, LocationType> {
-    const { error, isValid } = Validator.new(value)
-      .in(
-        [...LocationType.LOCATIONS],
-        'The value must be a valid location type.',
-      )
-      .validate();
-
-    if (!isValid && error)
+    if (!(LocationType.LOCATIONS as readonly string[]).includes(value))
       return left(
-        new ValidationError({ code: LocationType.ERROR_CODE, message: error }),
+        new ValidationError({
+          code: LocationType.ERROR_CODE,
+          message: 'The value must be a valid location type.',
+        }),
       );
+
     return right(new LocationType(value));
   }
 }

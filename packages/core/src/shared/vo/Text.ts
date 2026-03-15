@@ -1,5 +1,3 @@
-import { Validator } from '@repo/utils/validator';
-
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
@@ -21,19 +19,16 @@ export class Text extends ValueObject<string, ITextConfig> {
     config?: ITextConfig,
   ): Either<ValidationError, Text> {
     const { min = 3, max = 50 } = config ?? {};
+    const trimmed = value?.trim() ?? '';
 
-    const { error, isValid } = Validator.new(value)
-      .length(
-        min,
-        max,
-        'The value must be between {{min}} and {{max}} characters.',
-      )
-      .validate();
-
-    if (!isValid && error)
+    if (trimmed.length < min || trimmed.length > max)
       return left(
-        new ValidationError({ code: Text.ERROR_CODE, message: error }),
+        new ValidationError({
+          code: Text.ERROR_CODE,
+          message: `The value must be between ${min} and ${max} characters.`,
+        }),
       );
-    return right(new Text(value ?? '', config));
+
+    return right(new Text(trimmed, config));
   }
 }

@@ -1,5 +1,3 @@
-import { Validator } from '@repo/utils/validator';
-
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
@@ -21,14 +19,14 @@ export class SkillType extends ValueObject<SkillTypeValue> {
   }
 
   static create(value: SkillTypeValue): Either<ValidationError, SkillType> {
-    const { error, isValid } = Validator.new(value)
-      .in([...SkillType.SKILLS], 'The value must be a valid skill type.')
-      .validate();
-
-    if (!isValid && error)
+    if (!(SkillType.SKILLS as readonly string[]).includes(value))
       return left(
-        new ValidationError({ code: SkillType.ERROR_CODE, message: error }),
+        new ValidationError({
+          code: SkillType.ERROR_CODE,
+          message: 'The value must be a valid skill type.',
+        }),
       );
+
     return right(new SkillType(value));
   }
 }

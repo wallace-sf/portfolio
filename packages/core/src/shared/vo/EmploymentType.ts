@@ -1,5 +1,3 @@
-import { Validator } from '@repo/utils/validator';
-
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
@@ -28,20 +26,14 @@ export class EmploymentType extends ValueObject<EmploymentTypeValue> {
   static create(
     value: EmploymentTypeValue,
   ): Either<ValidationError, EmploymentType> {
-    const { error, isValid } = Validator.new(value)
-      .in(
-        [...EmploymentType.EMPLOYMENTS],
-        'The value must be a valid employment type.',
-      )
-      .validate();
-
-    if (!isValid && error)
+    if (!(EmploymentType.EMPLOYMENTS as readonly string[]).includes(value))
       return left(
         new ValidationError({
           code: EmploymentType.ERROR_CODE,
-          message: error,
+          message: 'The value must be a valid employment type.',
         }),
       );
+
     return right(new EmploymentType(value));
   }
 }
