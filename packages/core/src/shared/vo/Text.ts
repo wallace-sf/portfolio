@@ -22,7 +22,7 @@ export class Text extends ValueObject<string, ITextConfig> {
   ): Either<ValidationError, Text> {
     const { min = 3, max = 50 } = config ?? {};
 
-    const { error, isValid } = Validator.new(value)
+    const { error, isValid } = Validator.of(value)
       .length(
         min,
         max,
