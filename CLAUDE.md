@@ -43,6 +43,12 @@ Before implementing larger changes, review the relevant documents in `docs/`. Us
 - **Monorepo testing strategy**: `docs/TESTING.md`
 - **Ubiquitous language glossary**: `docs/GLOSSARY.md`
 
+### packages/core Specific Documentation
+
+- **Core bounded contexts, layer rules, exports**: `packages/core/ARCHITECTURE.md`
+- **Ubiquitous language for the domain**: `packages/core/GLOSSARY.md`
+- **Architectural Decision Records**: `packages/core/decisions/`
+
 ### When To Read Each Document
 
 - If the question is about **layers, dependencies, or DDD**, read `docs/ARCHITECTURE.md` and `docs/BOUNDED_CONTEXTS.md` first.
