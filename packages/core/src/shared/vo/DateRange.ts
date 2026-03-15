@@ -1,3 +1,5 @@
+import { Validator } from '@repo/utils/validator';
+
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
@@ -26,14 +28,17 @@ export class DateRange extends ValueObject<IDateRangeValue> {
       const endResult = DateTime.create(end);
       if (endResult.isLeft()) return left(endResult.value);
 
-      if (startResult.value.ms > endResult.value.ms) {
+      const { error, isValid } = Validator.of(startResult.value.ms)
+        .refine(
+          (startMs) => startMs <= endResult.value.ms,
+          'Start date must be before or equal to end date.',
+        )
+        .validate();
+
+      if (!isValid && error)
         return left(
-          new ValidationError({
-            code: DateRange.ERROR_CODE,
-            message: 'Start date must be before or equal to end date.',
-          }),
+          new ValidationError({ code: DateRange.ERROR_CODE, message: error }),
         );
-      }
 
       return right(new DateRange(startResult.value, endResult.value));
     }

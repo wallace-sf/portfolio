@@ -1,3 +1,5 @@
+import { Validator } from '@repo/utils/validator';
+
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
@@ -43,15 +45,15 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
   static create(
     input: ILocalizedTextInput,
   ): Either<ValidationError, LocalizedText> {
-    const trimmed = input['pt-BR']?.trim();
-    if (trimmed == null || trimmed === '') {
+    const { error, isValid } = Validator.of(input['pt-BR']?.trim() ?? '')
+      .notEmpty('pt-BR is required and must be non-empty after trim.')
+      .validate();
+
+    if (!isValid && error)
       return left(
-        new ValidationError({
-          code: LocalizedText.ERROR_CODE,
-          message: 'pt-BR is required and must be non-empty after trim.',
-        }),
+        new ValidationError({ code: LocalizedText.ERROR_CODE, message: error }),
       );
-    }
+
     return right(new LocalizedText(normalizeInput(input)));
   }
 
