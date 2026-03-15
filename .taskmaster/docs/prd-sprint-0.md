@@ -317,10 +317,79 @@ Document bounded contexts, layer rules, and ubiquitous language for `packages/co
 
 ---
 
+### T-00c — Reorganize packages/core test folder architecture
+
+**GitHub Issue**: #312
+**Priority**: Low
+**Dependencies**: T-00a (after Vitest migration)
+
+The current `test/` directory in `packages/core` does not mirror `src/` and uses vague naming conventions that hinder navigation.
+
+**Problems identified**:
+
+- `test/data/` — generic name; industry uses `helpers/`, `fixtures/`, or `support/`
+- `test/data/bases/` — confusing name; these are data generators (faker wrappers), should be `generators/`
+- `test/data/bases/NameData.ts` — filename diverges from class name (`TextData`)
+- `test/shared/` — 14 flat files; `src/shared/` has sub-structure (`base/`, `vo/`, `errors/`, `i18n/`) that is not mirrored
+
+**Acceptance Criteria**:
+
+- `test/data/` renamed to `test/helpers/`
+- Builders moved to `test/helpers/builders/`
+- Generators moved to `test/helpers/generators/` (with `NameData.ts` → `TextData.ts`)
+- `test/shared/` subdivided mirroring `src/shared/` (`base/`, `errors/`, `i18n/`, `vo/`)
+- All imports updated across test files
+- `pnpm --filter @repo/core test` passing after reorganization
+
+**Files**:
+
+- `packages/core/test/data/` → `packages/core/test/helpers/` ← rename
+- `packages/core/test/helpers/builders/` ← move builders
+- `packages/core/test/helpers/generators/TextData.ts` ← rename from NameData.ts
+- `packages/core/test/shared/base/`, `errors/`, `i18n/`, `vo/` ← reorganize
+
+---
+
+### T-00d — Audit business validations potentially outside the domain
+
+**GitHub Issue**: #314
+**Priority**: Low
+**Dependencies**: T-02, T-03
+
+During the implementation of the `Slug` VO, a design boundary was identified:
+
+- **`packages/utils/Validator`** should only encapsulate technical format validations delegated to external libraries (e.g. `isURL` via `validator`, `isDateTime` via `luxon`).
+- **Domain invariants** (e.g. kebab-case format, required locale, business size rules) must reside inside the `create()` method of the VO in `packages/core`.
+
+`LocalizedText` and `Slug` already follow the correct pattern. However, other VOs or entities may have business rules delegated to `Validator` when they should be inline in the domain class.
+
+**Acceptance Criteria**:
+
+- All VOs and Entities in `packages/core` audited
+- Business rules extracted to the domain layer when misplaced
+- `Validator` contains only technical/format validations
+- All existing tests continue passing after any refactoring
+
+**Scope**:
+
+- `packages/core/src/shared/vo/*.ts`
+- `packages/core/src/shared/i18n/*.ts`
+- `packages/core/src/*/model/*.ts` (entities and aggregates)
+- `packages/utils/src/validations/*.ts`
+
+**Files**:
+
+- `packages/core/src/shared/vo/*.ts` ← review and fix where needed
+- `packages/core/src/*/model/*.ts` ← review and fix where needed
+- `packages/utils/src/validations/*.ts` ← ensure pure technical validations only
+
+---
+
 ## Execution Order
 
 ```
-T-00a (parallel)     T-00b (parallel)
+T-00a (parallel)     T-00b (parallel)     T-00d (after T-02, T-03)
+  └── T-00c
 T-01
   └── T-02
         └── T-03
