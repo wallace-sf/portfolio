@@ -85,19 +85,13 @@ export class Validator<TValue> {
   }
 
   public empty(error: string): Validator<TValue> {
-    this.append(
-      (value) => z.string().max(0).safeParse(value).success,
-      error,
-    );
+    this.append((value) => z.string().max(0).safeParse(value).success, error);
 
     return this;
   }
 
   public notEmpty(error: string): Validator<TValue> {
-    this.append(
-      (value) => z.string().min(1).safeParse(value).success,
-      error,
-    );
+    this.append((value) => z.string().min(1).safeParse(value).success, error);
 
     return this;
   }
@@ -146,8 +140,7 @@ export class Validator<TValue> {
   public in(values: string[], error: string): Validator<TValue> {
     this.append(
       (value) =>
-        z.string().safeParse(value).success &&
-        values.includes(value as string),
+        z.string().safeParse(value).success && values.includes(value as string),
       error,
     );
 
