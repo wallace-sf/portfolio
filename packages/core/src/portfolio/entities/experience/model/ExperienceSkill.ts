@@ -1,4 +1,5 @@
 import {
+  collect,
   Either,
   ILocalizedTextInput,
   LocalizedText,
@@ -29,15 +30,14 @@ export class ExperienceSkill extends ValueObject<IExperienceSkillValue> {
   static create(
     props: IExperienceSkillProps,
   ): Either<ValidationError, ExperienceSkill> {
-    const skillResult = Skill.create(props.skill);
-    if (skillResult.isLeft()) return left(skillResult.value);
+    const result = collect([
+      Skill.create(props.skill),
+      LocalizedText.create(props.workDescription ?? { 'pt-BR': '' }),
+    ]);
+    if (result.isLeft()) return left(result.value);
 
-    const workDescResult = LocalizedText.create(
-      props.workDescription ?? { 'pt-BR': '' },
-    );
-    if (workDescResult.isLeft()) return left(workDescResult.value);
-
-    return right(new ExperienceSkill(skillResult.value, workDescResult.value));
+    const [skill, workDescription] = result.value;
+    return right(new ExperienceSkill(skill, workDescription));
   }
 
   get skill(): Skill {

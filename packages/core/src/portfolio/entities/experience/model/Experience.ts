@@ -1,4 +1,5 @@
 import {
+  collect,
   DateRange,
   Either,
   EmploymentType,
@@ -72,37 +73,28 @@ export class Experience extends Entity<Experience, IExperienceProps> {
   }
 
   static create(props: IExperienceProps): Either<ValidationError, Experience> {
-    const companyResult = LocalizedText.create(
-      props.company ?? { 'pt-BR': '' },
-    );
-    if (companyResult.isLeft()) return left(companyResult.value);
+    const result = collect([
+      LocalizedText.create(props.company ?? { 'pt-BR': '' }),
+      LocalizedText.create(props.position ?? { 'pt-BR': '' }),
+      LocalizedText.create(props.location ?? { 'pt-BR': '' }),
+      LocalizedText.create(props.description ?? { 'pt-BR': '' }),
+      Image.create(props.logo?.url, props.logo?.alt),
+      EmploymentType.create(props.employment_type),
+      LocationType.create(props.location_type),
+      DateRange.create(props.start_at, props.end_at),
+    ]);
+    if (result.isLeft()) return left(result.value);
 
-    const positionResult = LocalizedText.create(
-      props.position ?? { 'pt-BR': '' },
-    );
-    if (positionResult.isLeft()) return left(positionResult.value);
-
-    const locationResult = LocalizedText.create(
-      props.location ?? { 'pt-BR': '' },
-    );
-    if (locationResult.isLeft()) return left(locationResult.value);
-
-    const descriptionResult = LocalizedText.create(
-      props.description ?? { 'pt-BR': '' },
-    );
-    if (descriptionResult.isLeft()) return left(descriptionResult.value);
-
-    const logoResult = Image.create(props.logo?.url, props.logo?.alt);
-    if (logoResult.isLeft()) return left(logoResult.value);
-
-    const employmentResult = EmploymentType.create(props.employment_type);
-    if (employmentResult.isLeft()) return left(employmentResult.value);
-
-    const locationTypeResult = LocationType.create(props.location_type);
-    if (locationTypeResult.isLeft()) return left(locationTypeResult.value);
-
-    const periodResult = DateRange.create(props.start_at, props.end_at);
-    if (periodResult.isLeft()) return left(periodResult.value);
+    const [
+      company,
+      position,
+      location,
+      description,
+      logo,
+      employment_type,
+      location_type,
+      period,
+    ] = result.value;
 
     const skills: ExperienceSkill[] = [];
     for (const skillProps of props.skills ?? []) {
@@ -114,15 +106,15 @@ export class Experience extends Entity<Experience, IExperienceProps> {
     return right(
       new Experience(
         props,
-        companyResult.value,
-        positionResult.value,
-        locationResult.value,
-        descriptionResult.value,
-        logoResult.value,
-        employmentResult.value,
-        locationTypeResult.value,
+        company,
+        position,
+        location,
+        description,
+        logo,
+        employment_type,
+        location_type,
         skills,
-        periodResult.value,
+        period,
       ),
     );
   }

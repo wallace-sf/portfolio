@@ -1,4 +1,5 @@
 import {
+  collect,
   Either,
   Entity,
   IEntityProps,
@@ -34,17 +35,14 @@ export class Skill extends Entity<Skill, ISkillProps> {
   }
 
   static create(props: ISkillProps): Either<ValidationError, Skill> {
-    const descResult = Text.create(props.description);
-    if (descResult.isLeft()) return left(descResult.value);
+    const result = collect([
+      Text.create(props.description),
+      Text.create(props.icon, { min: 2, max: 50 }),
+      SkillType.create(props.type),
+    ]);
+    if (result.isLeft()) return left(result.value);
 
-    const iconResult = Text.create(props.icon, { min: 2, max: 50 });
-    if (iconResult.isLeft()) return left(iconResult.value);
-
-    const typeResult = SkillType.create(props.type);
-    if (typeResult.isLeft()) return left(typeResult.value);
-
-    return right(
-      new Skill(props, descResult.value, iconResult.value, typeResult.value),
-    );
+    const [description, icon, type] = result.value;
+    return right(new Skill(props, description, icon, type));
   }
 }
