@@ -1,4 +1,5 @@
 import {
+  collect,
   Either,
   Entity,
   IEntityProps,
@@ -33,14 +34,13 @@ export class ProfessionalValue extends Entity<
   static create(
     props: IProfessionalValueProps,
   ): Either<ValidationError, ProfessionalValue> {
-    const iconResult = Text.create(props.icon, { min: 2, max: 50 });
-    if (iconResult.isLeft()) return left(iconResult.value);
+    const result = collect([
+      Text.create(props.icon, { min: 2, max: 50 }),
+      Text.create(props.content, { min: 1, max: 125000 }),
+    ]);
+    if (result.isLeft()) return left(result.value);
 
-    const contentResult = Text.create(props.content, { min: 1, max: 125000 });
-    if (contentResult.isLeft()) return left(contentResult.value);
-
-    return right(
-      new ProfessionalValue(props, iconResult.value, contentResult.value),
-    );
+    const [icon, content] = result.value;
+    return right(new ProfessionalValue(props, icon, content));
   }
 }

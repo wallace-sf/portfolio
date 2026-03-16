@@ -1,6 +1,7 @@
 import { Validator } from '@repo/utils/validator';
 
 import {
+  collect,
   Either,
   Entity,
   IEntityProps,
@@ -68,17 +69,15 @@ export class Profile extends Entity<Profile, IProfileProps> {
         new ValidationError({ code: Profile.ERROR_CODE, message: error }),
       );
 
-    const nameResult = Name.create(props.name);
-    if (nameResult.isLeft()) return left(nameResult.value);
+    const requiredResult = collect([
+      Name.create(props.name),
+      LocalizedText.create(props.headline),
+      LocalizedText.create(props.bio),
+      Image.create(props.photo.url, props.photo.alt),
+    ]);
+    if (requiredResult.isLeft()) return left(requiredResult.value);
 
-    const headlineResult = LocalizedText.create(props.headline);
-    if (headlineResult.isLeft()) return left(headlineResult.value);
-
-    const bioResult = LocalizedText.create(props.bio);
-    if (bioResult.isLeft()) return left(bioResult.value);
-
-    const photoResult = Image.create(props.photo.url, props.photo.alt);
-    if (photoResult.isLeft()) return left(photoResult.value);
+    const [name, headline, bio, photo] = requiredResult.value;
 
     const stats: ProfileStat[] = [];
     for (const statProps of props.stats) {
@@ -94,16 +93,6 @@ export class Profile extends Entity<Profile, IProfileProps> {
       slugs.push(slugResult.value);
     }
 
-    return right(
-      new Profile(
-        props,
-        nameResult.value,
-        headlineResult.value,
-        bioResult.value,
-        photoResult.value,
-        stats,
-        slugs,
-      ),
-    );
+    return right(new Profile(props, name, headline, bio, photo, stats, slugs));
   }
 }

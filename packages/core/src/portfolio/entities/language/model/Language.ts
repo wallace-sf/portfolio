@@ -1,4 +1,5 @@
 import {
+  collect,
   Either,
   Entity,
   Fluency,
@@ -35,22 +36,14 @@ export class Language extends Entity<Language, ILanguageProps> {
   }
 
   static create(props: ILanguageProps): Either<ValidationError, Language> {
-    const nameResult = Name.create(props.name);
-    if (nameResult.isLeft()) return left(nameResult.value);
+    const result = collect([
+      Name.create(props.name),
+      Fluency.create(props.fluency),
+      Text.create(props.locale, { min: 2, max: 50 }),
+    ]);
+    if (result.isLeft()) return left(result.value);
 
-    const fluencyResult = Fluency.create(props.fluency);
-    if (fluencyResult.isLeft()) return left(fluencyResult.value);
-
-    const localeResult = Text.create(props.locale, { min: 2, max: 50 });
-    if (localeResult.isLeft()) return left(localeResult.value);
-
-    return right(
-      new Language(
-        props,
-        nameResult.value,
-        fluencyResult.value,
-        localeResult.value,
-      ),
-    );
+    const [name, fluency, locale] = result.value;
+    return right(new Language(props, name, fluency, locale));
   }
 }

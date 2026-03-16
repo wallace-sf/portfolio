@@ -1,4 +1,11 @@
-import { Either, left, right, Text, ValidationError } from '../../../../shared';
+import {
+  collect,
+  Either,
+  left,
+  right,
+  Text,
+  ValidationError,
+} from '../../../../shared';
 import {
   ILocalizedTextInput,
   LocalizedText,
@@ -24,21 +31,14 @@ export class ProfileStat {
   static create(
     props: IProfileStatProps,
   ): Either<ValidationError, ProfileStat> {
-    const labelResult = LocalizedText.create(props.label);
-    if (labelResult.isLeft()) return left(labelResult.value);
+    const result = collect([
+      LocalizedText.create(props.label),
+      Text.create(props.value, { min: 1, max: 50 }),
+      Text.create(props.icon, { min: 2, max: 50 }),
+    ]);
+    if (result.isLeft()) return left(result.value);
 
-    const valueResult = Text.create(props.value, { min: 1, max: 50 });
-    if (valueResult.isLeft()) return left(valueResult.value);
-
-    const iconResult = Text.create(props.icon, { min: 2, max: 50 });
-    if (iconResult.isLeft()) return left(iconResult.value);
-
-    return right(
-      new ProfileStat(
-        labelResult.value,
-        valueResult.value.value,
-        iconResult.value,
-      ),
-    );
+    const [label, value, icon] = result.value;
+    return right(new ProfileStat(label, value.value, icon));
   }
 }

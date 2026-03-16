@@ -1,4 +1,5 @@
 import {
+  collect,
   DateRange,
   Either,
   Entity,
@@ -94,34 +95,19 @@ export class Project extends Entity<Project, IProjectProps> {
   }
 
   static create(props: IProjectProps): Either<ValidationError, Project> {
-    const slugResult = Slug.create(props.slug);
-    if (slugResult.isLeft()) return left(slugResult.value);
+    const requiredResult = collect([
+      Slug.create(props.slug),
+      Image.create(props.coverImage?.url, props.coverImage?.alt),
+      LocalizedText.create(props.title ?? { 'pt-BR': '' }),
+      LocalizedText.create(props.caption ?? { 'pt-BR': '' }),
+      Text.create(props.content, { min: 3, max: 500000 }),
+      SkillFactory.bulk(props.skills),
+      DateRange.create(props.period?.start, props.period?.end),
+    ]);
+    if (requiredResult.isLeft()) return left(requiredResult.value);
 
-    const coverImageResult = Image.create(
-      props.coverImage?.url,
-      props.coverImage?.alt,
-    );
-    if (coverImageResult.isLeft()) return left(coverImageResult.value);
-
-    const titleResult = LocalizedText.create(props.title ?? { 'pt-BR': '' });
-    if (titleResult.isLeft()) return left(titleResult.value);
-
-    const captionResult = LocalizedText.create(
-      props.caption ?? { 'pt-BR': '' },
-    );
-    if (captionResult.isLeft()) return left(captionResult.value);
-
-    const contentResult = Text.create(props.content, { min: 3, max: 500000 });
-    if (contentResult.isLeft()) return left(contentResult.value);
-
-    const skillsResult = SkillFactory.bulk(props.skills);
-    if (skillsResult.isLeft()) return left(skillsResult.value);
-
-    const periodResult = DateRange.create(
-      props.period?.start,
-      props.period?.end,
-    );
-    if (periodResult.isLeft()) return left(periodResult.value);
+    const [slug, coverImage, title, caption, content, skills, period] =
+      requiredResult.value;
 
     let theme: LocalizedText | undefined;
     if (props.theme) {
@@ -161,17 +147,17 @@ export class Project extends Entity<Project, IProjectProps> {
     return right(
       new Project(
         props,
-        slugResult.value,
-        coverImageResult.value,
-        titleResult.value,
-        captionResult.value,
-        contentResult.value,
-        skillsResult.value,
+        slug,
+        coverImage,
+        title,
+        caption,
+        content,
+        skills,
         theme,
         summary,
         objectives,
         role,
-        periodResult.value,
+        period,
         relatedProjects,
       ),
     );

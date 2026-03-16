@@ -1,4 +1,5 @@
 import {
+  collect,
   Either,
   Entity,
   IEntityProps,
@@ -36,22 +37,14 @@ export class SocialNetwork extends Entity<SocialNetwork, ISocialNetworkProps> {
   static create(
     props: ISocialNetworkProps,
   ): Either<ValidationError, SocialNetwork> {
-    const nameResult = Name.create(props.name);
-    if (nameResult.isLeft()) return left(nameResult.value);
+    const result = collect([
+      Name.create(props.name),
+      Text.create(props.icon, { min: 2, max: 50 }),
+      Url.create(props.url),
+    ]);
+    if (result.isLeft()) return left(result.value);
 
-    const iconResult = Text.create(props.icon, { min: 2, max: 50 });
-    if (iconResult.isLeft()) return left(iconResult.value);
-
-    const urlResult = Url.create(props.url);
-    if (urlResult.isLeft()) return left(urlResult.value);
-
-    return right(
-      new SocialNetwork(
-        props,
-        nameResult.value,
-        iconResult.value,
-        urlResult.value,
-      ),
-    );
+    const [name, icon, url] = result.value;
+    return right(new SocialNetwork(props, name, icon, url));
   }
 }
