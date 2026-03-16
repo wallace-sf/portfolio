@@ -1,115 +1,65 @@
-# @repo/core — Domínio e Shared Kernel
+# @repo/core — Domain Layer
 
-Pacote de **domínio** do portfolio: entidades, value objects, shared kernel e padrões de erro. **Não depende** de infra, web ou API.
-
----
-
-## Índice
-
-- [Conteúdo](#conteúdo)
-- [Shared Kernel](#shared-kernel)
-- [Entidades e agregados](#entidades-e-agregados)
-- [Value Objects](#value-objects)
-- [Padrões de erro](#padrões-de-erro)
-- [Uso](#uso)
-- [Scripts](#scripts)
+> Domain layer of the Portfolio monorepo: entities, value objects, aggregates, repository interfaces, and shared kernel.
+> **Zero external framework dependencies.**
 
 ---
 
-## Conteúdo
+## Documentation
 
-```
-packages/core/src/
-├── experience/       # Experience (entidade)
-├── language/         # Language
-├── professional-value/
-├── project/          # Project (entidade)
-├── shared/
-│   ├── base/         # Entity, ValueObject
-│   ├── i18n/         # ERROR_MESSAGE (códigos)
-│   └── vo/           # Id, Text, DateTime, Name, Url, enums
-├── skill/            # Skill, SkillFactory
-├── social-network/
-└── index.ts
-```
+For complete architecture and DDD documentation, see:
+
+- **[docs/INDEX.md](../../docs/INDEX.md)** — Full documentation map
+- **[docs/02-ARCHITECTURE.md](../../docs/02-ARCHITECTURE.md)** — Clean Architecture, layer rules, ESLint enforcement
+- **[docs/03-BOUNDED-CONTEXTS.md](../../docs/03-BOUNDED-CONTEXTS.md)** — DDD contexts, aggregates, internal structure
+- **[docs/09-PATTERNS.md](../../docs/09-PATTERNS.md)** — Either, VO, Entity, Repository templates
+- **[docs/10-GLOSSARY.md](../../docs/10-GLOSSARY.md)** — Ubiquitous language
+- **[decisions/](./decisions/)** — Architectural Decision Records (ADRs)
 
 ---
 
-## Shared Kernel
+## This Package
 
-Elementos compartilhados entre bounded contexts (Portfolio, Blog, etc.):
+`@repo/core` is the system nucleus — it enforces domain invariants and defines the contracts that outer layers must satisfy.
 
-- **`Entity`**, **`ValueObject`**, **`IEntityProps`** — base para entidades e VOs
-- **`Id`** — UUID (uuid v4)
-- **`Text`** — string com min/max (ex.: 3–50, 3–200)
-- **`DateTime`** — data/hora (ISO)
-- **`Name`**, **`Url`**
-- **Enums / VOs**: `EmploymentType`, `LocationType`, `SkillType`, `Fluency`
-- **`ERROR_MESSAGE`** — mapa de códigos → `{ code, message }` em pt-BR e en-US (i18n de mensagens na borda)
+**Forbidden imports:** React, Next.js, Prisma, Axios, HTTP clients, `@repo/application`, `@repo/infra`
+**Allowed:** plain TypeScript, `@repo/utils`, `uuid`
 
 ---
 
-## Entidades e agregados
+## Structure
 
-| Classe | Contexto | Descrição |
-|--------|----------|-----------|
-| **Project** | Portfolio | title, caption, content, skills (Skill[]) |
-| **Experience** | Portfolio | company, position, start_at, end_at, location, location_type, employment_type, skills |
-| **Skill** | Portfolio | description, icon, type |
-| **ProfessionalValue** | Portfolio | valor profissional |
-| **Language** | Portfolio | idioma e fluência |
-| **SocialNetwork** | Portfolio | rede e URL |
-
-Regras de invariante (ex.: `start_at <= end_at` em `Experience`) são validadas no construtor; em falha, `throw new ValidationError(ERROR_CODE, message)`.
-
----
-
-## Value Objects
-
-- **`Id`** — UUID; usa `Validator.uuid` de `@repo/utils`
-- **`Text`** — `Text.new(value, { min, max })`; validação via `Validator.length`
-- **`DateTime`** — `DateTime.new(isoString)`; `Validator.datetime`
-- **`Name`** — nome 3–100
-- **`Url`** — `Validator.url`
-- **`EmploymentType`**, **`LocationType`**, **`SkillType`**, **`Fluency`** — enums com `.new(value)` e validação `isIn`
-
----
-
-## Padrões de erro
-
-- **Códigos estáveis**: cada VO/entidade define `static readonly ERROR_CODE` (ex.: `Id.ERROR_CODE = 'ERROR_INVALID_ID'`).
-- **`ValidationError`** (de `@repo/utils`): `throw new ValidationError(ERROR_CODE, message)`.
-- **Mensagens**: o Core usa `ERROR_MESSAGE` (pt-BR, en-US) como referência; a **tradução e o mapeamento para HTTP** ficam na borda (web/API). Ver [docs/ERROR_HANDLING.md](../../docs/ERROR_HANDLING.md).
-
----
-
-## Uso
-
-```ts
-import {
-  Project,
-  Skill,
-  SkillFactory,
-  Id,
-  Text,
-  ERROR_MESSAGE,
-} from '@repo/core';
+```text
+src/
+  shared/           → Shared Kernel (Either, base classes, VOs, errors, i18n)
+  portfolio/        → Portfolio context (Project, Experience, Profile, Skill, ...)
+  blog/             → Blog context (stub — future)
+  contact/          → Contact context (stub)
 ```
 
-- **Dependências**: `@repo/utils` (Validator, ValidationError), `uuid`.
-- **Consumido por**: `apps/web` (hoje, dados estáticos ou instanciação local); no futuro, Application e Infra.
+See [docs/03-BOUNDED-CONTEXTS.md](../../docs/03-BOUNDED-CONTEXTS.md) for the full internal structure.
+
+---
+
+## Public Exports
+
+```typescript
+// Preferred — subpath imports
+import { Project, IProjectRepository } from '@repo/core/portfolio';
+import { Slug, Either, ValidationError } from '@repo/core/shared';
+
+// Full package (re-exports everything)
+import { Project, Slug } from '@repo/core';
+```
 
 ---
 
 ## Scripts
 
-| Comando | Descrição |
-|---------|-----------|
-| `pnpm test` | Jest |
+| Command | Description |
+|---------|-------------|
+| `pnpm test` | Vitest |
 | `pnpm lint` | ESLint --fix |
-| `pnpm lint:check` | ESLint sem --fix |
+| `pnpm lint:check` | ESLint check |
 | `pnpm format` | Prettier |
-| `pnpm format:check` | Prettier check |
-| `pnpm types` | `tsc --noEmit --skipLibCheck` |
-
-Na raiz: `pnpm lint:core`, `pnpm test:core`, etc.
+| `pnpm types` | `tsc --noEmit` |

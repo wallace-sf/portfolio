@@ -4,7 +4,7 @@
 
 You are a senior software engineer specialized in TypeScript, DDD, Clean Architecture, and the Next.js ecosystem.
 Before writing any code, think about the architecture, applicable patterns, and tests.
-Always prioritize clean, testable, extensible code aligned with the layers defined below.
+Always prioritize clean, testable, extensible code.
 
 ---
 
@@ -13,623 +13,167 @@ Always prioritize clean, testable, extensible code aligned with the layers defin
 ```text
 apps/
   web/          → Public portfolio (Next.js 14+ App Router)
-  blog/         → Blog (Next.js — future, post-MVP)
-  api/          → Backend (Next.js API Routes)
+  blog/         → Blog (future, post-MVP)
+  api/          → Backend (Next.js API Routes, future)
 
 packages/
-  core/         → Domain + Shared Kernel (entities, VOs, repository interfaces, Domain Events)
-  application/  → Use Cases, DTOs, ports (external service interfaces)
-  infra/        → Concrete repositories (Prisma + Supabase), external services
-  ui/           → Shared design system (pure React components)
-  markdown/     → Shared MDX / Markdown parser and renderer
-  i18n/         → Shared translations across apps
-  eslint-config/
-  typescript-config/
+  core/         → Domain + Shared Kernel (entities, VOs, repository interfaces)
+  application/  → Use Cases, DTOs, ports
+  infra/        → Concrete repositories (Prisma + Supabase)
+  ui/           → Shared design system (React components)
+  markdown/     → MDX / Markdown parser
+  i18n/         → Shared translations
+  utils/        → Shared utilities (Validator, formatters)
 ```
 
 ---
 
-## 📚 Supporting Documentation
+## 📚 Complete Documentation
 
-Before implementing larger changes, review the relevant documents in `docs/`. Use `CLAUDE.md` as the operational guide and the files below for deeper detail.
+All project documentation lives in `docs/` with a numbered structure.
 
-- **Overall architecture**: `docs/ARCHITECTURE.md`
-- **Bounded contexts and domain boundaries**: `docs/BOUNDED_CONTEXTS.md`
-- **Application layer / use cases / ports**: `docs/APPLICATION.md`
-- **API strategy and envelopes**: `docs/API.md`
-- **Error handling and HTTP mapping**: `docs/ERROR_HANDLING.md`
-- **UI and domain i18n**: `docs/I18N.md`
-- **Edge validation vs domain invariants**: `docs/VALIDATION.md`
-- **Monorepo testing strategy**: `docs/TESTING.md`
-- **Ubiquitous language glossary**: `docs/GLOSSARY.md`
+**Start here:** [`docs/INDEX.md`](./docs/INDEX.md)
 
-### packages/core Specific Documentation
-
-- **Core bounded contexts, layer rules, exports**: `packages/core/ARCHITECTURE.md`
-- **Ubiquitous language for the domain**: `packages/core/GLOSSARY.md`
-- **Architectural Decision Records**: `packages/core/decisions/`
-
-### When To Read Each Document
-
-- If the question is about **layers, dependencies, or DDD**, read `docs/ARCHITECTURE.md` and `docs/BOUNDED_CONTEXTS.md` first.
-- If the change involves **use cases, ports, or infra integration**, read `docs/APPLICATION.md`.
-- If the change involves **HTTP, errors, envelopes, or internationalization**, read `docs/API.md`, `docs/ERROR_HANDLING.md`, and `docs/I18N.md`.
-- If the change involves **inputs, schemas, or entity / VO validation**, read `docs/VALIDATION.md`.
-- If the change involves **tests, builders, coverage, or suite structure**, read `docs/TESTING.md`.
+| Topic | Document |
+|-------|----------|
+| Architecture and layers | [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) |
+| DDD, contexts, aggregates | [03-BOUNDED-CONTEXTS](./docs/03-BOUNDED-CONTEXTS.md) |
+| Use cases and ports | [04-APPLICATION-LAYER](./docs/04-APPLICATION-LAYER.md) |
+| API envelope and error mapping | [05-API-CONTRACTS](./docs/05-API-CONTRACTS.md) |
+| Validation strategy | [06-VALIDATION](./docs/06-VALIDATION.md) |
+| Testing strategy | [08-TESTING](./docs/08-TESTING.md) |
+| Code templates (Either, VO, Entity) | [09-PATTERNS](./docs/09-PATTERNS.md) |
+| Domain and architectural terms | [10-GLOSSARY](./docs/10-GLOSSARY.md) |
 
 ---
 
-## 🏛️ Clean Architecture — Dependency Rule
-
-Dependencies point **only inward**:
+## 🏛️ Core Principle — Dependency Rule
 
 ```text
-core ← application ← infra ← web/api
+core ← application ← infra ← web / api
 ```
 
-### Layer Restrictions
+- **`packages/core`**: zero framework dependencies (no React, Next.js, Prisma, Axios)
+- **`packages/application`**: depends only on `core`; defines port interfaces
+- **`packages/infra`**: implements ports; knows `core` and `application`
+- **`apps/web` / `apps/api`**: presentation; calls application layer only
 
-**`packages/core`**
-
-- Forbidden imports: React, Next.js, Prisma, Axios, or any external framework library
-- Allowed: only plain TypeScript and other modules from the Core itself
-- This is the system nucleus: zero external dependencies
-
-**`packages/application`**
-
-- Forbidden imports: React, Next.js, Prisma, HTTP libraries
-- Allowed: import from `core`, define interfaces (ports) for infrastructure
-- Use Cases orchestrate entities and must never access the database directly
-
-**`packages/infra`**
-
-- Implements the interfaces (ports) defined in `core` / `application`
-- Concrete repositories with Prisma + Supabase, external services
-- Knows `core` and `application`, never the other way around
-
-**`apps/web` and `apps/api` (Presentation)**
-
-- Consume use cases through Server Components or API Routes
-- Must never import concrete repositories directly
-- React components must not contain business logic
+See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) for full layer rules and ESLint enforcement.
 
 ---
 
-## 🧩 DDD — Domain-Driven Design
+## 🧩 DDD Code Templates
 
-### Domain Reading Rule
+See [09-PATTERNS](./docs/09-PATTERNS.md) for full templates. Quick reference:
 
-- The model described in this section represents the repository **target architecture**.
-- The current code may still be in a **transitional state** in some areas, especially in `packages/core`, `packages/application`, and `packages/infra`.
-- For **new code**, always prefer alignment with the **target architecture**.
-- For **legacy code**, evolve incrementally without restructuring unrelated areas.
-- When there is divergence between the current implementation and the future model, use `docs/ARCHITECTURE.md`, `docs/BOUNDED_CONTEXTS.md`, and `docs/GLOSSARY.md` to distinguish **current state** from **target architecture**.
-
-### Bounded Contexts
-
-```text
-┌──────────────────────┐  ┌─────────────────────┐  ┌──────────────────┐
-│  Portfolio Context   │  │   Blog Context      │  │  Contact Context │
-│  - Project           │  │   (future)          │  │  - Message       │
-│  - Experience        │  │  - Post             │  │                  │
-│  - Profile           │  │  - Tag              │  │                  │
-│  - Skill             │  │  - Category         │  │                  │
-└──────────────────────┘  └─────────────────────┘  └──────────────────┘
-         ↑                          ↑
-         └────── Shared Kernel ─────┘
-              Markdown, Slug, DateRange, Tag, Technology, Image
-```
-
-### Rules Between Contexts
-
-- Contexts **do not import each other** directly
-- Only the **Shared Kernel** is shared between contexts
-- Public exports by context:
-  - `@repo/core/portfolio`
-  - `@repo/core/blog`
-  - `@repo/core/shared`
-
-### Internal Structure of `packages/core`
-
-> This structure represents the **target state** of `packages/core`. The current code still contains modules in an older layout, but new implementations should converge toward this organization.
-
-```text
-packages/core/src/
-  shared/
-    either.ts             → Either<L, R> pattern
-    errors/
-      domain-error.ts     → Abstract base class
-  shared-kernel/
-    value-objects/
-      markdown.vo.ts
-      slug.vo.ts
-      date-range.vo.ts
-      technology.vo.ts
-      tag.vo.ts
-      image.vo.ts
-  portfolio/
-    entities/
-      project.entity.ts
-      experience.entity.ts
-      profile.entity.ts
-    value-objects/
-      project-id.vo.ts
-      project-status.vo.ts
-      experience-skill.vo.ts
-      profile-stat.vo.ts
-      project-links.vo.ts
-    repositories/
-      IProjectRepository.ts
-      IExperienceRepository.ts
-      IProfileRepository.ts
-      ISkillRepository.ts
-    events/
-      project-published.event.ts
-  blog/
-    index.ts              → stub (future)
-  contact/
-    entities/
-      message.entity.ts
-  ARCHITECTURE.md         → ADR describing bounded contexts and rules
-```
-
-### DDD Implementation Patterns
-
-**Either Pattern — mandatory for domain errors**
+### Either Pattern
 
 ```typescript
-// packages/core/src/shared/either.ts
-type Either<L, R> = Left<L, R> | Right<L, R>;
-
-class Left<L, R> {
-  constructor(readonly value: L) {}
-  isLeft(): this is Left<L, R> {
-    return true;
-  }
-  isRight(): this is Right<L, R> {
-    return false;
-  }
-}
-class Right<L, R> {
-  constructor(readonly value: R) {}
-  isLeft(): this is Left<L, R> {
-    return false;
-  }
-  isRight(): this is Right<L, R> {
-    return true;
-  }
-}
-export const left = <L, R>(v: L): Either<L, R> => new Left(v);
+export const left  = <L, R>(v: L): Either<L, R> => new Left(v);
 export const right = <L, R>(v: R): Either<L, R> => new Right(v);
+
+// Usage
+const result = Slug.create('my-project');
+if (result.isLeft()) return left(result.value);  // propagate error
+const slug = result.value;                        // success
 ```
 
-**Value Object — template**
+### Value Object
 
 ```typescript
-class Slug {
-  private constructor(private readonly value: string) {}
+class Slug extends ValueObject<string> {
+  static readonly ERROR_CODE = 'INVALID_SLUG';
+  private constructor(value: string) { super({ value }); }
 
-  static create(raw: string): Either<DomainError, Slug> {
-    if (!raw?.trim() || raw.length < 3) return left(new InvalidSlugError());
-    const slug = raw.toLowerCase().replace(/\s+/g, '-');
-    return right(new Slug(slug));
-  }
-
-  toPath(): string {
-    return `/${this.value}`;
-  }
-  toString(): string {
-    return this.value;
-  }
-  equals(other: Slug): boolean {
-    return this.value === other.value;
+  static create(raw?: string): Either<ValidationError, Slug> {
+    const normalized = raw?.trim().toLowerCase() ?? '';
+    const { error, isValid } = Validator.of(normalized)
+      .length(3, 100, 'Slug must be at least 3 characters.')
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be kebab-case.')
+      .validate();
+    if (!isValid && error)
+      return left(new ValidationError({ code: Slug.ERROR_CODE, message: error }));
+    return right(new Slug(normalized));
   }
 }
 ```
 
-**Entity — template**
+### Entity
 
 ```typescript
-class Project {
-  private constructor(
-    public readonly id: ProjectId,
-    private title: LocalizedText,
-    private description: Markdown,
-    private slug: Slug,
-    private coverImage: Image,
-    private skills: Skill[],
-    private period: DateRange,
-    private status: ProjectStatus,
-    private featured: boolean,
-  ) {}
+class Project extends Entity<Project, IProjectProps> {
+  private constructor(props: IProjectProps, public readonly slug: Slug) { super(props); }
 
-  static create(props: CreateProjectProps): Either<DomainError, Project> {
-    const slug = Slug.create(props.slug)
-    if (slug.isLeft()) return left(slug.value)
-    const description = Markdown.create(props.description)
-    if (description.isLeft()) return left(description.value)
-    return right(new Project(...))
+  static create(props: IProjectProps): Either<ValidationError, Project> {
+    const slugResult = Slug.create(props.slug);
+    if (slugResult.isLeft()) return left(slugResult.value);
+    return right(new Project(props, slugResult.value));
   }
 
-  publish(): Either<DomainError, void> {
-    if (this.status === ProjectStatus.PUBLISHED)
-      return left(new ProjectAlreadyPublishedError())
-    this.status = ProjectStatus.PUBLISHED
-    return right(undefined)
-  }
-
-  archive(): void {
-    this.status = ProjectStatus.ARCHIVED
+  publish(): Either<ValidationError, void> {
+    if (this.status === 'PUBLISHED')
+      return left(new ValidationError({ code: 'ALREADY_PUBLISHED', message: '...' }));
+    this.status = 'PUBLISHED';
+    return right(undefined);
   }
 }
 ```
 
-**Repository — interface in the Core**
+### Repository Interface
 
 ```typescript
-// packages/core/src/portfolio/repositories/IProjectRepository.ts
 interface IProjectRepository {
   findAll(): Promise<Project[]>;
-  findPublished(): Promise<Project[]>;
-  findFeatured(): Promise<Project[]>;
-  findById(id: ProjectId): Promise<Project | null>;
   findBySlug(slug: Slug): Promise<Project | null>;
-  findRelated(id: ProjectId, limit?: number): Promise<Project[]>;
   save(project: Project): Promise<void>;
-  delete(id: ProjectId): Promise<void>;
-}
-```
-
-### Mandatory DDD Rules
-
-- Entities must never be exposed with public setters; use business-semantic methods
-- Value Objects are immutable and must provide an `equals()` method
-- Aggregates protect invariants; never mutate children directly
-- Use Domain Events for communication between contexts
-- **Never `throw` for business-rule errors**; use the Either pattern
-- `Profile` supports at most 6 featured projects (`featuredProjectSlugs.length <= 6`)
-
----
-
-## ⚙️ Design Patterns (GoF)
-
-Apply them only when they solve a real problem. Comment with `// Pattern: <Name>`.
-
-- **Factory Method**: entity creation with `Entity.create()`
-- **Repository**: abstract data access in the Core
-- **Adapter**: isolate external libraries (ORM, HTTP) from the application layer
-- **Strategy**: vary markdown rendering behavior
-- **Observer**: Domain Events between bounded contexts
-- **Decorator**: cache, logging, and validation without altering original classes
-- **Builder**: build complex objects with many optional parameters
-
----
-
-## ⚡ Next.js App Router (`apps/web`)
-
-### Server vs Client Components
-
-- By default, all components are **Server Components**
-- Use `'use client'` only for state hooks, events, or browser APIs
-- Fetch data in Server Components with `async/await`; never use `useEffect` for data fetching
-- Never place business logic inside React components
-
-```typescript
-// ✅ Server Component consumes a use case
-export default async function ProjectsPage() {
-  const useCase = container.resolve(GetPublishedProjectsUseCase)
-  const result = await useCase.execute({ locale: 'pt-BR' })
-  if (result.isLeft()) notFound()
-  return <ProjectList projects={result.value} />
-}
-```
-
-### Internal Structure of `apps/web`
-
-```text
-apps/web/src/
-  app/                    → App Router
-    [locale]/
-      page.tsx            → Home
-      projects/
-        page.tsx          → Project list
-        [slug]/
-          page.tsx        → Project detail
-          loading.tsx
-          error.tsx
-      about/
-        page.tsx          → Experiences
-      loading.tsx
-      error.tsx
-      not-found.tsx
-  api/
-    v1/
-      projects/
-        [slug]/
-          route.ts        → GET /api/v1/projects/:slug
-  components/
-    ui/                   → Visual primitives (Button, Input, Card)
-    features/             → Domain components (ProjectCard, ExperienceCard)
-    layouts/              → Header, Sidebar, Footer
-  hooks/                  → Reusable custom hooks
-  queries/                → TanStack Query query key factories by domain
-  schemas/                → Zod schemas by form / entity
-  lib/                    → Configuration (queryClient, DI container, API envelope)
-```
-
-### API Response Envelope
-
-```typescript
-// Success
-{ data: T, error: null, meta?: {...} }
-
-// Failure
-{ data: null, error: { code: string, message: string, details?: unknown }, meta?: {...} }
-```
-
-### HTTP Error Mapping
-
-- `NotFoundError` → 404
-- `ValidationError` / `DomainError` → 400
-- Unexpected errors → 500
-
-### Routes and Navigation
-
-- Use `next/navigation`; never `next/router`
-- Always use `next/image`; never `<img>`
-- Always use `next/link`; never `<a>` for internal navigation
-- Create `loading.tsx` and `error.tsx` per route segment
-
----
-
-## 🔄 TanStack Query
-
-```typescript
-// queries/projects.ts — mandatory Query Key Factory
-export const projectKeys = {
-  all: ['projects'] as const,
-  lists: () => [...projectKeys.all, 'list'] as const,
-  detail: (slug: string) => [...projectKeys.all, 'detail', slug] as const,
-};
-
-export const useProjects = () =>
-  useQuery({ queryKey: projectKeys.lists(), queryFn: fetchProjects });
-
-export const useCreateProject = () =>
-  useMutation({
-    mutationFn: createProject,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: projectKeys.lists() }),
-  });
-```
-
-- Never mix TanStack Query with `useEffect` for data fetching
-- Always handle `isPending` and `isError` in components
-- Mutations must always invalidate related queries in `onSuccess`
-
----
-
-## 🛡️ Zod
-
-- Centralize schemas in `src/schemas/` by entity
-- Derive types with `z.infer<>`; never declare duplicate types
-- Validate API responses with `.safeParse()` to avoid runtime errors
-- Integrate with React Hook Form via `@hookform/resolvers/zod`
-- Always validate Server Action bodies with Zod before processing
-
----
-
-## 🎨 Tailwind CSS
-
-- Use `cn()` (`clsx` + `tailwind-merge`) for conditional classes
-- Never use `style={{}}` for layout; use Tailwind
-- Keep design tokens in `tailwind.config.ts`; never hardcode colors
-- Use dark mode with the `class` strategy
-- Extract a component when inline utility classes grow beyond ~8 classes
-
----
-
-## 📦 Turborepo
-
-### `turbo.json` — mandatory tasks
-
-```json
-{
-  "$schema": "https://turbo.build/schema.json",
-  "tasks": {
-    "build": { "dependsOn": ["^build"], "outputs": [".next/**", "dist/**"] },
-    "dev": { "cache": false, "persistent": true },
-    "lint": { "dependsOn": ["^lint"] },
-    "typecheck": { "dependsOn": ["^typecheck"] },
-    "test": { "dependsOn": ["^build"], "outputs": ["coverage/**"] },
-    "test:ci": { "dependsOn": ["^build"] }
-  }
-}
-```
-
-### Monorepo Build Order
-
-```text
-packages/core → packages/application → packages/infra
-                                     → apps/web
-                                     → apps/blog (future)
-```
-
----
-
-## 🔧 TypeScript
-
-```json
-// packages/typescript-config/base.json
-{
-  "compilerOptions": {
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,
-    "paths": {
-      "@repo/core/*": ["../../packages/core/src/*"],
-      "@repo/application/*": ["../../packages/application/src/*"],
-      "@repo/infra/*": ["../../packages/infra/src/*"],
-      "@repo/ui/*": ["../../packages/ui/src/*"]
-    }
-  }
 }
 ```
 
 ---
 
-## 🔒 ESLint — Architecture Protection
+## 🔄 Development Workflow
 
-```js
-// packages/eslint-config/core.js — rules for packages/core
-module.exports = {
-  rules: {
-    'no-restricted-imports': [
-      'error',
-      {
-        patterns: [
-          {
-            group: ['@prisma/*', 'prisma'],
-            message: 'core cannot import infrastructure (Prisma)',
-          },
-          { group: ['next/*', 'next'], message: 'core cannot import Next.js' },
-          {
-            group: ['react', 'react-dom'],
-            message: 'core cannot import React',
-          },
-          {
-            group: ['axios', 'node-fetch'],
-            message: 'core cannot import HTTP clients',
-          },
-        ],
-      },
-    ],
-  },
-};
-```
+### Issue → Branch → PR Protocol
+
+1. **Confirm task** — ensure it exists in Task Master under the correct Sprint tag
+2. **Verify work not done** — check: (a) `gh issue view <n>` — if closed, stop; (b) merged PRs; (c) git log; (d) existing branches
+3. **Set Task Master to In Progress**: `task-master set-status --id=<id> --status=in-progress`
+4. **Move GitHub issue to "In Progress"** in all linked Project boards
+5. **Create branch from issue**: `gh issue develop <issue-number> --checkout`
+6. **Implement** — code, tests, commits
+7. **Open PR against `develop`**: `gh pr create --base develop`
+8. **Set Task Master to Done**: `task-master set-status --id=<id> --status=done`
+
+**Rules:** PRs always target `develop`. Task Master + GitHub Projects statuses must always mirror reality.
+Lock-file conflicts: `git checkout --theirs pnpm-lock.yaml && pnpm install`
 
 ---
 
-## 🧪 TDD / Testing
+## 🚫 Anti-Patterns
 
-### Stack
-
-- **`packages/core`**: **Vitest** for domain tests
-- **`apps/web`**: **Jest + Testing Library + jsdom** for UI and components
-- **`packages/utils`**: **Jest** with `node` / `browser` separation
-- **Playwright** for E2E when main flows exist
-
-### Mandatory Reference
-
-- When implementing or reviewing tests, consult **`docs/TESTING.md`** for the detailed monorepo testing strategy.
-- `CLAUDE.md` contains operational rules; `docs/TESTING.md` contains the full architecture, coverage, and quality criteria.
-
-### Mandatory Cycle: Red → Green → Refactor
-
-### What To Test By Layer
-
-- **core**: invariants, VOs, entities, factories, composition, error propagation, and business rules
-- **application**: use cases with mocked repositories, focused on orchestration
-- **web**: critical components, rendering, interaction, and important visual contracts
-- **utils**: pure functions, edge cases, and environment compatibility
-- **E2E**: main flows with Playwright when functional surface area justifies it
-
-### Mandatory Testing Rules
-
-- Test **observable behavior**, not internal implementation details.
-- For **Value Objects**, cover: valid creation, invalid rejection, normalization, equality, and immutability.
-- For **Entities / Aggregates**, cover: invariants, VO composition, empty lists when valid, missing input handling, and error propagation from invalid children.
-- **Builders** are allowed for ergonomics, but they must use **deterministic** and semantically clear defaults.
-- **Never** use randomness by default in builders, fixtures, or test data providers.
-- Avoid “field echo” tests that only repeat that a property was copied without protecting a real rule.
-- When asserting errors, prefer this order:
-  1. error type
-  2. `code`
-  3. relevant `message` fragment, when needed
-- Every new test should make clear which rule it protects and which regression it detects.
-- Always run the changed package suite and, before concluding relevant work, run **`pnpm test`** at the root to validate `turbo` integration.
-
-### Organization Conventions
-
-- `packages/core/test/...` for domain tests
-- `packages/utils/test/node/...` and `packages/utils/test/browser/...` when environment changes behavior
-- `apps/web/tests/...` for web application tests
-- Name files as `*.test.ts` or `*.test.tsx`
-
-### Test Template
-
-```typescript
-describe('Project entity', () => {
-  it('should create a project when props are valid', () => {
-    const result = Project.create({ title: 'My App', description: '# Hello', ... })
-    expect(result.isRight()).toBe(true)
-  })
-
-  it('should return error when description is empty', () => {
-    const result = Project.create({ title: 'My App', description: '', ... })
-    expect(result.isLeft()).toBe(true)
-    expect(result.value).toBeInstanceOf(EmptyMarkdownError)
-  })
-})
-```
-
-### Test Naming
-
-`should <expected behavior> when <context>`
+- Business logic in React components, controllers, or repositories
+- Importing Prisma / ORM inside `core` or `application`
+- `useEffect` for data fetching — use TanStack Query or Server Components
+- `throw` for domain business-rule errors — use Either pattern
+- Public setters on entities — use business-semantic methods
+- `any` in types — use explicit types or `unknown`
+- `<img>` or `<a>` for internal Next.js navigation
+- Tests that verify implementation instead of behavior
+- Direct imports between bounded contexts — use only the Shared Kernel
 
 ---
 
 ## ✅ General Standards
 
 - `strict: true` in every `tsconfig`
-- Avoid `any`; use explicit types or `unknown`
-- Keep functions single-responsibility (SRP)
-- Use **English** names in code
-- Maximum **200 lines per file**
-- Organize imports as: external libs → internal packages → relative imports
-
----
-
-## 🚫 Anti-Patterns — Never Do This
-
-- Business logic in React components, controllers, or repositories
-- Import Prisma / ORM inside `core` or `application`
-- Use `useEffect` for data fetching; use TanStack Query or Server Components
-- Use `throw` for domain business-rule errors; use the Either pattern
-- Public setters on entities; use business-semantic methods
-- `any` in API response types; validate with Zod
-- `<img>` and `<a>` for internal Next.js navigation
-- Magic strings; use enums or typed constants
-- Tests that verify implementation instead of behavior
-- Circular dependencies between monorepo packages
-- Direct imports between bounded contexts; use only the Shared Kernel
-
-## 🔄 Development Workflow
-
-### Issue → Branch → PR Protocol
-
-Follow this sequence for every piece of work, without exception:
-
-1. **Task Master tag** — ensure the task exists under the tag that matches the issue's Sprint (e.g. `sprint-1`). Switch with `task-master tags use <tag>` if needed.
-2. **Verify work hasn't already been done** — before touching any code, check: (a) `gh issue view <issue-number>` — if the issue is already **closed**, stop and investigate; (b) `gh pr list --state merged --search "<task title>"` — if a merged PR exists, the work is done; (c) `git log --all --oneline --grep="<task title>"` — confirm no commit already implements it; (d) `git branch -a | grep <issue-number>` — inspect any existing remote branch for that issue. Only proceed to implementation after confirming the work truly doesn't exist yet.
-3. **Set Task Master status to In Progress** — run `task-master set-status --id=<id> --status=in-progress` before touching any code.
-4. **Move the GitHub issue to "In Progress"** — update the issue status in every linked GitHub Project board. This must happen at the same time as step 3, without exception.
-5. **Create the branch from the GitHub issue** — always use `gh issue develop <issue-number> --checkout` so the branch name is derived from the issue. Never create branches manually for tracked issues.
-6. **Implement** — write code, tests, and commits on that branch.
-7. **Open PR against `develop`** — always target `develop`, never `master` or `staging`. Use `gh pr create --base develop`.
-8. **Set Task Master status to Done** — run `task-master set-status --id=<id> --status=done` after the PR is created.
-
-### Rules
-
-- One GitHub issue = one Task Master task (same Sprint tag).
-- The Task Master status AND the GitHub Projects board status must mirror reality at all times: `pending → in-progress → done`.
-- Both statuses must be updated together — never update one without the other.
-- PRs always point to `develop`, regardless of the Sprint or branch source.
-- If a rebase against `develop` is needed before pushing, resolve lock-file conflicts by checking out `develop`'s version (`git checkout --theirs pnpm-lock.yaml`) then running `pnpm install`.
+- English names in code
+- Maximum 200 lines per file
+- Import order: external libs → internal packages → relative imports
+- Test naming: `should <expected behavior> when <context>`
 
 ---
 
 ## Task Master AI Instructions
-**Import Task Master's development workflow commands and guidelines, and treat them as if the import were in the main `CLAUDE.md` file.**
+
+**Import Task Master's development workflow commands and guidelines.**
 @./.taskmaster/CLAUDE.md
