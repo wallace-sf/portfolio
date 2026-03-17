@@ -1,5 +1,5 @@
-import { ProfileStatDTO } from "./ProfileStatDTO";
-import { SocialNetworkDTO } from "./SocialNetworkDTO";
+import { ProfileStatDTO } from './ProfileStatDTO';
+import { SocialNetworkDTO } from './SocialNetworkDTO';
 
 export type ProfileDTO = {
   id: string;

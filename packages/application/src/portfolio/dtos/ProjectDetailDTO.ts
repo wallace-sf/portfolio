@@ -1,4 +1,4 @@
-import { ProjectSummaryDTO } from "./ProjectSummaryDTO";
+import { ProjectSummaryDTO } from './ProjectSummaryDTO';
 
 export type ProjectDetailDTO = ProjectSummaryDTO & {
   content: string;
