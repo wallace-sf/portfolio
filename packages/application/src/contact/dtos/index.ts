@@ -1,1 +1,1 @@
-export * from "./ContactMessageDTO";
+export * from './ContactMessageDTO';
