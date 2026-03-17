@@ -1,14 +1,17 @@
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 import { IProjectRepository, Project } from '@repo/core/portfolio';
 
+import { UseCase } from '../../shared/UseCase';
 import { ProjectSummaryDTO } from '../dtos/ProjectSummaryDTO';
 
 export interface GetFeaturedProjectsInput {
   locale: Locale;
 }
 
-export class GetFeaturedProjects {
-  constructor(private readonly projectRepository: IProjectRepository) {}
+export class GetFeaturedProjects extends UseCase<GetFeaturedProjectsInput, ProjectSummaryDTO[]> {
+  constructor(private readonly projectRepository: IProjectRepository) {
+    super();
+  }
 
   async execute(
     input: GetFeaturedProjectsInput,
