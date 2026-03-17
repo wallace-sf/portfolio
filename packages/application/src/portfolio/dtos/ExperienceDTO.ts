@@ -1,4 +1,4 @@
-import { ExperienceSkillDTO } from "./ExperienceSkillDTO";
+import { ExperienceSkillDTO } from './ExperienceSkillDTO';
 
 export type ExperienceDTO = {
   id: string;
