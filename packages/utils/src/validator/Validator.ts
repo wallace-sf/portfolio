@@ -32,7 +32,7 @@ export class Validator<TValue> {
       isValid = validationValid;
       error = validationError;
 
-      if (!isValid) break;
+      if (!isValid && error) break;
     }
 
     return { isValid, error };

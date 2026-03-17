@@ -119,6 +119,28 @@ class Project extends Entity<Project, IProjectProps> {
 }
 ```
 
+### Domain Validation (core)
+
+- Always use `Validator` from `@repo/utils/validator` for domain rules in entities and VOs.
+- Chain rules (chain of responsibility); `.validate()` returns the **first** error — one single `left` per validation flow.
+- **Do not** use manual `if` guards for domain invariants. Express each rule with `.refine()` (or `.length()`, `.regex()`, `.in()`, etc.) and end with a single `if (!isValid && error) return left(...)` after `.validate()`.
+
+```typescript
+// ✅ correct
+const { error, isValid } = Validator.of(value)
+  .refine((v) => someRule(v), 'Rule A message.')
+  .refine((v) => anotherRule(v), 'Rule B message.')
+  .validate();
+if (!isValid && error)
+  return left(new ValidationError({ code: Foo.ERROR_CODE, message: error }));
+
+// ❌ avoid
+if (!someRule(value)) return left(new ValidationError({ ... }));
+if (!anotherRule(value)) return left(new ValidationError({ ... }));
+```
+
+See also [`docs/06-VALIDATION.md`](./docs/06-VALIDATION.md).
+
 ### Repository Interface
 
 ```typescript
