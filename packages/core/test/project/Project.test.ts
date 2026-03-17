@@ -218,5 +218,29 @@ describe('Project', () => {
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Slug.ERROR_CODE);
     });
+
+    it('should return Left when relatedProjects contains the project own slug', () => {
+      const slug = 'my-project';
+      const result = Project.create(
+        ProjectBuilder.build()
+          .withSlug(slug)
+          .withRelatedProjects(['other-project', slug])
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
+    });
+
+    it('should return Left when relatedProjects contains duplicate slugs', () => {
+      const result = Project.create(
+        ProjectBuilder.build()
+          .withRelatedProjects(['related-project', 'related-project'])
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
+    });
   });
 });

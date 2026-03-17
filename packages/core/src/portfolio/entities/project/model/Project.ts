@@ -1,3 +1,5 @@
+import { Validator } from '@repo/utils/validator';
+
 import {
   collect,
   DateRange,
@@ -45,6 +47,8 @@ export interface IProjectProps extends IEntityProps {
 }
 
 export class Project extends Entity<Project, IProjectProps> {
+  static readonly ERROR_CODE = 'INVALID_PROJECT';
+
   public readonly slug: Slug;
   public readonly coverImage: Image;
   public readonly title: LocalizedText;
@@ -95,7 +99,7 @@ export class Project extends Entity<Project, IProjectProps> {
   }
 
   static create(props: IProjectProps): Either<ValidationError, Project> {
-    const requiredResult = collect([
+    const fieldsResult = collect([
       Slug.create(props.slug),
       Image.create(props.coverImage?.url, props.coverImage?.alt),
       LocalizedText.create(props.title ?? { 'pt-BR': '' }),
@@ -103,46 +107,63 @@ export class Project extends Entity<Project, IProjectProps> {
       Text.create(props.content, { min: 3, max: 500000 }),
       SkillFactory.bulk(props.skills),
       DateRange.create(props.period?.start, props.period?.end),
+      props.theme
+        ? LocalizedText.create(props.theme)
+        : right<ValidationError, LocalizedText | undefined>(undefined),
+      props.summary
+        ? LocalizedText.create(props.summary)
+        : right<ValidationError, LocalizedText | undefined>(undefined),
+      props.objectives
+        ? LocalizedText.create(props.objectives)
+        : right<ValidationError, LocalizedText | undefined>(undefined),
+      props.role
+        ? LocalizedText.create(props.role)
+        : right<ValidationError, LocalizedText | undefined>(undefined),
     ]);
-    if (requiredResult.isLeft()) return left(requiredResult.value);
+    if (fieldsResult.isLeft()) return left(fieldsResult.value);
 
-    const [slug, coverImage, title, caption, content, skills, period] =
-      requiredResult.value;
+    const [
+      slug,
+      coverImage,
+      title,
+      caption,
+      content,
+      skills,
+      period,
+      theme,
+      summary,
+      objectives,
+      role,
+    ] = fieldsResult.value;
 
-    let theme: LocalizedText | undefined;
-    if (props.theme) {
-      const r = LocalizedText.create(props.theme);
-      if (r.isLeft()) return left(r.value);
-      theme = r.value;
-    }
+    const relatedResult = collect(
+      (props.relatedProjects ?? []).map((s) => Slug.create(s)),
+    );
+    if (relatedResult.isLeft()) return left(relatedResult.value);
 
-    let summary: LocalizedText | undefined;
-    if (props.summary) {
-      const r = LocalizedText.create(props.summary);
-      if (r.isLeft()) return left(r.value);
-      summary = r.value;
-    }
+    const relatedSlugs = relatedResult.value as Slug[];
+    const ownSlugValue = slug.value;
 
-    let objectives: LocalizedText | undefined;
-    if (props.objectives) {
-      const r = LocalizedText.create(props.objectives);
-      if (r.isLeft()) return left(r.value);
-      objectives = r.value;
-    }
+    const { error: relatedError, isValid: relatedValid } = Validator.of(
+      relatedSlugs,
+    )
+      .refine(
+        (slugs) => !slugs.some((s) => s.value === ownSlugValue),
+        'A project cannot reference itself as a related project.',
+      )
+      .refine((slugs) => {
+        const values = slugs.map((s) => s.value);
+        return new Set(values).size === values.length;
+      }, 'Related projects must not contain duplicate slugs.')
+      .validate();
 
-    let role: LocalizedText | undefined;
-    if (props.role) {
-      const r = LocalizedText.create(props.role);
-      if (r.isLeft()) return left(r.value);
-      role = r.value;
-    }
-
-    const relatedProjects: Slug[] = [];
-    for (const rawSlug of props.relatedProjects ?? []) {
-      const r = Slug.create(rawSlug);
-      if (r.isLeft()) return left(r.value);
-      relatedProjects.push(r.value);
-    }
+    if (!relatedValid && relatedError)
+      return left(
+        new ValidationError({
+          code: Project.ERROR_CODE,
+          message: relatedError,
+        }),
+      );
 
     return right(
       new Project(
@@ -153,12 +174,12 @@ export class Project extends Entity<Project, IProjectProps> {
         caption,
         content,
         skills,
-        theme,
-        summary,
-        objectives,
-        role,
+        theme as LocalizedText | undefined,
+        summary as LocalizedText | undefined,
+        objectives as LocalizedText | undefined,
+        role as LocalizedText | undefined,
         period,
-        relatedProjects,
+        relatedSlugs,
       ),
     );
   }

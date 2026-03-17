@@ -82,6 +82,19 @@ static create(raw?: string): Either<ValidationError, Slug> {
 
 ---
 
+## Pending Domain Invariants
+
+The items below require a product decision before they can be enforced in the domain layer. Once decided, implement in the corresponding `create()` method using `Validator`.
+
+| Entity / VO | Open question | If "yes" → implementation hint |
+|---|---|---|
+| `Experience` | Can an experience have zero skills (`skills: []`)? | Validate `props.skills.length >= 1` in `Experience.create()` |
+| `ProjectStatus` | Are status transitions enforced (e.g. `ARCHIVED → PUBLISHED` forbidden)? | Add `publish()` / `archive()` methods to `Project` with transition guards |
+| `ExperienceSkill` | Can the same skill appear more than once in the same `Experience`? | After the skills loop in `Experience.create()`, verify uniqueness by skill id |
+| `ProfileStat` | Must `value` always be a numeric string (e.g. `"7"`)? | Add `.regex(/^\d+$/, …)` to `Text.create` call in `ProfileStat.create()` |
+
+---
+
 ## See Also
 
 - **[05-API-CONTRACTS](./05-API-CONTRACTS.md)** — Edge error mapping

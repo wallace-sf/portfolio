@@ -1,4 +1,4 @@
-import { Fluency, Language, Name, Text, ValidationError } from '../../src';
+import { Fluency, Language, Name, ValidationError } from '../../src';
 import { LanguageBuilder } from '../helpers';
 
 describe('Language', () => {
@@ -27,7 +27,7 @@ describe('Language', () => {
       if (!result.isRight()) return;
       expect(result.value.name.value).toBe(name);
       expect(result.value.fluency.value).toBe(fluency);
-      expect(result.value.locale.value).toBe(locale);
+      expect(result.value.locale).toBe(locale);
     });
   });
 
@@ -50,13 +50,26 @@ describe('Language', () => {
       expect((result.value as ValidationError).code).toBe(Fluency.ERROR_CODE);
     });
 
-    it('should return Left when locale is invalid', () => {
+    it('should return Left when locale is missing', () => {
       const result = Language.create(
         LanguageBuilder.build().withoutLocale().toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        Language.LOCALE_ERROR_CODE,
+      );
+    });
+
+    it('should return Left when locale is unsupported', () => {
+      const result = Language.create(
+        LanguageBuilder.build().withLocale('fr').toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(
+        Language.LOCALE_ERROR_CODE,
+      );
     });
   });
 });
