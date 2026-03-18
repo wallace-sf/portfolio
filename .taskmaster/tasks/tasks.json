@@ -2667,7 +2667,7 @@
           "1",
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -2720,7 +2720,8 @@
         ],
         "complexity": 5,
         "recommendedSubtasks": 4,
-        "expansionPrompt": "Implement GetExperiences use case with nested entity mapping: (1) Create use case class with IExperienceRepository DI, implement execute() calling findAll() with Either error handling, (2) Implement sorting logic by period.start descending (reuse pattern from GetPublishedProjects), (3) Implement toDTO() mapper handling all Experience fields including optional fields (description, logo, endAt), EmploymentType/LocationType toString() calls, and nested skills array, (4) Implement toSkillDTO() mapper for ExperienceSkill with localized workDescription, create test suite covering: sorted results, empty array, DTO mapping with all 10+ fields, nested skills array with workDescription, optional field handling, and locale verification for all localized fields."
+        "expansionPrompt": "Implement GetExperiences use case with nested entity mapping: (1) Create use case class with IExperienceRepository DI, implement execute() calling findAll() with Either error handling, (2) Implement sorting logic by period.start descending (reuse pattern from GetPublishedProjects), (3) Implement toDTO() mapper handling all Experience fields including optional fields (description, logo, endAt), EmploymentType/LocationType toString() calls, and nested skills array, (4) Implement toSkillDTO() mapper for ExperienceSkill with localized workDescription, create test suite covering: sorted results, empty array, DTO mapping with all 10+ fields, nested skills array with workDescription, optional field handling, and locale verification for all localized fields.",
+        "updatedAt": "2026-03-18T02:04:04.290Z"
       },
       {
         "id": "8",
@@ -2924,7 +2925,7 @@
       "version": "1.0.0",
       "lastModified": "2026-03-18T22:00:00.000Z",
       "taskCount": 13,
-      "completedCount": 10,
+      "completedCount": 11,
       "tags": [
         "sprint-1"
       ]
