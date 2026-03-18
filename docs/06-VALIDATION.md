@@ -60,7 +60,26 @@ static create(raw?: string): Either<ValidationError, Slug> {
 }
 ```
 
-`Validator` methods: `.notEmpty()`, `.length()`, `.regex()`, `.refine()`, `.url()`, `.uuid()`, `.datetime()`, `.in()`, `.combine()`.
+`Validator` methods:
+
+| Method | Description |
+|--------|-------------|
+| `.length(min, max, error)` | String length between `min` and `max` |
+| `.notEmpty(error)` | Non-empty string |
+| `.empty(error)` | Empty string |
+| `.alpha(error)` | Alphabetic characters only (supports accents) |
+| `.string(error)` | Valid string type |
+| `.regex(pattern, error)` | Matches regular expression |
+| `.url(error)` | Valid URL |
+| `.uuid(error)` | Valid UUID |
+| `.datetime(error)` | Valid ISO 8601 datetime |
+| `.in(values, error)` | Value must be one of the allowed values |
+| `.gt(n, error)` / `.gte(n, error)` | Number greater than / greater than or equal to `n` |
+| `.lt(n, error)` / `.lte(n, error)` | Number less than / less than or equal to `n` |
+| `.nil(error)` | Value is `null` or `undefined` |
+| `.notNil(error)` | Value is not `null` or `undefined` |
+| `.refine(predicate, error)` | Arbitrary predicate function |
+| `Validator.combine(...validators)` | Runs multiple validators; returns first error |
 
 ---
 
@@ -79,19 +98,6 @@ static create(raw?: string): Either<ValidationError, Slug> {
 - Added `.notEmpty()`, `.regex()`, `.refine()` ✓ (Sprint 1, PR #338)
 - All domain VOs and entities use `Validator` instead of raw `if` guards ✓ (Sprint 1, PR #339)
 - Zod-backed internals in `Validator` ✓ (Sprint 1, PR #338)
-
----
-
-## Pending Domain Invariants
-
-The items below require a product decision before they can be enforced in the domain layer. Once decided, implement in the corresponding `create()` method using `Validator`.
-
-| Entity / VO | Open question | If "yes" → implementation hint |
-|---|---|---|
-| `Experience` | Can an experience have zero skills (`skills: []`)? | Validate `props.skills.length >= 1` in `Experience.create()` |
-| `ProjectStatus` | Are status transitions enforced (e.g. `ARCHIVED → PUBLISHED` forbidden)? | Add `publish()` / `archive()` methods to `Project` with transition guards |
-| `ExperienceSkill` | Can the same skill appear more than once in the same `Experience`? | After the skills loop in `Experience.create()`, verify uniqueness by skill id |
-| `ProfileStat` | Must `value` always be a numeric string (e.g. `"7"`)? | Add `.regex(/^\d+$/, …)` to `Text.create` call in `ProfileStat.create()` |
 
 ---
 
