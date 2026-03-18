@@ -165,10 +165,12 @@ interface IProjectRepository {
 6. **Implement** — code, tests, commits
 7. **Open PR against `develop`**: `gh pr create --base develop`
 8. **Set Task Master to Done**: `task-master set-status --id=<id> --status=done`
+9. **Commit Task Master status to git**: create branch `chore/update-task-<N>-status-done` from `develop`, commit `.taskmaster/tasks/tasks.json`, open PR against `develop`
 
 **Rules:**
 - PRs always target `develop`.
 - **Task Master status** mirrors Claude's work: `pending → in-progress → done` (done = PR created).
+- **Step 9 is mandatory** — `set-status` only updates the local `tasks.json`; without committing it, the change is lost on branch switches or rebases.
 - **GitHub Projects board**: Claude sets `In Progress` when work begins. `In Review` and `Done` are the user's responsibility (after PR open and PR merge respectively). Claude must **never** move an issue to `Done`.
 - Lock-file conflicts: `git checkout --theirs pnpm-lock.yaml && pnpm install`
 
