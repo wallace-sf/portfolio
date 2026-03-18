@@ -81,6 +81,23 @@ describe('Validator', () => {
     });
   });
 
+  describe('email', () => {
+    it('should validate a valid email address', () => {
+      const validator = Validator.of('user@example.com').email('EMAIL_ERROR').validate();
+
+      expect(validator.error).toBeNull();
+      expect(validator.isValid).toBe(true);
+    });
+
+    it('should not validate an invalid email address', () => {
+      const error = 'EMAIL_ERROR';
+      const validator = Validator.of('not-an-email').email(error).validate();
+
+      expect(validator.error).toBe(error);
+      expect(validator.isValid).toBe(false);
+    });
+  });
+
   describe('url', () => {
     it('should validate', () => {
       const validator = Validator.of('https://www.google.com')
