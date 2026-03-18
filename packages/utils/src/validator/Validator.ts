@@ -120,6 +120,12 @@ export class Validator<TValue> {
     return this;
   }
 
+  public email(error: string): Validator<TValue> {
+    this.append((value) => z.string().email().safeParse(value).success, error);
+
+    return this;
+  }
+
   public url(error: string): Validator<TValue> {
     this.append((value) => z.string().url().safeParse(value).success, error);
 
