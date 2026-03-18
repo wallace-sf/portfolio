@@ -2536,7 +2536,7 @@
           "1",
           "2"
         ],
-        "status": "done",
+        "status": "pending",
         "subtasks": [
           {
             "id": 1,
@@ -2588,7 +2588,7 @@
           "1",
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -2653,7 +2653,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Implement GetProjectBySlug use case with multiple error paths and related data: (1) Create use case structure with IProjectRepository DI and GetProjectBySlugInput interface, (2) Implement slug validation using Slug.create() with early return on Left(ValidationError), (3) Implement repository orchestration - findBySlug() with NotFoundError when null, findRelated() for related projects, (4) Implement two DTO mappers - toDetailDTO() for full project with all optional fields (content, summary, objectives, role, team, period with endAt) and toSummaryDTO() for related projects array, (5) Create comprehensive test suite covering: happy path with related projects, NotFoundError path, ValidationError for invalid slug, DTO field mapping (12+ fields), optional field handling, locale handling, and related projects limit verification."
+        "expansionPrompt": "Implement GetProjectBySlug use case with multiple error paths and related data: (1) Create use case structure with IProjectRepository DI and GetProjectBySlugInput interface, (2) Implement slug validation using Slug.create() with early return on Left(ValidationError), (3) Implement repository orchestration - findBySlug() with NotFoundError when null, findRelated() for related projects, (4) Implement two DTO mappers - toDetailDTO() for full project with all optional fields (content, summary, objectives, role, team, period with endAt) and toSummaryDTO() for related projects array, (5) Create comprehensive test suite covering: happy path with related projects, NotFoundError path, ValidationError for invalid slug, DTO field mapping (12+ fields), optional field handling, locale handling, and related projects limit verification.",
+        "updatedAt": "2026-03-18T01:03:07.988Z"
       },
       {
         "id": "7",
@@ -2923,7 +2924,7 @@
       "version": "1.0.0",
       "lastModified": "2026-03-18T21:00:00.000Z",
       "taskCount": 13,
-      "completedCount": 8,
+      "completedCount": 9,
       "tags": [
         "sprint-1"
       ]
