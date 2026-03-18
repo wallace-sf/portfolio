@@ -71,6 +71,58 @@ class Slug extends ValueObject<string> {
 
 ---
 
+## `collect()` — batch Either validation
+
+When composing multiple Value Objects in `create()`, use `collect()` instead of sequential `if (isLeft())` guards.
+
+```typescript
+import { collect, left, right } from '@repo/core/shared';
+
+static create(props: IProjectProps): Either<ValidationError, Project> {
+  const result = collect([
+    Slug.create(props.slug),
+    LocalizedText.create(props.title),
+    Image.create(props.coverImage?.url, props.coverImage?.alt),
+  ]);
+  if (result.isLeft()) return left(result.value); // first error, fail-fast
+
+  const [slug, title, coverImage] = result.value; // typed tuple
+
+  return right(new Project(props, slug, title, coverImage));
+}
+```
+
+**When to use `collect()` vs manual loop:**
+
+| Situation | Pattern |
+|-----------|---------|
+| Multiple independent VOs created at once | `collect([...])` |
+| An array of children that each need validation | manual `for` loop |
+| An optional field that may or may not be created | manual `if (prop) { ... }` |
+
+```typescript
+// ✅ collect — 3 independent VOs
+const result = collect([Name.create(p.name), Url.create(p.url), Text.create(p.icon)]);
+
+// ✅ loop — variable-length children array
+const skills: Skill[] = [];
+for (const s of props.skills) {
+  const r = Skill.create(s);
+  if (r.isLeft()) return left(r.value);
+  skills.push(r.value);
+}
+
+// ✅ optional field
+let theme: LocalizedText | undefined;
+if (props.theme) {
+  const r = LocalizedText.create(props.theme);
+  if (r.isLeft()) return left(r.value);
+  theme = r.value;
+}
+```
+
+---
+
 ## Entity Template
 
 ```typescript
@@ -85,13 +137,14 @@ class Project extends Entity<Project, IProjectProps> {
   }
 
   static create(props: IProjectProps): Either<ValidationError, Project> {
-    const slugResult = Slug.create(props.slug);
-    if (slugResult.isLeft()) return left(slugResult.value);
+    const result = collect([
+      Slug.create(props.slug),
+      LocalizedText.create(props.title),
+    ]);
+    if (result.isLeft()) return left(result.value);
+    const [slug, title] = result.value;
 
-    const titleResult = LocalizedText.create(props.title);
-    if (titleResult.isLeft()) return left(titleResult.value);
-
-    return right(new Project(props, slugResult.value, titleResult.value, props.status));
+    return right(new Project(props, slug, title, props.status));
   }
 
   publish(): Either<ValidationError, void> {
@@ -106,7 +159,7 @@ class Project extends Entity<Project, IProjectProps> {
 **Rules for Entities:**
 - Private constructor — always use `Entity.create()`
 - No public setters — expose business-semantic methods (`publish()`, `archive()`)
-- Compose Value Objects — propagate their errors with `if (result.isLeft()) return left(result.value)`
+- Compose Value Objects with `collect()` for independent fields; use manual loops for children arrays
 - `Profile` supports at most 6 featured projects
 
 ---

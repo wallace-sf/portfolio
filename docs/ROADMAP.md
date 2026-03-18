@@ -62,10 +62,13 @@ Evolution view for the portfolio, aligned with Clean Architecture, DDD, i18n, an
 
 ## Phase 3 — Application and Contact Backend
 
-- [ ] **`packages/application`** (or equivalent)
-  - Ports: `IProjectRepository`, `IPostRepository`, `ITagRepository`, `IContactSender`
-  - Use cases: `GetProjects`, `GetProjectById`, `ListPosts`, `GetPostBySlug`, `ListTags`, `SendContact`
-  - View models where needed
+- [x] **`packages/application`** — base structure
+  - [x] Abstract `UseCase` base class
+  - [x] Output DTOs: `ProjectSummaryDTO`, `ProjectDetailDTO`, `ExperienceDTO`, `ProfileDTO`, and others
+  - [x] `IEmailService` port
+  - [x] `ContactMessageDTO`
+  - [x] `GetFeaturedProjects` use case
+  - [ ] Remaining use cases: `GetPublishedProjects`, `GetProjectBySlug`, `GetExperiences`, `GetProfile`, `SendContactMessage`
 - [ ] **Infra**
   - Concrete implementations of the ports; `ContactSender` (Supabase `contacts`, Resend, or another provider)
 - [ ] **API**
