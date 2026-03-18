@@ -352,11 +352,77 @@ Use case that validates and sends the contact form message via `IEmailService`.
 
 ---
 
+### T-18 — Enforce VO vs primitive+Validator rule on core entities
+
+**GitHub Issue**: #363
+**Priority**: Medium
+**Dependencies**: T-42, T-43
+
+Audit all entities in `packages/core/src/portfolio/entities/` and ensure every primitive or enum property has domain invariant validation in `create()` using `Validator`. Do not create new VOs for simple cases; use `Validator.of(value).in([...])` or `.refine()` with a single `left` return.
+
+**Acceptance Criteria**:
+
+- Every primitive/enum property in an entity has at least one `Validator` rule in `create()`
+- Gap identified: `Project.status: ProjectStatus` — add `Validator.of(props.status).in(Object.values(ProjectStatus), '...')` in `Project.create()`
+- No new VOs created for stable enums or boolean properties
+- All existing tests continue to pass
+
+**Files**:
+
+- `packages/core/src/portfolio/entities/project/model/Project.ts` ← fix status validation
+- Other entity files as identified in audit
+
+---
+
+### T-19 — Document VO vs primitive+Validator rule in CLAUDE.md
+
+**GitHub Issue**: #364
+**Priority**: Medium
+**Dependencies**: T-18
+
+Add a subsection **"Entity properties: VO vs primitive + Validator"** inside **"🧩 DDD Code Templates"** in `CLAUDE.md`, after **"Domain Validation (core)"**. The rule must be clear enough to guide implementation without ambiguity.
+
+**Acceptance Criteria**:
+
+- Subsection present in CLAUDE.md within "🧩 DDD Code Templates"
+- Rule documented: VO for rich/reused concepts; primitive/enum + Validator for simple cases
+- Examples provided (Slug, Name → VO; ProjectStatus, boolean → primitive + Validator)
+
+**Files**:
+
+- `CLAUDE.md` ← add subsection
+
+---
+
+### T-20 — Update docs/ to reflect VO vs primitive+Validator rule
+
+**GitHub Issue**: #365
+**Priority**: Low
+**Dependencies**: T-19
+
+Update `docs/09-PATTERNS.md` and `docs/06-VALIDATION.md` to reference the VO vs primitive+Validator rule. Keep additions concise — do not duplicate CLAUDE.md content, just reinforce and cross-reference.
+
+**Acceptance Criteria**:
+
+- `docs/09-PATTERNS.md` contains bullet/paragraph on VO vs primitive+Validator in Entity or VO section
+- `docs/06-VALIDATION.md` mentions Validator usage for primitive/enum invariants in `create()`
+- No duplication of content already in CLAUDE.md
+
+**Files**:
+
+- `docs/09-PATTERNS.md` ← update
+- `docs/06-VALIDATION.md` ← update
+
+---
+
 ## Execution Order
 
 ```
 T-42 (Validator + Zod)
   └── T-43 (Migrate VOs)
+        └── T-18 (Enforce VO vs primitive+Validator on entities)
+              └── T-19 (Document rule in CLAUDE.md)
+                    └── T-20 (Update docs/)
 
 T-44 (Docs refactor — independent, can run in parallel)
 
