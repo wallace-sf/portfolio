@@ -2734,7 +2734,7 @@
           "1",
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -2802,7 +2802,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Implement GetProfile use case with multiple nested structures: (1) Create use case class with IProfileRepository DI and GetProfileInput interface, implement execute() calling find() with NotFoundError handling, (2) Implement main toDTO() mapper for Profile with 7 top-level fields and 3 nested arrays (stats, featuredProjectSlugs, socialNetworks), (3) Implement toStatDTO() mapper for ProfileStat with locale handling for label/value and non-localized icon, (4) Implement toSocialNetworkDTO() mapper for SocialNetwork with toString() calls, (5) Create comprehensive test suite covering: happy path with all nested arrays, NotFoundError path, all DTO fields including 3 nested structures, featuredProjectSlugs max 6 validation (domain invariant), locale handling for stats, and social network mapping."
+        "expansionPrompt": "Implement GetProfile use case with multiple nested structures: (1) Create use case class with IProfileRepository DI and GetProfileInput interface, implement execute() calling find() with NotFoundError handling, (2) Implement main toDTO() mapper for Profile with 7 top-level fields and 3 nested arrays (stats, featuredProjectSlugs, socialNetworks), (3) Implement toStatDTO() mapper for ProfileStat with locale handling for label/value and non-localized icon, (4) Implement toSocialNetworkDTO() mapper for SocialNetwork with toString() calls, (5) Create comprehensive test suite covering: happy path with all nested arrays, NotFoundError path, all DTO fields including 3 nested structures, featuredProjectSlugs max 6 validation (domain invariant), locale handling for stats, and social network mapping.",
+        "updatedAt": "2026-03-18T02:47:24.036Z"
       },
       {
         "id": "9",
@@ -2923,9 +2924,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-18T22:00:00.000Z",
+      "lastModified": "2026-03-18T02:47:24.036Z",
       "taskCount": 13,
-      "completedCount": 11,
+      "completedCount": 12,
       "tags": [
         "sprint-1"
       ]
