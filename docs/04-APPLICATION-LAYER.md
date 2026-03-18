@@ -2,8 +2,6 @@
 
 > Use cases, ports, DTOs, and the orchestration pattern between domain and infrastructure.
 
-**Status: WIP** — `packages/application` is being introduced in Sprint 1.
-
 ---
 
 ## Goal
@@ -15,30 +13,68 @@ The application layer:
 
 ---
 
+## Abstract `UseCase` Base Class
+
+All use cases extend the abstract base class defined in `packages/application/src/shared/UseCase.ts`:
+
+```typescript
+export abstract class UseCase<TInput, TOutput, TError = DomainError> {
+  abstract execute(input: TInput): Promise<Either<TError, TOutput>>;
+}
+```
+
+Concrete use cases inject their required port via the constructor and implement `execute()`:
+
+```typescript
+export class GetFeaturedProjects extends UseCase<GetFeaturedProjectsInput, ProjectSummaryDTO[]> {
+  constructor(private readonly projectRepository: IProjectRepository) {
+    super();
+  }
+
+  async execute(input: GetFeaturedProjectsInput): Promise<Either<DomainError, ProjectSummaryDTO[]>> {
+    try {
+      const projects = await this.projectRepository.findFeatured();
+      return right(projects.map((p) => this.toDTO(p, input.locale)));
+    } catch {
+      return left(new DomainError('FETCH_FAILED', { message: 'Failed to fetch featured projects' }));
+    }
+  }
+}
+```
+
+---
+
 ## Ports
 
-Interfaces defined in the application layer and implemented by infrastructure:
+Repository interfaces live in `@repo/core` (not in `@repo/application`). Service ports that are not related to the domain are defined in `@repo/application`:
 
-| Port | Planned methods |
-|------|-----------------|
-| `IProjectRepository` | `findAll()`, `findFeatured()`, `findPublished()`, `findBySlug(slug)`, `findById(id)` |
-| `IExperienceRepository` | `findAll()` |
-| `IProfileRepository` | `findOne()` |
-| `ISkillRepository` | `findAll()` |
-| `IContactSender` | `send(payload)` |
+| Port | Package | Status |
+|------|---------|--------|
+| `IProjectRepository` | `@repo/core/portfolio` | defined |
+| `IExperienceRepository` | `@repo/core/portfolio` | defined |
+| `IProfileRepository` | `@repo/core/portfolio` | defined |
+| `IEmailService` | `@repo/application/contact` | ✅ implemented |
+
+`IEmailService` signature:
+
+```typescript
+interface IEmailService {
+  send(message: IContactMessageDTO): Promise<Either<DomainError, void>>;
+}
+```
 
 ---
 
 ## Use Cases
 
-| Use case | Port(s) | Input | Output |
-|----------|---------|-------|--------|
-| `GetFeaturedProjects` | `IProjectRepository` | — | `ProjectDTO[]` |
-| `GetPublishedProjects` | `IProjectRepository` | `{ locale }` | `ProjectDTO[]` |
-| `GetProjectBySlug` | `IProjectRepository` | `slug: string` | `ProjectDTO \| null` |
-| `GetExperiences` | `IExperienceRepository` | `{ locale }` | `ExperienceDTO[]` |
-| `GetProfile` | `IProfileRepository` | `{ locale }` | `ProfileDTO` |
-| `SendContactMessage` | `IContactSender` | `{ name, email, subject, message }` | `{ ok }` or error |
+| Use case | Port(s) | Input | Output | Status |
+|----------|---------|-------|--------|--------|
+| `GetFeaturedProjects` | `IProjectRepository` | `{ locale }` | `ProjectSummaryDTO[]` | ✅ implemented |
+| `GetPublishedProjects` | `IProjectRepository` | `{ locale }` | `ProjectSummaryDTO[]` | pending |
+| `GetProjectBySlug` | `IProjectRepository` | `{ locale, slug }` | `ProjectDetailDTO` | pending |
+| `GetExperiences` | `IExperienceRepository` | `{ locale }` | `ExperienceDTO[]` | pending |
+| `GetProfile` | `IProfileRepository` | `{ locale }` | `ProfileDTO` | pending |
+| `SendContactMessage` | `IEmailService` | `IContactMessageDTO` | `void` | pending |
 
 Use cases **never** know Supabase, HTTP, or Prisma. Domain errors are propagated as `Either` and mapped at the edge.
 
@@ -46,48 +82,68 @@ Use cases **never** know Supabase, HTTP, or Prisma. Domain errors are propagated
 
 ## DTOs
 
-DTOs are plain serializable objects — no domain logic. They are the output contract of use cases.
+DTOs are plain serializable types — no domain logic, no Either. They are the output contract of use cases, with all localized fields already resolved to a single string.
+
+| DTO | File | Description |
+|-----|------|-------------|
+| `ProjectSummaryDTO` | `portfolio/dtos/ProjectSummaryDTO.ts` | Card / listing view |
+| `ProjectDetailDTO` | `portfolio/dtos/ProjectDetailDTO.ts` | Detail page; extends `ProjectSummaryDTO` |
+| `ExperienceDTO` | `portfolio/dtos/ExperienceDTO.ts` | Work experience entry |
+| `ExperienceSkillDTO` | `portfolio/dtos/ExperienceSkillDTO.ts` | Skill inside an experience |
+| `ProfileDTO` | `portfolio/dtos/ProfileDTO.ts` | Full profile |
+| `ProfileStatDTO` | `portfolio/dtos/ProfileStatDTO.ts` | Single stat inside a profile |
+| `SocialNetworkDTO` | `portfolio/dtos/SocialNetworkDTO.ts` | Social link |
+| `IContactMessageDTO` | `contact/dtos/ContactMessageDTO.ts` | Input DTO for contact form |
 
 ```typescript
-// Example
-interface ProjectDTO {
+// ProjectSummaryDTO — output of GetFeaturedProjects
+type ProjectSummaryDTO = {
   id: string;
   slug: string;
-  title: string;         // resolved for requested locale
+  title: string;
   caption: string;
-  content: string;
-  skills: SkillDTO[];
-  featured: boolean;
-  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
-}
-```
+  coverImage: { url: string; alt: string };
+  theme?: string;
+  skills: string[];
+  publishedAt: string;
+};
 
-When a Core entity is directly serializable and sufficient, the use case may return it directly. Prefer explicit DTOs for summary listings or when the shape differs from the domain entity.
+// ProjectDetailDTO — extends ProjectSummaryDTO
+type ProjectDetailDTO = ProjectSummaryDTO & {
+  content: string;
+  summary?: string;
+  objectives?: string;
+  role?: string;
+  team?: string;
+  period: { startAt: string; endAt?: string };
+  relatedProjects: ProjectSummaryDTO[];
+};
+```
 
 ---
 
-## Planned Structure
+## Current Structure
 
 ```text
 packages/application/src/
-  ports/
-    IProjectRepository.ts
-    IExperienceRepository.ts
-    IProfileRepository.ts
-    ISkillRepository.ts
-    IContactSender.ts
-  use-cases/
-    GetFeaturedProjects.ts
-    GetPublishedProjects.ts
-    GetProjectBySlug.ts
-    GetExperiences.ts
-    GetProfile.ts
-    SendContactMessage.ts
-  dtos/
-    ProjectDTO.ts
-    ExperienceDTO.ts
-    ProfileDTO.ts
-    SkillDTO.ts
+  shared/
+    UseCase.ts              ✅ abstract base class
+  portfolio/
+    dtos/
+      ProjectSummaryDTO.ts  ✅
+      ProjectDetailDTO.ts   ✅
+      ExperienceDTO.ts      ✅
+      ExperienceSkillDTO.ts ✅
+      ProfileDTO.ts         ✅
+      ProfileStatDTO.ts     ✅
+      SocialNetworkDTO.ts   ✅
+    use-cases/
+      GetFeaturedProjects.ts ✅
+  contact/
+    dtos/
+      ContactMessageDTO.ts  ✅
+    ports/
+      IEmailService.ts      ✅
   index.ts
 ```
 
