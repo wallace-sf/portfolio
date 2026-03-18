@@ -2472,7 +2472,7 @@
           "1",
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -2920,9 +2920,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-16T00:42:00.953Z",
+      "lastModified": "2026-03-16T01:26:48.269Z",
       "taskCount": 13,
-      "completedCount": 6,
+      "completedCount": 7,
       "tags": [
         "sprint-1"
       ]
