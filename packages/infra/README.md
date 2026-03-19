@@ -54,6 +54,11 @@ Visão prevista (nomes e colunas podem mudar na implementação):
 
 - **`contacts`** ou integração com serviço externo (Resend, etc.); a definir.
 
+### Identity (planejado)
+
+- **`users`**: `id`, `auth_id` (uuid, FK auth.users), `email`, `role` (ADMIN/VISITOR), `created_at`, `updated_at`, `deleted_at`
+- RLS: leitura própria; escrita apenas via service_role
+
 ---
 
 ## Repositórios e ports
@@ -63,6 +68,7 @@ Cada repositório na Infra implementa uma interface (port) da Application, por e
 - **`IProjectRepository`** → `ProjectRepositorySupabase`: `findAll()`, `findById(id)`
 - **`IPostRepository`** → `PostRepositorySupabase`: `findPublished(limit, offset, tag?)`, `findBySlug(slug)`
 - **`ITagRepository`** → `TagRepositorySupabase`: `findAll()`
+- **`IUserRepository`** → `SupabaseUserRepository`: `findByAuthId()`, `findByEmail()`, `save()`
 - **`IContactSender`** (ou similar) → adapter para Supabase/Resend/etc.
 
 Os nomes exatos dos ports e métodos serão definidos em `packages/application` ou em [docs/APPLICATION.md](../docs/APPLICATION.md).
@@ -106,6 +112,7 @@ packages/infra/
 │   ├── repositories/
 │   │   ├── ProjectRepositorySupabase.ts
 │   │   ├── PostRepositorySupabase.ts
+│   │   ├── SupabaseUserRepository.ts
 │   │   └── TagRepositorySupabase.ts
 │   ├── mappers/
 │   │   ├── ProjectMapper.ts

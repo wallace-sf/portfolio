@@ -10,6 +10,7 @@ Evolution view for the portfolio, aligned with Clean Architecture, DDD, i18n, an
 - [Phase 1 — API and Infra](#phase-1--api-and-infra)
 - [Phase 2 — Blog and Supabase](#phase-2--blog-and-supabase)
 - [Phase 3 — Application and Contact Backend](#phase-3--application-and-contact-backend)
+- [Phase 4 — Identity (Auth)](#phase-4--identity-auth)
 - [Continuous Improvements](#continuous-improvements)
 
 ---
@@ -75,6 +76,23 @@ Evolution view for the portfolio, aligned with Clean Architecture, DDD, i18n, an
   - `POST /api/contact`; validation with Zod; rate limit and / or CAPTCHA (to be decided)
 - [ ] **Web**
   - Contact form submits to `/api/contact`; error handling uses stable codes and i18n
+
+---
+
+## Phase 4 — Identity (Auth)
+
+> **Status:** planejado. Plano detalhado em [11-IDENTITY](./11-IDENTITY.md) e [plans/identity-mvp.md](../plans/identity-mvp.md).
+
+- [ ] **Domain** (`packages/core`)
+  - User, Role, Email, AccessPolicy, IUserRepository, UnauthorizedError
+- [ ] **Infrastructure** (`packages/infra`)
+  - Migration tabela `users`; SupabaseUserRepository; seed admin
+- [ ] **Application** (`packages/application`)
+  - GetCurrentUserUseCase, EnsureAdminUseCase
+- [ ] **Web** (`apps/web`)
+  - Middleware auth; página login; layout admin; getAuthenticatedUser
+
+Modelo de papéis: `ADMIN | VISITOR`. Rotas protegidas: `/[locale]/admin/*`. Login: `/[locale]/login`.
 
 ---
 

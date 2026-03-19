@@ -11,6 +11,7 @@
 | **Portfolio** | Projects, experience, skills, profile, values | Project, Experience, Skill, ProfessionalValue, Language, SocialNetwork | Active |
 | **Blog** | Posts, tags, publication | BlogPost, Tag | Stub (future) |
 | **Contact** | Contact form capture and delivery | DTOs / Message entity | Stub |
+| **Identity** | Autenticação, autorização, papéis | User, Role, AccessPolicy | Planejado |
 | **Shared Kernel** | Cross-context primitives | Id, Text, DateTime, Name, Url, enums, Either, errors | Active |
 
 ```text
@@ -20,15 +21,15 @@
                     │  Entity, Errors  │
                     └────────┬─────────┘
                              │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
-         ▼                   ▼                   ▼
-┌────────────────┐  ┌────────────────┐  ┌────────────────┐
-│   Portfolio    │  │      Blog      │  │    Contact     │
-│  Project       │  │   BlogPost     │  │  (DTOs/forms)  │
-│  Experience    │  │   Tag          │  │                │
-│  Skill, etc.   │  │                │  │                │
-└────────────────┘  └────────────────┘  └────────────────┘
+         ┌───────────────────┼───────────────────┬───────────────────┐
+         │                   │                   │                   │
+         ▼                   ▼                   ▼                   ▼
+┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+│   Portfolio    │  │      Blog      │  │    Contact     │  │    Identity    │
+│  Project       │  │   BlogPost     │  │  (DTOs/forms)  │  │  User, Role    │
+│  Experience    │  │   Tag          │  │                │  │  AccessPolicy  │
+│  Skill, etc.   │  │                │  │                │  │  (planejado)   │
+└────────────────┘  └────────────────┘  └────────────────┘  └────────────────┘
 ```
 
 ---
@@ -78,8 +79,8 @@ import { Slug, Either, ValidationError }  from '@repo/core/shared';
 - `Entity`, `ValueObject`, `IEntityProps`
 - `Id`, `Text`, `DateTime`, `Name`, `Url`
 - `EmploymentType`, `LocationType`, `SkillType`, `Fluency`
-- `Slug`, `Image`, `DateRange`, `LocalizedText`
-- `Either<L, R>`, `ValidationError`, `DomainError`, `NotFoundError`
+- `Slug`, `Image`, `DateRange`, `LocalizedText`, `Email` (planejado)
+- `Either<L, R>`, `ValidationError`, `DomainError`, `NotFoundError`, `UnauthorizedError` (planejado)
 - `ERROR_MESSAGE` (domain error codes with `pt-BR` / `en-US` translations)
 
 **What does not belong here:** rules specific to one context (e.g., "a post can only be published with at least one tag" belongs to Blog).
@@ -130,6 +131,23 @@ src/
 - **Project** — aggregate root with slug, cover image, period, status, and localized fields
 - **Experience** — aggregate root that owns `ExperienceSkill[]`, `DateRange`, logo, and description
 - **BlogPost** (planned) — aggregate root; `Tag` as a VO inside Blog context
+
+---
+
+## Identity Context (Planejado)
+
+**Responsabilidade:** autenticação, autorização, papéis (ADMIN | VISITOR). Supabase Auth.
+
+**Modelos previstos:**
+
+| Class | Role | Descrição |
+|-------|------|-----------|
+| `User` | Entity | auth_id, email, role |
+| `Role` | Value Object | ADMIN \| VISITOR |
+| `AccessPolicy` | Policy | canAccessAdmin, canPublish, etc. |
+| `IUserRepository` | Interface | findByAuthId, findByEmail, save |
+
+Ver [11-IDENTITY](./11-IDENTITY.md) e [plans/identity-mvp.md](../plans/identity-mvp.md).
 
 ---
 
