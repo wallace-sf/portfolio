@@ -141,6 +141,38 @@ if (!anotherRule(value)) return left(new ValidationError({ ... }));
 
 See also [`docs/06-VALIDATION.md`](./docs/06-VALIDATION.md).
 
+### Entity properties: VO vs primitive + Validator
+
+- Prefer **Value Objects** for domain properties when the concept is rich or reused
+  (e.g. `Slug`, `Name`, `Url`, `LocalizedText`, `DateRange`). Entities should expose
+  such attributes as VOs, not as raw strings/numbers.
+- For **simple cases** (stable enums, booleans, or a single simple rule), keep the
+  property as **primitive or enum**. Do not create a dedicated VO just for consistency.
+  Instead, validate in the entity's `create()` using **Validator**
+  (e.g. `.in([...])`, `.refine(...)`), returning a single `left` on failure.
+- Boundary: rich or reused concept → VO; simple, entity-local value →
+  primitive/enum + Validator in `create()`.
+
+```typescript
+// ✅ VO — rich, reused concept
+public readonly slug: Slug;          // Slug.create(props.slug)
+public readonly period: DateRange;   // DateRange.create(start, end)
+
+// ✅ primitive + Validator — stable enum, entity-local
+public readonly status: ProjectStatus;
+// in create():
+{
+  const { error, isValid } = Validator.of(props.status)
+    .in(Object.values(ProjectStatus), 'Invalid status.')
+    .validate();
+  if (!isValid && error)
+    return left(new ValidationError({ code: Project.ERROR_CODE, message: error }));
+}
+
+// ❌ avoid — no VO and no Validator check for a domain-meaningful value
+public readonly status: ProjectStatus; // assigned directly with no validation
+```
+
 ### Repository Interface
 
 ```typescript
