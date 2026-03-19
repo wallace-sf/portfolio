@@ -93,6 +93,26 @@ A contact form submission. Contains name, email, and message body.
 
 ---
 
+## Domain Terms — Identity Context (Planejado)
+
+### User
+
+Identidade autenticada no sistema. Possui `auth_id` (Supabase Auth), `email` e `role`. Usada para autorização de ações admin.
+
+### Role
+
+Papel do usuário. Valores: `ADMIN` (acesso total) ou `VISITOR` (apenas leitura pública).
+
+### AccessPolicy
+
+Policy que determina se um User pode executar ações protegidas (publicar, gerenciar projetos, acessar área admin). Todos os métodos delegam para `role === 'ADMIN'`.
+
+### UnauthorizedError
+
+Erro de domínio para falhas de autenticação ou autorização (usuário não logado ou sem permissão).
+
+---
+
 ## Domain Terms — Shared Kernel Value Objects
 
 ### Either
@@ -258,6 +278,7 @@ An interface defined in the application layer representing a dependency on an ex
 DomainError (abstract)
   └── ValidationError    — invariant violations, invalid input
   └── NotFoundError      — entity lookup failures
+  └── UnauthorizedError  — auth/authorization failures (planejado)
 ```
 
 All domain errors use a static `ERROR_CODE` constant in `SCREAMING_SNAKE_CASE` (e.g., `INVALID_SLUG`, `INVALID_DATE_RANGE`).
