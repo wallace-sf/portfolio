@@ -161,6 +161,7 @@ class Project extends Entity<Project, IProjectProps> {
 - No public setters — expose business-semantic methods (`publish()`, `archive()`)
 - Compose Value Objects with `collect()` for independent fields; use manual loops for children arrays
 - `Profile` supports at most 6 featured projects
+- **VO vs primitive/enum:** expose rich or reused concepts as VOs (`Slug`, `Name`, `DateRange`); keep stable enums and simple primitives as-is and validate them directly in `create()` with `Validator.of(value).in([...])` or `.refine()`. See [CLAUDE.md — Entity properties: VO vs primitive + Validator](../CLAUDE.md).
 
 ---
 
