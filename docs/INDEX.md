@@ -20,6 +20,7 @@
 | Writing or reviewing tests? | [08-TESTING](./08-TESTING.md) |
 | Looking for code templates (Either, VO, Entity)? | [09-PATTERNS](./09-PATTERNS.md) |
 | Looking for a domain term? | [10-GLOSSARY](./10-GLOSSARY.md) |
+| Identity (auth, admin)? | [11-IDENTITY](./11-IDENTITY.md) |
 
 ---
 
@@ -45,6 +46,10 @@
 - **[09-PATTERNS](./09-PATTERNS.md)** — DDD patterns (Either, VO, Entity, Repository templates), GoF patterns
 - **[10-GLOSSARY](./10-GLOSSARY.md)** — Ubiquitous language: domain terms, architectural terms, process terms
 
+### Planned Features
+
+- **[11-IDENTITY](./11-IDENTITY.md)** — Identity bounded context (auth, roles, admin area) — planejado
+
 ---
 
 ## Cross-References
@@ -53,6 +58,7 @@
 - **[packages/core/README.md](../packages/core/README.md)** — Core package overview, links to 02-ARCHITECTURE and 03-BOUNDED-CONTEXTS
 - **[packages/core/decisions/](../packages/core/decisions/)** — Architectural Decision Records (ADRs)
 - **[ROADMAP.md](./ROADMAP.md)** — Product roadmap and sprint planning
+- **[plans/identity-mvp.md](../plans/identity-mvp.md)** — Plano de implementação Identity (MVP)
 
 ---
 
