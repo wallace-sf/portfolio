@@ -242,5 +242,16 @@ describe('Project', () => {
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
     });
+
+    it('should return Left when status is invalid', () => {
+      const result = Project.create(
+        ProjectBuilder.build()
+          .withStatus('INVALID' as ProjectStatus)
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
+    });
   });
 });

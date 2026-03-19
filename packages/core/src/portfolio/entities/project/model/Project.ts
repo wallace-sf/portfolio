@@ -99,6 +99,19 @@ export class Project extends Entity<Project, IProjectProps> {
   }
 
   static create(props: IProjectProps): Either<ValidationError, Project> {
+    {
+      const { error, isValid } = Validator.of(props.status)
+        .in(
+          Object.values(ProjectStatus),
+          `Status must be one of: ${Object.values(ProjectStatus).join(', ')}.`,
+        )
+        .validate();
+      if (!isValid && error)
+        return left(
+          new ValidationError({ code: Project.ERROR_CODE, message: error }),
+        );
+    }
+
     const fieldsResult = collect([
       Slug.create(props.slug),
       Image.create(props.coverImage?.url, props.coverImage?.alt),
