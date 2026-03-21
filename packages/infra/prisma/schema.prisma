@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums — values mirror domain VOs in packages/core
+// ---------------------------------------------------------------------------
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// SkillType mirrors SkillType.SKILLS in core
+enum SkillType {
+  EDUCATION
+  TECHNOLOGY
+  LANGUAGE
+  SOFT
+  OTHER
+}
+
+// EmploymentType mirrors EmploymentType.EMPLOYMENTS in core
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  SELF_EMPLOYED
+  FREELANCE
+  TEMPORARY
+  INTERNSHIP
+  APPRENTICE
+  TRAINEE
+}
+
+// LocationType mirrors LocationType.LOCATIONS in core
+// "ON-SITE" is stored as ONSITE; mapper handles the conversion
+enum LocationType {
+  ONSITE
+  HYBRID
+  REMOTE
+}
+
+// ---------------------------------------------------------------------------
+// Skill
+// ---------------------------------------------------------------------------
+
+model Skill {
+  id          String   @id @default(uuid()) @db.Uuid
+  description Json
+  icon        String
+  type        SkillType
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  projects    ProjectSkill[]
+  experiences ExperienceSkill[]
+}
+
+// ---------------------------------------------------------------------------
+// Project
+// ---------------------------------------------------------------------------
+
+model Project {
+  id                  String        @id @default(uuid()) @db.Uuid
+  slug                String        @unique
+  coverImageUrl       String
+  coverImageAlt       Json
+  title               Json
+  caption             Json
+  content             String        @db.Text
+  theme               Json?
+  summary             Json?
+  objectives          Json?
+  role                Json?
+  team                String?
+  periodStart         DateTime
+  periodEnd           DateTime?
+  featured            Boolean       @default(false)
+  status              ProjectStatus @default(DRAFT)
+  relatedProjectSlugs String[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  deletedAt           DateTime?
+
+  skills ProjectSkill[]
+}
+
+model ProjectSkill {
+  projectId String  @db.Uuid
+  skillId   String  @db.Uuid
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  skill     Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, skillId])
+  @@index([skillId])
+}
+
+// ---------------------------------------------------------------------------
+// Experience
+// ---------------------------------------------------------------------------
+
+model Experience {
+  id             String         @id @default(uuid()) @db.Uuid
+  company        Json
+  position       Json
+  location       Json
+  description    Json
+  logoUrl        String
+  logoAlt        Json
+  employmentType EmploymentType
+  locationType   LocationType
+  startAt        DateTime
+  endAt          DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  skills ExperienceSkill[]
+}
+
+model ExperienceSkill {
+  experienceId    String     @db.Uuid
+  skillId         String     @db.Uuid
+  workDescription Json
+  experience      Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  skill           Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([experienceId, skillId])
+  @@index([skillId])
+}
+
+// ---------------------------------------------------------------------------
+// Profile
+// ---------------------------------------------------------------------------
+
+model Profile {
+  id                  String          @id @default(uuid()) @db.Uuid
+  name                String
+  headline            Json
+  bio                 Json
+  photoUrl            String
+  photoAlt            Json
+  featuredProjectSlugs String[]
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  stats          ProfileStat[]
+  socialNetworks SocialNetwork[]
+}
+
+model ProfileStat {
+  id        String  @id @default(uuid()) @db.Uuid
+  profileId String  @db.Uuid
+  label     Json
+  value     String
+  icon      String
+  order     Int
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, order])
+}
+
+model SocialNetwork {
+  id        String  @id @default(uuid()) @db.Uuid
+  profileId String  @db.Uuid
+  name      String
+  url       String
+  icon      String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
