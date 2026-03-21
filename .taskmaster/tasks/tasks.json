@@ -2979,7 +2979,7 @@
   "sprint-2": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Configure packages/infra with Prisma + Supabase",
         "description": "Set up the infrastructure package with Prisma ORM connected to Supabase Postgres, including complete schema definition and initial migration.",
         "details": "1. Initialize packages/infra with package.json and tsconfig.json\n2. Install dependencies: prisma, @prisma/client\n3. Create schema.prisma with datasource db (provider: postgresql, url from env DATABASE_URL, directUrl from env DIRECT_URL)\n4. Define models following the domain entities:\n   - Project: id (uuid @id @default(uuid())), slug (unique), coverImageUrl, coverImageAlt (jsonb for LocalizedText), title (jsonb), caption (jsonb), content (text), skills (relation), theme (jsonb optional), summary (jsonb optional), objectives (jsonb optional), role (jsonb optional), team (string optional), periodStart (datetime), periodEnd (datetime optional), featured (boolean), status (enum: DRAFT, PUBLISHED, ARCHIVED), relatedProjectSlugs (string[]), createdAt, updatedAt, deletedAt (optional)\n   - Skill: id (uuid), description (jsonb), icon (string), type (enum: TECHNICAL, SOFT, LANGUAGE, TOOL)\n   - Experience: id (uuid), company (jsonb), position (jsonb), location (jsonb), description (jsonb), logoUrl, logoAlt (jsonb), employmentType (enum), locationType (enum), startAt (datetime), endAt (datetime optional), createdAt, updatedAt\n   - ExperienceSkill: experienceId, skillId, workDescription (jsonb), @@id([experienceId, skillId])\n   - Profile: id (uuid), name (string), headline (jsonb), bio (jsonb), photoUrl, photoAlt (jsonb), featuredProjectSlugs (string[])\n   - ProfileStat: id (uuid), profileId, label (jsonb), value (string), order (int)\n   - SocialNetwork: id (uuid), profileId, name (string), url (string), icon (string)\n5. Create src/prisma/client.ts with singleton PrismaClient export\n6. Add scripts to package.json: db:generate (prisma generate), db:migrate (prisma migrate dev), db:studio (prisma studio)\n7. Run prisma migrate dev --name init to create first migration\n8. Update .env.example with DATABASE_URL and DIRECT_URL placeholders",
@@ -2991,7 +2991,7 @@
         "updatedAt": "2026-03-21T04:40:51.969Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Implement PrismaProjectRepository",
         "description": "Create concrete implementation of IProjectRepository using Prisma, including mapper from Prisma model to domain Project entity.",
         "details": "1. Create ProjectMapper.ts with methods:\n   - toDomain(prismaProject): Project - converts Prisma result to domain entity\n     - Parse JSONB fields to LocalizedText VOs\n     - Parse slug to Slug VO\n     - Parse coverImage to Image VO\n     - Parse periodStart/End to DateRange VO\n     - Parse skills relation to Skill[] entities\n     - Parse relatedProjectSlugs to Slug[] VOs\n     - Use Project.create() to validate and instantiate\n   - toPrisma(project): Prisma.ProjectCreateInput - converts domain to Prisma input\n2. Implement PrismaProjectRepository implementing IProjectRepository:\n   - findAll(): Promise<Project[]> - prisma.project.findMany() with include skills, map with ProjectMapper\n   - findPublished(): Promise<Project[]> - where: { status: PUBLISHED, deletedAt: null }\n   - findFeatured(): Promise<Project[]> - where: { featured: true, status: PUBLISHED, deletedAt: null }\n   - findById(id: Id): Promise<Project | null> - prisma.project.findUnique({ where: { id: id.value } })\n   - findBySlug(slug: Slug): Promise<Project | null> - prisma.project.findUnique({ where: { slug: slug.value } })\n   - findRelated(id: Id, limit = 3): Promise<Project[]> - fetch project, then query where slug in relatedProjectSlugs and id != current, limit\n   - save(project): Promise<void> - upsert logic\n   - delete(id): Promise<void> - soft delete (set deletedAt)\n3. Handle Either errors from domain mappers appropriately (throw infrastructure exceptions if mapping fails)",
@@ -3004,7 +3004,7 @@
         "subtasks": []
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Implement PrismaExperienceRepository",
         "description": "Create concrete implementation of IExperienceRepository using Prisma, including join with ExperienceSkill to return skills with workDescription.",
         "details": "1. Create ExperienceMapper.ts with methods:\n   - toDomain(prismaExperience): Experience\n     - Parse JSONB fields (company, position, location, description) to LocalizedText VOs\n     - Parse logo to Image VO\n     - Parse employmentType to EmploymentType VO\n     - Parse locationType to LocationType VO\n     - Parse startAt/endAt to DateRange VO\n     - Parse experienceSkills relation to ExperienceSkill[] entities (each includes skill and workDescription)\n     - Use Experience.create() to validate\n   - toPrisma(experience): Prisma.ExperienceCreateInput\n2. Implement PrismaExperienceRepository implementing IExperienceRepository:\n   - findAll(): Promise<Experience[]>\n     - prisma.experience.findMany({\n         include: {\n           experienceSkills: {\n             include: { skill: true }\n           }\n         },\n         orderBy: { startAt: 'desc' }\n       })\n     - Map results with ExperienceMapper\n   - findById(id: Id): Promise<Experience | null> - similar include pattern\n   - save(experience): Promise<void> - upsert with nested experienceSkills\n   - delete(id): Promise<void> - hard delete (cascade to experienceSkills)\n3. Handle relation mapping correctly for ExperienceSkill join table",
@@ -3017,7 +3017,7 @@
         "subtasks": []
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Implement PrismaProfileRepository",
         "description": "Create concrete implementation of IProfileRepository using Prisma, including stats and social networks relations.",
         "details": "1. Create ProfileMapper.ts with methods:\n   - toDomain(prismaProfile): Profile\n     - Parse name to Name VO\n     - Parse JSONB fields (headline, bio) to LocalizedText VOs\n     - Parse photo to Image VO\n     - Parse stats relation to ProfileStat[] entities (each with label LocalizedText VO)\n     - Parse socialNetworks relation to SocialNetwork[] entities\n     - Parse featuredProjectSlugs to Slug[] VOs\n     - Use Profile.create() to validate (max 6 featured projects)\n   - toPrisma(profile): Prisma.ProfileCreateInput\n2. Implement PrismaProfileRepository implementing IProfileRepository:\n   - find(): Promise<Profile | null>\n     - prisma.profile.findFirst({\n         include: {\n           stats: { orderBy: { order: 'asc' } },\n           socialNetworks: true\n         }\n       })\n     - Assumes single profile (take first)\n     - Map with ProfileMapper\n     - Return null if not found\n   - save(profile): Promise<void> - upsert with nested stats and socialNetworks\n3. Handle single-profile assumption (findFirst instead of findUnique)",
@@ -3030,7 +3030,7 @@
         "subtasks": []
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Implement ResendEmailService",
         "description": "Create concrete implementation of IEmailService using Resend API for sending contact form emails.",
         "details": "1. Install dependency: resend\n2. Create ResendEmailService.ts implementing IEmailService:\n   - Constructor accepts Resend API client (injected)\n   - send(message: IContactMessageDTO): Promise<Either<DomainError, void>>\n     - Use resend.emails.send({\n         from: 'onboarding@resend.dev' (or configured sender),\n         to: process.env.CONTACT_EMAIL_TO,\n         replyTo: message.email,\n         subject: `Contact from ${message.name}`,\n         html: template with message.name, message.email, message.message\n       })\n     - Wrap in try/catch\n     - On success: return right(undefined)\n     - On error: return left(new DomainError({ code: 'EMAIL_SEND_FAILED', message: error.message }))\n3. Create simple HTML email template (inline styles)\n4. Update .env.example with RESEND_API_KEY and CONTACT_EMAIL_TO",
@@ -3043,7 +3043,7 @@
         "subtasks": []
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Create dependency injection container",
         "description": "Build factory/container that resolves concrete implementations of port interfaces for consumption in apps/web Server Components.",
         "details": "1. Create src/container.ts with makeContainer() function:\n   - Initialize PrismaClient singleton\n   - Initialize Resend client with RESEND_API_KEY from env\n   - Instantiate repositories:\n     - projectRepository = new PrismaProjectRepository(prisma)\n     - experienceRepository = new PrismaExperienceRepository(prisma)\n     - profileRepository = new PrismaProfileRepository(prisma)\n   - Instantiate services:\n     - emailService = new ResendEmailService(resend, { to: process.env.CONTACT_EMAIL_TO })\n   - Return object: { projectRepository, experienceRepository, profileRepository, emailService }\n2. Create src/index.ts:\n   - export { makeContainer } from './container'\n   - export type { Container } from './container'\n   - Re-export repositories and services for convenience\n3. Ensure container is singleton (call once, cache result)\n4. Add environment validation (throw if required env vars missing)",
@@ -3059,7 +3059,7 @@
         "subtasks": []
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "Define Response Envelope and implement GET /api/v1/projects/:slug",
         "description": "Introduce consistent REST response envelope and implement the first API endpoint with thin handler that calls use cases and maps errors to HTTP.",
         "details": "1. Create apps/web/src/lib/api/envelope.ts:\n   - Define ApiResponse<T> type:\n     - Success: { data: T, error: null, meta?: { timestamp: string, ... } }\n     - Error: { data: null, error: { code: string, message: string, details?: unknown }, meta?: { ... } }\n   - Helper functions:\n     - successResponse<T>(data: T, meta?): ApiResponse<T>\n     - errorResponse(code, message, details?, meta?): ApiResponse<never>\n2. Create apps/web/src/lib/api/error-mapper.ts:\n   - mapDomainErrorToHttp(error: DomainError, locale: string): { status: number, response: ApiResponse<never> }\n     - NotFoundError → 404\n     - ValidationError → 400\n     - Generic DomainError → 400\n     - Unknown error → 500\n   - Localize error messages based on locale (use i18n if available, or default English)\n3. Implement apps/web/src/app/api/v1/projects/[slug]/route.ts:\n   - export async GET(request: NextRequest, { params }: { params: { slug: string } }):\n     - Extract locale from request headers (Accept-Language) or use default\n     - Get container from makeContainer()\n     - Create GetProjectBySlug use case: new GetProjectBySlug(container.projectRepository)\n     - Create Slug VO from params.slug\n     - Execute use case: const result = await useCase.execute(slug)\n     - If result.isLeft(): map error with mapDomainErrorToHttp, return NextResponse.json(response, { status })\n     - If result.isRight(): return NextResponse.json(successResponse(result.value.toDTO()), { status: 200 })\n   - No business logic in handler - only orchestration\n4. Set CORS headers if needed\n5. Add Next.js route config: export const dynamic = 'force-dynamic' (or 'auto' depending on caching strategy)",
