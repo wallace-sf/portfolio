@@ -10,21 +10,8 @@
 - **pnpm** ≥ 8 (`npm install -g pnpm`)
 - **Git**
 - **Docker** (Docker Engine or Docker Desktop) — required to run the local database
-- **Supabase CLI** ≥ 2 — required for `pnpm db:*` commands
 
-Install the Supabase CLI:
-
-```bash
-# macOS
-brew install supabase/tap/supabase
-
-# Linux (manual binary)
-curl -sSL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz \
-  | tar -xz && sudo mv supabase /usr/local/bin/
-
-# npm / pnpm (any OS)
-npm install -g supabase
-```
+The Supabase CLI is installed automatically via `pnpm install` — no global installation needed.
 
 > **Linux + Docker Desktop only:** the Supabase CLI does not respect the active Docker
 > context and connects directly to `/var/run/docker.sock`. If `pnpm db:start` fails,
