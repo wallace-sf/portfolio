@@ -3,7 +3,6 @@ name: Task
 about: Feature, refactor, fix ou chore rastreado pelo Task Master
 title: "[T-XX] "
 labels: "mvp, priority: medium"
-milestone: "Sprint 2 — Infrastructure"
 ---
 
 ## Contexto
