@@ -6,7 +6,7 @@
 
 ## Prerequisites
 
-- **Node.js** ≥ 20
+- **Node.js** ≥ 22
 - **pnpm** ≥ 8 (`npm install -g pnpm`)
 - **Git**
 - **Docker** (Docker Engine or Docker Desktop) — required to run the local database
