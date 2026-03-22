@@ -6,10 +6,33 @@
 
 ## Prerequisites
 
-- **Node.js** ≥ 18
+- **Node.js** ≥ 20
 - **pnpm** ≥ 8 (`npm install -g pnpm`)
 - **Git**
-- A Supabase project (for database-backed features)
+- **Docker** (Docker Engine or Docker Desktop) — required to run the local database
+- **Supabase CLI** ≥ 2 — required for `pnpm db:*` commands
+
+Install the Supabase CLI:
+
+```bash
+# macOS
+brew install supabase/tap/supabase
+
+# Linux (manual binary)
+curl -sSL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz \
+  | tar -xz && sudo mv supabase /usr/local/bin/
+
+# npm / pnpm (any OS)
+npm install -g supabase
+```
+
+> **Linux + Docker Desktop only:** the Supabase CLI does not respect the active Docker
+> context and connects directly to `/var/run/docker.sock`. If `pnpm db:start` fails,
+> run once or add to your shell profile:
+>
+> ```bash
+> export DOCKER_HOST=unix:///var/run/docker.sock
+> ```
 
 ---
 
@@ -25,19 +48,37 @@ pnpm install
 
 ## Environment Variables
 
-Copy the example env file and fill in your Supabase credentials:
+```bash
+cp .env.example .env
+```
+
+### Local database (recommended for development)
+
+Start the local Supabase stack and use the local URLs:
 
 ```bash
-cp .env.example .env.local
+pnpm db:start   # starts Docker containers
+pnpm db:status  # shows URLs and service status
 ```
 
-Key variables:
+Set in `.env`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
+DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+DIRECT_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"
 ```
+
+Then apply migrations:
+
+```bash
+DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres" \
+  pnpm --filter @repo/infra db:migrate
+```
+
+### Cloud database (Supabase dashboard)
+
+Obtain the connection strings from **Project Settings → Database** and set them in `.env`.
+See `.env.example` for the expected format.
 
 ---
 
@@ -51,6 +92,11 @@ SUPABASE_SERVICE_ROLE_KEY=...
 | `pnpm lint` | Lint all packages |
 | `pnpm typecheck` | TypeScript check across all packages |
 | `pnpm format` | Prettier format |
+| `pnpm db:start` | Start local Supabase stack (Docker) |
+| `pnpm db:stop` | Stop local Supabase stack |
+| `pnpm db:reset` | Reset local DB and reapply migrations |
+| `pnpm db:status` | Show local service URLs and status |
+| `pnpm db:studio` | Open Supabase Studio (visual DB browser) |
 
 Run a single package:
 
