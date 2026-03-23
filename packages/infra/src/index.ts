@@ -4,3 +4,5 @@ export { ProjectMapper } from './repositories/project/ProjectMapper';
 export { PrismaProjectRepository } from './repositories/project/PrismaProjectRepository';
 export { ExperienceMapper } from './repositories/experience/ExperienceMapper';
 export { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
+export { ProfileMapper } from './repositories/profile/ProfileMapper';
+export { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
