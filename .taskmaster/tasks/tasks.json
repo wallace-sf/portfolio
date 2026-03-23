@@ -2786,7 +2786,7 @@
   "sprint-2": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Configure packages/infra with Prisma + Supabase",
         "description": "Set up the infrastructure package with Prisma ORM connected to Supabase Postgres, including complete schema definition and initial migration.",
         "details": "1. Initialize packages/infra with package.json and tsconfig.json\n2. Install dependencies: prisma, @prisma/client\n3. Create schema.prisma with datasource db (provider: postgresql, url from env DATABASE_URL, directUrl from env DIRECT_URL)\n4. Define models following the domain entities:\n   - Project: id (uuid @id @default(uuid())), slug (unique), coverImageUrl, coverImageAlt (jsonb for LocalizedText), title (jsonb), caption (jsonb), content (text), skills (relation), theme (jsonb optional), summary (jsonb optional), objectives (jsonb optional), role (jsonb optional), team (string optional), periodStart (datetime), periodEnd (datetime optional), featured (boolean), status (enum: DRAFT, PUBLISHED, ARCHIVED), relatedProjectSlugs (string[]), createdAt, updatedAt, deletedAt (optional)\n   - Skill: id (uuid), description (jsonb), icon (string), type (enum: TECHNICAL, SOFT, LANGUAGE, TOOL)\n   - Experience: id (uuid), company (jsonb), position (jsonb), location (jsonb), description (jsonb), logoUrl, logoAlt (jsonb), employmentType (enum), locationType (enum), startAt (datetime), endAt (datetime optional), createdAt, updatedAt\n   - ExperienceSkill: experienceId, skillId, workDescription (jsonb), @@id([experienceId, skillId])\n   - Profile: id (uuid), name (string), headline (jsonb), bio (jsonb), photoUrl, photoAlt (jsonb), featuredProjectSlugs (string[])\n   - ProfileStat: id (uuid), profileId, label (jsonb), value (string), order (int)\n   - SocialNetwork: id (uuid), profileId, name (string), url (string), icon (string)\n5. Create src/prisma/client.ts with singleton PrismaClient export\n6. Add scripts to package.json: db:generate (prisma generate), db:migrate (prisma migrate dev), db:studio (prisma studio)\n7. Run prisma migrate dev --name init to create first migration\n8. Update .env.example with DATABASE_URL and DIRECT_URL placeholders",
@@ -2802,7 +2802,8 @@
             "dependencies": [],
             "details": "1. Create packages/infra directory structure with src/ folder\n2. Initialize package.json with name '@repo/infra', version, and proper exports\n3. Create tsconfig.json extending base config with strict mode and proper paths\n4. Add .gitignore for node_modules, dist, .env\n5. Install core dependencies: prisma (dev), @prisma/client, and typescript tooling\n6. Set up src/index.ts as main entry point exporting repositories\n7. Verify package builds with tsc --noEmit",
             "status": "pending",
-            "testStrategy": "1. Run pnpm install to verify dependencies resolve\n2. Run tsc --noEmit to verify TypeScript config is valid\n3. Verify package can be imported from apps/web with proper module resolution\n4. Check package.json exports field resolves correctly"
+            "testStrategy": "1. Run pnpm install to verify dependencies resolve\n2. Run tsc --noEmit to verify TypeScript config is valid\n3. Verify package can be imported from apps/web with proper module resolution\n4. Check package.json exports field resolves correctly",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -2813,7 +2814,8 @@
             ],
             "details": "1. Create prisma/schema.prisma with generator client and datasource db (provider: postgresql, url: env('DATABASE_URL'), directUrl: env('DIRECT_URL'))\n2. Define ProjectStatus enum (DRAFT, PUBLISHED, ARCHIVED)\n3. Define Project model with:\n   - id: String @id @default(uuid()) @db.Uuid\n   - slug: String @unique\n   - coverImageUrl: String, coverImageAlt: Json (for LocalizedText)\n   - title: Json, caption: Json, summary: Json?, objectives: Json?, role: Json?, theme: Json?\n   - content: String @db.Text\n   - team: String?\n   - periodStart: DateTime, periodEnd: DateTime?\n   - featured: Boolean @default(false)\n   - status: ProjectStatus @default(DRAFT)\n   - relatedProjectSlugs: String[]\n   - createdAt: DateTime @default(now()), updatedAt: DateTime @updatedAt, deletedAt: DateTime?\n   - skills relation to Skill[] via ProjectSkill join table\n4. Update .env.example with DATABASE_URL and DIRECT_URL placeholders",
             "status": "pending",
-            "testStrategy": "1. Run prisma format to validate schema syntax\n2. Run prisma validate to check for errors\n3. Verify DATABASE_URL connection with prisma db pull (should show empty schema)\n4. Check that JSONB fields are properly typed as Json in schema"
+            "testStrategy": "1. Run prisma format to validate schema syntax\n2. Run prisma validate to check for errors\n3. Verify DATABASE_URL connection with prisma db pull (should show empty schema)\n4. Check that JSONB fields are properly typed as Json in schema",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -2824,7 +2826,8 @@
             ],
             "details": "1. Define SkillType enum (TECHNICAL, SOFT, LANGUAGE, TOOL)\n2. Define Skill model:\n   - id: String @id @default(uuid()) @db.Uuid\n   - description: Json (for LocalizedText)\n   - icon: String\n   - type: SkillType\n   - projects: Project[] relation via ProjectSkill\n   - experiences: ExperienceSkill[]\n   - createdAt: DateTime @default(now()), updatedAt: DateTime @updatedAt\n3. Define ProjectSkill join table:\n   - projectId: String @db.Uuid\n   - skillId: String @db.Uuid\n   - project: Project @relation(fields: [projectId], references: [id], onDelete: Cascade)\n   - skill: Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)\n   - @@id([projectId, skillId])\n   - @@index([skillId])",
             "status": "pending",
-            "testStrategy": "1. Run prisma format and validate\n2. Check relation syntax for many-to-many is correct\n3. Verify cascade delete is configured properly\n4. Generate types with prisma generate and inspect ProjectSkill type definition"
+            "testStrategy": "1. Run prisma format and validate\n2. Check relation syntax for many-to-many is correct\n3. Verify cascade delete is configured properly\n4. Generate types with prisma generate and inspect ProjectSkill type definition",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -2835,7 +2838,8 @@
             ],
             "details": "1. Define EmploymentType enum (FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, FREELANCE)\n2. Define LocationType enum (ONSITE, REMOTE, HYBRID)\n3. Define Experience model:\n   - id: String @id @default(uuid()) @db.Uuid\n   - company: Json, position: Json, location: Json, description: Json (all LocalizedText)\n   - logoUrl: String, logoAlt: Json\n   - employmentType: EmploymentType\n   - locationType: LocationType\n   - startAt: DateTime, endAt: DateTime?\n   - createdAt: DateTime @default(now()), updatedAt: DateTime @updatedAt\n   - skills: ExperienceSkill[]\n4. Define ExperienceSkill model:\n   - experienceId: String @db.Uuid\n   - skillId: String @db.Uuid\n   - workDescription: Json (LocalizedText explaining how skill was used)\n   - experience: Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)\n   - skill: Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)\n   - @@id([experienceId, skillId])",
             "status": "pending",
-            "testStrategy": "1. Run prisma format and validate\n2. Verify ExperienceSkill has workDescription field (not just a join table)\n3. Check cascade delete on both relations\n4. Generate and inspect types to ensure workDescription is included"
+            "testStrategy": "1. Run prisma format and validate\n2. Verify ExperienceSkill has workDescription field (not just a join table)\n3. Check cascade delete on both relations\n4. Generate and inspect types to ensure workDescription is included",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -2846,7 +2850,8 @@
             ],
             "details": "1. Define Profile model:\n   - id: String @id @default(uuid()) @db.Uuid\n   - name: String\n   - headline: Json, bio: Json (LocalizedText)\n   - photoUrl: String, photoAlt: Json\n   - featuredProjectSlugs: String[] (max 6, validated in domain)\n   - stats: ProfileStat[]\n   - socialNetworks: SocialNetwork[]\n   - createdAt: DateTime @default(now()), updatedAt: DateTime @updatedAt\n2. Define ProfileStat model:\n   - id: String @id @default(uuid()) @db.Uuid\n   - profileId: String @db.Uuid\n   - label: Json (LocalizedText)\n   - value: String\n   - order: Int\n   - profile: Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)\n   - @@index([profileId, order])\n3. Define SocialNetwork model:\n   - id: String @id @default(uuid()) @db.Uuid\n   - profileId: String @db.Uuid\n   - name: String\n   - url: String\n   - icon: String\n   - profile: Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)\n   - @@index([profileId])",
             "status": "pending",
-            "testStrategy": "1. Run prisma format and validate\n2. Verify one-to-many relations are correctly defined\n3. Check indexes on profileId for efficient queries\n4. Generate types and verify ProfileStat has order field for sorting"
+            "testStrategy": "1. Run prisma format and validate\n2. Verify one-to-many relations are correctly defined\n3. Check indexes on profileId for efficient queries\n4. Generate types and verify ProfileStat has order field for sorting",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -2857,7 +2862,8 @@
             ],
             "details": "1. Create src/prisma/client.ts:\n   - Import PrismaClient from @prisma/client\n   - Implement singleton pattern with globalThis caching (prevent multiple instances in dev)\n   - Export const prisma = globalThis.prisma || new PrismaClient({ log: ['query', 'error', 'warn'] })\n   - In dev mode: globalThis.prisma = prisma\n   - Add graceful shutdown: process.on('beforeExit', () => prisma.$disconnect())\n2. Add scripts to package.json:\n   - \"db:generate\": \"prisma generate\"\n   - \"db:migrate\": \"prisma migrate dev\"\n   - \"db:migrate:deploy\": \"prisma migrate deploy\" (for production)\n   - \"db:studio\": \"prisma studio\"\n   - \"db:push\": \"prisma db push\" (for dev quick sync)\n   - \"db:seed\": \"tsx prisma/seed.ts\" (optional, for later)\n3. Export prisma client from src/index.ts",
             "status": "pending",
-            "testStrategy": "1. Import prisma client in a test file and verify it instantiates\n2. Run db:generate and check .prisma/client is created\n3. Test connection with prisma.$queryRaw`SELECT 1` in a simple script\n4. Verify singleton behavior by importing twice and checking same instance\n5. Check graceful shutdown hook is registered"
+            "testStrategy": "1. Import prisma client in a test file and verify it instantiates\n2. Run db:generate and check .prisma/client is created\n3. Test connection with prisma.$queryRaw`SELECT 1` in a simple script\n4. Verify singleton behavior by importing twice and checking same instance\n5. Check graceful shutdown hook is registered",
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -2868,7 +2874,8 @@
             ],
             "details": "1. Ensure .env has valid DATABASE_URL and DIRECT_URL pointing to Supabase\n2. Run prisma migrate dev --name init to:\n   - Generate SQL migration in prisma/migrations/\n   - Apply migration to database\n   - Generate Prisma Client types\n3. Review generated SQL migration file to ensure:\n   - All tables created with correct columns\n   - JSONB columns use jsonb type\n   - UUID columns use uuid type with gen_random_uuid() default\n   - Indexes created on foreign keys and slug\n   - Cascade deletes configured\n   - Enums created as PostgreSQL enums\n4. Run prisma studio to visually inspect schema\n5. Commit migration files to git",
             "status": "pending",
-            "testStrategy": "1. Verify migration SQL file exists in prisma/migrations/\n2. Check database with prisma studio shows all 8 tables\n3. Run prisma db pull to reverse-engineer and compare with schema.prisma\n4. Execute test query: await prisma.project.findMany() (should return [])\n5. Test cascade delete by creating related records and deleting parent\n6. Verify UUID defaults work by creating record without id"
+            "testStrategy": "1. Verify migration SQL file exists in prisma/migrations/\n2. Check database with prisma studio shows all 8 tables\n3. Run prisma db pull to reverse-engineer and compare with schema.prisma\n4. Execute test query: await prisma.project.findMany() (should return [])\n5. Test cascade delete by creating related records and deleting parent\n6. Verify UUID defaults work by creating record without id",
+            "parentId": "undefined"
           },
           {
             "id": 8,
@@ -2879,7 +2886,8 @@
             ],
             "details": "1. Create prisma/seed.ts with:\n   - Sample Project with JSONB LocalizedText fields (en, es)\n   - Sample Skills (3-4) with different types\n   - ProjectSkill relations linking project to skills\n   - Sample Experience with ExperienceSkill including workDescription\n   - Sample Profile with ProfileStats (ordered) and SocialNetworks\n   - Use realistic data matching domain constraints\n2. Add seed script: \"db:seed\": \"tsx prisma/seed.ts\"\n3. Run seed and verify data appears in Prisma Studio\n4. Test queries:\n   - prisma.project.findMany({ include: { skills: { include: { skill: true } } } })\n   - prisma.experience.findMany({ include: { skills: { include: { skill: true } } }, orderBy: { startAt: 'desc' } })\n   - prisma.profile.findFirst({ include: { stats: { orderBy: { order: 'asc' } }, socialNetworks: true } })\n5. Verify JSONB fields parse correctly and UUIDs are valid",
             "status": "pending",
-            "testStrategy": "1. Run db:seed and verify no errors\n2. Check Prisma Studio shows all seeded data with correct relations\n3. Write simple test script that queries all models and logs results\n4. Verify JSONB fields return proper objects (not strings)\n5. Test filtering: prisma.project.findMany({ where: { status: 'PUBLISHED', featured: true } })\n6. Clean up: prisma migrate reset to test migration + seed workflow"
+            "testStrategy": "1. Run db:seed and verify no errors\n2. Check Prisma Studio shows all seeded data with correct relations\n3. Write simple test script that queries all models and logs results\n4. Verify JSONB fields return proper objects (not strings)\n5. Test filtering: prisma.project.findMany({ where: { status: 'PUBLISHED', featured: true } })\n6. Clean up: prisma migrate reset to test migration + seed workflow",
+            "parentId": "undefined"
           }
         ],
         "complexity": 6,
@@ -2887,7 +2895,7 @@
         "expansionPrompt": "Break down the Prisma + Supabase infrastructure setup into subtasks covering: (1) package initialization with dependencies, (2) schema.prisma datasource configuration, (3) Project model definition with JSONB fields, (4) Experience + ExperienceSkill models with relations, (5) Profile + ProfileStat + SocialNetwork models, (6) Skill model, (7) PrismaClient singleton setup, (8) initial migration generation and testing. Each subtask should be independently testable."
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Implement PrismaProjectRepository",
         "description": "Create concrete implementation of IProjectRepository using Prisma, including mapper from Prisma model to domain Project entity.",
         "details": "1. Create ProjectMapper.ts with methods:\n   - toDomain(prismaProject): Project - converts Prisma result to domain entity\n     - Parse JSONB fields to LocalizedText VOs\n     - Parse slug to Slug VO\n     - Parse coverImage to Image VO\n     - Parse periodStart/End to DateRange VO\n     - Parse skills relation to Skill[] entities\n     - Parse relatedProjectSlugs to Slug[] VOs\n     - Use Project.create() to validate and instantiate\n   - toPrisma(project): Prisma.ProjectCreateInput - converts domain to Prisma input\n2. Implement PrismaProjectRepository implementing IProjectRepository:\n   - findAll(): Promise<Project[]> - prisma.project.findMany() with include skills, map with ProjectMapper\n   - findPublished(): Promise<Project[]> - where: { status: PUBLISHED, deletedAt: null }\n   - findFeatured(): Promise<Project[]> - where: { featured: true, status: PUBLISHED, deletedAt: null }\n   - findById(id: Id): Promise<Project | null> - prisma.project.findUnique({ where: { id: id.value } })\n   - findBySlug(slug: Slug): Promise<Project | null> - prisma.project.findUnique({ where: { slug: slug.value } })\n   - findRelated(id: Id, limit = 3): Promise<Project[]> - fetch project, then query where slug in relatedProjectSlugs and id != current, limit\n   - save(project): Promise<void> - upsert logic\n   - delete(id): Promise<void> - soft delete (set deletedAt)\n3. Handle Either errors from domain mappers appropriately (throw infrastructure exceptions if mapping fails)",
@@ -2905,7 +2913,8 @@
             "dependencies": [],
             "details": "Create packages/infra/src/repositories/project/ProjectMapper.ts with toDomain method that:\n1. Accepts prismaProject with included skills relation\n2. Parse JSONB fields to LocalizedText VOs: title, subtitle, description, challenge, solution\n3. Parse slug string to Slug VO\n4. Parse coverImage JSONB to Image VO\n5. Parse periodStart/periodEnd to DateRange VO\n6. Parse skills relation array to Skill[] entities using SkillFactory.bulk\n7. Parse relatedProjectSlugs string[] to Slug[] VOs\n8. Parse tags string[] to Tag[] VOs\n9. Call Project.create() with all parsed VOs\n10. Handle Either errors from VO creation - if any VO.create() returns left, throw InfrastructureError with descriptive message\n11. Return unwrapped Project entity on success",
             "status": "pending",
-            "testStrategy": "Unit tests with mock Prisma data:\n1. Test successful mapping with valid JSONB data returns Project entity\n2. Test invalid slug in Prisma data throws InfrastructureError\n3. Test invalid LocalizedText JSONB throws InfrastructureError\n4. Test invalid Image JSONB throws InfrastructureError\n5. Test invalid DateRange (endAt before startAt) throws error\n6. Test skills relation properly mapped to Skill[] entities\n7. Test relatedProjectSlugs array converts to Slug[] VOs"
+            "testStrategy": "Unit tests with mock Prisma data:\n1. Test successful mapping with valid JSONB data returns Project entity\n2. Test invalid slug in Prisma data throws InfrastructureError\n3. Test invalid LocalizedText JSONB throws InfrastructureError\n4. Test invalid Image JSONB throws InfrastructureError\n5. Test invalid DateRange (endAt before startAt) throws error\n6. Test skills relation properly mapped to Skill[] entities\n7. Test relatedProjectSlugs array converts to Slug[] VOs",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -2916,7 +2925,8 @@
             ],
             "details": "In packages/infra/src/repositories/project/ProjectMapper.ts add toPrisma method that:\n1. Accepts Project domain entity\n2. Extract primitive values from VOs:\n   - slug: project.slug.value\n   - title/subtitle/description/challenge/solution: serialize LocalizedText VOs to JSONB {en: string, pt: string}\n   - coverImage: serialize Image VO to JSONB {url: string, alt: {en, pt}}\n   - periodStart/periodEnd: extract from DateRange VO\n   - status, featured, deletedAt: direct primitive values\n3. Convert skills to Prisma relation format (connect by id or nested create)\n4. Convert relatedProjectSlugs Slug[] to string[] using .map(s => s.value)\n5. Convert tags Tag[] to string[] using .map(t => t.value)\n6. Return Prisma.ProjectCreateInput object\n7. Handle nested relations properly for upsert operations",
             "status": "pending",
-            "testStrategy": "Unit tests:\n1. Test Project entity with all VOs converts to valid Prisma input\n2. Verify LocalizedText VOs serialize to correct JSONB structure\n3. Verify Image VO serializes to correct JSONB structure\n4. Verify DateRange splits into periodStart/periodEnd\n5. Verify Slug[] converts to string[]\n6. Verify skills relation format correct for Prisma\n7. Test round-trip: toPrisma(toDomain(prismaData)) preserves all data"
+            "testStrategy": "Unit tests:\n1. Test Project entity with all VOs converts to valid Prisma input\n2. Verify LocalizedText VOs serialize to correct JSONB structure\n3. Verify Image VO serializes to correct JSONB structure\n4. Verify DateRange splits into periodStart/periodEnd\n5. Verify Slug[] converts to string[]\n6. Verify skills relation format correct for Prisma\n7. Test round-trip: toPrisma(toDomain(prismaData)) preserves all data",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -2928,7 +2938,8 @@
             ],
             "details": "In packages/infra/src/repositories/project/PrismaProjectRepository.ts implement:\n1. findAll(): Promise<Project[]>\n   - Call prisma.project.findMany({ include: { skills: true }, where: { deletedAt: null }, orderBy: { periodEnd: 'desc' } })\n   - Map results using ProjectMapper.toDomain\n   - Return array of Project entities\n2. findPublished(): Promise<Project[]>\n   - Same as findAll but add where: { status: 'PUBLISHED', deletedAt: null }\n3. findFeatured(): Promise<Project[]>\n   - Same as findAll but add where: { featured: true, status: 'PUBLISHED', deletedAt: null }\n4. All methods must include skills relation in query\n5. Handle mapping errors by throwing InfrastructureError\n6. Ensure soft-delete filter (deletedAt: null) applied consistently",
             "status": "pending",
-            "testStrategy": "Integration tests with test database:\n1. Seed database with mix of PUBLISHED/DRAFT, featured/non-featured, deleted/active projects\n2. Test findAll returns only non-deleted projects\n3. Test findPublished returns only published, non-deleted projects\n4. Test findFeatured returns only featured, published, non-deleted projects\n5. Test all methods include skills relation\n6. Test results ordered by periodEnd DESC\n7. Test empty result set returns empty array, not null"
+            "testStrategy": "Integration tests with test database:\n1. Seed database with mix of PUBLISHED/DRAFT, featured/non-featured, deleted/active projects\n2. Test findAll returns only non-deleted projects\n3. Test findPublished returns only published, non-deleted projects\n4. Test findFeatured returns only featured, published, non-deleted projects\n5. Test all methods include skills relation\n6. Test results ordered by periodEnd DESC\n7. Test empty result set returns empty array, not null",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -2940,7 +2951,8 @@
             ],
             "details": "In packages/infra/src/repositories/project/PrismaProjectRepository.ts implement:\n1. findById(id: Id): Promise<Project | null>\n   - Call prisma.project.findUnique({ where: { id: id.value }, include: { skills: true } })\n   - If result is null, return null\n   - Otherwise map with ProjectMapper.toDomain and return Project entity\n2. findBySlug(slug: Slug): Promise<Project | null>\n   - Call prisma.project.findUnique({ where: { slug: slug.value }, include: { skills: true } })\n   - If result is null, return null\n   - Otherwise map with ProjectMapper.toDomain and return Project entity\n3. Both methods must include skills relation\n4. Both methods should NOT filter by deletedAt (allow finding deleted projects for admin purposes)\n5. Handle mapping errors by throwing InfrastructureError",
             "status": "pending",
-            "testStrategy": "Integration tests:\n1. Create project via Prisma, verify findById returns correct project\n2. Create project with unique slug, verify findBySlug returns correct project\n3. Test findById with non-existent id returns null\n4. Test findBySlug with non-existent slug returns null\n5. Test both methods include skills relation in result\n6. Test both methods can find deleted projects (deletedAt not null)\n7. Test invalid Id or Slug VO creation handled before query"
+            "testStrategy": "Integration tests:\n1. Create project via Prisma, verify findById returns correct project\n2. Create project with unique slug, verify findBySlug returns correct project\n3. Test findById with non-existent id returns null\n4. Test findBySlug with non-existent slug returns null\n5. Test both methods include skills relation in result\n6. Test both methods can find deleted projects (deletedAt not null)\n7. Test invalid Id or Slug VO creation handled before query",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -2952,7 +2964,8 @@
             ],
             "details": "In packages/infra/src/repositories/project/PrismaProjectRepository.ts implement:\n1. findRelated(id: Id, limit: number = 3): Promise<Project[]>\n   - First fetch current project: prisma.project.findUnique({ where: { id: id.value } })\n   - If project is null or relatedProjectSlugs is empty, return empty array\n   - Query related projects: prisma.project.findMany({\n       where: {\n         slug: { in: project.relatedProjectSlugs },\n         id: { not: id.value },\n         status: 'PUBLISHED',\n         deletedAt: null\n       },\n       include: { skills: true },\n       take: limit\n     })\n   - Map results using ProjectMapper.toDomain\n   - Return array of related Project entities\n2. Handle edge cases: project not found, empty relatedProjectSlugs, no matches",
             "status": "pending",
-            "testStrategy": "Integration tests:\n1. Create project A with relatedProjectSlugs pointing to projects B and C\n2. Verify findRelated(A.id) returns B and C\n3. Verify findRelated excludes project A itself (id != current)\n4. Verify findRelated respects limit parameter\n5. Verify findRelated only returns PUBLISHED, non-deleted projects\n6. Test project with empty relatedProjectSlugs returns empty array\n7. Test non-existent project id returns empty array\n8. Test relatedProjectSlugs pointing to non-existent slugs returns empty array"
+            "testStrategy": "Integration tests:\n1. Create project A with relatedProjectSlugs pointing to projects B and C\n2. Verify findRelated(A.id) returns B and C\n3. Verify findRelated excludes project A itself (id != current)\n4. Verify findRelated respects limit parameter\n5. Verify findRelated only returns PUBLISHED, non-deleted projects\n6. Test project with empty relatedProjectSlugs returns empty array\n7. Test non-existent project id returns empty array\n8. Test relatedProjectSlugs pointing to non-existent slugs returns empty array",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -2964,7 +2977,8 @@
             ],
             "details": "In packages/infra/src/repositories/project/PrismaProjectRepository.ts implement:\n1. save(project: Project): Promise<void>\n   - Convert project using ProjectMapper.toPrisma\n   - Use prisma.project.upsert({\n       where: { id: project.id?.value ?? 'new-id' },\n       create: prismaData,\n       update: prismaData\n     })\n   - Handle skills relation update (disconnect old, connect new)\n   - Wrap in transaction if needed for atomicity\n   - Return void on success, throw InfrastructureError on failure\n2. delete(id: Id): Promise<void>\n   - Soft delete: prisma.project.update({ where: { id: id.value }, data: { deletedAt: new Date() } })\n   - Do NOT use prisma.project.delete (hard delete)\n   - Return void on success\n   - If project not found, throw InfrastructureError\n3. Handle Prisma unique constraint violations appropriately",
             "status": "pending",
-            "testStrategy": "Integration tests:\n1. Test save with new project (no id) creates record\n2. Test save with existing project id updates record\n3. Verify save updates skills relation correctly\n4. Test delete sets deletedAt timestamp (soft delete)\n5. Test deleted project not returned by findPublished\n6. Test deleted project still returned by findById\n7. Test save with duplicate slug throws error\n8. Test delete with non-existent id throws error\n9. Test upsert preserves existing fields not in update"
+            "testStrategy": "Integration tests:\n1. Test save with new project (no id) creates record\n2. Test save with existing project id updates record\n3. Verify save updates skills relation correctly\n4. Test delete sets deletedAt timestamp (soft delete)\n5. Test deleted project not returned by findPublished\n6. Test deleted project still returned by findById\n7. Test save with duplicate slug throws error\n8. Test delete with non-existent id throws error\n9. Test upsert preserves existing fields not in update",
+            "parentId": "undefined"
           }
         ],
         "complexity": 8,
@@ -2972,7 +2986,7 @@
         "expansionPrompt": "Break down PrismaProjectRepository implementation into subtasks: (1) Create ProjectMapper.toDomain with JSONB-to-VO parsing for all LocalizedText fields, Image, DateRange, Slug, and Skill[] relation mapping, (2) Create ProjectMapper.toPrisma for domain-to-Prisma conversion, (3) Implement findAll/findPublished/findFeatured with status filtering and soft-delete checks, (4) Implement findById and findBySlug with proper includes, (5) Implement findRelated with slug-based filtering, (6) Implement save (upsert) and delete (soft-delete) operations. Focus on comprehensive error handling and Either propagation."
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Implement PrismaExperienceRepository",
         "description": "Create concrete implementation of IExperienceRepository using Prisma, including join with ExperienceSkill to return skills with workDescription.",
         "details": "1. Create ExperienceMapper.ts with methods:\n   - toDomain(prismaExperience): Experience\n     - Parse JSONB fields (company, position, location, description) to LocalizedText VOs\n     - Parse logo to Image VO\n     - Parse employmentType to EmploymentType VO\n     - Parse locationType to LocationType VO\n     - Parse startAt/endAt to DateRange VO\n     - Parse experienceSkills relation to ExperienceSkill[] entities (each includes skill and workDescription)\n     - Use Experience.create() to validate\n   - toPrisma(experience): Prisma.ExperienceCreateInput\n2. Implement PrismaExperienceRepository implementing IExperienceRepository:\n   - findAll(): Promise<Experience[]>\n     - prisma.experience.findMany({\n         include: {\n           experienceSkills: {\n             include: { skill: true }\n           }\n         },\n         orderBy: { startAt: 'desc' }\n       })\n     - Map results with ExperienceMapper\n   - findById(id: Id): Promise<Experience | null> - similar include pattern\n   - save(experience): Promise<void> - upsert with nested experienceSkills\n   - delete(id): Promise<void> - hard delete (cascade to experienceSkills)\n3. Handle relation mapping correctly for ExperienceSkill join table",
@@ -2981,7 +2995,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -2990,7 +3004,8 @@
             "dependencies": [],
             "details": "Create packages/infra/src/repositories/mappers/ExperienceMapper.ts. Implement toDomain(prismaExperience) method:\n1. Parse company, position, location, description JSONB fields to LocalizedText VOs using LocalizedText.create()\n2. Parse logo JSONB to Image VO using Image.create()\n3. Parse employmentType string to EmploymentType VO\n4. Parse locationType string to LocationType VO\n5. Parse startAt/endAt dates to DateRange VO using DateRange.create()\n6. Map experienceSkills relation array:\n   - For each experienceSkill in prismaExperience.experienceSkills:\n     - Extract nested skill data and map to Skill entity\n     - Parse workDescription JSONB to LocalizedText VO\n     - Create ExperienceSkill entity with skill and workDescription\n7. Call Experience.create() with all mapped VOs and return Either result\n8. Handle validation errors and return left(DomainError) on failure\n9. Include proper TypeScript types for Prisma input (with experienceSkills include)",
             "status": "pending",
-            "testStrategy": "Unit tests: (1) Test toDomain with valid Prisma data including experienceSkills relation returns right(Experience), (2) Test all JSONB fields correctly parsed to VOs, (3) Test experienceSkills array mapped with nested skill and workDescription, (4) Test invalid data returns left(ValidationError), (5) Mock Prisma types with experienceSkills include"
+            "testStrategy": "Unit tests: (1) Test toDomain with valid Prisma data including experienceSkills relation returns right(Experience), (2) Test all JSONB fields correctly parsed to VOs, (3) Test experienceSkills array mapped with nested skill and workDescription, (4) Test invalid data returns left(ValidationError), (5) Mock Prisma types with experienceSkills include",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3001,7 +3016,8 @@
             ],
             "details": "In packages/infra/src/repositories/mappers/ExperienceMapper.ts, implement toPrisma(experience: Experience): Prisma.ExperienceCreateInput:\n1. Serialize company, position, location, description LocalizedText VOs to JSONB (Prisma.JsonValue)\n2. Serialize logo Image VO to JSONB\n3. Convert employmentType VO to string enum value\n4. Convert locationType VO to string enum value\n5. Extract startAt/endAt from DateRange VO to Date objects\n6. Handle experienceSkills relation:\n   - Map experienceSkills array to nested create/connect input\n   - Serialize workDescription LocalizedText to JSONB\n   - Include skill foreign key relation\n7. Return complete Prisma.ExperienceCreateInput object\n8. Ensure proper handling of optional fields (endAt can be null for current positions)",
             "status": "pending",
-            "testStrategy": "Unit tests: (1) Test toPrisma converts Experience entity to valid Prisma input, (2) Test all LocalizedText VOs serialized to JSONB correctly, (3) Test DateRange VO split into startAt/endAt dates, (4) Test experienceSkills nested relation structure, (5) Test optional endAt field (current position)"
+            "testStrategy": "Unit tests: (1) Test toPrisma converts Experience entity to valid Prisma input, (2) Test all LocalizedText VOs serialized to JSONB correctly, (3) Test DateRange VO split into startAt/endAt dates, (4) Test experienceSkills nested relation structure, (5) Test optional endAt field (current position)",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3012,7 +3028,8 @@
             ],
             "details": "Create packages/infra/src/repositories/PrismaExperienceRepository.ts implementing IExperienceRepository:\n1. Constructor accepts PrismaClient instance\n2. Implement findAll(): Promise<Experience[]>:\n   - Call prisma.experience.findMany({\n       include: {\n         experienceSkills: {\n           include: { skill: true }\n         }\n       },\n       orderBy: { startAt: 'desc' }\n     })\n   - Map each result with ExperienceMapper.toDomain()\n   - Handle Either results: collect rights, log/throw on lefts\n   - Return Experience[] array\n3. Implement findById(id: Id): Promise<Experience | null>:\n   - Call prisma.experience.findUnique({ where: { id: id.value }, include: { experienceSkills: { include: { skill: true } } } })\n   - Return null if not found\n   - Map result with ExperienceMapper.toDomain()\n   - Return Experience or null\n4. Ensure proper error handling for Prisma errors",
             "status": "pending",
-            "testStrategy": "Integration tests with test database: (1) Test findAll returns experiences ordered by startAt DESC with experienceSkills and nested skills, (2) Test findById returns experience with relations, (3) Test findById returns null when not found, (4) Verify workDescription from join table is preserved, (5) Test empty database returns empty array for findAll"
+            "testStrategy": "Integration tests with test database: (1) Test findAll returns experiences ordered by startAt DESC with experienceSkills and nested skills, (2) Test findById returns experience with relations, (3) Test findById returns null when not found, (4) Verify workDescription from join table is preserved, (5) Test empty database returns empty array for findAll",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -3024,7 +3041,8 @@
             ],
             "details": "In packages/infra/src/repositories/PrismaExperienceRepository.ts, implement save(experience: Experience): Promise<void>:\n1. Convert experience to Prisma input using ExperienceMapper.toPrisma()\n2. Use prisma.experience.upsert({\n     where: { id: experience.id.value },\n     create: { ...prismaData, experienceSkills: { create: [...] } },\n     update: {\n       ...prismaData,\n       experienceSkills: {\n         deleteMany: {},  // Clear existing relations\n         create: [...]    // Recreate all relations\n       }\n     }\n   })\n3. Handle experienceSkills nested writes:\n   - On update: deleteMany existing experienceSkills, then create new ones\n   - On create: create experienceSkills with nested skill connect\n   - Ensure workDescription LocalizedText is preserved in join table\n4. Wrap in try-catch for Prisma errors\n5. Return Promise<void> on success",
             "status": "pending",
-            "testStrategy": "Integration tests: (1) Test save creates new experience with experienceSkills relations, (2) Test save updates existing experience and replaces experienceSkills, (3) Test workDescription persisted in join table, (4) Test save handles skills that already exist (connect vs create), (5) Test Prisma errors throw/return appropriate errors"
+            "testStrategy": "Integration tests: (1) Test save creates new experience with experienceSkills relations, (2) Test save updates existing experience and replaces experienceSkills, (3) Test workDescription persisted in join table, (4) Test save handles skills that already exist (connect vs create), (5) Test Prisma errors throw/return appropriate errors",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -3035,15 +3053,17 @@
             ],
             "details": "In packages/infra/src/repositories/PrismaExperienceRepository.ts, implement delete(id: Id): Promise<void>:\n1. Call prisma.experience.delete({ where: { id: id.value } })\n2. Prisma schema should have onDelete: Cascade for experienceSkills relation (verify schema.prisma)\n3. Wrap in try-catch:\n   - Catch PrismaClientKnownRequestError with code 'P2025' (record not found) and handle gracefully\n   - Re-throw other errors\n4. Return Promise<void> on success\n5. Verify experienceSkills are automatically deleted due to cascade constraint",
             "status": "pending",
-            "testStrategy": "Integration tests: (1) Test delete removes experience and cascades to experienceSkills join table, (2) Test delete on non-existent ID handles error gracefully, (3) Verify experienceSkills records deleted after experience deletion (count should be 0), (4) Test delete does not affect referenced Skill entities (skills remain), (5) Test Prisma cascade behavior with database queries"
+            "testStrategy": "Integration tests: (1) Test delete removes experience and cascades to experienceSkills join table, (2) Test delete on non-existent ID handles error gracefully, (3) Verify experienceSkills records deleted after experience deletion (count should be 0), (4) Test delete does not affect referenced Skill entities (skills remain), (5) Test Prisma cascade behavior with database queries",
+            "parentId": "undefined"
           }
         ],
         "complexity": 7,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break down PrismaExperienceRepository into subtasks: (1) Create ExperienceMapper.toDomain handling JSONB LocalizedText fields (company, position, location, description), Image, EmploymentType/LocationType VOs, DateRange, and the ExperienceSkill[] join table relation with nested skill data and workDescription, (2) Create ExperienceMapper.toPrisma, (3) Implement findAll with nested experienceSkills include and skill relation, ordered by startAt DESC, (4) Implement findById with same includes, (5) Implement save (upsert with nested writes for join table) and delete (hard delete with cascade). Ensure workDescription from join table is preserved."
+        "expansionPrompt": "Break down PrismaExperienceRepository into subtasks: (1) Create ExperienceMapper.toDomain handling JSONB LocalizedText fields (company, position, location, description), Image, EmploymentType/LocationType VOs, DateRange, and the ExperienceSkill[] join table relation with nested skill data and workDescription, (2) Create ExperienceMapper.toPrisma, (3) Implement findAll with nested experienceSkills include and skill relation, ordered by startAt DESC, (4) Implement findById with same includes, (5) Implement save (upsert with nested writes for join table) and delete (hard delete with cascade). Ensure workDescription from join table is preserved.",
+        "updatedAt": "2026-03-23T03:20:18.915Z"
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Implement PrismaProfileRepository",
         "description": "Create concrete implementation of IProfileRepository using Prisma, including stats and social networks relations.",
         "details": "1. Create ProfileMapper.ts with methods:\n   - toDomain(prismaProfile): Profile\n     - Parse name to Name VO\n     - Parse JSONB fields (headline, bio) to LocalizedText VOs\n     - Parse photo to Image VO\n     - Parse stats relation to ProfileStat[] entities (each with label LocalizedText VO)\n     - Parse socialNetworks relation to SocialNetwork[] entities\n     - Parse featuredProjectSlugs to Slug[] VOs\n     - Use Profile.create() to validate (max 6 featured projects)\n   - toPrisma(profile): Prisma.ProfileCreateInput\n2. Implement PrismaProfileRepository implementing IProfileRepository:\n   - find(): Promise<Profile | null>\n     - prisma.profile.findFirst({\n         include: {\n           stats: { orderBy: { order: 'asc' } },\n           socialNetworks: true\n         }\n       })\n     - Assumes single profile (take first)\n     - Map with ProfileMapper\n     - Return null if not found\n   - save(profile): Promise<void> - upsert with nested stats and socialNetworks\n3. Handle single-profile assumption (findFirst instead of findUnique)",
@@ -3061,7 +3081,8 @@
             "dependencies": [],
             "details": "1. Create packages/infra/src/repositories/mappers/ProfileMapper.ts\n2. Implement toDomain(prismaProfile) method:\n   - Parse name string to Name VO using Name.create()\n   - Parse headline JSONB to LocalizedText VO using LocalizedText.create()\n   - Parse bio JSONB to LocalizedText VO using LocalizedText.create()\n   - Parse photo object to Image VO using Image.create()\n   - Map stats relation array to ProfileStat[] entities:\n     - For each stat, parse label JSONB to LocalizedText VO\n     - Use ProfileStat.create() for each stat\n   - Map socialNetworks relation array to SocialNetwork[] entities using SocialNetwork.create()\n   - Parse featuredProjectSlugs string[] to Slug[] VOs using Slug.create() for each\n   - Call Profile.create() with all parsed props to validate domain invariants (e.g., max 6 featured projects)\n   - Return Either<ValidationError, Profile>\n3. Handle validation errors by propagating left from any VO/entity creation failure",
             "status": "pending",
-            "testStrategy": "1. Unit test with mock Prisma profile data:\n   - Test successful parsing of all fields and relations\n   - Test Name VO validation errors propagate\n   - Test LocalizedText VO errors for headline/bio propagate\n   - Test Image VO errors propagate\n   - Test stats array with valid LocalizedText labels\n   - Test socialNetworks array parsing\n   - Test featuredProjectSlugs validation (max 6 enforced by Profile.create)\n   - Test Profile.create validation errors propagate\n2. Test handling of null/undefined optional fields"
+            "testStrategy": "1. Unit test with mock Prisma profile data:\n   - Test successful parsing of all fields and relations\n   - Test Name VO validation errors propagate\n   - Test LocalizedText VO errors for headline/bio propagate\n   - Test Image VO errors propagate\n   - Test stats array with valid LocalizedText labels\n   - Test socialNetworks array parsing\n   - Test featuredProjectSlugs validation (max 6 enforced by Profile.create)\n   - Test Profile.create validation errors propagate\n2. Test handling of null/undefined optional fields",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3072,7 +3093,8 @@
             ],
             "details": "1. In ProfileMapper.ts, implement toPrisma(profile: Profile) method:\n   - Convert Name VO to string using .value getter\n   - Convert LocalizedText VOs (headline, bio) to JSONB objects using .toJSON() or similar\n   - Convert Image VO to object with url/alt using .value or individual getters\n   - Convert ProfileStat[] entities to Prisma nested create input:\n     - Map each stat to { label: stat.label.toJSON(), value: stat.value, order: stat.order }\n   - Convert SocialNetwork[] entities to Prisma nested create input:\n     - Map each network to { platform: network.platform, url: network.url, username: network.username }\n   - Convert Slug[] VOs (featuredProjectSlugs) to string[] using .value getter\n   - Return Prisma.ProfileCreateInput with nested stats and socialNetworks arrays\n2. Ensure proper structure for upsert with nested relations (create/connectOrCreate pattern if needed)",
             "status": "pending",
-            "testStrategy": "1. Unit test with domain Profile entity:\n   - Test all VOs converted to primitive/JSONB values correctly\n   - Test stats array includes label JSONB, value, and order fields\n   - Test socialNetworks array structure\n   - Test featuredProjectSlugs converted to string[]\n   - Verify output matches Prisma.ProfileCreateInput schema\n2. Test with profile having empty stats/socialNetworks arrays\n3. Test with profile having null optional fields"
+            "testStrategy": "1. Unit test with domain Profile entity:\n   - Test all VOs converted to primitive/JSONB values correctly\n   - Test stats array includes label JSONB, value, and order fields\n   - Test socialNetworks array structure\n   - Test featuredProjectSlugs converted to string[]\n   - Verify output matches Prisma.ProfileCreateInput schema\n2. Test with profile having empty stats/socialNetworks arrays\n3. Test with profile having null optional fields",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3084,7 +3106,8 @@
             ],
             "details": "1. Create packages/infra/src/repositories/PrismaProfileRepository.ts implementing IProfileRepository\n2. Inject PrismaClient in constructor\n3. Implement find(): Promise<Profile | null>:\n   - Call prisma.profile.findFirst({\n       include: {\n         stats: { orderBy: { order: 'asc' } },\n         socialNetworks: true\n       }\n     })\n   - If result is null, return null (no profile exists yet)\n   - If result exists, call ProfileMapper.toDomain(result)\n   - If mapper returns left (validation error), throw or log error (decide on error handling strategy)\n   - If mapper returns right(profile), return profile\n4. Document single-profile assumption: findFirst is used because system assumes only one profile exists",
             "status": "pending",
-            "testStrategy": "1. Integration test with test database:\n   - Test find() returns null when no profile exists\n   - Insert test profile with stats (varying order values) and socialNetworks\n   - Verify find() returns Profile entity with stats ordered by order ASC\n   - Verify all relations loaded correctly\n2. Test mapper validation error handling (e.g., invalid Slug in featuredProjectSlugs)\n3. Unit test with mocked PrismaClient verifying findFirst called with correct includes"
+            "testStrategy": "1. Integration test with test database:\n   - Test find() returns null when no profile exists\n   - Insert test profile with stats (varying order values) and socialNetworks\n   - Verify find() returns Profile entity with stats ordered by order ASC\n   - Verify all relations loaded correctly\n2. Test mapper validation error handling (e.g., invalid Slug in featuredProjectSlugs)\n3. Unit test with mocked PrismaClient verifying findFirst called with correct includes",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -3096,7 +3119,8 @@
             ],
             "details": "1. In PrismaProfileRepository, implement save(profile: Profile): Promise<void>\n2. Call ProfileMapper.toPrisma(profile) to get Prisma input\n3. Determine upsert strategy for single-profile assumption:\n   - Use prisma.profile.upsert({\n       where: { id: known_id_or_findFirst_result },\n       create: { ...prismaInput },\n       update: { ...prismaInput }\n     })\n   - OR use deleteMany + create pattern for stats/socialNetworks to replace all relations\n4. Handle nested relations:\n   - For stats: use deleteMany + createMany or set with create array to replace all\n   - For socialNetworks: use deleteMany + createMany or set with create array to replace all\n5. Wrap in transaction if using multiple queries\n6. Return Promise<void> on success",
             "status": "pending",
-            "testStrategy": "1. Integration test:\n   - Create initial profile with 2 stats and 3 social networks via save()\n   - Verify find() returns profile with correct relations\n   - Update profile (change stats, add/remove socialNetworks) and save() again\n   - Verify find() returns updated profile with new relations (old ones replaced)\n2. Test upsert creates profile if none exists\n3. Test upsert updates profile if one exists\n4. Test transaction rollback on nested relation error (if applicable)"
+            "testStrategy": "1. Integration test:\n   - Create initial profile with 2 stats and 3 social networks via save()\n   - Verify find() returns profile with correct relations\n   - Update profile (change stats, add/remove socialNetworks) and save() again\n   - Verify find() returns updated profile with new relations (old ones replaced)\n2. Test upsert creates profile if none exists\n3. Test upsert updates profile if one exists\n4. Test transaction rollback on nested relation error (if applicable)",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -3108,7 +3132,8 @@
             ],
             "details": "1. In find() method:\n   - Wrap Prisma call in try-catch to handle Prisma errors (e.g., connection errors)\n   - Decide on error handling strategy for mapper validation errors:\n     - Option A: Throw custom InfrastructureError\n     - Option B: Log error and return null (treat as invalid data)\n   - Document decision in code comments\n2. In save() method:\n   - Wrap Prisma upsert in try-catch to handle constraint violations, connection errors\n   - Consider handling unique constraint violations specifically\n   - Throw or return Either based on error type\n3. Add comprehensive tests:\n   - Test find() when database connection fails\n   - Test save() when database connection fails\n   - Test find() when stored data is invalid (e.g., invalid JSONB for LocalizedText)\n   - Test save() with profile exceeding max 6 featured projects (should be caught by domain, but verify)\n   - Test null vs. successful null return distinction",
             "status": "pending",
-            "testStrategy": "1. Unit tests with mocked PrismaClient:\n   - Mock Prisma throwing connection error in find(), verify error propagated\n   - Mock Prisma throwing connection error in save(), verify error propagated\n2. Integration tests:\n   - Manually insert invalid JSONB data, verify find() handles gracefully\n   - Test save() with concurrent updates (if relevant)\n3. Document error handling behavior in README or code comments"
+            "testStrategy": "1. Unit tests with mocked PrismaClient:\n   - Mock Prisma throwing connection error in find(), verify error propagated\n   - Mock Prisma throwing connection error in save(), verify error propagated\n2. Integration tests:\n   - Manually insert invalid JSONB data, verify find() handles gracefully\n   - Test save() with concurrent updates (if relevant)\n3. Document error handling behavior in README or code comments",
+            "parentId": "undefined"
           }
         ],
         "complexity": 6,
@@ -3116,7 +3141,7 @@
         "expansionPrompt": "Break down PrismaProfileRepository into subtasks: (1) Create ProfileMapper.toDomain parsing Name, LocalizedText fields (headline, bio), Image, and the two 1:many relations (stats with order field and LocalizedText labels, socialNetworks), plus featuredProjectSlugs string[] to Slug[] conversion, (2) Create ProfileMapper.toPrisma, (3) Implement find() using findFirst (singleton profile assumption) with nested stats (ordered by order ASC) and socialNetworks includes, (4) Implement save (upsert) with nested writes for stats and socialNetworks, (5) Add error handling for when no profile exists vs. successful null return."
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Implement ResendEmailService",
         "description": "Create concrete implementation of IEmailService using Resend API for sending contact form emails.",
         "details": "1. Install dependency: resend\n2. Create ResendEmailService.ts implementing IEmailService:\n   - Constructor accepts Resend API client (injected)\n   - send(message: IContactMessageDTO): Promise<Either<DomainError, void>>\n     - Use resend.emails.send({\n         from: 'onboarding@resend.dev' (or configured sender),\n         to: process.env.CONTACT_EMAIL_TO,\n         replyTo: message.email,\n         subject: `Contact from ${message.name}`,\n         html: template with message.name, message.email, message.message\n       })\n     - Wrap in try/catch\n     - On success: return right(undefined)\n     - On error: return left(new DomainError({ code: 'EMAIL_SEND_FAILED', message: error.message }))\n3. Create simple HTML email template (inline styles)\n4. Update .env.example with RESEND_API_KEY and CONTACT_EMAIL_TO",
@@ -3134,7 +3159,8 @@
             "dependencies": [],
             "details": "Run `pnpm add resend` in packages/infra. Verify TypeScript types are available (@types/resend if needed). Add RESEND_API_KEY and CONTACT_EMAIL_TO to .env.example with documentation comments explaining their purpose. Create types/resend.d.ts if custom type definitions are needed for configuration.",
             "status": "pending",
-            "testStrategy": "Verify package.json includes resend dependency, verify .env.example has documented variables, verify TypeScript compilation succeeds with Resend imports."
+            "testStrategy": "Verify package.json includes resend dependency, verify .env.example has documented variables, verify TypeScript compilation succeeds with Resend imports.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3145,7 +3171,8 @@
             ],
             "details": "Create packages/infra/src/services/ResendEmailService.ts. Implement class with constructor accepting Resend client instance and configuration object { apiKey: string, recipientEmail: string, senderEmail: string }. Store dependencies as private readonly properties. Follow Clean Architecture: no direct env access in class, config injected from container. Implement IEmailService interface signature with async send method stub returning Promise<Either<DomainError, void>>.",
             "status": "pending",
-            "testStrategy": "Unit test: verify constructor accepts and stores Resend client and config properly. Verify class implements IEmailService interface correctly. Test with mock Resend client instance."
+            "testStrategy": "Unit test: verify constructor accepts and stores Resend client and config properly. Verify class implements IEmailService interface correctly. Test with mock Resend client instance.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3156,7 +3183,8 @@
             ],
             "details": "Implement send(message: IContactMessageDTO): Promise<Either<DomainError, void>>. Create simple HTML email template function formatEmailHtml(name, email, message) with inline styles (table-based layout for email client compatibility). Call resend.emails.send({ from: config.senderEmail, to: config.recipientEmail, replyTo: message.email, subject: `Contact from ${message.name}`, html: formatEmailHtml(...) }). Wrap in try/catch: on success return right(undefined), on error return left(new DomainError({ code: 'EMAIL_SEND_FAILED', message: error.message })). Follow Either pattern from docs/09-PATTERNS.md.",
             "status": "pending",
-            "testStrategy": "Unit tests with mocked Resend client: (1) Test successful send returns right(undefined), (2) Test API error (rejected promise) returns left(DomainError) with EMAIL_SEND_FAILED code, (3) Verify resend.emails.send called with correct parameters (from, to, replyTo, subject, html), (4) Verify HTML template contains message.name, message.email, message.message."
+            "testStrategy": "Unit tests with mocked Resend client: (1) Test successful send returns right(undefined), (2) Test API error (rejected promise) returns left(DomainError) with EMAIL_SEND_FAILED code, (3) Verify resend.emails.send called with correct parameters (from, to, replyTo, subject, html), (4) Verify HTML template contains message.name, message.email, message.message.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -3167,7 +3195,8 @@
             ],
             "details": "Create packages/infra/src/services/__tests__/ResendEmailService.test.ts. Mock Resend client with jest.mock or vitest.mock. Test cases: (1) Successful email send returns right(undefined), (2) Resend API error returns left(DomainError) with EMAIL_SEND_FAILED code and original error message, (3) Verify emails.send called with exact parameters (from, to, replyTo, subject, html), (4) Verify HTML template rendering with all IContactMessageDTO fields, (5) Test with different message inputs. Follow testing standards from docs/08-TESTING.md. Use behavior-focused test names: 'should return right when email sends successfully', 'should return left with DomainError when Resend API fails'.",
             "status": "pending",
-            "testStrategy": "Run test suite with `pnpm test ResendEmailService`. Verify 100% code coverage for ResendEmailService. All tests should pass. Verify mocks are properly isolated and don't make real API calls."
+            "testStrategy": "Run test suite with `pnpm test ResendEmailService`. Verify 100% code coverage for ResendEmailService. All tests should pass. Verify mocks are properly isolated and don't make real API calls.",
+            "parentId": "undefined"
           }
         ],
         "complexity": 3,
@@ -3175,7 +3204,7 @@
         "expansionPrompt": "Break down ResendEmailService into subtasks: (1) Install resend dependency and set up types, (2) Implement ResendEmailService class with injected Resend client, constructor accepting config (API key, recipient email), (3) Implement send() method wrapping resend.emails.send with proper error handling, Either pattern (right on success, left(DomainError) on API failure), and email template with name/email/message fields, (4) Create unit tests with mocked Resend client testing success/failure paths and correct parameter passing."
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "Create dependency injection container",
         "description": "Build factory/container that resolves concrete implementations of port interfaces for consumption in apps/web Server Components.",
         "details": "1. Create src/container.ts with makeContainer() function:\n   - Initialize PrismaClient singleton\n   - Initialize Resend client with RESEND_API_KEY from env\n   - Instantiate repositories:\n     - projectRepository = new PrismaProjectRepository(prisma)\n     - experienceRepository = new PrismaExperienceRepository(prisma)\n     - profileRepository = new PrismaProfileRepository(prisma)\n   - Instantiate services:\n     - emailService = new ResendEmailService(resend, { to: process.env.CONTACT_EMAIL_TO })\n   - Return object: { projectRepository, experienceRepository, profileRepository, emailService }\n2. Create src/index.ts:\n   - export { makeContainer } from './container'\n   - export type { Container } from './container'\n   - Re-export repositories and services for convenience\n3. Ensure container is singleton (call once, cache result)\n4. Add environment validation (throw if required env vars missing)",
@@ -3196,7 +3225,8 @@
             "dependencies": [],
             "details": "Create packages/infra/src/container.ts with makeContainer() function. Initialize PrismaClient singleton using lazy instantiation pattern to avoid connection pool exhaustion (check if instance exists, create if needed). Initialize Resend client singleton with RESEND_API_KEY from process.env. Implement singleton pattern by storing instances in module-scoped variables. Export Container type interface defining the shape of the returned object.",
             "status": "pending",
-            "testStrategy": "Unit test: mock environment variables and verify singletons are created only once across multiple makeContainer() calls. Verify PrismaClient and Resend instances are properly initialized. Test that subsequent calls return the same instances (referential equality check)."
+            "testStrategy": "Unit test: mock environment variables and verify singletons are created only once across multiple makeContainer() calls. Verify PrismaClient and Resend instances are properly initialized. Test that subsequent calls return the same instances (referential equality check).",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3207,7 +3237,8 @@
             ],
             "details": "In makeContainer(), instantiate: projectRepository = new PrismaProjectRepository(prisma), experienceRepository = new PrismaExperienceRepository(prisma), profileRepository = new PrismaProfileRepository(prisma), skillRepository = new PrismaSkillRepository(prisma) if needed per schema. Pass the singleton PrismaClient instance to each repository constructor. Ensure all repositories are part of the Container return type.",
             "status": "pending",
-            "testStrategy": "Unit test: mock PrismaClient and verify each repository receives the mocked client instance. Verify all repositories are instantiated and returned in the container object. Test that repositories share the same PrismaClient instance (singleton behavior)."
+            "testStrategy": "Unit test: mock PrismaClient and verify each repository receives the mocked client instance. Verify all repositories are instantiated and returned in the container object. Test that repositories share the same PrismaClient instance (singleton behavior).",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3218,7 +3249,8 @@
             ],
             "details": "In makeContainer(), instantiate emailService = new ResendEmailService(resend, { to: process.env.CONTACT_EMAIL_TO, from: process.env.RESEND_FROM_EMAIL or default }). Pass the Resend singleton client and email configuration object. Include emailService in the Container return type. Ensure service is properly typed.",
             "status": "pending",
-            "testStrategy": "Unit test: mock Resend client and env vars, verify ResendEmailService is instantiated with correct config. Verify the service receives the mocked Resend client. Test that emailService is included in the returned container object with correct type."
+            "testStrategy": "Unit test: mock Resend client and env vars, verify ResendEmailService is instantiated with correct config. Verify the service receives the mocked Resend client. Test that emailService is included in the returned container object with correct type.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -3227,7 +3259,8 @@
             "dependencies": [],
             "details": "At the top of makeContainer(), validate required env vars: DATABASE_URL, DIRECT_URL, RESEND_API_KEY, CONTACT_EMAIL_TO. For each missing var, throw new Error with descriptive message: 'Missing required environment variable: {VAR_NAME}. Please set it in your .env file.' Consider creating validateEnv() helper function that checks all vars and aggregates missing ones into a single error message listing all missing vars.",
             "status": "pending",
-            "testStrategy": "Unit test: mock process.env with missing vars and verify descriptive errors are thrown. Test each missing var individually. Test with all vars missing to verify aggregated error message. Test successful validation when all vars present. Verify error messages include the variable name and helpful guidance."
+            "testStrategy": "Unit test: mock process.env with missing vars and verify descriptive errors are thrown. Test each missing var individually. Test with all vars missing to verify aggregated error message. Test successful validation when all vars present. Verify error messages include the variable name and helpful guidance.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -3241,7 +3274,8 @@
             ],
             "details": "Create packages/infra/src/index.ts: export { makeContainer } from './container', export type { Container } from './container'. Re-export repository and service types for convenience. Implement module-level singleton caching: let containerInstance: Container | null = null; export const getContainer = () => { if (!containerInstance) containerInstance = makeContainer(); return containerInstance; }. Add integration test that calls makeContainer() with real env vars (test environment), verifies all dependencies are present, calls a method on each repository to ensure they work.",
             "status": "pending",
-            "testStrategy": "Integration test: set up test environment with .env.test, call getContainer() multiple times and verify same instance returned. Call makeContainer() and verify container has all expected properties (repositories, services). Execute simple operations on each repository (e.g., findAll()) to verify they're functional. Test that PrismaClient connection works. Verify singleton pattern prevents multiple PrismaClient instances."
+            "testStrategy": "Integration test: set up test environment with .env.test, call getContainer() multiple times and verify same instance returned. Call makeContainer() and verify container has all expected properties (repositories, services). Execute simple operations on each repository (e.g., findAll()) to verify they're functional. Test that PrismaClient connection works. Verify singleton pattern prevents multiple PrismaClient instances.",
+            "parentId": "undefined"
           }
         ],
         "complexity": 4,
@@ -3249,7 +3283,7 @@
         "expansionPrompt": "Break down DI container creation into subtasks: (1) Create container.ts with makeContainer() factory function initializing PrismaClient and Resend client singletons, (2) Instantiate all four repositories (PrismaProjectRepository, PrismaExperienceRepository, PrismaProfileRepository, PrismaSkillRepository if needed) with PrismaClient injection, (3) Instantiate ResendEmailService with Resend client and email config from env, (4) Implement env var validation throwing descriptive errors for missing required vars (DATABASE_URL, DIRECT_URL, RESEND_API_KEY, CONTACT_EMAIL_TO), (5) Export Container type and makeContainer, ensure singleton pattern, add integration test calling container and using repos."
       },
       {
-        "id": 7,
+        "id": "7",
         "title": "Define Response Envelope and implement GET /api/v1/projects/:slug",
         "description": "Introduce consistent REST response envelope and implement the first API endpoint with thin handler that calls use cases and maps errors to HTTP.",
         "details": "1. Create apps/web/src/lib/api/envelope.ts:\n   - Define ApiResponse<T> type:\n     - Success: { data: T, error: null, meta?: { timestamp: string, ... } }\n     - Error: { data: null, error: { code: string, message: string, details?: unknown }, meta?: { ... } }\n   - Helper functions:\n     - successResponse<T>(data: T, meta?): ApiResponse<T>\n     - errorResponse(code, message, details?, meta?): ApiResponse<never>\n2. Create apps/web/src/lib/api/error-mapper.ts:\n   - mapDomainErrorToHttp(error: DomainError, locale: string): { status: number, response: ApiResponse<never> }\n     - NotFoundError → 404\n     - ValidationError → 400\n     - Generic DomainError → 400\n     - Unknown error → 500\n   - Localize error messages based on locale (use i18n if available, or default English)\n3. Implement apps/web/src/app/api/v1/projects/[slug]/route.ts:\n   - export async GET(request: NextRequest, { params }: { params: { slug: string } }):\n     - Extract locale from request headers (Accept-Language) or use default\n     - Get container from makeContainer()\n     - Create GetProjectBySlug use case: new GetProjectBySlug(container.projectRepository)\n     - Create Slug VO from params.slug\n     - Execute use case: const result = await useCase.execute(slug)\n     - If result.isLeft(): map error with mapDomainErrorToHttp, return NextResponse.json(response, { status })\n     - If result.isRight(): return NextResponse.json(successResponse(result.value.toDTO()), { status: 200 })\n   - No business logic in handler - only orchestration\n4. Set CORS headers if needed\n5. Add Next.js route config: export const dynamic = 'force-dynamic' (or 'auto' depending on caching strategy)",
@@ -3267,7 +3301,8 @@
             "dependencies": [],
             "details": "Create envelope.ts in apps/web/src/lib/api/ directory. Define ApiResponse<T> as a discriminated union:\n- Success variant: { data: T, error: null, meta?: { timestamp: string, [key: string]: unknown } }\n- Error variant: { data: null, error: { code: string, message: string, details?: unknown }, meta?: { timestamp: string, [key: string]: unknown } }\n\nImplement helper functions:\n- successResponse<T>(data: T, meta?: Record<string, unknown>): ApiResponse<T> - constructs success response with auto-generated timestamp\n- errorResponse(code: string, message: string, details?: unknown, meta?: Record<string, unknown>): ApiResponse<never> - constructs error response with auto-generated timestamp\n\nEnsure type safety and proper generics usage. Follow TypeScript strict mode.",
             "status": "pending",
-            "testStrategy": "Unit tests verifying: (1) successResponse returns correct shape with data and null error, (2) errorResponse returns correct shape with null data and error object, (3) timestamp is automatically added to meta, (4) custom meta fields are preserved, (5) TypeScript type checking enforces discriminated union correctly"
+            "testStrategy": "Unit tests verifying: (1) successResponse returns correct shape with data and null error, (2) errorResponse returns correct shape with null data and error object, (3) timestamp is automatically added to meta, (4) custom meta fields are preserved, (5) TypeScript type checking enforces discriminated union correctly",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3278,7 +3313,8 @@
             ],
             "details": "Create error-mapper.ts in apps/web/src/lib/api/ directory. Implement:\n- mapDomainErrorToHttp(error: DomainError, locale: string = 'en'): { status: number, response: ApiResponse<never> }\n\nMapping rules:\n- NotFoundError → status 404\n- ValidationError → status 400\n- Generic DomainError → status 400\n- Unknown/unexpected errors → status 500 with generic message\n\nLocalize error messages based on locale parameter. If i18n package is available in @repo/i18n, use it; otherwise fallback to English. Extract error.code and error.message from DomainError, pass error.details if present. Use errorResponse helper from envelope.ts to construct the response object.",
             "status": "pending",
-            "testStrategy": "Unit tests for each error type: (1) ValidationError maps to 400 with correct code/message, (2) NotFoundError maps to 404, (3) Generic DomainError maps to 400, (4) Unknown error maps to 500, (5) Locale parameter affects message text, (6) Error details are included when present"
+            "testStrategy": "Unit tests for each error type: (1) ValidationError maps to 400 with correct code/message, (2) NotFoundError maps to 404, (3) Generic DomainError maps to 400, (4) Unknown error maps to 500, (5) Locale parameter affects message text, (6) Error details are included when present",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3289,7 +3325,8 @@
             ],
             "details": "Create route.ts in apps/web/src/app/api/v1/projects/[slug]/ directory. Implement:\n- export async function GET(request: NextRequest, { params }: { params: { slug: string } }): Promise<NextResponse>\n\nExtract slug from params.slug. Extract locale from request.headers.get('Accept-Language') or default to 'en'. Add route configuration:\n- export const dynamic = 'force-dynamic' (or 'auto' based on caching strategy)\n\nSet CORS headers if needed using NextResponse headers. Structure handler for orchestration only - no business logic. Import necessary Next.js types (NextRequest, NextResponse). Follow Next.js 14+ App Router conventions.",
             "status": "pending",
-            "testStrategy": "Integration tests: (1) Route responds to GET requests, (2) Slug parameter is correctly extracted from URL, (3) Accept-Language header is parsed correctly, (4) Default locale is used when header absent, (5) CORS headers are present if configured, (6) Route config exports are correct"
+            "testStrategy": "Integration tests: (1) Route responds to GET requests, (2) Slug parameter is correctly extracted from URL, (3) Accept-Language header is parsed correctly, (4) Default locale is used when header absent, (5) CORS headers are present if configured, (6) Route config exports are correct",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -3300,7 +3337,8 @@
             ],
             "details": "In the route handler:\n1. Get DI container: const container = makeContainer() (import from apps/web/src/lib/di or equivalent)\n2. Get repository from container: const projectRepository = container.projectRepository\n3. Instantiate use case: const getProjectBySlug = new GetProjectBySlug(projectRepository)\n4. Create Slug VO from params.slug: const slugResult = Slug.create(params.slug)\n5. Handle Slug creation failure: if (slugResult.isLeft()), map validation error to HTTP response early\n6. Execute use case: const result = await getProjectBySlug.execute(slugResult.value)\n\nEnsure proper import paths for GetProjectBySlug use case (from @repo/application), Slug VO (from @repo/core), and container (from apps/web). Follow dependency injection and Either pattern conventions.",
             "status": "pending",
-            "testStrategy": "Integration tests: (1) Container provides correct repository instance, (2) Use case is instantiated with repository, (3) Invalid slug format returns 400 before use case execution, (4) Valid slug executes use case successfully, (5) Use case result is Either type, (6) DI container is properly imported and functioning"
+            "testStrategy": "Integration tests: (1) Container provides correct repository instance, (2) Use case is instantiated with repository, (3) Invalid slug format returns 400 before use case execution, (4) Valid slug executes use case successfully, (5) Use case result is Either type, (6) DI container is properly imported and functioning",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -3312,7 +3350,8 @@
             ],
             "details": "In the route handler, after executing use case:\n1. Check if result.isLeft():\n   - Extract error: const error = result.value\n   - Map to HTTP: const { status, response } = mapDomainErrorToHttp(error, locale)\n   - Return: return NextResponse.json(response, { status })\n2. Check if result.isRight():\n   - Extract project entity: const project = result.value\n   - Convert to DTO: const dto = project.toDTO() (or use ProjectMapper.toDTO if separate)\n   - Build success response: const response = successResponse(dto)\n   - Return: return NextResponse.json(response, { status: 200 })\n\nEnsure proper typing throughout. Import mapDomainErrorToHttp and envelope helpers. Follow Either pattern conventions from domain layer.",
             "status": "pending",
-            "testStrategy": "Integration tests: (1) Valid existing project returns 200 with data in envelope, (2) Non-existent project returns 404 with error in envelope, (3) Invalid slug format returns 400 with validation error, (4) Response structure matches ApiResponse type, (5) Error responses include correct code/message, (6) Success responses include project DTO"
+            "testStrategy": "Integration tests: (1) Valid existing project returns 200 with data in envelope, (2) Non-existent project returns 404 with error in envelope, (3) Invalid slug format returns 400 with validation error, (4) Response structure matches ApiResponse type, (5) Error responses include correct code/message, (6) Success responses include project DTO",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -3323,7 +3362,8 @@
             ],
             "details": "Create test files:\n1. apps/web/src/lib/api/__tests__/envelope.test.ts:\n   - Test successResponse creates correct structure\n   - Test errorResponse creates correct structure\n   - Test meta timestamp generation\n   - Test TypeScript types are enforced\n\n2. apps/web/src/lib/api/__tests__/error-mapper.test.ts:\n   - Test each DomainError subclass mapping\n   - Test locale handling\n   - Test error details preservation\n\n3. apps/web/src/app/api/v1/projects/[slug]/__tests__/route.test.ts:\n   - Test valid slug returns 200 + project data in envelope\n   - Test invalid slug format returns 400 + validation error\n   - Test non-existent slug returns 404 + not found error\n   - Test Accept-Language header affects error messages\n   - Test CORS headers if configured\n\nUse test database setup for integration tests. Mock container/repository for unit tests where appropriate.",
             "status": "pending",
-            "testStrategy": "Meta-testing: Verify test coverage reaches >90% for envelope.ts, error-mapper.ts, and route.ts. Ensure tests are behavior-focused, not implementation-focused. Run tests in CI pipeline. Validate that integration tests properly set up and tear down test database."
+            "testStrategy": "Meta-testing: Verify test coverage reaches >90% for envelope.ts, error-mapper.ts, and route.ts. Ensure tests are behavior-focused, not implementation-focused. Run tests in CI pipeline. Validate that integration tests properly set up and tear down test database.",
+            "parentId": "undefined"
           }
         ],
         "complexity": 5,
@@ -3331,7 +3371,7 @@
         "expansionPrompt": "Break down API envelope and first endpoint into subtasks: (1) Create envelope.ts with ApiResponse<T> type (success/error variants), successResponse and errorResponse helper functions, (2) Create error-mapper.ts with mapDomainErrorToHttp function mapping DomainError subclasses (ValidationError, NotFoundError) to HTTP status codes (400, 404, 500) and localized error messages, (3) Implement GET /api/v1/projects/[slug]/route.ts extracting slug param and locale from request, (4) Wire up GetProjectBySlug use case from container, execute with Slug VO, (5) Map Either result to HTTP response using envelope (left → errorResponse with status, right → successResponse with DTO), (6) Add integration tests for route (valid slug 200, invalid slug 400, not found 404) and unit tests for helpers."
       },
       {
-        "id": 8,
+        "id": "8",
         "title": "Setup local Supabase development environment with Docker and Supabase CLI",
         "description": "Configure local Supabase instance using Docker and Supabase CLI for development, including initialization, database connection setup, and Prisma integration.",
         "details": "1. **Install Supabase CLI globally**:\n   - Run: `npm install -g supabase`\n   - Verify installation: `supabase --version`\n   - Ensure Docker is installed and running (Docker Desktop or Docker Engine)\n\n2. **Initialize Supabase in project root**:\n   - Navigate to project root: `/home/wallace/Projects/portfolio`\n   - Run: `supabase init`\n   - This creates `supabase/` directory with:\n     - `config.toml`: Supabase configuration file\n     - `seed.sql`: Database seed file (optional)\n   - Add `supabase/.temp/` to `.gitignore` if not already present\n   - Commit `supabase/config.toml` to version control\n\n3. **Start local Supabase services with Docker**:\n   - Run: `supabase start`\n   - This pulls and starts Docker containers for:\n     - PostgreSQL (local database on port 54322)\n     - Supabase Studio (web UI on port 54323)\n     - PostgREST API (port 54321)\n     - GoTrue (auth service)\n     - Realtime server\n   - Wait for all services to start (may take 2-3 minutes on first run)\n   - CLI will output connection credentials including DATABASE_URL and DIRECT_URL\n\n4. **Configure environment variables**:\n   - Copy local database URLs from CLI output\n   - Update `.env` in project root with local Supabase credentials:\n     ```\n     DATABASE_URL=\"postgresql://postgres:postgres@localhost:54322/postgres?pgbouncer=true&connection_limit=1\"\n     DIRECT_URL=\"postgresql://postgres:postgres@localhost:54322/postgres\"\n     ```\n   - Also update `apps/web/.env` if it exists separately\n   - Update `.env.example` with placeholders showing the local format\n\n5. **Run Prisma migration against local database**:\n   - Navigate to `packages/infra/` directory\n   - Ensure `prisma/schema.prisma` exists (already present with complete schema)\n   - Run: `pnpm db:migrate` or `npx prisma migrate dev --name init`\n   - This creates the initial migration in `packages/infra/prisma/migrations/`\n   - Prisma will:\n     - Create all tables (Project, Skill, Experience, Profile, etc.)\n     - Create all enums (ProjectStatus, SkillType, EmploymentType, LocationType)\n     - Create all indexes and foreign key constraints\n     - Generate Prisma Client\n\n6. **Verify database setup**:\n   - Run: `pnpm db:studio` from `packages/infra/` or `npx prisma studio`\n   - Prisma Studio opens at http://localhost:5555\n   - Verify all tables exist:\n     - Project, ProjectSkill\n     - Skill\n     - Experience, ExperienceSkill\n     - Profile, ProfileStat, SocialNetwork\n   - Check enums are properly created\n   - Optionally access Supabase Studio at http://localhost:54323\n\n7. **Document local development workflow**:\n   - Create or update `packages/infra/README.md` with:\n     - Steps to start local Supabase: `supabase start`\n     - Steps to stop: `supabase stop`\n     - Steps to reset DB: `supabase db reset`\n     - Connection string format for local development\n     - Note that local DB data is ephemeral (reset on `supabase stop`)\n   - Add npm scripts to root `package.json`:\n     ```json\n     \"db:start\": \"supabase start\",\n     \"db:stop\": \"supabase stop\",\n     \"db:reset\": \"supabase db reset\"\n     ```\n\n8. **Configure .gitignore**:\n   - Ensure `.gitignore` includes:\n     ```\n     # Supabase\n     supabase/.temp/\n     supabase/.branches/\n     **/supabase/.temp/\n     ```\n   - DO commit: `supabase/config.toml`, `supabase/migrations/`, `supabase/seed.sql`\n\n**Important Notes**:\n- This task sets up LOCAL development only (not production Supabase)\n- The schema at `packages/infra/prisma/schema.prisma` already exists with complete models (Project, Experience, Profile, Skill tables)\n- Migration name `init` is used because this is the first migration\n- Local Supabase runs on different ports (54322 for DB) than production (5432)\n- Docker must be running before `supabase start`\n- Depends on Prisma schema being defined (Task 1: packages/infra setup)",
@@ -3349,7 +3389,8 @@
             "dependencies": [],
             "details": "1. Install Supabase CLI: `npm install -g supabase` or `pnpm add -g supabase`\n2. Verify installation: `supabase --version` (should output version 1.x.x)\n3. Navigate to project root: `/home/wallace/Projects/portfolio`\n4. Initialize Supabase: `supabase init`\n5. Verify creation of `supabase/` directory with:\n   - `config.toml`: Supabase configuration file\n   - `seed.sql`: Database seed file (optional, can be empty initially)\n6. Update `.gitignore` to include:\n   - `supabase/.temp/` (local temp files)\n   - `supabase/.branches/` (local branch data)\n   - Ensure `supabase/config.toml` and `supabase/migrations/` are NOT ignored (should be committed)\n7. Commit `supabase/config.toml` to version control",
             "status": "pending",
-            "testStrategy": "1. Verify CLI installation: `supabase --version` outputs version number\n2. Verify `supabase/` directory exists in project root\n3. Verify `supabase/config.toml` file exists and contains valid TOML configuration\n4. Verify `.gitignore` contains `supabase/.temp/` and `supabase/.branches/`\n5. Verify `git status` shows `supabase/config.toml` as trackable (not ignored)"
+            "testStrategy": "1. Verify CLI installation: `supabase --version` outputs version number\n2. Verify `supabase/` directory exists in project root\n3. Verify `supabase/config.toml` file exists and contains valid TOML configuration\n4. Verify `.gitignore` contains `supabase/.temp/` and `supabase/.branches/`\n5. Verify `git status` shows `supabase/config.toml` as trackable (not ignored)",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3360,7 +3401,8 @@
             ],
             "details": "1. Ensure Docker is running (check with `docker ps` or Docker Desktop)\n2. Start Supabase services: `supabase start` from project root\n3. Wait for Docker to pull and start all containers (2-3 minutes on first run):\n   - PostgreSQL (local database on port 54322, not standard 5432)\n   - Supabase Studio (web UI on port 54323)\n   - PostgREST API (port 54321)\n   - GoTrue (auth service)\n   - Realtime server\n   - Inbucket (email testing)\n4. CLI will output connection details including:\n   - `DB URL`: postgresql connection string for pooled connection (port 54322)\n   - `Direct URL`: postgresql connection string for direct connection (port 54322)\n   - `API URL`: http://localhost:54321\n   - `Studio URL`: http://localhost:54323\n   - `anon key`: for client-side access\n   - `service_role key`: for server-side admin access\n5. Copy both DATABASE_URL and DIRECT_URL values from CLI output\n6. Note: Local Supabase uses different ports (54322) than production Supabase (5432)\n7. Keep terminal window open or note that services run in background Docker containers",
             "status": "pending",
-            "testStrategy": "1. Verify `supabase start` completes without errors\n2. Verify Docker containers are running: `docker ps | grep supabase`\n3. Verify Studio is accessible: open http://localhost:54323 in browser\n4. Verify PostgreSQL is accessible: `docker exec supabase_db_portfolio psql -U postgres -c 'SELECT version();'` (container name may vary)\n5. Verify CLI output contains DATABASE_URL starting with `postgresql://postgres:postgres@localhost:54322/postgres`"
+            "testStrategy": "1. Verify `supabase start` completes without errors\n2. Verify Docker containers are running: `docker ps | grep supabase`\n3. Verify Studio is accessible: open http://localhost:54323 in browser\n4. Verify PostgreSQL is accessible: `docker exec supabase_db_portfolio psql -U postgres -c 'SELECT version();'` (container name may vary)\n5. Verify CLI output contains DATABASE_URL starting with `postgresql://postgres:postgres@localhost:54322/postgres`",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3371,7 +3413,8 @@
             ],
             "details": "1. Copy DATABASE_URL from Supabase CLI output (from subtask 2)\n2. Copy DIRECT_URL from Supabase CLI output (from subtask 2)\n3. Update `.env` in project root with local credentials:\n   ```\n   DATABASE_URL=\"postgresql://postgres:postgres@localhost:54322/postgres?pgbouncer=true&connection_limit=1\"\n   DIRECT_URL=\"postgresql://postgres:postgres@localhost:54322/postgres\"\n   ```\n   Note: The exact format will be provided by `supabase start` output\n4. If `apps/web/.env` exists separately, update it with the same values\n5. Update `.env.example` to show both production and local format:\n   - Add comment: `# Local development (Supabase local)`\n   - Add example: `DATABASE_URL=\"postgresql://postgres:postgres@localhost:54322/postgres?pgbouncer=true&connection_limit=1\"`\n   - Keep existing production format with comment: `# Production (Supabase cloud)`\n6. Important: Default password is `postgres` for local development\n7. Ensure `.env` is in `.gitignore` (already present)",
             "status": "pending",
-            "testStrategy": "1. Verify `.env` file contains DATABASE_URL and DIRECT_URL with localhost:54322\n2. Verify `.env.example` includes both local and production format examples\n3. Verify connection strings use correct format:\n   - DATABASE_URL includes `pgbouncer=true`\n   - DIRECT_URL is direct connection without pgbouncer\n4. Test connection: from `packages/infra/`, run `npx prisma db execute --stdin <<< 'SELECT 1;'` (should connect successfully)\n5. Verify `.env` is gitignored: `git check-ignore .env` outputs `.env`"
+            "testStrategy": "1. Verify `.env` file contains DATABASE_URL and DIRECT_URL with localhost:54322\n2. Verify `.env.example` includes both local and production format examples\n3. Verify connection strings use correct format:\n   - DATABASE_URL includes `pgbouncer=true`\n   - DIRECT_URL is direct connection without pgbouncer\n4. Test connection: from `packages/infra/`, run `npx prisma db execute --stdin <<< 'SELECT 1;'` (should connect successfully)\n5. Verify `.env` is gitignored: `git check-ignore .env` outputs `.env`",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -3382,7 +3425,8 @@
             ],
             "details": "1. Navigate to `packages/infra/` directory\n2. Verify `prisma/schema.prisma` exists (already present with complete schema)\n3. Run migration: `pnpm db:migrate` (which runs `prisma migrate dev`)\n   - This creates the initial migration in `packages/infra/prisma/migrations/`\n   - Migration name will be auto-generated or prompted (suggest: `init` or `initial_schema`)\n4. Prisma will automatically:\n   - Create all tables: Project, Skill, Experience, Profile, ProjectSkill, ExperienceSkill, ProfileStat, SocialNetwork\n   - Create all enums: ProjectStatus, SkillType, EmploymentType, LocationType\n   - Create all indexes and foreign key constraints as defined in schema\n   - Generate Prisma Client in `node_modules/.prisma/client/`\n5. If migration fails, check:\n   - DATABASE_URL and DIRECT_URL are correctly set in `.env`\n   - Local Supabase is running: `supabase status`\n   - Connection to localhost:54322 is accessible\n6. Migration files will be created in `packages/infra/prisma/migrations/YYYYMMDDHHMMSS_migration_name/`\n7. Commit the generated migration files to git",
             "status": "pending",
-            "testStrategy": "1. Verify migration completes without errors\n2. Verify migration directory created: check `packages/infra/prisma/migrations/` contains a timestamped folder\n3. Verify migration SQL file exists in the migration folder\n4. Verify Prisma Client generated: `packages/infra/node_modules/.prisma/client/` exists\n5. Run Prisma Studio: `pnpm db:studio` from `packages/infra/`\n6. In Prisma Studio (http://localhost:5555), verify all tables exist:\n   - Project, ProjectSkill, Skill\n   - Experience, ExperienceSkill\n   - Profile, ProfileStat, SocialNetwork\n7. Verify enums exist in database: in Studio, check enum dropdown in any relevant table\n8. Test Prisma Client import: create test file that imports `@prisma/client` and instantiates `PrismaClient` without errors"
+            "testStrategy": "1. Verify migration completes without errors\n2. Verify migration directory created: check `packages/infra/prisma/migrations/` contains a timestamped folder\n3. Verify migration SQL file exists in the migration folder\n4. Verify Prisma Client generated: `packages/infra/node_modules/.prisma/client/` exists\n5. Run Prisma Studio: `pnpm db:studio` from `packages/infra/`\n6. In Prisma Studio (http://localhost:5555), verify all tables exist:\n   - Project, ProjectSkill, Skill\n   - Experience, ExperienceSkill\n   - Profile, ProfileStat, SocialNetwork\n7. Verify enums exist in database: in Studio, check enum dropdown in any relevant table\n8. Test Prisma Client import: create test file that imports `@prisma/client` and instantiates `PrismaClient` without errors",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -3393,7 +3437,8 @@
             ],
             "details": "1. Update `packages/infra/README.md` to replace WIP status with local development section:\n   - Add \"Local Development\" section with:\n     - Prerequisites: Docker Desktop or Docker Engine running\n     - Start services: `supabase start` (from project root)\n     - Stop services: `supabase stop` (from project root)\n     - Reset database: `supabase db reset` (drops all data, re-runs migrations and seeds)\n     - View data: `pnpm db:studio` (from packages/infra/) or http://localhost:54323 (Supabase Studio)\n   - Add connection string format explanation:\n     - Local: `postgresql://postgres:postgres@localhost:54322/postgres`\n     - Production: `postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres`\n   - Add note: Local DB data is ephemeral when using `supabase stop` without `--no-backup` flag\n   - Add troubleshooting section:\n     - \"Services won't start\": Check Docker is running, check port conflicts (54321-54323, 54322)\n     - \"Migration fails\": Verify .env has correct DATABASE_URL, run `supabase status` to check services\n2. Add npm scripts to root `package.json`:\n   ```json\n   \"db:start\": \"supabase start\",\n   \"db:stop\": \"supabase stop\",\n   \"db:reset\": \"supabase db reset\",\n   \"db:status\": \"supabase status\",\n   \"db:studio\": \"pnpm -C packages/infra db:studio\"\n   ```\n3. Update `.gitignore` verification section to confirm:\n   - `supabase/.temp/` is ignored (local temp files)\n   - `supabase/.branches/` is ignored (local branch data)\n   - `supabase/config.toml` is NOT ignored (should be committed)\n   - `supabase/migrations/` is NOT ignored (should be committed)\n4. Add note in README about Task 1 dependency (Prisma schema must exist first)",
             "status": "pending",
-            "testStrategy": "1. Verify `packages/infra/README.md` contains \"Local Development\" section\n2. Verify README includes all Supabase commands: start, stop, reset, status\n3. Verify README explains port differences: local (54322) vs production (5432)\n4. Verify root `package.json` contains new db:* scripts\n5. Test scripts from project root:\n   - `pnpm db:status` shows running services\n   - `pnpm db:stop` stops services successfully\n   - `pnpm db:start` restarts services successfully\n   - `pnpm db:studio` opens Prisma Studio\n6. Verify `.gitignore` correctly configured:\n   - `git check-ignore supabase/.temp/test` outputs path (ignored)\n   - `git check-ignore supabase/config.toml` outputs nothing (not ignored, trackable)\n7. Verify documentation is clear and actionable for another developer"
+            "testStrategy": "1. Verify `packages/infra/README.md` contains \"Local Development\" section\n2. Verify README includes all Supabase commands: start, stop, reset, status\n3. Verify README explains port differences: local (54322) vs production (5432)\n4. Verify root `package.json` contains new db:* scripts\n5. Test scripts from project root:\n   - `pnpm db:status` shows running services\n   - `pnpm db:stop` stops services successfully\n   - `pnpm db:start` restarts services successfully\n   - `pnpm db:studio` opens Prisma Studio\n6. Verify `.gitignore` correctly configured:\n   - `git check-ignore supabase/.temp/test` outputs path (ignored)\n   - `git check-ignore supabase/config.toml` outputs nothing (not ignored, trackable)\n7. Verify documentation is clear and actionable for another developer",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-22T02:16:08.081Z"
@@ -3401,9 +3446,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-22T02:16:08.081Z",
+      "lastModified": "2026-03-23T03:20:18.915Z",
       "taskCount": 8,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "sprint-2"
       ]
