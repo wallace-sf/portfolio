@@ -2904,7 +2904,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -2983,7 +2983,8 @@
         ],
         "complexity": 8,
         "recommendedSubtasks": 6,
-        "expansionPrompt": "Break down PrismaProjectRepository implementation into subtasks: (1) Create ProjectMapper.toDomain with JSONB-to-VO parsing for all LocalizedText fields, Image, DateRange, Slug, and Skill[] relation mapping, (2) Create ProjectMapper.toPrisma for domain-to-Prisma conversion, (3) Implement findAll/findPublished/findFeatured with status filtering and soft-delete checks, (4) Implement findById and findBySlug with proper includes, (5) Implement findRelated with slug-based filtering, (6) Implement save (upsert) and delete (soft-delete) operations. Focus on comprehensive error handling and Either propagation."
+        "expansionPrompt": "Break down PrismaProjectRepository implementation into subtasks: (1) Create ProjectMapper.toDomain with JSONB-to-VO parsing for all LocalizedText fields, Image, DateRange, Slug, and Skill[] relation mapping, (2) Create ProjectMapper.toPrisma for domain-to-Prisma conversion, (3) Implement findAll/findPublished/findFeatured with status filtering and soft-delete checks, (4) Implement findById and findBySlug with proper includes, (5) Implement findRelated with slug-based filtering, (6) Implement save (upsert) and delete (soft-delete) operations. Focus on comprehensive error handling and Either propagation.",
+        "updatedAt": "2026-03-23T03:34:18.766Z"
       },
       {
         "id": "3",
@@ -3072,7 +3073,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -3138,7 +3139,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break down PrismaProfileRepository into subtasks: (1) Create ProfileMapper.toDomain parsing Name, LocalizedText fields (headline, bio), Image, and the two 1:many relations (stats with order field and LocalizedText labels, socialNetworks), plus featuredProjectSlugs string[] to Slug[] conversion, (2) Create ProfileMapper.toPrisma, (3) Implement find() using findFirst (singleton profile assumption) with nested stats (ordered by order ASC) and socialNetworks includes, (4) Implement save (upsert) with nested writes for stats and socialNetworks, (5) Add error handling for when no profile exists vs. successful null return."
+        "expansionPrompt": "Break down PrismaProfileRepository into subtasks: (1) Create ProfileMapper.toDomain parsing Name, LocalizedText fields (headline, bio), Image, and the two 1:many relations (stats with order field and LocalizedText labels, socialNetworks), plus featuredProjectSlugs string[] to Slug[] conversion, (2) Create ProfileMapper.toPrisma, (3) Implement find() using findFirst (singleton profile assumption) with nested stats (ordered by order ASC) and socialNetworks includes, (4) Implement save (upsert) with nested writes for stats and socialNetworks, (5) Add error handling for when no profile exists vs. successful null return.",
+        "updatedAt": "2026-03-23T03:49:55.820Z"
       },
       {
         "id": "5",
@@ -3446,9 +3448,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-23T03:20:18.915Z",
+      "lastModified": "2026-03-23T03:49:55.820Z",
       "taskCount": 8,
-      "completedCount": 3,
+      "completedCount": 5,
       "tags": [
         "sprint-2"
       ]
