@@ -9,17 +9,7 @@
 - **Node.js** ≥ 22
 - **pnpm** ≥ 8 (`npm install -g pnpm`)
 - **Git**
-- **Docker** (Docker Engine or Docker Desktop) — required to run the local database
-
-The Supabase CLI is installed automatically via `pnpm install` — no global installation needed.
-
-> **Linux + Docker Desktop only:** the Supabase CLI does not respect the active Docker
-> context and connects directly to `/var/run/docker.sock`. If `pnpm db:start` fails,
-> run once or add to your shell profile:
->
-> ```bash
-> export DOCKER_HOST=unix:///var/run/docker.sock
-> ```
+- A [Supabase](https://supabase.com) project (free tier is sufficient)
 
 ---
 
@@ -39,33 +29,15 @@ pnpm install
 cp .env.example .env
 ```
 
-### Local database (recommended for development)
-
-Start the local Supabase stack and use the local URLs:
-
-```bash
-pnpm db:start   # starts Docker containers
-pnpm db:status  # shows URLs and service status
-```
-
-Set in `.env`:
-
-```env
-DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"
-DIRECT_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"
-```
+1. Create a project at [supabase.com](https://supabase.com) (or use an existing one)
+2. Go to **Project Settings → Database → Connection string**
+3. Copy the **Transaction** string to `DATABASE_URL` and the **Session** string to `DIRECT_URL`
 
 Then apply migrations:
 
 ```bash
-DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres" \
-  pnpm --filter @repo/infra db:migrate
+pnpm --filter @repo/infra db:migrate
 ```
-
-### Cloud database (Supabase dashboard)
-
-Obtain the connection strings from **Project Settings → Database** and set them in `.env`.
-See `.env.example` for the expected format.
 
 ---
 
@@ -79,11 +51,8 @@ See `.env.example` for the expected format.
 | `pnpm lint` | Lint all packages |
 | `pnpm typecheck` | TypeScript check across all packages |
 | `pnpm format` | Prettier format |
-| `pnpm db:start` | Start local Supabase stack (Docker) |
-| `pnpm db:stop` | Stop local Supabase stack |
-| `pnpm db:reset` | Reset local DB and reapply migrations |
-| `pnpm db:status` | Show local service URLs and status |
-| `pnpm db:studio` | Open Supabase Studio (visual DB browser) |
+| `pnpm --filter @repo/infra db:migrate` | Apply pending migrations |
+| `pnpm --filter @repo/infra db:studio` | Open Prisma Studio (visual DB browser) |
 
 Run a single package:
 
