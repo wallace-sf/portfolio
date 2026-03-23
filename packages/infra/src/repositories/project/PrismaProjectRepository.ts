@@ -45,16 +45,16 @@ export class PrismaProjectRepository implements IProjectRepository {
   }
 
   async findById(id: Id): Promise<Project | null> {
-    const row = await this.db.project.findUnique({
-      where: { id: id.value },
+    const row = await this.db.project.findFirst({
+      where: { id: id.value, deletedAt: null },
       include: INCLUDE,
     });
     return row ? ProjectMapper.toDomain(row) : null;
   }
 
   async findBySlug(slug: Slug): Promise<Project | null> {
-    const row = await this.db.project.findUnique({
-      where: { slug: slug.value },
+    const row = await this.db.project.findFirst({
+      where: { slug: slug.value, deletedAt: null },
       include: INCLUDE,
     });
     return row ? ProjectMapper.toDomain(row) : null;
