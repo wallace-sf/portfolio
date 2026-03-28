@@ -6,11 +6,27 @@ Revisão de decisões de modelagem identificadas em conversa, visando maior ader
 
 ---
 
+## Classificação de Domínio (decisão)
+
+| Tipo | Entidade | Repositório | Observação |
+|---|---|---|---|
+| Aggregate Root | `Project` | `IProjectRepository` | Referencia Skills por ID |
+| Aggregate Root | `Experience` | `IExperienceRepository` | Referencia Skills por ID |
+| Aggregate Root | `Profile` | `IProfileRepository` | Singleton; dono do ciclo de vida das Skills |
+| Entity interna | `Skill` | — | Dono: `Profile`; sem repositório próprio |
+| Entity interna | `SocialNetwork` | — | Dono: `Profile` |
+| Entity interna | `Language` | — | Dono: `Profile` |
+| Entity interna | `ProfessionalValue` | — | Dono: `Profile` |
+| Value Object | `ProfileStat` | — | Plain class, sem `id` |
+| Value Object | `ExperienceSkill` | — | A remover — ver item 1 |
+
+**Princípio:** apenas Aggregate Roots têm repositório. Entidades internas são acessadas exclusivamente através do repositório do seu agregado.
+
+---
+
 ## 1. Remover `ExperienceSkill` — referenciar `Skill` por `Id`
 
-**Motivação:** `ExperienceSkill` foi criado para carregar `workDescription` por skill dentro de uma experiência. Decidimos que `description` na própria `Experience` é suficiente, tornando o VO supérfluo. Em DDD estrito, aggregates distintos se referenciam por `Id`, não por objeto completo.
-
-**Arquivos a modificar:**
+**Motivação:** `ExperienceSkill` embute `ISkillProps` completo por valor dentro de `Experience`. Em DDD estrito, agregados distintos se referenciam por `Id`, não por objeto. Além disso, `workDescription` é redundante com a `description` da própria `Experience`.
 
 | Arquivo | Mudança |
 |---|---|
@@ -29,17 +45,50 @@ Revisão de decisões de modelagem identificadas em conversa, visando maior ader
 | `infra/prisma/schema.prisma` | Remover coluna `workDescription` do model `ExperienceSkill` |
 | Nova migration Prisma | Dropar coluna `workDescription` |
 
-**Consequência no use case:** `ExperienceDTO.skills` passa a ser `string[]` (IDs). Para exibir nome/ícone/tipo das skills de uma experiência, a camada de apresentação ou o use case deverá consultar o `ISkillRepository` separadamente.
+**Consequência no use case:** `ExperienceDTO.skills` passa a ser `string[]` (IDs). Para exibir nome/ícone/tipo de uma skill, o use case resolve via `IProfileRepository` (que carrega Skills junto com o Profile).
 
 ---
 
-## 2. Converter `SkillType`, `Fluency`, `LocationType`, `EmploymentType` em enums inline
+## 2. Remover `ISkillRepository` e `PrismaSkillRepository`
 
-**Motivação:** O próprio `CLAUDE.md` estabelece que enums estáveis com uma única regra de validação não devem ser VOs — devem ser primitivos/enums validados com `Validator.of(...).in([...])` dentro do `create()` da entidade que os usa. Esses quatro "VOs" são exatamente esse caso: cada um é usado por uma única entidade, tem apenas a regra `.in([...])`, e não agrega comportamento adicional.
+**Motivação:** `Skill` é uma entidade interna do agregado `Profile` — não um Aggregate Root. Pelo DDD, apenas Aggregate Roots têm repositório próprio. Criar `ISkillRepository` viola essa regra: dá a `Skill` um ciclo de vida independente que ela não possui no domínio. Skills são definidas pelo desenvolvedor (Profile) e acessadas por ID a partir de `Experience` e `Project`.
 
-Além disso, como são usados por apenas um bounded context, não pertencem ao Shared Kernel.
+| Arquivo | Mudança |
+|---|---|
+| `core/.../skill/repositories/ISkillRepository.ts` | Deletar |
+| `core/.../skill/repositories/` (pasta) | Deletar se vazia |
+| `core/.../skill/index.ts` | Remover export de `ISkillRepository` |
+| `infra/.../skill/PrismaSkillRepository.ts` | Deletar |
+| `infra/.../skill/SkillMapper.ts` | Mover lógica para `ProfileMapper` (Skills são carregadas com Profile) |
+| `infra/.../container.ts` | Remover binding de `ISkillRepository` / `PrismaSkillRepository` |
+| `application/.../use-cases/GetExperiences.ts` | Remover dependência de `ISkillRepository` se existir |
+| `application/.../use-cases/GetProjects.ts` | Idem |
 
-**Mudanças por entidade:**
+**Como Skills são lidas após a remoção:** o `IProfileRepository` carrega Skills junto com o Profile (já fazem parte do mesmo agregado). Use cases que precisam de Skills resolvem via Profile ou recebem os IDs de Skills que estão embarcados em `Experience.skills` e `Project.skills`.
+
+**Impacto no Prisma:** o model `Skill` no schema permanece — o que muda é que não há mais um repositório Prisma dedicado. Skills são persistidas via `ProfileMapper` dentro do `save(profile)`.
+
+---
+
+## 3. Referenciar `Skill` por `Id` em `Project`
+
+**Motivação:** `Project.skills` atualmente embute `ISkillProps[]` por valor, pelo mesmo problema de `ExperienceSkill`. `Project` é um Aggregate Root separado de `Profile`; deve referenciar Skills por ID.
+
+| Arquivo | Mudança |
+|---|---|
+| `core/.../project/model/Project.ts` | `skills: Skill[]` → `skills: Id[]`; `IProjectProps.skills: string[]` |
+| `core/test/project/Project.test.ts` | Ajustar testes para `skills: string[]` |
+| `core/test/helpers/builders/ProjectBuilder.ts` | `withSkills` aceita `string[]` (IDs) |
+| `application/.../dtos/ProjectDTO.ts` | `skills: SkillDTO[]` → `skills: string[]` |
+| `application/.../use-cases/GetProjects.ts` | `skills: project.skills.map(id => id.value)` |
+| `infra/.../project/ProjectMapper.ts` | `toDomain` mapeia skill IDs; `toPrisma` usa `{ skillId: id.value }` |
+| `infra/.../project/PrismaProjectRepository.ts` | `save` alinhado com nova estrutura |
+
+---
+
+## 4. Converter `SkillType`, `Fluency`, `LocationType`, `EmploymentType` em enums inline
+
+**Motivação:** O próprio `CLAUDE.md` estabelece que enums estáveis com uma única regra de validação não devem ser VOs — devem ser primitivos/enums validados com `Validator.of(...).in([...])` dentro do `create()` da entidade que os usa. Esses quatro "VOs" são exatamente esse caso: cada um é usado por uma única entidade, tem apenas a regra `.in([...])`, e não agrega comportamento adicional. Além disso, como são usados por apenas um bounded context, não pertencem ao Shared Kernel.
 
 | VO a remover | Entidade dona | Mudança na entidade |
 |---|---|---|
@@ -55,18 +104,15 @@ Além disso, como são usados por apenas um bounded context, não pertencem ao S
 
 ---
 
-## 3. Criar interface base `IRepository<T>`
+## 5. Criar interface base `IRepository<T>`
 
-**Motivação:** Os repositórios `IExperienceRepository`, `ISkillRepository` e `IProjectRepository` repetem as mesmas quatro assinaturas (`findAll`, `findById`, `save`, `delete`) sem um contrato comum declarado. Uma interface base garante nomenclatura e assinaturas consistentes e torna explícito que esses três seguem o mesmo padrão. `IProfileRepository` fica independente — `Profile` é singleton, sem `findById` nem `delete`, e essa independência comunica sua natureza especial.
-
-**Arquivos a criar/modificar:**
+**Motivação:** `IExperienceRepository` e `IProjectRepository` repetem as mesmas quatro assinaturas (`findAll`, `findById`, `save`, `delete`) sem um contrato comum. Uma interface base garante nomenclatura e assinaturas consistentes. `IProfileRepository` fica independente — `Profile` é singleton, sem `findById` nem `delete`, e essa independência comunica sua natureza especial. `ISkillRepository` não entra nessa interface — será removido no item 2.
 
 | Arquivo | Mudança |
 |---|---|
 | `core/src/shared/base/IRepository.ts` | Criar interface genérica `IRepository<T>` |
 | `core/src/shared/base/index.ts` | Exportar `IRepository` |
 | `core/.../experience/repositories/IExperienceRepository.ts` | Estender `IRepository<Experience>` |
-| `core/.../skill/repositories/ISkillRepository.ts` | Estender `IRepository<Skill>` |
 | `core/.../project/repositories/IProjectRepository.ts` | Estender `IRepository<Project>` (mantém métodos extras) |
 
 **Interface resultante:**
@@ -82,25 +128,25 @@ export interface IRepository<T> {
 
 ---
 
-## 4. Criar classe `AggregateRoot` e classificar entidades internas
+## 6. Criar classe `AggregateRoot` e classificar entidades internas
 
-**Motivação:** Já existem 4 aggregate roots (`Project`, `Experience`, `Skill`, `Profile`) e o bounded context `blog` (previsto no roadmap) introduzirá pelo menos mais um (`BlogPost`). O benefício de `AggregateRoot` não depende de domain events — ele comunica intenção: quem lê o código sabe que `Experience extends AggregateRoot` é uma raiz, não um objeto interno. O custo é mínimo (classe vazia por ora); o ganho semântico é imediato.
-
-**Arquivos a criar/modificar:**
+**Motivação:** `AggregateRoot` comunica intenção: quem lê o código sabe que `Experience extends AggregateRoot` é uma raiz de consistência, não um objeto interno. O custo é mínimo (classe vazia por ora); o ganho semântico é imediato. `Skill` **não** estende `AggregateRoot` — é entidade interna de `Profile`.
 
 | Arquivo | Mudança |
 |---|---|
-| `core/src/shared/base/AggregateRoot.ts` | Criar `AggregateRoot<T, TProps> extends Entity<T, TProps>` (vazia por ora) |
+| `core/src/shared/base/AggregateRoot.ts` | Criar `AggregateRoot<T, TProps> extends Entity<T, TProps>` |
 | `core/src/shared/base/index.ts` | Exportar `AggregateRoot` |
 | `core/.../experience/model/Experience.ts` | Estender `AggregateRoot` em vez de `Entity` |
-| `core/.../skill/model/Skill.ts` | Estender `AggregateRoot` em vez de `Entity` |
 | `core/.../project/model/Project.ts` | Estender `AggregateRoot` em vez de `Entity` |
 | `core/.../profile/model/Profile.ts` | Estender `AggregateRoot` em vez de `Entity` |
+| `core/.../skill/model/Skill.ts` | Manter `extends Entity` — entidade interna de `Profile` |
 
-**Pendência — classificar `Language`, `ProfessionalValue`, `SocialNetwork`:**
+**Entidades internas já classificadas:**
 
-Essas três entidades existem no domínio mas não têm repositório. Precisam ser avaliadas:
-- Se têm identidade própria e ciclo de vida independente → são aggregate roots (ganham repositório e estendem `AggregateRoot`)
-- Se só fazem sentido dentro de `Profile` → são objetos internos (estendem `Entity` ou são VOs dentro do aggregate de `Profile`)
-
-`ProfileStat` já está implicitamente como objeto interno de `Profile`, mas não estende `Entity` nem `ValueObject` — é uma classe simples. Avaliar se deve adotar uma das bases ou permanecer assim.
+| Entidade | Base | Dono |
+|---|---|---|
+| `Skill` | `Entity` | `Profile` |
+| `SocialNetwork` | `Entity` | `Profile` |
+| `Language` | `Entity` | `Profile` |
+| `ProfessionalValue` | `Entity` | `Profile` |
+| `ProfileStat` | plain class | `Profile` |
