@@ -9,6 +9,9 @@ const jestConfig: JestConfigWithTsJest = {
     '^.+\\.tsx?$': 'ts-jest',
   },
   testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
+  moduleNameMapper: {
+    '^~(.*)$': '<rootDir>/src$1',
+  },
 };
 
 export default jestConfig;

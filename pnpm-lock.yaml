@@ -119,9 +119,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@repo/application':
+        specifier: workspace:*
+        version: link:../../packages/application
       '@repo/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@repo/infra':
+        specifier: workspace:*
+        version: link:../../packages/infra
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -5194,7 +5200,7 @@ packages:
       std-env: 3.10.0
       test-exclude: 7.0.2
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/node@20.14.2)(tsx@4.21.0)
+      vitest: 3.2.4(@types/node@20.14.2)
     transitivePeerDependencies:
       - supports-color
     dev: true

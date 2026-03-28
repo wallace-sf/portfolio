@@ -15,7 +15,9 @@
     "types": "tsc -p ./tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@repo/application": "workspace:*",
     "@repo/core": "workspace:*",
+    "@repo/infra": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "classnames": "^2.5.1",
