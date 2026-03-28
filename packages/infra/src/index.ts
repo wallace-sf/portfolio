@@ -6,3 +6,5 @@ export { ExperienceMapper } from './repositories/experience/ExperienceMapper';
 export { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
 export { ProfileMapper } from './repositories/profile/ProfileMapper';
 export { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
+export { ResendEmailService } from './services/ResendEmailService';
+export type { IResendEmailServiceConfig } from './services/ResendEmailService';
