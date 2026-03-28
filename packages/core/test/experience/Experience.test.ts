@@ -2,12 +2,12 @@ import {
   DateRange,
   EmploymentType,
   Experience,
+  Id,
   LocalizedText,
   LocationType,
   ValidationError,
 } from '../../src';
-import { ExperienceBuilder, SkillBuilder } from '../helpers';
-import { Data } from '../helpers/generators';
+import { ExperienceBuilder } from '../helpers';
 
 describe('Experience', () => {
   describe('when created from valid props', () => {
@@ -48,18 +48,18 @@ describe('Experience', () => {
       expect(result.value.period.endAt?.value).toBe(endAt);
     });
 
-    it('should create experience with logo and skills', () => {
-      const skills = SkillBuilder.listToProps(2).map((skill) => ({
-        skill,
-        workDescription: { 'pt-BR': 'Desenvolvimento frontend.' },
-      }));
+    it('should create experience with logo and skill IDs', () => {
+      const skillIds = [
+        'b0000000-0000-4000-8000-000000000001',
+        'b0000000-0000-4000-8000-000000000002',
+      ];
 
       const result = Experience.create(
         ExperienceBuilder.build()
           .withLogo('https://example.com/logo.png', {
             'pt-BR': 'Logo da empresa',
           })
-          .withSkills(skills)
+          .withSkills(skillIds)
           .toProps(),
       );
 
@@ -67,9 +67,8 @@ describe('Experience', () => {
       if (!result.isRight()) return;
       expect(result.value.logo.url.value).toBe('https://example.com/logo.png');
       expect(result.value.skills).toHaveLength(2);
-      expect(result.value.skills[0]!.workDescription.get('pt-BR')).toBe(
-        'Desenvolvimento frontend.',
-      );
+      expect(result.value.skills[0]).toBeInstanceOf(Id);
+      expect(result.value.skills[0]!.value).toBe(skillIds[0]);
     });
 
     it('should allow experience without end date (active)', () => {
@@ -210,22 +209,15 @@ describe('Experience', () => {
       expect((result.value as ValidationError).code).toBe(DateRange.ERROR_CODE);
     });
 
-    it('should return Left when a skill has invalid props', () => {
+    it('should return Left when a skill ID is invalid', () => {
       const result = Experience.create(
         ExperienceBuilder.build()
-          .withSkills([
-            {
-              skill: SkillBuilder.listToProps(1)[0]!,
-              workDescription: { 'pt-BR': '' },
-            },
-          ])
+          .withSkills(['not-a-valid-uuid'])
           .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(
-        LocalizedText.ERROR_CODE,
-      );
+      expect((result.value as ValidationError).code).toBe('INVALID_ID');
     });
   });
 

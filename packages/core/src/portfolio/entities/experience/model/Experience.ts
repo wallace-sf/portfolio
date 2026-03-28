@@ -5,6 +5,7 @@ import {
   EmploymentType,
   EmploymentTypeValue,
   AggregateRoot,
+  Id,
   IEntityProps,
   ILocalizedTextInput,
   Image,
@@ -15,7 +16,6 @@ import {
   left,
   right,
 } from '../../../../shared';
-import { ExperienceSkill, IExperienceSkillProps } from './ExperienceSkill';
 
 export interface IExperienceLogo {
   url: string;
@@ -30,7 +30,7 @@ export interface IExperienceProps extends IEntityProps {
   logo: IExperienceLogo;
   employment_type: EmploymentTypeValue;
   location_type: LocationTypeValue;
-  skills: IExperienceSkillProps[];
+  skills: string[];
   start_at: string;
   end_at?: string;
 }
@@ -45,7 +45,7 @@ export class Experience extends AggregateRoot<Experience, IExperienceProps> {
   public readonly logo: Image;
   public readonly employment_type: EmploymentType;
   public readonly location_type: LocationType;
-  public readonly skills: ExperienceSkill[];
+  public readonly skills: Id[];
   public readonly period: DateRange;
 
   private constructor(
@@ -57,7 +57,7 @@ export class Experience extends AggregateRoot<Experience, IExperienceProps> {
     logo: Image,
     employment_type: EmploymentType,
     location_type: LocationType,
-    skills: ExperienceSkill[],
+    skills: Id[],
     period: DateRange,
   ) {
     super(props);
@@ -96,11 +96,11 @@ export class Experience extends AggregateRoot<Experience, IExperienceProps> {
       period,
     ] = result.value;
 
-    const skills: ExperienceSkill[] = [];
-    for (const skillProps of props.skills ?? []) {
-      const skillResult = ExperienceSkill.create(skillProps);
-      if (skillResult.isLeft()) return left(skillResult.value);
-      skills.push(skillResult.value);
+    const skills: Id[] = [];
+    for (const skillId of props.skills ?? []) {
+      const idResult = Id.create(skillId);
+      if (idResult.isLeft()) return left(idResult.value);
+      skills.push(idResult.value);
     }
 
     return right(

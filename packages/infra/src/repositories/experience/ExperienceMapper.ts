@@ -1,16 +1,12 @@
 import { Prisma } from '@prisma/client';
 
-import {
-  IExperienceProps,
-  Experience,
-  IExperienceSkillProps,
-} from '@repo/core/portfolio';
+import { IExperienceProps, Experience } from '@repo/core/portfolio';
 import { ILocalizedTextInput, LocationTypeValue } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
 
 type PrismaExperienceWithSkills = Prisma.ExperienceGetPayload<{
-  include: { skills: { include: { skill: true } } };
+  include: { skills: true };
 }>;
 
 type ExperienceScalarData = Omit<Prisma.ExperienceUncheckedCreateInput, 'skills'>;
@@ -38,18 +34,6 @@ export class ExperienceMapper {
       );
     }
 
-    const skillProps: IExperienceSkillProps[] = raw.skills.map((es) => ({
-      skill: {
-        id: es.skill.id,
-        description: es.skill.description as string,
-        icon: es.skill.icon,
-        type: es.skill.type,
-        created_at: es.skill.createdAt.toISOString(),
-        updated_at: es.skill.updatedAt.toISOString(),
-      },
-      workDescription: asLocalized(es.workDescription),
-    }));
-
     const props: IExperienceProps = {
       id: raw.id,
       company: asLocalized(raw.company),
@@ -62,7 +46,7 @@ export class ExperienceMapper {
       },
       employment_type: raw.employmentType,
       location_type: locationType,
-      skills: skillProps,
+      skills: raw.skills.map((es) => es.skillId),
       start_at: raw.startAt.toISOString(),
       end_at: raw.endAt?.toISOString(),
       created_at: raw.createdAt.toISOString(),
