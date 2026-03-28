@@ -27,7 +27,8 @@
     "@prisma/client": "^6.0.0",
     "@repo/application": "workspace:*",
     "@repo/core": "workspace:*",
-    "@repo/utils": "workspace:*"
+    "@repo/utils": "workspace:*",
+    "resend": "^6.9.4"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
