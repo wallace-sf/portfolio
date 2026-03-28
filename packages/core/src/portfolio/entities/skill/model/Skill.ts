@@ -1,7 +1,7 @@
 import {
   collect,
   Either,
-  Entity,
+  AggregateRoot,
   IEntityProps,
   left,
   right,
@@ -17,7 +17,7 @@ export interface ISkillProps extends IEntityProps {
   type: SkillTypeValue;
 }
 
-export class Skill extends Entity<Skill, ISkillProps> {
+export class Skill extends AggregateRoot<Skill, ISkillProps> {
   public readonly description: Text;
   public readonly icon: Text;
   public readonly type: SkillType;
