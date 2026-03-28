@@ -37,13 +37,16 @@ export class ResendEmailService implements IEmailService {
 
   async send(message: IContactMessageDTO): Promise<Either<DomainError, void>> {
     try {
-      await this.client.emails.send({
+      const { error } = await this.client.emails.send({
         from: this.config.senderEmail,
         to: this.config.recipientEmail,
         replyTo: message.email,
         subject: `Contact from ${message.name}`,
         html: formatEmailHtml(message.name, message.email, message.message),
       });
+      if (error) {
+        return left(new DomainError('EMAIL_SEND_FAILED', { message: error.message }));
+      }
       return right(undefined);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
