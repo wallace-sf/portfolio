@@ -30,7 +30,7 @@ describe('ResendEmailService', () => {
 
   describe('send', () => {
     it('should return right when email sends successfully', async () => {
-      sendMock.mockResolvedValueOnce({ id: 'email-id-123' });
+      sendMock.mockResolvedValueOnce({ data: { id: 'email-id-123' }, error: null });
       const service = makeService(sendMock);
 
       const result = await service.send(validMessage);
@@ -40,7 +40,7 @@ describe('ResendEmailService', () => {
     });
 
     it('should call resend with correct parameters', async () => {
-      sendMock.mockResolvedValueOnce({ id: 'email-id-123' });
+      sendMock.mockResolvedValueOnce({ data: { id: 'email-id-123' }, error: null });
       const service = makeService(sendMock);
 
       await service.send(validMessage);
@@ -56,7 +56,7 @@ describe('ResendEmailService', () => {
     });
 
     it('should include all message fields in the email html', async () => {
-      sendMock.mockResolvedValueOnce({ id: 'email-id-123' });
+      sendMock.mockResolvedValueOnce({ data: { id: 'email-id-123' }, error: null });
       const service = makeService(sendMock);
 
       await service.send(validMessage);
@@ -68,8 +68,8 @@ describe('ResendEmailService', () => {
       expect(html).toContain(validMessage.message);
     });
 
-    it('should return left with DomainError when Resend API throws', async () => {
-      sendMock.mockRejectedValueOnce(new Error('API rate limit exceeded'));
+    it('should return left with DomainError when Resend returns an error object', async () => {
+      sendMock.mockResolvedValueOnce({ data: null, error: { message: 'You can only send testing emails to your own email address.' } });
       const service = makeService(sendMock);
 
       const result = await service.send(validMessage);
@@ -77,10 +77,21 @@ describe('ResendEmailService', () => {
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(DomainError);
       expect((result.value as DomainError).code).toBe('EMAIL_SEND_FAILED');
-      expect((result.value as DomainError).message).toContain('API rate limit exceeded');
+      expect((result.value as DomainError).message).toContain('You can only send testing emails');
     });
 
-    it('should return left with DomainError for unknown errors', async () => {
+    it('should return left with DomainError when Resend throws unexpectedly', async () => {
+      sendMock.mockRejectedValueOnce(new Error('Network failure'));
+      const service = makeService(sendMock);
+
+      const result = await service.send(validMessage);
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as DomainError).code).toBe('EMAIL_SEND_FAILED');
+      expect((result.value as DomainError).message).toContain('Network failure');
+    });
+
+    it('should return left with DomainError for unknown thrown values', async () => {
       sendMock.mockRejectedValueOnce('unexpected string error');
       const service = makeService(sendMock);
 
