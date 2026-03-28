@@ -3219,7 +3219,7 @@
           "4",
           "5"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -3283,7 +3283,8 @@
         ],
         "complexity": 4,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break down DI container creation into subtasks: (1) Create container.ts with makeContainer() factory function initializing PrismaClient and Resend client singletons, (2) Instantiate all four repositories (PrismaProjectRepository, PrismaExperienceRepository, PrismaProfileRepository, PrismaSkillRepository if needed) with PrismaClient injection, (3) Instantiate ResendEmailService with Resend client and email config from env, (4) Implement env var validation throwing descriptive errors for missing required vars (DATABASE_URL, DIRECT_URL, RESEND_API_KEY, CONTACT_EMAIL_TO), (5) Export Container type and makeContainer, ensure singleton pattern, add integration test calling container and using repos."
+        "expansionPrompt": "Break down DI container creation into subtasks: (1) Create container.ts with makeContainer() factory function initializing PrismaClient and Resend client singletons, (2) Instantiate all four repositories (PrismaProjectRepository, PrismaExperienceRepository, PrismaProfileRepository, PrismaSkillRepository if needed) with PrismaClient injection, (3) Instantiate ResendEmailService with Resend client and email config from env, (4) Implement env var validation throwing descriptive errors for missing required vars (DATABASE_URL, DIRECT_URL, RESEND_API_KEY, CONTACT_EMAIL_TO), (5) Export Container type and makeContainer, ensure singleton pattern, add integration test calling container and using repos.",
+        "updatedAt": "2026-03-28T17:21:54.937Z"
       },
       {
         "id": "7",
@@ -3449,9 +3450,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-28T03:47:46.649Z",
+      "lastModified": "2026-03-28T17:21:54.938Z",
       "taskCount": 8,
-      "completedCount": 6,
+      "completedCount": 7,
       "tags": [
         "sprint-2"
       ]
