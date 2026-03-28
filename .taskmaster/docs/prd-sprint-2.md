@@ -147,6 +147,7 @@ Implement `IProfileRepository` with Prisma, including stats and social networks.
 **GitHub Issue**: #287
 **Priority**: Medium
 **Dependencies**: T-25
+**Status**: Done
 
 Implement `IEmailService` using the Resend API for sending contact form emails.
 
@@ -154,13 +155,19 @@ Implement `IEmailService` using the Resend API for sending contact form emails.
 
 - Implements `IEmailService.send(ContactMessageDTO)`
 - Email template includes sender's name, email, and message
-- `RESEND_API_KEY` environment variable documented in `.env.example`
+- `RESEND_API_KEY`, `CONTACT_EMAIL_TO`, `CONTACT_EMAIL_FROM` documented in `.env.example`
 - Returns `Either<DomainError, void>`
+
+**Implementation notes**:
+
+- **Critical**: Resend SDK never throws for API errors (e.g. 403 sending to unverified address). It always returns `{ data, error }`. The service must destructure `{ error }` and return `left(new DomainError(...))` when `error` is truthy — a plain `try/catch` is insufficient.
+- `send-email-manual.ts` integration script added to `packages/infra/scripts/` for manual validation with real Resend credentials. Run via `pnpm send:email:manual` with `.env` populated.
 
 **Files**:
 
-- `packages/infra/src/services/ResendEmailService.ts` ← create
-- `.env.example` ← update with `RESEND_API_KEY`
+- `packages/infra/src/services/ResendEmailService.ts` ← created
+- `packages/infra/scripts/send-email-manual.ts` ← created
+- `.env.example` ← updated with `RESEND_API_KEY`, `CONTACT_EMAIL_TO`, `CONTACT_EMAIL_FROM`
 
 ---
 
@@ -169,22 +176,33 @@ Implement `IEmailService` using the Resend API for sending contact form emails.
 **GitHub Issue**: #288
 **Priority**: High
 **Dependencies**: T-26, T-27, T-28, T-29
+**Status**: Done
 
 Create a factory/container that resolves concrete implementations of the port interfaces. Exported for consumption in `apps/web` Server Components.
 
 **Acceptance Criteria**:
 
-- `container.ts` exports a `makeContainer()` function with resolved repositories
+- `container.ts` exports `makeContainer()` and singleton `getContainer()`
 - Resolves: `IProjectRepository` → `PrismaProjectRepository`
 - Resolves: `IExperienceRepository` → `PrismaExperienceRepository`
 - Resolves: `IProfileRepository` → `PrismaProfileRepository`
 - Resolves: `IEmailService` → `ResendEmailService`
+- Validates required env vars on startup; throws with all missing names in a single error
 - `packages/infra/src/index.ts` exports the container
+
+**Implementation notes**:
+
+- `validateEnv(vars: readonly string[])` utility extracted to `packages/utils/src/env/validateEnv.ts` and exported as `@repo/utils/env` subpath. Throws with all missing variable names listed in one error — never silently ignores missing config.
+- `env` object with lazy getters added to `packages/infra/src/env.ts` (`RESEND_API_KEY`, `CONTACT_EMAIL_TO`, `CONTACT_EMAIL_FROM`). Container calls `validateEnv(Object.keys(env))` before wiring dependencies. Avoids scattered `process.env` accesses.
 
 **Files**:
 
-- `packages/infra/src/container.ts` ← create
-- `packages/infra/src/index.ts` ← create
+- `packages/infra/src/container.ts` ← created
+- `packages/infra/src/env.ts` ← created
+- `packages/infra/src/index.ts` ← created
+- `packages/utils/src/env/validateEnv.ts` ← created
+- `packages/utils/src/env/index.ts` ← created
+- `packages/utils/package.json` ← added `./env` subpath export
 
 ---
 
@@ -193,28 +211,93 @@ Create a factory/container that resolves concrete implementations of the port in
 **GitHub Issue**: #289
 **Priority**: Medium
 **Dependencies**: T-30
+**Status**: DEFERRED → moved to Sprint 3
 
-Introduce a consistent REST response envelope and implement the minimum projects endpoint. The API layer must be thin — only calls use cases and maps errors to HTTP.
+This task was deferred. The development order is: core → infra → API → frontend. `apps/web` (including API routes hosted there) is the last layer to be touched. See Sprint 3 PRD for the rescheduled implementation.
+
+**Rationale**: API routes in `apps/web/src/app/api/` are part of the frontend application. Implementing them before the presentation layer sprint introduces premature coupling and violates the established build order.
+
+---
+
+---
+
+### T-ID1 — Identity: Core domain (Email, Role, User, UnauthorizedError, IUserRepository, AccessPolicy)
+
+**GitHub Issue**: #404
+**Priority**: Low
+**Dependencies**: T-25
+
+Implement the Identity bounded context in `packages/core`. Authentication via Supabase Auth; authorization model is binary (`ADMIN | VISITOR`).
 
 **Acceptance Criteria**:
 
-- Response envelope defined and used in all endpoints:
-  - Success: `{ data: T, error: null, meta?: {...} }`
-  - Failure: `{ data: null, error: { code: string, message: string, details?: unknown }, meta?: {...} }`
-- Endpoint implemented: `GET /api/v1/projects/:slug`
-- Handler:
-  - calls `GetProjectBySlug` use case
-  - maps `NotFoundError` → HTTP 404
-  - maps `ValidationError` / `DomainError` → HTTP 400
-  - maps unexpected errors → HTTP 500
-- Error message localized based on request locale
-- No domain logic in the handler
+- `Email` Value Object with format validation
+- `Role` enum: `ADMIN | VISITOR`
+- `User` entity: `id: Id`, `email: Email`, `role: Role`; `User.create()` returns `Either<DomainError, User>`
+- `UnauthorizedError` extends `DomainError` with code `UNAUTHORIZED`
+- `IUserRepository`: `findById(id: Id): Promise<User | null>`, `findByEmail(email: Email): Promise<User | null>`
+- `AccessPolicy.isAdmin(user: User): boolean`
+- All exported from `packages/core/src/identity/index.ts`
+- Unit tests for `User.create()` and `AccessPolicy`
+
+**Out of scope for MVP**: logout, magic link/OAuth, audit log, notifications.
 
 **Files**:
 
-- `apps/web/src/app/api/v1/projects/[slug]/route.ts` ← create
-- `apps/web/src/lib/api/envelope.ts` ← create envelope helper
-- `apps/web/src/lib/api/error-mapper.ts` ← create error mapping
+- `packages/core/src/identity/vo/Email.ts` ← create
+- `packages/core/src/identity/model/User.ts` ← create
+- `packages/core/src/identity/policy/AccessPolicy.ts` ← create
+- `packages/core/src/identity/repositories/IUserRepository.ts` ← create
+- `packages/core/src/shared/errors/UnauthorizedError.ts` ← create
+- `packages/core/src/identity/index.ts` ← create
+
+---
+
+### T-ID2 — Identity: Infrastructure (migration users, SupabaseUserRepository, seed admin)
+
+**GitHub Issue**: #405
+**Priority**: Low
+**Dependencies**: T-ID1
+
+Implement the infrastructure for the Identity bounded context.
+
+**Acceptance Criteria**:
+
+- Prisma migration creating `users` table with columns `id`, `email`, `role`
+- `SupabaseUserRepository` implements `IUserRepository`
+- Seed script creates initial admin user
+- `makeContainer()` wires `SupabaseUserRepository` → `IUserRepository`
+
+**Files**:
+
+- `packages/infra/prisma/migrations/...` ← create migration
+- `packages/infra/src/repositories/identity/SupabaseUserRepository.ts` ← create
+- `packages/infra/prisma/seed.ts` ← update with admin seed
+
+---
+
+### T-ID3 — Identity: Application (GetCurrentUserUseCase, EnsureAdminUseCase)
+
+**GitHub Issue**: #406
+**Priority**: Low
+**Dependencies**: T-ID1, T-ID2
+
+Implement the application use cases for the Identity bounded context.
+
+**Acceptance Criteria**:
+
+- `GetCurrentUserUseCase`: input `{ userId: string }` → `Either<NotFoundError, UserDTO>`
+- `EnsureAdminUseCase`: input `{ userId: string }` → `Either<UnauthorizedError | NotFoundError, void>`; uses `AccessPolicy.isAdmin()`
+- `UserDTO`: `{ id: string, email: string, role: string }`
+- All exported from `packages/application/src/identity/index.ts`
+- Unit tests for both use cases with mocked repository
+
+**Files**:
+
+- `packages/application/src/identity/use-cases/GetCurrentUserUseCase.ts` ← create
+- `packages/application/src/identity/use-cases/EnsureAdminUseCase.ts` ← create
+- `packages/application/src/identity/dtos/UserDTO.ts` ← create
+- `packages/application/src/identity/index.ts` ← create
 
 ---
 
@@ -227,15 +310,22 @@ T-25 (packages/infra scaffold + Prisma schema)
   ├── T-28 (PrismaProfileRepository)
   └── T-29 (ResendEmailService)
         └── T-30 (DI container)
-              └── T-31 (Response Envelope + GET /api/v1/projects/:slug)
+
+T-ID1 (Identity core)
+  └── T-ID2 (Identity infra)
+        └── T-ID3 (Identity application)
+
+T-31 → DEFERRED to Sprint 3
 ```
 
 ## Definition of Done
 
-- [ ] `packages/infra` package configured and building
-- [ ] All Prisma repositories implemented and returning domain entities
-- [ ] `ResendEmailService` implemented and functional
-- [ ] DI container wiring all dependencies
-- [ ] `GET /api/v1/projects/:slug` endpoint responding with correct envelope
+- [x] `packages/infra` package configured and building
+- [x] All Prisma repositories implemented and returning domain entities
+- [x] `ResendEmailService` implemented and functional (with correct `{ data, error }` handling)
+- [x] `validateEnv` utility in `@repo/utils/env`; `env` object with lazy getters in `packages/infra/src/env.ts`
+- [x] DI container wiring all dependencies with startup env validation
+- [ ] Identity bounded context: core, infra, application layers complete
+- [ ] `GET /api/v1/projects/:slug` → DEFERRED to Sprint 3
 - [ ] `.env.example` documents all required environment variables
 - [ ] Ready to start Sprint 3 (Presentation Layer)
