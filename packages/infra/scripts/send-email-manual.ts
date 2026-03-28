@@ -2,20 +2,21 @@ import { Resend } from 'resend';
 
 import { validateEnv } from '@repo/utils/env';
 
+import { env } from '../src/env';
 import { ResendEmailService } from '../src/services/ResendEmailService';
 
 try {
-  validateEnv(['RESEND_API_KEY', 'CONTACT_EMAIL_TO', 'CONTACT_EMAIL_FROM']);
+  validateEnv(Object.keys(env));
 } catch (err) {
   console.error(err instanceof Error ? err.message : err);
   process.exit(1);
 }
 
 async function main() {
-  const client = new Resend(process.env.RESEND_API_KEY!);
+  const client = new Resend(env.RESEND_API_KEY);
   const service = new ResendEmailService(client, {
-    recipientEmail: process.env.CONTACT_EMAIL_TO!,
-    senderEmail: process.env.CONTACT_EMAIL_FROM!,
+    recipientEmail: env.CONTACT_EMAIL_TO,
+    senderEmail: env.CONTACT_EMAIL_FROM,
   });
 
   const result = await service.send({
@@ -29,7 +30,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('SUCCESS: email sent to', process.env.CONTACT_EMAIL_TO);
+  console.log('SUCCESS: email sent to', env.CONTACT_EMAIL_TO);
 }
 
 main();

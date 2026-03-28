@@ -6,6 +6,7 @@ import { IProjectRepository } from '@repo/core/portfolio';
 import { IEmailService } from '@repo/application/contact';
 import { validateEnv } from '@repo/utils/env';
 
+import { env } from './env';
 import { prisma } from './prisma/client';
 import { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
 import { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
@@ -19,20 +20,18 @@ export interface Container {
   emailService: IEmailService;
 }
 
-const REQUIRED_ENV_VARS = ['RESEND_API_KEY', 'CONTACT_EMAIL_TO', 'CONTACT_EMAIL_FROM'] as const;
-
 export function makeContainer(): Container {
-  validateEnv(REQUIRED_ENV_VARS);
+  validateEnv(Object.keys(env));
 
-  const resend = new Resend(process.env['RESEND_API_KEY']!);
+  const resend = new Resend(env.RESEND_API_KEY);
 
   return {
     projectRepository: new PrismaProjectRepository(prisma),
     experienceRepository: new PrismaExperienceRepository(prisma),
     profileRepository: new PrismaProfileRepository(prisma),
     emailService: new ResendEmailService(resend, {
-      recipientEmail: process.env['CONTACT_EMAIL_TO']!,
-      senderEmail: process.env['CONTACT_EMAIL_FROM']!,
+      recipientEmail: env.CONTACT_EMAIL_TO,
+      senderEmail: env.CONTACT_EMAIL_FROM,
     }),
   };
 }

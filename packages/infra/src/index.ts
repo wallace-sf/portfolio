@@ -1,3 +1,4 @@
+export { env } from './env';
 export { makeContainer, getContainer } from './container';
 export type { Container } from './container';
 export { prisma } from './prisma/client';
