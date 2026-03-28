@@ -4,7 +4,7 @@ import {
   collect,
   DateRange,
   Either,
-  Entity,
+  AggregateRoot,
   IEntityProps,
   ILocalizedTextInput,
   Image,
@@ -46,7 +46,7 @@ export interface IProjectProps extends IEntityProps {
   relatedProjects?: string[];
 }
 
-export class Project extends Entity<Project, IProjectProps> {
+export class Project extends AggregateRoot<Project, IProjectProps> {
   static readonly ERROR_CODE = 'INVALID_PROJECT';
 
   public readonly slug: Slug;

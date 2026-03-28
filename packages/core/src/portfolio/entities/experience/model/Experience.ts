@@ -4,7 +4,7 @@ import {
   Either,
   EmploymentType,
   EmploymentTypeValue,
-  Entity,
+  AggregateRoot,
   IEntityProps,
   ILocalizedTextInput,
   Image,
@@ -35,7 +35,7 @@ export interface IExperienceProps extends IEntityProps {
   end_at?: string;
 }
 
-export class Experience extends Entity<Experience, IExperienceProps> {
+export class Experience extends AggregateRoot<Experience, IExperienceProps> {
   static readonly ERROR_CODE = 'INVALID_EXPERIENCE';
 
   public readonly company: LocalizedText;
