@@ -3296,7 +3296,7 @@
         "dependencies": [
           "6"
         ],
-        "status": "pending",
+        "status": "deferred",
         "subtasks": [
           {
             "id": 1,
@@ -3373,7 +3373,7 @@
         "complexity": 5,
         "recommendedSubtasks": 6,
         "expansionPrompt": "Break down API envelope and first endpoint into subtasks: (1) Create envelope.ts with ApiResponse<T> type (success/error variants), successResponse and errorResponse helper functions, (2) Create error-mapper.ts with mapDomainErrorToHttp function mapping DomainError subclasses (ValidationError, NotFoundError) to HTTP status codes (400, 404, 500) and localized error messages, (3) Implement GET /api/v1/projects/[slug]/route.ts extracting slug param and locale from request, (4) Wire up GetProjectBySlug use case from container, execute with Slug VO, (5) Map Either result to HTTP response using envelope (left → errorResponse with status, right → successResponse with DTO), (6) Add integration tests for route (valid slug 200, invalid slug 400, not found 404) and unit tests for helpers.",
-        "updatedAt": "2026-03-28T18:23:32.081Z"
+        "updatedAt": "2026-03-28T18:25:40.661Z"
       },
       {
         "id": "8",
@@ -3451,7 +3451,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-03-28T18:23:32.081Z",
+      "lastModified": "2026-03-28T18:25:40.661Z",
       "taskCount": 8,
       "completedCount": 7,
       "tags": [
