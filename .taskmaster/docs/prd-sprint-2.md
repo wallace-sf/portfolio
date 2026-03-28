@@ -105,13 +105,13 @@ Implement `IProjectRepository` using Prisma + Supabase, including a mapper from 
 **Priority**: High
 **Dependencies**: T-25
 
-Implement `IExperienceRepository` with Prisma, including the join with `ExperienceSkill` to return skills with `workDescription`.
+Implement `IExperienceRepository` with Prisma, including the join com `ExperienceSkill` para retornar skill IDs.
 
 **Acceptance Criteria**:
 
 - Implements all methods of `IExperienceRepository`
-- `findAll()` includes skills via join (`include: { experienceSkills: { include: { skill: true } } }`)
-- `ExperienceMapper` converts Prisma result → `Experience` entity with `ExperienceSkill[]`
+- `findAll()` includes skill IDs via join (`include: { experienceSkills: true }`)
+- `ExperienceMapper` converts Prisma result → `Experience` entity with `Id[]` for skills
 - Results ordered by `startAt DESC`
 
 **Files**:
@@ -219,6 +219,114 @@ This task was deferred. The development order is: core → infra → API → fro
 
 ---
 
+### T-DDD1 — Remover ExperienceSkill — referenciar Skill por Id em Experience
+
+**GitHub Issue**: #400
+**Priority**: Medium
+**Dependencies**: T-25, T-27, T-30
+
+Remover o Value Object `ExperienceSkill` e substituir `Experience.skills` por `Id[]`. Aggregates distintos se referenciam por ID, não por objeto completo.
+
+**Acceptance Criteria**:
+
+- `ExperienceSkill.ts` deletado de `packages/core`
+- `IExperienceProps.skills: string[]`; `Experience.skills: Id[]`
+- `ExperienceDTO.skills: string[]`
+- `ExperienceMapper` mapeia skill IDs; coluna `workDescription` removida do Prisma schema
+- `pnpm build` e `pnpm test` passando
+
+**Files**:
+
+- `core/.../experience/model/Experience.ts` ← `skills: Id[]`
+- `core/.../experience/model/ExperienceSkill.ts` ← deletar
+- `application/.../dtos/ExperienceDTO.ts` ← `skills: string[]`
+- `infra/.../experience/ExperienceMapper.ts` ← mapear skill IDs
+- `infra/prisma/schema.prisma` ← remover `workDescription`
+
+---
+
+### T-DDD2 — Remover ISkillRepository e PrismaSkillRepository
+
+**GitHub Issue**: #412
+**Priority**: Medium
+**Dependencies**: T-25, T-28, T-DDD1
+
+`Skill` é entidade interna do agregado `Profile`, não um Aggregate Root. Pelo DDD, apenas Aggregate Roots têm repositório próprio. Skills são persistidas e acessadas via `IProfileRepository`.
+
+**Acceptance Criteria**:
+
+- `ISkillRepository.ts` deletado de `packages/core`
+- `PrismaSkillRepository.ts` deletado de `packages/infra`
+- Lógica de mapeamento de Skills absorvida pelo `ProfileMapper`
+- Container DI sem referência a `ISkillRepository`
+- `pnpm build` e `pnpm test` passando
+
+**Files**:
+
+- `core/.../skill/repositories/ISkillRepository.ts` ← deletar
+- `infra/.../skill/PrismaSkillRepository.ts` ← deletar
+- `infra/.../mappers/ProfileMapper.ts` ← absorver mapeamento de Skills
+- `infra/.../container.ts` ← remover binding `ISkillRepository`
+
+---
+
+### T-DDD3 — Migrar Project.skills de ISkillProps[] para Id[]
+
+**GitHub Issue**: #413
+**Priority**: Medium
+**Dependencies**: T-25, T-26, T-DDD1, T-DDD2
+
+`Project.skills` embute `ISkillProps[]` por valor, violando a mesma regra corrigida em `Experience`. Project deve referenciar Skills apenas por ID.
+
+**Acceptance Criteria**:
+
+- `IProjectProps.skills: string[]`; `Project.skills: Id[]`
+- `ProjectDTO.skills: string[]`
+- `ProjectMapper` mapeia skill IDs; não embute `ISkillProps`
+- `pnpm build` e `pnpm test` passando
+
+**Files**:
+
+- `core/.../project/model/Project.ts` ← `skills: Id[]`
+- `application/.../dtos/ProjectDTO.ts` ← `skills: string[]`
+- `infra/.../project/ProjectMapper.ts` ← mapear skill IDs
+
+---
+
+### T-DDD4 — Converter SkillType, Fluency, LocationType, EmploymentType em enums inline
+
+**GitHub Issue**: #401
+**Priority**: Medium
+**Dependencies**: T-DDD1
+
+Remover os quatro VOs do Shared Kernel e convertê-los em enums/constantes inline nas entidades donas. Enums estáveis com única regra `.in([...])` não devem ser VOs.
+
+**Acceptance Criteria**:
+
+- `SkillType`, `Fluency`, `LocationType`, `EmploymentType` removidos de `shared/vo/`
+- Cada entidade dona (`Skill`, `Language`, `Experience`) exporta seu próprio enum/constante
+- Validação via `Validator.of(...).in([...])` dentro de `create()`
+- `pnpm build` e `pnpm test` passando
+
+---
+
+### T-DDD5 — Criar interface base IRepository\<T\> no Shared Kernel
+
+**GitHub Issue**: #402
+**Priority**: Medium
+**Dependencies**: T-DDD2
+
+Criar `IRepository<T>` como contrato comum para `IExperienceRepository` e `IProjectRepository`. `ISkillRepository` foi removido (T-DDD2). `IProfileRepository` permanece independente por ser singleton.
+
+**Acceptance Criteria**:
+
+- `IRepository<T>` com `findAll`, `findById`, `save`, `delete` criada em `shared/base/`
+- `IExperienceRepository` e `IProjectRepository` estendem `IRepository<T>`
+- `IProfileRepository` permanece independente
+- `pnpm build` passando
+
+---
+
 ---
 
 ### T-ID1 — Identity: Core domain (Email, Role, User, UnauthorizedError, IUserRepository, AccessPolicy)
@@ -311,6 +419,13 @@ T-25 (packages/infra scaffold + Prisma schema)
   └── T-29 (ResendEmailService)
         └── T-30 (DI container)
 
+DDD Cleanup:
+  T-DDD1 (Remove ExperienceSkill — Experience.skills: Id[])
+    └── T-DDD2 (Remove ISkillRepository + PrismaSkillRepository)
+          └── T-DDD3 (Project.skills: Id[])
+  T-DDD4 (Enums inline — SkillType, Fluency, LocationType, EmploymentType)
+  T-DDD5 (IRepository<T> base interface)
+
 T-ID1 (Identity core)
   └── T-ID2 (Identity infra)
         └── T-ID3 (Identity application)
@@ -325,6 +440,10 @@ T-31 → DEFERRED to Sprint 3
 - [x] `ResendEmailService` implemented and functional (with correct `{ data, error }` handling)
 - [x] `validateEnv` utility in `@repo/utils/env`; `env` object with lazy getters in `packages/infra/src/env.ts`
 - [x] DI container wiring all dependencies with startup env validation
+- [ ] DDD cleanup: `ExperienceSkill` removido, `Experience.skills` e `Project.skills` como `Id[]`
+- [ ] DDD cleanup: `ISkillRepository` e `PrismaSkillRepository` removidos
+- [ ] DDD cleanup: enums inline (`SkillType`, `Fluency`, `LocationType`, `EmploymentType`)
+- [ ] DDD cleanup: `IRepository<T>` base interface criada
 - [ ] Identity bounded context: core, infra, application layers complete
 - [ ] `GET /api/v1/projects/:slug` → DEFERRED to Sprint 3
 - [ ] `.env.example` documents all required environment variables
