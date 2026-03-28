@@ -4,6 +4,7 @@ import { IExperienceRepository } from '@repo/core/portfolio';
 import { IProfileRepository } from '@repo/core/portfolio';
 import { IProjectRepository } from '@repo/core/portfolio';
 import { IEmailService } from '@repo/application/contact';
+import { validateEnv } from '@repo/utils/env';
 
 import { prisma } from './prisma/client';
 import { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
@@ -20,17 +21,8 @@ export interface Container {
 
 const REQUIRED_ENV_VARS = ['RESEND_API_KEY', 'CONTACT_EMAIL_TO', 'CONTACT_EMAIL_FROM'] as const;
 
-function validateEnv(): void {
-  const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(', ')}. Please set them in your .env file.`,
-    );
-  }
-}
-
 export function makeContainer(): Container {
-  validateEnv();
+  validateEnv(REQUIRED_ENV_VARS);
 
   const resend = new Resend(process.env['RESEND_API_KEY']!);
 

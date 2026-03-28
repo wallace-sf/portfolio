@@ -1,13 +1,14 @@
 import { Resend } from 'resend';
 
+import { validateEnv } from '@repo/utils/env';
+
 import { ResendEmailService } from '../src/services/ResendEmailService';
 
-const requiredVars = ['RESEND_API_KEY', 'CONTACT_EMAIL_TO', 'CONTACT_EMAIL_FROM'] as const;
-for (const key of requiredVars) {
-  if (!process.env[key]) {
-    console.error(`Missing environment variable: ${key}`);
-    process.exit(1);
-  }
+try {
+  validateEnv(['RESEND_API_KEY', 'CONTACT_EMAIL_TO', 'CONTACT_EMAIL_FROM']);
+} catch (err) {
+  console.error(err instanceof Error ? err.message : err);
+  process.exit(1);
 }
 
 async function main() {
