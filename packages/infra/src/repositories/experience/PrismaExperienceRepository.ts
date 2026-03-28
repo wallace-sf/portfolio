@@ -7,7 +7,7 @@ import { InfrastructureError } from '../../errors/InfrastructureError';
 import { ExperienceMapper } from './ExperienceMapper';
 
 const INCLUDE = {
-  skills: { include: { skill: true } },
+  skills: true,
 } as const;
 
 export class PrismaExperienceRepository implements IExperienceRepository {
@@ -33,9 +33,8 @@ export class PrismaExperienceRepository implements IExperienceRepository {
     const data = ExperienceMapper.toPrisma(experience);
     const { id, ...rest } = data;
 
-    const skillsCreate = experience.skills.map((es) => ({
-      skillId: es.skill.id.value,
-      workDescription: es.workDescription.value,
+    const skillsCreate = experience.skills.map((skillId) => ({
+      skillId: skillId.value,
     }));
 
     await this.db.experience.upsert({

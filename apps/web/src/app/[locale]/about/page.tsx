@@ -47,44 +47,7 @@ const EXPERIENCES: IExperienceProps[] = [
     },
     logo: { url: 'https://placehold.co/48x48', alt: { 'pt-BR': 'WESF logo' } },
     location_type: 'REMOTE',
-    skills: [
-      {
-        skill: {
-          id: '1',
-          description: 'React.js',
-          icon: 'devicon:react',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Desenvolvimento de interfaces.' },
-      },
-      {
-        skill: {
-          id: '2',
-          description: 'Angular',
-          icon: 'devicon:angular',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Manutenção de aplicações.' },
-      },
-      {
-        skill: {
-          id: '3',
-          description: 'Typescript',
-          icon: 'devicon:typescript',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Tipagem estática.' },
-      },
-      {
-        skill: {
-          id: '4',
-          description: 'Electron',
-          icon: 'devicon:electron',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Apps desktop.' },
-      },
-    ],
+    skills: [],
     start_at: '2021-01-01T00:00:00.000Z',
     end_at: '2022-01-01T00:00:00.000Z',
   },
@@ -102,44 +65,7 @@ const EXPERIENCES: IExperienceProps[] = [
       alt: { 'pt-BR': 'Galaxies logo' },
     },
     location_type: 'REMOTE',
-    skills: [
-      {
-        skill: {
-          id: '1',
-          description: 'Next.js',
-          icon: 'devicon:nextjs',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'SSR e geração estática.' },
-      },
-      {
-        skill: {
-          id: '2',
-          description: 'TailwindCSS',
-          icon: 'devicon:tailwindcss',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Estilização utilitária.' },
-      },
-      {
-        skill: {
-          id: '3',
-          description: 'Material UI',
-          icon: 'devicon:materialui',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Design system.' },
-      },
-      {
-        skill: {
-          id: '4',
-          description: 'Electron',
-          icon: 'devicon:electron',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Apps desktop.' },
-      },
-    ],
+    skills: [],
     start_at: '2022-01-01T00:00:00.000Z',
     end_at: '2023-01-01T00:00:00.000Z',
   },
@@ -155,44 +81,7 @@ const EXPERIENCES: IExperienceProps[] = [
     description: { 'pt-BR': 'Desenvolvimento de sistemas para engenharia.' },
     logo: { url: 'https://placehold.co/48x48', alt: { 'pt-BR': 'FDTE logo' } },
     location_type: 'HYBRID',
-    skills: [
-      {
-        skill: {
-          id: '1',
-          description: 'React.js',
-          icon: 'devicon:react',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Desenvolvimento de interfaces.' },
-      },
-      {
-        skill: {
-          id: '2',
-          description: 'Angular',
-          icon: 'devicon:angular',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Manutenção de sistemas legados.' },
-      },
-      {
-        skill: {
-          id: '3',
-          description: 'Typescript',
-          icon: 'devicon:typescript',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Tipagem estática.' },
-      },
-      {
-        skill: {
-          id: '4',
-          description: 'Electron',
-          icon: 'devicon:electron',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Apps desktop.' },
-      },
-    ],
+    skills: [],
     start_at: '2023-01-01T00:00:00.000Z',
     end_at: '2024-01-01T00:00:00.000Z',
   },

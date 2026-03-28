@@ -1,9 +1,8 @@
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
-import { Experience, ExperienceSkill, IExperienceRepository } from '@repo/core/portfolio';
+import { Experience, IExperienceRepository } from '@repo/core/portfolio';
 
 import { UseCase } from '../../shared/UseCase';
 import { ExperienceDTO } from '../dtos/ExperienceDTO';
-import { ExperienceSkillDTO } from '../dtos/ExperienceSkillDTO';
 
 export interface GetExperiencesInput {
   locale: Locale;
@@ -43,16 +42,7 @@ export class GetExperiences extends UseCase<GetExperiencesInput, ExperienceDTO[]
       locationType: experience.location_type.value,
       startAt: experience.period.startAt.value,
       endAt: experience.period.endAt?.value,
-      skills: experience.skills.map((s) => this.toSkillDTO(s, locale)),
-    };
-  }
-
-  private toSkillDTO(skill: ExperienceSkill, locale: Locale): ExperienceSkillDTO {
-    return {
-      id: skill.skill.id.value,
-      name: skill.skill.description.value,
-      type: skill.skill.type.value,
-      workDescription: skill.workDescription.get(locale),
+      skills: experience.skills.map((id) => id.value),
     };
   }
 }

@@ -1,21 +1,12 @@
 import {
   Experience,
   IExperienceProps,
-  IExperienceSkillProps,
   EmploymentTypeValue,
   ILocalizedTextInput,
   LocationTypeValue,
 } from '../../../src';
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
-import { SkillBuilder } from './SkillBuilder';
-
-function experienceSkillListToProps(count: number): IExperienceSkillProps[] {
-  return SkillBuilder.listToProps(count).map((skill) => ({
-    skill,
-    workDescription: { 'pt-BR': Data.text.description() },
-  }));
-}
 
 export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
   private constructor(props: IExperienceProps) {
@@ -33,7 +24,10 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
       location_type: Data.location.valid(),
       start_at: '2022-01-01T00:00:00.000Z',
       end_at: '2022-01-02T00:00:00.000Z',
-      skills: experienceSkillListToProps(2),
+      skills: [
+        'a0000000-0000-4000-8000-000000000001',
+        'a0000000-0000-4000-8000-000000000002',
+      ],
     });
   }
 
@@ -94,7 +88,7 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
     return this;
   }
 
-  public withSkills(skills: IExperienceSkillProps[]): ExperienceBuilder {
+  public withSkills(skills: string[]): ExperienceBuilder {
     this._props.skills = skills;
     return this;
   }

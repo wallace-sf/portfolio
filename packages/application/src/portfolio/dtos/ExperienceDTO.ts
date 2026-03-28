@@ -1,5 +1,3 @@
-import { ExperienceSkillDTO } from './ExperienceSkillDTO';
-
 export type ExperienceDTO = {
   id: string;
   company: string;
@@ -11,5 +9,5 @@ export type ExperienceDTO = {
   locationType: string;
   startAt: string;
   endAt?: string;
-  skills: ExperienceSkillDTO[];
+  skills: string[];
 };
