@@ -1,6 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": ["**/.env.*local", "**/.env"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "RESEND_API_KEY",
+    "CONTACT_EMAIL_TO",
+    "CONTACT_EMAIL_FROM",
+    "ADMIN_EMAIL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
