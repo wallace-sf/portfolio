@@ -1,6 +1,6 @@
 import { Validator } from '@repo/utils/validator';
 
-import { Entity, IEntityProps } from '../../../../shared/base/Entity';
+import { AggregateRoot, IEntityProps } from '../../../../shared/base';
 import { collect, Either, left, right } from '../../../../shared/either';
 import { ValidationError } from '../../../../shared/errors';
 import { Email } from '../../../../shared/vo/Email';
@@ -13,7 +13,7 @@ export interface IUserProps extends IEntityProps {
   role: Role;
 }
 
-export class User extends Entity<User, IUserProps> {
+export class User extends AggregateRoot<User, IUserProps> {
   static readonly ERROR_CODE = 'INVALID_USER';
 
   public readonly name: Name;
