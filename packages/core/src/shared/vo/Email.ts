@@ -15,10 +15,7 @@ export class Email extends ValueObject<string> {
     const normalized = value?.trim().toLowerCase() ?? '';
     const { error, isValid } = Validator.of(normalized)
       .length(3, 254, 'Email must be between {{min}} and {{max}} characters.')
-      .regex(
-        /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/,
-        'Email must be a valid format (e.g., user@example.com).',
-      )
+      .email('Email must be a valid format (e.g., user@example.com).')
       .validate();
 
     if (!isValid && error)
