@@ -18,6 +18,12 @@ enum ProjectStatus {
   ARCHIVED
 }
 
+// Role mirrors Role enum in core/identity
+enum Role {
+  ADMIN
+  VISITOR
+}
+
 // SkillType mirrors SkillType.SKILLS in core
 enum SkillType {
   EDUCATION
@@ -174,4 +180,19 @@ model SocialNetwork {
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([profileId])
+}
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String   @unique
+  role      Role     @default(VISITOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
 }

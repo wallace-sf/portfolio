@@ -11,3 +11,5 @@ export { ProfileMapper } from './repositories/profile/ProfileMapper';
 export { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
 export { ResendEmailService } from './services/ResendEmailService';
 export type { IResendEmailServiceConfig } from './services/ResendEmailService';
+export { UserMapper } from './repositories/user/UserMapper';
+export { PrismaUserRepository } from './repositories/user/PrismaUserRepository';

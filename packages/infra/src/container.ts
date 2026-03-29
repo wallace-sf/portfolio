@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 
+import { IUserRepository } from '@repo/core/identity';
 import { IExperienceRepository } from '@repo/core/portfolio';
 import { IProfileRepository } from '@repo/core/portfolio';
 import { IProjectRepository } from '@repo/core/portfolio';
@@ -11,6 +12,7 @@ import { prisma } from './prisma/client';
 import { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
 import { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
 import { PrismaProjectRepository } from './repositories/project/PrismaProjectRepository';
+import { PrismaUserRepository } from './repositories/user/PrismaUserRepository';
 import { ResendEmailService } from './services/ResendEmailService';
 
 export interface Container {
@@ -18,6 +20,7 @@ export interface Container {
   experienceRepository: IExperienceRepository;
   profileRepository: IProfileRepository;
   emailService: IEmailService;
+  userRepository: IUserRepository;
 }
 
 export function makeContainer(): Container {
@@ -33,6 +36,7 @@ export function makeContainer(): Container {
       recipientEmail: env.CONTACT_EMAIL_TO,
       senderEmail: env.CONTACT_EMAIL_FROM,
     }),
+    userRepository: new PrismaUserRepository(prisma),
   };
 }
 
