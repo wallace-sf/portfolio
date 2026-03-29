@@ -9,10 +9,7 @@ import { useBreakpoint } from '~hooks';
 
 import { SkillGroup } from '../SkillGroup';
 
-export const ExperienceCard: FC<IExperienceProps> = ({
-  company,
-  position,
-}) => {
+export const ExperienceCard: FC<IExperienceProps> = ({ company, position }) => {
   const isXL = useBreakpoint('xl');
   const skillProps: ISkillProps[] = [];
 
