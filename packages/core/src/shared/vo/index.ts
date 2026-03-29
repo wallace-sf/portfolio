@@ -1,5 +1,6 @@
 export * from './DateRange';
 export * from './DateTime';
+export * from './Email';
 export * from './EmploymentType';
 export * from './Fluency';
 export * from './Id';
