@@ -40,7 +40,6 @@ async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProj
       summary: raw.summary ?? undefined,
       objectives: raw.objectives ?? undefined,
       role: raw.role ?? undefined,
-      team: raw.team,
       periodStart: raw.periodStart,
       periodEnd: raw.periodEnd,
       featured: raw.featured,

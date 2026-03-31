@@ -91,11 +91,6 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return this;
   }
 
-  public withTeam(team: string): ProjectBuilder {
-    this._props.team = team;
-    return this;
-  }
-
   public withPeriod(period: IProjectPeriod): ProjectBuilder {
     this._props.period = period;
     return this;

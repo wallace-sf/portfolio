@@ -39,7 +39,6 @@ export interface IProjectProps extends IEntityProps {
   summary?: ILocalizedTextInput;
   objectives?: ILocalizedTextInput;
   role?: ILocalizedTextInput;
-  team?: string;
   period: IProjectPeriod;
   featured: boolean;
   status: ProjectStatus;
@@ -59,7 +58,6 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   public readonly summary: LocalizedText | undefined;
   public readonly objectives: LocalizedText | undefined;
   public readonly role: LocalizedText | undefined;
-  public readonly team: string | undefined;
   public readonly period: DateRange;
   public readonly featured: boolean;
   public readonly status: ProjectStatus;
@@ -91,7 +89,6 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     this.summary = summary;
     this.objectives = objectives;
     this.role = role;
-    this.team = props.team;
     this.period = period;
     this.featured = props.featured;
     this.status = props.status;
