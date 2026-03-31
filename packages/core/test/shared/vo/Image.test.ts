@@ -1,7 +1,7 @@
 import { Image, ValidationError } from '../../../src';
 
 const validUrl = 'https://example.com/image.png';
-const validAlt = { 'pt-BR': 'Imagem de capa do projeto' };
+const validAlt = { 'en-US': 'Project cover image', 'pt-BR': 'Imagem de capa do projeto' };
 
 describe('Image', () => {
   describe('when created from valid value', () => {
@@ -58,8 +58,8 @@ describe('Image', () => {
       );
     });
 
-    it('should return Left with INVALID_LOCALIZED_TEXT when pt-BR alt is missing', () => {
-      const result = Image.create(validUrl, { 'pt-BR': '' });
+    it('should return Left with INVALID_LOCALIZED_TEXT when en-US alt is missing', () => {
+      const result = Image.create(validUrl, { 'en-US': '' });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
