@@ -41,12 +41,18 @@ const EXPERIENCES: IExperienceProps[] = [
     company: { 'en-US': 'WESF IT Services', 'pt-BR': 'WESF Serviços de TI' },
     employment_type: 'FREELANCE',
     location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
-    position: { 'en-US': 'Full-Stack Developer', 'pt-BR': 'Desenvolvedor Full-Stack' },
+    position: {
+      'en-US': 'Full-Stack Developer',
+      'pt-BR': 'Desenvolvedor Full-Stack',
+    },
     description: {
       'en-US': 'Full-stack solution development for clients.',
       'pt-BR': 'Desenvolvimento de soluções full-stack para clientes.',
     },
-    logo: { url: 'https://placehold.co/48x48', alt: { 'en-US': 'WESF logo', 'pt-BR': 'WESF logo' } },
+    logo: {
+      url: 'https://placehold.co/48x48',
+      alt: { 'en-US': 'WESF logo', 'pt-BR': 'WESF logo' },
+    },
     location_type: 'REMOTE',
     skills: [],
     start_at: '2021-01-01T00:00:00.000Z',
@@ -57,7 +63,10 @@ const EXPERIENCES: IExperienceProps[] = [
     company: { 'en-US': 'Galaxies', 'pt-BR': 'Galaxies' },
     employment_type: 'PART_TIME',
     location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
-    position: { 'en-US': 'Front-end Developer', 'pt-BR': 'Desenvolvedor Front-end' },
+    position: {
+      'en-US': 'Front-end Developer',
+      'pt-BR': 'Desenvolvedor Front-end',
+    },
     description: {
       'en-US': 'Interface development for SaaS platform.',
       'pt-BR': 'Desenvolvimento de interfaces para plataforma SaaS.',
@@ -74,14 +83,25 @@ const EXPERIENCES: IExperienceProps[] = [
   {
     id: '3',
     company: {
-      'en-US': 'FDTE - Foundation for the Technological Development of Engineering',
-      'pt-BR': 'FDTE - Fundação para o Desenvolvimento Técnológico da Engenharia',
+      'en-US':
+        'FDTE - Foundation for the Technological Development of Engineering',
+      'pt-BR':
+        'FDTE - Fundação para o Desenvolvimento Técnológico da Engenharia',
     },
     employment_type: 'FULL_TIME',
     location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
-    position: { 'en-US': 'Front-end Developer', 'pt-BR': 'Desenvolvedor Front-end' },
-    description: { 'en-US': 'Systems development for engineering.', 'pt-BR': 'Desenvolvimento de sistemas para engenharia.' },
-    logo: { url: 'https://placehold.co/48x48', alt: { 'en-US': 'FDTE logo', 'pt-BR': 'FDTE logo' } },
+    position: {
+      'en-US': 'Front-end Developer',
+      'pt-BR': 'Desenvolvedor Front-end',
+    },
+    description: {
+      'en-US': 'Systems development for engineering.',
+      'pt-BR': 'Desenvolvimento de sistemas para engenharia.',
+    },
+    logo: {
+      url: 'https://placehold.co/48x48',
+      alt: { 'en-US': 'FDTE logo', 'pt-BR': 'FDTE logo' },
+    },
     location_type: 'HYBRID',
     skills: [],
     start_at: '2023-01-01T00:00:00.000Z',
