@@ -2,7 +2,7 @@ import { LocalizedText, Text, ValidationError } from '../../src';
 import { ProfileStat } from '../../src/portfolio/entities/profile/model/ProfileStat';
 
 const validProps = {
-  label: { 'pt-BR': 'Anos de experiência' },
+  label: { 'en-US': 'Years of experience', 'pt-BR': 'Anos de experiência' },
   value: '5+',
   icon: 'briefcase',
 };
@@ -30,10 +30,10 @@ describe('ProfileStat', () => {
   });
 
   describe('when created from invalid props', () => {
-    it('should return Left when label pt-BR is empty', () => {
+    it('should return Left when label en-US is empty', () => {
       const result = ProfileStat.create({
         ...validProps,
-        label: { 'pt-BR': '' },
+        label: { 'en-US': '' },
       });
 
       expect(result.isLeft()).toBe(true);

@@ -85,17 +85,17 @@ describe('GetExperiences', () => {
       const oldest = makeExperience({
         start_at: '2020-01-01T00:00:00.000Z',
         end_at: '2021-01-01T00:00:00.000Z',
-        company: { 'pt-BR': 'oldest' },
+        company: { 'en-US': 'oldest', 'pt-BR': 'oldest' },
       });
       const middle = makeExperience({
         start_at: '2021-06-01T00:00:00.000Z',
         end_at: '2022-06-01T00:00:00.000Z',
-        company: { 'pt-BR': 'middle' },
+        company: { 'en-US': 'middle', 'pt-BR': 'middle' },
       });
       const newest = makeExperience({
         start_at: '2023-01-01T00:00:00.000Z',
         end_at: '2024-01-01T00:00:00.000Z',
-        company: { 'pt-BR': 'newest' },
+        company: { 'en-US': 'newest', 'pt-BR': 'newest' },
       });
 
       const repo = makeRepository({

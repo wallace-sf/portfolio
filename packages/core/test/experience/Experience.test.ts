@@ -20,9 +20,9 @@ describe('Experience', () => {
 
     it('should create experience with all fields as VOs', () => {
       const company = { 'pt-BR': 'Fieldlink', 'en-US': 'Fieldlink' };
-      const position = { 'pt-BR': 'Engenheiro de Software' };
-      const location = { 'pt-BR': 'São Paulo, Brasil' };
-      const description = { 'pt-BR': 'Desenvolvimento de sistemas.' };
+      const position = { 'en-US': 'Software Engineer', 'pt-BR': 'Engenheiro de Software' };
+      const location = { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' };
+      const description = { 'en-US': 'Systems development.', 'pt-BR': 'Desenvolvimento de sistemas.' };
       const startAt = '2022-01-01T00:00:00.000Z';
       const endAt = '2022-06-01T00:00:00.000Z';
 
@@ -57,6 +57,7 @@ describe('Experience', () => {
       const result = Experience.create(
         ExperienceBuilder.build()
           .withLogo('https://example.com/logo.png', {
+            'en-US': 'Company logo',
             'pt-BR': 'Logo da empresa',
           })
           .withSkills(skillIds)

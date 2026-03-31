@@ -6,7 +6,7 @@ export class ImageData {
   }
 
   static alt(): ILocalizedTextInput {
-    return { 'pt-BR': 'Imagem de capa do projeto' };
+    return { 'en-US': 'Project cover image', 'pt-BR': 'Imagem de capa do projeto' };
   }
 
   static altMultiLocale(): ILocalizedTextInput {

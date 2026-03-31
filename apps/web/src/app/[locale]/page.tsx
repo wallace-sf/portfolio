@@ -11,10 +11,11 @@ const PROJECTS: IProjectProps[] = [
     slug: 'fieldlink-enterprise',
     coverImage: {
       url: 'https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg',
-      alt: { 'pt-BR': 'Imagem do projeto Fieldlink Enterprise' },
+      alt: { 'en-US': 'Fieldlink Enterprise project image', 'pt-BR': 'Imagem do projeto Fieldlink Enterprise' },
     },
-    title: { 'pt-BR': 'Fieldlink Enterprise' },
+    title: { 'en-US': 'Fieldlink Enterprise', 'pt-BR': 'Fieldlink Enterprise' },
     caption: {
+      'en-US': 'Placeholder caption for Fieldlink Enterprise project.',
       'pt-BR':
         'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
     },
@@ -54,10 +55,11 @@ const PROJECTS: IProjectProps[] = [
     slug: 'fieldlink-form-builder',
     coverImage: {
       url: 'https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg',
-      alt: { 'pt-BR': 'Imagem do projeto Fieldlink Form Builder' },
+      alt: { 'en-US': 'Fieldlink Form Builder project image', 'pt-BR': 'Imagem do projeto Fieldlink Form Builder' },
     },
-    title: { 'pt-BR': 'Fieldlink Form Builder' },
+    title: { 'en-US': 'Fieldlink Form Builder', 'pt-BR': 'Fieldlink Form Builder' },
     caption: {
+      'en-US': 'Placeholder caption for Fieldlink Form Builder project.',
       'pt-BR':
         'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
     },
@@ -72,10 +74,11 @@ const PROJECTS: IProjectProps[] = [
     slug: 'fieldlink-rotas',
     coverImage: {
       url: 'https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg',
-      alt: { 'pt-BR': 'Imagem do projeto Fieldlink Rotas' },
+      alt: { 'en-US': 'Fieldlink Rotas project image', 'pt-BR': 'Imagem do projeto Fieldlink Rotas' },
     },
-    title: { 'pt-BR': 'Fieldlink Rotas' },
+    title: { 'en-US': 'Fieldlink Rotas', 'pt-BR': 'Fieldlink Rotas' },
     caption: {
+      'en-US': 'Placeholder caption for Fieldlink Rotas project.',
       'pt-BR':
         'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
     },
@@ -90,10 +93,11 @@ const PROJECTS: IProjectProps[] = [
     slug: 'portfolio-platform',
     coverImage: {
       url: 'https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg',
-      alt: { 'pt-BR': 'Imagem do projeto Portfolio Platform' },
+      alt: { 'en-US': 'Portfolio Platform project image', 'pt-BR': 'Imagem do projeto Portfolio Platform' },
     },
-    title: { 'pt-BR': 'Portfolio Platform' },
+    title: { 'en-US': 'Portfolio Platform', 'pt-BR': 'Portfolio Platform' },
     caption: {
+      'en-US': 'Placeholder caption for Portfolio Platform project.',
       'pt-BR':
         'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
     },

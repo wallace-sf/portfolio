@@ -19,7 +19,7 @@ describe('Project', () => {
 
     it('should create project with all required fields as VOs', () => {
       const title = { 'pt-BR': 'Meu Projeto', 'en-US': 'My Project' };
-      const caption = { 'pt-BR': 'Uma legenda para o projeto.' };
+      const caption = { 'en-US': 'A caption for the project.', 'pt-BR': 'Uma legenda para o projeto.' };
       const content = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
       const skills = SkillBuilder.listToProps(2);
 
@@ -47,7 +47,7 @@ describe('Project', () => {
           .withSlug('fieldlink-form-builder')
           .withCoverImage({
             url: 'https://example.com/cover.png',
-            alt: { 'pt-BR': 'Imagem de capa' },
+            alt: { 'en-US': 'Cover image', 'pt-BR': 'Imagem de capa' },
           })
           .toProps(),
       );
@@ -80,10 +80,10 @@ describe('Project', () => {
     it('should create project with optional fields', () => {
       const result = Project.create(
         ProjectBuilder.build()
-          .withTheme({ 'pt-BR': 'Design System' })
-          .withSummary({ 'pt-BR': 'Resumo do projeto.' })
-          .withObjectives({ 'pt-BR': 'Objetivo do projeto.' })
-          .withRole({ 'pt-BR': 'Tech Lead' })
+          .withTheme({ 'en-US': 'Design System', 'pt-BR': 'Design System' })
+          .withSummary({ 'en-US': 'Project summary.', 'pt-BR': 'Resumo do projeto.' })
+          .withObjectives({ 'en-US': 'Project objective.', 'pt-BR': 'Objetivo do projeto.' })
+          .withRole({ 'en-US': 'Tech Lead', 'pt-BR': 'Tech Lead' })
           .withTeam('Squad Alpha')
           .toProps(),
       );

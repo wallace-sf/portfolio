@@ -9,15 +9,15 @@ import { ProfileStat } from '../../src/portfolio/entities/profile/model/ProfileS
 import { Data } from '../helpers/generators';
 
 const validStat = {
-  label: { 'pt-BR': 'Anos de experiência' },
+  label: { 'en-US': 'Years of experience', 'pt-BR': 'Anos de experiência' },
   value: '5+',
   icon: 'briefcase',
 };
 
 const validProps = {
   name: 'Wallace',
-  headline: { 'pt-BR': 'Engenheiro de Software' },
-  bio: { 'pt-BR': 'Desenvolvedor apaixonado por DDD e Clean Architecture.' },
+  headline: { 'en-US': 'Software Engineer', 'pt-BR': 'Engenheiro de Software' },
+  bio: { 'en-US': 'Developer passionate about DDD and Clean Architecture.', 'pt-BR': 'Desenvolvedor apaixonado por DDD e Clean Architecture.' },
   photo: {
     url: Data.image.url(),
     alt: Data.image.alt(),
@@ -115,10 +115,10 @@ describe('Profile', () => {
       expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
     });
 
-    it('should return Left when headline pt-BR is empty', () => {
+    it('should return Left when headline en-US is empty', () => {
       const result = Profile.create({
         ...validProps,
-        headline: { 'pt-BR': '' },
+        headline: { 'en-US': '' },
       });
 
       expect(result.isLeft()).toBe(true);
@@ -127,10 +127,10 @@ describe('Profile', () => {
       );
     });
 
-    it('should return Left when bio pt-BR is empty', () => {
+    it('should return Left when bio en-US is empty', () => {
       const result = Profile.create({
         ...validProps,
-        bio: { 'pt-BR': '' },
+        bio: { 'en-US': '' },
       });
 
       expect(result.isLeft()).toBe(true);

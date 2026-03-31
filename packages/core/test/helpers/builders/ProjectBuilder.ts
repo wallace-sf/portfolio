@@ -20,8 +20,8 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return new ProjectBuilder({
       slug: Data.slug.valid(),
       coverImage: { url: Data.image.url(), alt: Data.image.alt() },
-      title: { 'pt-BR': Data.text.title() },
-      caption: { 'pt-BR': Data.text.caption() },
+      title: { 'en-US': Data.text.title(), 'pt-BR': Data.text.title() },
+      caption: { 'en-US': Data.text.caption(), 'pt-BR': Data.text.caption() },
       content: Data.text.text(),
       skills: SkillBuilder.listToProps(2),
       period: { start: '2024-01-01' },

@@ -15,10 +15,10 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
 
   static build(): ExperienceBuilder {
     return new ExperienceBuilder({
-      company: { 'pt-BR': 'Portfolio Inc' },
-      position: { 'pt-BR': 'Software Engineer' },
-      location: { 'pt-BR': 'São Paulo, Brazil' },
-      description: { 'pt-BR': Data.text.description() },
+      company: { 'en-US': 'Portfolio Inc', 'pt-BR': 'Portfolio Inc' },
+      position: { 'en-US': 'Software Engineer', 'pt-BR': 'Software Engineer' },
+      location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brazil' },
+      description: { 'en-US': Data.text.description(), 'pt-BR': Data.text.description() },
       logo: { url: Data.image.url(), alt: Data.image.alt() },
       employment_type: Data.employment.valid(),
       location_type: Data.location.valid(),
