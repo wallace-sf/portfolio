@@ -29,7 +29,6 @@ export class ProjectMapper {
       summary: raw.summary ? asLocalized(raw.summary) : undefined,
       objectives: raw.objectives ? asLocalized(raw.objectives) : undefined,
       role: raw.role ? asLocalized(raw.role) : undefined,
-      team: raw.team ?? undefined,
       period: {
         start: raw.periodStart.toISOString(),
         end: raw.periodEnd?.toISOString(),
@@ -74,7 +73,6 @@ export class ProjectMapper {
       summary: project.summary?.value ?? Prisma.JsonNull,
       objectives: project.objectives?.value ?? Prisma.JsonNull,
       role: project.role?.value ?? Prisma.JsonNull,
-      team: project.team ?? null,
       periodStart: new Date(project.period.startAt.value),
       periodEnd: project.period.endAt
         ? new Date(project.period.endAt.value)

@@ -68,7 +68,6 @@ export class GetProjectBySlug extends UseCase<
       summary: project.summary?.get(locale),
       objectives: project.objectives?.get(locale),
       role: project.role?.get(locale),
-      team: project.team,
       period: {
         startAt: project.period.startAt.value,
         endAt: project.period.endAt?.value,

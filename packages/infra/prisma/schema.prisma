@@ -85,7 +85,6 @@ model Project {
   summary             Json?
   objectives          Json?
   role                Json?
-  team                String?
   periodStart         DateTime
   periodEnd           DateTime?
   featured            Boolean       @default(false)

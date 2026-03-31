@@ -25,7 +25,6 @@ export type PrismaProjectWithSkills = {
   summary: Prisma.JsonValue | null;
   objectives: Prisma.JsonValue | null;
   role: Prisma.JsonValue | null;
-  team: string | null;
   periodStart: Date;
   periodEnd: Date | null;
   featured: boolean;
@@ -66,7 +65,6 @@ export function buildPrismaProject(overrides?: Partial<PrismaProjectWithSkills>)
     summary: null,
     objectives: null,
     role: null,
-    team: null,
     periodStart: new Date('2024-01-01T00:00:00.000Z'),
     periodEnd: null,
     featured: false,

@@ -32,7 +32,6 @@ describe('ProjectMapper', () => {
         summary: { 'pt-BR': 'Resumo' },
         objectives: { 'pt-BR': 'Objetivos' },
         role: { 'pt-BR': 'Desenvolvedor' },
-        team: 'Time A',
         periodEnd: new Date('2024-12-31T00:00:00.000Z'),
         relatedProjectSlugs: ['other-project'],
       });
@@ -43,7 +42,6 @@ describe('ProjectMapper', () => {
       expect(project.summary?.value).toEqual({ 'pt-BR': 'Resumo' });
       expect(project.objectives?.value).toEqual({ 'pt-BR': 'Objetivos' });
       expect(project.role?.value).toEqual({ 'pt-BR': 'Desenvolvedor' });
-      expect(project.team).toBe('Time A');
       expect(project.period.endAt?.value).toBe('2024-12-31T00:00:00.000Z');
       expect(project.relatedProjects).toHaveLength(1);
       expect(project.relatedProjects[0]!.value).toBe('other-project');

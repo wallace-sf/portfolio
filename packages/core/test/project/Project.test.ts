@@ -84,7 +84,6 @@ describe('Project', () => {
           .withSummary({ 'en-US': 'Project summary.', 'pt-BR': 'Resumo do projeto.' })
           .withObjectives({ 'en-US': 'Project objective.', 'pt-BR': 'Objetivo do projeto.' })
           .withRole({ 'en-US': 'Tech Lead', 'pt-BR': 'Tech Lead' })
-          .withTeam('Squad Alpha')
           .toProps(),
       );
 
@@ -96,7 +95,6 @@ describe('Project', () => {
         'Objetivo do projeto.',
       );
       expect(result.value.role?.get('pt-BR')).toBe('Tech Lead');
-      expect(result.value.team).toBe('Squad Alpha');
     });
 
     it('should create project with related projects', () => {
@@ -131,7 +129,6 @@ describe('Project', () => {
       expect(result.value.summary).toBeUndefined();
       expect(result.value.objectives).toBeUndefined();
       expect(result.value.role).toBeUndefined();
-      expect(result.value.team).toBeUndefined();
     });
   });
 
