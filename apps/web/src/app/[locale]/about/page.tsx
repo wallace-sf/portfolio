@@ -1,8 +1,10 @@
 import { FC } from 'react';
 
 import {
+  EmploymentType,
   IProfessionalValueProps,
   IExperienceProps,
+  LocationType,
 } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
 
@@ -39,7 +41,7 @@ const EXPERIENCES: IExperienceProps[] = [
   {
     id: '1',
     company: { 'en-US': 'WESF IT Services', 'pt-BR': 'WESF Serviços de TI' },
-    employment_type: 'FREELANCE',
+    employment_type: EmploymentType.FREELANCE,
     location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
     position: {
       'en-US': 'Full-Stack Developer',
@@ -53,7 +55,7 @@ const EXPERIENCES: IExperienceProps[] = [
       url: 'https://placehold.co/48x48',
       alt: { 'en-US': 'WESF logo', 'pt-BR': 'WESF logo' },
     },
-    location_type: 'REMOTE',
+    location_type: LocationType.REMOTE,
     skills: [],
     start_at: '2021-01-01T00:00:00.000Z',
     end_at: '2022-01-01T00:00:00.000Z',
@@ -61,7 +63,7 @@ const EXPERIENCES: IExperienceProps[] = [
   {
     id: '2',
     company: { 'en-US': 'Galaxies', 'pt-BR': 'Galaxies' },
-    employment_type: 'PART_TIME',
+    employment_type: EmploymentType.PART_TIME,
     location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
     position: {
       'en-US': 'Front-end Developer',
@@ -75,7 +77,7 @@ const EXPERIENCES: IExperienceProps[] = [
       url: 'https://placehold.co/48x48',
       alt: { 'en-US': 'Galaxies logo', 'pt-BR': 'Galaxies logo' },
     },
-    location_type: 'REMOTE',
+    location_type: LocationType.REMOTE,
     skills: [],
     start_at: '2022-01-01T00:00:00.000Z',
     end_at: '2023-01-01T00:00:00.000Z',
@@ -88,7 +90,7 @@ const EXPERIENCES: IExperienceProps[] = [
       'pt-BR':
         'FDTE - Fundação para o Desenvolvimento Técnológico da Engenharia',
     },
-    employment_type: 'FULL_TIME',
+    employment_type: EmploymentType.FULL_TIME,
     location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
     position: {
       'en-US': 'Front-end Developer',
@@ -102,7 +104,7 @@ const EXPERIENCES: IExperienceProps[] = [
       url: 'https://placehold.co/48x48',
       alt: { 'en-US': 'FDTE logo', 'pt-BR': 'FDTE logo' },
     },
-    location_type: 'HYBRID',
+    location_type: LocationType.HYBRID,
     skills: [],
     start_at: '2023-01-01T00:00:00.000Z',
     end_at: '2024-01-01T00:00:00.000Z',

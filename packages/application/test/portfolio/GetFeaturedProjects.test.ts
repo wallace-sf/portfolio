@@ -5,6 +5,7 @@ import {
   IProjectRepository,
   Project,
   ProjectStatus,
+  SkillType,
 } from '@repo/core/portfolio';
 import { DomainError } from '@repo/core/shared';
 
@@ -123,8 +124,8 @@ describe('GetFeaturedProjects', () => {
     it('should include mapped skills descriptions in DTO', async () => {
       const project = makeProject({
         skills: [
-          { description: 'TypeScript', icon: 'ts', type: 'TECHNOLOGY' },
-          { description: 'React', icon: 'react', type: 'TECHNOLOGY' },
+          { description: 'TypeScript', icon: 'ts', type: SkillType.TECHNOLOGY },
+          { description: 'React', icon: 'react', type: SkillType.TECHNOLOGY },
         ],
       });
       const repo = makeRepository({ findFeatured: vi.fn().mockResolvedValue([project]) });

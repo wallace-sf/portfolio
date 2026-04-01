@@ -1,4 +1,4 @@
-import { IProjectProps, ProjectStatus } from '@repo/core/portfolio';
+import { IProjectProps, ProjectStatus, SkillType } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 
@@ -28,25 +28,25 @@ const PROJECTS: IProjectProps[] = [
         id: '1',
         description: 'React.js',
         icon: 'devicon:react',
-        type: 'TECHNOLOGY',
+        type: SkillType.TECHNOLOGY,
       },
       {
         id: '2',
         description: 'Angular',
         icon: 'devicon:angular',
-        type: 'TECHNOLOGY',
+        type: SkillType.TECHNOLOGY,
       },
       {
         id: '3',
         description: 'Typescript',
         icon: 'devicon:typescript',
-        type: 'TECHNOLOGY',
+        type: SkillType.TECHNOLOGY,
       },
       {
         id: '4',
         description: 'Electron',
         icon: 'devicon:electron',
-        type: 'TECHNOLOGY',
+        type: SkillType.TECHNOLOGY,
       },
     ],
     period: { start: '2022-01-01', end: '2023-12-31' },
@@ -122,25 +122,25 @@ const PROJECTS: IProjectProps[] = [
         id: '1',
         description: 'Next.js',
         icon: 'devicon:nextjs',
-        type: 'TECHNOLOGY',
+        type: SkillType.TECHNOLOGY,
       },
       {
         id: '2',
         description: 'TailwindCSS',
         icon: 'devicon:tailwindcss',
-        type: 'TECHNOLOGY',
+        type: SkillType.TECHNOLOGY,
       },
       {
         id: '3',
         description: 'Material UI',
         icon: 'devicon:materialui',
-        type: 'TECHNOLOGY',
+        type: SkillType.TECHNOLOGY,
       },
       {
         id: '4',
         description: 'Electron',
         icon: 'devicon:electron',
-        type: 'TECHNOLOGY',
+        type: SkillType.TECHNOLOGY,
       },
     ],
     period: { start: '2024-01-01' },

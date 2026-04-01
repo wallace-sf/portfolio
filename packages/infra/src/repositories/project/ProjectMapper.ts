@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 
-import { IProjectProps, Project, ProjectStatus } from '@repo/core/portfolio';
+import { IProjectProps, Project, ProjectStatus, SkillType } from '@repo/core/portfolio';
 import { ILocalizedTextInput } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
@@ -40,7 +40,7 @@ export class ProjectMapper {
         id: ps.skill.id,
         description: ps.skill.description as string,
         icon: ps.skill.icon,
-        type: ps.skill.type,
+        type: ps.skill.type as SkillType,
         created_at: ps.skill.createdAt.toISOString(),
         updated_at: ps.skill.updatedAt.toISOString(),
       })),
