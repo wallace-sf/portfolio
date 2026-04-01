@@ -1,9 +1,4 @@
-import { Id } from '../../../../shared';
+import { IRepository } from '../../../../shared/base/IRepository';
 import { Skill } from '../model/Skill';
 
-export interface ISkillRepository {
-  findAll(): Promise<Skill[]>;
-  findById(id: Id): Promise<Skill | null>;
-  save(skill: Skill): Promise<void>;
-  delete(id: Id): Promise<void>;
-}
+export interface ISkillRepository extends IRepository<Skill> {}
