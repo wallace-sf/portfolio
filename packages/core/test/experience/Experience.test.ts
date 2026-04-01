@@ -1,10 +1,8 @@
 import {
   DateRange,
-  EmploymentType,
   Experience,
   Id,
   LocalizedText,
-  LocationType,
   ValidationError,
 } from '../../src';
 import { ExperienceBuilder } from '../helpers';
@@ -164,9 +162,7 @@ describe('Experience', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(
-        EmploymentType.ERROR_CODE,
-      );
+      expect((result.value as ValidationError).code).toBe(Experience.ERROR_CODE);
     });
 
     it('should return Left when location type is invalid', () => {
@@ -175,9 +171,7 @@ describe('Experience', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(
-        LocationType.ERROR_CODE,
-      );
+      expect((result.value as ValidationError).code).toBe(Experience.ERROR_CODE);
     });
 
     it('should return Left when start_at is invalid', () => {

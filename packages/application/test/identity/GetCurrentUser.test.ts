@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { IUserProps, IUserRepository, User } from '@repo/core/identity';
+import { IUserProps, IUserRepository, Role, User } from '@repo/core/identity';
 import { DomainError, NotFoundError } from '@repo/core/shared';
 
 import { GetCurrentUser } from '../../src/identity/use-cases/GetCurrentUser';
@@ -15,7 +15,7 @@ const VALID_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const BASE_USER_PROPS: IUserProps = {
   name: 'Admin User',
   email: 'admin@example.com',
-  role: 'ADMIN',
+  role: Role.ADMIN,
 };
 
 function makeUser(overrides: Partial<IUserProps> = {}): User {
@@ -84,7 +84,7 @@ describe('GetCurrentUser', () => {
     });
 
     it('should map all DTO fields correctly', async () => {
-      const user = makeUser({ name: 'Test User', email: 'test@example.com', role: 'VISITOR' });
+      const user = makeUser({ name: 'Test User', email: 'test@example.com', role: Role.VISITOR });
       const repo = makeRepository({ findById: vi.fn().mockResolvedValue(user) });
       const useCase = new GetCurrentUser(repo);
 

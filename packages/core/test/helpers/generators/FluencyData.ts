@@ -1,7 +1,7 @@
-import { Fluency, FluencyValue } from '../../../src';
+import { Fluency } from '../../../src';
 
 export class FluencyData {
-  static valid(): FluencyValue {
-    return Fluency.LEVELS[0] as FluencyValue;
+  static valid(): Fluency {
+    return Fluency.INTERMEDIATE;
   }
 }

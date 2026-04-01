@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { IUserProps, IUserRepository, User } from '@repo/core/identity';
+import { IUserProps, IUserRepository, Role, User } from '@repo/core/identity';
 import { DomainError, NotFoundError } from '@repo/core/shared';
 import { UnauthorizedError } from '@repo/core/identity';
 
@@ -15,7 +15,7 @@ const VALID_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const BASE_USER_PROPS: IUserProps = {
   name: 'Admin User',
   email: 'admin@example.com',
-  role: 'ADMIN',
+  role: Role.ADMIN,
 };
 
 function makeUser(overrides: Partial<IUserProps> = {}): User {
@@ -39,7 +39,7 @@ function makeRepository(overrides: Partial<IUserRepository> = {}): IUserReposito
 describe('EnsureAdmin', () => {
   describe('execute()', () => {
     it('should return Right(void) when user is admin', async () => {
-      const adminUser = makeUser({ role: 'ADMIN' });
+      const adminUser = makeUser({ role: Role.ADMIN });
       const repo = makeRepository({ findById: vi.fn().mockResolvedValue(adminUser) });
       const useCase = new EnsureAdmin(repo);
 
@@ -50,7 +50,7 @@ describe('EnsureAdmin', () => {
     });
 
     it('should return Left with UnauthorizedError when user is not admin', async () => {
-      const visitorUser = makeUser({ role: 'VISITOR' });
+      const visitorUser = makeUser({ role: Role.VISITOR });
       const repo = makeRepository({ findById: vi.fn().mockResolvedValue(visitorUser) });
       const useCase = new EnsureAdmin(repo);
 
@@ -108,7 +108,7 @@ describe('EnsureAdmin', () => {
 
     it('should not call findByEmail or any write operation', async () => {
       const findByEmail = vi.fn();
-      const adminUser = makeUser({ role: 'ADMIN' });
+      const adminUser = makeUser({ role: Role.ADMIN });
       const repo = makeRepository({
         findById: vi.fn().mockResolvedValue(adminUser),
         findByEmail,

@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 
-import { IExperienceProps, Experience } from '@repo/core/portfolio';
-import { ILocalizedTextInput, LocationTypeValue } from '@repo/core/shared';
+import { IExperienceProps, Experience, EmploymentType, LocationType } from '@repo/core/portfolio';
+import { ILocalizedTextInput } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
 
@@ -11,16 +11,16 @@ type PrismaExperienceWithSkills = Prisma.ExperienceGetPayload<{
 
 type ExperienceScalarData = Omit<Prisma.ExperienceUncheckedCreateInput, 'skills'>;
 
-const LOCATION_TYPE_MAP: Record<string, LocationTypeValue> = {
-  ONSITE: 'ON-SITE',
-  HYBRID: 'HYBRID',
-  REMOTE: 'REMOTE',
+const LOCATION_TYPE_MAP: Record<string, LocationType> = {
+  ONSITE: LocationType.ON_SITE,
+  HYBRID: LocationType.HYBRID,
+  REMOTE: LocationType.REMOTE,
 };
 
-const LOCATION_TYPE_REVERSE_MAP: Record<LocationTypeValue, string> = {
-  'ON-SITE': 'ONSITE',
-  HYBRID: 'HYBRID',
-  REMOTE: 'REMOTE',
+const LOCATION_TYPE_REVERSE_MAP: Record<LocationType, string> = {
+  [LocationType.ON_SITE]: 'ONSITE',
+  [LocationType.HYBRID]: 'HYBRID',
+  [LocationType.REMOTE]: 'REMOTE',
 };
 
 export class ExperienceMapper {
@@ -44,7 +44,7 @@ export class ExperienceMapper {
         url: raw.logoUrl,
         alt: asLocalized(raw.logoAlt),
       },
-      employment_type: raw.employmentType,
+      employment_type: raw.employmentType as EmploymentType,
       location_type: locationType,
       skills: raw.skills.map((es) => es.skillId),
       start_at: raw.startAt.toISOString(),
@@ -73,8 +73,8 @@ export class ExperienceMapper {
       description: experience.description.value,
       logoUrl: experience.logo.url.value,
       logoAlt: experience.logo.alt.value,
-      employmentType: experience.employment_type.value,
-      locationType: LOCATION_TYPE_REVERSE_MAP[experience.location_type.value] as never,
+      employmentType: experience.employment_type,
+      locationType: LOCATION_TYPE_REVERSE_MAP[experience.location_type] as never,
       startAt: new Date(experience.period.startAt.value),
       endAt: experience.period.endAt
         ? new Date(experience.period.endAt.value)

@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  EmploymentType,
   Experience,
   IExperienceProps,
   IExperienceRepository,
+  LocationType,
 } from '@repo/core/portfolio';
 import { DomainError } from '@repo/core/shared';
 
@@ -26,8 +28,8 @@ const BASE_PROPS: IExperienceProps = {
     url: 'https://example.com/logo.png',
     alt: { 'pt-BR': 'Logo da empresa', 'en-US': 'Company logo' },
   },
-  employment_type: 'FULL_TIME',
-  location_type: 'HYBRID',
+  employment_type: EmploymentType.FULL_TIME,
+  location_type: LocationType.HYBRID,
   start_at: '2022-01-01T00:00:00.000Z',
   end_at: '2023-01-01T00:00:00.000Z',
   skills: [SKILL_ID_1, SKILL_ID_2],

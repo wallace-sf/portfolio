@@ -1,9 +1,9 @@
 import {
   Experience,
   IExperienceProps,
-  EmploymentTypeValue,
+  EmploymentType,
   ILocalizedTextInput,
-  LocationTypeValue,
+  LocationType,
 } from '../../../src';
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
@@ -66,14 +66,12 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
     return this;
   }
 
-  public withEmploymentType(
-    employmentType: EmploymentTypeValue,
-  ): ExperienceBuilder {
+  public withEmploymentType(employmentType: EmploymentType): ExperienceBuilder {
     this._props.employment_type = employmentType;
     return this;
   }
 
-  public withLocationType(locationType: LocationTypeValue): ExperienceBuilder {
+  public withLocationType(locationType: LocationType): ExperienceBuilder {
     this._props.location_type = locationType;
     return this;
   }

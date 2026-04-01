@@ -195,14 +195,14 @@ describe('Project', () => {
 
     it('should propagate nested skill validation errors', () => {
       const skills = SkillBuilder.listToProps(2);
-      skills[0]!.type = '' as SkillType['value'];
+      skills[0]!.type = '' as unknown as SkillType;
 
       const result = Project.create(
         ProjectBuilder.build().withSkills(skills).toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(SkillType.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe('INVALID_SKILL_TYPE');
     });
 
     it('should return Left when a related project slug is invalid', () => {
