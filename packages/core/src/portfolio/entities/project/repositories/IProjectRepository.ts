@@ -1,5 +1,4 @@
-import { Slug } from '../../../../shared';
-import { Id } from '../../../../shared';
+import { Slug, Id } from '../../../../shared';
 import { IRepository } from '../../../../shared/base/IRepository';
 import { Project } from '../model/Project';
 
