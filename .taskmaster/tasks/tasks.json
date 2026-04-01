@@ -3574,14 +3574,15 @@
         "description": "Delete ISkillRepository from packages/core and PrismaSkillRepository from packages/infra. Migrate Skill mapping logic into ProfileMapper. Remove ISkillRepository binding from DI container. Skill lifecycle is managed exclusively by IProfileRepository.",
         "details": "Skill is not an Aggregate Root — it is an internal entity of the Profile aggregate. Only Aggregate Roots have their own repositories. See plans/ddd-cleanup.md item 2.\n\n**GitHub Issue**: #412\n\n1. Delete packages/core/src/portfolio/entities/skill/repositories/ISkillRepository.ts\n2. Remove ISkillRepository export from packages/core/src/portfolio/entities/skill/index.ts\n3. Delete packages/infra/src/repositories/PrismaSkillRepository.ts (or equivalent path)\n4. Move Skill mapping logic from SkillMapper into ProfileMapper\n5. Remove ISkillRepository → PrismaSkillRepository binding from container.ts\n6. Ensure ProfileMapper handles Skill persistence inside save(profile)\n7. Verify pnpm build and pnpm test pass",
         "testStrategy": "Run pnpm build to confirm no TypeScript errors. Run pnpm test to confirm all existing tests pass. Verify container.ts has no reference to ISkillRepository. Verify ProfileMapper correctly maps Skills.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "1",
           "4",
           "12"
         ],
         "priority": "medium",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-04-01T04:25:36.998Z"
       },
       {
         "id": "18",
@@ -3602,9 +3603,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-01T04:13:11.254Z",
+      "lastModified": "2026-04-01T04:25:36.998Z",
       "taskCount": 18,
-      "completedCount": 14,
+      "completedCount": 15,
       "tags": [
         "sprint-2"
       ]
