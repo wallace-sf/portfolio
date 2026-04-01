@@ -62,7 +62,7 @@ export class GetProjectBySlug extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((s) => s.description.value),
+      skills: project.skills.map((id) => id.value),
       publishedAt: project.period.startAt.value,
       content: project.content.value,
       summary: project.summary?.get(locale),
@@ -87,7 +87,7 @@ export class GetProjectBySlug extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((s) => s.description.value),
+      skills: project.skills.map((id) => id.value),
       publishedAt: project.period.startAt.value,
     };
   }

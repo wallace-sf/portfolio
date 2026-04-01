@@ -5,6 +5,7 @@ import {
   DateRange,
   Either,
   AggregateRoot,
+  Id,
   IEntityProps,
   ILocalizedTextInput,
   Image,
@@ -15,7 +16,6 @@ import {
   left,
   right,
 } from '../../../../shared';
-import { ISkillProps, Skill, SkillFactory } from '../../skill';
 import { ProjectStatus } from './ProjectStatus';
 
 export interface IProjectCoverImage {
@@ -34,7 +34,7 @@ export interface IProjectProps extends IEntityProps {
   title: ILocalizedTextInput;
   caption: ILocalizedTextInput;
   content: string;
-  skills: ISkillProps[];
+  skills: string[];
   theme?: ILocalizedTextInput;
   summary?: ILocalizedTextInput;
   objectives?: ILocalizedTextInput;
@@ -53,7 +53,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   public readonly title: LocalizedText;
   public readonly caption: LocalizedText;
   public readonly content: Text;
-  public readonly skills: Skill[];
+  public readonly skills: Id[];
   public readonly theme: LocalizedText | undefined;
   public readonly summary: LocalizedText | undefined;
   public readonly objectives: LocalizedText | undefined;
@@ -70,7 +70,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     title: LocalizedText,
     caption: LocalizedText,
     content: Text,
-    skills: Skill[],
+    skills: Id[],
     theme: LocalizedText | undefined,
     summary: LocalizedText | undefined,
     objectives: LocalizedText | undefined,
@@ -115,7 +115,6 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       LocalizedText.create(props.title ?? { 'pt-BR': '' }),
       LocalizedText.create(props.caption ?? { 'pt-BR': '' }),
       Text.create(props.content, { min: 3, max: 500000 }),
-      SkillFactory.bulk(props.skills),
       DateRange.create(props.period?.start, props.period?.end),
       props.theme
         ? LocalizedText.create(props.theme)
@@ -138,13 +137,19 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       title,
       caption,
       content,
-      skills,
       period,
       theme,
       summary,
       objectives,
       role,
     ] = fieldsResult.value;
+
+    const skills: Id[] = [];
+    for (const skillId of props.skills ?? []) {
+      const idResult = Id.create(skillId);
+      if (idResult.isLeft()) return left(idResult.value);
+      skills.push(idResult.value);
+    }
 
     const relatedResult = collect(
       (props.relatedProjects ?? []).map((s) => Slug.create(s)),

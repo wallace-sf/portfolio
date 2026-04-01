@@ -5,7 +5,6 @@ import {
   IProjectRepository,
   Project,
   ProjectStatus,
-  SkillType,
 } from '@repo/core/portfolio';
 import { DomainError } from '@repo/core/shared';
 
@@ -121,13 +120,12 @@ describe('GetFeaturedProjects', () => {
       expect(enDto.theme).toBe('Theme EN');
     });
 
-    it('should include mapped skills descriptions in DTO', async () => {
-      const project = makeProject({
-        skills: [
-          { description: 'TypeScript', icon: 'ts', type: SkillType.TECHNOLOGY },
-          { description: 'React', icon: 'react', type: SkillType.TECHNOLOGY },
-        ],
-      });
+    it('should include skill IDs in DTO', async () => {
+      const skillIds = [
+        'a0000000-0000-4000-8000-000000000001',
+        'a0000000-0000-4000-8000-000000000002',
+      ];
+      const project = makeProject({ skills: skillIds });
       const repo = makeRepository({ findFeatured: vi.fn().mockResolvedValue([project]) });
       const useCase = new GetFeaturedProjects(repo);
 
@@ -135,7 +133,7 @@ describe('GetFeaturedProjects', () => {
 
       expect(result.isRight()).toBe(true);
       const dto = (result.value as ProjectSummaryDTO[])[0]!;
-      expect(dto.skills).toEqual(['TypeScript', 'React']);
+      expect(dto.skills).toEqual(skillIds);
     });
 
     it('should return Left with DomainError when repository throws', async () => {

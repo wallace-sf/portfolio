@@ -1,12 +1,12 @@
 import {
+  Id,
   LocalizedText,
   Project,
   ProjectStatus,
   Slug,
-  SkillType,
   ValidationError,
 } from '../../src';
-import { ProjectBuilder, SkillBuilder } from '../helpers';
+import { ProjectBuilder } from '../helpers';
 
 describe('Project', () => {
   describe('when created from valid props', () => {
@@ -21,7 +21,10 @@ describe('Project', () => {
       const title = { 'pt-BR': 'Meu Projeto', 'en-US': 'My Project' };
       const caption = { 'en-US': 'A caption for the project.', 'pt-BR': 'Uma legenda para o projeto.' };
       const content = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
-      const skills = SkillBuilder.listToProps(2);
+      const skills = [
+        'a0000000-0000-4000-8000-000000000001',
+        'a0000000-0000-4000-8000-000000000002',
+      ];
 
       const result = Project.create(
         ProjectBuilder.build()
@@ -39,6 +42,7 @@ describe('Project', () => {
       expect(result.value.caption.get('pt-BR')).toBe(caption['pt-BR']);
       expect(result.value.content.value).toBe(content);
       expect(result.value.skills).toHaveLength(2);
+      expect(result.value.skills[0]).toBeInstanceOf(Id);
     });
 
     it('should create project with slug and coverImage', () => {
@@ -173,17 +177,6 @@ describe('Project', () => {
       expect((result.value as ValidationError).code).toBe('INVALID_TEXT');
     });
 
-    it('should return Left when skills are not provided as array', () => {
-      const result = Project.create(
-        ProjectBuilder.build().withoutSkills().toProps(),
-      );
-
-      expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(
-        'ERROR_INVALID_SKILL_LIST',
-      );
-    });
-
     it('should return Left when period is missing', () => {
       const result = Project.create(
         ProjectBuilder.build().withoutPeriod().toProps(),
@@ -193,16 +186,13 @@ describe('Project', () => {
       expect((result.value as ValidationError).code).toBe('INVALID_DATE_TIME');
     });
 
-    it('should propagate nested skill validation errors', () => {
-      const skills = SkillBuilder.listToProps(2);
-      skills[0]!.type = '' as unknown as SkillType;
-
+    it('should return Left when a skill ID is not a valid UUID', () => {
       const result = Project.create(
-        ProjectBuilder.build().withSkills(skills).toProps(),
+        ProjectBuilder.build().withSkills(['not-a-valid-uuid']).toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe('INVALID_SKILL_TYPE');
+      expect((result.value as ValidationError).code).toBe(Id.ERROR_CODE);
     });
 
     it('should return Left when a related project slug is invalid', () => {

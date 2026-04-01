@@ -1,19 +1,6 @@
-import { Prisma, ProjectStatus, SkillType } from '@prisma/client';
+import { Prisma, ProjectStatus } from '@prisma/client';
 
-type PrismaSkillOnProject = {
-  projectId: string;
-  skillId: string;
-  skill: {
-    id: string;
-    description: Prisma.JsonValue;
-    icon: string;
-    type: SkillType;
-    createdAt: Date;
-    updatedAt: Date;
-  };
-};
-
-export type PrismaProjectWithSkills = {
+export type PrismaProject = {
   id: string;
   slug: string;
   coverImageUrl: string;
@@ -30,36 +17,22 @@ export type PrismaProjectWithSkills = {
   featured: boolean;
   status: ProjectStatus;
   relatedProjectSlugs: string[];
+  skillIds: string[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
-  skills: PrismaSkillOnProject[];
 };
 
-export function buildPrismaSkill(overrides?: Partial<PrismaSkillOnProject['skill']>): PrismaSkillOnProject['skill'] {
+export function buildPrismaProject(overrides?: Partial<PrismaProject>): PrismaProject {
   const id = overrides?.id ?? crypto.randomUUID();
-  return {
-    id,
-    description: 'TypeScript development',
-    icon: 'code',
-    type: 'TECHNOLOGY',
-    createdAt: new Date('2024-01-01T00:00:00.000Z'),
-    updatedAt: new Date('2024-01-01T00:00:00.000Z'),
-    ...overrides,
-  };
-}
-
-export function buildPrismaProject(overrides?: Partial<PrismaProjectWithSkills>): PrismaProjectWithSkills {
-  const id = overrides?.id ?? crypto.randomUUID();
-  const skill = buildPrismaSkill();
 
   return {
     id,
     slug: 'my-test-project',
     coverImageUrl: 'https://example.com/cover.jpg',
-    coverImageAlt: { 'pt-BR': 'Capa do projeto' },
-    title: { 'pt-BR': 'Meu Projeto' },
-    caption: { 'pt-BR': 'Uma breve descrição' },
+    coverImageAlt: { 'en-US': 'Project cover', 'pt-BR': 'Capa do projeto' },
+    title: { 'en-US': 'My Project', 'pt-BR': 'Meu Projeto' },
+    caption: { 'en-US': 'A brief description', 'pt-BR': 'Uma breve descrição' },
     content: 'Conteúdo detalhado do projeto.',
     theme: null,
     summary: null,
@@ -70,10 +43,10 @@ export function buildPrismaProject(overrides?: Partial<PrismaProjectWithSkills>)
     featured: false,
     status: 'DRAFT',
     relatedProjectSlugs: [],
+    skillIds: [crypto.randomUUID()],
     createdAt: new Date('2024-01-01T00:00:00.000Z'),
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
     deletedAt: null,
-    skills: [{ projectId: id, skillId: skill.id, skill }],
     ...overrides,
   };
 }

@@ -1,6 +1,7 @@
-import { PrismaClient, SkillType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
+import { LocationType } from '@repo/core/portfolio';
 import { Id } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
@@ -14,12 +15,10 @@ const db = new PrismaClient({
 });
 const repo = new PrismaExperienceRepository(db);
 
-let sharedSkillId: string;
-
 async function seedExperience(
   overrides?: Partial<ReturnType<typeof buildPrismaExperience>>,
 ) {
-  const raw = buildPrismaExperience({ ...overrides, skills: [] });
+  const raw = buildPrismaExperience(overrides);
 
   await db.experience.create({
     data: {
@@ -32,18 +31,11 @@ async function seedExperience(
       logoAlt: raw.logoAlt,
       employmentType: raw.employmentType,
       locationType: raw.locationType,
+      skillIds: raw.skillIds,
       startAt: raw.startAt,
       endAt: raw.endAt,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
-      skills: {
-        create: [
-          {
-            skillId: sharedSkillId,
-            workDescription: { 'pt-BR': 'Trabalho realizado' },
-          },
-        ],
-      },
     },
   });
 
@@ -51,18 +43,10 @@ async function seedExperience(
 }
 
 beforeAll(async () => {
-  const skill = await db.skill.create({
-    data: {
-      description: 'TypeScript',
-      icon: 'code',
-      type: SkillType.TECHNOLOGY,
-    },
-  });
-  sharedSkillId = skill.id;
+  await db.$connect();
 });
 
 afterAll(async () => {
-  await db.skill.delete({ where: { id: sharedSkillId } });
   await db.$disconnect();
 });
 
@@ -88,15 +72,14 @@ describe('PrismaExperienceRepository', () => {
       expect(experiences).toHaveLength(0);
     });
 
-    it('should include skills with workDescription', async () => {
-      await seedExperience();
+    it('should include skill IDs', async () => {
+      const skillId = crypto.randomUUID();
+      await seedExperience({ skillIds: [skillId] });
 
       const experiences = await repo.findAll();
 
       expect(experiences[0]!.skills).toHaveLength(1);
-      expect(experiences[0]!.skills[0]!.workDescription.value).toEqual({
-        'pt-BR': 'Trabalho realizado',
-      });
+      expect(experiences[0]!.skills[0]!.value).toBe(skillId);
     });
   });
 
@@ -125,36 +108,20 @@ describe('PrismaExperienceRepository', () => {
 
   describe('save', () => {
     it('should persist a new experience and retrieve it', async () => {
-      const experienceId = crypto.randomUUID();
-      const raw = buildPrismaExperience({
-        id: experienceId,
-        skills: [
-          {
-            experienceId,
-            skillId: sharedSkillId,
-            workDescription: { 'pt-BR': 'Feature development' },
-            skill: {
-              id: sharedSkillId,
-              description: 'TypeScript',
-              icon: 'code',
-              type: 'TECHNOLOGY',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-          },
-        ],
-      });
+      const skillId = crypto.randomUUID();
+      const raw = buildPrismaExperience({ skillIds: [skillId] });
       const experience = ExperienceMapper.toDomain(raw);
 
       await repo.save(experience);
 
-      const idResult = Id.create(experienceId);
+      const idResult = Id.create(raw.id);
       if (idResult.isLeft()) throw idResult.value;
       const found = await repo.findById(idResult.value);
 
       expect(found).not.toBeNull();
-      expect(found!.id.value).toBe(experienceId);
+      expect(found!.id.value).toBe(raw.id);
       expect(found!.skills).toHaveLength(1);
+      expect(found!.skills[0]!.value).toBe(skillId);
     });
 
     it('should update an existing experience on upsert', async () => {
@@ -162,34 +129,14 @@ describe('PrismaExperienceRepository', () => {
 
       const idResult = Id.create(seeded.id);
       if (idResult.isLeft()) throw idResult.value;
-      const experience = await repo.findById(idResult.value);
-      if (!experience) throw new Error('Experience not found');
 
-      const updatedRaw = buildPrismaExperience({
-        ...seeded,
-        locationType: 'HYBRID',
-        skills: [
-          {
-            experienceId: seeded.id,
-            skillId: sharedSkillId,
-            workDescription: { 'pt-BR': 'Atualizado' },
-            skill: {
-              id: sharedSkillId,
-              description: 'TypeScript',
-              icon: 'code',
-              type: 'TECHNOLOGY',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-          },
-        ],
-      });
+      const updatedRaw = buildPrismaExperience({ ...seeded, locationType: 'HYBRID' });
       const updated = ExperienceMapper.toDomain(updatedRaw);
 
       await repo.save(updated);
 
       const found = await repo.findById(idResult.value);
-      expect(found!.location_type.value).toBe('HYBRID');
+      expect(found!.location_type).toBe(LocationType.HYBRID);
     });
   });
 
