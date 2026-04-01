@@ -1,4 +1,4 @@
-import { IProjectProps, ProjectStatus, SkillType } from '@repo/core/portfolio';
+import { IProjectProps, ProjectStatus } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 
@@ -24,30 +24,10 @@ const PROJECTS: IProjectProps[] = [
     },
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     skills: [
-      {
-        id: '1',
-        description: 'React.js',
-        icon: 'devicon:react',
-        type: SkillType.TECHNOLOGY,
-      },
-      {
-        id: '2',
-        description: 'Angular',
-        icon: 'devicon:angular',
-        type: SkillType.TECHNOLOGY,
-      },
-      {
-        id: '3',
-        description: 'Typescript',
-        icon: 'devicon:typescript',
-        type: SkillType.TECHNOLOGY,
-      },
-      {
-        id: '4',
-        description: 'Electron',
-        icon: 'devicon:electron',
-        type: SkillType.TECHNOLOGY,
-      },
+      'a0000000-0000-4000-8000-000000000001',
+      'a0000000-0000-4000-8000-000000000002',
+      'a0000000-0000-4000-8000-000000000003',
+      'a0000000-0000-4000-8000-000000000004',
     ],
     period: { start: '2022-01-01', end: '2023-12-31' },
     featured: true,
@@ -118,30 +98,10 @@ const PROJECTS: IProjectProps[] = [
     },
     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     skills: [
-      {
-        id: '1',
-        description: 'Next.js',
-        icon: 'devicon:nextjs',
-        type: SkillType.TECHNOLOGY,
-      },
-      {
-        id: '2',
-        description: 'TailwindCSS',
-        icon: 'devicon:tailwindcss',
-        type: SkillType.TECHNOLOGY,
-      },
-      {
-        id: '3',
-        description: 'Material UI',
-        icon: 'devicon:materialui',
-        type: SkillType.TECHNOLOGY,
-      },
-      {
-        id: '4',
-        description: 'Electron',
-        icon: 'devicon:electron',
-        type: SkillType.TECHNOLOGY,
-      },
+      'b0000000-0000-4000-8000-000000000001',
+      'b0000000-0000-4000-8000-000000000002',
+      'b0000000-0000-4000-8000-000000000003',
+      'b0000000-0000-4000-8000-000000000004',
     ],
     period: { start: '2024-01-01' },
     featured: true,

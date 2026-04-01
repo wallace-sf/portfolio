@@ -2,10 +2,11 @@ import { Prisma } from '@prisma/client';
 import { describe, expect, it } from 'vitest';
 
 import { ProjectStatus } from '@repo/core/portfolio';
+import { Id } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
 import { ProjectMapper } from '../../../src/repositories/project/ProjectMapper';
-import { buildPrismaProject, buildPrismaSkill } from '../../factories/prisma-project.factory';
+import { buildPrismaProject } from '../../factories/prisma-project.factory';
 
 describe('ProjectMapper', () => {
   describe('toDomain', () => {
@@ -28,40 +29,36 @@ describe('ProjectMapper', () => {
 
     it('should map optional fields when present', () => {
       const raw = buildPrismaProject({
-        theme: { 'pt-BR': 'dark' },
-        summary: { 'pt-BR': 'Resumo' },
-        objectives: { 'pt-BR': 'Objetivos' },
-        role: { 'pt-BR': 'Desenvolvedor' },
+        theme: { 'en-US': 'dark', 'pt-BR': 'escuro' },
+        summary: { 'en-US': 'Summary', 'pt-BR': 'Resumo' },
+        objectives: { 'en-US': 'Objectives', 'pt-BR': 'Objetivos' },
+        role: { 'en-US': 'Developer', 'pt-BR': 'Desenvolvedor' },
         periodEnd: new Date('2024-12-31T00:00:00.000Z'),
         relatedProjectSlugs: ['other-project'],
       });
 
       const project = ProjectMapper.toDomain(raw);
 
-      expect(project.theme?.value).toEqual({ 'pt-BR': 'dark' });
-      expect(project.summary?.value).toEqual({ 'pt-BR': 'Resumo' });
-      expect(project.objectives?.value).toEqual({ 'pt-BR': 'Objetivos' });
-      expect(project.role?.value).toEqual({ 'pt-BR': 'Desenvolvedor' });
+      expect(project.theme?.get('en-US')).toBe('dark');
+      expect(project.summary?.get('en-US')).toBe('Summary');
+      expect(project.objectives?.get('en-US')).toBe('Objectives');
+      expect(project.role?.get('en-US')).toBe('Developer');
       expect(project.period.endAt?.value).toBe('2024-12-31T00:00:00.000Z');
       expect(project.relatedProjects).toHaveLength(1);
       expect(project.relatedProjects[0]!.value).toBe('other-project');
     });
 
-    it('should map multiple skills', () => {
-      const skill1 = buildPrismaSkill({ description: 'TypeScript' });
-      const skill2 = buildPrismaSkill({ description: 'React', icon: 'react', type: 'TECHNOLOGY' });
-      const raw = buildPrismaProject({
-        skills: [
-          { projectId: crypto.randomUUID(), skillId: skill1.id, skill: skill1 },
-          { projectId: crypto.randomUUID(), skillId: skill2.id, skill: skill2 },
-        ],
-      });
+    it('should map multiple skill IDs to Id VOs', () => {
+      const skillId1 = crypto.randomUUID();
+      const skillId2 = crypto.randomUUID();
+      const raw = buildPrismaProject({ skillIds: [skillId1, skillId2] });
 
       const project = ProjectMapper.toDomain(raw);
 
       expect(project.skills).toHaveLength(2);
-      expect(project.skills[0]!.id.value).toBe(skill1.id);
-      expect(project.skills[1]!.id.value).toBe(skill2.id);
+      expect(project.skills[0]).toBeInstanceOf(Id);
+      expect(project.skills[0]!.value).toBe(skillId1);
+      expect(project.skills[1]!.value).toBe(skillId2);
     });
 
     it('should map a PUBLISHED project status', () => {
@@ -132,15 +129,15 @@ describe('ProjectMapper', () => {
 
     it('should include optional json fields when present', () => {
       const raw = buildPrismaProject({
-        theme: { 'pt-BR': 'dark' },
-        summary: { 'pt-BR': 'Resumo' },
+        theme: { 'en-US': 'dark' },
+        summary: { 'en-US': 'Summary' },
       });
       const project = ProjectMapper.toDomain(raw);
 
       const data = ProjectMapper.toPrisma(project);
 
-      expect(data.theme).toEqual({ 'pt-BR': 'dark' });
-      expect(data.summary).toEqual({ 'pt-BR': 'Resumo' });
+      expect(data.theme).toEqual({ 'en-US': 'dark' });
+      expect(data.summary).toEqual({ 'en-US': 'Summary' });
     });
 
     it('should set periodEnd to null when project has no end date', () => {
@@ -169,6 +166,17 @@ describe('ProjectMapper', () => {
       const data = ProjectMapper.toPrisma(project);
 
       expect(data.relatedProjectSlugs).toEqual(['project-a', 'project-b']);
+    });
+
+    it('should round-trip skillIds correctly', () => {
+      const skillId1 = crypto.randomUUID();
+      const skillId2 = crypto.randomUUID();
+      const raw = buildPrismaProject({ skillIds: [skillId1, skillId2] });
+      const project = ProjectMapper.toDomain(raw);
+
+      const data = ProjectMapper.toPrisma(project);
+
+      expect(data.skillIds).toEqual([skillId1, skillId2]);
     });
   });
 });

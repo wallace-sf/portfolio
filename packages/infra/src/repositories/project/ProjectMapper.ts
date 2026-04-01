@@ -1,18 +1,16 @@
 import { Prisma } from '@prisma/client';
 
-import { IProjectProps, Project, ProjectStatus, SkillType } from '@repo/core/portfolio';
+import { IProjectProps, Project, ProjectStatus } from '@repo/core/portfolio';
 import { ILocalizedTextInput } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
 
-type PrismaProjectWithSkills = Prisma.ProjectGetPayload<{
-  include: { skills: { include: { skill: true } } };
-}>;
+type PrismaProject = Prisma.ProjectGetPayload<Record<string, never>>;
 
-type ProjectScalarData = Omit<Prisma.ProjectUncheckedCreateInput, 'skills'>;
+type ProjectScalarData = Prisma.ProjectUncheckedCreateInput;
 
 export class ProjectMapper {
-  static toDomain(raw: PrismaProjectWithSkills): Project {
+  static toDomain(raw: PrismaProject): Project {
     const asLocalized = (v: unknown) => v as ILocalizedTextInput;
 
     const props: IProjectProps = {
@@ -36,14 +34,7 @@ export class ProjectMapper {
       featured: raw.featured,
       status: raw.status as ProjectStatus,
       relatedProjects: raw.relatedProjectSlugs,
-      skills: raw.skills.map((ps) => ({
-        id: ps.skill.id,
-        description: ps.skill.description as string,
-        icon: ps.skill.icon,
-        type: ps.skill.type as SkillType,
-        created_at: ps.skill.createdAt.toISOString(),
-        updated_at: ps.skill.updatedAt.toISOString(),
-      })),
+      skills: raw.skillIds,
       created_at: raw.createdAt.toISOString(),
       updated_at: raw.updatedAt.toISOString(),
       deleted_at: raw.deletedAt?.toISOString() ?? null,
@@ -80,6 +71,7 @@ export class ProjectMapper {
       featured: project.featured,
       status: project.status,
       relatedProjectSlugs: project.relatedProjects.map((s) => s.value),
+      skillIds: project.skills.map((id) => id.value),
       createdAt: new Date(project.created_at.value),
       updatedAt: new Date(project.updated_at.value),
       deletedAt: project.deleted_at

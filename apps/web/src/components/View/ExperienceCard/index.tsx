@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 
-import { IExperienceProps, ISkillProps } from '@repo/core/portfolio';
+import { IExperienceProps } from '@repo/core/portfolio';
 import { TextRich } from '@repo/ui/View';
 
 import { useBreakpoint } from '~hooks';
@@ -11,7 +11,7 @@ import { SkillGroup } from '../SkillGroup';
 
 export const ExperienceCard: FC<IExperienceProps> = ({ company, position }) => {
   const isXL = useBreakpoint('xl');
-  const skillProps: ISkillProps[] = [];
+  const skillProps: string[] = [];
 
   return (
     <article className="flex flex-col py-6 px-3 bg-dark-200 rounded-xl gap-y-3">

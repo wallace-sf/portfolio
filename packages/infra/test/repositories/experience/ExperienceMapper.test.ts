@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import { EmploymentType, LocationType } from '@repo/core/portfolio';
+import { Id } from '@repo/core/shared';
+
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
 import { ExperienceMapper } from '../../../src/repositories/experience/ExperienceMapper';
 import { buildPrismaExperience } from '../../factories/prisma-experience.factory';
@@ -17,9 +20,11 @@ describe('ExperienceMapper', () => {
       expect(experience.location.value).toEqual(raw.location);
       expect(experience.description.value).toEqual(raw.description);
       expect(experience.logo.url.value).toBe(raw.logoUrl);
-      expect(experience.employment_type.value).toBe('FULL_TIME');
-      expect(experience.location_type.value).toBe('REMOTE');
+      expect(experience.employment_type).toBe(EmploymentType.FULL_TIME);
+      expect(experience.location_type).toBe(LocationType.REMOTE);
       expect(experience.skills).toHaveLength(1);
+      expect(experience.skills[0]).toBeInstanceOf(Id);
+      expect(experience.skills[0]!.value).toBe(raw.skillIds[0]);
     });
 
     it('should convert locationType ONSITE to domain ON-SITE', () => {
@@ -27,7 +32,7 @@ describe('ExperienceMapper', () => {
 
       const experience = ExperienceMapper.toDomain(raw);
 
-      expect(experience.location_type.value).toBe('ON-SITE');
+      expect(experience.location_type).toBe(LocationType.ON_SITE);
     });
 
     it('should convert locationType HYBRID correctly', () => {
@@ -35,17 +40,19 @@ describe('ExperienceMapper', () => {
 
       const experience = ExperienceMapper.toDomain(raw);
 
-      expect(experience.location_type.value).toBe('HYBRID');
+      expect(experience.location_type).toBe(LocationType.HYBRID);
     });
 
-    it('should map experienceSkill with nested skill and workDescription', () => {
-      const raw = buildPrismaExperience();
+    it('should map multiple skill IDs to Id VOs', () => {
+      const skillId1 = crypto.randomUUID();
+      const skillId2 = crypto.randomUUID();
+      const raw = buildPrismaExperience({ skillIds: [skillId1, skillId2] });
 
       const experience = ExperienceMapper.toDomain(raw);
-      const skill = experience.skills[0]!;
 
-      expect(skill.skill.id.value).toBe(raw.skills[0]!.skillId);
-      expect(skill.workDescription.value).toEqual(raw.skills[0]!.workDescription);
+      expect(experience.skills).toHaveLength(2);
+      expect(experience.skills[0]!.value).toBe(skillId1);
+      expect(experience.skills[1]!.value).toBe(skillId2);
     });
 
     it('should map endAt when present', () => {
@@ -111,6 +118,16 @@ describe('ExperienceMapper', () => {
       const data = ExperienceMapper.toPrisma(experience);
 
       expect(data.endAt).toEqual(end);
+    });
+
+    it('should round-trip skillIds correctly', () => {
+      const skillId1 = crypto.randomUUID();
+      const raw = buildPrismaExperience({ skillIds: [skillId1] });
+      const experience = ExperienceMapper.toDomain(raw);
+
+      const data = ExperienceMapper.toPrisma(experience);
+
+      expect(data.skillIds).toEqual([skillId1]);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { PrismaClient, SkillType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { ProjectStatus } from '@repo/core/portfolio';
@@ -17,14 +17,10 @@ const repo = new PrismaProjectRepository(db);
 
 const TEST_SLUG_PREFIX = 'test-';
 
-// Shared skill created once for all tests
-let sharedSkillId: string;
-
 async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProject>>) {
   const raw = buildPrismaProject({
     slug: `${TEST_SLUG_PREFIX}${crypto.randomUUID()}`,
     ...overrides,
-    skills: [],
   });
 
   await db.project.create({
@@ -45,10 +41,10 @@ async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProj
       featured: raw.featured,
       status: raw.status,
       relatedProjectSlugs: raw.relatedProjectSlugs,
+      skillIds: raw.skillIds,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
       deletedAt: raw.deletedAt,
-      skills: { create: [{ skillId: sharedSkillId }] },
     },
   });
 
@@ -56,19 +52,11 @@ async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProj
 }
 
 beforeAll(async () => {
-  const skill = await db.skill.create({
-    data: {
-      description: 'TypeScript',
-      icon: 'code',
-      type: SkillType.TECHNOLOGY,
-    },
-  });
-  sharedSkillId = skill.id;
+  await db.$connect();
 });
 
 afterAll(async () => {
   await db.project.deleteMany({ where: { slug: { startsWith: TEST_SLUG_PREFIX } } });
-  await db.skill.delete({ where: { id: sharedSkillId } });
   await db.$disconnect();
 });
 
@@ -203,24 +191,9 @@ describe('PrismaProjectRepository', () => {
 
   describe('save', () => {
     it('should persist a new project and retrieve it', async () => {
-      const projectId = crypto.randomUUID();
       const raw = buildPrismaProject({
-        id: projectId,
         slug: `${TEST_SLUG_PREFIX}${crypto.randomUUID()}`,
-        skills: [
-          {
-            projectId,
-            skillId: sharedSkillId,
-            skill: {
-              id: sharedSkillId,
-              description: 'TypeScript',
-              icon: 'code',
-              type: 'TECHNOLOGY',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-          },
-        ],
+        skillIds: [crypto.randomUUID(), crypto.randomUUID()],
       });
       const project = ProjectMapper.toDomain(raw);
 
@@ -232,6 +205,7 @@ describe('PrismaProjectRepository', () => {
 
       expect(found).not.toBeNull();
       expect(found!.slug.value).toBe(raw.slug);
+      expect(found!.skills).toHaveLength(2);
     });
 
     it('should update an existing project on upsert', async () => {
@@ -239,27 +213,8 @@ describe('PrismaProjectRepository', () => {
 
       const slugResult = Slug.create(seeded.slug);
       if (slugResult.isLeft()) throw slugResult.value;
-      const project = await repo.findBySlug(slugResult.value);
-      if (!project) throw new Error('Project not found');
 
-      const updatedRaw = buildPrismaProject({
-        ...seeded,
-        status: 'PUBLISHED',
-        skills: [
-          {
-            projectId: seeded.id,
-            skillId: sharedSkillId,
-            skill: {
-              id: sharedSkillId,
-              description: 'TypeScript',
-              icon: 'code',
-              type: 'TECHNOLOGY',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-          },
-        ],
-      });
+      const updatedRaw = buildPrismaProject({ ...seeded, status: 'PUBLISHED' });
       const updatedProject = ProjectMapper.toDomain(updatedRaw);
 
       await repo.save(updatedProject);

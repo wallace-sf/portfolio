@@ -5,11 +5,9 @@ import { ILocalizedTextInput } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
 
-type PrismaExperienceWithSkills = Prisma.ExperienceGetPayload<{
-  include: { skills: true };
-}>;
+type PrismaExperience = Prisma.ExperienceGetPayload<Record<string, never>>;
 
-type ExperienceScalarData = Omit<Prisma.ExperienceUncheckedCreateInput, 'skills'>;
+type ExperienceScalarData = Prisma.ExperienceUncheckedCreateInput;
 
 const LOCATION_TYPE_MAP: Record<string, LocationType> = {
   ONSITE: LocationType.ON_SITE,
@@ -24,7 +22,7 @@ const LOCATION_TYPE_REVERSE_MAP: Record<LocationType, string> = {
 };
 
 export class ExperienceMapper {
-  static toDomain(raw: PrismaExperienceWithSkills): Experience {
+  static toDomain(raw: PrismaExperience): Experience {
     const asLocalized = (v: unknown) => v as ILocalizedTextInput;
 
     const locationType = LOCATION_TYPE_MAP[raw.locationType];
@@ -46,7 +44,7 @@ export class ExperienceMapper {
       },
       employment_type: raw.employmentType as EmploymentType,
       location_type: locationType,
-      skills: raw.skills.map((es) => es.skillId),
+      skills: raw.skillIds,
       start_at: raw.startAt.toISOString(),
       end_at: raw.endAt?.toISOString(),
       created_at: raw.createdAt.toISOString(),
@@ -75,6 +73,7 @@ export class ExperienceMapper {
       logoAlt: experience.logo.alt.value,
       employmentType: experience.employment_type,
       locationType: LOCATION_TYPE_REVERSE_MAP[experience.location_type] as never,
+      skillIds: experience.skills.map((id) => id.value),
       startAt: new Date(experience.period.startAt.value),
       endAt: experience.period.endAt
         ? new Date(experience.period.endAt.value)

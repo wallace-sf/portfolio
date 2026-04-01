@@ -2,7 +2,6 @@
 
 import { FC } from 'react';
 
-import { ISkillProps } from '@repo/core/portfolio';
 import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
@@ -18,7 +17,7 @@ export interface IProjectCardProps {
   title: string;
   caption: string;
   compact?: boolean;
-  skills: ISkillProps[];
+  skills: string[];
 }
 
 export const ProjectCard: FC<IProjectCardProps> = ({

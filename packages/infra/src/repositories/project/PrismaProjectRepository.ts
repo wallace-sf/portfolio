@@ -6,17 +6,12 @@ import { Id, Slug } from '@repo/core/shared';
 import { InfrastructureError } from '../../errors/InfrastructureError';
 import { ProjectMapper } from './ProjectMapper';
 
-const INCLUDE = {
-  skills: { include: { skill: true } },
-} as const;
-
 export class PrismaProjectRepository implements IProjectRepository {
   constructor(private readonly db: PrismaClient) {}
 
   async findAll(): Promise<Project[]> {
     const rows = await this.db.project.findMany({
       where: { deletedAt: null },
-      include: INCLUDE,
       orderBy: { periodStart: 'desc' },
     });
     return rows.map(ProjectMapper.toDomain);
@@ -25,7 +20,6 @@ export class PrismaProjectRepository implements IProjectRepository {
   async findPublished(): Promise<Project[]> {
     const rows = await this.db.project.findMany({
       where: { status: ProjectStatus.PUBLISHED, deletedAt: null },
-      include: INCLUDE,
       orderBy: { periodStart: 'desc' },
     });
     return rows.map(ProjectMapper.toDomain);
@@ -38,7 +32,6 @@ export class PrismaProjectRepository implements IProjectRepository {
         status: ProjectStatus.PUBLISHED,
         deletedAt: null,
       },
-      include: INCLUDE,
       orderBy: { periodStart: 'desc' },
     });
     return rows.map(ProjectMapper.toDomain);
@@ -47,7 +40,6 @@ export class PrismaProjectRepository implements IProjectRepository {
   async findById(id: Id): Promise<Project | null> {
     const row = await this.db.project.findFirst({
       where: { id: id.value, deletedAt: null },
-      include: INCLUDE,
     });
     return row ? ProjectMapper.toDomain(row) : null;
   }
@@ -55,7 +47,6 @@ export class PrismaProjectRepository implements IProjectRepository {
   async findBySlug(slug: Slug): Promise<Project | null> {
     const row = await this.db.project.findFirst({
       where: { slug: slug.value, deletedAt: null },
-      include: INCLUDE,
     });
     return row ? ProjectMapper.toDomain(row) : null;
   }
@@ -75,7 +66,6 @@ export class PrismaProjectRepository implements IProjectRepository {
         status: ProjectStatus.PUBLISHED,
         deletedAt: null,
       },
-      include: INCLUDE,
       take: limit,
     });
 
@@ -84,19 +74,11 @@ export class PrismaProjectRepository implements IProjectRepository {
 
   async save(project: Project): Promise<void> {
     const data = ProjectMapper.toPrisma(project);
-    const { id, ...rest } = data;
-
-    const skillsCreate = project.skills.map((skill) => ({
-      skillId: skill.id.value,
-    }));
 
     await this.db.project.upsert({
-      where: { id },
-      create: { ...rest, id, skills: { create: skillsCreate } },
-      update: {
-        ...rest,
-        skills: { deleteMany: {}, create: skillsCreate },
-      },
+      where: { id: data.id as string },
+      create: data,
+      update: data,
     });
   }
 
