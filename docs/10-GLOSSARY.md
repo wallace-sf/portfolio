@@ -93,23 +93,23 @@ A contact form submission. Contains name, email, and message body.
 
 ---
 
-## Domain Terms — Identity Context (Planejado)
+## Domain Terms — Identity Context
 
 ### User
 
-Identidade autenticada no sistema. Possui `auth_id` (Supabase Auth), `email` e `role`. Usada para autorização de ações admin.
+Aggregate root em `@repo/core/identity`. Identificador (`Id`), `Name`, `Email`, `Role`. Métodos `isAdmin()` / `isVisitor()` para regras de autorização no domínio. O vínculo com o fornecedor de auth (ex.: `sub` do Supabase) pode ser mapeado na infraestrutura ao resolver `userId` na borda HTTP.
 
 ### Role
 
-Papel do usuário. Valores: `ADMIN` (acesso total) ou `VISITOR` (apenas leitura pública).
+Enum (`ADMIN` | `VISITOR`). `ADMIN` desbloqueia operações de gestão quando a API e os casos de uso (`EnsureAdmin`) o exigem.
 
-### AccessPolicy
+### EnsureAdmin (application use case)
 
-Policy que determina se um User pode executar ações protegidas (publicar, gerenciar projetos, acessar área admin). Todos os métodos delegam para `role === 'ADMIN'`.
+Caso de uso que verifica se o utilizador existe e é `ADMIN`; caso contrário devolve `UnauthorizedError`. Substitui um objeto `AccessPolicy` separado enquanto as regras forem binárias.
 
 ### UnauthorizedError
 
-Erro de domínio para falhas de autenticação ou autorização (usuário não logado ou sem permissão).
+Erro de domínio (`code` `UNAUTHORIZED`) para falhas de autorização (ex.: utilizador autenticado sem privilégio de admin). Na API, mapeia tipicamente a HTTP **401** (ver [05-API-CONTRACTS](./05-API-CONTRACTS.md)).
 
 ---
 

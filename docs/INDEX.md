@@ -20,7 +20,7 @@
 | Writing or reviewing tests? | [08-TESTING](./08-TESTING.md) |
 | Looking for code templates (Either, VO, Entity)? | [09-PATTERNS](./09-PATTERNS.md) |
 | Looking for a domain term? | [10-GLOSSARY](./10-GLOSSARY.md) |
-| Identity (auth, admin)? | [11-IDENTITY](./11-IDENTITY.md) |
+| Identity (auth, admin, REST)? | [11-IDENTITY](./11-IDENTITY.md) |
 
 ---
 
@@ -48,7 +48,7 @@
 
 ### Planned Features
 
-- **[11-IDENTITY](./11-IDENTITY.md)** — Identity bounded context (auth, roles, admin area) — planejado
+- **[11-IDENTITY](./11-IDENTITY.md)** — Identity bounded context (auth, roles, admin, API contract)
 
 ---
 
@@ -66,5 +66,5 @@
 
 1. **Single Source of Truth** — each concept appears in exactly one authoritative location
 2. **Numbered for reading order** — read 00 → 10 or jump directly to the topic
-3. **Current state vs target** — where they differ, the target is the direction for new code
+3. **Current state vs target** — where they differ, the docs call out migration (e.g. static data → REST)
 4. **CLAUDE.md is the operational guide** — this index is the knowledge base

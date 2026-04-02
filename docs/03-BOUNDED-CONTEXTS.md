@@ -10,8 +10,8 @@
 |---------|----------------|------------|--------|
 | **Portfolio** | Projects, experience, skills, profile, values | Project, Experience, Skill, ProfessionalValue, Language, SocialNetwork | Active |
 | **Blog** | Posts, tags, publication | BlogPost, Tag | Stub (future) |
-| **Contact** | Contact form capture and delivery | DTOs / Message entity | Stub |
-| **Identity** | Autenticação, autorização, papéis | User, Role, AccessPolicy | Planejado |
+| **Contact** | Contact form capture and delivery | `SendContactMessage`, `IEmailService` | Application + infra (API route pending) |
+| **Identity** | Autenticação, autorização, papéis | User, Role, `IUserRepository`, use cases na application | Em uso (domínio + casos de uso; API HTTP em evolução) |
 | **Shared Kernel** | Cross-context primitives | Id, Text, DateTime, Name, Url, enums, Either, errors | Active |
 
 ```text
@@ -27,8 +27,8 @@
 ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
 │   Portfolio    │  │      Blog      │  │    Contact     │  │    Identity    │
 │  Project       │  │   BlogPost     │  │  (DTOs/forms)  │  │  User, Role    │
-│  Experience    │  │   Tag          │  │                │  │  AccessPolicy  │
-│  Skill, etc.   │  │                │  │                │  │  (planejado)   │
+│  Experience    │  │   Tag          │  │                │  │  IUserRepo     │
+│  Skill, etc.   │  │                │  │                │  │  EnsureAdmin   │
 └────────────────┘  └────────────────┘  └────────────────┘  └────────────────┘
 ```
 
@@ -80,7 +80,7 @@ import { Slug, Either, ValidationError }  from '@repo/core/shared';
 - `Id`, `Text`, `DateTime`, `Name`, `Url`
 - `EmploymentType`, `LocationType`, `SkillType`, `Fluency`
 - `Slug`, `Image`, `DateRange`, `LocalizedText`, `Email` (planejado)
-- `Either<L, R>`, `ValidationError`, `DomainError`, `NotFoundError`, `UnauthorizedError` (planejado)
+- `Either<L, R>`, `ValidationError`, `DomainError`, `NotFoundError`, `UnauthorizedError` (identity)
 - `ERROR_MESSAGE` (domain error codes with `pt-BR` / `en-US` translations)
 
 **What does not belong here:** rules specific to one context (e.g., "a post can only be published with at least one tag" belongs to Blog).
@@ -120,7 +120,8 @@ src/
       */repositories/           → IExperienceRepository.ts, IProfileRepository.ts, etc.
 
   blog/                         → Stub (future)
-  contact/                      → Stub
+  identity/                     → User, Role, IUserRepository
+  contact/                      → Stub at core; application use case + infra email
 ```
 
 ---
@@ -134,18 +135,21 @@ src/
 
 ---
 
-## Identity Context (Planejado)
+## Identity Context
 
-**Responsabilidade:** autenticação, autorização, papéis (ADMIN | VISITOR). Supabase Auth.
+**Responsabilidade:** utilizador de back-office, papéis (`Role.ADMIN` | `Role.VISITOR`), e regras de autorização expressas nos casos de uso (`EnsureAdmin`, `GetCurrentUser`). Autenticação com fornecedor (ex.: Supabase Auth) fica na **infra** e no **middleware**; o domínio recebe identificadores já validados na borda HTTP.
 
-**Modelos previstos:**
+**Modelos em `packages/core`:**
 
 | Class | Role | Descrição |
 |-------|------|-----------|
-| `User` | Entity | auth_id, email, role |
-| `Role` | Value Object | ADMIN \| VISITOR |
-| `AccessPolicy` | Policy | canAccessAdmin, canPublish, etc. |
-| `IUserRepository` | Interface | findByAuthId, findByEmail, save |
+| `User` | Aggregate root | `Name`, `Email`, `Role` |
+| `Role` | Enum | `ADMIN` \| `VISITOR` |
+| `IUserRepository` | Interface | `findById`, `findByEmail` |
+
+**Application (`packages/application/identity`):** `GetCurrentUser`, `EnsureAdmin`.
+
+**API:** ver [05-API-CONTRACTS](./05-API-CONTRACTS.md) (`GET /api/v1/me`, rotas admin futuras). **Regra:** o front-end não chama estes casos de uso diretamente — apenas HTTP.
 
 Ver [11-IDENTITY](./11-IDENTITY.md) e [plans/identity-mvp.md](../plans/identity-mvp.md).
 
