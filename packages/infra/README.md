@@ -27,9 +27,9 @@
 
 ## Supabase
 
-- **Função**: Postgres (tabelas `projects`, `posts`, `tags`, etc.), Auth (se necessário para admin/Contact) e Realtime (opcional para Blog).
-- **Cliente**: `@supabase/supabase-js` no Node e, se fizer sentido, no edge (Route Handlers Next.js).
-- **Variáveis**: `SUPABASE_URL`, `SUPABASE_ANON_KEY`; em contextos server-only, `SUPABASE_SERVICE_ROLE_KEY` — **nunca expor no client**.
+- **Função**: Postgres (portfolio, identity, etc.). **Auth** deve passar por um adaptador que implemente **`IAuthenticationGateway`** (`@repo/application`): o SDK **não** deve ser usado em `apps/web` (UI/middleware); apenas em classes deste pacote, chamadas pelos Route Handlers via container ([docs/11-IDENTITY](../../docs/11-IDENTITY.md)).
+- **Cliente**: `@supabase/supabase-js` (e, se necessário, `@supabase/ssr`) **apenas** em `packages/infra`, não no bundle do cliente.
+- **Variáveis**: `SUPABASE_URL`, `SUPABASE_ANON_KEY` para o adaptador no servidor; `SUPABASE_SERVICE_ROLE_KEY` só para operações server-only — **nunca** expor chaves sensíveis ao browser; login via `POST /api/v1/auth/sign-in` quando implementado.
 
 ---
 

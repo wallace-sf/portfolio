@@ -76,7 +76,8 @@ Allowed: plain TypeScript, `@repo/utils`, `uuid`.
 ### `apps/web` and `apps/api`
 
 - **REST is mandatory for presentation:** pages, layouts, and client components fetch the **HTTP API** (`/api/v1/...`). They must **not** import or call `@repo/application` use cases directly.
-- **Composition root:** only **HTTP route handlers** (e.g. `apps/web/app/api/**` or `apps/api`) wire `@repo/infra` with `@repo/application` and invoke use cases. That is the single entry point from the outside world into the application layer.
+- **No auth vendor in the UI:** `apps/web` must **not** import `@supabase/*`, `next-auth/*`, or other IdP SDKs from pages, layouts, client components, hooks, or `middleware.ts`. Authentication is **pluggable** behind `IAuthenticationGateway` (see [11-IDENTITY](./11-IDENTITY.md)); the browser uses only your REST routes (e.g. `POST /api/v1/auth/sign-in`).
+- **Composition root:** only **HTTP route handlers** (e.g. `apps/web/app/api/**` or `apps/api`) wire `@repo/infra` with `@repo/application` and invoke use cases. Handlers obtain the auth gateway from the container — never embed Supabase in a `page.tsx`.
 - Never import concrete repositories from presentation code.
 - React components must contain no business logic.
 

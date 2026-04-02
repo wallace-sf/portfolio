@@ -58,7 +58,7 @@
 - **[packages/core/README.md](../packages/core/README.md)** — Core package overview, links to 02-ARCHITECTURE and 03-BOUNDED-CONTEXTS
 - **[packages/core/decisions/](../packages/core/decisions/)** — Architectural Decision Records (ADRs)
 - **[ROADMAP.md](./ROADMAP.md)** — Product roadmap and sprint planning
-- **[plans/identity-mvp.md](../plans/identity-mvp.md)** — Plano de implementação Identity (MVP)
+- **[plans/identity-mvp.md](../plans/identity-mvp.md)** — Plano: gateway de auth plugável, `authSubject`, REST `auth/*` e admin
 
 ---
 

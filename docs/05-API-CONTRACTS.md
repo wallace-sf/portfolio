@@ -36,10 +36,11 @@ All API responses follow a consistent envelope:
 |----------------------------|-------------|
 | `ValidationError` / invalid input | 400 |
 | `NotFoundError` | 404 |
-| `UnauthorizedError` (e.g. `EnsureAdmin` when user is not admin) | 401 |
+| Missing session / no resolvable application `userId` | 401 (`AUTH_REQUIRED`) |
+| `UnauthorizedError` / failed `EnsureAdmin` | 401 (`UNAUTHORIZED`) |
 | Unexpected / infrastructure | 500 |
 
-Use **403** only when you introduce a distinct “authenticated but forbidden for this resource” rule; today `UnauthorizedError` maps to **401** for failed privilege checks.
+Use **403** for “authenticated but forbidden **for this resource**” (ex.: recurso de outro dono). Sessão ausente e falta de papel admin usam **401** com códigos distintos.
 
 ---
 
@@ -55,7 +56,10 @@ Examples:
 | `ERROR_INVALID_TEXT` | 400 | Text length constraint violated |
 | `INVALID_SLUG` | 400 | Slug format violated |
 | `NOT_FOUND` | 404 | Resource not found |
-| `UNAUTHORIZED` | 401 | Not allowed (e.g. not admin) |
+| `AUTH_REQUIRED` | 401 | Sem sessão ou impossível resolver `userId` |
+| `UNAUTHORIZED` | 401 | Autenticado mas sem permissão (ex.: não é `ADMIN`) |
+| `AUTH_INVALID_CREDENTIALS` | 401 | Sign-in rejeitado pelo IdP (planeado) |
+| `AUTH_SUBJECT_CONFLICT` | 409 | Email já ligado a outro `authSubject` (planeado) |
 | `INTERNAL_ERROR` | 500 | Unexpected server error |
 
 ---
@@ -68,7 +72,11 @@ try {
   if (result.isLeft()) {
     const { code } = result.value;
     const status =
-      code === 'NOT_FOUND' ? 404 : code === 'UNAUTHORIZED' ? 401 : 400;
+      code === 'NOT_FOUND'
+        ? 404
+        : code === 'UNAUTHORIZED' || code === 'AUTH_REQUIRED'
+          ? 401
+          : 400;
     const message = translateError(code, locale) ?? result.value.message;
     return Response.json({ data: null, error: { code, message } }, { status });
   }
@@ -93,15 +101,32 @@ try {
 
 ---
 
+## Authentication (contract — implementation pending)
+
+- **Pluggable provider:** session and sign-in go through **`IAuthenticationGateway`** (`@repo/application`), implemented in **`@repo/infra`** (e.g. Supabase). Route handlers use the **container** — not `@supabase/*` in `page.tsx` or `middleware.ts`. See [11-IDENTITY](./11-IDENTITY.md).
+- **Mechanism:** cookie-based session after successful sign-in; cookie names are an infra detail.
+- **Resolution:** handler obtains **`authSubject`** (opaque external id) from the gateway, maps to application `User.id` via **`authSubject`** column + `IUserRepository` (when implemented), then passes `userId` to use cases.
+- **Passwords:** never stored in the application `User` table — only at the IdP.
+
+### Auth routes (planned)
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `POST` | `/api/v1/auth/sign-in` | Body `{ email, password }` → gateway → cookies; then sync/link `User` (planned use case). |
+| `POST` | `/api/v1/auth/sign-out` | Clear session via gateway. |
+| `POST` | `/api/v1/auth/refresh` | Refresh session cookies (optional; same-origin from layout/middleware). |
+
+---
+
 ## Authorization model (overview)
 
 | Audience | Typical use |
 |----------|-------------|
 | **Anonymous** | Public read endpoints (portfolio content), `POST /contact` |
-| **Authenticated** | `GET /me` — requires a valid session; resolves `userId` for `GetCurrentUser` |
-| **Admin** | Mutations and admin-only reads — handler runs `EnsureAdmin` with the current `userId` before proceeding |
+| **Authenticated** | `GET /me` — valid session + `User` row; `GetCurrentUser` |
+| **Admin** | All routes under `/api/v1/admin/*` — after session resolution, `EnsureAdmin.execute({ userId })`; failure → **401** `UNAUTHORIZED` |
 
-Exact session mechanics (Supabase Auth, cookies, headers) live in **infra** and **middleware**; the API contract assumes the handler can obtain a stable `userId` for logged-in requests.
+Session details: [11-IDENTITY](./11-IDENTITY.md).
 
 ---
 
@@ -131,9 +156,24 @@ Query parameters such as `locale` should align with `@repo/core` `Locale` and ex
 
 | Method | Path | Use case | Auth |
 |--------|------|----------|------|
-| `GET` | `/api/v1/me` | `GetCurrentUser` | **Session required** — without a resolvable `userId`, respond with **401** |
+| `GET` | `/api/v1/me` | `GetCurrentUser` | **Authenticated** — sem sessão / sem `User` → **401** `AUTH_REQUIRED` |
 
-Admin-only routes (e.g. future `PATCH /api/v1/projects/:slug`) must call `EnsureAdmin.execute({ userId })` before applying changes; failure → **401** with `UNAUTHORIZED`.
+---
+
+### Admin-only endpoints (`/api/v1/admin/*`) — planned
+
+**Rule:** every handler under this prefix calls `EnsureAdmin` after resolving `userId`. Missing session → **401** `AUTH_REQUIRED`; not admin → **401** `UNAUTHORIZED`.
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `POST` | `/api/v1/admin/projects` | Create project (`DRAFT`) |
+| `PATCH` | `/api/v1/admin/projects/:slug` | Update project |
+| `POST` | `/api/v1/admin/projects/:slug/publish` | Publish |
+| `POST` | `/api/v1/admin/projects/:slug/archive` | Archive |
+| `PATCH` | `/api/v1/admin/profile` | Update profile |
+| `POST` / `PATCH` / `DELETE` | `/api/v1/admin/experiences` … | CRUD experiences |
+
+Public reads under `/api/v1/projects`, `/api/v1/profile`, etc. stay **public** and return only published (or policy-approved) data.
 
 ---
 

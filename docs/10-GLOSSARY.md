@@ -97,7 +97,15 @@ A contact form submission. Contains name, email, and message body.
 
 ### User
 
-Aggregate root em `@repo/core/identity`. Identificador (`Id`), `Name`, `Email`, `Role`. Métodos `isAdmin()` / `isVisitor()` para regras de autorização no domínio. O vínculo com o fornecedor de auth (ex.: `sub` do Supabase) pode ser mapeado na infraestrutura ao resolver `userId` na borda HTTP.
+Aggregate root em `@repo/core/identity`. Identificador (`Id`), `Name`, `Email`, `Role`. Métodos `isAdmin()` / `isVisitor()`. O vínculo com o IdP será tipicamente uma coluna **`authSubject`** (UUID estável, ex. `sub` do Supabase) na persistência — **planeado**; senhas ficam só no IdP.
+
+### authSubject
+
+Identificador externo do utilizador no provedor de auth (ex. id em `auth.users`). Liga a sessão ao registo `User` da aplicação; ver [11-IDENTITY](./11-IDENTITY.md).
+
+### IAuthenticationGateway (application port)
+
+Contrato para ler sessão, sign-in, sign-out e refresh **sem** expor Supabase à application ou ao front. Implementação concreta na infra; ver [11-IDENTITY](./11-IDENTITY.md).
 
 ### Role
 

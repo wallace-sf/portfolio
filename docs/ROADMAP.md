@@ -67,15 +67,17 @@ Evolution view for the portfolio, aligned with Clean Architecture, DDD, i18n, an
 
 ## Phase 4 — Identity (sessions and admin UI)
 
-> Domain and application layers for Identity are in place. Remaining work is **HTTP session integration**, **middleware**, and **admin UI**.
+> Core + application já têm `User`, `GetCurrentUser`, `EnsureAdmin`. Falta **gateway de auth**, **`authSubject`**, **rotas REST** e UI — ver [plans/identity-mvp.md](../plans/identity-mvp.md).
 
 - [x] **Domain** (`packages/core`): `User`, `Role`, `IUserRepository`, `UnauthorizedError`
 - [x] **Infrastructure**: Prisma `User` model and repository
 - [x] **Application**: `GetCurrentUser`, `EnsureAdmin`
-- [ ] **Sessions**: middleware; resolve `userId` for authenticated routes
-- [ ] **Web**: `/[locale]/login`, `/[locale]/admin/*` layouts protected consistently with API rules
+- [ ] **`IAuthenticationGateway`** + adaptador Supabase **só em `@repo/infra`**
+- [ ] **Dados**: `User.authSubject`, `findByAuthSubject` / `linkAuthSubject`, caso de uso `EnsureAppUserForAuthSession`
+- [ ] **REST**: `POST /api/v1/auth/sign-in`, `sign-out`, `refresh`, `GET /api/v1/me` ([05-API-CONTRACTS](./05-API-CONTRACTS.md))
+- [ ] **Middleware / Web**: login e admin sem SDK do IdP no cliente
 
-Modelo de papéis: `ADMIN | VISITOR`. Referência: [11-IDENTITY](./11-IDENTITY.md), [plans/identity-mvp.md](../plans/identity-mvp.md).
+Modelo de papéis: `ADMIN | VISITOR`.
 
 ---
 
