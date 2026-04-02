@@ -401,6 +401,22 @@ T-01
               └── (fixes: Entity.props, SkillFactory, dir structure)
 ```
 
+---
+
+## Open backlog — Identity (GitHub)
+
+> Closed issues **#404–#406** delivered early identity pieces. Current identity backlog is tracked as **#442–#446** and [plans/identity-mvp.md](../../plans/identity-mvp.md).
+
+### T-ID-authSubject — Domain + data: `authSubject` and repository
+
+**GitHub Issue**: #443  
+**Priority**: High  
+**Dependencies**: none (can run in parallel with #442)
+
+**Fase 1** (identity MVP): Prisma migration for `authSubject` (UUID, unique, nullable until linked), `IUserRepository.findByAuthSubject` / `linkAuthSubject`, `User` validation for optional `authSubject`. Passwords remain at IdP only — see [docs/11-IDENTITY.md](../../docs/11-IDENTITY.md).
+
+---
+
 ## Definition of Done
 
 - [ ] All tasks completed and tests passing

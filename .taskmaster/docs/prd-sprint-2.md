@@ -433,6 +433,22 @@ T-ID1 (Identity core)
 T-31 → DEFERRED to Sprint 3
 ```
 
+---
+
+## Open backlog — Identity (GitHub)
+
+> Use **#442–#446** and [docs/11-IDENTITY.md](../../docs/11-IDENTITY.md) as the source of truth for pluggable auth. Legacy T-ID1–T-ID3 in this file referred to earlier milestones; closed issues **#404–#406** are done — remaining work is below.
+
+### T-ID-SupabaseGateway — `SupabaseAuthenticationGateway` in `@repo/infra`
+
+**GitHub Issue**: #444  
+**Priority**: High  
+**Dependencies**: #442 (port), #443 (`authSubject` + repository for session linking)
+
+**Fase 2** in [plans/identity-mvp.md](../../plans/identity-mvp.md): `@supabase/supabase-js` / `@supabase/ssr` **only** in `packages/infra`; register gateway in `makeContainer()`; env per [.env.example](../../.env.example).
+
+---
+
 ## Definition of Done
 
 - [x] `packages/infra` package configured and building

@@ -568,6 +568,20 @@ T-DDD3 (IRepository<T>) — independent, can run in parallel with T-DDD1
 T-DDD4 (AggregateRoot) — depends on T-DDD1
 ```
 
+---
+
+## Open backlog — Identity (GitHub)
+
+### T-ID-IAuthGateway — Port `IAuthenticationGateway` + `AuthCookieApi`
+
+**GitHub Issue**: #442  
+**Priority**: High  
+**Dependencies**: none (parallel with #443)
+
+**Fase 0** in [plans/identity-mvp.md](../../plans/identity-mvp.md): stable port in `@repo/application` (`signInWithPassword`, `signOut`, `refreshSession`, `getPrincipalFromCookies`) with `AuthCookieApi`; no Next/Supabase types in `application`; tests with fake.
+
+---
+
 ## Definition of Done
 
 - [ ] All tasks completed and tests passing

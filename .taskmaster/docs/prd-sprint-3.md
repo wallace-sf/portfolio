@@ -2,146 +2,181 @@
 
 ## Overview
 
-This sprint implements the Presentation Layer: REST API routes in `apps/web`, the Identity web integration (middleware, login, admin layout), and the replacement of all static data with live fetches from the API. It is the last development sprint before quality and deploy.
+This sprint implements the **Presentation Layer** in `apps/web`: **REST route handlers** under `/api/v1`, then **pages and components** that consume the API **only via HTTP** (no direct `@repo/application` or DI container from `page.tsx`). Identity UI follows [docs/11-IDENTITY.md](../../docs/11-IDENTITY.md) and [plans/identity-mvp.md](../../plans/identity-mvp.md).
 
 ## Project Context
 
 - **Repository**: https://github.com/wallace-sf/portfolio
-- **Packages**: `apps/web` (Next.js 14 App Router)
-- **Architecture**: DDD + Clean Architecture
+- **Packages**: `apps/web` (Next.js App Router — route handlers + UI)
+- **Architecture**: DDD + Clean Architecture ([docs/02-ARCHITECTURE.md](../../docs/02-ARCHITECTURE.md))
 - **Monorepo**: Turborepo + pnpm + TypeScript strict
 
 ## Stack
 
-- Next.js 14 (App Router, Server Components, Route Handlers)
-- Supabase Auth (`@supabase/supabase-js`, `@supabase/ssr`)
+- Next.js (App Router, Server Components, Route Handlers)
+- **REST** as the only external boundary for the browser ([docs/05-API-CONTRACTS.md](../../docs/05-API-CONTRACTS.md))
 - next-intl (i18n)
-- Vitest / Jest (tests)
+- Vitest (tests where applicable)
+- **Not** in `apps/web` UI: `@supabase/*` or other IdP SDKs on pages/middleware (see `11-IDENTITY`)
 
 ## Background
 
-Sprint 2 delivered the complete infrastructure layer — Prisma repositories, Resend email service, DI container, and Identity core/infra/application. Sprint 3 wires everything to the HTTP and UI layer.
+Sprint 2 delivered infrastructure (Prisma, container, repositories). Sprint 3 wires **HTTP** first: handlers compose `@repo/infra` + use cases; **pages** use `fetch` (RSC or TanStack Query) to same-origin `/api/v1/...`.
 
-**Development order respected**: `apps/web` is touched last, after core → infra → API → frontend.
+**Development order**: route handlers (API) → connect pages → identity UI (depends on auth REST from parallel identity issues).
 
 ## Goals
 
-1. Define the REST response envelope and implement the first API endpoints
-2. Wire the contact form to the real `SendContactMessage` use case
-3. Replace static data on pages with fetches via use cases / API
-4. Implement the Identity web layer (middleware, login page, admin layout)
+1. Implement REST envelope and portfolio/contact routes per [05-API-CONTRACTS](../../docs/05-API-CONTRACTS.md) (**GitHub #289**).
+2. Connect contact form: RHF + Zod + `POST /api/v1/contact` (**#290**).
+3. Replace static data: Home, Projects, Project detail, Experiences via documented `GET` paths (**#291–#294**).
+4. UI components: ProjectCard, StatCard, ThemeToggle, LanguageSelector, route `loading`/`error` (**#295–#299**).
+5. Identity web: login, middleware, admin layout — **REST only** (**#407**, depends on **#442–#445**).
 
 ## Out of Scope
 
-- New domain entities or use cases (Sprint 1 and 2)
-- CI/CD configuration (Sprint 4)
+- New domain entities (Sprints 0–1)
+- Implementing `IAuthenticationGateway` adapter (**Sprint 2 / #444**)
+- CI/CD depth (**Sprint 4**)
 - Blog bounded context (post-MVP)
 
 ---
 
 ## Tasks
 
-### T-ENV — Define Response Envelope and implement API endpoints
+### T-ENV — REST envelope + portfolio & contact API routes
 
-**GitHub Issue**: #289
-**Priority**: Medium
-**Dependencies**: Sprint 2 complete (DI container, use cases)
+**GitHub Issue**: #289  
+**Priority**: High  
+**Dependencies**: Sprint 2 DI container and use cases available
 
-Introduce a consistent REST response envelope and implement the portfolio API endpoints. The API layer must be thin — only calls use cases and maps errors to HTTP.
+Implement route handlers that call use cases and return JSON using the envelope `{ data, error, meta }` from [05-API-CONTRACTS](../../docs/05-API-CONTRACTS.md). Map domain errors to HTTP status codes as documented.
 
-**Acceptance Criteria**:
+**Acceptance criteria** (summary):
 
-- `ApiResponse<T>` discriminated union type:
-  - Success: `{ success: true; data: T }`
-  - Failure: `{ success: false; error: { code: string; message: string } }`
-- `successResponse<T>(data: T)` and `errorResponse(code, message)` helpers
-- `mapDomainErrorToHttp(error: DomainError)`: `NotFoundError` → 404, `ValidationError` → 422, `DomainError` → 500 (opaque message)
-- Endpoints implemented:
-  - `GET /api/v1/projects/[slug]` — calls `GetProjectBySlug`, locale via `?locale=` param (defaults to `pt-BR`)
-  - `GET /api/v1/projects` — calls `GetPublishedProjects`
-  - `GET /api/v1/profile` — calls `GetProfile`
-  - `GET /api/v1/experiences` — calls `GetExperiences`
-  - `POST /api/v1/contact` — calls `SendContactMessage`
-- No domain logic in handlers
-- Unit tests for envelope helpers, error mapper, and each route handler
-
-**Files**:
-
-- `apps/web/src/lib/api/envelope.ts` ← create
-- `apps/web/src/lib/api/error-mapper.ts` ← create
-- `apps/web/src/app/api/v1/projects/[slug]/route.ts` ← create
-- `apps/web/src/app/api/v1/projects/route.ts` ← create
-- `apps/web/src/app/api/v1/profile/route.ts` ← create
-- `apps/web/src/app/api/v1/experiences/route.ts` ← create
-- `apps/web/src/app/api/v1/contact/route.ts` ← create
+- Helpers for success/failure responses aligned with `05` (not the legacy `{ success: boolean }` shape).
+- Endpoints: `GET /api/v1/projects`, `GET /api/v1/projects/featured`, `GET /api/v1/projects/:slug`, `GET /api/v1/profile`, `GET /api/v1/experiences`, `POST /api/v1/contact`.
+- No business logic in handlers beyond mapping and status codes.
+- Tests for mappers/handlers as appropriate.
 
 ---
 
-### T-PAGES — Replace static data with live API fetches
+### T-CONTACT — ContactForm: RHF + Zod + POST /api/v1/contact
 
-**Priority**: High
+**GitHub Issue**: #290  
+**Priority**: High  
+**Dependencies**: T-ENV (contact route) or parallel once route exists
+
+Migrate from Formik/Yup; submit via `fetch` to `POST /api/v1/contact` with envelope handling.
+
+---
+
+### T-PAGE-HOME — Home page via REST
+
+**GitHub Issue**: #291  
+**Priority**: High  
+**Dependencies**: T-ENV (featured + profile routes)
+
+`GET /api/v1/profile` and `GET /api/v1/projects/featured` — no `@repo/application` in pages.
+
+---
+
+### T-PAGE-PROJECTS — Portfolio list via REST
+
+**GitHub Issue**: #292  
 **Dependencies**: T-ENV
 
-Replace all hardcoded arrays and static data in page components with fetches from the use cases via the DI container (Server Components) or via the internal API (Client Components).
-
-**Acceptance Criteria**:
-
-- Home page: featured projects from `GetFeaturedProjects`, profile from `GetProfile`
-- Projects page: published projects from `GetPublishedProjects`
-- Project detail page: project from `GetProjectBySlug`; related projects from DTO
-- Experiences: data from `GetExperiences`
-- Contact form submits to `POST /api/v1/contact`; error codes mapped to i18n messages
-- No hardcoded data arrays remain in page components
-
-**Files**:
-
-- `apps/web/src/app/[locale]/page.tsx` ← update
-- `apps/web/src/app/[locale]/projects/page.tsx` ← update
-- `apps/web/src/app/[locale]/projects/[slug]/page.tsx` ← create
-- `apps/web/src/components/Forms/ContactForm/` ← update
+`GET /api/v1/projects`.
 
 ---
 
-### T-ID4 — Identity: Web (getAuthenticatedUser, middleware, login page, admin layout)
+### T-PAGE-PROJECT-DETAIL — Project detail via REST
 
-**GitHub Issue**: #407
-**Priority**: Low
-**Dependencies**: T-ID1, T-ID2, T-ID3 (from Sprint 2)
+**GitHub Issue**: #293  
+**Dependencies**: T-ENV
 
-Implement the presentation layer of the Identity bounded context.
-
-**Acceptance Criteria**:
-
-- `getAuthenticatedUser()` server helper resolves the current user from the Supabase session
-- Next.js middleware protects `/[locale]/admin/*`; redirects to `/[locale]/login` if unauthenticated
-- Login page at `/[locale]/login` with Supabase Auth form
-- Admin layout at `/[locale]/admin/layout.tsx` calls `EnsureAdminUseCase`; redirects if not admin
-- Middleware excludes `/api/*`, `/_next/*`, static assets
-
-**Files**:
-
-- `apps/web/src/lib/auth/getAuthenticatedUser.ts` ← create
-- `apps/web/src/middleware.ts` ← update (add auth guard alongside i18n)
-- `apps/web/src/app/[locale]/login/page.tsx` ← create
-- `apps/web/src/app/[locale]/admin/layout.tsx` ← create
+`GET /api/v1/projects/:slug`; `loading.tsx` / `error.tsx`; `generateStaticParams` if applicable.
 
 ---
 
-## Execution Order
+### T-PAGE-EXPERIENCES — Experiences page via REST
+
+**GitHub Issue**: #294  
+**Dependencies**: T-ENV
+
+`GET /api/v1/experiences`; SkillAccordion + ExperienceCard updates.
+
+---
+
+### T-UI-PROJECT-CARD — ProjectCard aligned to API payload
+
+**GitHub Issue**: #295  
+**Dependencies**: T-PAGE-PROJECTS (or parallel)
+
+---
+
+### T-UI-STAT-CARD — StatCard component
+
+**GitHub Issue**: #296  
+**Dependencies**: T-PAGE-HOME
+
+---
+
+### T-UI-THEME — ThemeToggle functional
+
+**GitHub Issue**: #297  
+
+---
+
+### T-UI-LANG — LanguageSelector functional
+
+**GitHub Issue**: #298  
+
+---
+
+### T-UI-LOADING-ERROR — loading.tsx & error.tsx per segment
+
+**GitHub Issue**: #299  
+
+---
+
+### T-ID-WEB — Identity: login, middleware, admin UI (REST only)
+
+**GitHub Issue**: #407  
+**Priority**: Medium  
+**Dependencies**: #442, #443, #444, #445 (identity phases 0–3)
+
+`GET /api/v1/me`, `POST /api/v1/auth/sign-in`, middleware and admin layout **without** IdP SDK in `apps/web` per `11-IDENTITY`.
+
+---
+
+### T-ID-REST-AUTH — Identity: REST auth + GET /me (handlers)
+
+**GitHub Issue**: #445  
+**Priority**: High  
+**Dependencies**: #442, #443, #444  
+
+Route handlers for `auth/*` and `GET /api/v1/me` (may overlap scheduling with T-ENV; coordinate ordering).
+
+---
+
+## Execution order
 
 ```
-T-ENV (Response Envelope + API endpoints)
-  └── T-PAGES (Replace static data with live fetches)
+T-ENV (core API surface)
+  ├── T-CONTACT
+  ├── T-PAGE-HOME, T-PAGE-PROJECTS, T-PAGE-PROJECT-DETAIL, T-PAGE-EXPERIENCES
+  │     └── T-UI-PROJECT-CARD, T-UI-STAT-CARD
+  ├── T-UI-THEME, T-UI-LANG, T-UI-LOADING-ERROR (parallel where possible)
 
-T-ID4 (Identity web — can run in parallel with T-ENV after Sprint 2 identity tasks)
+Identity (parallel track):
+  #442 → #443 → #444 → #445 → T-ID-WEB (#407)
 ```
 
 ## Definition of Done
 
-- [ ] All API endpoints implemented with correct envelope and error mapping
-- [ ] No static data arrays remain in page components
-- [ ] Contact form delivers emails via `SendContactMessage` use case
-- [ ] Identity middleware and login page functional
-- [ ] `apps/web` builds without errors (`pnpm --filter web build`)
-- [ ] All new route handlers have unit tests
-- [ ] Ready to start Sprint 4 (Quality & Deploy)
+- [ ] Public portfolio data and contact flow work through documented REST contract
+- [ ] No direct use-case imports from `apps/web` pages/components
+- [ ] Contact email path uses handler + `SendContactMessage`
+- [ ] Identity UI blocked until auth REST exists; no Supabase SDK in client-facing `apps/web` layers per `11-IDENTITY`
+- [ ] `pnpm --filter web build` passes
