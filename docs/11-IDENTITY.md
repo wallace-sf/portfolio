@@ -1,36 +1,66 @@
-# 11 — Identity (Planejado)
+# 11 — Identity
 
-> Bounded context de autenticação e autorização. Plano detalhado para implementação futura.
+> Bounded context de identidade: utilizadores, papéis e autorização. Complementa [03-BOUNDED-CONTEXTS](./03-BOUNDED-CONTEXTS.md) e [05-API-CONTRACTS](./05-API-CONTRACTS.md).
 
-## Contexto
+---
 
-Responsável por autenticação e autorização. Modelo binário: `ADMIN | VISITOR`. Supabase Auth como mecanismo; domínio em `packages/core`. Dependency rule: `core ← application ← infra ← web`.
+## O que é “auth” neste projeto
 
-## Context Map
+Em DDD, **Identity** é um **bounded context** próprio: modela *quem* é o utilizador e *que* pode fazer no sistema (via `Role` e casos de uso como `EnsureAdmin`). **Não** é apenas “middleware”: a regra de negócio “só ADMIN pode…” vive no domínio e na camada de aplicação.
 
-| Context | Status | Modelos principais |
-|---------|--------|--------------------|
-| Identity | Planejado | User, Role, AccessPolicy, IUserRepository |
+- **Autenticação** (prova de identidade — sessão, JWT, Supabase Auth): mecanismo na **infra** + borda HTTP (cookies, headers).
+- **Autorização** (permissão para uma ação): **`EnsureAdmin`**, futuros policies, e leitura de utilizador com **`GetCurrentUser`** — sempre invocados a partir de **route handlers**, nunca a partir de componentes React.
 
-## Modelos previstos
+O **front-end** consome apenas **REST**; não importa `@repo/application` para Identity.
 
-- **User** — entidade: `auth_id`, `email`, `role`
-- **Role** — VO: `ADMIN | VISITOR`
-- **Email** — VO no Shared Kernel
-- **AccessPolicy** — policy: `canPublish`, `canManageProjects`, `canAccessAdmin`, etc.
-- **IUserRepository** — interface em core
+---
 
-## Rotas previstas
+## Estado atual (código)
 
-- `/[locale]/login` — página de login (email + senha)
-- `/[locale]/admin/*` — área protegida; middleware + layout com `EnsureAdminUseCase`
+| Layer | Conteúdo |
+|-------|----------|
+| **core** (`@repo/core/identity`) | `User`, `Role`, `IUserRepository`, `UnauthorizedError` |
+| **application** | `GetCurrentUser`, `EnsureAdmin`, `UserDTO` |
+| **infra** | Implementação de `IUserRepository` (ex.: Prisma), utilizadores em BD |
 
-## Plano de implementação
+Rotas HTTP (`/api/v1/me`, etc.) estão descritas em [05-API-CONTRACTS](./05-API-CONTRACTS.md); a implementação dos Route Handlers pode acompanhar o roadmap.
 
-O plano detalhado por fases está em [plans/identity-mvp.md](../plans/identity-mvp.md).
+---
+
+## Papéis
+
+`Role` é um enum em `packages/core`:
+
+- `ADMIN` — acesso a operações de gestão (quando expostas pela API).
+- `VISITOR` — utilizador autenticado sem privilégios de administração.
+
+`EnsureAdmin` devolve `UnauthorizedError` (código `UNAUTHORIZED`) quando o utilizador não é `ADMIN` — mapeado a **401** na API.
+
+---
+
+## Casos de uso
+
+| Caso de uso | Finalidade |
+|-------------|------------|
+| `GetCurrentUser` | Dado um `userId` válido (já extraído da sessão na borda), devolve `UserDTO`. |
+| `EnsureAdmin` | Garante que o utilizador existe e é `ADMIN`; caso contrário falha com `UnauthorizedError`. |
+
+O **nível de acesso** a cada endpoint HTTP é definido na camada de interface: rotas públicas sem sessão; rotas autenticadas exigem sessão e passam `userId` aos casos de uso; rotas admin chamam `EnsureAdmin` antes de mutações.
+
+---
+
+## UI (planeado / em curso)
+
+- `/[locale]/login` — login (email + senha ou fluxo do fornecedor).
+- `/[locale]/admin/*` — área protegida; o servidor deve validar sessão e, nas operações sensíveis, alinhar com `EnsureAdmin` no handler.
+
+Detalhes de fases em [plans/identity-mvp.md](../plans/identity-mvp.md) e [ROADMAP](./ROADMAP.md).
+
+---
 
 ## Ver também
 
 - [03-BOUNDED-CONTEXTS](./03-BOUNDED-CONTEXTS.md) — mapa de contextos
+- [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md) — lista de casos de uso
 - [ROADMAP](./ROADMAP.md) — fase Identity
-- [packages/infra/README.md](../packages/infra/README.md) — schema `users`
+- [packages/infra/README.md](../packages/infra/README.md) — schema e repositórios
