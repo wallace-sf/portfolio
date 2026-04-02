@@ -57,6 +57,9 @@ Repository interfaces for **Portfolio** and **Identity** live in `@repo/core`. S
 | `IProfileRepository` | `@repo/core/portfolio` | defined |
 | `IUserRepository` | `@repo/core/identity` | defined |
 | `IEmailService` | `@repo/application/contact` | implemented (`ResendEmailService` in `@repo/infra`) |
+| `IAuthenticationGateway` | `@repo/application/identity` (planned) | **Planned** — sessão/sign-in sem acoplar o front ao IdP; ver [11-IDENTITY](./11-IDENTITY.md) |
+
+The **authentication gateway** abstracts reading and establishing sessions from HTTP cookies. **Supabase** (or another IdP) lives only in an adapter in **`@repo/infra`**. The browser calls **`/api/v1/auth/*`** only.
 
 `IEmailService` signature:
 
@@ -82,14 +85,17 @@ interface IEmailService {
 
 ### Identity
 
-Identity is modeled as its **own bounded context** in `packages/core` (`User`, `Role`, `IUserRepository`, `UnauthorizedError`). Application use cases enforce **authorization rules** (who may act), while **authentication** (session / tokens) is resolved at the HTTP edge (cookies, headers) and passed in as inputs such as `userId`.
+Identity is modeled as its **own bounded context** in `packages/core` (`User`, `Role`, `IUserRepository`, `UnauthorizedError`). **Authorization** use cases take `userId` after the handler resolves session → `authSubject` → `User.id` (when `authSubject` and gateway exist). **Authentication** is delegated to **`IAuthenticationGateway`** at the composition root — not to React.
 
 | Use case | Port(s) | Input | Output | Status |
 |----------|---------|-------|--------|--------|
 | `GetCurrentUser` | `IUserRepository` | `{ userId }` | `UserDTO` | implemented |
 | `EnsureAdmin` | `IUserRepository` | `{ userId }` | `void` | implemented |
+| `EnsureAppUserForAuthSession` | `IUserRepository` | `{ authSubject, email, defaultName? }` | application `userId` (`string`) | **planned** |
 
 `EnsureAdmin` returns `UnauthorizedError` when the user exists but is not `Role.ADMIN`. Route handlers map that to **401** (see [05-API-CONTRACTS](./05-API-CONTRACTS.md)).
+
+`EnsureAppUserForAuthSession` (planned): link `authSubject` to an existing `User` by email or create a `VISITOR`; used after sign-in and on `GET /api/v1/me`.
 
 ### Contact
 
@@ -160,9 +166,11 @@ packages/application/src/
   identity/
     dtos/
       UserDTO.ts
+    ports/                    ← planned: IAuthenticationGateway
     use-cases/
       GetCurrentUser.ts
       EnsureAdmin.ts
+      EnsureAppUserForAuthSession.ts   ← planned
   contact/
     dtos/
     ports/

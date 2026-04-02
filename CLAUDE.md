@@ -221,6 +221,7 @@ interface IProjectRepository {
 - Tests that verify implementation instead of behavior
 - Direct imports between bounded contexts — use only the Shared Kernel
 - Importing `@repo/application` or calling use cases from `apps/web` pages, layouts, or client components — use HTTP to `/api/v1/...` instead
+- Importing `@supabase/*` or other IdP SDKs from `apps/web` UI or `middleware.ts` — auth belongs behind `IAuthenticationGateway` in `@repo/infra` and REST routes; see [11-IDENTITY](./docs/11-IDENTITY.md)
 
 ---
 
