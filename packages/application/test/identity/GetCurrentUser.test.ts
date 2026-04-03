@@ -28,6 +28,8 @@ function makeRepository(overrides: Partial<IUserRepository> = {}): IUserReposito
   return {
     findById: vi.fn(),
     findByEmail: vi.fn(),
+    findByAuthSubject: vi.fn(),
+    linkAuthSubject: vi.fn(),
     ...overrides,
   };
 }

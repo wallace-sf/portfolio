@@ -39,10 +39,19 @@ export function buildPrismaProfile(
   return {
     id,
     name: 'Wallace Ferreira',
-    headline: { 'pt-BR': 'Desenvolvedor Full-Stack' },
-    bio: { 'pt-BR': 'Apaixonado por tecnologia e boas práticas.' },
+    headline: {
+      'en-US': 'Full-Stack Developer',
+      'pt-BR': 'Desenvolvedor Full-Stack',
+    },
+    bio: {
+      'en-US': 'Passionate about technology and best practices.',
+      'pt-BR': 'Apaixonado por tecnologia e boas práticas.',
+    },
     photoUrl: 'https://example.com/photo.jpg',
-    photoAlt: { 'pt-BR': 'Foto de Wallace' },
+    photoAlt: {
+      'en-US': "Wallace's photo",
+      'pt-BR': 'Foto de Wallace',
+    },
     featuredProjectSlugs: ['project-a', 'project-b'],
     createdAt: new Date('2024-01-01T00:00:00.000Z'),
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
@@ -50,7 +59,7 @@ export function buildPrismaProfile(
       {
         id: crypto.randomUUID(),
         profileId: id,
-        label: { 'pt-BR': 'Projetos' },
+        label: { 'en-US': 'Projects', 'pt-BR': 'Projetos' },
         value: '10+',
         icon: 'folder',
         order: 0,
@@ -58,7 +67,10 @@ export function buildPrismaProfile(
       {
         id: crypto.randomUUID(),
         profileId: id,
-        label: { 'pt-BR': 'Anos de experiência' },
+        label: {
+          'en-US': 'Years of experience',
+          'pt-BR': 'Anos de experiência',
+        },
         value: '5+',
         icon: 'clock',
         order: 1,
