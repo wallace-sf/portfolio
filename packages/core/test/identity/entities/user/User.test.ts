@@ -28,6 +28,20 @@ describe('User', () => {
       if (!result.isRight()) return;
       expect(result.value.role).toBe(Role.VISITOR);
     });
+
+    it('should create user with valid authSubject', () => {
+      const sub = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
+      const result = User.create({
+        name: 'Linked User',
+        email: 'linked@example.com',
+        role: Role.VISITOR,
+        authSubject: sub,
+      });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.authSubject).toBe(sub);
+    });
   });
 
   describe('when created from invalid props', () => {
@@ -62,6 +76,18 @@ describe('User', () => {
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(User.ERROR_CODE);
       expect((result.value as ValidationError).message).toContain('Role must be one of');
+    });
+
+    it('should return Left for invalid authSubject', () => {
+      const result = User.create({
+        name: 'John Doe',
+        email: 'john@example.com',
+        role: Role.ADMIN,
+        authSubject: 'not-a-uuid',
+      });
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(User.ERROR_CODE);
     });
   });
 

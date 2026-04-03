@@ -976,7 +976,7 @@
   "sprint-0": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Implement Either pattern for domain error handling",
         "description": "Create the Either<L, R> type with Left and Right classes as the foundation for functional error handling across the domain layer",
         "details": "Implement `packages/core/src/shared/either.ts` with:\n\n```typescript\nexport class Left<L, R> {\n  readonly value: L;\n  constructor(value: L) {\n    this.value = value;\n  }\n  isLeft(): this is Left<L, R> {\n    return true;\n  }\n  isRight(): this is Right<L, R> {\n    return false;\n  }\n}\n\nexport class Right<L, R> {\n  readonly value: R;\n  constructor(value: R) {\n    this.value = value;\n  }\n  isLeft(): this is Left<L, R> {\n    return false;\n  }\n  isRight(): this is Right<L, R> {\n    return true;\n  }\n}\n\nexport type Either<L, R> = Left<L, R> | Right<L, R>;\n\nexport const left = <L, R>(value: L): Either<L, R> => new Left(value);\nexport const right = <L, R>(value: R): Either<L, R> => new Right(value);\n```\n\nUpdate `packages/core/src/shared/index.ts` to export: `Either`, `Left`, `Right`, `left`, `right`.\n\nThis implementation provides type-safe discriminated unions with `.isLeft()` and `.isRight()` type guards, enabling exhaustive pattern matching and eliminating runtime exceptions for domain errors.",
@@ -992,7 +992,8 @@
             "dependencies": [],
             "details": "Create `packages/core/src/shared/either.ts` with the complete Either implementation:\n\n1. Implement `Left<L, R>` class:\n   - Readonly `value: L` property\n   - Constructor accepting `value: L`\n   - `isLeft()` type guard returning `this is Left<L, R>`\n   - `isRight()` type guard returning false\n\n2. Implement `Right<L, R>` class:\n   - Readonly `value: R` property\n   - Constructor accepting `value: R`\n   - `isLeft()` type guard returning false\n   - `isRight()` type guard returning `this is Right<L, R>`\n\n3. Define `Either<L, R>` type as discriminated union: `Left<L, R> | Right<L, R>`\n\n4. Implement helper functions:\n   - `left<L, R>(value: L): Either<L, R>` - creates Left instance\n   - `right<L, R>(value: R): Either<L, R>` - creates Right instance\n\nEnsure proper TypeScript type inference with discriminated unions. The type guards enable exhaustive pattern matching and type narrowing.",
             "status": "pending",
-            "testStrategy": null
+            "testStrategy": null,
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1003,7 +1004,8 @@
             ],
             "details": "Update `packages/core/src/shared/index.ts` to properly export the Either pattern:\n\n```typescript\nexport { Either, Left, Right, left, right } from './either';\n```\n\nThis makes the Either pattern available to:\n- Other shared kernel modules\n- Portfolio, Blog, and Contact bounded contexts\n- Value Objects and Entities that need error handling\n\nVerify exports are accessible by attempting to import from `@repo/core/shared` in TypeScript.",
             "status": "pending",
-            "testStrategy": "Verify exports with TypeScript compilation:\n- Run `pnpm types` in packages/core\n- Confirm no export errors\n- Test import statement: `import { Either, left, right } from '@repo/core/shared'`"
+            "testStrategy": "Verify exports with TypeScript compilation:\n- Run `pnpm types` in packages/core\n- Confirm no export errors\n- Test import statement: `import { Either, left, right } from '@repo/core/shared'`",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1015,13 +1017,14 @@
             ],
             "details": "Create `packages/core/test/shared/either.test.ts` with comprehensive test coverage:\n\n1. **Left creation and behavior:**\n   - `left()` helper creates Left instance\n   - `isLeft()` returns true\n   - `isRight()` returns false\n   - `value` property is accessible and correct\n\n2. **Right creation and behavior:**\n   - `right()` helper creates Right instance\n   - `isLeft()` returns false\n   - `isRight()` returns true\n   - `value` property is accessible and correct\n\n3. **Type narrowing:**\n   - After `if (result.isLeft())`, TypeScript infers `result.value` as L type\n   - After `if (result.isRight())`, TypeScript infers `result.value` as R type\n   - Exhaustive pattern matching works correctly\n\n4. **Immutability:**\n   - `value` property is readonly\n   - Cannot reassign value after construction\n\n5. **Generic type inference:**\n   - Type parameters are correctly inferred from arguments\n   - Complex types (objects, arrays) work correctly\n\nUse Vitest framework. Target 100% code coverage.",
             "status": "pending",
-            "testStrategy": "Run `pnpm test` in packages/core and verify:\n- All tests pass\n- 100% code coverage for either.ts\n- Type narrowing works in test code (no TypeScript errors)\n- Tests follow naming pattern: 'should <expected behavior> when <context>'"
+            "testStrategy": "Run `pnpm test` in packages/core and verify:\n- All tests pass\n- 100% code coverage for either.ts\n- Type narrowing works in test code (no TypeScript errors)\n- Tests follow naming pattern: 'should <expected behavior> when <context>'",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-09T02:47:44.495Z"
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Migrate test runner from Jest to Vitest",
         "description": "Replace Jest with Vitest as the standard test runner for packages/core to align with monorepo conventions",
         "details": "1. Remove Jest configuration and dependencies:\n   - Delete `packages/core/jest.config.ts`\n   - Remove from `package.json` devDependencies: `jest`, `ts-jest`, `@types/jest`\n\n2. Add Vitest configuration:\n   - Create `packages/core/vitest.config.ts`:\n```typescript\nimport { defineConfig } from 'vitest/config';\nimport path from 'path';\n\nexport default defineConfig({\n  test: {\n    globals: true,\n    environment: 'node',\n    include: ['test/**/*.test.ts'],\n    coverage: {\n      provider: 'v8',\n      reporter: ['text', 'json', 'html'],\n      include: ['src/**/*.ts'],\n      exclude: ['src/**/index.ts'],\n    },\n  },\n  resolve: {\n    alias: {\n      '~': path.resolve(__dirname, './src'),\n    },\n  },\n});\n```\n\n3. Update `package.json` scripts:\n   - Change `\"test\": \"jest\"` to `\"test\": \"vitest run\"`\n   - Change `\"test:watch\": \"jest --watchAll --collectCoverage\"` to `\"test:watch\": \"vitest\"`\n   - Add `vitest` to devDependencies\n\n4. Update test files:\n   - Replace `describe`, `it`, `expect` imports if any (Vitest globals mode handles this)\n   - Verify all existing tests pass with `pnpm test`",
@@ -1038,7 +1041,8 @@
             "details": "1. Delete `packages/core/jest.config.ts` configuration file\n2. Remove Jest dependencies from `packages/core/package.json` devDependencies:\n   - `jest`\n   - `ts-jest`\n   - `@types/jest` (if present)\n3. Run `pnpm install` in packages/core to update lockfile\n4. Verify no Jest references remain in package.json\n5. Commit changes: 'chore(core): remove Jest configuration and dependencies'",
             "status": "done",
             "testStrategy": "Verify jest.config.ts is deleted and Jest packages are removed from package.json devDependencies. Confirm lockfile is updated with pnpm install.",
-            "updatedAt": "2026-03-09T21:01:06.143Z"
+            "updatedAt": "2026-03-09T21:01:06.143Z",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1050,7 +1054,8 @@
             "details": "1. Add Vitest to `packages/core/package.json` devDependencies:\n   - `vitest` (latest version)\n   - `@vitest/coverage-v8` for coverage provider\n2. Create `packages/core/vitest.config.ts` with:\n   - `globals: true` for describe/it/expect without imports\n   - `environment: 'node'` for Node.js runtime\n   - `include: ['test/**/*.test.ts']` to match existing test file pattern\n   - Coverage configuration with v8 provider, text/json/html reporters\n   - Coverage includes src/**/*.ts, excludes src/**/index.ts\n   - Path alias `'~': path.resolve(__dirname, './src')` for imports\n3. Run `pnpm install` to add Vitest packages\n4. Commit changes: 'chore(core): add Vitest configuration with coverage setup'",
             "status": "done",
             "testStrategy": "Verify vitest.config.ts exists with correct settings. Check that Vitest packages are in devDependencies. Ensure path aliases resolve correctly.",
-            "updatedAt": "2026-03-09T21:01:06.150Z"
+            "updatedAt": "2026-03-09T21:01:06.150Z",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1062,7 +1067,8 @@
             "details": "1. Update `packages/core/package.json` scripts section:\n   - Change `\"test\": \"jest\"` to `\"test\": \"vitest run\"`\n   - Change `\"test:watch\": \"jest --watchAll --collectCoverage\"` to `\"test:watch\": \"vitest\"`\n   - Add `\"test:coverage\": \"vitest run --coverage\"` for explicit coverage runs\n2. Review existing test files in test/**/*.test.ts:\n   - Verify no explicit Jest imports (Vitest globals mode handles describe/it/expect)\n   - Check for Jest-specific APIs that need replacement (rare with current test structure)\n3. Run `pnpm test` to execute all 19 existing test files\n4. Document any compatibility issues found\n5. Commit changes: 'chore(core): update test scripts to use Vitest'",
             "status": "done",
             "testStrategy": "Run `pnpm test` and verify all existing tests execute. Check that test output format is readable. Confirm no Jest-specific errors appear.",
-            "updatedAt": "2026-03-09T21:01:06.156Z"
+            "updatedAt": "2026-03-09T21:01:06.156Z",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1074,13 +1080,14 @@
             "details": "1. Run full test suite: `pnpm test` in packages/core\n   - Verify all 19 test files pass without errors\n   - Check for any timing or async handling differences from Jest\n2. Test watch mode: `pnpm test:watch`\n   - Verify file watching works correctly\n   - Test that changes trigger re-runs\n3. Generate coverage reports: `pnpm test:coverage`\n   - Verify coverage reports generate in text, json, and html formats\n   - Confirm base classes (Entity.ts, ValueObject.ts) are now included in coverage\n   - Check coverage thresholds are reasonable\n4. Fix any issues found:\n   - Adjust test syntax if Vitest behaves differently\n   - Update vitest.config.ts if coverage settings need tuning\n   - Document any breaking changes or behavioral differences\n5. Update root-level turbo.json if test task configuration needs changes\n6. Commit changes: 'test(core): validate Vitest migration and fix issues'\n7. Update task 2 with final validation results",
             "status": "done",
             "testStrategy": "All tests must pass with `pnpm test`. Watch mode must function correctly. Coverage reports must generate with v8 provider. Base classes must appear in coverage. No Jest-related errors in output.",
-            "updatedAt": "2026-03-09T21:01:06.162Z"
+            "updatedAt": "2026-03-09T21:01:06.162Z",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-09T21:01:06.162Z"
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Fix ValueObject and Entity base class bugs",
         "description": "Fix ValueObject.equals() for deep comparison, remove isNew concept, and fix Entity.props mutation in constructor",
         "details": "1. Fix `packages/core/src/shared/base/ValueObject.ts`:\n   - Remove `isNew` from `IValueObjectProps` interface\n   - Remove `isNew` getter method\n   - Fix `equals()` method to perform deep equality for object types:\n```typescript\npublic equals(vo: ValueObject<TValue, TConfig>): boolean {\n  if (vo == null) return false;\n  // For primitive types, use strict equality\n  if (typeof this.value !== 'object' || this.value === null) {\n    return this.value === vo.value;\n  }\n  // For object types, perform deep comparison\n  return JSON.stringify(this.value) === JSON.stringify(vo.value);\n}\n```\n\n2. Fix `packages/core/src/shared/base/Entity.ts`:\n   - Make `props` field private: `private readonly props: TProps`\n   - Fix constructor to avoid mutating input object:\n```typescript\nconstructor(props: TProps) {\n  this.created_at = DateTime.new(props.created_at);\n  this.deleted_at = props.deleted_at ? DateTime.new(props.deleted_at) : null;\n  this.id = Id.new(props.id);\n  this.updated_at = DateTime.new(props.updated_at);\n  // Use spread to avoid mutating input\n  this.props = Object.freeze({ ...props, id: this.id.value });\n}\n```\n\n3. Update all VOs that pass `isNew` to remove this parameter.\n\n4. Remove invalid `~components/*` path from `packages/core/tsconfig.json`.",
@@ -1099,7 +1106,8 @@
             "dependencies": [],
             "details": "Edit `packages/core/src/shared/base/ValueObject.ts`:\n\n1. Remove `isNew?: boolean` from the `IValueObjectProps` interface (line 3)\n2. Remove the `isNew` getter method (lines 30-32)\n3. Clean up any related comments or documentation mentioning isNew\n\nThis is a foundational change that must be completed before updating dependent VOs.",
             "status": "pending",
-            "testStrategy": "Verify that ValueObject.ts compiles without errors after removing isNew. Check that no references to isNew remain in the base class. This change will cause compilation errors in dependent VOs, which is expected and will be fixed in subtask 4."
+            "testStrategy": "Verify that ValueObject.ts compiles without errors after removing isNew. Check that no references to isNew remain in the base class. This change will cause compilation errors in dependent VOs, which is expected and will be fixed in subtask 4.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1108,7 +1116,8 @@
             "dependencies": [],
             "details": "Edit `packages/core/src/shared/base/ValueObject.ts`, update the `equals()` method (around line 19):\n\n```typescript\npublic equals(vo: ValueObject<TValue, TConfig>): boolean {\n  if (vo == null) return false;\n  // For primitive types, use strict equality\n  if (typeof this.value !== 'object' || this.value === null) {\n    return this.value === vo.value;\n  }\n  // For object types, perform deep comparison\n  return JSON.stringify(this.value) === JSON.stringify(vo.value);\n}\n```\n\nThis handles primitives (string, number, boolean) with strict equality and objects (like LocalizedText's Record<string, string>) with deep comparison.",
             "status": "pending",
-            "testStrategy": "Create tests in `packages/core/test/shared/ValueObject.test.ts` to verify: (1) primitive equality works (string, number, boolean), (2) object equality works with LocalizedText containing Record<string, string>, (3) null handling, (4) different object values return false. Test with actual VO instances like LocalizedText."
+            "testStrategy": "Create tests in `packages/core/test/shared/ValueObject.test.ts` to verify: (1) primitive equality works (string, number, boolean), (2) object equality works with LocalizedText containing Record<string, string>, (3) null handling, (4) different object values return false. Test with actual VO instances like LocalizedText.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1117,7 +1126,8 @@
             "dependencies": [],
             "details": "Edit `packages/core/src/shared/base/Entity.ts`:\n\n1. Change line 14: `private readonly props: TProps` (was public)\n2. Update constructor (around line 23) to use spread operator:\n\n```typescript\nconstructor(props: TProps) {\n  this.created_at = DateTime.new(props.created_at);\n  this.deleted_at = props.deleted_at ? DateTime.new(props.deleted_at) : null;\n  this.id = Id.new(props.id);\n  this.updated_at = DateTime.new(props.updated_at);\n  // Use spread to avoid mutating input\n  this.props = Object.freeze({ ...props, id: this.id.value });\n}\n```\n\nThis prevents external mutation of the props object passed to the constructor.",
             "status": "pending",
-            "testStrategy": "Create test in `packages/core/test/shared/Entity.test.ts`: (1) Pass props object to Entity constructor, (2) Verify original props object is not mutated, (3) Verify Entity.props is frozen (Object.isFrozen returns true), (4) Attempt to modify Entity.props and verify it throws or silently fails in strict mode. Run all 19 existing entity test files to ensure no regression."
+            "testStrategy": "Create test in `packages/core/test/shared/Entity.test.ts`: (1) Pass props object to Entity constructor, (2) Verify original props object is not mutated, (3) Verify Entity.props is frozen (Object.isFrozen returns true), (4) Attempt to modify Entity.props and verify it throws or silently fails in strict mode. Run all 19 existing entity test files to ensure no regression.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1128,7 +1138,8 @@
             ],
             "details": "Update these 10 VOs in `packages/core/src/shared/vo/`:\n- Id.ts (line 11)\n- DateTime.ts\n- Text.ts\n- Name.ts\n- Url.ts\n- EmploymentType.ts\n- Fluency.ts\n- LocationType.ts\n- SkillType.ts\n- LocalizedText.ts\n\nFor each VO:\n1. Find the super() call in the constructor\n2. Remove the `isNew` parameter from the props object passed to super()\n3. Example: Change `super({ value, isNew })` to `super({ value })`\n\nAlso remove the invalid `~components/*` path from `packages/core/tsconfig.json` if present.",
             "status": "pending",
-            "testStrategy": "Verify compilation succeeds for all 10 VOs after removing isNew. Run existing tests for each VO to ensure no breaking changes. Specifically verify: Id.generate() still works, DateTime.new() works, and all factory methods continue to function correctly. Ensure tsconfig.json is valid JSON."
+            "testStrategy": "Verify compilation succeeds for all 10 VOs after removing isNew. Run existing tests for each VO to ensure no breaking changes. Specifically verify: Id.generate() still works, DateTime.new() works, and all factory methods continue to function correctly. Ensure tsconfig.json is valid JSON.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1141,13 +1152,14 @@
             ],
             "details": "1. Create/update `packages/core/test/shared/ValueObject.test.ts`:\n   - Test deep equality with LocalizedText (object with Record<string, string>)\n   - Test primitive equality with Id, DateTime, Text\n   - Test null/undefined handling in equals()\n   - Test that different objects with same structure are equal\n\n2. Create/update `packages/core/test/shared/Entity.test.ts`:\n   - Test props immutability (Object.isFrozen)\n   - Test constructor doesn't mutate input props\n   - Test that entity creation works correctly\n\n3. Run all 19 existing test files to validate no regression:\n   - Run `npm test` or equivalent in packages/core\n   - Verify all tests pass\n   - Fix any breaking changes discovered\n\n4. Document the changes in tests to explain the new behavior.",
             "status": "pending",
-            "testStrategy": "Execute full test suite with coverage reporting. Target 100% coverage for ValueObject.equals() and Entity constructor. Verify all 19 existing test files pass. Create specific test cases: (1) LocalizedText equality with identical objects returns true, (2) LocalizedText equality with different objects returns false, (3) Entity props mutation test, (4) Entity props freeze test. Document any edge cases discovered."
+            "testStrategy": "Execute full test suite with coverage reporting. Target 100% coverage for ValueObject.equals() and Entity constructor. Verify all 19 existing test files pass. Create specific test cases: (1) LocalizedText equality with identical objects returns true, (2) LocalizedText equality with different objects returns false, (3) Entity props mutation test, (4) Entity props freeze test. Document any edge cases discovered.",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-09T23:21:15.173Z"
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Migrate all Value Objects to Either pattern",
         "description": "Refactor all VOs (Id, DateTime, Text, Name, Url, EmploymentType, Fluency, LocationType, SkillType, LocalizedText) from throw-based to Either-based error handling",
         "details": "For each VO in `packages/core/src/shared/vo/`:\n\n1. Change static factory method to return `Either<ValidationError, T>`:\n```typescript\nstatic create(value: string): Either<ValidationError, VoName> {\n  const validation = Validator.new(value)\n    .required('Value is required')\n    .min(3, 'Minimum 3 characters')\n    .validate();\n  \n  if (!validation.isValid && validation.error) {\n    return left(new ValidationError({ \n      code: 'INVALID_VO_NAME',\n      message: validation.error \n    }));\n  }\n  \n  return right(new VoName(value));\n}\n```\n\n2. For Id VO:\n   - Create `Id.generate()` that returns `Id` directly (no Either) for generating new UUIDs\n   - Keep `Id.create(value)` returning `Either<ValidationError, Id>` for validation\n\n3. Remove all `throw` statements for domain errors\n\n4. Standardize error codes to `INVALID_<NAME>` format (e.g., `INVALID_ID`, `INVALID_TEXT`)\n\n5. Translate all Portuguese error messages to English\n\n6. Delete `packages/core/src/shared/i18n/ERROR_MESSAGE.ts` (no longer needed)\n\n7. Update exports in `packages/core/src/shared/vo/index.ts`\n\nVOs to migrate:\n- Id\n- DateTime\n- Text\n- Name\n- Url\n- EmploymentType\n- Fluency\n- LocationType\n- SkillType\n- LocalizedText",
@@ -1165,7 +1177,8 @@
             "dependencies": [],
             "details": "Update packages/core/src/shared/vo/id/Id.ts:\n1. Change static create(value: string) to return Either<ValidationError, Id>\n2. Add static generate(): Id method that returns Id directly (no Either) using uuid.v4()\n3. Remove all throw statements\n4. Update error code to 'INVALID_ID'\n5. Translate error messages from Portuguese to English (e.g., 'O id deve ser um UUID' → 'ID must be a valid UUID')\n6. Keep constructor private\n7. Use Validator pattern for uuid validation in create() method\n8. Update test file packages/core/test/shared/vo/Id.test.ts to use Either assertions (.isRight()/.isLeft()) instead of .toThrow()",
             "status": "pending",
-            "testStrategy": "Test create() with valid UUID returns Right<Id>. Test create() with invalid UUID returns Left<ValidationError> with code 'INVALID_ID'. Test generate() returns valid Id instance without Either wrapper. Verify error messages are in English."
+            "testStrategy": "Test create() with valid UUID returns Right<Id>. Test create() with invalid UUID returns Left<ValidationError> with code 'INVALID_ID'. Test generate() returns valid Id instance without Either wrapper. Verify error messages are in English.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1176,7 +1189,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/date-time/DateTime.ts:\n1. Change static create(value: string) to return Either<ValidationError, DateTime>\n2. Remove all throw statements from validation logic\n3. Update error code to 'INVALID_DATE_TIME'\n4. Translate error messages to English (date format errors, invalid date errors)\n5. Keep date parsing and validation logic using Date constructor\n6. Handle invalid date formats with left(ValidationError)\n7. Update test file packages/core/test/shared/vo/DateTime.test.ts to Either pattern",
             "status": "pending",
-            "testStrategy": "Test create() with valid ISO date string returns Right<DateTime>. Test create() with invalid date format returns Left with 'INVALID_DATE_TIME'. Test create() with empty/null values returns Left. Verify English error messages."
+            "testStrategy": "Test create() with valid ISO date string returns Right<DateTime>. Test create() with invalid date format returns Left with 'INVALID_DATE_TIME'. Test create() with empty/null values returns Left. Verify English error messages.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1187,7 +1201,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/text/Text.ts:\n1. Change static create(value: string, config?: ITextConfig) to return Either<ValidationError, Text>\n2. Preserve existing min/max/pattern validation using config parameter\n3. Use Validator.new(value).required().min(config.min).max(config.max).validate()\n4. Remove throw statements at line 33 and elsewhere\n5. Update error code to 'INVALID_TEXT'\n6. Translate Portuguese error messages to English\n7. Handle optional config parameter correctly\n8. Update test file packages/core/test/shared/vo/Text.test.ts to Either assertions",
             "status": "pending",
-            "testStrategy": "Test create() with valid text returns Right. Test create() with text below min length returns Left. Test create() with text above max length returns Left. Test create() without config uses defaults. Test create() with custom config applies rules. Verify error codes and English messages."
+            "testStrategy": "Test create() with valid text returns Right. Test create() with text below min length returns Left. Test create() with text above max length returns Left. Test create() without config uses defaults. Test create() with custom config applies rules. Verify error codes and English messages.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1198,7 +1213,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/name/Name.ts:\n1. Change static create(value: string) to return Either<ValidationError, Name>\n2. Apply validation: required, minimum 2 characters\n3. Remove all throw statements\n4. Update error code to 'INVALID_NAME'\n5. Translate error messages to English\n6. Keep name trimming and normalization logic\n7. Update test file packages/core/test/shared/vo/Name.test.ts to Either pattern",
             "status": "pending",
-            "testStrategy": "Test create() with valid name returns Right<Name>. Test create() with empty string returns Left with 'INVALID_NAME'. Test create() with single character returns Left. Test create() with whitespace-only returns Left. Verify English error messages."
+            "testStrategy": "Test create() with valid name returns Right<Name>. Test create() with empty string returns Left with 'INVALID_NAME'. Test create() with single character returns Left. Test create() with whitespace-only returns Left. Verify English error messages.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1209,7 +1225,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/url/Url.ts:\n1. Change static create(value: string) to return Either<ValidationError, Url>\n2. Validate URL format using built-in URL constructor or regex\n3. Remove all throw statements\n4. Update error code to 'INVALID_URL'\n5. Translate error messages to English (e.g., 'URL inválida' → 'Invalid URL format')\n6. Handle protocol validation (http/https)\n7. Update test file packages/core/test/shared/vo/Url.test.ts to Either assertions",
             "status": "pending",
-            "testStrategy": "Test create() with valid URL returns Right<Url>. Test create() with invalid URL format returns Left with 'INVALID_URL'. Test create() with missing protocol returns Left. Test create() with malformed URL returns Left. Verify English error messages."
+            "testStrategy": "Test create() with valid URL returns Right<Url>. Test create() with invalid URL format returns Left with 'INVALID_URL'. Test create() with missing protocol returns Left. Test create() with malformed URL returns Left. Verify English error messages.",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -1220,7 +1237,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/employment-type/EmploymentType.ts:\n1. Change static create(value: string) to return Either<ValidationError, EmploymentType>\n2. Validate against enum values (FULL_TIME, PART_TIME, CONTRACT, FREELANCE, INTERNSHIP)\n3. Remove throw statements for invalid enum values\n4. Update error code to 'INVALID_EMPLOYMENT_TYPE'\n5. Translate error messages to English with list of valid values\n6. Update test file packages/core/test/shared/vo/EmploymentType.test.ts to Either pattern",
             "status": "pending",
-            "testStrategy": "Test create() with valid enum value returns Right. Test create() with each valid enum constant. Test create() with invalid enum value returns Left with 'INVALID_EMPLOYMENT_TYPE'. Test error message includes valid options. Verify English messages."
+            "testStrategy": "Test create() with valid enum value returns Right. Test create() with each valid enum constant. Test create() with invalid enum value returns Left with 'INVALID_EMPLOYMENT_TYPE'. Test error message includes valid options. Verify English messages.",
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -1231,7 +1249,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/fluency/Fluency.ts:\n1. Change static create(value: string) to return Either<ValidationError, Fluency>\n2. Validate against enum values (BASIC, INTERMEDIATE, ADVANCED, FLUENT, NATIVE)\n3. Remove throw statements\n4. Update error code to 'INVALID_FLUENCY'\n5. Translate error messages to English\n6. Update test file packages/core/test/shared/vo/Fluency.test.ts to Either assertions",
             "status": "pending",
-            "testStrategy": "Test create() with valid fluency level returns Right. Test create() with each valid enum value (BASIC through NATIVE). Test create() with invalid value returns Left with 'INVALID_FLUENCY'. Test error message lists valid options in English."
+            "testStrategy": "Test create() with valid fluency level returns Right. Test create() with each valid enum value (BASIC through NATIVE). Test create() with invalid value returns Left with 'INVALID_FLUENCY'. Test error message lists valid options in English.",
+            "parentId": "undefined"
           },
           {
             "id": 8,
@@ -1242,7 +1261,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/location-type/LocationType.ts:\n1. Change static create(value: string) to return Either<ValidationError, LocationType>\n2. Validate against enum values (REMOTE, ONSITE, HYBRID)\n3. Remove throw statements\n4. Update error code to 'INVALID_LOCATION_TYPE'\n5. Translate error messages to English\n6. Update test file packages/core/test/shared/vo/LocationType.test.ts to Either pattern",
             "status": "pending",
-            "testStrategy": "Test create() with valid location type returns Right. Test create() with REMOTE, ONSITE, HYBRID each return Right. Test create() with invalid value returns Left with 'INVALID_LOCATION_TYPE'. Verify English error messages with valid options listed."
+            "testStrategy": "Test create() with valid location type returns Right. Test create() with REMOTE, ONSITE, HYBRID each return Right. Test create() with invalid value returns Left with 'INVALID_LOCATION_TYPE'. Verify English error messages with valid options listed.",
+            "parentId": "undefined"
           },
           {
             "id": 9,
@@ -1253,7 +1273,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/skill-type/SkillType.ts:\n1. Change static create(value: string) to return Either<ValidationError, SkillType>\n2. Validate against enum values (TECHNICAL, SOFT, LANGUAGE, TOOL, FRAMEWORK, etc.)\n3. Remove throw statements\n4. Update error code to 'INVALID_SKILL_TYPE'\n5. Translate error messages to English\n6. Update test file packages/core/test/shared/vo/SkillType.test.ts to Either assertions",
             "status": "pending",
-            "testStrategy": "Test create() with valid skill type returns Right. Test create() with each defined enum value. Test create() with invalid/undefined type returns Left with 'INVALID_SKILL_TYPE'. Verify English error messages list all valid skill types."
+            "testStrategy": "Test create() with valid skill type returns Right. Test create() with each defined enum value. Test create() with invalid/undefined type returns Left with 'INVALID_SKILL_TYPE'. Verify English error messages list all valid skill types.",
+            "parentId": "undefined"
           },
           {
             "id": 10,
@@ -1264,7 +1285,8 @@
             ],
             "details": "Update packages/core/src/shared/vo/localized-text/LocalizedText.ts:\n1. Change static create(value: Record<string, string>) to return Either<ValidationError, LocalizedText>\n2. Validate object structure: must have at least one locale key\n3. Validate each locale value is non-empty string\n4. Remove throw statements at line 53 and elsewhere\n5. Update error code to 'INVALID_LOCALIZED_TEXT'\n6. Translate Portuguese error messages to English (e.g., 'Texto localizado deve ter pelo menos um idioma' → 'Localized text must have at least one locale')\n7. Handle edge cases: empty object, null values, invalid locale keys\n8. Update test file packages/core/test/shared/vo/LocalizedText.test.ts to Either pattern",
             "status": "pending",
-            "testStrategy": "Test create() with valid multi-locale object returns Right. Test create() with single locale returns Right. Test create() with empty object returns Left with 'INVALID_LOCALIZED_TEXT'. Test create() with empty string values returns Left. Test create() with null values returns Left. Verify English error messages and deep equality in ValueObject.equals()."
+            "testStrategy": "Test create() with valid multi-locale object returns Right. Test create() with single locale returns Right. Test create() with empty object returns Left with 'INVALID_LOCALIZED_TEXT'. Test create() with empty string values returns Left. Test create() with null values returns Left. Verify English error messages and deep equality in ValueObject.equals().",
+            "parentId": "undefined"
           },
           {
             "id": 11,
@@ -1275,7 +1297,8 @@
             ],
             "details": "Review and update all 10 migrated VOs:\n1. Audit each VO file for remaining Portuguese strings\n2. Translate to clear, concise English error messages\n3. Verify error codes follow 'INVALID_<VO_NAME>' pattern consistently\n4. Standardize error message format: '<Field> must <requirement>' (e.g., 'ID must be a valid UUID')\n5. Update validation error details to be descriptive\n6. Ensure ValidationError constructor receives correct { code, message } structure\n7. Cross-reference all error messages in test files and update assertions",
             "status": "pending",
-            "testStrategy": "Review all 19 test files and verify: All error assertions check for English messages. All error codes match INVALID_<NAME> pattern. No Portuguese strings remain in error paths. Error messages are clear and actionable. Run full test suite to catch any missed translations."
+            "testStrategy": "Review all 19 test files and verify: All error assertions check for English messages. All error codes match INVALID_<NAME> pattern. No Portuguese strings remain in error paths. Error messages are clear and actionable. Run full test suite to catch any missed translations.",
+            "parentId": "undefined"
           },
           {
             "id": 12,
@@ -1286,13 +1309,14 @@
             ],
             "details": "Final cleanup tasks:\n1. Delete packages/core/src/shared/i18n/ERROR_MESSAGE.ts file (no longer needed)\n2. Remove any imports of ERROR_MESSAGE from remaining files\n3. Update packages/core/src/shared/vo/index.ts to export all migrated VOs with Either-returning create() methods\n4. Audit all 19 test files:\n   - Replace .toThrow() assertions with .isLeft()/.isRight()\n   - Update expect statements: expect(result.isRight()).toBe(true) for success\n   - Update expect statements: expect(result.isLeft()).toBe(true) for failures\n   - Verify error codes: expect(result.value.code).toBe('INVALID_<NAME>')\n5. Run full test suite: pnpm test in packages/core\n6. Fix any remaining type errors or test failures\n7. Verify 100% test coverage maintained",
             "status": "pending",
-            "testStrategy": "Run pnpm test in packages/core and verify all tests pass. Verify ERROR_MESSAGE.ts is deleted and no imports reference it. Check that all 19 test files use Either pattern consistently. Verify type checking passes with pnpm typecheck. Confirm test coverage remains at 100% for all VOs. Smoke test each VO's create() method returns Either type correctly."
+            "testStrategy": "Run pnpm test in packages/core and verify all tests pass. Verify ERROR_MESSAGE.ts is deleted and no imports reference it. Check that all 19 test files use Either pattern consistently. Verify type checking passes with pnpm typecheck. Confirm test coverage remains at 100% for all VOs. Smoke test each VO's create() method returns Either type correctly.",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-09T23:21:30.560Z"
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Create missing Value Objects: Slug, Image, DateRange",
         "description": "Implement three new VOs required by the domain model with Either-based validation",
         "details": "1. Create `packages/core/src/shared/vo/Slug.ts`:\n```typescript\nimport { Either, left, right } from '../either';\nimport { ValidationError } from '../errors';\nimport { ValueObject } from '../base/ValueObject';\n\nexport class Slug extends ValueObject<string> {\n  private static readonly SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;\n  \n  private constructor(value: string) {\n    super({ value });\n  }\n\n  static create(raw: string): Either<ValidationError, Slug> {\n    if (!raw?.trim() || raw.length < 3) {\n      return left(new ValidationError({\n        code: 'INVALID_SLUG',\n        message: 'Slug must be at least 3 characters'\n      }));\n    }\n    \n    const normalized = raw.toLowerCase().trim();\n    \n    if (!this.SLUG_REGEX.test(normalized)) {\n      return left(new ValidationError({\n        code: 'INVALID_SLUG',\n        message: 'Slug must be kebab-case (lowercase letters, numbers, hyphens only)'\n      }));\n    }\n    \n    return right(new Slug(normalized));\n  }\n\n  toPath(): string {\n    return `/${this.value}`;\n  }\n}\n```\n\n2. Create `packages/core/src/shared/vo/Image.ts` composing Url and LocalizedText:\n```typescript\nexport class Image extends ValueObject<{ url: Url; alt: LocalizedText }> {\n  private constructor(url: Url, alt: LocalizedText) {\n    super({ value: { url, alt } });\n  }\n\n  static create(urlStr: string, alt: Record<string, string>): Either<ValidationError, Image> {\n    const urlResult = Url.create(urlStr);\n    if (urlResult.isLeft()) return left(urlResult.value);\n    \n    const altResult = LocalizedText.create(alt);\n    if (altResult.isLeft()) return left(altResult.value);\n    \n    return right(new Image(urlResult.value, altResult.value));\n  }\n\n  get url(): Url { return this.value.url; }\n  get alt(): LocalizedText { return this.value.alt; }\n}\n```\n\n3. Create `packages/core/src/shared/vo/DateRange.ts`:\n```typescript\nexport class DateRange extends ValueObject<{ startAt: DateTime; endAt?: DateTime }> {\n  private constructor(startAt: DateTime, endAt?: DateTime) {\n    super({ value: { startAt, endAt } });\n  }\n\n  static create(start: string, end?: string): Either<ValidationError, DateRange> {\n    const startResult = DateTime.create(start);\n    if (startResult.isLeft()) return left(startResult.value);\n    \n    let endAt: DateTime | undefined;\n    if (end) {\n      const endResult = DateTime.create(end);\n      if (endResult.isLeft()) return left(endResult.value);\n      endAt = endResult.value;\n      \n      if (startResult.value.ms > endAt.ms) {\n        return left(new ValidationError({\n          code: 'INVALID_DATE_RANGE',\n          message: 'Start date must be before or equal to end date'\n        }));\n      }\n    }\n    \n    return right(new DateRange(startResult.value, endAt));\n  }\n\n  isActive(): boolean {\n    return this.value.endAt === undefined;\n  }\n  \n  get startAt(): DateTime { return this.value.startAt; }\n  get endAt(): DateTime | undefined { return this.value.endAt; }\n}\n```\n\n4. Update `packages/core/src/shared/vo/index.ts` to export all three\n\n5. Create test data providers in `packages/core/test/data/bases/`",
@@ -1311,7 +1335,8 @@
             "details": "Implement Slug.ts extending ValueObject<string> with:\n- Private static SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/ for kebab-case validation\n- Private constructor taking normalized string value\n- Static create(raw: string) method with Either<ValidationError, Slug> return:\n  - Validate min 3 characters (return Left with INVALID_SLUG if violated)\n  - Normalize to lowercase and trim\n  - Test against SLUG_REGEX (return Left with INVALID_SLUG if fails)\n  - Return Right(new Slug(normalized)) on success\n- Public toPath(): string method returning `/${this.value}`\n- Import Either, left, right from '../either'\n- Import ValidationError from '../errors'\n- Import ValueObject from '../base/ValueObject'",
             "status": "done",
             "testStrategy": null,
-            "updatedAt": "2026-03-09T23:35:49.839Z"
+            "updatedAt": "2026-03-09T23:35:49.839Z",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1323,7 +1348,8 @@
             "details": "Implement Image.ts extending ValueObject<{ url: Url; alt: LocalizedText }> with:\n- Private constructor taking url: Url and alt: LocalizedText parameters\n- Static create(urlStr: string, alt: Record<string, string>) method:\n  - Call Url.create(urlStr) and check if Left, return early with error\n  - Call LocalizedText.create(alt) and check if Left, return early with error\n  - Return Right(new Image(urlResult.value, altResult.value)) on success\n- Getter methods: get url(): Url and get alt(): LocalizedText\n- Properly handle Either composition from multiple VOs\n- Import Url and LocalizedText from their respective files\n- Import Either, left, right from '../either'\n- Import ValidationError from '../errors'\n- Import ValueObject from '../base/ValueObject'",
             "status": "done",
             "testStrategy": null,
-            "updatedAt": "2026-03-09T23:35:52.896Z"
+            "updatedAt": "2026-03-09T23:35:52.896Z",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1335,7 +1361,8 @@
             "details": "Implement DateRange.ts extending ValueObject<{ startAt: DateTime; endAt?: DateTime }> with:\n- Private constructor taking startAt: DateTime and optional endAt?: DateTime\n- Static create(start: string, end?: string) method:\n  - Call DateTime.create(start), return Left if invalid\n  - If end provided, call DateTime.create(end), return Left if invalid\n  - Validate startAt.ms <= endAt.ms, return Left with INVALID_DATE_RANGE if violated\n  - Return Right(new DateRange(startResult.value, endAt)) on success\n- Public isActive(): boolean method returning true if endAt is undefined\n- Getter methods: get startAt(): DateTime and get endAt(): DateTime | undefined\n- Import DateTime from './DateTime'\n- Import Either, left, right from '../either'\n- Import ValidationError from '../errors'\n- Import ValueObject from '../base/ValueObject'",
             "status": "done",
             "testStrategy": null,
-            "updatedAt": "2026-03-09T23:35:55.935Z"
+            "updatedAt": "2026-03-09T23:35:55.935Z",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1347,7 +1374,8 @@
             "details": "Create Slug.test.ts with describe block testing:\n- Valid kebab-case slugs ('my-slug', 'slug-123', 'abc') return Right\n- Invalid formats return Left with INVALID_SLUG:\n  - Uppercase letters ('My-Slug')\n  - Spaces ('my slug')\n  - Special characters ('my_slug', 'my.slug', 'my@slug')\n  - Leading/trailing hyphens ('-slug', 'slug-')\n  - Consecutive hyphens ('my--slug')\n- Min length validation:\n  - Strings < 3 chars ('ab', 'a') return Left\n  - Empty string and whitespace-only return Left\n- toPath() method returns '/slug-name' format\n- Edge cases: trim whitespace before validation\n- Use Vitest (describe, it, expect) with proper assertions\n- Test both isLeft() and isRight() type guards",
             "status": "done",
             "testStrategy": "Unit tests with Vitest covering all validation rules, edge cases, and toPath() method. Verify Left returns contain proper ValidationError with INVALID_SLUG code.",
-            "updatedAt": "2026-03-09T23:35:58.949Z"
+            "updatedAt": "2026-03-09T23:35:58.949Z",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1359,7 +1387,8 @@
             "details": "Create Image.test.ts with describe block testing:\n- Valid composition: valid URL + valid LocalizedText returns Right\n- Invalid URL composition:\n  - Invalid URL string returns Left with Url's validation error\n  - Verify error is propagated from Url.create()\n- Invalid LocalizedText composition:\n  - Invalid localized text returns Left with LocalizedText's validation error\n  - Empty translations, missing required locales\n- Getter methods:\n  - image.url returns Url instance\n  - image.alt returns LocalizedText instance\n- Either chaining: verify both VOs are validated in sequence\n- Test with mock data for URLs and localized alt text\n- Use Vitest (describe, it, expect) with proper assertions\n- Verify Left returns contain appropriate ValidationError from composed VOs",
             "status": "done",
             "testStrategy": "Unit tests with Vitest covering composition scenarios, error propagation from Url and LocalizedText, and getter methods. Test Either chaining with valid/invalid inputs.",
-            "updatedAt": "2026-03-09T23:36:02.101Z"
+            "updatedAt": "2026-03-09T23:36:02.101Z",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -1373,13 +1402,14 @@
             "details": "Create DateRange.test.ts with describe block testing:\n- Valid range: start <= end returns Right\n- Invalid range: start > end returns Left with INVALID_DATE_RANGE\n- Optional end date: omitting end date returns Right\n- isActive() method:\n  - Returns true when endAt is undefined (ongoing period)\n  - Returns false when endAt is defined (completed period)\n- Getter methods: startAt and endAt return correct DateTime instances\n- Edge cases: same start and end date (valid), invalid DateTime strings\n\nCreate test data providers in packages/core/test/data/bases/:\n- SlugData.ts: valid slugs ('my-project', 'test-123'), invalid slugs ('My-Project', 'test_case')\n- ImageData.ts: valid Image objects with URLs and localized alt text\n- DateRangeData.ts: valid ranges, invalid ranges, active/inactive periods\n\nUse Vitest with proper assertions for all tests",
             "status": "done",
             "testStrategy": "Unit tests with Vitest covering validation rules, boundary conditions, isActive() business logic, and getter methods. Create reusable test data providers for all three VOs to support testing across the codebase.",
-            "updatedAt": "2026-03-09T23:36:05.196Z"
+            "updatedAt": "2026-03-09T23:36:05.196Z",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-09T23:36:05.196Z"
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "Migrate all Entities to Either pattern and reorganize structure",
         "description": "Refactor entity factory methods to return Either, make constructors private, and reorganize directories to match CLAUDE.md conventions",
         "details": "For each entity (Project, Experience, Skill, Language, ProfessionalValue, SocialNetwork):\n\n1. Make constructor private\n2. Add `static create()` returning `Either<DomainError, Entity>`\n3. Move entities to `src/portfolio/entities/<name>/model/<Name>.ts` structure\n4. Update `SkillFactory.bulk()` to return `Either<DomainError, Skill[]>` with index in error messages\n\nExample for Skill entity:\n```typescript\nexport class Skill extends Entity<Skill, ISkillProps> {\n  private constructor(props: ISkillProps) {\n    super(props);\n    // Initialize fields\n  }\n\n  static create(props: ISkillProps): Either<DomainError, Skill> {\n    const nameResult = Name.create(props.name);\n    if (nameResult.isLeft()) return left(nameResult.value);\n    \n    const typeResult = SkillType.create(props.type);\n    if (typeResult.isLeft()) return left(typeResult.value);\n    \n    return right(new Skill({\n      ...props,\n      name: nameResult.value,\n      type: typeResult.value\n    }));\n  }\n}\n```\n\nFor SkillFactory.bulk():\n```typescript\nstatic bulk(skillsProps: ISkillProps[]): Either<DomainError, Skill[]> {\n  const skills: Skill[] = [];\n  \n  for (let i = 0; i < skillsProps.length; i++) {\n    const result = Skill.create(skillsProps[i]);\n    if (result.isLeft()) {\n      return left(new ValidationError({\n        code: 'INVALID_SKILL_AT_INDEX',\n        message: `Invalid skill at index ${i}: ${result.value.message}`,\n        details: { index: i, error: result.value }\n      }));\n    }\n    skills.push(result.value);\n  }\n  \n  return right(skills);\n}\n```\n\nDirectory reorganization:\n- Move `src/project/model/Project.ts` → `src/portfolio/entities/project/model/Project.ts`\n- Move `src/skill/model/Skill.ts` → `src/portfolio/entities/skill/model/Skill.ts`\n- Move `src/experience/Experience.ts` → `src/portfolio/entities/experience/model/Experience.ts`\n- Update all imports and re-exports in `src/portfolio/index.ts`",
@@ -1397,7 +1427,8 @@
             "dependencies": [],
             "details": "1. Make Project constructor private\n2. Create static create(props: IProjectProps): Either<DomainError, Project>\n3. Chain Either validations for all VOs (Markdown for content, Skill array, etc.)\n4. Handle array validation: map over skills, collect Left errors if any\n5. Move file from packages/core/src/project/model/Project.ts to packages/core/src/portfolio/entities/project/model/Project.ts\n6. Update internal imports within the file\n7. Ensure all error returns use left() and success returns use right()\n8. Preserve all existing business logic and field assignments",
             "status": "pending",
-            "testStrategy": "Update ProjectBuilder to handle Either returns. Test Project.create() with valid props returns Right. Test Project.create() with invalid content returns Left with appropriate DomainError. Test Project.create() with invalid skill in array returns Left. Verify file exists at new location."
+            "testStrategy": "Update ProjectBuilder to handle Either returns. Test Project.create() with valid props returns Right. Test Project.create() with invalid content returns Left with appropriate DomainError. Test Project.create() with invalid skill in array returns Left. Verify file exists at new location.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1408,7 +1439,8 @@
             ],
             "details": "1. Make Experience constructor private (currently public at line 38)\n2. Create static create(props: IExperienceProps): Either<DomainError, Experience>\n3. Chain Either validations for: Name (company), LocalizedText (role, description), DateRange (period), EmploymentType, LocationType, Url (companyUrl)\n4. Handle nested objects: Location with city/country, employment metadata\n5. Move from packages/core/src/experience/Experience.ts to packages/core/src/portfolio/entities/experience/model/Experience.ts\n6. Update imports for VOs and base Entity class\n7. Return left() for validation failures, right() for success",
             "status": "pending",
-            "testStrategy": "Update ExperienceBuilder to handle Either returns. Test Experience.create() with valid props returns Right. Test Experience.create() with invalid company name returns Left. Test Experience.create() with invalid date range returns Left. Verify file relocation completed."
+            "testStrategy": "Update ExperienceBuilder to handle Either returns. Test Experience.create() with valid props returns Right. Test Experience.create() with invalid company name returns Left. Test Experience.create() with invalid date range returns Left. Verify file relocation completed.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1419,7 +1451,8 @@
             ],
             "details": "1. Make Skill constructor private (currently public at line 20)\n2. Create static create(props: ISkillProps): Either<DomainError, Skill>\n3. Validate Name VO: const nameResult = Name.create(props.name); if (nameResult.isLeft()) return left(nameResult.value)\n4. Validate SkillType VO: const typeResult = SkillType.create(props.type); if (typeResult.isLeft()) return left(typeResult.value)\n5. Move from packages/core/src/skill/model/Skill.ts to packages/core/src/portfolio/entities/skill/model/Skill.ts\n6. Return right(new Skill({ ...props, name: nameResult.value, type: typeResult.value }))\n7. Update imports for path changes",
             "status": "pending",
-            "testStrategy": "Update SkillBuilder to handle Either returns. Test Skill.create() with valid props returns Right with correct name and type. Test Skill.create() with invalid name returns Left with ValidationError. Test Skill.create() with invalid type returns Left. Verify new file location."
+            "testStrategy": "Update SkillBuilder to handle Either returns. Test Skill.create() with valid props returns Right with correct name and type. Test Skill.create() with invalid name returns Left with ValidationError. Test Skill.create() with invalid type returns Left. Verify new file location.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1430,7 +1463,8 @@
             ],
             "details": "1. Locate current Language entity file\n2. Make constructor private\n3. Create static create(props: ILanguageProps): Either<DomainError, Language>\n4. Validate Name VO for language name with Either pattern\n5. Validate Fluency VO with Either pattern\n6. Create new directory structure: packages/core/src/portfolio/entities/language/model/\n7. Move Language.ts to new location\n8. Chain Either validations: check Name first, then Fluency\n9. Return left() on any validation failure, right(new Language(...)) on success\n10. Update all import paths",
             "status": "pending",
-            "testStrategy": "Update LanguageBuilder (if exists) or create test builder to handle Either returns. Test Language.create() with valid name and fluency returns Right. Test Language.create() with invalid name returns Left. Test Language.create() with invalid fluency returns Left. Verify directory structure created correctly."
+            "testStrategy": "Update LanguageBuilder (if exists) or create test builder to handle Either returns. Test Language.create() with valid name and fluency returns Right. Test Language.create() with invalid name returns Left. Test Language.create() with invalid fluency returns Left. Verify directory structure created correctly.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1441,7 +1475,8 @@
             ],
             "details": "1. Locate current ProfessionalValue entity file\n2. Make constructor private\n3. Create static create(props: IProfessionalValueProps): Either<DomainError, ProfessionalValue>\n4. Identify all composed VOs in ProfessionalValue (likely Name, LocalizedText for description)\n5. Chain Either validations for each VO\n6. Create directory: packages/core/src/portfolio/entities/professional-value/model/\n7. Move file to new location\n8. Update import paths for VOs and base classes\n9. Ensure error propagation: if any VO validation fails, return left() immediately\n10. Return right(new ProfessionalValue(...)) on success",
             "status": "pending",
-            "testStrategy": "Update ProfessionalValueBuilder to handle Either returns. Test ProfessionalValue.create() with valid props returns Right. Test ProfessionalValue.create() with invalid name returns Left with appropriate error code. Test ProfessionalValue.create() with invalid description returns Left. Verify file moved to correct directory."
+            "testStrategy": "Update ProfessionalValueBuilder to handle Either returns. Test ProfessionalValue.create() with valid props returns Right. Test ProfessionalValue.create() with invalid name returns Left with appropriate error code. Test ProfessionalValue.create() with invalid description returns Left. Verify file moved to correct directory.",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -1452,7 +1487,8 @@
             ],
             "details": "1. Locate current SocialNetwork entity file\n2. Make constructor private\n3. Create static create(props: ISocialNetworkProps): Either<DomainError, SocialNetwork>\n4. Validate Name VO for platform name: const nameResult = Name.create(props.name)\n5. Validate Url VO for profile URL: const urlResult = Url.create(props.url)\n6. Chain validations: if (nameResult.isLeft()) return left(nameResult.value); if (urlResult.isLeft()) return left(urlResult.value)\n7. Create directory: packages/core/src/portfolio/entities/social-network/model/\n8. Move SocialNetwork.ts to new location\n9. Update imports for new paths\n10. Return right(new SocialNetwork({ name: nameResult.value, url: urlResult.value }))",
             "status": "pending",
-            "testStrategy": "Update SocialNetworkBuilder to handle Either returns. Test SocialNetwork.create() with valid name and URL returns Right. Test SocialNetwork.create() with invalid name returns Left. Test SocialNetwork.create() with invalid URL returns Left. Verify directory structure matches conventions."
+            "testStrategy": "Update SocialNetworkBuilder to handle Either returns. Test SocialNetwork.create() with valid name and URL returns Right. Test SocialNetwork.create() with invalid name returns Left. Test SocialNetwork.create() with invalid URL returns Left. Verify directory structure matches conventions.",
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -1463,7 +1499,8 @@
             ],
             "details": "1. Locate SkillFactory.bulk() method (currently at line 4-6)\n2. Change return type from Skill[] to Either<DomainError, Skill[]>\n3. Initialize empty array: const skills: Skill[] = []\n4. Loop with index: for (let i = 0; i < skillsProps.length; i++)\n5. Call Skill.create(skillsProps[i]) for each item\n6. Check if result.isLeft(): return left(new ValidationError({ code: 'INVALID_SKILL_AT_INDEX', message: `Invalid skill at index ${i}: ${result.value.message}`, details: { index: i, error: result.value } }))\n7. If result.isRight(): skills.push(result.value)\n8. After loop completes: return right(skills)\n9. Update any callers of bulk() to handle Either return type",
             "status": "pending",
-            "testStrategy": "Test SkillFactory.bulk() with all valid skills returns Right<Skill[]>. Test SkillFactory.bulk() with one invalid skill at index 2 returns Left with error message including 'index 2'. Test SkillFactory.bulk() with empty array returns Right<[]>. Test SkillFactory.bulk() with invalid skill at index 0 returns Left with index 0 in error."
+            "testStrategy": "Test SkillFactory.bulk() with all valid skills returns Right<Skill[]>. Test SkillFactory.bulk() with one invalid skill at index 2 returns Left with error message including 'index 2'. Test SkillFactory.bulk() with empty array returns Right<[]>. Test SkillFactory.bulk() with invalid skill at index 0 returns Left with index 0 in error.",
+            "parentId": "undefined"
           },
           {
             "id": 8,
@@ -1478,7 +1515,8 @@
             ],
             "details": "1. Update packages/core/src/portfolio/index.ts to export from new entity locations:\n   - export * from './entities/project/model/Project'\n   - export * from './entities/experience/model/Experience'\n   - export * from './entities/skill/model/Skill'\n   - export * from './entities/language/model/Language'\n   - export * from './entities/professional-value/model/ProfessionalValue'\n   - export * from './entities/social-network/model/SocialNetwork'\n2. Find all files importing entities (use grep/search)\n3. Update import paths from old locations to new locations\n4. Verify packages/core/package.json exports field includes './portfolio': './src/portfolio/index.ts'\n5. Check for circular dependencies after reorganization\n6. Update any builders, factories, or test utilities with new import paths",
             "status": "pending",
-            "testStrategy": "Run TypeScript compilation (tsc --noEmit) to verify no import errors. Verify packages/core/src/portfolio/index.ts exports all entities. Test importing entities from external packages using @repo/core/portfolio path. Search codebase for old import paths and verify none remain. Run pnpm build to ensure monorepo builds successfully."
+            "testStrategy": "Run TypeScript compilation (tsc --noEmit) to verify no import errors. Verify packages/core/src/portfolio/index.ts exports all entities. Test importing entities from external packages using @repo/core/portfolio path. Search codebase for old import paths and verify none remain. Run pnpm build to ensure monorepo builds successfully.",
+            "parentId": "undefined"
           },
           {
             "id": 9,
@@ -1490,7 +1528,8 @@
             ],
             "details": "1. Locate all test builder files (e.g., ProjectBuilder.ts, ExperienceBuilder.ts, etc.)\n2. For each builder's build() method:\n   - Call Entity.create() which now returns Either\n   - Unwrap result: const result = Entity.create(props); if (result.isLeft()) throw new Error(`Builder failed: ${result.value.message}`)\n   - Return result.value (the Right side)\n3. Update SkillBuilder to handle SkillFactory.bulk() Either return\n4. Ensure builders still provide fluent API for test setup\n5. Update any builder methods that internally create VOs to handle Either returns\n6. Verify builders throw descriptive errors when invalid props provided\n7. Check if builders are used in test setup and update accordingly",
             "status": "pending",
-            "testStrategy": "Test each builder with valid props successfully creates entity. Test each builder with invalid props throws Error with descriptive message. Verify existing tests using builders still pass. Test ProjectBuilder with invalid content throws. Test SkillBuilder with invalid name throws. Test ExperienceBuilder with invalid date range throws."
+            "testStrategy": "Test each builder with valid props successfully creates entity. Test each builder with invalid props throws Error with descriptive message. Verify existing tests using builders still pass. Test ProjectBuilder with invalid content throws. Test SkillBuilder with invalid name throws. Test ExperienceBuilder with invalid date range throws.",
+            "parentId": "undefined"
           },
           {
             "id": 10,
@@ -1501,13 +1540,14 @@
             ],
             "details": "1. Run pnpm test in packages/core to execute all tests\n2. Verify all entity tests pass (Project, Experience, Skill, Language, ProfessionalValue, SocialNetwork)\n3. Check coverage reports to ensure Either pattern branches (isLeft/isRight) are covered\n4. Test entity creation with valid props returns Right for all 6 entities\n5. Test entity creation with invalid props returns Left with correct error codes for all 6 entities\n6. Verify SkillFactory.bulk() tests pass with indexed error messages\n7. Run pnpm build to verify TypeScript compilation succeeds\n8. Test importing entities from other packages (@repo/core/portfolio) works\n9. Verify no circular dependencies were introduced\n10. Check that all test builders work correctly with Either unwrapping\n11. Run pnpm typecheck to ensure no type errors across monorepo",
             "status": "pending",
-            "testStrategy": "Run pnpm test and verify 100% test pass rate. Run pnpm build and verify successful compilation. Run pnpm typecheck and verify no type errors. Manually test creating each entity with valid and invalid props. Verify error messages are descriptive and include error codes. Check coverage reports show >80% coverage for entity files. Verify no import errors in console. Test that downstream packages can import entities from @repo/core/portfolio."
+            "testStrategy": "Run pnpm test and verify 100% test pass rate. Run pnpm build and verify successful compilation. Run pnpm typecheck and verify no type errors. Manually test creating each entity with valid and invalid props. Verify error messages are descriptive and include error codes. Check coverage reports show >80% coverage for entity files. Verify no import errors in console. Test that downstream packages can import entities from @repo/core/portfolio.",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-10T00:20:53.027Z"
       },
       {
-        "id": 7,
+        "id": "7",
         "title": "Create Profile entity with featured projects invariant",
         "description": "Implement the Profile entity representing personal portfolio data with business rule: maximum 6 featured projects",
         "details": "Create `packages/core/src/portfolio/entities/profile/model/Profile.ts`:\n\n```typescript\nimport { Entity, IEntityProps } from '../../../../shared/base/Entity';\nimport { Name, LocalizedText, Image, Slug } from '../../../../shared/vo';\nimport { Either, left, right } from '../../../../shared/either';\nimport { ValidationError } from '../../../../shared/errors';\nimport { ProfileStat } from './ProfileStat';\n\nexport interface IProfileProps extends IEntityProps {\n  name: string;\n  headline: Record<string, string>;\n  bio: Record<string, string>;\n  photo: { url: string; alt: Record<string, string> };\n  stats: Array<{ label: Record<string, string>; value: string; icon: string }>;\n  featuredProjectSlugs: string[];\n}\n\nexport class Profile extends Entity<Profile, IProfileProps> {\n  private static readonly MAX_FEATURED_PROJECTS = 6;\n  \n  public readonly name: Name;\n  public readonly headline: LocalizedText;\n  public readonly bio: LocalizedText;\n  public readonly photo: Image;\n  public readonly stats: ProfileStat[];\n  public readonly featuredProjectSlugs: Slug[];\n\n  private constructor(props: IProfileProps, domainObjects: {\n    name: Name;\n    headline: LocalizedText;\n    bio: LocalizedText;\n    photo: Image;\n    stats: ProfileStat[];\n    featuredProjectSlugs: Slug[];\n  }) {\n    super(props);\n    this.name = domainObjects.name;\n    this.headline = domainObjects.headline;\n    this.bio = domainObjects.bio;\n    this.photo = domainObjects.photo;\n    this.stats = domainObjects.stats;\n    this.featuredProjectSlugs = domainObjects.featuredProjectSlugs;\n  }\n\n  static create(props: IProfileProps): Either<ValidationError, Profile> {\n    // Validate featured projects invariant\n    if (props.featuredProjectSlugs.length > this.MAX_FEATURED_PROJECTS) {\n      return left(new ValidationError({\n        code: 'TOO_MANY_FEATURED_PROJECTS',\n        message: `Maximum ${this.MAX_FEATURED_PROJECTS} featured projects allowed, got ${props.featuredProjectSlugs.length}`\n      }));\n    }\n\n    // Validate and create VOs\n    const nameResult = Name.create(props.name);\n    if (nameResult.isLeft()) return left(nameResult.value);\n\n    const headlineResult = LocalizedText.create(props.headline);\n    if (headlineResult.isLeft()) return left(headlineResult.value);\n\n    const bioResult = LocalizedText.create(props.bio);\n    if (bioResult.isLeft()) return left(bioResult.value);\n\n    const photoResult = Image.create(props.photo.url, props.photo.alt);\n    if (photoResult.isLeft()) return left(photoResult.value);\n\n    // Create stats\n    const stats: ProfileStat[] = [];\n    for (const statProps of props.stats) {\n      const statResult = ProfileStat.create(statProps);\n      if (statResult.isLeft()) return left(statResult.value);\n      stats.push(statResult.value);\n    }\n\n    // Create featured project slugs\n    const slugs: Slug[] = [];\n    for (const slugStr of props.featuredProjectSlugs) {\n      const slugResult = Slug.create(slugStr);\n      if (slugResult.isLeft()) return left(slugResult.value);\n      slugs.push(slugResult.value);\n    }\n\n    return right(new Profile(props, {\n      name: nameResult.value,\n      headline: headlineResult.value,\n      bio: bioResult.value,\n      photo: photoResult.value,\n      stats,\n      featuredProjectSlugs: slugs\n    }));\n  }\n}\n```\n\nCreate `packages/core/src/portfolio/entities/profile/model/ProfileStat.ts`:\n```typescript\nexport interface IProfileStatProps {\n  label: Record<string, string>;\n  value: string;\n  icon: string;\n}\n\nexport class ProfileStat {\n  public readonly label: LocalizedText;\n  public readonly value: string;\n  public readonly icon: Text;\n\n  private constructor(label: LocalizedText, value: string, icon: Text) {\n    this.label = label;\n    this.value = value;\n    this.icon = icon;\n  }\n\n  static create(props: IProfileStatProps): Either<ValidationError, ProfileStat> {\n    const labelResult = LocalizedText.create(props.label);\n    if (labelResult.isLeft()) return left(labelResult.value);\n\n    const iconResult = Text.create(props.icon);\n    if (iconResult.isLeft()) return left(iconResult.value);\n\n    return right(new ProfileStat(labelResult.value, props.value, iconResult.value));\n  }\n}\n```\n\nUpdate `packages/core/src/portfolio/index.ts` to export Profile and ProfileStat.",
@@ -1525,7 +1565,8 @@
             "dependencies": [],
             "details": "Create `packages/core/src/portfolio/entities/profile/model/ProfileStat.ts` with IProfileStatProps interface (label: Record<string, string>, value: string, icon: string). Implement private constructor accepting validated LocalizedText, string, and Text instances. Implement static create() method that validates label using LocalizedText.create(), icon using Text.create(), and returns Either<ValidationError, ProfileStat>. Chain Either results using early returns on isLeft(). Import required VOs from shared/vo and Either/ValidationError from shared. Follow ValueObject composition pattern from existing codebase.",
             "status": "pending",
-            "testStrategy": "Unit tests in packages/core/test/portfolio/profile/ProfileStat.test.ts: (1) Valid creation with proper label/value/icon returns Right, (2) Invalid label (empty translations) returns Left with appropriate error, (3) Invalid icon (empty string) returns Left with TEXT_REQUIRED error, (4) Verify all fields are correctly assigned after successful creation"
+            "testStrategy": "Unit tests in packages/core/test/portfolio/profile/ProfileStat.test.ts: (1) Valid creation with proper label/value/icon returns Right, (2) Invalid label (empty translations) returns Left with appropriate error, (3) Invalid icon (empty string) returns Left with TEXT_REQUIRED error, (4) Verify all fields are correctly assigned after successful creation",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1536,7 +1577,8 @@
             ],
             "details": "Create `packages/core/src/portfolio/entities/profile/model/Profile.ts`. Define IProfileProps interface extending IEntityProps with: name (string), headline (Record<string, string>), bio (Record<string, string>), photo ({ url: string, alt: Record<string, string> }), stats (Array<{ label: Record<string, string>, value: string, icon: string }>), featuredProjectSlugs (string[]). Create Profile class extending Entity<Profile, IProfileProps>. Add private static readonly MAX_FEATURED_PROJECTS = 6. Declare readonly properties: name (Name), headline (LocalizedText), bio (LocalizedText), photo (Image), stats (ProfileStat[]), featuredProjectSlugs (Slug[]). Implement private constructor accepting props and domainObjects parameter containing all validated VO instances.",
             "status": "pending",
-            "testStrategy": "Structure validation through TypeScript compilation - no runtime tests needed for skeleton. Verify Profile extends Entity correctly and all imports resolve."
+            "testStrategy": "Structure validation through TypeScript compilation - no runtime tests needed for skeleton. Verify Profile extends Entity correctly and all imports resolve.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1547,7 +1589,8 @@
             ],
             "details": "In Profile.create() static method, add first validation check: if (props.featuredProjectSlugs.length > this.MAX_FEATURED_PROJECTS) return left(new ValidationError({ code: 'TOO_MANY_FEATURED_PROJECTS', message: `Maximum ${this.MAX_FEATURED_PROJECTS} featured projects allowed, got ${props.featuredProjectSlugs.length}` })). Place this check at the beginning of create() method before any VO validations. This enforces the core business invariant that Profile aggregate must protect. Import ValidationError from shared/errors and Either/left/right from shared/either.",
             "status": "pending",
-            "testStrategy": "Tests in packages/core/test/portfolio/profile/Profile.test.ts: (1) Profile with 7+ featured projects returns Left with TOO_MANY_FEATURED_PROJECTS error code, (2) Profile with exactly 6 featured projects succeeds, (3) Profile with 0-5 featured projects succeeds, (4) Verify error message includes actual count"
+            "testStrategy": "Tests in packages/core/test/portfolio/profile/Profile.test.ts: (1) Profile with 7+ featured projects returns Left with TOO_MANY_FEATURED_PROJECTS error code, (2) Profile with exactly 6 featured projects succeeds, (3) Profile with 0-5 featured projects succeeds, (4) Verify error message includes actual count",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1558,7 +1601,8 @@
             ],
             "details": "In Profile.create(), after invariant check, validate each VO: (1) const nameResult = Name.create(props.name); if (nameResult.isLeft()) return left(nameResult.value), (2) const headlineResult = LocalizedText.create(props.headline); if (headlineResult.isLeft()) return left(headlineResult.value), (3) const bioResult = LocalizedText.create(props.bio); if (bioResult.isLeft()) return left(bioResult.value), (4) const photoResult = Image.create(props.photo.url, props.photo.alt); if (photoResult.isLeft()) return left(photoResult.value). Import Name, LocalizedText, Image from ../../../../shared/vo. Use early return pattern for Each validation failure.",
             "status": "pending",
-            "testStrategy": "Tests in Profile.test.ts: (1) Invalid name returns Left with NAME_INVALID error, (2) Invalid headline (empty translations) returns Left with appropriate LocalizedText error, (3) Invalid bio returns Left with LocalizedText error, (4) Invalid photo URL returns Left with Image error, (5) Valid name/headline/bio/photo proceeds to next validation stage"
+            "testStrategy": "Tests in Profile.test.ts: (1) Invalid name returns Left with NAME_INVALID error, (2) Invalid headline (empty translations) returns Left with appropriate LocalizedText error, (3) Invalid bio returns Left with LocalizedText error, (4) Invalid photo URL returns Left with Image error, (5) Valid name/headline/bio/photo proceeds to next validation stage",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1569,7 +1613,8 @@
             ],
             "details": "In Profile.create(), after single VO validations, add: const stats: ProfileStat[] = []; for (const statProps of props.stats) { const statResult = ProfileStat.create(statProps); if (statResult.isLeft()) return left(statResult.value); stats.push(statResult.value); }. Consider enhancing error messages with array index for debugging: return left(new ValidationError({ code: statResult.value.code, message: `Stat at index ${stats.length}: ${statResult.value.message}` })). This provides clear feedback when one stat in the array fails validation.",
             "status": "pending",
-            "testStrategy": "Tests in Profile.test.ts: (1) All valid stats create ProfileStat[] successfully, (2) Invalid stat in array (e.g., empty icon at index 2) returns Left with indexed error message, (3) Empty stats array is valid, (4) Multiple stats (3-5) all validate correctly, (5) Verify stats are stored in correct order"
+            "testStrategy": "Tests in Profile.test.ts: (1) All valid stats create ProfileStat[] successfully, (2) Invalid stat in array (e.g., empty icon at index 2) returns Left with indexed error message, (3) Empty stats array is valid, (4) Multiple stats (3-5) all validate correctly, (5) Verify stats are stored in correct order",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -1580,7 +1625,8 @@
             ],
             "details": "In Profile.create(), after stats validation, add: const slugs: Slug[] = []; for (const slugStr of props.featuredProjectSlugs) { const slugResult = Slug.create(slugStr); if (slugResult.isLeft()) return left(slugResult.value); slugs.push(slugResult.value); }. Then complete method with: return right(new Profile(props, { name: nameResult.value, headline: headlineResult.value, bio: bioResult.value, photo: photoResult.value, stats, featuredProjectSlugs: slugs })); Import Slug from shared/vo. Consider adding indexed error messages similar to stats array.",
             "status": "pending",
-            "testStrategy": "Tests in Profile.test.ts: (1) Valid slug strings convert to Slug[] successfully, (2) Invalid slug format (uppercase, spaces) returns Left with INVALID_SLUG error, (3) Slug at specific index fails with indexed error message, (4) Complete valid Profile creation returns Right with all fields properly initialized, (5) Verify featuredProjectSlugs array contains Slug instances not strings"
+            "testStrategy": "Tests in Profile.test.ts: (1) Valid slug strings convert to Slug[] successfully, (2) Invalid slug format (uppercase, spaces) returns Left with INVALID_SLUG error, (3) Slug at specific index fails with indexed error message, (4) Complete valid Profile creation returns Right with all fields properly initialized, (5) Verify featuredProjectSlugs array contains Slug instances not strings",
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -1591,13 +1637,14 @@
             ],
             "details": "Create `packages/core/test/portfolio/profile/Profile.test.ts` with test suites: (1) 'Profile.create() - valid creation' testing all happy paths with 0-6 featured projects, (2) 'Profile.create() - invariant violations' testing >6 featured projects error, (3) 'Profile.create() - VO validation failures' testing each field's failure path (name, headline, bio, photo, stats, slugs), (4) 'Profile.create() - array validations' testing stats and slugs array edge cases. Create `packages/core/test/data/ProfileBuilder.ts` with fluent builder: ProfileBuilder.aProfile().withName('John').withFeaturedProjects(['proj-1']).build() returning IProfileProps for easy test fixture creation. Export from packages/core/src/portfolio/index.ts: export { Profile, ProfileStat } from './entities/profile/model';",
             "status": "pending",
-            "testStrategy": "Run vitest for Profile.test.ts ensuring: (1) 100% code coverage for Profile.create() method, (2) All error paths tested with specific error code assertions, (3) ProfileBuilder successfully used in multiple test cases, (4) Tests follow AAA pattern (Arrange-Act-Assert), (5) No test interdependencies - each test can run in isolation"
+            "testStrategy": "Run vitest for Profile.test.ts ensuring: (1) 100% code coverage for Profile.create() method, (2) All error paths tested with specific error code assertions, (3) ProfileBuilder successfully used in multiple test cases, (4) Tests follow AAA pattern (Arrange-Act-Assert), (5) No test interdependencies - each test can run in isolation",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-10T00:51:02.840Z"
       },
       {
-        "id": 8,
+        "id": "8",
         "title": "Update Project entity with complete Figma design fields",
         "description": "Extend Project entity with all fields required for Portfolio and Project Detail pages including slug, images, metadata, and relations",
         "details": "Update `packages/core/src/portfolio/entities/project/model/Project.ts`:\n\n1. Create ProjectStatus enum in separate file:\n```typescript\n// packages/core/src/portfolio/entities/project/model/ProjectStatus.ts\nexport enum ProjectStatus {\n  DRAFT = 'DRAFT',\n  PUBLISHED = 'PUBLISHED',\n  ARCHIVED = 'ARCHIVED'\n}\n```\n\n2. Update IProjectProps interface:\n```typescript\nexport interface IProjectProps extends IEntityProps {\n  // Existing\n  content: string;\n  skills: ISkillProps[];\n  \n  // Updated to LocalizedText\n  title: Record<string, string>;\n  caption: Record<string, string>;\n  \n  // New fields\n  slug: string;\n  coverImage: { url: string; alt: Record<string, string> };\n  theme: Record<string, string>;\n  summary: Record<string, string>;\n  objectives: Record<string, string>;\n  role: Record<string, string>;\n  team: string;\n  period: { start: string; end?: string };\n  featured: boolean;\n  status: ProjectStatus;\n  relatedProjects: string[];\n}\n```\n\n3. Update Project class fields:\n```typescript\nexport class Project extends Entity<Project, IProjectProps> {\n  // Updated\n  public readonly title: LocalizedText;\n  public readonly caption: LocalizedText;\n  \n  // New\n  public readonly slug: Slug;\n  public readonly coverImage: Image;\n  public readonly theme: LocalizedText;\n  public readonly summary: LocalizedText;\n  public readonly objectives: LocalizedText;\n  public readonly role: LocalizedText;\n  public readonly team: string;\n  public readonly period: DateRange;\n  public readonly featured: boolean;\n  public readonly status: ProjectStatus;\n  public readonly relatedProjects: Slug[];\n  \n  // Existing\n  public readonly content: Text;\n  public readonly skills: Skill[];\n\n  private constructor(props: IProjectProps, domainObjects: {...}) {\n    super(props);\n    // Initialize all fields from domainObjects\n  }\n\n  static create(props: IProjectProps): Either<DomainError, Project> {\n    // Validate all VOs and compose\n    // Content validation with min 3 chars, max 500000 (or no upper limit)\n    const contentResult = Text.create(props.content, { min: 3, max: 500000 });\n    // ... other validations\n    \n    // Validate related projects slugs\n    const relatedSlugs: Slug[] = [];\n    for (const slugStr of props.relatedProjects) {\n      const slugResult = Slug.create(slugStr);\n      if (slugResult.isLeft()) return left(slugResult.value);\n      relatedSlugs.push(slugResult.value);\n    }\n    \n    return right(new Project(props, { /* all domain objects */ }));\n  }\n}\n```\n\nUpdate `ProjectBuilder` in `test/data/ProjectBuilder.ts` to support new fields.",
@@ -1615,7 +1662,8 @@
             "dependencies": [],
             "details": "Create `packages/core/src/portfolio/entities/project/model/ProjectStatus.ts` with:\n```typescript\nexport enum ProjectStatus {\n  DRAFT = 'DRAFT',\n  PUBLISHED = 'PUBLISHED',\n  ARCHIVED = 'ARCHIVED'\n}\n```\nExport from project model index file. Follow existing enum patterns in the codebase.",
             "status": "pending",
-            "testStrategy": "Verify enum can be imported and all three values are accessible. Add basic test in Project.test.ts to verify enum usage."
+            "testStrategy": "Verify enum can be imported and all three values are accessible. Add basic test in Project.test.ts to verify enum usage.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1626,7 +1674,8 @@
             ],
             "details": "Update `packages/core/src/portfolio/entities/project/model/Project.ts` IProjectProps interface:\n- Add slug: string\n- Add coverImage: { url: string; alt: Record<string, string> }\n- Add theme, summary, objectives, role: Record<string, string> (LocalizedText raw format)\n- Add team: string\n- Add period: { start: string; end?: string }\n- Add featured: boolean\n- Add status: ProjectStatus\n- Add relatedProjects: string[]\n- Update title and caption to Record<string, string> format\n- Keep existing content: string and skills: ISkillProps[]",
             "status": "pending",
-            "testStrategy": "TypeScript compilation should pass. Interface should be compatible with new Project class implementation."
+            "testStrategy": "TypeScript compilation should pass. Interface should be compatible with new Project class implementation.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1637,7 +1686,8 @@
             ],
             "details": "In Project class:\n- Change `public readonly title: Text` to `public readonly title: LocalizedText`\n- Change `public readonly caption: Text` to `public readonly caption: LocalizedText`\n- Update constructor to accept LocalizedText instances\n- Update create() method to call LocalizedText.create() instead of Text.create() for these fields\n- Handle Either validation chaining for both fields",
             "status": "pending",
-            "testStrategy": "Test that title and caption accept Record<string, string> format. Test validation errors for invalid localized text. Verify existing tests are updated to use LocalizedText format."
+            "testStrategy": "Test that title and caption accept Record<string, string> format. Test validation errors for invalid localized text. Verify existing tests are updated to use LocalizedText format.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1649,7 +1699,8 @@
             ],
             "details": "Add to Project class:\n- `public readonly slug: Slug` - validated in create()\n- `public readonly coverImage: Image` - validated in create()\n- `public readonly team: string` - no validation needed\n- `public readonly featured: boolean` - primitive boolean\n- `public readonly status: ProjectStatus` - enum value\n\nUpdate constructor to initialize all fields from domainObjects parameter. Ensure proper Either validation chaining in create() method for Slug and Image VOs.",
             "status": "pending",
-            "testStrategy": "Test slug validation with valid/invalid slugs. Test coverImage with valid/invalid Image props. Test status accepts all ProjectStatus enum values. Test featured boolean field. Test team string field."
+            "testStrategy": "Test slug validation with valid/invalid slugs. Test coverImage with valid/invalid Image props. Test status accepts all ProjectStatus enum values. Test featured boolean field. Test team string field.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1660,7 +1711,8 @@
             ],
             "details": "Add to Project class:\n- `public readonly theme: LocalizedText`\n- `public readonly summary: LocalizedText`\n- `public readonly objectives: LocalizedText`\n- `public readonly role: LocalizedText`\n\nIn create() method, add Either validation for each:\n```typescript\nconst themeResult = LocalizedText.create(props.theme);\nif (themeResult.isLeft()) return left(themeResult.value);\n```\nRepeat for summary, objectives, and role. Pass validated instances to constructor via domainObjects.",
             "status": "pending",
-            "testStrategy": "Test each field with valid LocalizedText (multi-locale). Test validation errors for invalid localized text. Test empty/missing locale handling. Verify all four fields return correct values via getters."
+            "testStrategy": "Test each field with valid LocalizedText (multi-locale). Test validation errors for invalid localized text. Test empty/missing locale handling. Verify all four fields return correct values via getters.",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -1671,7 +1723,8 @@
             ],
             "details": "Add to Project class:\n- `public readonly period: DateRange`\n\nIn create() method:\n```typescript\nconst periodResult = DateRange.create({\n  start: props.period.start,\n  end: props.period.end\n});\nif (periodResult.isLeft()) return left(periodResult.value);\n```\n\nHandle optional end date properly. Pass validated DateRange instance to constructor.",
             "status": "pending",
-            "testStrategy": "Test with valid start and end dates. Test with only start date (end optional). Test with invalid date formats. Test with end date before start date (if DateRange validates this). Verify period.start and period.end getters work correctly."
+            "testStrategy": "Test with valid start and end dates. Test with only start date (end optional). Test with invalid date formats. Test with end date before start date (if DateRange validates this). Verify period.start and period.end getters work correctly.",
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -1682,7 +1735,8 @@
             ],
             "details": "Add to Project class:\n- `public readonly relatedProjects: Slug[]`\n\nIn create() method:\n```typescript\nconst relatedSlugs: Slug[] = [];\nfor (const slugStr of props.relatedProjects) {\n  const slugResult = Slug.create(slugStr);\n  if (slugResult.isLeft()) return left(slugResult.value);\n  relatedSlugs.push(slugResult.value);\n}\n```\n\nConsider adding index to error message for clarity. Handle empty array case (valid).",
             "status": "pending",
-            "testStrategy": "Test with empty array. Test with valid slugs array. Test with one invalid slug in array - should fail and return error. Test with multiple related projects. Verify relatedProjects getter returns Slug[] array."
+            "testStrategy": "Test with empty array. Test with valid slugs array. Test with one invalid slug in array - should fail and return error. Test with multiple related projects. Verify relatedProjects getter returns Slug[] array.",
+            "parentId": "undefined"
           },
           {
             "id": 8,
@@ -1693,7 +1747,8 @@
             ],
             "details": "Update content validation in create() method:\n```typescript\nconst contentResult = Text.create(props.content, { \n  min: 3, \n  max: 500000 // or remove max entirely if no upper limit needed\n});\nif (contentResult.isLeft()) return left(contentResult.value);\n```\n\nDecide on final max value based on requirements. Current is 12500, new requirement is 500000 or unlimited. Document the chosen constraint.",
             "status": "pending",
-            "testStrategy": "Test content with < 3 characters (should fail). Test content with exactly 3 characters (should pass). Test content with > 500000 characters if limit is set (should fail). Test large valid content string. Verify error messages are correct."
+            "testStrategy": "Test content with < 3 characters (should fail). Test content with exactly 3 characters (should pass). Test content with > 500000 characters if limit is set (should fail). Test large valid content string. Verify error messages are correct.",
+            "parentId": "undefined"
           },
           {
             "id": 9,
@@ -1711,13 +1766,14 @@
             ],
             "details": "Update `packages/core/test/data/ProjectBuilder.ts`:\n- Add builder methods for: slug, coverImage, theme, summary, objectives, role, team, period, featured, status, relatedProjects\n- Add factory methods: `ProjectBuilder.draft()`, `ProjectBuilder.published()`, `ProjectBuilder.archived()`\n- Update default values to include all new required fields\n- Ensure builder supports fluent API for all fields\n- Update existing tests to use new builder methods",
             "status": "pending",
-            "testStrategy": "Test each builder method sets correct field. Test factory methods return projects with correct status. Test chaining multiple builder methods. Test that default ProjectBuilder creates valid project with all fields. Update all existing Project.test.ts tests to use new builder API."
+            "testStrategy": "Test each builder method sets correct field. Test factory methods return projects with correct status. Test chaining multiple builder methods. Test that default ProjectBuilder creates valid project with all fields. Update all existing Project.test.ts tests to use new builder API.",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-10T01:25:40.971Z"
       },
       {
-        "id": 9,
+        "id": "9",
         "title": "Update Experience entity and create ExperienceSkill VO",
         "description": "Add missing fields to Experience entity (logo, description) and create ExperienceSkill VO to support contextual work descriptions per skill",
         "details": "1. Create `packages/core/src/portfolio/entities/experience/model/ExperienceSkill.ts`:\n```typescript\nimport { ValueObject } from '../../../../shared/base/ValueObject';\nimport { LocalizedText } from '../../../../shared/vo';\nimport { Skill } from '../../skill/model/Skill';\nimport { Either, left, right } from '../../../../shared/either';\nimport { ValidationError } from '../../../../shared/errors';\n\nexport interface IExperienceSkillProps {\n  skill: ISkillProps;\n  workDescription: Record<string, string>;\n}\n\nexport class ExperienceSkill extends ValueObject<{\n  skill: Skill;\n  workDescription: LocalizedText;\n}> {\n  private constructor(skill: Skill, workDescription: LocalizedText) {\n    super({ value: { skill, workDescription } });\n  }\n\n  static create(props: IExperienceSkillProps): Either<ValidationError, ExperienceSkill> {\n    const skillResult = Skill.create(props.skill);\n    if (skillResult.isLeft()) return left(skillResult.value);\n\n    const workDescResult = LocalizedText.create(props.workDescription);\n    if (workDescResult.isLeft()) return left(workDescResult.value);\n\n    return right(new ExperienceSkill(skillResult.value, workDescResult.value));\n  }\n\n  get skill(): Skill {\n    return this.value.skill;\n  }\n\n  get workDescription(): LocalizedText {\n    return this.value.workDescription;\n  }\n}\n```\n\n2. Update `packages/core/src/portfolio/entities/experience/model/Experience.ts`:\n```typescript\nexport interface IExperienceProps extends IEntityProps {\n  // Updated to LocalizedText\n  company: Record<string, string>;\n  position: Record<string, string>;\n  location: Record<string, string>;\n  \n  // New fields\n  logo: { url: string; alt: Record<string, string> };\n  description: Record<string, string>;\n  \n  // Updated type\n  skills: IExperienceSkillProps[];\n  \n  // Existing\n  employment_type: EmploymentTypeValue;\n  location_type: LocationTypeValue;\n  start_at: string;\n  end_at?: string;\n}\n\nexport class Experience extends Entity<Experience, IExperienceProps> {\n  public readonly company: LocalizedText;\n  public readonly position: LocalizedText;\n  public readonly location: LocalizedText;\n  public readonly logo: Image;\n  public readonly description: LocalizedText;\n  public readonly employment_type: EmploymentType;\n  public readonly location_type: LocationType;\n  public readonly skills: ExperienceSkill[];\n  public readonly period: DateRange;\n\n  private constructor(props: IExperienceProps, domainObjects: {...}) {\n    super(props);\n    // Initialize fields\n  }\n\n  static create(props: IExperienceProps): Either<DomainError, Experience> {\n    // Validate company, position, location as LocalizedText\n    const companyResult = LocalizedText.create(props.company);\n    if (companyResult.isLeft()) return left(companyResult.value);\n\n    // Validate logo\n    const logoResult = Image.create(props.logo.url, props.logo.alt);\n    if (logoResult.isLeft()) return left(logoResult.value);\n\n    // Validate description\n    const descResult = LocalizedText.create(props.description);\n    if (descResult.isLeft()) return left(descResult.value);\n\n    // Validate period using DateRange VO (delegates validation)\n    const periodResult = DateRange.create(props.start_at, props.end_at);\n    if (periodResult.isLeft()) return left(periodResult.value);\n\n    // Create ExperienceSkills\n    const skills: ExperienceSkill[] = [];\n    for (let i = 0; i < props.skills.length; i++) {\n      const skillResult = ExperienceSkill.create(props.skills[i]);\n      if (skillResult.isLeft()) {\n        return left(new ValidationError({\n          code: 'INVALID_EXPERIENCE_SKILL',\n          message: `Invalid skill at index ${i}`,\n          details: { index: i, error: skillResult.value }\n        }));\n      }\n      skills.push(skillResult.value);\n    }\n\n    return right(new Experience(props, {\n      company: companyResult.value,\n      position: positionResult.value,\n      location: locationResult.value,\n      logo: logoResult.value,\n      description: descResult.value,\n      employment_type: employmentTypeResult.value,\n      location_type: locationTypeResult.value,\n      period: periodResult.value,\n      skills\n    }));\n  }\n}\n```\n\n3. Remove date validation logic from Experience (delegated to DateRange)\n\n4. Update `ExperienceBuilder` and tests",
@@ -1736,7 +1792,8 @@
             "details": "Create ExperienceSkill.ts extending ValueObject with:\n- IExperienceSkillProps interface (skill: ISkillProps, workDescription: Record<string, string>)\n- Private constructor accepting Skill and LocalizedText\n- Static create() returning Either<ValidationError, ExperienceSkill>\n- Chain Either validations: Skill.create() then LocalizedText.create()\n- Return left with ValidationError if either fails\n- Implement getters for skill and workDescription\n- Follow Either pattern from CLAUDE.md (never throw)\n- Export interface and class from experience index",
             "status": "done",
             "testStrategy": "Unit tests in packages/core/test/portfolio/experience/ExperienceSkill.test.ts:\n- Valid creation with valid skill and workDescription → Right\n- Invalid skill props → Left with ValidationError\n- Invalid workDescription (empty/missing locale) → Left with ValidationError\n- Getters return correct Skill and LocalizedText instances\n- equals() method works correctly for deep comparison",
-            "updatedAt": "2026-03-14T23:14:14.464Z"
+            "updatedAt": "2026-03-14T23:14:14.464Z",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1748,7 +1805,8 @@
             "details": "Modify IExperienceProps in packages/core/src/portfolio/entities/experience/model/Experience.ts:\n- Add logo field: { url: string; alt: Record<string, string> }\n- Add description field: Record<string, string> (LocalizedText props)\n- Change skills field type from ISkillProps[] to IExperienceSkillProps[]\n- Keep existing fields: company, position, location (still Record<string, string>), employment_type, location_type, start_at, end_at\n- Update imports to include IExperienceSkillProps from ExperienceSkill\n- Ensure interface extends IEntityProps",
             "status": "done",
             "testStrategy": "Type checking:\n- Verify TypeScript compiles without errors\n- Test that Experience.create() accepts new interface structure\n- Verify IExperienceProps can be constructed with all required fields\n- Check that logo, description, and skills fields are properly typed",
-            "updatedAt": "2026-03-14T23:14:14.469Z"
+            "updatedAt": "2026-03-14T23:14:14.469Z",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1760,7 +1818,8 @@
             "details": "Update Experience class in packages/core/src/portfolio/entities/experience/model/Experience.ts:\n- Change field types: company, position, location from Text to LocalizedText\n- Update constructor to accept LocalizedText instances\n- Update create() method to call LocalizedText.create() for company, position, location\n- Chain Either validations: if companyResult.isLeft() return left(companyResult.value)\n- Remove old Text.create() calls\n- Update imports to use LocalizedText from shared/vo\n- Ensure all validations follow Either pattern",
             "status": "done",
             "testStrategy": "Unit tests in packages/core/test/portfolio/experience/Experience.test.ts:\n- Valid creation with LocalizedText props (Record<string, string>) → Right\n- Invalid company (missing locale) → Left with ValidationError\n- Invalid position (empty string) → Left with ValidationError\n- Invalid location → Left with ValidationError\n- Verify getters return LocalizedText instances\n- Test locale() method works correctly for all fields",
-            "updatedAt": "2026-03-14T23:14:14.474Z"
+            "updatedAt": "2026-03-14T23:14:14.474Z",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1772,7 +1831,8 @@
             "details": "Update Experience class in packages/core/src/portfolio/entities/experience/model/Experience.ts:\n- Add public readonly fields: logo: Image, description: LocalizedText\n- Update constructor to accept and initialize logo and description\n- Add validation in create(): Image.create(props.logo.url, props.logo.alt)\n- Add validation in create(): LocalizedText.create(props.description)\n- Chain Either validations following pattern: if logoResult.isLeft() return left(logoResult.value)\n- Implement getters if needed\n- Update imports to include Image from shared/vo\n- Ensure all new validations return left with ValidationError on failure",
             "status": "done",
             "testStrategy": "Unit tests in packages/core/test/portfolio/experience/Experience.test.ts:\n- Valid creation with logo and description → Right\n- Invalid logo URL → Left with ValidationError\n- Invalid logo alt text (missing locale) → Left with ValidationError\n- Invalid description (empty/missing locale) → Left with ValidationError\n- Verify logo and description getters return correct instances\n- Test that all fields are immutable",
-            "updatedAt": "2026-03-14T23:14:14.478Z"
+            "updatedAt": "2026-03-14T23:14:14.478Z",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1784,7 +1844,8 @@
             "details": "Update Experience class skills field:\n- Change field type: public readonly skills: ExperienceSkill[]\n- Update create() method to iterate over props.skills (IExperienceSkillProps[])\n- For each skill, call ExperienceSkill.create(props.skills[i])\n- If validation fails, return left with ValidationError containing:\n  - code: 'INVALID_EXPERIENCE_SKILL'\n  - message: 'Invalid skill at index {i}'\n  - details: { index: i, error: skillResult.value }\n- Collect all valid ExperienceSkill instances in array\n- Pass array to constructor\n- Update constructor to accept ExperienceSkill[]\n- Remove old Skill[] logic",
             "status": "done",
             "testStrategy": "Unit tests:\n- Valid creation with array of valid ExperienceSkills → Right\n- Invalid skill at index 0 → Left with INVALID_EXPERIENCE_SKILL and index 0\n- Invalid skill at index 2 → Left with error details showing index 2\n- Empty skills array → should succeed (if allowed)\n- Verify skills getter returns ExperienceSkill[]\n- Test that each ExperienceSkill has correct skill and workDescription",
-            "updatedAt": "2026-03-14T23:14:14.482Z"
+            "updatedAt": "2026-03-14T23:14:14.482Z",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -1796,7 +1857,8 @@
             "details": "Update Experience.create() method:\n- Locate date validation code block (currently lines 51-63 checking start_at/end_at)\n- Replace with single call: DateRange.create(props.start_at, props.end_at)\n- Chain Either validation: const periodResult = DateRange.create(props.start_at, props.end_at)\n- If periodResult.isLeft() return left(periodResult.value)\n- Remove all manual date parsing, comparison, and validation logic\n- DateRange VO (from Task 5 dependency) handles: required start_at, optional end_at, end >= start validation\n- Update constructor to accept DateRange instance\n- Ensure period field type is DateRange\n- Remove any date-related helper methods if they exist",
             "status": "done",
             "testStrategy": "Unit tests:\n- Valid dates (start_at with end_at) → Right\n- Valid dates (start_at without end_at) → Right\n- Invalid dates (end_at before start_at) → Left with DateRange ValidationError\n- Invalid start_at format → Left with DateRange ValidationError\n- Missing start_at → Left with DateRange ValidationError\n- Verify Experience no longer has date validation logic\n- Ensure all date edge cases are covered by DateRange tests",
-            "updatedAt": "2026-03-14T23:14:14.486Z"
+            "updatedAt": "2026-03-14T23:14:14.486Z",
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -1808,13 +1870,14 @@
             "details": "Update ExperienceBuilder:\n- Add withLogo(url: string, alt: Record<string, string>) method\n- Add withDescription(description: Record<string, string>) method\n- Update withSkills() to accept IExperienceSkillProps[] instead of ISkillProps[]\n- Update withCompany/Position/Location to accept Record<string, string> (LocalizedText props)\n- Ensure build() constructs valid IExperienceProps with all new fields\n- Provide sensible defaults for logo, description\n\nCreate test files:\n- ExperienceSkill.test.ts covering all scenarios from testStrategy above\n- Update Experience.test.ts with tests for logo, description, ExperienceSkill[] validation\n- Test all Either-based validations\n- Test indexed error handling for skills array\n- Test DateRange delegation\n- Verify all validation error codes and messages",
             "status": "done",
             "testStrategy": "Builder tests:\n- ExperienceBuilder creates valid Experience with all new fields\n- Builder defaults work correctly\n- Builder methods are chainable\n\nIntegration tests:\n- Complete Experience creation flow with all fields\n- Test combinations of valid/invalid fields\n- Verify error messages are clear and in English\n- Run full test suite: pnpm test in packages/core\n- Ensure 100% coverage for Experience and ExperienceSkill",
-            "updatedAt": "2026-03-14T23:14:14.490Z"
+            "updatedAt": "2026-03-14T23:14:14.490Z",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-14T23:14:14.490Z"
       },
       {
-        "id": 10,
+        "id": "10",
         "title": "Define repository interfaces for infrastructure contracts",
         "description": "Create repository interface definitions in the domain layer to establish contracts for the infrastructure layer implementation",
         "details": "Create repository interfaces in respective entity directories:\n\n1. `packages/core/src/portfolio/entities/project/repositories/IProjectRepository.ts`:\n```typescript\nimport { Project } from '../model/Project';\nimport { ProjectId } from '../value-objects/ProjectId';\nimport { Slug } from '../../../../shared/vo/Slug';\n\nexport interface IProjectRepository {\n  findAll(): Promise<Project[]>;\n  findPublished(): Promise<Project[]>;\n  findFeatured(): Promise<Project[]>;\n  findById(id: ProjectId): Promise<Project | null>;\n  findBySlug(slug: Slug): Promise<Project | null>;\n  findRelated(id: ProjectId, limit?: number): Promise<Project[]>;\n  save(project: Project): Promise<void>;\n  delete(id: ProjectId): Promise<void>;\n}\n```\n\n2. `packages/core/src/portfolio/entities/experience/repositories/IExperienceRepository.ts`:\n```typescript\nimport { Experience } from '../model/Experience';\nimport { Id } from '../../../../shared/vo/Id';\n\nexport interface IExperienceRepository {\n  findAll(): Promise<Experience[]>;\n  findById(id: Id): Promise<Experience | null>;\n  save(experience: Experience): Promise<void>;\n  delete(id: Id): Promise<void>;\n}\n```\n\n3. `packages/core/src/portfolio/entities/profile/repositories/IProfileRepository.ts`:\n```typescript\nimport { Profile } from '../model/Profile';\nimport { Id } from '../../../../shared/vo/Id';\n\nexport interface IProfileRepository {\n  find(): Promise<Profile | null>; // Singleton pattern - only one profile\n  save(profile: Profile): Promise<void>;\n}\n```\n\n4. `packages/core/src/portfolio/entities/skill/repositories/ISkillRepository.ts`:\n```typescript\nimport { Skill } from '../model/Skill';\nimport { Id } from '../../../../shared/vo/Id';\n\nexport interface ISkillRepository {\n  findAll(): Promise<Skill[]>;\n  findById(id: Id): Promise<Skill | null>;\n  save(skill: Skill): Promise<void>;\n  delete(id: Id): Promise<void>;\n}\n```\n\nKey principles:\n- All interfaces use domain types (entities, VOs) - never primitives\n- No imports of external libraries (Prisma, Supabase, etc.)\n- Methods return Promise for async operations\n- Repository pattern for each aggregate root\n\nUpdate `packages/core/src/portfolio/index.ts` to export all four interfaces.",
@@ -1834,7 +1897,8 @@
             "dependencies": [],
             "details": "Create file `packages/core/src/portfolio/entities/project/repositories/IProjectRepository.ts`. Import Project from '../model/Project', ProjectId from '../value-objects/ProjectId', and Slug from '../../../../shared/vo/Slug'. Define interface with methods: findAll(): Promise<Project[]>, findPublished(): Promise<Project[]>, findFeatured(): Promise<Project[]>, findById(id: ProjectId): Promise<Project | null>, findBySlug(slug: Slug): Promise<Project | null>, findRelated(id: ProjectId, limit?: number): Promise<Project[]>, save(project: Project): Promise<void>, delete(id: ProjectId): Promise<void>. Ensure all types are domain types - no primitives in method signatures.",
             "status": "pending",
-            "testStrategy": "Validate TypeScript compilation with `pnpm types` in packages/core. Verify no external imports (Prisma, Supabase) using grep. Confirm interface exports correctly from file."
+            "testStrategy": "Validate TypeScript compilation with `pnpm types` in packages/core. Verify no external imports (Prisma, Supabase) using grep. Confirm interface exports correctly from file.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1843,7 +1907,8 @@
             "dependencies": [],
             "details": "Create `packages/core/src/portfolio/entities/experience/repositories/IExperienceRepository.ts` with methods: findAll(): Promise<Experience[]>, findById(id: Id): Promise<Experience | null>, save(experience: Experience): Promise<void>, delete(id: Id): Promise<void>. Import Experience from '../model/Experience' and Id from '../../../../shared/vo/Id'. Create `packages/core/src/portfolio/entities/skill/repositories/ISkillRepository.ts` with identical method signatures but using Skill entity. Import Skill from '../model/Skill' and Id from '../../../../shared/vo/Id'. Both interfaces follow standard repository pattern with async operations.",
             "status": "pending",
-            "testStrategy": "Run TypeScript compilation to verify no type errors. Grep repository files for prohibited imports (prisma, @prisma, supabase). Verify method signatures use domain types only."
+            "testStrategy": "Run TypeScript compilation to verify no type errors. Grep repository files for prohibited imports (prisma, @prisma, supabase). Verify method signatures use domain types only.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1852,7 +1917,8 @@
             "dependencies": [],
             "details": "Create `packages/core/src/portfolio/entities/profile/repositories/IProfileRepository.ts`. Import Profile from '../model/Profile' and Id from '../../../../shared/vo/Id'. Define interface with only 2 methods: find(): Promise<Profile | null> (returns single profile or null - singleton pattern), save(profile: Profile): Promise<void>. No findAll() method since Profile is a singleton entity. No delete() method as profile should always exist. This differs from standard CRUD repositories due to domain constraint of single profile per portfolio.",
             "status": "pending",
-            "testStrategy": "Validate TypeScript compilation. Verify interface has exactly 2 methods (find and save only). Confirm no external library imports. Check that find() returns single Profile | null, not array."
+            "testStrategy": "Validate TypeScript compilation. Verify interface has exactly 2 methods (find and save only). Confirm no external library imports. Check that find() returns single Profile | null, not array.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1865,7 +1931,8 @@
             ],
             "details": "Edit `packages/core/src/portfolio/index.ts` to add repository interface exports. Add lines: export type { IProjectRepository } from './entities/project/repositories/IProjectRepository', export type { IExperienceRepository } from './entities/experience/repositories/IExperienceRepository', export type { IProfileRepository } from './entities/profile/repositories/IProfileRepository', export type { ISkillRepository } from './entities/skill/repositories/ISkillRepository'. Group with other repository-related exports if any exist. Maintain alphabetical ordering within export groups for consistency.",
             "status": "pending",
-            "testStrategy": "Verify exports are accessible by attempting to import from '@repo/core/portfolio' in a test file. Run `pnpm types` to ensure no circular dependencies. Check that all 4 interfaces are exported as type-only exports."
+            "testStrategy": "Verify exports are accessible by attempting to import from '@repo/core/portfolio' in a test file. Run `pnpm types` to ensure no circular dependencies. Check that all 4 interfaces are exported as type-only exports.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1876,13 +1943,14 @@
             ],
             "details": "Execute validation checks: (1) Run `pnpm types` in packages/core to verify TypeScript compilation with no errors. (2) Grep all repository files for prohibited imports: `grep -r \"@prisma\\|prisma\\|supabase\\|axios\\|next\" packages/core/src/portfolio/entities/*/repositories/` should return nothing. (3) Verify all interfaces use only domain types (entities and VOs) in method signatures - no string, number, or other primitives. (4) Confirm exports in portfolio/index.ts allow imports like `import type { IProjectRepository } from '@repo/core/portfolio'`. (5) Check directory structure matches: entities/<entity>/repositories/I<Entity>Repository.ts pattern. Document any violations and ensure all 4 interfaces comply with architectural constraints.",
             "status": "pending",
-            "testStrategy": "Automated checks: pnpm types returns exit code 0. Grep commands return no matches for external imports. Manual review: verify method signatures use domain types, confirm singleton pattern in IProfileRepository, validate export statements work correctly."
+            "testStrategy": "Automated checks: pnpm types returns exit code 0. Grep commands return no matches for external imports. Manual review: verify method signatures use domain types, confirm singleton pattern in IProfileRepository, validate export statements work correctly.",
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-03-10T02:59:49.237Z"
       },
       {
-        "id": 11,
+        "id": "11",
         "title": "Create packages/core architecture documentation",
         "description": "Document bounded contexts, architectural decisions, layer rules, and ubiquitous language for the domain layer",
         "details": "Create comprehensive documentation for packages/core:\n\n1. `packages/core/ARCHITECTURE.md`:\n   - Bounded context map (Portfolio, Blog, Contact, Shared Kernel)\n   - Dependency rules between contexts\n   - Layer isolation rules (what core can/cannot import)\n   - Visual diagram of context boundaries\n   - Export structure (@repo/core/portfolio, @repo/core/shared, etc.)\n\n2. `packages/core/GLOSSARY.md`:\n   - Ubiquitous Language definitions for Portfolio context:\n     - Project, Experience, Profile, Skill\n     - Value Objects: Slug, Image, DateRange, LocalizedText, etc.\n   - Term definitions with examples\n   - Relationships between domain concepts\n\n3. `packages/core/decisions/adr-template.md`:\n```markdown\n# ADR-XXX: [Title]\n\n## Status\n[Proposed | Accepted | Deprecated | Superseded]\n\n## Context\n[What is the issue we're facing?]\n\n## Decision\n[What did we decide?]\n\n## Consequences\n[What becomes easier or harder?]\n\n## Alternatives Considered\n[What other options did we evaluate?]\n```\n\n4. `packages/core/decisions/ADR-001-repository-interfaces-in-core.md`:\n```markdown\n# ADR-001: Repository Interfaces Belong in Core, Not Application\n\n## Status\nAccepted\n\n## Context\nIn Clean Architecture, repository interfaces (ports) can be placed in either the domain layer (core) or application layer. We need to decide where they belong in our monorepo.\n\n## Decision\nRepository interfaces are defined in `packages/core` alongside their respective entities, not in `packages/application`.\n\nStructure:\n- `packages/core/src/portfolio/entities/project/repositories/IProjectRepository.ts`\n- `packages/core/src/portfolio/entities/experience/repositories/IExperienceRepository.ts`\n\n## Consequences\n\n**Positive:**\n- Interfaces live with their aggregate roots (high cohesion)\n- Domain defines its own persistence contract\n- Application layer doesn't need to define infrastructure contracts\n- Easier to understand what operations are available per entity\n\n**Negative:**\n- Some Clean Architecture implementations put interfaces in application\n- Requires clear documentation of this architectural choice\n\n## Alternatives Considered\n\n1. **Application Layer Interfaces**: Place in `packages/application/ports/repositories/`\n   - Rejected: Separates interface from entity, lower cohesion\n\n2. **Separate Ports Package**: Create `packages/ports`\n   - Rejected: Over-engineering for monorepo, adds unnecessary complexity\n```\n\nEnsure documentation is referenced from root `CLAUDE.md`.",
@@ -1898,7 +1966,8 @@
             "dependencies": [],
             "details": "Create `packages/core/ARCHITECTURE.md` with:\n\n1. **Bounded Context Map**: Document all bounded contexts (Portfolio, Blog, Contact, Shared Kernel) with clear boundaries\n2. **Dependency Rules**: Explain that contexts cannot import from each other directly, only from Shared Kernel\n3. **Layer Isolation Rules**: Document what core can/cannot import (no Prisma, React, Next.js, HTTP clients)\n4. **Export Structure**: Document public exports (@repo/core/portfolio, @repo/core/blog, @repo/core/shared)\n5. **Visual Diagram**: Use Mermaid or ASCII art to show context boundaries and relationships\n6. **Reference from root CLAUDE.md**: Ensure it mentions this ARCHITECTURE.md file\n\nFollow existing Portfolio context structure from packages/core/src/portfolio/index.ts as reference.",
             "status": "done",
-            "testStrategy": "Validation checklist:\n- ARCHITECTURE.md includes all 4 bounded contexts\n- Visual diagram accurately represents codebase structure\n- Export paths match actual package.json exports in packages/core\n- Layer isolation rules match ESLint restrictions in CLAUDE.md\n- Document is referenced from root CLAUDE.md"
+            "testStrategy": "Validation checklist:\n- ARCHITECTURE.md includes all 4 bounded contexts\n- Visual diagram accurately represents codebase structure\n- Export paths match actual package.json exports in packages/core\n- Layer isolation rules match ESLint restrictions in CLAUDE.md\n- Document is referenced from root CLAUDE.md",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -1909,7 +1978,8 @@
             ],
             "details": "Add Mermaid diagrams to ARCHITECTURE.md:\n\n1. **Bounded Context Diagram**: Show Portfolio, Blog, Contact contexts with Shared Kernel in the center\n2. **Package Dependency Graph**: Visualize core ← application ← infra ← web/api dependency flow\n3. **Context Exports Diagram**: Show how @repo/core/portfolio, @repo/core/blog, @repo/core/shared exports are organized\n\nExample Mermaid syntax:\n```mermaid\ngraph TD\n  SK[Shared Kernel]\n  P[Portfolio Context]\n  B[Blog Context]\n  C[Contact Context]\n  P -.-> SK\n  B -.-> SK\n  C -.-> SK\n```\n\nEnsure diagrams match actual code structure and export patterns.",
             "status": "done",
-            "testStrategy": "Diagram validation:\n- Mermaid syntax renders correctly in GitHub/VS Code\n- All 4 bounded contexts are represented\n- Shared Kernel relationships are shown accurately\n- Package dependency arrows point in correct direction (toward core)\n- Diagrams match actual folder structure in packages/core/src"
+            "testStrategy": "Diagram validation:\n- Mermaid syntax renders correctly in GitHub/VS Code\n- All 4 bounded contexts are represented\n- Shared Kernel relationships are shown accurately\n- Package dependency arrows point in correct direction (toward core)\n- Diagrams match actual folder structure in packages/core/src",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -1920,7 +1990,8 @@
             ],
             "details": "Create `packages/core/GLOSSARY.md` with structured definitions:\n\n**Entities:**\n- **Project**: A portfolio work item (commercial, personal, or academic)\n- **Experience**: A professional work experience entry\n- **Profile**: The portfolio owner's personal data\n- **Skill**: A technical or professional capability\n\n**Value Objects (from Shared Kernel):**\n- **Slug**: URL-friendly identifier (kebab-case, min 3 chars)\n- **Image**: Represents visual asset with URL, alt text, dimensions\n- **DateRange**: Period with start/end dates and ongoing flag\n- **LocalizedText**: Multi-language text content (pt-BR, en-US)\n- **Markdown**: Rich text content in markdown format\n- **Tag**: Categorization label\n- **Technology**: Tech stack item with name and category\n\nInclude:\n- Definition for each term\n- TypeScript type signature examples\n- Usage examples from actual entities\n- Relationships between concepts (e.g., Project contains Skills, uses Slug)",
             "status": "done",
-            "testStrategy": "Glossary completeness:\n- All entities from Portfolio context are defined (Project, Experience, Profile, Skill)\n- All Shared Kernel VOs are documented (Slug, Image, DateRange, LocalizedText, Markdown, Tag, Technology)\n- Each term has clear definition, example, and type signature\n- Relationships between domain concepts are explained\n- Examples reference actual code from packages/core/src"
+            "testStrategy": "Glossary completeness:\n- All entities from Portfolio context are defined (Project, Experience, Profile, Skill)\n- All Shared Kernel VOs are documented (Slug, Image, DateRange, LocalizedText, Markdown, Tag, Technology)\n- Each term has clear definition, example, and type signature\n- Relationships between domain concepts are explained\n- Examples reference actual code from packages/core/src",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -1929,7 +2000,8 @@
             "dependencies": [],
             "details": "Create `packages/core/decisions/adr-template.md`:\n\n```markdown\n# ADR-XXX: [Title]\n\n## Status\n[Proposed | Accepted | Deprecated | Superseded]\n\n## Context\n[What is the issue we're facing? What constraints exist? What are the requirements?]\n\n## Decision\n[What did we decide? Be specific and actionable.]\n\n## Consequences\n\n**Positive:**\n- [What becomes easier or better?]\n\n**Negative:**\n- [What becomes harder or requires trade-offs?]\n\n## Alternatives Considered\n\n1. **[Alternative Name]**:\n   - Description: [What was this option?]\n   - Rejected because: [Why didn't we choose this?]\n\n2. **[Alternative Name]**:\n   - Description: [What was this option?]\n   - Rejected because: [Why didn't we choose this?]\n```\n\nCreate decisions/ directory if it doesn't exist.",
             "status": "done",
-            "testStrategy": "Template validation:\n- File exists at packages/core/decisions/adr-template.md\n- All required sections present (Status, Context, Decision, Consequences, Alternatives Considered)\n- Markdown formatting is correct\n- Placeholders are clearly marked with [brackets] or XXX\n- Template follows industry-standard ADR format"
+            "testStrategy": "Template validation:\n- File exists at packages/core/decisions/adr-template.md\n- All required sections present (Status, Context, Decision, Consequences, Alternatives Considered)\n- Markdown formatting is correct\n- Placeholders are clearly marked with [brackets] or XXX\n- Template follows industry-standard ADR format",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -1940,7 +2012,8 @@
             ],
             "details": "Create `packages/core/decisions/ADR-001-repository-interfaces-in-core.md`:\n\n**Status**: Accepted\n\n**Context**: Explain that Clean Architecture allows repository interfaces (ports) in either domain or application layer. We needed to decide placement for monorepo.\n\n**Decision**: Repository interfaces defined in `packages/core` alongside entities:\n- `packages/core/src/portfolio/entities/project/repositories/IProjectRepository.ts`\n- `packages/core/src/portfolio/entities/experience/repositories/IExperienceRepository.ts`\n- Pattern: interfaces live with their aggregate roots\n\n**Consequences**:\n- **Positive**: High cohesion (interface + entity together), domain defines persistence contract, easier discoverability\n- **Negative**: Differs from some Clean Architecture implementations, requires documentation\n\n**Alternatives Considered**:\n1. **Application Layer Interfaces** (`packages/application/ports/repositories/`): Rejected due to lower cohesion\n2. **Separate Ports Package** (`packages/ports`): Rejected as over-engineering for monorepo\n\nReference actual repository interfaces from packages/core/src/portfolio.",
             "status": "done",
-            "testStrategy": "ADR-001 validation:\n- Follows adr-template.md structure exactly\n- Status is set to 'Accepted'\n- Context explains the architectural decision point clearly\n- Decision section specifies exact file paths from actual codebase\n- At least 2 alternatives are documented with rejection rationale\n- References match actual repository interface locations in packages/core/src"
+            "testStrategy": "ADR-001 validation:\n- Follows adr-template.md structure exactly\n- Status is set to 'Accepted'\n- Context explains the architectural decision point clearly\n- Decision section specifies exact file paths from actual codebase\n- At least 2 alternatives are documented with rejection rationale\n- References match actual repository interface locations in packages/core/src",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -1955,12 +2028,13 @@
             ],
             "details": "1. **Update root CLAUDE.md**:\n   - Add reference to `packages/core/ARCHITECTURE.md` in the DDD section\n   - Add reference to `packages/core/GLOSSARY.md` in the DDD — Domain-Driven Design section\n   - Add reference to `packages/core/decisions/` directory in relevant sections\n   - Example: \"See `packages/core/ARCHITECTURE.md` for detailed bounded context map and layer rules\"\n\n2. **Validation Checklist**:\n   - [ ] ARCHITECTURE.md exists and covers all 4 bounded contexts\n   - [ ] Visual diagrams render correctly (Mermaid syntax)\n   - [ ] GLOSSARY.md defines all entities and VOs\n   - [ ] adr-template.md follows industry standard\n   - [ ] ADR-001 is complete with alternatives analysis\n   - [ ] All files referenced from root CLAUDE.md\n   - [ ] No broken internal links\n   - [ ] Consistent terminology across all docs\n\n3. **Cross-reference verification**:\n   - Ensure export paths in ARCHITECTURE.md match packages/core/src/portfolio/index.ts\n   - Verify entity names in GLOSSARY.md match actual class names in codebase\n   - Check that ADR-001 references real file paths",
             "status": "done",
-            "testStrategy": "Final documentation validation:\n- Root CLAUDE.md contains references to all new documentation files\n- All 5 files exist: ARCHITECTURE.md, GLOSSARY.md, adr-template.md, ADR-001\n- Internal links work correctly (no 404s)\n- Terminology is consistent between ARCHITECTURE.md and GLOSSARY.md\n- Export paths match package.json and index.ts files\n- Entity/VO names match actual TypeScript class names in packages/core/src\n- Documentation is discoverable from root CLAUDE.md"
+            "testStrategy": "Final documentation validation:\n- Root CLAUDE.md contains references to all new documentation files\n- All 5 files exist: ARCHITECTURE.md, GLOSSARY.md, adr-template.md, ADR-001\n- Internal links work correctly (no 404s)\n- Terminology is consistent between ARCHITECTURE.md and GLOSSARY.md\n- Export paths match package.json and index.ts files\n- Entity/VO names match actual TypeScript class names in packages/core/src\n- Documentation is discoverable from root CLAUDE.md",
+            "parentId": "undefined"
           }
         ]
       },
       {
-        "id": 12,
+        "id": "12",
         "title": "Audit business validations delegated to Validator utility",
         "description": "Review all Value Objects and Entities in packages/core to ensure domain invariants reside in create() methods while technical format validations remain in Validator utility",
         "details": "## Context\n\nDuring Slug VO implementation (Task 5), a critical architectural boundary was established:\n- **packages/utils/Validator**: purely technical format validations (isURL, isDateTime, isUUID, protocol checks)\n- **packages/core VOs/Entities**: domain invariants and business rules (kebab-case requirement, locale mandatory, min/max lengths, enum memberships)\n\n`Slug` and `LocalizedText` follow the correct pattern with all domain rules inline in `create()`. However, other VOs may have business logic delegated to Validator when it should be in the domain layer.\n\n---\n\n## Audit Scope\n\n### Value Objects to Review\n\n**packages/core/src/shared/vo/**:\n- `Name.ts` - uses `Validator.alpha()` and `length(3, 100)` - **ISSUE: alphabetic constraint is domain rule**\n- `Text.ts` - uses `Validator.length(min, max)` with domain-specific ranges - **ISSUE: length constraints are domain rules**\n- `Url.ts` - uses `Validator.url()` - ✓ technical validation (protocol check)\n- `DateTime.ts` - uses `Validator.datetime()` - ✓ technical validation (ISO format)\n- `Id.ts` - uses `Validator.uuid()` - ✓ technical validation (UUID format)\n- `EmploymentType.ts` - uses `Validator.in([...])` for enum membership - **ISSUE: enum membership is domain rule**\n- `LocationType.ts` - uses `Validator.in([...])` for enum membership - **ISSUE: enum membership is domain rule**\n- `SkillType.ts` - uses `Validator.in([...])` for enum membership - **ISSUE: enum membership is domain rule**\n- `Fluency.ts` - uses `Validator.in([...])` for enum membership - **ISSUE: enum membership is domain rule**\n- `Image.ts` - composes Url + LocalizedText - ✓ correct pattern\n- `DateRange.ts` - start <= end check inline - ✓ correct pattern\n- `Slug.ts` - kebab-case regex inline - ✓ **reference implementation**\n\n**packages/core/src/shared/i18n/**:\n- `LocalizedText.ts` - pt-BR mandatory rule inline - ✓ **reference implementation**\n\n**packages/core/src/portfolio/entities/\\*/model/**:\n- `Profile.ts` (profile:57-64) - MAX_FEATURED_PROJECTS inline - ✓ correct pattern\n- `ProfileStat.ts` (profile:30,33) - uses Text with min/max configs - depends on Text audit\n- `Project.ts` (project:114) - uses Text with `{ min: 3, max: 500000 }` - depends on Text audit\n- `Experience.ts` - composes VOs - depends on VO audits\n- `ExperienceSkill.ts` - composes VOs - correct pattern\n- `Skill.ts` (skill:37,40) - uses Text with custom configs - depends on Text audit\n\n---\n\n## Classification Criteria\n\n### Technical Validations (KEEP in Validator)\n- Format checks: `isUrl()`, `isDateTime()`, `isUUID()`\n- Protocol requirements: `require_protocol: true`\n- External standard compliance: ISO 8601, RFC 3986, UUID v4\n\n### Domain Invariants (MOVE to VO/Entity)\n- Business-specific constraints: min/max lengths tied to domain concepts\n- Pattern requirements: kebab-case, alphabetic-only names\n- Enum membership: allowed employment types, skill types, fluency levels\n- Aggregate invariants: max featured projects, date range ordering\n- Locale requirements: pt-BR mandatory\n\n---\n\n## Refactoring Strategy\n\n### 1. Name VO (packages/core/src/shared/vo/Name.ts)\n\n**Current (INCORRECT)**:\n\\`\\`\\`typescript\nstatic create(value?: string): Either<ValidationError, Name> {\n  const { error, isValid } = Validator.new(value)\n    .alpha('The name must contain only letters.')\n    .length(3, 100, 'The name must be between {{min}} and {{max}} characters.')\n    .validate();\n  if (!isValid && error) return left(new ValidationError({ code: Name.ERROR_CODE, message: error }));\n  return right(new Name(value ?? ''));\n}\n\\`\\`\\`\n\n**Refactored (CORRECT)**:\n\\`\\`\\`typescript\nstatic create(value?: string): Either<ValidationError, Name> {\n  const trimmed = value?.trim();\n  \n  if (!trimmed || trimmed.length < 3 || trimmed.length > 100) {\n    return left(new ValidationError({\n      code: Name.ERROR_CODE,\n      message: 'Name must be between 3 and 100 characters.'\n    }));\n  }\n  \n  if (!/^[A-ZÃÁÀÂÄÇÉÊËÍÏÕÓÔÖÚÜ\\\\s]+$/i.test(trimmed)) {\n    return left(new ValidationError({\n      code: Name.ERROR_CODE,\n      message: 'Name must contain only letters and spaces.'\n    }));\n  }\n  \n  return right(new Name(trimmed));\n}\n\\`\\`\\`\n\n**Justification**: Alphabetic constraint is a domain rule for the Name concept, not a generic technical validation.\n\n---\n\n### 2. Text VO (packages/core/src/shared/vo/Text.ts)\n\n**Current (INCORRECT)**:\n\\`\\`\\`typescript\nstatic create(value?: string, config?: ITextConfig): Either<ValidationError, Text> {\n  const { min = 3, max = 50 } = config ?? {};\n  const { error, isValid } = Validator.new(value).length(min, max, '...').validate();\n  if (!isValid && error) return left(new ValidationError({ code: Text.ERROR_CODE, message: error }));\n  return right(new Text(value ?? '', config));\n}\n\\`\\`\\`\n\n**Refactored (CORRECT)**:\n\\`\\`\\`typescript\nstatic create(value?: string, config?: ITextConfig): Either<ValidationError, Text> {\n  const { min = 3, max = 50 } = config ?? {};\n  const trimmed = value?.trim() ?? '';\n  \n  if (trimmed.length < min || trimmed.length > max) {\n    return left(new ValidationError({\n      code: Text.ERROR_CODE,\n      message: `Text must be between ${min} and ${max} characters.`\n    }));\n  }\n  \n  return right(new Text(trimmed, config));\n}\n\\`\\`\\`\n\n**Justification**: Length constraints for domain-specific Text are business rules, not generic format checks.\n\n---\n\n### 3. Enum VOs (EmploymentType, LocationType, SkillType, Fluency)\n\n**Current (INCORRECT)**:\n\\`\\`\\`typescript\nstatic create(value: EmploymentTypeValue): Either<ValidationError, EmploymentType> {\n  const { error, isValid } = Validator.new(value)\n    .in([...EmploymentType.EMPLOYMENTS], 'The value must be a valid employment type.')\n    .validate();\n  if (!isValid && error) return left(new ValidationError({ code: EmploymentType.ERROR_CODE, message: error }));\n  return right(new EmploymentType(value));\n}\n\\`\\`\\`\n\n**Refactored (CORRECT)**:\n\\`\\`\\`typescript\nstatic create(value: EmploymentTypeValue): Either<ValidationError, EmploymentType> {\n  if (!EmploymentType.EMPLOYMENTS.includes(value as any)) {\n    return left(new ValidationError({\n      code: EmploymentType.ERROR_CODE,\n      message: `Invalid employment type. Must be one of: ${EmploymentType.EMPLOYMENTS.join(', ')}.`\n    }));\n  }\n  return right(new EmploymentType(value));\n}\n\\`\\`\\`\n\n**Justification**: The set of valid employment types is a domain concept, not a generic format validator.\n\n**Apply same pattern to**: LocationType, SkillType, Fluency.\n\n---\n\n### 4. Validator Utility - Keep Only Technical Validations\n\nAfter refactoring, `packages/utils/src/validator/Validator.ts` should retain:\n- `url()` - URL format and protocol validation (external standard RFC 3986)\n- `datetime()` - ISO 8601 format validation (external standard)\n- `uuid()` - UUID v4 format validation (external standard)\n- `string()`, `nil()`, `notNil()` - basic type checks\n- `gt()`, `gte()`, `lt()`, `lte()` - numeric comparisons (when used for technical thresholds)\n\n**Remove or deprecate** (business logic, not technical format):\n- `alpha()` - domain rule moved to Name VO\n- `length()` - domain rule moved to Text VO and others\n- `in()` - domain rule moved to enum VOs\n- `empty()` - superseded by domain-specific trimming and validation\n\n---\n\n## Testing Impact\n\n### Existing Tests Must Continue Passing\n\nAll current tests in `packages/core/test/**/*.test.ts` must pass after refactoring:\n- Slug.test.ts - ✓ no changes needed (reference implementation)\n- LocalizedText.test.ts - ✓ no changes needed (reference implementation)\n- Name.test.ts - update to test inline validation logic\n- Text.test.ts - update to test inline length checks\n- EmploymentType.test.ts - update to test inline enum membership\n- (same for LocationType, SkillType, Fluency)\n- DateRange.test.ts - ✓ no changes needed (correct pattern)\n- Profile.test.ts - ✓ no changes needed (correct pattern)\n\n### New Test Requirements\n\nAfter refactoring, verify:\n1. All domain rules are covered by VO/Entity tests\n2. Validator tests only cover technical format validations\n3. Error messages are clear and domain-specific\n4. No circular dependencies introduced\n\n---\n\n## Acceptance Criteria\n\n### 1. All VOs and Entities Audited\n- [ ] Every VO in `packages/core/src/shared/vo/` reviewed\n- [ ] Every VO in `packages/core/src/shared/i18n/` reviewed\n- [ ] Every Entity in `packages/core/src/portfolio/entities/*/model/` reviewed\n- [ ] Audit results documented (table of VO/Entity → Current validation → Classification → Action)\n\n### 2. Domain Rules Extracted to Core Layer\n- [ ] Name: alphabetic constraint moved inline\n- [ ] Text: length constraints moved inline\n- [ ] EmploymentType: enum membership moved inline\n- [ ] LocationType: enum membership moved inline\n- [ ] SkillType: enum membership moved inline\n- [ ] Fluency: enum membership moved inline\n- [ ] Any other misplaced rules identified and refactored\n\n### 3. Validator Contains Only Technical Validations\n- [ ] `isUrl()` - ✓ retained (RFC 3986)\n- [ ] `isDateTime()` - ✓ retained (ISO 8601)\n- [ ] `isUUID()` - ✓ retained (UUID v4)\n- [ ] `alpha()`, `length()`, `in()` - removed or deprecated\n- [ ] Validator documentation updated to clarify scope\n\n### 4. All Tests Pass\n- [ ] `pnpm test` in packages/core - all tests pass\n- [ ] `pnpm test` in packages/utils - all tests pass\n- [ ] Integration tests still work with refactored VOs\n- [ ] No test coverage regression\n\n### 5. Architecture Compliance\n- [ ] No domain logic remains in packages/utils\n- [ ] No external dependencies in packages/core (still zero framework imports)\n- [ ] Either pattern consistently used for all domain errors\n- [ ] Error codes and messages follow established patterns\n\n---\n\n## Implementation Notes\n\n### Refactoring Order (Minimize Breakage)\n\n1. **Audit first** - document all VOs/Entities and their current validation approach\n2. **Start with leaf VOs** - Name, Text (no dependencies on other VOs)\n3. **Then enum VOs** - EmploymentType, LocationType, SkillType, Fluency\n4. **Update entities** - ProfileStat, Skill, Project (depend on Text)\n5. **Run tests after each refactor** - ensure no regressions\n6. **Update Validator documentation** - clarify technical-only scope\n\n### Edge Cases to Consider\n\n- **Text with extreme ranges**: Project content uses `{ min: 3, max: 500000 }` - this is a domain rule for project content length\n- **Name normalization**: `normalized` and `capitalized` getters - keep these, they're domain behavior\n- **Empty string handling**: ensure consistent trim() and empty checks across all VOs\n- **Error message consistency**: follow Slug and LocalizedText patterns for error formatting\n\n### References\n\n- **Issue #314**: Original design boundary discussion\n- **Task 5**: Slug VO implementation (reference pattern)\n- **CLAUDE.md**: DDD rules and layer restrictions\n- **docs/ARCHITECTURE.md**: Bounded context boundaries\n- **docs/VALIDATION.md**: Edge validation vs domain invariants",
@@ -1974,7 +2048,7 @@
         "updatedAt": "2026-03-15T02:53:50.816Z"
       },
       {
-        "id": 13,
+        "id": "13",
         "title": "Reorganize packages/core test folder architecture",
         "description": "Refactor test/ directory structure to mirror src/ layout, rename test/data/ to test/helpers/, reorganize builders and generators into subdirectories, and subdivide test/shared/ to match src/shared/ bounded context structure",
         "details": "## Context\n\nThe current `packages/core/test/` structure diverges from `src/` and uses generic naming that obscures intent:\n- `test/data/` contains both builders and data generators with no clear separation\n- `test/data/bases/NameData.ts` has incorrect class name (`TextData`) diverging from file name\n- `test/shared/` is flat with 14 files, not mirroring `src/shared/` subdirectories (base/, errors/, i18n/, vo/, types/)\n- Entity-specific tests (experience/, project/, skill/) exist but lack consistent organization\n\n## Migration Plan\n\n### 1. Rename `test/data/` → `test/helpers/`\n\n```bash\ncd packages/core\ngit mv test/data test/helpers\n```\n\n### 2. Create subdirectories within `test/helpers/`\n\n```bash\nmkdir -p test/helpers/builders\nmkdir -p test/helpers/generators\n```\n\n### 3. Move builders into `test/helpers/builders/`\n\nMove all `*Builder.ts` files:\n```bash\ncd test/helpers\ngit mv EntityBuilder.ts builders/\ngit mv ExperienceBuilder.ts builders/\ngit mv LanguageBuilder.ts builders/\ngit mv ProfileBuilder.ts builders/\ngit mv ProfessionalValueBuilder.ts builders/\ngit mv ProjectBuilder.ts builders/\ngit mv SkillBuilder.ts builders/\ngit mv SocialNetworkBuilder.ts builders/\n```\n\n### 4. Move generators into `test/helpers/generators/`\n\nMove all files from `bases/` subdirectory:\n```bash\ncd test/helpers\ngit mv bases/EmploymentTypeData.ts generators/\ngit mv bases/FluencyData.ts generators/\ngit mv bases/ImageData.ts generators/\ngit mv bases/LocationTypeData.ts generators/\ngit mv bases/SkillTypeData.ts generators/\ngit mv bases/SlugData.ts generators/\ngit mv bases/NameData.ts generators/TextData.ts  # Rename during move\nrmdir bases/\n```\n\n### 5. Fix `TextData` class and exports\n\nUpdate `test/helpers/generators/TextData.ts` (formerly NameData.ts):\n- File already exports `TextData` class (correct)\n- No code changes needed, just the file rename\n\nUpdate `test/helpers/generators/index.ts`:\n```typescript\nexport * from './EmploymentTypeData';\nexport * from './FluencyData';\nexport * from './ImageData';\nexport * from './LocationTypeData';\nexport * from './SkillTypeData';\nexport * from './SlugData';\nexport * from './TextData';  // Changed from NameData\n\nexport class Data {\n  static employment = EmploymentTypeData;\n  static fluency = FluencyData;\n  static image = ImageData;\n  static location = LocationTypeData;\n  static skill = SkillTypeData;\n  static slug = SlugData;\n  static text = TextData;\n}\n```\n\n### 6. Create `test/helpers/index.ts` barrel export\n\n```typescript\nexport * from './builders';\nexport * from './generators';\n```\n\nCreate `test/helpers/builders/index.ts`:\n```typescript\nexport * from './EntityBuilder';\nexport * from './ExperienceBuilder';\nexport * from './LanguageBuilder';\nexport * from './ProfileBuilder';\nexport * from './ProfessionalValueBuilder';\nexport * from './ProjectBuilder';\nexport * from './SkillBuilder';\nexport * from './SocialNetworkBuilder';\n```\n\n### 7. Reorganize `test/shared/` to mirror `src/shared/`\n\nCurrent flat structure with 14 files needs subdivision:\n\n```bash\ncd test/shared\n\n# Already has: base/, errors/, i18n/, vo/ directories\n# Move files into appropriate subdirectories:\n\n# Base classes\ngit mv Entity.test.ts base/\ngit mv either.test.ts base/\n\n# Error types\ngit mv errors.test.ts errors/\n\n# Internationalization\ngit mv Locale.test.ts i18n/\ngit mv LocalizedText.test.ts i18n/\n\n# Value Objects (remaining files)\ngit mv DateTime.test.ts vo/\ngit mv EmploymentType.test.ts vo/\ngit mv Fluency.test.ts vo/\ngit mv Id.test.ts vo/\ngit mv LocationType.test.ts vo/\ngit mv Name.test.ts vo/\ngit mv SkillType.test.ts vo/\ngit mv Text.test.ts vo/\ngit mv Url.test.ts vo/\n\n# vo/ subdirectory already contains:\n# - DateRange.test.ts\n# - Image.test.ts\n# - Slug.test.ts\n```\n\nAfter reorganization, `test/shared/` structure:\n```\ntest/shared/\n├── base/\n│   ├── Entity.test.ts\n│   └── either.test.ts\n├── errors/\n│   └── errors.test.ts\n├── i18n/\n│   ├── Locale.test.ts\n│   └── LocalizedText.test.ts\n└── vo/\n    ├── DateRange.test.ts\n    ├── DateTime.test.ts\n    ├── EmploymentType.test.ts\n    ├── Fluency.test.ts\n    ├── Id.test.ts\n    ├── Image.test.ts\n    ├── LocationType.test.ts\n    ├── Name.test.ts\n    ├── SkillType.test.ts\n    ├── Slug.test.ts\n    ├── Text.test.ts\n    └── Url.test.ts\n```\n\nThis now mirrors `src/shared/` exactly:\n```\nsrc/shared/\n├── base/\n├── errors/\n├── i18n/\n├── types/\n└── vo/\n```\n\n### 8. Update all import statements\n\nUse find-replace across all test files:\n\n```bash\n# Builder imports\nfind test -name \"*.test.ts\" -exec sed -i \"s|from '[./]*data'|from '../helpers'|g\" {} \\;\nfind test -name \"*.test.ts\" -exec sed -i \"s|from '[./]*data/|from '../helpers/builders/|g\" {} \\;\n\n# Generator imports (Data class)\nfind test -name \"*.test.ts\" -exec sed -i \"s|from '[./]*data/bases'|from '../helpers/generators'|g\" {} \\;\n\n# Builder file internal imports\nfind test/helpers/builders -name \"*.ts\" -exec sed -i \"s|from './bases'|from '../generators'|g\" {} \\;\nfind test/helpers/builders -name \"*.ts\" -exec sed -i \"s|from '../../src'|from '../../../src'|g\" {} \\;\n```\n\nManual verification needed for:\n- `test/helpers/builders/ProjectBuilder.ts:10` → `import { Data } from '../generators';`\n- Any relative imports in entity test files referencing helpers\n\n### 9. Final Directory Structure\n\n```\npackages/core/test/\n├── helpers/\n│   ├── builders/\n│   │   ├── EntityBuilder.ts\n│   │   ├── ExperienceBuilder.ts\n│   │   ├── LanguageBuilder.ts\n│   │   ├── ProfileBuilder.ts\n│   │   ├── ProfessionalValueBuilder.ts\n│   │   ├── ProjectBuilder.ts\n│   │   ├── SkillBuilder.ts\n│   │   ├── SocialNetworkBuilder.ts\n│   │   └── index.ts\n│   ├── generators/\n│   │   ├── EmploymentTypeData.ts\n│   │   ├── FluencyData.ts\n│   │   ├── ImageData.ts\n│   │   ├── LocationTypeData.ts\n│   │   ├── SkillTypeData.ts\n│   │   ├── SlugData.ts\n│   │   ├── TextData.ts\n│   │   └── index.ts\n│   └── index.ts\n├── shared/\n│   ├── base/\n│   │   ├── Entity.test.ts\n│   │   └── either.test.ts\n│   ├── errors/\n│   │   └── errors.test.ts\n│   ├── i18n/\n│   │   ├── Locale.test.ts\n│   │   └── LocalizedText.test.ts\n│   └── vo/\n│       ├── DateRange.test.ts\n│       ├── DateTime.test.ts\n│       ├── EmploymentType.test.ts\n│       ├── Fluency.test.ts\n│       ├── Id.test.ts\n│       ├── Image.test.ts\n│       ├── LocationType.test.ts\n│       ├── Name.test.ts\n│       ├── SkillType.test.ts\n│       ├── Slug.test.ts\n│       ├── Text.test.ts\n│       └── Url.test.ts\n├── experience/\n│   ├── Experience.test.ts\n│   └── ExperienceSkill.test.ts\n├── language/\n│   └── Language.test.ts\n├── professional-value/\n│   └── ProfessionalValue.test.ts\n├── profile/\n│   ├── Profile.test.ts\n│   └── ProfileStat.test.ts\n├── project/\n│   └── Project.test.ts\n├── skill/\n│   ├── Skill.test.ts\n│   └── SkillFactory.test.ts\n└── social-network/\n    └── SocialNetwork.test.ts\n```\n\n## Implementation Notes\n\n- Use `git mv` for all file moves to preserve history\n- Run `pnpm --filter @repo/core test` after each major step (builders, generators, shared subdivision)\n- Use sed for bulk import updates, then manually verify critical files\n- The `TextData` class name was already correct in NameData.ts; only file rename needed\n- Some tests in `test/shared/base/`, `test/shared/errors/`, and `test/shared/i18n/` directories already exist; verify no duplicates before moving\n- Priority: low (architectural cleanup, no functional changes)",
@@ -1989,75 +2063,82 @@
         "updatedAt": "2026-03-15T02:53:51.317Z"
       },
       {
-        "id": 14,
+        "id": "14",
         "title": "[Identity] Fase 1 — authSubject, IUserRepository, migration Prisma",
         "description": "GitHub #443. Link application User to IdP via authSubject; Prisma migration; findByAuthSubject / linkAuthSubject; Validator on User.",
         "details": "See .taskmaster/docs/prd-sprint-0.md (Open backlog — Identity), plans/identity-mvp.md Fase 1, docs/11-IDENTITY.md.\n**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/443",
         "testStrategy": "Unit/domain tests for User + repository contract; migration applies cleanly.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
             "title": "Add authSubject column to User Prisma schema and generate migration",
             "description": "Add nullable UUID authSubject field to the User model in schema.prisma and generate the corresponding Prisma migration",
             "details": "File: packages/infra/prisma/schema.prisma. Add: authSubject String? @unique @db.Uuid. Generate migration: pnpm prisma migrate dev --name add-auth-subject-to-user. Verify migration SQL adds column with UNIQUE constraint.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
-            "parentTaskId": 14
+            "parentTaskId": 14,
+            "updatedAt": "2026-04-03T01:46:29.886Z",
+            "parentId": "undefined"
           },
           {
             "id": 2,
             "title": "Add findByAuthSubject and linkAuthSubject to IUserRepository interface",
             "description": "Extend the IUserRepository port with two new methods for IdP linking",
             "details": "File: packages/core/src/portfolio/entities/user/repositories/IUserRepository.ts. Add: findByAuthSubject(authSubject: string): Promise<User | null>. Add: linkAuthSubject(userId: UserId, authSubject: string): Promise<Either<DomainError, void>>. Export from user index.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
-            "parentTaskId": 14
+            "parentTaskId": 14,
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T01:46:29.900Z"
           },
           {
             "id": 3,
             "title": "Implement findByAuthSubject and linkAuthSubject in PrismaUserRepository",
             "description": "Add the new repository methods to the Prisma implementation",
             "details": "File: packages/infra/src/repositories/user/PrismaUserRepository.ts. findByAuthSubject: prisma.user.findUnique({where: {authSubject}}), map to domain. linkAuthSubject: prisma.user.update({where: {id}, data: {authSubject}}), return Either.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
-            "parentTaskId": 14
+            "parentTaskId": 14,
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T01:46:29.914Z"
           },
           {
             "id": 4,
             "title": "Add authSubject validation (optional UUID) to User entity",
             "description": "Add Validator check for authSubject as optional UUID in User.create() following the Validator chain pattern",
             "details": "File: packages/core/src/portfolio/entities/user/model/User.ts. In create(): if props.authSubject is provided, use Validator.of(props.authSubject).refine(v => UUID_REGEX.test(v), 'authSubject must be a valid UUID.').validate(). Return left(ValidationError) on failure.",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
-            "parentTaskId": 14
+            "parentTaskId": 14,
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T01:46:29.923Z"
           },
           {
             "id": 5,
             "title": "Write unit tests for User authSubject validation and repository contract",
             "description": "Tests for User.create() with valid/invalid authSubject and repository contract tests for new methods",
             "details": "User.test.ts: should create User with valid authSubject, should return ValidationError for invalid UUID authSubject, should create User without authSubject (optional). IUserRepository contract tests: findByAuthSubject returns User or null, linkAuthSubject returns right(void).",
-            "status": "pending",
+            "status": "done",
             "dependencies": [],
-            "parentTaskId": 14
+            "parentTaskId": 14,
+            "parentId": "undefined",
+            "updatedAt": "2026-04-03T01:46:29.937Z"
           }
         ],
-        "updatedAt": "2026-04-02T03:21:49.111Z"
+        "updatedAt": "2026-04-03T01:46:29.937Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-04-02T03:21:49.111Z",
+      "lastModified": "2026-04-03T01:46:29.937Z",
       "taskCount": 14,
-      "completedCount": 12,
+      "completedCount": 14,
       "tags": [
         "sprint-0"
-      ],
-      "created": "2026-03-15T22:17:40.578Z",
-      "description": "Tasks for sprint-0 context",
-      "updated": "2026-03-15T22:17:40.578Z"
+      ]
     }
   },
   "sprint-1": {

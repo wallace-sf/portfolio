@@ -39,8 +39,18 @@ describe('PrismaProfileRepository', () => {
           featuredProjectSlugs: raw.featuredProjectSlugs,
           stats: {
             create: [
-              { label: { 'pt-BR': 'B' }, value: '2', icon: 'b-icon', order: 1 },
-              { label: { 'pt-BR': 'A' }, value: '1', icon: 'a-icon', order: 0 },
+              {
+                label: { 'en-US': 'B', 'pt-BR': 'B' },
+                value: '2',
+                icon: 'b-icon',
+                order: 1,
+              },
+              {
+                label: { 'en-US': 'A', 'pt-BR': 'A' },
+                value: '1',
+                icon: 'a-icon',
+                order: 0,
+              },
             ],
           },
         },
@@ -50,8 +60,8 @@ describe('PrismaProfileRepository', () => {
 
       expect(profile).not.toBeNull();
       expect(profile!.id.value).toBe(raw.id);
-      expect(profile!.stats[0]!.label.value).toEqual({ 'pt-BR': 'A' });
-      expect(profile!.stats[1]!.label.value).toEqual({ 'pt-BR': 'B' });
+      expect(profile!.stats[0]!.label.value).toEqual({ 'en-US': 'A', 'pt-BR': 'A' });
+      expect(profile!.stats[1]!.label.value).toEqual({ 'en-US': 'B', 'pt-BR': 'B' });
     });
 
     it('should return the profile with featuredProjectSlugs', async () => {
@@ -97,7 +107,14 @@ describe('PrismaProfileRepository', () => {
         ...raw,
         name: 'Wallace Updated',
         stats: [
-          { id: crypto.randomUUID(), profileId: raw.id, label: { 'pt-BR': 'Novo stat' }, value: '99', icon: 'star', order: 0 },
+          {
+            id: crypto.randomUUID(),
+            profileId: raw.id,
+            label: { 'en-US': 'New stat', 'pt-BR': 'Novo stat' },
+            value: '99',
+            icon: 'star',
+            order: 0,
+          },
         ],
       });
       const updated = ProfileMapper.toDomain(updatedRaw);

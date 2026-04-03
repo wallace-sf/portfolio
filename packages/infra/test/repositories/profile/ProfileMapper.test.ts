@@ -23,15 +23,29 @@ describe('ProfileMapper', () => {
     it('should order stats by the order field', () => {
       const raw = buildPrismaProfile({
         stats: [
-          { id: crypto.randomUUID(), profileId: crypto.randomUUID(), label: { 'pt-BR': 'B' }, value: '2', icon: 'b-icon', order: 1 },
-          { id: crypto.randomUUID(), profileId: crypto.randomUUID(), label: { 'pt-BR': 'A' }, value: '1', icon: 'a-icon', order: 0 },
+          {
+            id: crypto.randomUUID(),
+            profileId: crypto.randomUUID(),
+            label: { 'en-US': 'B', 'pt-BR': 'B' },
+            value: '2',
+            icon: 'b-icon',
+            order: 1,
+          },
+          {
+            id: crypto.randomUUID(),
+            profileId: crypto.randomUUID(),
+            label: { 'en-US': 'A', 'pt-BR': 'A' },
+            value: '1',
+            icon: 'a-icon',
+            order: 0,
+          },
         ],
       });
 
       const profile = ProfileMapper.toDomain(raw);
 
-      expect(profile.stats[0]!.label.value).toEqual({ 'pt-BR': 'A' });
-      expect(profile.stats[1]!.label.value).toEqual({ 'pt-BR': 'B' });
+      expect(profile.stats[0]!.label.value).toEqual({ 'en-US': 'A', 'pt-BR': 'A' });
+      expect(profile.stats[1]!.label.value).toEqual({ 'en-US': 'B', 'pt-BR': 'B' });
     });
 
     it('should map featuredProjectSlugs to Slug VOs', () => {
