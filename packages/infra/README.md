@@ -27,9 +27,9 @@
 
 ## Supabase
 
-- **Função**: Postgres (tabelas `projects`, `posts`, `tags`, etc.), Auth (se necessário para admin/Contact) e Realtime (opcional para Blog).
-- **Cliente**: `@supabase/supabase-js` no Node e, se fizer sentido, no edge (Route Handlers Next.js).
-- **Variáveis**: `SUPABASE_URL`, `SUPABASE_ANON_KEY`; em contextos server-only, `SUPABASE_SERVICE_ROLE_KEY` — **nunca expor no client**.
+- **Função**: Postgres (portfolio, identity, etc.). **Auth** deve passar por um adaptador que implemente **`IAuthenticationGateway`** (`@repo/application`): o SDK **não** deve ser usado em `apps/web` (UI/middleware); apenas em classes deste pacote, chamadas pelos Route Handlers via container ([docs/11-IDENTITY](../../docs/11-IDENTITY.md)).
+- **Cliente**: `@supabase/supabase-js` (e, se necessário, `@supabase/ssr`) **apenas** em `packages/infra`, não no bundle do cliente.
+- **Variáveis**: `SUPABASE_URL`, `SUPABASE_ANON_KEY` para o adaptador no servidor; `SUPABASE_SERVICE_ROLE_KEY` só para operações server-only — **nunca** expor chaves sensíveis ao browser; login via `POST /api/v1/auth/sign-in` quando implementado.
 
 ---
 
@@ -54,6 +54,11 @@ Visão prevista (nomes e colunas podem mudar na implementação):
 
 - **`contacts`** ou integração com serviço externo (Resend, etc.); a definir.
 
+### Identity (planejado)
+
+- **`users`**: `id`, `auth_id` (uuid, FK auth.users), `email`, `role` (ADMIN/VISITOR), `created_at`, `updated_at`, `deleted_at`
+- RLS: leitura própria; escrita apenas via service_role
+
 ---
 
 ## Repositórios e ports
@@ -63,6 +68,7 @@ Cada repositório na Infra implementa uma interface (port) da Application, por e
 - **`IProjectRepository`** → `ProjectRepositorySupabase`: `findAll()`, `findById(id)`
 - **`IPostRepository`** → `PostRepositorySupabase`: `findPublished(limit, offset, tag?)`, `findBySlug(slug)`
 - **`ITagRepository`** → `TagRepositorySupabase`: `findAll()`
+- **`IUserRepository`** → `SupabaseUserRepository`: `findByAuthId()`, `findByEmail()`, `save()`
 - **`IContactSender`** (ou similar) → adapter para Supabase/Resend/etc.
 
 Os nomes exatos dos ports e métodos serão definidos em `packages/application` ou em [docs/APPLICATION.md](../docs/APPLICATION.md).
@@ -106,6 +112,7 @@ packages/infra/
 │   ├── repositories/
 │   │   ├── ProjectRepositorySupabase.ts
 │   │   ├── PostRepositorySupabase.ts
+│   │   ├── SupabaseUserRepository.ts
 │   │   └── TagRepositorySupabase.ts
 │   ├── mappers/
 │   │   ├── ProjectMapper.ts

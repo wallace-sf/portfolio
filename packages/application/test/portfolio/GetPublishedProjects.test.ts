@@ -153,13 +153,12 @@ describe('GetPublishedProjects', () => {
       expect(enDto.theme).toBe('Theme EN');
     });
 
-    it('should include mapped skills descriptions in DTO', async () => {
-      const project = makeProject({
-        skills: [
-          { description: 'TypeScript', icon: 'ts', type: 'TECHNOLOGY' },
-          { description: 'Next.js', icon: 'next', type: 'TECHNOLOGY' },
-        ],
-      });
+    it('should include skill IDs in DTO', async () => {
+      const skillIds = [
+        'a0000000-0000-4000-8000-000000000001',
+        'a0000000-0000-4000-8000-000000000002',
+      ];
+      const project = makeProject({ skills: skillIds });
       const repo = makeRepository({ findPublished: vi.fn().mockResolvedValue([project]) });
       const useCase = new GetPublishedProjects(repo);
 
@@ -167,7 +166,7 @@ describe('GetPublishedProjects', () => {
 
       expect(result.isRight()).toBe(true);
       const dto = (result.value as ProjectSummaryDTO[])[0]!;
-      expect(dto.skills).toEqual(['TypeScript', 'Next.js']);
+      expect(dto.skills).toEqual(skillIds);
     });
 
     it('should return Left with DomainError when repository throws', async () => {

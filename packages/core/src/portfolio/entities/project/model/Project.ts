@@ -4,7 +4,8 @@ import {
   collect,
   DateRange,
   Either,
-  Entity,
+  AggregateRoot,
+  Id,
   IEntityProps,
   ILocalizedTextInput,
   Image,
@@ -15,7 +16,6 @@ import {
   left,
   right,
 } from '../../../../shared';
-import { ISkillProps, Skill, SkillFactory } from '../../skill';
 import { ProjectStatus } from './ProjectStatus';
 
 export interface IProjectCoverImage {
@@ -34,19 +34,18 @@ export interface IProjectProps extends IEntityProps {
   title: ILocalizedTextInput;
   caption: ILocalizedTextInput;
   content: string;
-  skills: ISkillProps[];
+  skills: string[];
   theme?: ILocalizedTextInput;
   summary?: ILocalizedTextInput;
   objectives?: ILocalizedTextInput;
   role?: ILocalizedTextInput;
-  team?: string;
   period: IProjectPeriod;
   featured: boolean;
   status: ProjectStatus;
   relatedProjects?: string[];
 }
 
-export class Project extends Entity<Project, IProjectProps> {
+export class Project extends AggregateRoot<Project, IProjectProps> {
   static readonly ERROR_CODE = 'INVALID_PROJECT';
 
   public readonly slug: Slug;
@@ -54,12 +53,11 @@ export class Project extends Entity<Project, IProjectProps> {
   public readonly title: LocalizedText;
   public readonly caption: LocalizedText;
   public readonly content: Text;
-  public readonly skills: Skill[];
+  public readonly skills: Id[];
   public readonly theme: LocalizedText | undefined;
   public readonly summary: LocalizedText | undefined;
   public readonly objectives: LocalizedText | undefined;
   public readonly role: LocalizedText | undefined;
-  public readonly team: string | undefined;
   public readonly period: DateRange;
   public readonly featured: boolean;
   public readonly status: ProjectStatus;
@@ -72,7 +70,7 @@ export class Project extends Entity<Project, IProjectProps> {
     title: LocalizedText,
     caption: LocalizedText,
     content: Text,
-    skills: Skill[],
+    skills: Id[],
     theme: LocalizedText | undefined,
     summary: LocalizedText | undefined,
     objectives: LocalizedText | undefined,
@@ -91,7 +89,6 @@ export class Project extends Entity<Project, IProjectProps> {
     this.summary = summary;
     this.objectives = objectives;
     this.role = role;
-    this.team = props.team;
     this.period = period;
     this.featured = props.featured;
     this.status = props.status;
@@ -118,7 +115,6 @@ export class Project extends Entity<Project, IProjectProps> {
       LocalizedText.create(props.title ?? { 'pt-BR': '' }),
       LocalizedText.create(props.caption ?? { 'pt-BR': '' }),
       Text.create(props.content, { min: 3, max: 500000 }),
-      SkillFactory.bulk(props.skills),
       DateRange.create(props.period?.start, props.period?.end),
       props.theme
         ? LocalizedText.create(props.theme)
@@ -141,13 +137,19 @@ export class Project extends Entity<Project, IProjectProps> {
       title,
       caption,
       content,
-      skills,
       period,
       theme,
       summary,
       objectives,
       role,
     ] = fieldsResult.value;
+
+    const skills: Id[] = [];
+    for (const skillId of props.skills ?? []) {
+      const idResult = Id.create(skillId);
+      if (idResult.isLeft()) return left(idResult.value);
+      skills.push(idResult.value);
+    }
 
     const relatedResult = collect(
       (props.relatedProjects ?? []).map((s) => Slug.create(s)),

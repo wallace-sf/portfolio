@@ -93,6 +93,34 @@ A contact form submission. Contains name, email, and message body.
 
 ---
 
+## Domain Terms — Identity Context
+
+### User
+
+Aggregate root em `@repo/core/identity`. Identificador (`Id`), `Name`, `Email`, `Role`. Métodos `isAdmin()` / `isVisitor()`. O vínculo com o IdP será tipicamente uma coluna **`authSubject`** (UUID estável, ex. `sub` do Supabase) na persistência — **planeado**; senhas ficam só no IdP.
+
+### authSubject
+
+Identificador externo do utilizador no provedor de auth (ex. id em `auth.users`). Liga a sessão ao registo `User` da aplicação; ver [11-IDENTITY](./11-IDENTITY.md).
+
+### IAuthenticationGateway (application port)
+
+Contrato para ler sessão, sign-in, sign-out e refresh **sem** expor Supabase à application ou ao front. Implementação concreta na infra; ver [11-IDENTITY](./11-IDENTITY.md).
+
+### Role
+
+Enum (`ADMIN` | `VISITOR`). `ADMIN` desbloqueia operações de gestão quando a API e os casos de uso (`EnsureAdmin`) o exigem.
+
+### EnsureAdmin (application use case)
+
+Caso de uso que verifica se o utilizador existe e é `ADMIN`; caso contrário devolve `UnauthorizedError`. Substitui um objeto `AccessPolicy` separado enquanto as regras forem binárias.
+
+### UnauthorizedError
+
+Erro de domínio (`code` `UNAUTHORIZED`) para falhas de autorização (ex.: utilizador autenticado sem privilégio de admin). Na API, mapeia tipicamente a HTTP **401** (ver [05-API-CONTRACTS](./05-API-CONTRACTS.md)).
+
+---
+
 ## Domain Terms — Shared Kernel Value Objects
 
 ### Either
@@ -258,6 +286,7 @@ An interface defined in the application layer representing a dependency on an ex
 DomainError (abstract)
   └── ValidationError    — invariant violations, invalid input
   └── NotFoundError      — entity lookup failures
+  └── UnauthorizedError  — auth/authorization failures (planejado)
 ```
 
 All domain errors use a static `ERROR_CODE` constant in `SCREAMING_SNAKE_CASE` (e.g., `INVALID_SLUG`, `INVALID_DATE_RANGE`).

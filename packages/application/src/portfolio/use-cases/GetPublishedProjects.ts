@@ -40,7 +40,7 @@ export class GetPublishedProjects extends UseCase<GetPublishedProjectsInput, Pro
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((s) => s.description.value),
+      skills: project.skills.map((id) => id.value),
       publishedAt: project.period.startAt.value,
     };
   }

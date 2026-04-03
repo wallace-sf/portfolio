@@ -9,13 +9,9 @@ import { useBreakpoint } from '~hooks';
 
 import { SkillGroup } from '../SkillGroup';
 
-export const ExperienceCard: FC<IExperienceProps> = ({
-  company,
-  position,
-  skills,
-}) => {
+export const ExperienceCard: FC<IExperienceProps> = ({ company, position }) => {
   const isXL = useBreakpoint('xl');
-  const skillProps = skills.map((s) => s.skill);
+  const skillProps: string[] = [];
 
   return (
     <article className="flex flex-col py-6 px-3 bg-dark-200 rounded-xl gap-y-3">

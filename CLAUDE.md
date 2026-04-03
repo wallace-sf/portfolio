@@ -14,7 +14,7 @@ Always prioritize clean, testable, extensible code.
 apps/
   web/          → Public portfolio (Next.js 14+ App Router)
   blog/         → Blog (future, post-MVP)
-  api/          → Backend (Next.js API Routes, future)
+  api/          → Optional dedicated HTTP app if routes outgrow apps/web/app/api
 
 packages/
   core/         → Domain + Shared Kernel (entities, VOs, repository interfaces)
@@ -44,6 +44,7 @@ All project documentation lives in `docs/` with a numbered structure.
 | Testing strategy | [08-TESTING](./docs/08-TESTING.md) |
 | Code templates (Either, VO, Entity) | [09-PATTERNS](./docs/09-PATTERNS.md) |
 | Domain and architectural terms | [10-GLOSSARY](./docs/10-GLOSSARY.md) |
+| Identity (auth, REST boundary) | [11-IDENTITY](./docs/11-IDENTITY.md) |
 
 ---
 
@@ -56,7 +57,7 @@ core ← application ← infra ← web / api
 - **`packages/core`**: zero framework dependencies (no React, Next.js, Prisma, Axios)
 - **`packages/application`**: depends only on `core`; defines port interfaces
 - **`packages/infra`**: implements ports; knows `core` and `application`
-- **`apps/web` / `apps/api`**: presentation; calls application layer only
+- **`apps/web` / `apps/api`**: **HTTP route handlers** compose infra + application (use cases). **Pages and React code consume only the REST API** — they do not import `@repo/application`. See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) and [05-API-CONTRACTS](./docs/05-API-CONTRACTS.md).
 
 See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) for full layer rules and ESLint enforcement.
 
@@ -212,13 +213,15 @@ interface IProjectRepository {
 
 - Business logic in React components, controllers, or repositories
 - Importing Prisma / ORM inside `core` or `application`
-- `useEffect` for data fetching — use TanStack Query or Server Components
+- `useEffect` for data fetching — use TanStack Query (client) or `fetch` to `/api/v1/...` (Server Components); never call use cases from components
 - `throw` for domain business-rule errors — use Either pattern
 - Public setters on entities — use business-semantic methods
 - `any` in types — use explicit types or `unknown`
 - `<img>` or `<a>` for internal Next.js navigation
 - Tests that verify implementation instead of behavior
 - Direct imports between bounded contexts — use only the Shared Kernel
+- Importing `@repo/application` or calling use cases from `apps/web` pages, layouts, or client components — use HTTP to `/api/v1/...` instead
+- Importing `@supabase/*` or other IdP SDKs from `apps/web` UI or `middleware.ts` — auth belongs behind `IAuthenticationGateway` in `@repo/infra` and REST routes; see [11-IDENTITY](./docs/11-IDENTITY.md)
 
 ---
 

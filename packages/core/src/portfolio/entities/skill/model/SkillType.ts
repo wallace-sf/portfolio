@@ -1,0 +1,7 @@
+export enum SkillType {
+  EDUCATION = 'EDUCATION',
+  TECHNOLOGY = 'TECHNOLOGY',
+  LANGUAGE = 'LANGUAGE',
+  SOFT = 'SOFT',
+  OTHER = 'OTHER',
+}

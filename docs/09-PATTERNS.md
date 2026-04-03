@@ -203,12 +203,14 @@ Apply only when solving a real problem. Comment with `// Pattern: <Name>`.
 ## `apps/web` Patterns
 
 ```typescript
-// ✅ Server Component consuming a use case
+// ✅ Server Component — data via REST (use cases run inside Route Handlers only)
 export default async function ProjectsPage() {
-  const useCase = container.resolve(GetPublishedProjectsUseCase);
-  const result = await useCase.execute({ locale: 'pt-BR' });
-  if (result.isLeft()) notFound();
-  return <ProjectList projects={result.value} />;
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/projects?locale=pt-BR`, {
+    cache: 'no-store',
+  });
+  const body = await res.json();
+  if (!res.ok || body.error) notFound();
+  return <ProjectList projects={body.data} />;
 }
 ```
 

@@ -3,13 +3,11 @@ import {
   IProjectCoverImage,
   IProjectPeriod,
   IProjectProps,
-  ISkillProps,
   Project,
   ProjectStatus,
 } from '../../../src';
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
-import { SkillBuilder } from './SkillBuilder';
 
 export class ProjectBuilder extends EntityBuilder<IProjectProps> {
   private constructor(props: IProjectProps) {
@@ -20,10 +18,13 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return new ProjectBuilder({
       slug: Data.slug.valid(),
       coverImage: { url: Data.image.url(), alt: Data.image.alt() },
-      title: { 'pt-BR': Data.text.title() },
-      caption: { 'pt-BR': Data.text.caption() },
+      title: { 'en-US': Data.text.title(), 'pt-BR': Data.text.title() },
+      caption: { 'en-US': Data.text.caption(), 'pt-BR': Data.text.caption() },
       content: Data.text.text(),
-      skills: SkillBuilder.listToProps(2),
+      skills: [
+        'a0000000-0000-4000-8000-000000000001',
+        'a0000000-0000-4000-8000-000000000002',
+      ],
       period: { start: '2024-01-01' },
       featured: false,
       status: ProjectStatus.DRAFT,
@@ -66,7 +67,7 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return this;
   }
 
-  public withSkills(skills: ISkillProps[]): ProjectBuilder {
+  public withSkills(skills: string[]): ProjectBuilder {
     this._props.skills = skills;
     return this;
   }
@@ -88,11 +89,6 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
 
   public withRole(role: ILocalizedTextInput): ProjectBuilder {
     this._props.role = role;
-    return this;
-  }
-
-  public withTeam(team: string): ProjectBuilder {
-    this._props.team = team;
     return this;
   }
 

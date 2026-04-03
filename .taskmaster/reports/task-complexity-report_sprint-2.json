@@ -1,0 +1,69 @@
+{
+	"meta": {
+		"generatedAt": "2026-03-21T04:10:47.543Z",
+		"tasksAnalyzed": 7,
+		"totalTasks": 7,
+		"analysisCount": 7,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": true
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Configure packages/infra with Prisma + Supabase",
+			"complexityScore": 6,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Break down the Prisma + Supabase infrastructure setup into subtasks covering: (1) package initialization with dependencies, (2) schema.prisma datasource configuration, (3) Project model definition with JSONB fields, (4) Experience + ExperienceSkill models with relations, (5) Profile + ProfileStat + SocialNetwork models, (6) Skill model, (7) PrismaClient singleton setup, (8) initial migration generation and testing. Each subtask should be independently testable.",
+			"reasoning": "Medium-high complexity due to: (1) greenfield infra package setup, (2) complex Prisma schema with 7 models, many JSONB fields for LocalizedText, multiple relations (1:many, many:many via join table), and soft-delete pattern, (3) UUID primary keys throughout, (4) requires careful mapping of domain concepts (enums, optional fields, arrays) to Prisma schema, (5) migration setup and DATABASE_URL configuration. However, the domain is well-defined and Prisma's schema language is straightforward. Main challenges are ensuring schema matches domain entities exactly and handling JSONB properly."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Implement PrismaProjectRepository",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break down PrismaProjectRepository implementation into subtasks: (1) Create ProjectMapper.toDomain with JSONB-to-VO parsing for all LocalizedText fields, Image, DateRange, Slug, and Skill[] relation mapping, (2) Create ProjectMapper.toPrisma for domain-to-Prisma conversion, (3) Implement findAll/findPublished/findFeatured with status filtering and soft-delete checks, (4) Implement findById and findBySlug with proper includes, (5) Implement findRelated with slug-based filtering, (6) Implement save (upsert) and delete (soft-delete) operations. Focus on comprehensive error handling and Either propagation.",
+			"reasoning": "High complexity due to: (1) Complex bidirectional mapping between 10+ VOs/entities (Slug, Image, LocalizedText x5, Text, DateRange, Skill[], Slug[]) and Prisma's JSONB representation, (2) Skill relation must be included and mapped through SkillFactory.bulk, (3) relatedProjectSlugs is a string[] that must be converted to/from Slug[] VOs, (4) Multiple query methods with varying filters (published, featured, related), (5) Soft-delete pattern (deletedAt checks), (6) Upsert logic complexity, (7) Error handling from Either-based domain methods must be handled correctly. Project entity has the most complex structure of all entities."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Implement PrismaExperienceRepository",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down PrismaExperienceRepository into subtasks: (1) Create ExperienceMapper.toDomain handling JSONB LocalizedText fields (company, position, location, description), Image, EmploymentType/LocationType VOs, DateRange, and the ExperienceSkill[] join table relation with nested skill data and workDescription, (2) Create ExperienceMapper.toPrisma, (3) Implement findAll with nested experienceSkills include and skill relation, ordered by startAt DESC, (4) Implement findById with same includes, (5) Implement save (upsert with nested writes for join table) and delete (hard delete with cascade). Ensure workDescription from join table is preserved.",
+			"reasoning": "Medium-high complexity due to: (1) Complex many-to-many relation through ExperienceSkill join table where the join table itself has data (workDescription as LocalizedText), requiring careful Prisma include and nested mapping, (2) 4 LocalizedText JSONB fields plus Image, EmploymentType VO, LocationType VO, DateRange VO to map, (3) Ordering by startAt DESC for professional timeline, (4) Upsert with nested experienceSkills relation writes is non-trivial, (5) Hard delete with cascade to join table. The join table with its own data (not just FKs) adds significant complexity compared to simple relations."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Implement PrismaProfileRepository",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down PrismaProfileRepository into subtasks: (1) Create ProfileMapper.toDomain parsing Name, LocalizedText fields (headline, bio), Image, and the two 1:many relations (stats with order field and LocalizedText labels, socialNetworks), plus featuredProjectSlugs string[] to Slug[] conversion, (2) Create ProfileMapper.toPrisma, (3) Implement find() using findFirst (singleton profile assumption) with nested stats (ordered by order ASC) and socialNetworks includes, (4) Implement save (upsert) with nested writes for stats and socialNetworks, (5) Add error handling for when no profile exists vs. successful null return.",
+			"reasoning": "Medium complexity due to: (1) Two 1:many nested relations (stats, socialNetworks) requiring careful Prisma includes and mapping, (2) ProfileStat has both a LocalizedText label (JSONB) and an order field for sorting, (3) featuredProjectSlugs is string[] that must be validated as Slug[] VOs (max 6 enforced by domain), (4) Single-profile assumption (findFirst instead of findUnique) is a special case to handle, (5) Upsert with two nested relations. Less complex than Project/Experience because relations are simpler (1:many instead of many:many, no join table data)."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Implement ResendEmailService",
+			"complexityScore": 3,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down ResendEmailService into subtasks: (1) Install resend dependency and set up types, (2) Implement ResendEmailService class with injected Resend client, constructor accepting config (API key, recipient email), (3) Implement send() method wrapping resend.emails.send with proper error handling, Either pattern (right on success, left(DomainError) on API failure), and email template with name/email/message fields, (4) Create unit tests with mocked Resend client testing success/failure paths and correct parameter passing.",
+			"reasoning": "Low-medium complexity: (1) Simple external service integration with single method, (2) Resend API is straightforward (send with from/to/replyTo/subject/html), (3) Either pattern for error handling is standard, (4) HTML email template is basic (no complex styling needed), (5) Configuration via env vars is simple. Main work is proper error wrapping and testing with mocks. Significantly simpler than repository implementations."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Create dependency injection container",
+			"complexityScore": 4,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down DI container creation into subtasks: (1) Create container.ts with makeContainer() factory function initializing PrismaClient and Resend client singletons, (2) Instantiate all four repositories (PrismaProjectRepository, PrismaExperienceRepository, PrismaProfileRepository, PrismaSkillRepository if needed) with PrismaClient injection, (3) Instantiate ResendEmailService with Resend client and email config from env, (4) Implement env var validation throwing descriptive errors for missing required vars (DATABASE_URL, DIRECT_URL, RESEND_API_KEY, CONTACT_EMAIL_TO), (5) Export Container type and makeContainer, ensure singleton pattern, add integration test calling container and using repos.",
+			"reasoning": "Medium complexity: (1) Manual DI container (no framework) requires careful singleton management for PrismaClient (critical to avoid connection pool exhaustion), (2) Must instantiate 4-5 concrete implementations with correct dependency injection, (3) Environment validation logic needed for multiple required vars with clear error messages, (4) Type safety for Container return type, (5) Testing requires mocking env vars. However, the pattern is straightforward factory function, and there are only ~6 dependencies to wire. Depends on tasks 2-5 being complete."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Define Response Envelope and implement GET /api/v1/projects/:slug",
+			"complexityScore": 5,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break down API envelope and first endpoint into subtasks: (1) Create envelope.ts with ApiResponse<T> type (success/error variants), successResponse and errorResponse helper functions, (2) Create error-mapper.ts with mapDomainErrorToHttp function mapping DomainError subclasses (ValidationError, NotFoundError) to HTTP status codes (400, 404, 500) and localized error messages, (3) Implement GET /api/v1/projects/[slug]/route.ts extracting slug param and locale from request, (4) Wire up GetProjectBySlug use case from container, execute with Slug VO, (5) Map Either result to HTTP response using envelope (left → errorResponse with status, right → successResponse with DTO), (6) Add integration tests for route (valid slug 200, invalid slug 400, not found 404) and unit tests for helpers.",
+			"reasoning": "Medium complexity: (1) API envelope pattern is a new cross-cutting concern affecting all future endpoints, (2) Error mapping from domain errors to HTTP requires understanding the error taxonomy (ValidationError vs NotFoundError vs generic DomainError) and choosing appropriate status codes, (3) Next.js App Router API routes have specific patterns (NextRequest, NextResponse, params), (4) Locale extraction and i18n error messages add complexity, (5) Integration testing requires test DB setup. However, the use case is already implemented, and Next.js patterns are standard. Main work is envelope design and error mapping."
+		}
+	]
+}

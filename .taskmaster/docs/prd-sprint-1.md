@@ -415,6 +415,131 @@ Update `docs/09-PATTERNS.md` and `docs/06-VALIDATION.md` to reference the VO vs 
 
 ---
 
+---
+
+### T-DDD1 — Remove ExperienceSkill and reference Skill by Id
+
+**GitHub Issue**: #400
+**Priority**: Medium
+**Dependencies**: T-08
+
+Remove the `ExperienceSkill` VO and replace it with `Id[]` references inside the `Experience` aggregate. In strict DDD, distinct aggregates reference each other by `Id`, not by embedded object.
+
+**Motivation**: `ExperienceSkill` was created to carry `workDescription` per skill. `Experience.description` is sufficient, making the VO superfluous.
+
+**Acceptance Criteria**:
+
+- `Experience.skills` typed as `Id[]`; `IExperienceProps.skills: string[]`
+- `ExperienceSkill.ts` and its test deleted
+- `ExperienceBuilder.withSkills` accepts `string[]` (IDs)
+- `ExperienceDTO.skills` changed to `string[]`
+- `ExperienceSkillDTO.ts` deleted
+- `GetExperiences` use case updated: `skills: experience.skills.map(id => id.value)`
+- `ExperienceMapper` maps skill IDs; `toPrisma` drops `workDescription`
+- `PrismaExperienceRepository.save` uses `{ skillId: id.value }`
+- `schema.prisma`: `workDescription` column removed from `ExperienceSkill` model
+- New Prisma migration dropping the column
+- All tests passing
+
+**Files**:
+
+- `packages/core/.../experience/model/Experience.ts` ← update
+- `packages/core/.../experience/model/ExperienceSkill.ts` ← delete
+- `packages/application/.../dtos/ExperienceDTO.ts` ← update
+- `packages/application/.../dtos/ExperienceSkillDTO.ts` ← delete
+- `packages/application/.../use-cases/GetExperiences.ts` ← update
+- `packages/infra/.../experience/ExperienceMapper.ts` ← update
+- `packages/infra/prisma/schema.prisma` ← update
+
+---
+
+### T-DDD2 — Convert SkillType, Fluency, LocationType, EmploymentType to inline enums
+
+**GitHub Issue**: #401
+**Priority**: Medium
+**Dependencies**: T-DDD1
+
+These four VOs each contain only a single `.in([...])` rule and are used by exactly one entity. Per `CLAUDE.md`, stable enums with a single rule must be primitives/enums validated with `Validator.of(...).in([...])` inside the owning entity's `create()`. They do not belong in the Shared Kernel.
+
+**Acceptance Criteria**:
+
+- `SkillType.ts`, `Fluency.ts`, `LocationType.ts`, `EmploymentType.ts` deleted from `shared/vo/`
+- Each entity exports its own `SKILL_TYPES`, `FLUENCY_LEVELS`, `LOCATION_TYPES`, `EMPLOYMENT_TYPES` constants and value types
+- Each entity's `create()` validates the property with `Validator.of(value).in([...]).validate()`
+- `shared/vo/index.ts` no longer exports the four removed VOs
+- All importers (entities, mappers, DTOs, tests) updated
+- `ExperienceMapper` `LOCATION_TYPE_MAP` / `LOCATION_TYPE_REVERSE_MAP` preserved with updated imports
+- All tests passing
+
+**Files**:
+
+- `packages/core/src/shared/vo/SkillType.ts` ← delete
+- `packages/core/src/shared/vo/Fluency.ts` ← delete
+- `packages/core/src/shared/vo/LocationType.ts` ← delete
+- `packages/core/src/shared/vo/EmploymentType.ts` ← delete
+- `packages/core/src/shared/vo/index.ts` ← remove exports
+- `packages/core/.../skill/model/Skill.ts` ← inline SkillType
+- `packages/core/.../language/model/Language.ts` ← inline Fluency (if applicable)
+- `packages/core/.../experience/model/Experience.ts` ← inline LocationType, EmploymentType
+
+---
+
+### T-DDD3 — Create IRepository<T> base interface in Shared Kernel
+
+**GitHub Issue**: #402
+**Priority**: Medium
+**Dependencies**: T-08
+
+`IExperienceRepository`, `ISkillRepository`, and `IProjectRepository` repeat the same four method signatures without a shared contract. A generic base interface enforces consistent naming and makes the pattern explicit. `IProfileRepository` stays independent — `Profile` is a singleton with no `findById` or `delete`.
+
+**Acceptance Criteria**:
+
+- `IRepository<T>` created in `core/src/shared/base/IRepository.ts` with `findAll()`, `findById(id: Id)`, `save(entity: T)`, `delete(id: Id)`
+- `core/src/shared/base/index.ts` exports `IRepository`
+- `IExperienceRepository` extends `IRepository<Experience>`
+- `ISkillRepository` extends `IRepository<Skill>`
+- `IProjectRepository` extends `IRepository<Project>` (retains extra methods)
+- `IProfileRepository` unchanged
+- All tests passing
+
+**Files**:
+
+- `packages/core/src/shared/base/IRepository.ts` ← create
+- `packages/core/src/shared/base/index.ts` ← export
+- `packages/core/.../experience/repositories/IExperienceRepository.ts` ← extend
+- `packages/core/.../skill/repositories/ISkillRepository.ts` ← extend
+- `packages/core/.../project/repositories/IProjectRepository.ts` ← extend
+
+---
+
+### T-DDD4 — Create AggregateRoot class and classify internal entities
+
+**GitHub Issue**: #403
+**Priority**: Medium
+**Dependencies**: T-05, T-06, T-DDD1
+
+Create a semantic `AggregateRoot` base class that communicates design intent. With `BlogPost` on the roadmap, the pattern will appear in multiple bounded contexts and the base class pays for itself.
+
+**Acceptance Criteria**:
+
+- `AggregateRoot<T, TProps> extends Entity<T, TProps>` created (empty body for now)
+- `core/src/shared/base/index.ts` exports `AggregateRoot`
+- `Experience`, `Skill`, `Project`, `Profile` extend `AggregateRoot` instead of `Entity`
+- Decision documented: `Language`, `ProfessionalValue`, `SocialNetwork` evaluated — if they have their own identity and lifecycle → aggregate roots (get repository + extend `AggregateRoot`); if only meaningful inside `Profile` → internal entities or VOs
+- `ProfileStat` evaluated: adopt `Entity` or `ValueObject` base, or remain a plain class with documented rationale
+- All tests passing
+
+**Files**:
+
+- `packages/core/src/shared/base/AggregateRoot.ts` ← create
+- `packages/core/src/shared/base/index.ts` ← export
+- `packages/core/.../experience/model/Experience.ts` ← extend AggregateRoot
+- `packages/core/.../skill/model/Skill.ts` ← extend AggregateRoot
+- `packages/core/.../project/model/Project.ts` ← extend AggregateRoot
+- `packages/core/.../profile/model/Profile.ts` ← extend AggregateRoot
+
+---
+
 ## Execution Order
 
 ```
@@ -435,7 +560,27 @@ T-09 (packages/application scaffold)
   │     └── T-16 (GetProfile)
   └── T-11 (IEmailService port)
         └── T-17 (SendContactMessage)
+
+T-DDD1 (Remove ExperienceSkill)
+  └── T-DDD2 (Enum VOs inline)
+
+T-DDD3 (IRepository<T>) — independent, can run in parallel with T-DDD1
+T-DDD4 (AggregateRoot) — depends on T-DDD1
 ```
+
+---
+
+## Open backlog — Identity (GitHub)
+
+### T-ID-IAuthGateway — Port `IAuthenticationGateway` + `AuthCookieApi`
+
+**GitHub Issue**: #442  
+**Priority**: High  
+**Dependencies**: none (parallel with #443)
+
+**Fase 0** in [plans/identity-mvp.md](../../plans/identity-mvp.md): stable port in `@repo/application` (`signInWithPassword`, `signOut`, `refreshSession`, `getPrincipalFromCookies`) with `AuthCookieApi`; no Next/Supabase types in `application`; tests with fake.
+
+---
 
 ## Definition of Done
 
