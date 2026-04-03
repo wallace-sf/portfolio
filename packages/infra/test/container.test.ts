@@ -28,6 +28,7 @@ const VALID_ENV = {
   RESEND_API_KEY: 're_test_key',
   CONTACT_EMAIL_TO: 'owner@example.com',
   CONTACT_EMAIL_FROM: 'onboarding@resend.dev',
+  ADMIN_EMAIL: 'admin@example.com',
 };
 
 describe('container', () => {
