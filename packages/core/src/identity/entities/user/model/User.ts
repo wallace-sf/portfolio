@@ -4,6 +4,7 @@ import { AggregateRoot, IEntityProps } from '../../../../shared/base';
 import { collect, Either, left, right } from '../../../../shared/either';
 import { ValidationError } from '../../../../shared/errors';
 import { Email } from '../../../../shared/vo/Email';
+import { Id } from '../../../../shared/vo/Id';
 import { Name } from '../../../../shared/vo/Name';
 import { Role } from './Role';
 
@@ -11,6 +12,8 @@ export interface IUserProps extends IEntityProps {
   name: string;
   email: string;
   role: Role;
+  /** IdP stable subject (e.g. Supabase `sub`); optional until first login links the account. */
+  authSubject?: string | null;
 }
 
 export class User extends AggregateRoot<User, IUserProps> {
@@ -19,12 +22,14 @@ export class User extends AggregateRoot<User, IUserProps> {
   public readonly name: Name;
   public readonly email: Email;
   public readonly role: Role;
+  public readonly authSubject: string | null;
 
   private constructor(props: IUserProps, name: Name, email: Email) {
     super(props);
     this.name = name;
     this.email = email;
     this.role = props.role;
+    this.authSubject = props.authSubject ?? null;
   }
 
   static create(props: IUserProps): Either<ValidationError, User> {
@@ -38,6 +43,17 @@ export class User extends AggregateRoot<User, IUserProps> {
       if (!isValid && error)
         return left(
           new ValidationError({ code: User.ERROR_CODE, message: error }),
+        );
+    }
+
+    if (props.authSubject != null && props.authSubject !== '') {
+      const subResult = Id.create(props.authSubject);
+      if (subResult.isLeft())
+        return left(
+          new ValidationError({
+            code: User.ERROR_CODE,
+            message: subResult.value.message,
+          }),
         );
     }
 
