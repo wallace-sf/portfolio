@@ -40,7 +40,7 @@ describe('User', () => {
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value.authSubject).toBe(sub);
+      expect(result.value.authSubject?.value).toBe(sub);
     });
   });
 

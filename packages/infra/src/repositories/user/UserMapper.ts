@@ -35,7 +35,7 @@ export class UserMapper {
       name: user.name.value,
       email: user.email.value,
       role: user.role,
-      authSubject: user.authSubject,
+      authSubject: user.authSubject?.value ?? null,
       createdAt: new Date(user.created_at.value),
       updatedAt: new Date(user.updated_at.value),
     };
