@@ -22,14 +22,14 @@ export class User extends AggregateRoot<User, IUserProps> {
   public readonly name: Name;
   public readonly email: Email;
   public readonly role: Role;
-  public readonly authSubject: string | null;
+  public readonly authSubject: Id | null;
 
-  private constructor(props: IUserProps, name: Name, email: Email) {
+  private constructor(props: IUserProps, name: Name, email: Email, authSubject: Id | null) {
     super(props);
     this.name = name;
     this.email = email;
     this.role = props.role;
-    this.authSubject = props.authSubject ?? null;
+    this.authSubject = authSubject;
   }
 
   static create(props: IUserProps): Either<ValidationError, User> {
@@ -46,7 +46,8 @@ export class User extends AggregateRoot<User, IUserProps> {
         );
     }
 
-    if (props.authSubject != null && props.authSubject !== '') {
+    let authSubject: Id | null = null;
+    if (props.authSubject != null) {
       const subResult = Id.create(props.authSubject);
       if (subResult.isLeft())
         return left(
@@ -55,17 +56,15 @@ export class User extends AggregateRoot<User, IUserProps> {
             message: subResult.value.message,
           }),
         );
+      authSubject = subResult.value;
     }
 
-    const fieldsResult = collect([
-      Name.create(props.name),
-      Email.create(props.email),
-    ]);
+    const fieldsResult = collect([Name.create(props.name), Email.create(props.email)]);
     if (fieldsResult.isLeft()) return left(fieldsResult.value);
 
     const [name, email] = fieldsResult.value;
 
-    return right(new User(props, name, email));
+    return right(new User(props, name, email, authSubject));
   }
 
   public isAdmin(): boolean {
