@@ -24,7 +24,12 @@ export class User extends AggregateRoot<User, IUserProps> {
   public readonly role: Role;
   public readonly authSubject: Id | null;
 
-  private constructor(props: IUserProps, name: Name, email: Email, authSubject: Id | null) {
+  private constructor(
+    props: IUserProps,
+    name: Name,
+    email: Email,
+    authSubject: Id | null,
+  ) {
     super(props);
     this.name = name;
     this.email = email;
@@ -59,7 +64,10 @@ export class User extends AggregateRoot<User, IUserProps> {
       authSubject = subResult.value;
     }
 
-    const fieldsResult = collect([Name.create(props.name), Email.create(props.email)]);
+    const fieldsResult = collect([
+      Name.create(props.name),
+      Email.create(props.email),
+    ]);
     if (fieldsResult.isLeft()) return left(fieldsResult.value);
 
     const [name, email] = fieldsResult.value;
