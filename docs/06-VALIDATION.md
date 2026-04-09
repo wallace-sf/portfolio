@@ -79,7 +79,6 @@ static create(raw?: string): Either<ValidationError, Slug> {
 | `.nil(error)` | Value is `null` or `undefined` |
 | `.notNil(error)` | Value is not `null` or `undefined` |
 | `.refine(predicate, error)` | Arbitrary predicate function |
-| `Validator.combine(...validators)` | Runs multiple validators; returns first error |
 
 ---
 
