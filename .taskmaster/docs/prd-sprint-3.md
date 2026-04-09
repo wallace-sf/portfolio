@@ -30,8 +30,10 @@ Sprint 2 delivered infrastructure (Prisma, container, repositories). Sprint 3 wi
 1. Implement REST envelope and portfolio/contact routes per [05-API-CONTRACTS](../../docs/05-API-CONTRACTS.md) (**GitHub #289**).
 2. Connect contact form: RHF + Zod + `POST /api/v1/contact` (**#290**).
 3. Replace static data: Home, Projects, Project detail, Experiences via documented `GET` paths (**#291–#294**).
-4. UI components: ProjectCard, StatCard, ThemeToggle, LanguageSelector, route `loading`/`error` (**#295–#299**).
-5. Identity web: login, middleware, admin layout — **REST only** (**#407**, depends on **#442–#445**).
+4. UI components: ProjectCard, StatCard, ThemeToggle, LanguageSelector, route `loading`/`error`, not-found (**#295–#300**).
+5. Internacionalizar textos hardcoded (**#301**).
+6. Rate limiting em `POST /api/v1/contact` (**#452**).
+7. Identity web: login, middleware, admin layout — **REST only** (**#407**, depends on **#442–#445**).
 
 ## Out of Scope
 
@@ -140,6 +142,52 @@ Migrate from Formik/Yup; submit via `fetch` to `POST /api/v1/contact` with envel
 
 ---
 
+### T-UI-NOT-FOUND — not-found.tsx customizado
+
+**GitHub Issue**: #300  
+**Priority**: Medium  
+**Dependencies**: None (standalone UI)
+
+Custom 404 page at `apps/web/src/app/[locale]/not-found.tsx` aligned with the design system. Must handle both locale-aware routing and the global not-found fallback.
+
+**Acceptance criteria**:
+- `not-found.tsx` renders a styled 404 page consistent with the rest of the UI
+- Works with next-intl locale prefix routing
+- No broken links or missing translations
+
+---
+
+### T-UI-I18N — Internacionalizar textos hardcoded dos componentes
+
+**GitHub Issue**: #301  
+**Priority**: Low  
+**Dependencies**: T-UI-LANG (LanguageSelector functional)
+
+Audit all components for hardcoded Portuguese/English strings and move them to the `@repo/i18n` translation files consumed via `next-intl`. Covers page titles, button labels, aria-labels, and error messages not yet extracted.
+
+**Acceptance criteria**:
+- No hardcoded UI strings in `apps/web/src/` (except dynamic content from API)
+- All locale files (`en`, `pt`) complete and in sync
+- `pnpm --filter web build` passes in all locales
+
+---
+
+### T-RATE-LIMIT — Rate limiting para POST /api/v1/contact
+
+**GitHub Issue**: #452  
+**Priority**: Medium  
+**Dependencies**: T-ENV (contact route must exist)
+
+Protect `POST /api/v1/contact` against abuse with a request-rate strategy (e.g. IP-based in-memory or edge middleware). Excessive requests must receive `429 Too Many Requests` with `Retry-After` header per [05-API-CONTRACTS](../../docs/05-API-CONTRACTS.md).
+
+**Acceptance criteria**:
+- Requests exceeding the configured limit return `429` with `Retry-After`
+- Legitimate traffic (≤ threshold) unaffected
+- No Supabase or external dependency required for the rate-limit mechanism
+- Threshold configurable via environment variable
+
+---
+
 ### T-ID-WEB — Identity: login, middleware, admin UI (REST only)
 
 **GitHub Issue**: #407  
@@ -165,9 +213,11 @@ Route handlers for `auth/*` and `GET /api/v1/me` (may overlap scheduling with T-
 ```
 T-ENV (core API surface)
   ├── T-CONTACT
+  ├── T-RATE-LIMIT (após T-CONTACT)
   ├── T-PAGE-HOME, T-PAGE-PROJECTS, T-PAGE-PROJECT-DETAIL, T-PAGE-EXPERIENCES
   │     └── T-UI-PROJECT-CARD, T-UI-STAT-CARD
-  ├── T-UI-THEME, T-UI-LANG, T-UI-LOADING-ERROR (parallel where possible)
+  ├── T-UI-THEME, T-UI-LANG, T-UI-LOADING-ERROR, T-UI-NOT-FOUND (paralelo)
+  └── T-UI-I18N (após T-UI-LANG)
 
 Identity (parallel track):
   #442 → #443 → #444 → #445 → T-ID-WEB (#407)
@@ -178,5 +228,8 @@ Identity (parallel track):
 - [ ] Public portfolio data and contact flow work through documented REST contract
 - [ ] No direct use-case imports from `apps/web` pages/components
 - [ ] Contact email path uses handler + `SendContactMessage`
+- [ ] `POST /api/v1/contact` returns 429 when rate limit exceeded
+- [ ] Custom not-found page renders correctly with locale routing
+- [ ] No hardcoded UI strings remain outside i18n files
 - [ ] Identity UI blocked until auth REST exists; no Supabase SDK in client-facing `apps/web` layers per `11-IDENTITY`
 - [ ] `pnpm --filter web build` passes
