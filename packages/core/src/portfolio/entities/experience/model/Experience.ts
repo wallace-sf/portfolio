@@ -1,5 +1,3 @@
-import { Validator } from '@repo/utils/validator';
-
 import {
   collect,
   DateRange,
@@ -13,6 +11,7 @@ import {
   ValidationError,
   left,
   right,
+  validateEnum,
 } from '../../../../shared';
 import { EmploymentType } from './EmploymentType';
 import { LocationType } from './LocationType';
@@ -50,6 +49,8 @@ export class Experience extends AggregateRoot<Experience, IExperienceProps> {
 
   private constructor(
     props: IExperienceProps,
+    employment_type: EmploymentType,
+    location_type: LocationType,
     company: LocalizedText,
     position: LocalizedText,
     location: LocalizedText,
@@ -59,39 +60,31 @@ export class Experience extends AggregateRoot<Experience, IExperienceProps> {
     period: DateRange,
   ) {
     super(props);
+    this.employment_type = employment_type;
+    this.location_type = location_type;
     this.company = company;
     this.position = position;
     this.location = location;
     this.description = description;
     this.logo = logo;
-    this.employment_type = props.employment_type;
-    this.location_type = props.location_type;
     this.skills = skills;
     this.period = period;
   }
 
   static create(props: IExperienceProps): Either<ValidationError, Experience> {
-    const { error: empError, isValid: empValid } = Validator.of(
-      props.employment_type,
-    )
-      .in(Object.values(EmploymentType), 'Invalid employment type.')
-      .validate();
-    if (!empValid && empError)
-      return left(
-        new ValidationError({ code: Experience.ERROR_CODE, message: empError }),
-      );
-
-    const { error: locError, isValid: locValid } = Validator.of(
-      props.location_type,
-    )
-      .in(Object.values(LocationType), 'Invalid location type.')
-      .validate();
-    if (!locValid && locError)
-      return left(
-        new ValidationError({ code: Experience.ERROR_CODE, message: locError }),
-      );
-
     const result = collect([
+      validateEnum(
+        props.employment_type,
+        Object.values(EmploymentType),
+        Experience.ERROR_CODE,
+        'Invalid employment type.',
+      ),
+      validateEnum(
+        props.location_type,
+        Object.values(LocationType),
+        Experience.ERROR_CODE,
+        'Invalid location type.',
+      ),
       LocalizedText.create(props.company ?? { 'en-US': '' }),
       LocalizedText.create(props.position ?? { 'en-US': '' }),
       LocalizedText.create(props.location ?? { 'en-US': '' }),
@@ -101,8 +94,16 @@ export class Experience extends AggregateRoot<Experience, IExperienceProps> {
     ]);
     if (result.isLeft()) return left(result.value);
 
-    const [company, position, location, description, logo, period] =
-      result.value;
+    const [
+      employment_type,
+      location_type,
+      company,
+      position,
+      location,
+      description,
+      logo,
+      period,
+    ] = result.value;
 
     const skills: Id[] = [];
     for (const skillId of props.skills ?? []) {
@@ -114,6 +115,8 @@ export class Experience extends AggregateRoot<Experience, IExperienceProps> {
     return right(
       new Experience(
         props,
+        employment_type,
+        location_type,
         company,
         position,
         location,
