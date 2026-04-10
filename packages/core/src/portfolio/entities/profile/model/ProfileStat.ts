@@ -18,6 +18,8 @@ export interface IProfileStatProps {
 }
 
 export class ProfileStat {
+  static readonly ERROR_CODE = 'INVALID_PROFILE_STAT';
+
   public readonly label: LocalizedText;
   public readonly value: string;
   public readonly icon: Text;

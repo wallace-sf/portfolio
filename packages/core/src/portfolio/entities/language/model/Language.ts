@@ -23,6 +23,7 @@ export interface ILanguageProps extends IEntityProps {
 }
 
 export class Language extends Entity<Language, ILanguageProps> {
+  static readonly ERROR_CODE = 'INVALID_LANGUAGE';
   static readonly LOCALE_ERROR_CODE = 'INVALID_LOCALE';
 
   public readonly name: Name;
@@ -46,7 +47,7 @@ export class Language extends Entity<Language, ILanguageProps> {
       validateEnum(
         props.fluency,
         Object.values(Fluency),
-        'INVALID_FLUENCY',
+        Language.ERROR_CODE,
         'Invalid fluency level.',
       ),
       Name.create(props.name),

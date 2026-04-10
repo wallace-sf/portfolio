@@ -47,7 +47,7 @@ describe('Language', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe('INVALID_FLUENCY');
+      expect((result.value as ValidationError).code).toBe(Language.ERROR_CODE);
     });
 
     it('should return Left when locale is missing', () => {
