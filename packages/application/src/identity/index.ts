@@ -1,2 +1,2 @@
-export * from './dtos';
-export * from './use-cases';
+export * from '~/identity/dtos';
+export * from '~/identity/use-cases';

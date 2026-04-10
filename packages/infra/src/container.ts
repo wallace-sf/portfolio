@@ -7,13 +7,13 @@ import { IProjectRepository } from '@repo/core/portfolio';
 import { IEmailService } from '@repo/application/contact';
 import { validateEnv } from '@repo/utils/env';
 
-import { env } from './env';
-import { prisma } from './prisma/client';
-import { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
-import { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
-import { PrismaProjectRepository } from './repositories/project/PrismaProjectRepository';
-import { PrismaUserRepository } from './repositories/user/PrismaUserRepository';
-import { ResendEmailService } from './services/ResendEmailService';
+import { env } from '~/env';
+import { prisma } from '~/prisma/client';
+import { PrismaExperienceRepository } from '~/repositories/experience/PrismaExperienceRepository';
+import { PrismaProfileRepository } from '~/repositories/profile/PrismaProfileRepository';
+import { PrismaProjectRepository } from '~/repositories/project/PrismaProjectRepository';
+import { PrismaUserRepository } from '~/repositories/user/PrismaUserRepository';
+import { ResendEmailService } from '~/services/ResendEmailService';
 
 export interface Container {
   projectRepository: IProjectRepository;

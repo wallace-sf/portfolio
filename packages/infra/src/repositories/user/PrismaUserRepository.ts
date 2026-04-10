@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { IUserRepository, User } from '@repo/core/identity';
 import { Email, Id } from '@repo/core/shared';
 
-import { UserMapper } from './UserMapper';
+import { UserMapper } from '~/repositories/user/UserMapper';
 
 export class PrismaUserRepository implements IUserRepository {
   constructor(private readonly db: PrismaClient) {}

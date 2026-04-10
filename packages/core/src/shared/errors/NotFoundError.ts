@@ -1,4 +1,4 @@
-import { DomainError } from './DomainError';
+import { DomainError } from '~/shared/errors/DomainError';
 
 /**
  * Entity/resource not found error.

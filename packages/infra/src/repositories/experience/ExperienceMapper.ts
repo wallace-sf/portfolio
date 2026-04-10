@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { IExperienceProps, Experience, EmploymentType, LocationType } from '@repo/core/portfolio';
 import { ILocalizedTextInput } from '@repo/core/shared';
 
-import { InfrastructureError } from '../../errors/InfrastructureError';
+import { InfrastructureError } from '~/errors/InfrastructureError';
 
 type PrismaExperience = Prisma.ExperienceGetPayload<Record<string, never>>;
 

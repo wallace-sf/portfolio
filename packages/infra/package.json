@@ -4,15 +4,16 @@
   "private": true,
   "main": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./prisma": "./src/prisma/client.ts"
+    ".": { "types": "./dist/types/index.d.ts", "default": "./src/index.ts" },
+    "./prisma": { "types": "./dist/types/prisma/client.d.ts", "default": "./src/prisma/client.ts" }
   },
   "scripts": {
     "lint": "eslint --fix --ext .ts ./src",
     "lint:check": "eslint --ext .ts ./src",
     "format": "prettier --write ./src/**/*.ts",
     "format:check": "prettier --check ./src/**/*.ts",
-    "types": "tsc --noEmit --skipLibCheck",
+    "build:types": "tsc --build tsconfig.build.json",
+    "types": "tsc --build tsconfig.build.json",
     "db:generate": "dotenv -e ../../.env -- prisma generate",
     "db:migrate": "dotenv -e ../../.env -- prisma migrate dev",
     "db:migrate:deploy": "dotenv -e ../../.env -- prisma migrate deploy",

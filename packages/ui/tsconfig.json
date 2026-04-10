@@ -12,6 +12,7 @@
       "~types": ["./src/types.ts"]
     }
   },
+  "references": [{ "path": "../../packages/utils/tsconfig.build.json" }],
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",

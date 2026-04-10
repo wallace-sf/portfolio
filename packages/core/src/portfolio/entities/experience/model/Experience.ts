@@ -1,3 +1,5 @@
+import { EmploymentType } from '~/portfolio/entities/experience/model/EmploymentType';
+import { LocationType } from '~/portfolio/entities/experience/model/LocationType';
 import {
   collect,
   DateRange,
@@ -12,9 +14,7 @@ import {
   left,
   right,
   validateEnum,
-} from '../../../../shared';
-import { EmploymentType } from './EmploymentType';
-import { LocationType } from './LocationType';
+} from '~/shared';
 
 export interface IExperienceLogo {
   url: string;

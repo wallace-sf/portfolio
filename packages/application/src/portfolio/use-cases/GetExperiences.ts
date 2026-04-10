@@ -1,8 +1,8 @@
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 import { Experience, IExperienceRepository } from '@repo/core/portfolio';
 
-import { UseCase } from '../../shared/UseCase';
-import { ExperienceDTO } from '../dtos/ExperienceDTO';
+import { UseCase } from '~/shared/UseCase';
+import { ExperienceDTO } from '~/portfolio/dtos/ExperienceDTO';
 
 export interface GetExperiencesInput {
   locale: Locale;

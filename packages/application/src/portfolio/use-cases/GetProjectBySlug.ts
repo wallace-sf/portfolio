@@ -1,9 +1,9 @@
 import { DomainError, Either, Locale, NotFoundError, Slug, ValidationError, left, right } from '@repo/core/shared';
 import { IProjectRepository, Project } from '@repo/core/portfolio';
 
-import { UseCase } from '../../shared/UseCase';
-import { ProjectDetailDTO } from '../dtos/ProjectDetailDTO';
-import { ProjectSummaryDTO } from '../dtos/ProjectSummaryDTO';
+import { UseCase } from '~/shared/UseCase';
+import { ProjectDetailDTO } from '~/portfolio/dtos/ProjectDetailDTO';
+import { ProjectSummaryDTO } from '~/portfolio/dtos/ProjectSummaryDTO';
 
 export interface GetProjectBySlugInput {
   slug: string;

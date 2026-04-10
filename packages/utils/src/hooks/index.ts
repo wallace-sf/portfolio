@@ -1,1 +1,1 @@
-export * from './useThrottle';
+export * from '~/hooks/useThrottle';

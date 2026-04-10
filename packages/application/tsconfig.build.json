@@ -1,9 +1,11 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "src",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "composite": true,
+    "incremental": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "src",
+    "declarationDir": "dist/types",
     "paths": {
       "~/*": ["*"]
     }
@@ -12,6 +14,6 @@
     { "path": "../utils/tsconfig.build.json" },
     { "path": "../core/tsconfig.build.json" }
   ],
-  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "build"]
 }

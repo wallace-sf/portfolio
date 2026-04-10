@@ -1,1 +1,1 @@
-export * from './UserDTO';
+export * from '~/identity/dtos/UserDTO';

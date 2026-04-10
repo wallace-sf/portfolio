@@ -9,7 +9,7 @@ import {
   right,
   Text,
   ValidationError,
-} from '../../../../shared';
+} from '~/shared';
 
 export interface IProfileStatProps extends IEntityProps {
   label: ILocalizedTextInput;

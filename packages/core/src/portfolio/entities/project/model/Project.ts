@@ -1,5 +1,6 @@
 import { Validator } from '@repo/utils/validator';
 
+import { ProjectStatus } from '~/portfolio/entities/project/model/ProjectStatus';
 import {
   collect,
   DateRange,
@@ -16,8 +17,7 @@ import {
   left,
   right,
   validateEnum,
-} from '../../../../shared';
-import { ProjectStatus } from './ProjectStatus';
+} from '~/shared';
 
 export interface IProjectCoverImage {
   url: string;
