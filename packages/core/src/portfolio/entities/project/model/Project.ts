@@ -66,6 +66,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
 
   private constructor(
     props: IProjectProps,
+    status: ProjectStatus,
     slug: Slug,
     coverImage: Image,
     title: LocalizedText,
@@ -80,6 +81,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     relatedProjects: Slug[],
   ) {
     super(props);
+    this.status = status;
     this.slug = slug;
     this.coverImage = coverImage;
     this.title = title;
@@ -92,20 +94,17 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     this.role = role;
     this.period = period;
     this.featured = props.featured;
-    this.status = props.status;
     this.relatedProjects = relatedProjects;
   }
 
   static create(props: IProjectProps): Either<ValidationError, Project> {
-    const statusResult = validateEnum(
-      props.status,
-      Object.values(ProjectStatus),
-      Project.ERROR_CODE,
-      `Status must be one of: ${Object.values(ProjectStatus).join(', ')}.`,
-    );
-    if (statusResult.isLeft()) return left(statusResult.value);
-
     const fieldsResult = collect([
+      validateEnum(
+        props.status,
+        Object.values(ProjectStatus),
+        Project.ERROR_CODE,
+        `Status must be one of: ${Object.values(ProjectStatus).join(', ')}.`,
+      ),
       Slug.create(props.slug),
       Image.create(props.coverImage?.url, props.coverImage?.alt),
       LocalizedText.create(props.title ?? { 'pt-BR': '' }),
@@ -128,6 +127,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     if (fieldsResult.isLeft()) return left(fieldsResult.value);
 
     const [
+      status,
       slug,
       coverImage,
       title,
@@ -175,6 +175,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     return right(
       new Project(
         props,
+        status,
         slug,
         coverImage,
         title,

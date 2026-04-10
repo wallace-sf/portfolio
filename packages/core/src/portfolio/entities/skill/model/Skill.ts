@@ -1,5 +1,3 @@
-import { Validator } from '@repo/utils/validator';
-
 import {
   collect,
   Either,
@@ -9,6 +7,7 @@ import {
   right,
   Text,
   ValidationError,
+  validateEnum,
 } from '../../../../shared';
 import { SkillType } from './SkillType';
 
@@ -23,29 +22,32 @@ export class Skill extends AggregateRoot<Skill, ISkillProps> {
   public readonly icon: Text;
   public readonly type: SkillType;
 
-  private constructor(props: ISkillProps, description: Text, icon: Text) {
+  private constructor(
+    props: ISkillProps,
+    type: SkillType,
+    description: Text,
+    icon: Text,
+  ) {
     super(props);
+    this.type = type;
     this.description = description;
     this.icon = icon;
-    this.type = props.type;
   }
 
   static create(props: ISkillProps): Either<ValidationError, Skill> {
-    const { error: typeError, isValid: typeValid } = Validator.of(props.type)
-      .in(Object.values(SkillType), 'Invalid skill type.')
-      .validate();
-    if (!typeValid && typeError)
-      return left(
-        new ValidationError({ code: 'INVALID_SKILL_TYPE', message: typeError }),
-      );
-
     const result = collect([
+      validateEnum(
+        props.type,
+        Object.values(SkillType),
+        'INVALID_SKILL_TYPE',
+        'Invalid skill type.',
+      ),
       Text.create(props.description),
       Text.create(props.icon, { min: 2, max: 50 }),
     ]);
     if (result.isLeft()) return left(result.value);
 
-    const [description, icon] = result.value;
-    return right(new Skill(props, description, icon));
+    const [type, description, icon] = result.value;
+    return right(new Skill(props, type, description, icon));
   }
 }

@@ -25,48 +25,46 @@ export class User extends AggregateRoot<User, IUserProps> {
 
   private constructor(
     props: IUserProps,
+    role: Role,
     name: Name,
     email: Email,
     authSubject: Id | null,
   ) {
     super(props);
+    this.role = role;
     this.name = name;
     this.email = email;
-    this.role = props.role;
     this.authSubject = authSubject;
   }
 
   static create(props: IUserProps): Either<ValidationError, User> {
-    const roleResult = validateEnum(
-      props.role,
-      Object.values(Role),
-      User.ERROR_CODE,
-      `Role must be one of: ${Object.values(Role).join(', ')}.`,
-    );
-    if (roleResult.isLeft()) return left(roleResult.value);
-
-    let authSubject: Id | null = null;
-    if (props.authSubject != null) {
-      const subResult = Id.create(props.authSubject);
-      if (subResult.isLeft())
-        return left(
-          new ValidationError({
-            code: User.ERROR_CODE,
-            message: subResult.value.message,
-          }),
-        );
-      authSubject = subResult.value;
-    }
-
-    const fieldsResult = collect([
+    const result = collect([
+      validateEnum(
+        props.role,
+        Object.values(Role),
+        User.ERROR_CODE,
+        `Role must be one of: ${Object.values(Role).join(', ')}.`,
+      ),
       Name.create(props.name),
       Email.create(props.email),
+      User._createAuthSubject(props.authSubject),
     ]);
-    if (fieldsResult.isLeft()) return left(fieldsResult.value);
+    if (result.isLeft()) return left(result.value);
 
-    const [name, email] = fieldsResult.value;
+    const [role, name, email, authSubject] = result.value;
+    return right(new User(props, role, name, email, authSubject));
+  }
 
-    return right(new User(props, name, email, authSubject));
+  private static _createAuthSubject(
+    value: string | null | undefined,
+  ): Either<ValidationError, Id | null> {
+    if (value == null) return right(null);
+    const result = Id.create(value);
+    if (result.isLeft())
+      return left(
+        new ValidationError({ code: User.ERROR_CODE, message: result.value.message }),
+      );
+    return result;
   }
 
   public isAdmin(): boolean {
