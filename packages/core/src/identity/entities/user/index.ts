@@ -1,2 +1,2 @@
-export * from './model';
-export * from './repositories';
+export * from '~/identity/entities/user/model';
+export * from '~/identity/entities/user/repositories';

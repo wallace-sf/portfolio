@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client';
 import { IExperienceRepository, Experience } from '@repo/core/portfolio';
 import { Id } from '@repo/core/shared';
 
-import { InfrastructureError } from '../../errors/InfrastructureError';
-import { ExperienceMapper } from './ExperienceMapper';
+import { InfrastructureError } from '~/errors/InfrastructureError';
+import { ExperienceMapper } from '~/repositories/experience/ExperienceMapper';
 
 export class PrismaExperienceRepository implements IExperienceRepository {
   constructor(private readonly db: PrismaClient) {}

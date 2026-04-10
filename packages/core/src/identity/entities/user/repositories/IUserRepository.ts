@@ -1,6 +1,6 @@
-import { Email } from '../../../../shared/vo/Email';
-import { Id } from '../../../../shared/vo/Id';
-import { User } from '../model/User';
+import { User } from '~/identity/entities/user/model/User';
+import { Email } from '~/shared/vo/Email';
+import { Id } from '~/shared/vo/Id';
 
 export interface IUserRepository {
   findById(id: Id): Promise<User | null>;

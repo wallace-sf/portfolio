@@ -9,7 +9,7 @@ import {
   Text,
   Url,
   ValidationError,
-} from '../../../../shared';
+} from '~/shared';
 
 export interface ISocialNetworkProps extends IEntityProps {
   name: string;

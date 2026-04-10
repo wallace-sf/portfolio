@@ -2,7 +2,7 @@ import { Prisma, User as PrismaUser } from '@prisma/client';
 
 import { IUserProps, Role, User } from '@repo/core/identity';
 
-import { InfrastructureError } from '../../errors/InfrastructureError';
+import { InfrastructureError } from '~/errors/InfrastructureError';
 
 type UserScalarData = Omit<Prisma.UserUncheckedCreateInput, never>;
 

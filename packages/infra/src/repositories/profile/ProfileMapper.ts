@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { IProfileProps, IProfileStatProps, Profile } from '@repo/core/portfolio';
 import { ILocalizedTextInput } from '@repo/core/shared';
 
-import { InfrastructureError } from '../../errors/InfrastructureError';
+import { InfrastructureError } from '~/errors/InfrastructureError';
 
 type PrismaProfileWithRelations = Prisma.ProfileGetPayload<{
   include: {

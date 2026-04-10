@@ -1,4 +1,4 @@
-import { Entity, IEntityProps } from './Entity';
+import { Entity, IEntityProps } from '~/shared/base/Entity';
 
 /**
  * Marks entities that serve as transactional consistency boundaries

@@ -18,6 +18,7 @@ const jestConfig: JestConfigWithTsJest = {
       testEnvironment: 'node',
       testMatch: ['**/test/node/**/*.test.ts'],
       testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
+      moduleNameMapper: { '^~/(.*)$': '<rootDir>/src/$1' },
     },
     {
       displayName: 'browser',
@@ -25,6 +26,7 @@ const jestConfig: JestConfigWithTsJest = {
       testEnvironment: 'jsdom',
       testMatch: ['**/test/browser/**/*.test.ts'],
       testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
+      moduleNameMapper: { '^~/(.*)$': '<rootDir>/src/$1' },
     },
   ],
 };

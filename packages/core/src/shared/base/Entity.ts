@@ -1,7 +1,7 @@
-import { Either, right } from '../either';
-import { ValidationError } from '../errors';
-import { DateTime } from '../vo/DateTime';
-import { Id } from '../vo/Id';
+import { Either, right } from '~/shared/either';
+import { ValidationError } from '~/shared/errors';
+import { DateTime } from '~/shared/vo/DateTime';
+import { Id } from '~/shared/vo/Id';
 
 export interface IEntityProps {
   created_at?: string;

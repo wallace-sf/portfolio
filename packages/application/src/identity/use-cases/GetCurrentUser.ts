@@ -1,8 +1,8 @@
 import { DomainError, Either, Id, NotFoundError, left, right } from '@repo/core/shared';
 import { IUserRepository, User } from '@repo/core/identity';
 
-import { UseCase } from '../../shared/UseCase';
-import { UserDTO } from '../dtos/UserDTO';
+import { UseCase } from '~/shared/UseCase';
+import { UserDTO } from '~/identity/dtos/UserDTO';
 
 export interface GetCurrentUserInput {
   userId: string;

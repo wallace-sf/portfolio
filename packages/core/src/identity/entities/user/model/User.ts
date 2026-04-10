@@ -1,11 +1,11 @@
-import { AggregateRoot, IEntityProps } from '../../../../shared/base';
-import { collect, Either, left, right } from '../../../../shared/either';
-import { ValidationError } from '../../../../shared/errors';
-import { validateEnum } from '../../../../shared/validateEnum';
-import { Email } from '../../../../shared/vo/Email';
-import { Id } from '../../../../shared/vo/Id';
-import { Name } from '../../../../shared/vo/Name';
-import { Role } from './Role';
+import { Role } from '~/identity/entities/user/model/Role';
+import { AggregateRoot, IEntityProps } from '~/shared/base';
+import { collect, Either, left, right } from '~/shared/either';
+import { ValidationError } from '~/shared/errors';
+import { validateEnum } from '~/shared/validateEnum';
+import { Email } from '~/shared/vo/Email';
+import { Id } from '~/shared/vo/Id';
+import { Name } from '~/shared/vo/Name';
 
 export interface IUserProps extends IEntityProps {
   name: string;
@@ -62,7 +62,10 @@ export class User extends AggregateRoot<User, IUserProps> {
     const result = Id.create(value);
     if (result.isLeft())
       return left(
-        new ValidationError({ code: User.ERROR_CODE, message: result.value.message }),
+        new ValidationError({
+          code: User.ERROR_CODE,
+          message: result.value.message,
+        }),
       );
     return result;
   }

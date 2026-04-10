@@ -1,8 +1,8 @@
 import { Validator } from '@repo/utils/validator';
 
-import { ValueObject } from '../base/ValueObject';
-import { left, right, Either } from '../either';
-import { ValidationError } from '../errors';
+import { ValueObject } from '~/shared/base/ValueObject';
+import { left, right, Either } from '~/shared/either';
+import { ValidationError } from '~/shared/errors';
 
 export class Name extends ValueObject<string> {
   static readonly ERROR_CODE = 'INVALID_NAME';

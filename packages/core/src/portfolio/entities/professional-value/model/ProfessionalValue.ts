@@ -7,7 +7,7 @@ import {
   right,
   Text,
   ValidationError,
-} from '../../../../shared';
+} from '~/shared';
 
 export interface IProfessionalValueProps extends IEntityProps {
   icon: string;

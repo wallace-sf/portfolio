@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client';
 import { IProjectRepository, Project, ProjectStatus } from '@repo/core/portfolio';
 import { Id, Slug } from '@repo/core/shared';
 
-import { InfrastructureError } from '../../errors/InfrastructureError';
-import { ProjectMapper } from './ProjectMapper';
+import { InfrastructureError } from '~/errors/InfrastructureError';
+import { ProjectMapper } from '~/repositories/project/ProjectMapper';
 
 export class PrismaProjectRepository implements IProjectRepository {
   constructor(private readonly db: PrismaClient) {}

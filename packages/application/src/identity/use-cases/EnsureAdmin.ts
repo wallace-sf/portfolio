@@ -2,7 +2,7 @@ import { DomainError, Either, Id, NotFoundError, left, right } from '@repo/core/
 import { IUserRepository } from '@repo/core/identity';
 import { UnauthorizedError } from '@repo/core/identity';
 
-import { UseCase } from '../../shared/UseCase';
+import { UseCase } from '~/shared/UseCase';
 
 export interface EnsureAdminInput {
   userId: string;

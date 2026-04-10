@@ -1,1 +1,1 @@
-export * from './UnauthorizedError';
+export * from '~/identity/errors/UnauthorizedError';

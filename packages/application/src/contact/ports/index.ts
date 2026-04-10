@@ -1,1 +1,1 @@
-export * from './IEmailService';
+export * from '~/contact/ports/IEmailService';

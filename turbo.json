@@ -34,7 +34,8 @@
       "dependsOn": ["^format:check"]
     },
     "types": {
-      "dependsOn": ["^types"]
+      "dependsOn": ["^types"],
+      "outputs": ["dist/types/**"]
     },
     "test": {
       "dependsOn": ["^test"]

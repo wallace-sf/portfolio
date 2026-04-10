@@ -1,4 +1,4 @@
-import { Id } from '../vo/Id';
+import { Id } from '~/shared/vo/Id';
 
 /**
  * Generic base repository interface for entity persistence operations.

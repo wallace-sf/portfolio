@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { IProjectProps, Project, ProjectStatus } from '@repo/core/portfolio';
 import { ILocalizedTextInput } from '@repo/core/shared';
 
-import { InfrastructureError } from '../../errors/InfrastructureError';
+import { InfrastructureError } from '~/errors/InfrastructureError';
 
 type PrismaProject = Prisma.ProjectGetPayload<Record<string, never>>;
 
