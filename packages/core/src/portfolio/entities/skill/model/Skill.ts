@@ -18,6 +18,8 @@ export interface ISkillProps extends IEntityProps {
 }
 
 export class Skill extends AggregateRoot<Skill, ISkillProps> {
+  static readonly ERROR_CODE = 'INVALID_SKILL';
+
   public readonly description: Text;
   public readonly icon: Text;
   public readonly type: SkillType;
@@ -39,7 +41,7 @@ export class Skill extends AggregateRoot<Skill, ISkillProps> {
       validateEnum(
         props.type,
         Object.values(SkillType),
-        'INVALID_SKILL_TYPE',
+        Skill.ERROR_CODE,
         'Invalid skill type.',
       ),
       Text.create(props.description),

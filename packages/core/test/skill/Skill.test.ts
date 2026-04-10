@@ -47,7 +47,7 @@ describe('Skill', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe('INVALID_SKILL_TYPE');
+      expect((result.value as ValidationError).code).toBe(Skill.ERROR_CODE);
     });
   });
 });
