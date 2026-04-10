@@ -15,6 +15,7 @@ import {
   ValidationError,
   left,
   right,
+  validateEnum,
 } from '../../../../shared';
 import { ProjectStatus } from './ProjectStatus';
 
@@ -96,18 +97,13 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   }
 
   static create(props: IProjectProps): Either<ValidationError, Project> {
-    {
-      const { error, isValid } = Validator.of(props.status)
-        .in(
-          Object.values(ProjectStatus),
-          `Status must be one of: ${Object.values(ProjectStatus).join(', ')}.`,
-        )
-        .validate();
-      if (!isValid && error)
-        return left(
-          new ValidationError({ code: Project.ERROR_CODE, message: error }),
-        );
-    }
+    const statusResult = validateEnum(
+      props.status,
+      Object.values(ProjectStatus),
+      Project.ERROR_CODE,
+      `Status must be one of: ${Object.values(ProjectStatus).join(', ')}.`,
+    );
+    if (statusResult.isLeft()) return left(statusResult.value);
 
     const fieldsResult = collect([
       Slug.create(props.slug),
@@ -159,26 +155,22 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     const relatedSlugs = relatedResult.value as Slug[];
     const ownSlugValue = slug.value;
 
-    const { error: relatedError, isValid: relatedValid } = Validator.of(
-      relatedSlugs,
-    )
-      .refine(
-        (slugs) => !slugs.some((s) => s.value === ownSlugValue),
-        'A project cannot reference itself as a related project.',
-      )
-      .refine((slugs) => {
-        const values = slugs.map((s) => s.value);
-        return new Set(values).size === values.length;
-      }, 'Related projects must not contain duplicate slugs.')
-      .validate();
-
-    if (!relatedValid && relatedError)
-      return left(
-        new ValidationError({
-          code: Project.ERROR_CODE,
-          message: relatedError,
-        }),
-      );
+    {
+      const { error, isValid } = Validator.of(relatedSlugs)
+        .refine(
+          (slugs) => !slugs.some((s) => s.value === ownSlugValue),
+          'A project cannot reference itself as a related project.',
+        )
+        .refine((slugs) => {
+          const values = slugs.map((s) => s.value);
+          return new Set(values).size === values.length;
+        }, 'Related projects must not contain duplicate slugs.')
+        .validate();
+      if (!isValid && error)
+        return left(
+          new ValidationError({ code: Project.ERROR_CODE, message: error }),
+        );
+    }
 
     return right(
       new Project(

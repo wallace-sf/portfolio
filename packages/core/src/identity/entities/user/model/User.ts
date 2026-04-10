@@ -1,8 +1,7 @@
-import { Validator } from '@repo/utils/validator';
-
 import { AggregateRoot, IEntityProps } from '../../../../shared/base';
 import { collect, Either, left, right } from '../../../../shared/either';
 import { ValidationError } from '../../../../shared/errors';
+import { validateEnum } from '../../../../shared/validateEnum';
 import { Email } from '../../../../shared/vo/Email';
 import { Id } from '../../../../shared/vo/Id';
 import { Name } from '../../../../shared/vo/Name';
@@ -38,18 +37,13 @@ export class User extends AggregateRoot<User, IUserProps> {
   }
 
   static create(props: IUserProps): Either<ValidationError, User> {
-    {
-      const { error, isValid } = Validator.of(props.role)
-        .in(
-          Object.values(Role),
-          `Role must be one of: ${Object.values(Role).join(', ')}.`,
-        )
-        .validate();
-      if (!isValid && error)
-        return left(
-          new ValidationError({ code: User.ERROR_CODE, message: error }),
-        );
-    }
+    const roleResult = validateEnum(
+      props.role,
+      Object.values(Role),
+      User.ERROR_CODE,
+      `Role must be one of: ${Object.values(Role).join(', ')}.`,
+    );
+    if (roleResult.isLeft()) return left(roleResult.value);
 
     let authSubject: Id | null = null;
     if (props.authSubject != null) {
