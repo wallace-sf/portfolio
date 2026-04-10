@@ -8,6 +8,9 @@ const jestConfig: JestConfigWithTsJest = {
     '!<rootDir>/src/types/**/*.ts',
   ],
   maxWorkers: 2,
+  moduleNameMapper: {
+    '^~/(.*)$': '<rootDir>/src/$1',
+  },
   projects: [
     {
       displayName: 'node',
