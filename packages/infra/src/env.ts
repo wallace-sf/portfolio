@@ -11,4 +11,10 @@ export const env = {
   get ADMIN_EMAIL() {
     return process.env['ADMIN_EMAIL'] ?? 'admin@portfolio.dev';
   },
+  get SUPABASE_URL() {
+    return process.env['SUPABASE_URL']!;
+  },
+  get SUPABASE_ANON_KEY() {
+    return process.env['SUPABASE_ANON_KEY']!;
+  },
 };
