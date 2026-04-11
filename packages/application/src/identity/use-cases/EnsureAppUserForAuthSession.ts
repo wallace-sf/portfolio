@@ -65,8 +65,7 @@ export class EnsureAppUserForAuthSession extends UseCase<
       }
 
       // Branch 4: no user found → create new VISITOR
-      const name =
-        input.defaultName ?? input.email.split('@')[0] ?? input.email;
+      const name = input.defaultName ?? email.localPart;
       const props: IUserProps = {
         name,
         email: input.email,
