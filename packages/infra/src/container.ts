@@ -5,6 +5,7 @@ import { IExperienceRepository } from '@repo/core/portfolio';
 import { IProfileRepository } from '@repo/core/portfolio';
 import { IProjectRepository } from '@repo/core/portfolio';
 import { IEmailService } from '@repo/application/contact';
+import { IAuthenticationGateway } from '@repo/application/identity';
 import { validateEnv } from '@repo/utils/env';
 
 import { env } from '~/env';
@@ -13,6 +14,7 @@ import { PrismaExperienceRepository } from '~/repositories/experience/PrismaExpe
 import { PrismaProfileRepository } from '~/repositories/profile/PrismaProfileRepository';
 import { PrismaProjectRepository } from '~/repositories/project/PrismaProjectRepository';
 import { PrismaUserRepository } from '~/repositories/user/PrismaUserRepository';
+import { SupabaseAuthenticationGateway } from '~/identity/SupabaseAuthenticationGateway';
 import { ResendEmailService } from '~/services/ResendEmailService';
 
 export interface Container {
@@ -21,6 +23,7 @@ export interface Container {
   profileRepository: IProfileRepository;
   emailService: IEmailService;
   userRepository: IUserRepository;
+  authGateway: IAuthenticationGateway;
 }
 
 export function makeContainer(): Container {
@@ -37,6 +40,7 @@ export function makeContainer(): Container {
       senderEmail: env.CONTACT_EMAIL_FROM,
     }),
     userRepository: new PrismaUserRepository(prisma),
+    authGateway: new SupabaseAuthenticationGateway(env.SUPABASE_URL, env.SUPABASE_ANON_KEY),
   };
 }
 

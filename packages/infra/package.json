@@ -4,8 +4,14 @@
   "private": true,
   "main": "src/index.ts",
   "exports": {
-    ".": { "types": "./dist/types/index.d.ts", "default": "./src/index.ts" },
-    "./prisma": { "types": "./dist/types/prisma/client.d.ts", "default": "./src/prisma/client.ts" }
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./prisma": {
+      "types": "./dist/types/prisma/client.d.ts",
+      "default": "./src/prisma/client.ts"
+    }
   },
   "scripts": {
     "lint": "eslint --fix --ext .ts ./src",
@@ -30,6 +36,8 @@
     "@repo/application": "workspace:*",
     "@repo/core": "workspace:*",
     "@repo/utils": "workspace:*",
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.103.0",
     "resend": "^6.9.4"
   },
   "devDependencies": {
