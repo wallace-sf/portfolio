@@ -7,4 +7,5 @@ export interface IUserRepository {
   findByEmail(email: Email): Promise<User | null>;
   findByAuthSubject(authSubject: Id): Promise<User | null>;
   linkAuthSubject(userId: Id, authSubject: Id): Promise<void>;
+  save(user: User): Promise<void>;
 }
