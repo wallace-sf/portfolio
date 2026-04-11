@@ -232,6 +232,7 @@ interface IProjectRepository {
 - Maximum 200 lines per file
 - Import order: external libs → internal packages → relative imports
 - Test naming: `should <expected behavior> when <context>`
+- **Tests are mandatory for every implementation** — never commit a new class, port, adapter, use case, or gateway without accompanying tests in the same branch/PR. A PR without tests for new production code is incomplete. See [docs/08-TESTING.md](./docs/08-TESTING.md) for strategy and naming.
 
 ---
 
