@@ -12,10 +12,17 @@ export interface ErrorResponse {
 
 export type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 
-export function successResponse<T>(data: T, meta?: { total?: number }): SuccessResponse<T> {
+export function successResponse<T>(
+  data: T,
+  meta?: { total?: number },
+): SuccessResponse<T> {
   return { data, error: null, ...(meta ? { meta } : {}) };
 }
 
-export function errorResponse(code: string, message: string, status: number): ErrorResponse {
+export function errorResponse(
+  code: string,
+  message: string,
+  status: number,
+): ErrorResponse {
   return { data: null, error: { code, message }, meta: { status } };
 }

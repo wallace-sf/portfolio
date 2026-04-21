@@ -26,7 +26,10 @@ describe('errorResponse', () => {
   it('should return null data with error code and message', () => {
     const result = errorResponse('NOT_FOUND', 'Resource not found', 404);
     expect(result.data).toBeNull();
-    expect(result.error).toEqual({ code: 'NOT_FOUND', message: 'Resource not found' });
+    expect(result.error).toEqual({
+      code: 'NOT_FOUND',
+      message: 'Resource not found',
+    });
     expect(result.meta).toEqual({ status: 404 });
   });
 
@@ -38,7 +41,11 @@ describe('errorResponse', () => {
   });
 
   it('should return correct status in meta for internal errors', () => {
-    const result = errorResponse('INTERNAL_ERROR', 'Internal server error', 500);
+    const result = errorResponse(
+      'INTERNAL_ERROR',
+      'Internal server error',
+      500,
+    );
     expect(result.meta.status).toBe(500);
   });
 });

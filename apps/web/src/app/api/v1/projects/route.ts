@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getContainer } from '@repo/infra';
 import { GetPublishedProjects } from '@repo/application/portfolio';
+import { getContainer } from '@repo/infra';
+import { NextRequest, NextResponse } from 'next/server';
 
 import { errorResponse, successResponse } from '~/lib/api/envelope';
 import { mapDomainErrorToHttp } from '~/lib/api/error-mapper';
@@ -14,12 +14,17 @@ export async function GET(request: NextRequest) {
     const result = await useCase.execute({ locale });
     if (result.isLeft()) {
       const { status, code, message } = mapDomainErrorToHttp(result.value);
-      return NextResponse.json(errorResponse(code, message, status), { status });
+      return NextResponse.json(errorResponse(code, message, status), {
+        status,
+      });
     }
     return NextResponse.json(successResponse(result.value));
   } catch {
-    return NextResponse.json(errorResponse('INTERNAL_ERROR', 'Internal server error', 500), {
-      status: 500,
-    });
+    return NextResponse.json(
+      errorResponse('INTERNAL_ERROR', 'Internal server error', 500),
+      {
+        status: 500,
+      },
+    );
   }
 }

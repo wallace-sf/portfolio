@@ -1,11 +1,11 @@
 /**
  * @jest-environment node
  */
-import { NextRequest } from 'next/server';
 import { getContainer } from '@repo/infra';
+import { NextRequest } from 'next/server';
 
-import { GET } from '../route';
 import { GET as GETBySlug } from '../[slug]/route';
+import { GET } from '../route';
 
 jest.mock('@repo/infra', () => ({
   getContainer: jest.fn(),
@@ -69,7 +69,9 @@ describe('GET /api/v1/projects/[slug]', () => {
     mockFindBySlug.mockResolvedValue(null);
 
     const request = makeRequest('http://localhost/api/v1/projects/my-project');
-    const response = await GETBySlug(request, { params: { slug: 'my-project' } });
+    const response = await GETBySlug(request, {
+      params: { slug: 'my-project' },
+    });
     const body = await response.json();
 
     expect(response.status).toBe(404);

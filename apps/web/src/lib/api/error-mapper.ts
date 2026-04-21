@@ -1,5 +1,5 @@
-import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
 import { UnauthorizedError } from '@repo/core/identity';
+import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
 
 export interface HttpError {
   status: number;
@@ -17,5 +17,9 @@ export function mapDomainErrorToHttp(error: DomainError): HttpError {
   if (error instanceof UnauthorizedError) {
     return { status: 401, code: error.code, message: error.message };
   }
-  return { status: 500, code: 'INTERNAL_ERROR', message: 'Internal server error' };
+  return {
+    status: 500,
+    code: 'INTERNAL_ERROR',
+    message: 'Internal server error',
+  };
 }
