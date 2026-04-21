@@ -8,6 +8,6 @@
       "~/*": ["*"]
     }
   },
-  "include": ["src/**/*.ts", "jest.config.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts", "vitest.config.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "dist", "build"]
 }
