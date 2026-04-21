@@ -32,7 +32,7 @@ It is also a **technical reference** for applying Clean Architecture, Domain-Dri
 | Database | Supabase (Postgres + Auth + Realtime) |
 | ORM / query | Prisma |
 | Monorepo | Turborepo + pnpm workspaces |
-| Testing | Vitest (domain), Jest + Testing Library (web), Playwright (E2E) |
+| Testing | Vitest + Testing Library (all packages), Playwright (E2E) |
 | CI/CD | GitHub Actions + Vercel |
 
 ---
