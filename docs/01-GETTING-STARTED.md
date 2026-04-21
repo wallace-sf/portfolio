@@ -25,18 +25,54 @@ pnpm install
 
 ## Environment Variables
 
+The project uses two gitignored env files — one for the dev server, one for tests.
+Neither is committed to the repository.
+
+### Strategy
+
+| File | Loaded by | Purpose |
+|------|-----------|---------|
+| `.env.local` (root) | Next.js (`next dev`) | Run the app locally |
+| `packages/infra/.env.test.local` | Vitest (`mode=test`) | Integration tests against local Supabase |
+
+Both files use the **local Supabase stack** (`pnpm db:start`). The cloud Supabase
+project (`.env`) is reserved for production and staging.
+
+### Setup
+
+**1. Start the local Supabase stack**
+
 ```bash
-cp .env.example .env
+pnpm db:start
+# Starts Postgres (port 54322) and the Supabase API (port 54321) via Docker.
+# Run once; it persists across reboots until `pnpm db:stop`.
 ```
 
-1. Create a project at [supabase.com](https://supabase.com) (or use an existing one)
-2. Go to **Project Settings → Database → Connection string**
-3. Copy the **Transaction** string to `DATABASE_URL` and the **Session** string to `DIRECT_URL`
-
-Then apply migrations:
+**2. Create the dev env file**
 
 ```bash
-pnpm --filter @repo/infra db:migrate
+cp .env.example .env.local
+```
+
+The local Supabase values are pre-filled — no changes needed for DB and auth.
+Fill in `RESEND_API_KEY` only if you need to test email delivery end-to-end.
+
+**3. Create the test env file**
+
+```bash
+cp packages/infra/.env.example packages/infra/.env.test.local 2>/dev/null || \
+cp .env.example packages/infra/.env.test.local
+```
+
+The file at `packages/infra/.env.test.local` is identical to `.env.local` for the
+local stack. Vitest loads it automatically when running `pnpm test:infra`.
+
+**4. Apply migrations**
+
+```bash
+pnpm db:reset   # fresh schema from all migrations (use on first setup)
+# or
+pnpm --filter @repo/infra db:migrate   # incremental
 ```
 
 ---
