@@ -31,7 +31,12 @@
     "types:tailwind": "pnpm -C packages/tailwind-config types",
     "lint:storybooks": "pnpm -C apps/storybooks lint",
     "format:storybooks": "pnpm -C apps/storybooks format",
-    "types:storybooks": "pnpm -C apps/storybooks types"
+    "types:storybooks": "pnpm -C apps/storybooks types",
+    "db:start": "DOCKER_HOST=unix:///var/run/docker.sock supabase start",
+    "db:stop": "DOCKER_HOST=unix:///var/run/docker.sock supabase stop",
+    "db:reset": "DOCKER_HOST=unix:///var/run/docker.sock supabase db reset",
+    "db:status": "DOCKER_HOST=unix:///var/run/docker.sock supabase status",
+    "db:studio": "DOCKER_HOST=unix:///var/run/docker.sock supabase studio"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",

@@ -101,6 +101,25 @@ See [CLAUDE.md — Entity properties: VO vs primitive + Validator](../CLAUDE.md)
 
 ---
 
+### Enum and primitive invariants in entities
+
+For simple enum or primitive properties that do not warrant a dedicated VO, validate directly in `create()` using `Validator` — no need to wrap in a VO:
+
+```typescript
+// ✅ enum validated in entity create() — no VO needed
+{
+  const { error, isValid } = Validator.of(props.status)
+    .in(Object.values(ProjectStatus), 'Invalid status.')
+    .validate();
+  if (!isValid && error)
+    return left(new ValidationError({ code: Project.ERROR_CODE, message: error }));
+}
+```
+
+See [CLAUDE.md — Entity properties: VO vs primitive + Validator](../CLAUDE.md) for the full decision rule.
+
+---
+
 ## What Not To Do
 
 - Do **not** add Zod as a dependency of `@repo/core`

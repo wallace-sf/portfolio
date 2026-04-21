@@ -81,6 +81,23 @@ Modelo de papéis: `ADMIN | VISITOR`.
 
 ---
 
+## Phase 4 — Identity (Auth)
+
+> **Status:** planejado. Plano detalhado em [11-IDENTITY](./11-IDENTITY.md) e [plans/identity-mvp.md](../plans/identity-mvp.md).
+
+- [ ] **Domain** (`packages/core`)
+  - User, Role, Email, AccessPolicy, IUserRepository, UnauthorizedError
+- [ ] **Infrastructure** (`packages/infra`)
+  - Migration tabela `users`; SupabaseUserRepository; seed admin
+- [ ] **Application** (`packages/application`)
+  - GetCurrentUserUseCase, EnsureAdminUseCase
+- [ ] **Web** (`apps/web`)
+  - Middleware auth; página login; layout admin; getAuthenticatedUser
+
+Modelo de papéis: `ADMIN | VISITOR`. Rotas protegidas: `/[locale]/admin/*`. Login: `/[locale]/login`.
+
+---
+
 ## Continuous Improvements
 
 - **Validation**: Zod in the API and row decoding; gradual migration from Yup to Zod in forms; see [06-VALIDATION](./06-VALIDATION.md)
