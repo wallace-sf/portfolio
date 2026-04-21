@@ -34,7 +34,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "jest.config.ts",
+    "vitest.config.ts",
     "test/**/*.ts",
     "tailwind.config.ts",
     "environment.d.ts"

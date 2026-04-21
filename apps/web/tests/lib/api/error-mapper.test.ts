@@ -1,7 +1,7 @@
 import { UnauthorizedError } from '@repo/core/identity';
 import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
 
-import { mapDomainErrorToHttp } from '../error-mapper';
+import { mapDomainErrorToHttp } from '~/lib/api/error-mapper';
 
 describe('mapDomainErrorToHttp', () => {
   it('should map NotFoundError to 404', () => {

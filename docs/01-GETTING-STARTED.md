@@ -25,15 +25,37 @@ pnpm install
 
 ## Environment Variables
 
+Three gitignored env files, each with a different scope:
+
+| File | Loaded by | Purpose |
+|------|-----------|---------|
+| `.env` (root) | — | Production credentials — never use for local work |
+| `.env.local` (root) | Next.js (`next dev`) | Local dev server (Supabase dev project) |
+| `packages/infra/.env.test.local` | Vitest (`mode=test`) | Integration tests (Supabase dev project) |
+
+None of these files is committed to git.
+
+### Setup
+
+**1. Create the dev env file**
+
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
 
-1. Create a project at [supabase.com](https://supabase.com) (or use an existing one)
-2. Go to **Project Settings → Database → Connection string**
-3. Copy the **Transaction** string to `DATABASE_URL` and the **Session** string to `DIRECT_URL`
+Fill in the credentials from your **Supabase dev project**
+(supabase.com → Project Settings → Database and API).
 
-Then apply migrations:
+**2. Create the test env file**
+
+```bash
+cp .env.local packages/infra/.env.test.local
+```
+
+Vitest loads `packages/infra/.env.test.local` automatically in test mode — no
+extra configuration needed.
+
+**3. Apply migrations**
 
 ```bash
 pnpm --filter @repo/infra db:migrate

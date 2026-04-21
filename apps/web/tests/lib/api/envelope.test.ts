@@ -1,4 +1,4 @@
-import { errorResponse, successResponse } from '../envelope';
+import { errorResponse, successResponse } from '~/lib/api/envelope';
 
 describe('successResponse', () => {
   it('should return data with null error when no meta is provided', () => {

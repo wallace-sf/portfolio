@@ -97,6 +97,6 @@ Detalhes da estratégia (UI + domínio, LocalizedText, fallback): [docs/I18N.md]
 | `pnpm format` | Prettier em `src` |
 | `pnpm format:check` | Checagem Prettier |
 | `pnpm types` | `tsc --noEmit` |
-| `pnpm test` | Jest |
+| `pnpm test` | Vitest |
 
 Dev/build usam `NEXT_PUBLIC_*` (ver `turbo.json` na raiz).

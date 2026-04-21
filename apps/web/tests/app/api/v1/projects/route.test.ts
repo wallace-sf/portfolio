@@ -1,28 +1,28 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
-import { getContainer } from '@repo/infra';
+import { type Container, getContainer } from '@repo/infra';
 import { NextRequest } from 'next/server';
 
-import { GET as GETBySlug } from '../[slug]/route';
-import { GET } from '../route';
+import { GET as GETBySlug } from '~/app/api/v1/projects/[slug]/route';
+import { GET } from '~/app/api/v1/projects/route';
 
-jest.mock('@repo/infra', () => ({
-  getContainer: jest.fn(),
+vi.mock('@repo/infra', () => ({
+  getContainer: vi.fn(),
 }));
 
-const mockFindPublished = jest.fn();
-const mockFindBySlug = jest.fn();
-const mockFindRelated = jest.fn();
+const mockFindPublished = vi.fn();
+const mockFindBySlug = vi.fn();
+const mockFindRelated = vi.fn();
 
 beforeEach(() => {
-  (getContainer as jest.Mock).mockReturnValue({
+  vi.mocked(getContainer).mockReturnValue({
     projectRepository: {
       findPublished: mockFindPublished,
       findBySlug: mockFindBySlug,
       findRelated: mockFindRelated,
     },
-  });
+  } as unknown as Container);
   mockFindRelated.mockResolvedValue([]);
 });
 
