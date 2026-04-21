@@ -1,12 +1,18 @@
-import { DomainError, Either, Id, NotFoundError, left, right } from '@repo/core/shared';
-import { IUserRepository } from '@repo/core/identity';
-import { UnauthorizedError } from '@repo/core/identity';
+import { IUserRepository, UnauthorizedError } from '@repo/core/identity';
+import {
+  DomainError,
+  Either,
+  Id,
+  NotFoundError,
+  left,
+  right,
+} from '@repo/core/shared';
 
 import { UseCase } from '~/shared/UseCase';
 
-export interface EnsureAdminInput {
+export type EnsureAdminInput = {
   userId: string;
-}
+};
 
 export class EnsureAdmin extends UseCase<
   EnsureAdminInput,

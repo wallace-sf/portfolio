@@ -4,6 +4,6 @@ export class InfrastructureError extends Error {
     public readonly cause?: unknown,
   ) {
     super(message);
-    this.name = 'InfrastructureError';
+    this.name = "InfrastructureError";
   }
 }

@@ -1,5 +1,5 @@
-import { DomainError, Either, Email, Id, left, right } from '@repo/core/shared';
 import { IUserProps, IUserRepository, Role, User } from '@repo/core/identity';
+import { DomainError, Either, Email, Id, left, right } from '@repo/core/shared';
 
 import { UseCase } from '~/shared/UseCase';
 
@@ -45,7 +45,8 @@ export class EnsureAppUserForAuthSession extends UseCase<
       const email = emailResult.value;
 
       // Branch 1: user already linked to this authSubject
-      const bySubject = await this.userRepository.findByAuthSubject(authSubject);
+      const bySubject =
+        await this.userRepository.findByAuthSubject(authSubject);
       if (bySubject) return right(bySubject.id.value);
 
       // Branch 2 & 3: check by email

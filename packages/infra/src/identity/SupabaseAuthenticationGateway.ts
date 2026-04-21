@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 import {
   AuthCookieApi,
@@ -6,13 +6,13 @@ import {
   AuthSession,
   IAuthenticationGateway,
   SignInWithPasswordInput,
-} from '@repo/application/identity';
-import { DomainError, Either, left, right } from '@repo/core/shared';
+} from "@repo/application/identity";
+import { DomainError, Either, left, right } from "@repo/core/shared";
 
 /** Cookie name used to persist the Supabase access token (JWT). */
-export const SUPABASE_ACCESS_TOKEN_COOKIE = 'sb-access-token';
+export const SUPABASE_ACCESS_TOKEN_COOKIE = "sb-access-token";
 /** Cookie name used to persist the Supabase refresh token. */
-export const SUPABASE_REFRESH_TOKEN_COOKIE = 'sb-refresh-token';
+export const SUPABASE_REFRESH_TOKEN_COOKIE = "sb-refresh-token";
 
 /**
  * Supabase implementation of IAuthenticationGateway.
@@ -41,8 +41,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (error || !data.session) {
         return left(
-          new DomainError('INVALID_CREDENTIALS', {
-            message: error?.message ?? 'Sign-in failed.',
+          new DomainError("INVALID_CREDENTIALS", {
+            message: error?.message ?? "Sign-in failed.",
           }),
         );
       }
@@ -50,7 +50,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
       return right({
         accessToken: data.session.access_token,
         refreshToken: data.session.refresh_token,
-        expiresAt: data.session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
+        expiresAt:
+          data.session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
       });
     } catch (err) {
       return left(this._unexpectedError(err));
@@ -82,13 +83,17 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
     }
   }
 
-  async refreshSession(cookies: AuthCookieApi): Promise<Either<DomainError, AuthSession>> {
+  async refreshSession(
+    cookies: AuthCookieApi,
+  ): Promise<Either<DomainError, AuthSession>> {
     try {
       const refreshToken = cookies.get(SUPABASE_REFRESH_TOKEN_COOKIE);
 
       if (!refreshToken) {
         return left(
-          new DomainError('NO_REFRESH_TOKEN', { message: 'No refresh token in cookies.' }),
+          new DomainError("NO_REFRESH_TOKEN", {
+            message: "No refresh token in cookies.",
+          }),
         );
       }
 
@@ -102,8 +107,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (error || !data.session) {
         return left(
-          new DomainError('INVALID_REFRESH_TOKEN', {
-            message: error?.message ?? 'Session refresh failed.',
+          new DomainError("INVALID_REFRESH_TOKEN", {
+            message: error?.message ?? "Session refresh failed.",
           }),
         );
       }
@@ -111,7 +116,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
       return right({
         accessToken: data.session.access_token,
         refreshToken: data.session.refresh_token,
-        expiresAt: data.session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
+        expiresAt:
+          data.session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
       });
     } catch (err) {
       return left(this._unexpectedError(err));
@@ -126,7 +132,9 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (!accessToken) {
         return left(
-          new DomainError('NO_ACCESS_TOKEN', { message: 'No access token in cookies.' }),
+          new DomainError("NO_ACCESS_TOKEN", {
+            message: "No access token in cookies.",
+          }),
         );
       }
 
@@ -138,16 +146,17 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (error || !data.user) {
         return left(
-          new DomainError('INVALID_ACCESS_TOKEN', {
-            message: error?.message ?? 'Access token is invalid or expired.',
+          new DomainError("INVALID_ACCESS_TOKEN", {
+            message: error?.message ?? "Access token is invalid or expired.",
           }),
         );
       }
 
       return right({
         id: data.user.id,
-        email: data.user.email ?? '',
-        role: (data.user.app_metadata?.['role'] as string | undefined) ?? 'VISITOR',
+        email: data.user.email ?? "",
+        role:
+          (data.user.app_metadata?.["role"] as string | undefined) ?? "VISITOR",
       });
     } catch (err) {
       return left(this._unexpectedError(err));
@@ -155,7 +164,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
   }
 
   private _unexpectedError(err: unknown): DomainError {
-    const message = err instanceof Error ? err.message : 'Unexpected authentication error.';
-    return new DomainError('AUTH_UNEXPECTED_ERROR', { message });
+    const message =
+      err instanceof Error ? err.message : "Unexpected authentication error.";
+    return new DomainError("AUTH_UNEXPECTED_ERROR", { message });
   }
 }

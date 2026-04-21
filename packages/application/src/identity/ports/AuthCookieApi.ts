@@ -14,8 +14,8 @@ export type CookieSetOptions = {
  * (e.g. Next.js route handlers) provides the concrete implementation.
  * This keeps `@repo/application` free of any `next/headers` import.
  */
-export interface AuthCookieApi {
+export type AuthCookieApi = {
   get(name: string): string | undefined;
   set(name: string, value: string, options?: CookieSetOptions): void;
   delete(name: string): void;
-}
+};
