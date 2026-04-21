@@ -2,8 +2,8 @@ import { Validator } from '@repo/utils/validator';
 
 import { DomainError, Either, ValidationError, left, right } from '@repo/core/shared';
 
-import { IContactMessageDTO } from '../dtos/ContactMessageDTO';
-import { IEmailService } from '../ports/IEmailService';
+import { IContactMessageDTO } from '~/contact/dtos/ContactMessageDTO';
+import { IEmailService } from '~/contact/ports/IEmailService';
 
 export interface SendContactMessageInput {
   name: string;

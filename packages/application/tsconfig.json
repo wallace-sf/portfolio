@@ -5,10 +5,13 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "~/*": ["*"],
-      "@repo/core/*": ["../../core/src/*"]
+      "~/*": ["*"]
     }
   },
+  "references": [
+    { "path": "../utils/tsconfig.build.json" },
+    { "path": "../core/tsconfig.build.json" }
+  ],
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "dist", "build"]
 }

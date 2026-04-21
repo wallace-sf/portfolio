@@ -1,4 +1,4 @@
-import { Skill, SkillType, Text, ValidationError } from '../../src';
+import { Skill, Text, ValidationError } from '../../src';
 import { SkillBuilder } from '../helpers';
 
 describe('Skill', () => {
@@ -10,7 +10,7 @@ describe('Skill', () => {
       expect(result.value).toBeInstanceOf(Skill);
     });
 
-    it('should expose description, icon and type as VOs', () => {
+    it('should expose description and icon as VOs and type as enum', () => {
       const props = SkillBuilder.build().toProps();
       const result = Skill.create(props);
 
@@ -18,7 +18,7 @@ describe('Skill', () => {
       if (!result.isRight()) return;
       expect(result.value.description.value).toBe(props.description);
       expect(result.value.icon.value).toBe(props.icon);
-      expect(result.value.type.value).toBe(props.type);
+      expect(result.value.type).toBe(props.type);
     });
   });
 
@@ -47,9 +47,7 @@ describe('Skill', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(
-        SkillType.ERROR_CODE,
-      );
+      expect((result.value as ValidationError).code).toBe(Skill.ERROR_CODE);
     });
   });
 });

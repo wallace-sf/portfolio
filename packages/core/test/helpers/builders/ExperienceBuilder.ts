@@ -1,21 +1,12 @@
 import {
   Experience,
   IExperienceProps,
-  IExperienceSkillProps,
-  EmploymentTypeValue,
+  EmploymentType,
   ILocalizedTextInput,
-  LocationTypeValue,
+  LocationType,
 } from '../../../src';
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
-import { SkillBuilder } from './SkillBuilder';
-
-function experienceSkillListToProps(count: number): IExperienceSkillProps[] {
-  return SkillBuilder.listToProps(count).map((skill) => ({
-    skill,
-    workDescription: { 'pt-BR': Data.text.description() },
-  }));
-}
 
 export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
   private constructor(props: IExperienceProps) {
@@ -24,16 +15,19 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
 
   static build(): ExperienceBuilder {
     return new ExperienceBuilder({
-      company: { 'pt-BR': 'Portfolio Inc' },
-      position: { 'pt-BR': 'Software Engineer' },
-      location: { 'pt-BR': 'São Paulo, Brazil' },
-      description: { 'pt-BR': Data.text.description() },
+      company: { 'en-US': 'Portfolio Inc', 'pt-BR': 'Portfolio Inc' },
+      position: { 'en-US': 'Software Engineer', 'pt-BR': 'Software Engineer' },
+      location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brazil' },
+      description: { 'en-US': Data.text.description(), 'pt-BR': Data.text.description() },
       logo: { url: Data.image.url(), alt: Data.image.alt() },
       employment_type: Data.employment.valid(),
       location_type: Data.location.valid(),
       start_at: '2022-01-01T00:00:00.000Z',
       end_at: '2022-01-02T00:00:00.000Z',
-      skills: experienceSkillListToProps(2),
+      skills: [
+        'a0000000-0000-4000-8000-000000000001',
+        'a0000000-0000-4000-8000-000000000002',
+      ],
     });
   }
 
@@ -72,14 +66,12 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
     return this;
   }
 
-  public withEmploymentType(
-    employmentType: EmploymentTypeValue,
-  ): ExperienceBuilder {
+  public withEmploymentType(employmentType: EmploymentType): ExperienceBuilder {
     this._props.employment_type = employmentType;
     return this;
   }
 
-  public withLocationType(locationType: LocationTypeValue): ExperienceBuilder {
+  public withLocationType(locationType: LocationType): ExperienceBuilder {
     this._props.location_type = locationType;
     return this;
   }
@@ -94,7 +86,7 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
     return this;
   }
 
-  public withSkills(skills: IExperienceSkillProps[]): ExperienceBuilder {
+  public withSkills(skills: string[]): ExperienceBuilder {
     this._props.skills = skills;
     return this;
   }

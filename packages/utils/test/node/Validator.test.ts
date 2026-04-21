@@ -18,29 +18,6 @@ describe('Validator', () => {
     });
   });
 
-  describe('combine', () => {
-    it('should combine validate', () => {
-      const validator = Validator.combine(
-        Validator.of('value').notNil('NOT_NIL_ERROR'),
-        Validator.of('value').string('STRING_ERROR'),
-        Validator.of('value').alpha('ALPHA_ERROR'),
-        Validator.of('value').length(1, 5, 'LENGTH_ERROR'),
-      );
-
-      expect(validator.error).toBeNull();
-      expect(validator.isValid).toBe(true);
-    });
-
-    it('should not combine validate', () => {
-      const validator = Validator.combine(
-        Validator.of('value').length(1, 3, 'LENGTH_ERROR'),
-      );
-
-      expect(validator.error).toBe('LENGTH_ERROR');
-      expect(validator.isValid).toBe(false);
-    });
-  });
-
   describe('length', () => {
     it('should validate', () => {
       const validator = Validator.of('value')

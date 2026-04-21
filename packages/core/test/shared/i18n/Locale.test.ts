@@ -1,8 +1,8 @@
 import { DEFAULT_LOCALE, isLocale, LOCALES } from '../../../src';
 
 describe('Locale', () => {
-  it('should export DEFAULT_LOCALE as "pt-BR"', () => {
-    expect(DEFAULT_LOCALE).toBe('pt-BR');
+  it('should export DEFAULT_LOCALE as "en-US"', () => {
+    expect(DEFAULT_LOCALE).toBe('en-US');
   });
 
   it('should export LOCALES as en-US, pt-BR, es', () => {

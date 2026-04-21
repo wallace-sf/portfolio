@@ -1,4 +1,11 @@
 {
   "extends": "./packages/typescript-config/base.json",
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "references": [
+    { "path": "packages/utils/tsconfig.build.json" },
+    { "path": "packages/core/tsconfig.build.json" },
+    { "path": "packages/application/tsconfig.build.json" },
+    { "path": "packages/infra/tsconfig.build.json" },
+    { "path": "packages/ui/tsconfig.build.json" }
+  ]
 }

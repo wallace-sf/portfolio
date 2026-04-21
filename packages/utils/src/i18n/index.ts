@@ -1,1 +1,1 @@
-export * from './Translator';
+export * from '~/i18n/Translator';

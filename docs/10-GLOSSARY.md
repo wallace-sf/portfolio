@@ -93,23 +93,31 @@ A contact form submission. Contains name, email, and message body.
 
 ---
 
-## Domain Terms — Identity Context (Planejado)
+## Domain Terms — Identity Context
 
 ### User
 
-Identidade autenticada no sistema. Possui `auth_id` (Supabase Auth), `email` e `role`. Usada para autorização de ações admin.
+Aggregate root em `@repo/core/identity`. Identificador (`Id`), `Name`, `Email`, `Role`. Métodos `isAdmin()` / `isVisitor()`. O vínculo com o IdP será tipicamente uma coluna **`authSubject`** (UUID estável, ex. `sub` do Supabase) na persistência — **planeado**; senhas ficam só no IdP.
+
+### authSubject
+
+Identificador externo do utilizador no provedor de auth (ex. id em `auth.users`). Liga a sessão ao registo `User` da aplicação; ver [11-IDENTITY](./11-IDENTITY.md).
+
+### IAuthenticationGateway (application port)
+
+Contrato para ler sessão, sign-in, sign-out e refresh **sem** expor Supabase à application ou ao front. Implementação concreta na infra; ver [11-IDENTITY](./11-IDENTITY.md).
 
 ### Role
 
-Papel do usuário. Valores: `ADMIN` (acesso total) ou `VISITOR` (apenas leitura pública).
+Enum (`ADMIN` | `VISITOR`). `ADMIN` desbloqueia operações de gestão quando a API e os casos de uso (`EnsureAdmin`) o exigem.
 
-### AccessPolicy
+### EnsureAdmin (application use case)
 
-Policy que determina se um User pode executar ações protegidas (publicar, gerenciar projetos, acessar área admin). Todos os métodos delegam para `role === 'ADMIN'`.
+Caso de uso que verifica se o utilizador existe e é `ADMIN`; caso contrário devolve `UnauthorizedError`. Substitui um objeto `AccessPolicy` separado enquanto as regras forem binárias.
 
 ### UnauthorizedError
 
-Erro de domínio para falhas de autenticação ou autorização (usuário não logado ou sem permissão).
+Erro de domínio (`code` `UNAUTHORIZED`) para falhas de autorização (ex.: utilizador autenticado sem privilégio de admin). Na API, mapeia tipicamente a HTTP **401** (ver [05-API-CONTRACTS](./05-API-CONTRACTS.md)).
 
 ---
 

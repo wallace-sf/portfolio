@@ -21,23 +21,6 @@ export class Validator<TValue> {
     return new Validator<TValue>(value);
   }
 
-  static combine<TValue>(...validators: Validator<TValue>[]) {
-    let isValid = true;
-    let error: string | null = null;
-
-    for (const validation of validators) {
-      const { isValid: validationValid, error: validationError } =
-        validation.validate();
-
-      isValid = validationValid;
-      error = validationError;
-
-      if (!isValid && error) break;
-    }
-
-    return { isValid, error };
-  }
-
   private append(validation: Validation, error: string) {
     this._validations.push([validation, error]);
 

@@ -9,7 +9,7 @@ import {
   Text,
   Url,
   ValidationError,
-} from '../../../../shared';
+} from '~/shared';
 
 export interface ISocialNetworkProps extends IEntityProps {
   name: string;
@@ -18,6 +18,8 @@ export interface ISocialNetworkProps extends IEntityProps {
 }
 
 export class SocialNetwork extends Entity<SocialNetwork, ISocialNetworkProps> {
+  static readonly ERROR_CODE = 'INVALID_SOCIAL_NETWORK';
+
   public readonly name: Name;
   public readonly icon: Text;
   public readonly url: Url;

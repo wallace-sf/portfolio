@@ -1,20 +1,20 @@
 import { Validator } from '@repo/utils/validator';
 
-import { ValueObject } from '../base/ValueObject';
-import { left, right, Either } from '../either';
-import { ValidationError } from '../errors';
-import type { Locale } from './Locale';
+import { ValueObject } from '~/shared/base/ValueObject';
+import { left, right, Either } from '~/shared/either';
+import { ValidationError } from '~/shared/errors';
+import type { Locale } from '~/shared/i18n/Locale';
 
 export type LocalizedTextValue = Readonly<{
+  'en-US': string;
+  'pt-BR'?: string;
   es?: string;
-  'en-US'?: string;
-  'pt-BR': string;
 }>;
 
 export interface ILocalizedTextInput {
+  'en-US': string;
+  'pt-BR'?: string;
   es?: string;
-  'en-US'?: string;
-  'pt-BR': string;
 }
 
 function trimOrUndefined(s: string | undefined): string | undefined {
@@ -24,13 +24,13 @@ function trimOrUndefined(s: string | undefined): string | undefined {
 }
 
 function normalizeInput(input: ILocalizedTextInput): LocalizedTextValue {
-  const ptBR = input['pt-BR']?.trim() ?? '';
-  const enUS = trimOrUndefined(input['en-US']);
+  const enUS = input['en-US']?.trim() ?? '';
+  const ptBR = trimOrUndefined(input['pt-BR']);
   const es = trimOrUndefined(input.es);
 
   return Object.freeze({
-    'pt-BR': ptBR,
-    ...(enUS !== undefined && { 'en-US': enUS }),
+    'en-US': enUS,
+    ...(ptBR !== undefined && { 'pt-BR': ptBR }),
     ...(es !== undefined && { es }),
   });
 }
@@ -45,8 +45,8 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
   static create(
     input: ILocalizedTextInput,
   ): Either<ValidationError, LocalizedText> {
-    const { error, isValid } = Validator.of(input['pt-BR']?.trim() ?? '')
-      .notEmpty('pt-BR is required and must be non-empty after trim.')
+    const { error, isValid } = Validator.of(input['en-US']?.trim() ?? '')
+      .notEmpty('en-US is required and must be non-empty after trim.')
       .validate();
 
     if (!isValid && error)
@@ -61,7 +61,7 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
    * Returns text for the requested locale, with optional fallback.
    * - Uses `locale` if available and non-empty.
    * - Else uses `fallback` if provided and available.
-   * - Else uses pt-BR.
+   * - Else uses en-US.
    */
   get(locale: Locale, fallback?: Locale): string {
     const v = this.value;
@@ -71,7 +71,7 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
       const forFallback = this._getLocaleValue(v, fallback);
       if (forFallback !== undefined && forFallback !== '') return forFallback;
     }
-    return v['pt-BR'];
+    return v['en-US'];
   }
 
   private _getLocaleValue(
@@ -79,10 +79,10 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
     locale: Locale,
   ): string | undefined {
     switch (locale) {
-      case 'pt-BR':
-        return v['pt-BR'];
       case 'en-US':
         return v['en-US'];
+      case 'pt-BR':
+        return v['pt-BR'];
       case 'es':
         return v.es;
       default:

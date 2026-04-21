@@ -10,9 +10,9 @@ describe('Language', () => {
       expect(result.value).toBeInstanceOf(Language);
     });
 
-    it('should create language with all fields as VOs', () => {
+    it('should create language with name as VO, fluency as enum, and locale as string', () => {
       const name = 'Português';
-      const fluency = 'BEGINNER';
+      const fluency = Fluency.BEGINNER;
       const locale = 'pt-BR';
 
       const result = Language.create(
@@ -26,7 +26,7 @@ describe('Language', () => {
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
       expect(result.value.name.value).toBe(name);
-      expect(result.value.fluency.value).toBe(fluency);
+      expect(result.value.fluency).toBe(fluency);
       expect(result.value.locale).toBe(locale);
     });
   });
@@ -47,7 +47,7 @@ describe('Language', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Fluency.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(Language.ERROR_CODE);
     });
 
     it('should return Left when locale is missing', () => {

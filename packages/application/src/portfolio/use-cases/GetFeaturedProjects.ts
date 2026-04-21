@@ -1,8 +1,8 @@
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 import { IProjectRepository, Project } from '@repo/core/portfolio';
 
-import { UseCase } from '../../shared/UseCase';
-import { ProjectSummaryDTO } from '../dtos/ProjectSummaryDTO';
+import { UseCase } from '~/shared/UseCase';
+import { ProjectSummaryDTO } from '~/portfolio/dtos/ProjectSummaryDTO';
 
 export interface GetFeaturedProjectsInput {
   locale: Locale;
@@ -39,7 +39,7 @@ export class GetFeaturedProjects extends UseCase<GetFeaturedProjectsInput, Proje
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((s) => s.description.value),
+      skills: project.skills.map((id) => id.value),
       publishedAt: project.period.startAt.value,
     };
   }

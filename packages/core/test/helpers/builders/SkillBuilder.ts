@@ -1,4 +1,4 @@
-import { ISkillProps, Skill, SkillTypeValue } from '../../../src';
+import { ISkillProps, Skill, SkillType } from '../../../src';
 import { EntityBuilder } from './EntityBuilder';
 
 export class SkillBuilder extends EntityBuilder<ISkillProps> {
@@ -6,17 +6,17 @@ export class SkillBuilder extends EntityBuilder<ISkillProps> {
     {
       description: 'TypeScript development',
       icon: 'code',
-      type: 'TECHNOLOGY',
+      type: SkillType.TECHNOLOGY,
     },
     {
       description: 'Team communication',
       icon: 'users',
-      type: 'SOFT',
+      type: SkillType.SOFT,
     },
     {
       description: 'English language',
       icon: 'language',
-      type: 'LANGUAGE',
+      type: SkillType.LANGUAGE,
     },
   ];
 
@@ -64,7 +64,7 @@ export class SkillBuilder extends EntityBuilder<ISkillProps> {
     return this;
   }
 
-  public withType(type: SkillTypeValue): SkillBuilder {
+  public withType(type: SkillType): SkillBuilder {
     this._props.type = type;
 
     return this;

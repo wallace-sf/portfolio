@@ -1,8 +1,10 @@
 import { FC } from 'react';
 
 import {
+  EmploymentType,
   IProfessionalValueProps,
   IExperienceProps,
+  LocationType,
 } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
 
@@ -38,161 +40,72 @@ const PROFESSIONAL_VALUES: IProfessionalValueProps[] = [
 const EXPERIENCES: IExperienceProps[] = [
   {
     id: '1',
-    company: { 'pt-BR': 'WESF Serviços de TI' },
-    employment_type: 'FREELANCE',
-    location: { 'pt-BR': 'São Paulo, Brasil' },
-    position: { 'pt-BR': 'Desenvolvedor Full-Stack' },
+    company: { 'en-US': 'WESF IT Services', 'pt-BR': 'WESF Serviços de TI' },
+    employment_type: EmploymentType.FREELANCE,
+    location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
+    position: {
+      'en-US': 'Full-Stack Developer',
+      'pt-BR': 'Desenvolvedor Full-Stack',
+    },
     description: {
+      'en-US': 'Full-stack solution development for clients.',
       'pt-BR': 'Desenvolvimento de soluções full-stack para clientes.',
     },
-    logo: { url: 'https://placehold.co/48x48', alt: { 'pt-BR': 'WESF logo' } },
-    location_type: 'REMOTE',
-    skills: [
-      {
-        skill: {
-          id: '1',
-          description: 'React.js',
-          icon: 'devicon:react',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Desenvolvimento de interfaces.' },
-      },
-      {
-        skill: {
-          id: '2',
-          description: 'Angular',
-          icon: 'devicon:angular',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Manutenção de aplicações.' },
-      },
-      {
-        skill: {
-          id: '3',
-          description: 'Typescript',
-          icon: 'devicon:typescript',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Tipagem estática.' },
-      },
-      {
-        skill: {
-          id: '4',
-          description: 'Electron',
-          icon: 'devicon:electron',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Apps desktop.' },
-      },
-    ],
+    logo: {
+      url: 'https://placehold.co/48x48',
+      alt: { 'en-US': 'WESF logo', 'pt-BR': 'WESF logo' },
+    },
+    location_type: LocationType.REMOTE,
+    skills: [],
     start_at: '2021-01-01T00:00:00.000Z',
     end_at: '2022-01-01T00:00:00.000Z',
   },
   {
     id: '2',
-    company: { 'pt-BR': 'Galaxies' },
-    employment_type: 'PART_TIME',
-    location: { 'pt-BR': 'São Paulo, Brasil' },
-    position: { 'pt-BR': 'Desenvolvedor Front-end' },
+    company: { 'en-US': 'Galaxies', 'pt-BR': 'Galaxies' },
+    employment_type: EmploymentType.PART_TIME,
+    location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
+    position: {
+      'en-US': 'Front-end Developer',
+      'pt-BR': 'Desenvolvedor Front-end',
+    },
     description: {
+      'en-US': 'Interface development for SaaS platform.',
       'pt-BR': 'Desenvolvimento de interfaces para plataforma SaaS.',
     },
     logo: {
       url: 'https://placehold.co/48x48',
-      alt: { 'pt-BR': 'Galaxies logo' },
+      alt: { 'en-US': 'Galaxies logo', 'pt-BR': 'Galaxies logo' },
     },
-    location_type: 'REMOTE',
-    skills: [
-      {
-        skill: {
-          id: '1',
-          description: 'Next.js',
-          icon: 'devicon:nextjs',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'SSR e geração estática.' },
-      },
-      {
-        skill: {
-          id: '2',
-          description: 'TailwindCSS',
-          icon: 'devicon:tailwindcss',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Estilização utilitária.' },
-      },
-      {
-        skill: {
-          id: '3',
-          description: 'Material UI',
-          icon: 'devicon:materialui',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Design system.' },
-      },
-      {
-        skill: {
-          id: '4',
-          description: 'Electron',
-          icon: 'devicon:electron',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Apps desktop.' },
-      },
-    ],
+    location_type: LocationType.REMOTE,
+    skills: [],
     start_at: '2022-01-01T00:00:00.000Z',
     end_at: '2023-01-01T00:00:00.000Z',
   },
   {
     id: '3',
     company: {
+      'en-US':
+        'FDTE - Foundation for the Technological Development of Engineering',
       'pt-BR':
         'FDTE - Fundação para o Desenvolvimento Técnológico da Engenharia',
     },
-    employment_type: 'FULL_TIME',
-    location: { 'pt-BR': 'São Paulo, Brasil' },
-    position: { 'pt-BR': 'Desenvolvedor Front-end' },
-    description: { 'pt-BR': 'Desenvolvimento de sistemas para engenharia.' },
-    logo: { url: 'https://placehold.co/48x48', alt: { 'pt-BR': 'FDTE logo' } },
-    location_type: 'HYBRID',
-    skills: [
-      {
-        skill: {
-          id: '1',
-          description: 'React.js',
-          icon: 'devicon:react',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Desenvolvimento de interfaces.' },
-      },
-      {
-        skill: {
-          id: '2',
-          description: 'Angular',
-          icon: 'devicon:angular',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Manutenção de sistemas legados.' },
-      },
-      {
-        skill: {
-          id: '3',
-          description: 'Typescript',
-          icon: 'devicon:typescript',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Tipagem estática.' },
-      },
-      {
-        skill: {
-          id: '4',
-          description: 'Electron',
-          icon: 'devicon:electron',
-          type: 'TECHNOLOGY',
-        },
-        workDescription: { 'pt-BR': 'Apps desktop.' },
-      },
-    ],
+    employment_type: EmploymentType.FULL_TIME,
+    location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
+    position: {
+      'en-US': 'Front-end Developer',
+      'pt-BR': 'Desenvolvedor Front-end',
+    },
+    description: {
+      'en-US': 'Systems development for engineering.',
+      'pt-BR': 'Desenvolvimento de sistemas para engenharia.',
+    },
+    logo: {
+      url: 'https://placehold.co/48x48',
+      alt: { 'en-US': 'FDTE logo', 'pt-BR': 'FDTE logo' },
+    },
+    location_type: LocationType.HYBRID,
+    skills: [],
     start_at: '2023-01-01T00:00:00.000Z',
     end_at: '2024-01-01T00:00:00.000Z',
   },

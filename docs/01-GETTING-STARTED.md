@@ -6,10 +6,10 @@
 
 ## Prerequisites
 
-- **Node.js** ≥ 18
+- **Node.js** ≥ 22
 - **pnpm** ≥ 8 (`npm install -g pnpm`)
 - **Git**
-- A Supabase project (for database-backed features)
+- A [Supabase](https://supabase.com) project (free tier is sufficient)
 
 ---
 
@@ -25,18 +25,18 @@ pnpm install
 
 ## Environment Variables
 
-Copy the example env file and fill in your Supabase credentials:
-
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-Key variables:
+1. Create a project at [supabase.com](https://supabase.com) (or use an existing one)
+2. Go to **Project Settings → Database → Connection string**
+3. Copy the **Transaction** string to `DATABASE_URL` and the **Session** string to `DIRECT_URL`
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
+Then apply migrations:
+
+```bash
+pnpm --filter @repo/infra db:migrate
 ```
 
 ---
@@ -51,6 +51,8 @@ SUPABASE_SERVICE_ROLE_KEY=...
 | `pnpm lint` | Lint all packages |
 | `pnpm typecheck` | TypeScript check across all packages |
 | `pnpm format` | Prettier format |
+| `pnpm --filter @repo/infra db:migrate` | Apply pending migrations |
+| `pnpm --filter @repo/infra db:studio` | Open Prisma Studio (visual DB browser) |
 
 Run a single package:
 

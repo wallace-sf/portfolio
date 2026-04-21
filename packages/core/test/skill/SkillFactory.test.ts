@@ -34,14 +34,12 @@ describe('SkillFactory', () => {
 
     it('should return Left with index when one skill has invalid props', () => {
       const props = SkillBuilder.listToProps(2);
-      props[0]!.type = '' as 'EDUCATION';
+      props[0]!.type = '' as unknown as SkillType;
 
       const result = SkillFactory.bulk(props);
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(
-        SkillType.ERROR_CODE,
-      );
+      expect((result.value as ValidationError).code).toBe(Skill.ERROR_CODE);
     });
   });
 });

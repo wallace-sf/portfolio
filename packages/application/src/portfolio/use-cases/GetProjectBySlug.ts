@@ -1,9 +1,9 @@
 import { DomainError, Either, Locale, NotFoundError, Slug, ValidationError, left, right } from '@repo/core/shared';
 import { IProjectRepository, Project } from '@repo/core/portfolio';
 
-import { UseCase } from '../../shared/UseCase';
-import { ProjectDetailDTO } from '../dtos/ProjectDetailDTO';
-import { ProjectSummaryDTO } from '../dtos/ProjectSummaryDTO';
+import { UseCase } from '~/shared/UseCase';
+import { ProjectDetailDTO } from '~/portfolio/dtos/ProjectDetailDTO';
+import { ProjectSummaryDTO } from '~/portfolio/dtos/ProjectSummaryDTO';
 
 export interface GetProjectBySlugInput {
   slug: string;
@@ -62,13 +62,12 @@ export class GetProjectBySlug extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((s) => s.description.value),
+      skills: project.skills.map((id) => id.value),
       publishedAt: project.period.startAt.value,
       content: project.content.value,
       summary: project.summary?.get(locale),
       objectives: project.objectives?.get(locale),
       role: project.role?.get(locale),
-      team: project.team,
       period: {
         startAt: project.period.startAt.value,
         endAt: project.period.endAt?.value,
@@ -88,7 +87,7 @@ export class GetProjectBySlug extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((s) => s.description.value),
+      skills: project.skills.map((id) => id.value),
       publishedAt: project.period.startAt.value,
     };
   }

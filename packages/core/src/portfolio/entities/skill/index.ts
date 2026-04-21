@@ -1,3 +1,3 @@
-export * from './factory/SkillFactory';
-export * from './model/Skill';
-export type { ISkillRepository } from './repositories/ISkillRepository';
+export * from '~/portfolio/entities/skill/factory/SkillFactory';
+export * from '~/portfolio/entities/skill/model/Skill';
+export * from '~/portfolio/entities/skill/model/SkillType';

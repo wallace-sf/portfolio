@@ -79,7 +79,25 @@ static create(raw?: string): Either<ValidationError, Slug> {
 | `.nil(error)` | Value is `null` or `undefined` |
 | `.notNil(error)` | Value is not `null` or `undefined` |
 | `.refine(predicate, error)` | Arbitrary predicate function |
-| `Validator.combine(...validators)` | Runs multiple validators; returns first error |
+
+---
+
+### Enum and primitive invariants in entities
+
+For simple enum or primitive properties that do not warrant a dedicated VO, validate directly in `create()` using `Validator` — no need to wrap in a VO:
+
+```typescript
+// ✅ enum validated in entity create() — no VO needed
+{
+  const { error, isValid } = Validator.of(props.status)
+    .in(Object.values(ProjectStatus), 'Invalid status.')
+    .validate();
+  if (!isValid && error)
+    return left(new ValidationError({ code: Project.ERROR_CODE, message: error }));
+}
+```
+
+See [CLAUDE.md — Entity properties: VO vs primitive + Validator](../CLAUDE.md) for the full decision rule.
 
 ---
 

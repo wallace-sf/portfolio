@@ -1,30 +1,37 @@
 import {
   collect,
   Either,
+  Entity,
+  IEntityProps,
+  ILocalizedTextInput,
   left,
+  LocalizedText,
   right,
   Text,
   ValidationError,
-} from '../../../../shared';
-import {
-  ILocalizedTextInput,
-  LocalizedText,
-} from '../../../../shared/i18n/LocalizedText';
+} from '~/shared';
 
-export interface IProfileStatProps {
+export interface IProfileStatProps extends IEntityProps {
   label: ILocalizedTextInput;
   value: string;
   icon: string;
 }
 
-export class ProfileStat {
+export class ProfileStat extends Entity<ProfileStat, IProfileStatProps> {
+  static readonly ERROR_CODE = 'INVALID_PROFILE_STAT';
+
   public readonly label: LocalizedText;
   public readonly value: string;
   public readonly icon: Text;
 
-  private constructor(label: LocalizedText, value: string, icon: Text) {
+  private constructor(
+    props: IProfileStatProps,
+    label: LocalizedText,
+    icon: Text,
+  ) {
+    super(props);
     this.label = label;
-    this.value = value;
+    this.value = props.value;
     this.icon = icon;
   }
 
@@ -38,7 +45,7 @@ export class ProfileStat {
     ]);
     if (result.isLeft()) return left(result.value);
 
-    const [label, value, icon] = result.value;
-    return right(new ProfileStat(label, value.value, icon));
+    const [label, , icon] = result.value;
+    return right(new ProfileStat(props, label, icon));
   }
 }

@@ -1,9 +1,4 @@
-import { Id } from '../../../../shared';
-import { Experience } from '../model/Experience';
+import { Experience } from '~/portfolio/entities/experience/model/Experience';
+import { IRepository } from '~/shared/base/IRepository';
 
-export interface IExperienceRepository {
-  findAll(): Promise<Experience[]>;
-  findById(id: Id): Promise<Experience | null>;
-  save(experience: Experience): Promise<void>;
-  delete(id: Id): Promise<void>;
-}
+export interface IExperienceRepository extends IRepository<Experience> {}

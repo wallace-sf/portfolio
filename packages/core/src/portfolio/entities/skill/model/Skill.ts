@@ -1,48 +1,55 @@
+import { SkillType } from '~/portfolio/entities/skill/model/SkillType';
 import {
   collect,
   Either,
-  Entity,
+  AggregateRoot,
   IEntityProps,
   left,
   right,
-  SkillType,
-  SkillTypeValue,
   Text,
   ValidationError,
-} from '../../../../shared';
+  validateEnum,
+} from '~/shared';
 
 export interface ISkillProps extends IEntityProps {
   description: string;
   icon: string;
-  type: SkillTypeValue;
+  type: SkillType;
 }
 
-export class Skill extends Entity<Skill, ISkillProps> {
+export class Skill extends AggregateRoot<Skill, ISkillProps> {
+  static readonly ERROR_CODE = 'INVALID_SKILL';
+
   public readonly description: Text;
   public readonly icon: Text;
   public readonly type: SkillType;
 
   private constructor(
     props: ISkillProps,
+    type: SkillType,
     description: Text,
     icon: Text,
-    type: SkillType,
   ) {
     super(props);
+    this.type = type;
     this.description = description;
     this.icon = icon;
-    this.type = type;
   }
 
   static create(props: ISkillProps): Either<ValidationError, Skill> {
     const result = collect([
+      validateEnum(
+        props.type,
+        Object.values(SkillType),
+        Skill.ERROR_CODE,
+        'Invalid skill type.',
+      ),
       Text.create(props.description),
       Text.create(props.icon, { min: 2, max: 50 }),
-      SkillType.create(props.type),
     ]);
     if (result.isLeft()) return left(result.value);
 
-    const [description, icon, type] = result.value;
-    return right(new Skill(props, description, icon, type));
+    const [type, description, icon] = result.value;
+    return right(new Skill(props, type, description, icon));
   }
 }

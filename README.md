@@ -59,7 +59,7 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for a full explanation of each layer an
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 22+
 - pnpm 9+
 - A [Supabase](https://supabase.com) project
 

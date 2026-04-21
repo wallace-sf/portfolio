@@ -8,14 +8,14 @@
 
 The application layer:
 - **Orchestrates** the domain: use cases call repository ports and return data ready for the interface layer
-- **Keeps Core pure**: Application depends on Core and defines port interfaces; Infrastructure implements them
-- **Isolates delivery**: Web / API never access concrete repositories directly
+- **Keeps Core pure**: Application depends on Core and uses port interfaces; Infrastructure implements them
+- **Is not called by the front-end directly**: `apps/web` consumes **REST** only; route handlers invoke use cases (see [02-ARCHITECTURE](./02-ARCHITECTURE.md), [05-API-CONTRACTS](./05-API-CONTRACTS.md))
 
 ---
 
 ## Abstract `UseCase` Base Class
 
-All use cases extend the abstract base class defined in `packages/application/src/shared/UseCase.ts`:
+Most use cases extend the abstract base class in `packages/application/src/shared/UseCase.ts`:
 
 ```typescript
 export abstract class UseCase<TInput, TOutput, TError = DomainError> {
@@ -42,18 +42,24 @@ export class GetFeaturedProjects extends UseCase<GetFeaturedProjectsInput, Proje
 }
 ```
 
+`SendContactMessage` follows the same orchestration style but does not extend `UseCase` (historical shape); it still returns `Either`.
+
 ---
 
 ## Ports
 
-Repository interfaces live in `@repo/core` (not in `@repo/application`). Service ports that are not related to the domain are defined in `@repo/application`:
+Repository interfaces for **Portfolio** and **Identity** live in `@repo/core`. Service ports not tied to a single aggregate are defined in `@repo/application`:
 
 | Port | Package | Status |
 |------|---------|--------|
 | `IProjectRepository` | `@repo/core/portfolio` | defined |
 | `IExperienceRepository` | `@repo/core/portfolio` | defined |
 | `IProfileRepository` | `@repo/core/portfolio` | defined |
-| `IEmailService` | `@repo/application/contact` | ✅ implemented |
+| `IUserRepository` | `@repo/core/identity` | defined |
+| `IEmailService` | `@repo/application/contact` | implemented (`ResendEmailService` in `@repo/infra`) |
+| `IAuthenticationGateway` | `@repo/application/identity` (planned) | **Planned** — sessão/sign-in sem acoplar o front ao IdP; ver [11-IDENTITY](./11-IDENTITY.md) |
+
+The **authentication gateway** abstracts reading and establishing sessions from HTTP cookies. **Supabase** (or another IdP) lives only in an adapter in **`@repo/infra`**. The browser calls **`/api/v1/auth/*`** only.
 
 `IEmailService` signature:
 
@@ -67,14 +73,35 @@ interface IEmailService {
 
 ## Use Cases
 
+### Portfolio
+
 | Use case | Port(s) | Input | Output | Status |
 |----------|---------|-------|--------|--------|
-| `GetFeaturedProjects` | `IProjectRepository` | `{ locale }` | `ProjectSummaryDTO[]` | ✅ implemented |
-| `GetPublishedProjects` | `IProjectRepository` | `{ locale }` | `ProjectSummaryDTO[]` | pending |
-| `GetProjectBySlug` | `IProjectRepository` | `{ locale, slug }` | `ProjectDetailDTO` | pending |
-| `GetExperiences` | `IExperienceRepository` | `{ locale }` | `ExperienceDTO[]` | pending |
-| `GetProfile` | `IProfileRepository` | `{ locale }` | `ProfileDTO` | pending |
-| `SendContactMessage` | `IEmailService` | `IContactMessageDTO` | `void` | pending |
+| `GetFeaturedProjects` | `IProjectRepository` | `{ locale }` | `ProjectSummaryDTO[]` | implemented |
+| `GetPublishedProjects` | `IProjectRepository` | `{ locale }` | `ProjectSummaryDTO[]` | implemented |
+| `GetProjectBySlug` | `IProjectRepository` | `{ locale, slug }` | `ProjectDetailDTO` | implemented |
+| `GetExperiences` | `IExperienceRepository` | `{ locale }` | `ExperienceDTO[]` | implemented |
+| `GetProfile` | `IProfileRepository` | `{ locale }` | `ProfileDTO` | implemented |
+
+### Identity
+
+Identity is modeled as its **own bounded context** in `packages/core` (`User`, `Role`, `IUserRepository`, `UnauthorizedError`). **Authorization** use cases take `userId` after the handler resolves session → `authSubject` → `User.id` (when `authSubject` and gateway exist). **Authentication** is delegated to **`IAuthenticationGateway`** at the composition root — not to React.
+
+| Use case | Port(s) | Input | Output | Status |
+|----------|---------|-------|--------|--------|
+| `GetCurrentUser` | `IUserRepository` | `{ userId }` | `UserDTO` | implemented |
+| `EnsureAdmin` | `IUserRepository` | `{ userId }` | `void` | implemented |
+| `EnsureAppUserForAuthSession` | `IUserRepository` | `{ authSubject, email, defaultName? }` | application `userId` (`string`) | **planned** |
+
+`EnsureAdmin` returns `UnauthorizedError` when the user exists but is not `Role.ADMIN`. Route handlers map that to **401** (see [05-API-CONTRACTS](./05-API-CONTRACTS.md)).
+
+`EnsureAppUserForAuthSession` (planned): link `authSubject` to an existing `User` by email or create a `VISITOR`; used after sign-in and on `GET /api/v1/me`.
+
+### Contact
+
+| Use case | Port(s) | Input | Output | Status |
+|----------|---------|-------|--------|--------|
+| `SendContactMessage` | `IEmailService` | `SendContactMessageInput` | `void` | implemented |
 
 Use cases **never** know Supabase, HTTP, or Prisma. Domain errors are propagated as `Either` and mapped at the edge.
 
@@ -82,21 +109,21 @@ Use cases **never** know Supabase, HTTP, or Prisma. Domain errors are propagated
 
 ## DTOs
 
-DTOs are plain serializable types — no domain logic, no Either. They are the output contract of use cases, with all localized fields already resolved to a single string.
+DTOs are plain serializable types — no domain logic, no Either. They are the output (or input) contract of use cases, with localized fields resolved to a single string where applicable.
 
-| DTO | File | Description |
-|-----|------|-------------|
-| `ProjectSummaryDTO` | `portfolio/dtos/ProjectSummaryDTO.ts` | Card / listing view |
-| `ProjectDetailDTO` | `portfolio/dtos/ProjectDetailDTO.ts` | Detail page; extends `ProjectSummaryDTO` |
-| `ExperienceDTO` | `portfolio/dtos/ExperienceDTO.ts` | Work experience entry |
-| `ExperienceSkillDTO` | `portfolio/dtos/ExperienceSkillDTO.ts` | Skill inside an experience |
-| `ProfileDTO` | `portfolio/dtos/ProfileDTO.ts` | Full profile |
-| `ProfileStatDTO` | `portfolio/dtos/ProfileStatDTO.ts` | Single stat inside a profile |
-| `SocialNetworkDTO` | `portfolio/dtos/SocialNetworkDTO.ts` | Social link |
-| `IContactMessageDTO` | `contact/dtos/ContactMessageDTO.ts` | Input DTO for contact form |
+| DTO | Module | Description |
+|-----|--------|-------------|
+| `ProjectSummaryDTO` | portfolio | Card / listing view |
+| `ProjectDetailDTO` | portfolio | Detail page; extends `ProjectSummaryDTO` |
+| `ExperienceDTO` | portfolio | Work experience entry (`skills: string[]`) |
+| `ProfileDTO` | portfolio | Full profile |
+| `ProfileStatDTO` | portfolio | Stat inside a profile |
+| `SocialNetworkDTO` | portfolio | Social link |
+| `UserDTO` | identity | `id`, `name`, `email`, `role` |
+| `IContactMessageDTO` | contact | Input shape for email send |
 
 ```typescript
-// ProjectSummaryDTO — output of GetFeaturedProjects
+// ProjectSummaryDTO — output of list/featured use cases
 type ProjectSummaryDTO = {
   id: string;
   slug: string;
@@ -127,44 +154,58 @@ type ProjectDetailDTO = ProjectSummaryDTO & {
 ```text
 packages/application/src/
   shared/
-    UseCase.ts              ✅ abstract base class
+    UseCase.ts
   portfolio/
     dtos/
-      ProjectSummaryDTO.ts  ✅
-      ProjectDetailDTO.ts   ✅
-      ExperienceDTO.ts      ✅
-      ExperienceSkillDTO.ts ✅
-      ProfileDTO.ts         ✅
-      ProfileStatDTO.ts     ✅
-      SocialNetworkDTO.ts   ✅
     use-cases/
-      GetFeaturedProjects.ts ✅
+      GetFeaturedProjects.ts
+      GetPublishedProjects.ts
+      GetProjectBySlug.ts
+      GetExperiences.ts
+      GetProfile.ts
+  identity/
+    dtos/
+      UserDTO.ts
+    ports/                    ← planned: IAuthenticationGateway
+    use-cases/
+      GetCurrentUser.ts
+      EnsureAdmin.ts
+      EnsureAppUserForAuthSession.ts   ← planned
   contact/
     dtos/
-      ContactMessageDTO.ts  ✅
     ports/
-      IEmailService.ts      ✅
+      IEmailService.ts
+    use-cases/
+      SendContactMessage.ts
   index.ts
 ```
 
-**Dependencies**: only `@repo/core` (and `@repo/utils` for shared types if needed). Must **not** depend on `@repo/infra`, `apps/web`, or `apps/api`.
+**Dependencies**: `@repo/core` only (plus `@repo/utils` where needed for validation helpers in contact). Must **not** depend on `@repo/infra`, `apps/web`, or `apps/api`.
 
 ---
 
-## Read Flow Example
+## Read / write flow (HTTP boundary)
 
-**List projects:**
+**List published projects (correct pattern):**
 
-1. `apps/web` (Server Component or Route Handler) calls `GetPublishedProjects.execute({ locale })`.
-2. `GetPublishedProjects` calls `IProjectRepository.findPublished()`.
-3. `@repo/infra` reads Supabase rows and maps them to `Project[]`.
-4. Use case maps `Project[]` → `ProjectDTO[]` and returns.
-5. `apps/web` renders the result or maps domain errors to HTTP status + localized message.
+1. Browser or Server Component calls `GET /api/v1/projects?locale=...` (or the client uses TanStack Query with that URL).
+2. **Route handler** resolves locale, builds `GetPublishedProjects` with `IProjectRepository` from infra, calls `execute()`.
+3. Use case calls `IProjectRepository.findPublished()`, maps to `ProjectSummaryDTO[]`, returns `Either`.
+4. Handler maps `Either` to the [envelope](./05-API-CONTRACTS.md) and HTTP status.
+
+**Admin-only action (example):**
+
+1. Handler reads **authenticated user id** from the session (middleware / Supabase / cookie — infrastructure detail at the edge).
+2. Handler calls `EnsureAdmin.execute({ userId })`; on `right`, proceeds to call other use cases or mutations; on `UnauthorizedError`, responds with **401**.
+
+Pages and React components **do not** import `GetPublishedProjects` or `EnsureAdmin` directly.
 
 ---
 
 ## See Also
 
-- **[02-ARCHITECTURE](./02-ARCHITECTURE.md)** — Layer dependency rule
-- **[05-API-CONTRACTS](./05-API-CONTRACTS.md)** — HTTP envelope and error mapping
+- **[02-ARCHITECTURE](./02-ARCHITECTURE.md)** — Layer dependency rule and REST boundary
+- **[03-BOUNDED-CONTEXTS](./03-BOUNDED-CONTEXTS.md)** — Identity vs Portfolio
+- **[05-API-CONTRACTS](./05-API-CONTRACTS.md)** — HTTP envelope and endpoints
+- **[11-IDENTITY](./11-IDENTITY.md)** — Identity context and routes
 - **[10-GLOSSARY](./10-GLOSSARY.md)** — Use Case, Port, DTO definitions

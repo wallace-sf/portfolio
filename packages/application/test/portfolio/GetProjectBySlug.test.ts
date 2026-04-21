@@ -74,7 +74,6 @@ describe('GetProjectBySlug', () => {
         summary: { 'pt-BR': 'Resumo PT', 'en-US': 'Summary EN' },
         objectives: { 'pt-BR': 'Objetivos PT', 'en-US': 'Objectives EN' },
         role: { 'pt-BR': 'Papel PT', 'en-US': 'Role EN' },
-        team: 'Team A',
         period: { start: '2023-01-01T00:00:00.000Z', end: '2023-12-31T00:00:00.000Z' },
       });
       const repo = makeRepository({
@@ -98,7 +97,6 @@ describe('GetProjectBySlug', () => {
       expect(dto.summary).toBe('Resumo PT');
       expect(dto.objectives).toBe('Objetivos PT');
       expect(dto.role).toBe('Papel PT');
-      expect(dto.team).toBe('Team A');
       expect(dto.period.startAt).toBe('2023-01-01T00:00:00.000Z');
       expect(dto.period.endAt).toBe('2023-12-31T00:00:00.000Z');
       expect(dto.relatedProjects).toEqual([]);
@@ -121,7 +119,6 @@ describe('GetProjectBySlug', () => {
       expect(dto.summary).toBeUndefined();
       expect(dto.objectives).toBeUndefined();
       expect(dto.role).toBeUndefined();
-      expect(dto.team).toBeUndefined();
       expect(dto.period.endAt).toBeUndefined();
     });
 

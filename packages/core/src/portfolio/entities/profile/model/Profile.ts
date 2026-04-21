@@ -1,9 +1,13 @@
 import { Validator } from '@repo/utils/validator';
 
 import {
+  IProfileStatProps,
+  ProfileStat,
+} from '~/portfolio/entities/profile/model/ProfileStat';
+import {
   collect,
   Either,
-  Entity,
+  AggregateRoot,
   IEntityProps,
   Image,
   left,
@@ -11,12 +15,11 @@ import {
   right,
   Slug,
   ValidationError,
-} from '../../../../shared';
+} from '~/shared';
 import {
   ILocalizedTextInput,
   LocalizedText,
-} from '../../../../shared/i18n/LocalizedText';
-import { IProfileStatProps, ProfileStat } from './ProfileStat';
+} from '~/shared/i18n/LocalizedText';
 
 export interface IProfileProps extends IEntityProps {
   name: string;
@@ -27,7 +30,7 @@ export interface IProfileProps extends IEntityProps {
   featuredProjectSlugs: string[];
 }
 
-export class Profile extends Entity<Profile, IProfileProps> {
+export class Profile extends AggregateRoot<Profile, IProfileProps> {
   static readonly ERROR_CODE = 'TOO_MANY_FEATURED_PROJECTS';
   private static readonly MAX_FEATURED_PROJECTS = 6;
 
