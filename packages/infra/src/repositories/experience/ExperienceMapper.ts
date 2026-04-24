@@ -1,13 +1,13 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 import {
   IExperienceProps,
   Experience,
   EmploymentType,
   LocationType,
-} from "@repo/core/portfolio";
-import { ILocalizedTextInput } from "@repo/core/shared";
+} from '@repo/core/portfolio';
+import { ILocalizedTextInput } from '@repo/core/shared';
 
-import { InfrastructureError } from "~/errors/InfrastructureError";
+import { InfrastructureError } from '~/errors/InfrastructureError';
 
 type PrismaExperience = Prisma.ExperienceGetPayload<Record<string, never>>;
 
@@ -20,9 +20,9 @@ const LOCATION_TYPE_MAP: Record<string, LocationType> = {
 };
 
 const LOCATION_TYPE_REVERSE_MAP: Record<LocationType, string> = {
-  [LocationType.ON_SITE]: "ONSITE",
-  [LocationType.HYBRID]: "HYBRID",
-  [LocationType.REMOTE]: "REMOTE",
+  [LocationType.ON_SITE]: 'ONSITE',
+  [LocationType.HYBRID]: 'HYBRID',
+  [LocationType.REMOTE]: 'REMOTE',
 };
 
 export class ExperienceMapper {

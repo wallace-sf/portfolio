@@ -4,14 +4,14 @@ import {
   AuthSession,
   IAuthenticationGateway,
   SignInWithPasswordInput,
-} from "@repo/application/identity";
-import { DomainError, Either, left, right } from "@repo/core/shared";
-import { createClient } from "@supabase/supabase-js";
+} from '@repo/application/identity';
+import { DomainError, Either, left, right } from '@repo/core/shared';
+import { createClient } from '@supabase/supabase-js';
 
 /** Cookie name used to persist the Supabase access token (JWT). */
-export const SUPABASE_ACCESS_TOKEN_COOKIE = "sb-access-token";
+export const SUPABASE_ACCESS_TOKEN_COOKIE = 'sb-access-token';
 /** Cookie name used to persist the Supabase refresh token. */
-export const SUPABASE_REFRESH_TOKEN_COOKIE = "sb-refresh-token";
+export const SUPABASE_REFRESH_TOKEN_COOKIE = 'sb-refresh-token';
 
 /**
  * Supabase implementation of IAuthenticationGateway.
@@ -40,8 +40,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (error || !data.session) {
         return left(
-          new DomainError("INVALID_CREDENTIALS", {
-            message: error?.message ?? "Sign-in failed.",
+          new DomainError('INVALID_CREDENTIALS', {
+            message: error?.message ?? 'Sign-in failed.',
           }),
         );
       }
@@ -90,8 +90,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (!refreshToken) {
         return left(
-          new DomainError("NO_REFRESH_TOKEN", {
-            message: "No refresh token in cookies.",
+          new DomainError('NO_REFRESH_TOKEN', {
+            message: 'No refresh token in cookies.',
           }),
         );
       }
@@ -106,8 +106,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (error || !data.session) {
         return left(
-          new DomainError("INVALID_REFRESH_TOKEN", {
-            message: error?.message ?? "Session refresh failed.",
+          new DomainError('INVALID_REFRESH_TOKEN', {
+            message: error?.message ?? 'Session refresh failed.',
           }),
         );
       }
@@ -131,8 +131,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (!accessToken) {
         return left(
-          new DomainError("NO_ACCESS_TOKEN", {
-            message: "No access token in cookies.",
+          new DomainError('NO_ACCESS_TOKEN', {
+            message: 'No access token in cookies.',
           }),
         );
       }
@@ -145,17 +145,17 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (error || !data.user) {
         return left(
-          new DomainError("INVALID_ACCESS_TOKEN", {
-            message: error?.message ?? "Access token is invalid or expired.",
+          new DomainError('INVALID_ACCESS_TOKEN', {
+            message: error?.message ?? 'Access token is invalid or expired.',
           }),
         );
       }
 
       return right({
         id: data.user.id,
-        email: data.user.email ?? "",
+        email: data.user.email ?? '',
         role:
-          (data.user.app_metadata?.["role"] as string | undefined) ?? "VISITOR",
+          (data.user.app_metadata?.['role'] as string | undefined) ?? 'VISITOR',
       });
     } catch (err) {
       return left(this._unexpectedError(err));
@@ -164,7 +164,7 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
   private _unexpectedError(err: unknown): DomainError {
     const message =
-      err instanceof Error ? err.message : "Unexpected authentication error.";
-    return new DomainError("AUTH_UNEXPECTED_ERROR", { message });
+      err instanceof Error ? err.message : 'Unexpected authentication error.';
+    return new DomainError('AUTH_UNEXPECTED_ERROR', { message });
   }
 }

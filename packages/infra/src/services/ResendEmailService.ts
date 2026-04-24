@@ -1,6 +1,6 @@
-import { IContactMessageDTO, IEmailService } from "@repo/application/contact";
-import { DomainError, Either, left, right } from "@repo/core/shared";
-import { Resend } from "resend";
+import { IContactMessageDTO, IEmailService } from '@repo/application/contact';
+import { DomainError, Either, left, right } from '@repo/core/shared';
+import { Resend } from 'resend';
 
 export interface IResendEmailServiceConfig {
   recipientEmail: string;
@@ -44,14 +44,14 @@ export class ResendEmailService implements IEmailService {
       });
       if (error) {
         return left(
-          new DomainError("EMAIL_SEND_FAILED", { message: error.message }),
+          new DomainError('EMAIL_SEND_FAILED', { message: error.message }),
         );
       }
       return right(undefined);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       return left(
-        new DomainError("EMAIL_SEND_FAILED", { message: errorMessage }),
+        new DomainError('EMAIL_SEND_FAILED', { message: errorMessage }),
       );
     }
   }
