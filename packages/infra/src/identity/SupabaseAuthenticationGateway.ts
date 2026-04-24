@@ -1,5 +1,3 @@
-import { createClient } from "@supabase/supabase-js";
-
 import {
   AuthCookieApi,
   AuthPrincipal,
@@ -8,6 +6,7 @@ import {
   SignInWithPasswordInput,
 } from "@repo/application/identity";
 import { DomainError, Either, left, right } from "@repo/core/shared";
+import { createClient } from "@supabase/supabase-js";
 
 /** Cookie name used to persist the Supabase access token (JWT). */
 export const SUPABASE_ACCESS_TOKEN_COOKIE = "sb-access-token";

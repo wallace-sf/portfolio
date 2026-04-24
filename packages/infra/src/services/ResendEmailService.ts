@@ -1,8 +1,6 @@
-import { Resend } from "resend";
-
-import { IContactMessageDTO } from "@repo/application/contact";
+import { IContactMessageDTO, IEmailService } from "@repo/application/contact";
 import { DomainError, Either, left, right } from "@repo/core/shared";
-import { IEmailService } from "@repo/application/contact";
+import { Resend } from "resend";
 
 export interface IResendEmailServiceConfig {
   recipientEmail: string;
