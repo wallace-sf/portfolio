@@ -1,4 +1,5 @@
-import { Language, ILanguageProps, Fluency } from '../../../src';
+import { Language, ILanguageProps, Fluency } from '~/index';
+
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 

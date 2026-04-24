@@ -1,4 +1,4 @@
-import { Slug, ValidationError } from '../../../src';
+import { Slug, ValidationError } from '~/index';
 
 describe('Slug', () => {
   describe('when created from valid value', () => {

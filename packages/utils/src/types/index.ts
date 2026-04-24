@@ -1,2 +1,2 @@
-export * from '~/types/Dummy';
-export * from '~/types/ErrorMessage';
+export * from './Dummy';
+export * from './ErrorMessage';

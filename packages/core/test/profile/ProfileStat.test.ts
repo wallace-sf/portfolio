@@ -1,5 +1,5 @@
-import { LocalizedText, Text, ValidationError } from '../../src';
-import { ProfileStat } from '../../src/portfolio/entities/profile/model/ProfileStat';
+import { LocalizedText, Text, ValidationError } from '~/index';
+import { ProfileStat } from '~/portfolio/entities/profile/model/ProfileStat';
 
 const validProps = {
   label: { 'en-US': 'Years of experience', 'pt-BR': 'Anos de experiência' },

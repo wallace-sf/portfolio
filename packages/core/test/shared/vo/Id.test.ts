@@ -1,4 +1,4 @@
-import { Id, ValidationError } from '../../../src';
+import { Id, ValidationError } from '~/index';
 
 describe('Id', () => {
   describe('when created from valid value', () => {
@@ -19,7 +19,9 @@ describe('Id', () => {
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
       expect((result.value as ValidationError).code).toBe(Id.ERROR_CODE);
-      expect((result.value as ValidationError).message).toBe('The value must be a valid UUID.');
+      expect((result.value as ValidationError).message).toBe(
+        'The value must be a valid UUID.',
+      );
     });
 
     it('should return Left with ValidationError for non-UUID string', () => {

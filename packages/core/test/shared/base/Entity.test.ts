@@ -1,4 +1,4 @@
-import { DateTime, Entity, IEntityProps } from '../../../src';
+import { DateTime, Entity, IEntityProps } from '~/index';
 
 interface IMyClassProps extends IEntityProps {
   name?: string;
@@ -32,7 +32,12 @@ describe('Entity', () => {
 
   it('should accept provided created_at and updated_at timestamps', () => {
     const timestamp = '2024-01-01T00:00:00.000Z';
-    const e = MyClass.new({ name: 'John', age: 20, created_at: timestamp, updated_at: timestamp });
+    const e = MyClass.new({
+      name: 'John',
+      age: 20,
+      created_at: timestamp,
+      updated_at: timestamp,
+    });
 
     expect(e.created_at.value).toBe(timestamp);
     expect(e.updated_at.value).toBe(timestamp);

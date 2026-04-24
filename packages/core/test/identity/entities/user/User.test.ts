@@ -1,4 +1,4 @@
-import { User, Role, ValidationError, UnauthorizedError } from '../../../../src';
+import { User, Role, ValidationError, UnauthorizedError } from '~/index';
 
 describe('User', () => {
   describe('when created from valid props', () => {
@@ -53,7 +53,9 @@ describe('User', () => {
       });
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).message).toContain('valid format');
+      expect((result.value as ValidationError).message).toContain(
+        'valid format',
+      );
     });
 
     it('should return Left for invalid name', () => {
@@ -75,7 +77,9 @@ describe('User', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(User.ERROR_CODE);
-      expect((result.value as ValidationError).message).toContain('Role must be one of');
+      expect((result.value as ValidationError).message).toContain(
+        'Role must be one of',
+      );
     });
 
     it('should return Left for invalid authSubject', () => {

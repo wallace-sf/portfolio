@@ -1,10 +1,13 @@
-import { Name, SocialNetwork, Text, Url, ValidationError } from '../../src';
+import { Name, SocialNetwork, Text, Url, ValidationError } from '~/index';
+
 import { SocialNetworkBuilder } from '../helpers';
 
 describe('SocialNetwork', () => {
   describe('when created from valid props', () => {
     it('should return Right with a valid SocialNetwork', () => {
-      const result = SocialNetwork.create(SocialNetworkBuilder.build().toProps());
+      const result = SocialNetwork.create(
+        SocialNetworkBuilder.build().toProps(),
+      );
 
       expect(result.isRight()).toBe(true);
       expect(result.value).toBeInstanceOf(SocialNetwork);

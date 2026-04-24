@@ -1,4 +1,5 @@
-import { ProfessionalValue, Text, ValidationError } from '../../src';
+import { ProfessionalValue, Text, ValidationError } from '~/index';
+
 import { ProfessionalValueBuilder } from '../helpers';
 
 describe('ProfessionalValue', () => {

@@ -4,7 +4,8 @@ import {
   EmploymentType,
   ILocalizedTextInput,
   LocationType,
-} from '../../../src';
+} from '~/index';
+
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 
@@ -18,7 +19,10 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
       company: { 'en-US': 'Portfolio Inc', 'pt-BR': 'Portfolio Inc' },
       position: { 'en-US': 'Software Engineer', 'pt-BR': 'Software Engineer' },
       location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brazil' },
-      description: { 'en-US': Data.text.description(), 'pt-BR': Data.text.description() },
+      description: {
+        'en-US': Data.text.description(),
+        'pt-BR': Data.text.description(),
+      },
       logo: { url: Data.image.url(), alt: Data.image.alt() },
       employment_type: Data.employment.valid(),
       location_type: Data.location.valid(),

@@ -1,1 +1,1 @@
-export * from '~/constants/masks';
+export * from './masks';

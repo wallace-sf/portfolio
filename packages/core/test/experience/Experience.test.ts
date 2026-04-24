@@ -4,7 +4,8 @@ import {
   Id,
   LocalizedText,
   ValidationError,
-} from '../../src';
+} from '~/index';
+
 import { ExperienceBuilder } from '../helpers';
 
 describe('Experience', () => {
@@ -18,9 +19,18 @@ describe('Experience', () => {
 
     it('should create experience with all fields as VOs', () => {
       const company = { 'pt-BR': 'Fieldlink', 'en-US': 'Fieldlink' };
-      const position = { 'en-US': 'Software Engineer', 'pt-BR': 'Engenheiro de Software' };
-      const location = { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' };
-      const description = { 'en-US': 'Systems development.', 'pt-BR': 'Desenvolvimento de sistemas.' };
+      const position = {
+        'en-US': 'Software Engineer',
+        'pt-BR': 'Engenheiro de Software',
+      };
+      const location = {
+        'en-US': 'São Paulo, Brazil',
+        'pt-BR': 'São Paulo, Brasil',
+      };
+      const description = {
+        'en-US': 'Systems development.',
+        'pt-BR': 'Desenvolvimento de sistemas.',
+      };
       const startAt = '2022-01-01T00:00:00.000Z';
       const endAt = '2022-06-01T00:00:00.000Z';
 
@@ -162,7 +172,9 @@ describe('Experience', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Experience.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        Experience.ERROR_CODE,
+      );
     });
 
     it('should return Left when location type is invalid', () => {
@@ -171,7 +183,9 @@ describe('Experience', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Experience.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        Experience.ERROR_CODE,
+      );
     });
 
     it('should return Left when start_at is invalid', () => {
@@ -206,9 +220,7 @@ describe('Experience', () => {
 
     it('should return Left when a skill ID is invalid', () => {
       const result = Experience.create(
-        ExperienceBuilder.build()
-          .withSkills(['not-a-valid-uuid'])
-          .toProps(),
+        ExperienceBuilder.build().withSkills(['not-a-valid-uuid']).toProps(),
       );
 
       expect(result.isLeft()).toBe(true);

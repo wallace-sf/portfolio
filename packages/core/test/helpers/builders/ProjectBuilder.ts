@@ -5,7 +5,8 @@ import {
   IProjectProps,
   Project,
   ProjectStatus,
-} from '../../../src';
+} from '~/index';
+
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 

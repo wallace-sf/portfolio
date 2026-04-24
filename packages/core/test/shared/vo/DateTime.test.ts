@@ -1,4 +1,4 @@
-import { DateTime, ValidationError } from '../../../src';
+import { DateTime, ValidationError } from '~/index';
 
 describe('DateTime', () => {
   describe('when created from valid value', () => {
@@ -19,7 +19,9 @@ describe('DateTime', () => {
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
       expect((result.value as ValidationError).code).toBe(DateTime.ERROR_CODE);
-      expect((result.value as ValidationError).message).toBe('The value must be a valid date and time.');
+      expect((result.value as ValidationError).message).toBe(
+        'The value must be a valid date and time.',
+      );
     });
   });
 

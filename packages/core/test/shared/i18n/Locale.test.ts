@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, isLocale, LOCALES } from '../../../src';
+import { DEFAULT_LOCALE, isLocale, LOCALES } from '~/index';
 
 describe('Locale', () => {
   it('should export DEFAULT_LOCALE as "en-US"', () => {

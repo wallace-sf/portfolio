@@ -1,4 +1,4 @@
-import { LocationType } from '../../../src';
+import { LocationType } from '~/index';
 
 export class LocationTypeData {
   static valid(): LocationType {

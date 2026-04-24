@@ -1,4 +1,4 @@
-import { Email, ValidationError } from '../../../src';
+import { Email, ValidationError } from '~/index';
 
 describe('Email', () => {
   describe('when created from valid value', () => {
@@ -36,7 +36,9 @@ describe('Email', () => {
       const result = Email.create('invalid-email');
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).message).toContain('valid format');
+      expect((result.value as ValidationError).message).toContain(
+        'valid format',
+      );
     });
 
     it('should return Left for invalid format (no domain)', () => {

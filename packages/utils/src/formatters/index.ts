@@ -1,1 +1,1 @@
-export * from '~/formatters/formatCellphone';
+export * from './formatCellphone';
