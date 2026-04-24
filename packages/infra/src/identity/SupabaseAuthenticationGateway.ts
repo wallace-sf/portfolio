@@ -1,5 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
 import {
   AuthCookieApi,
   AuthPrincipal,
@@ -8,6 +6,7 @@ import {
   SignInWithPasswordInput,
 } from '@repo/application/identity';
 import { DomainError, Either, left, right } from '@repo/core/shared';
+import { createClient } from '@supabase/supabase-js';
 
 /** Cookie name used to persist the Supabase access token (JWT). */
 export const SUPABASE_ACCESS_TOKEN_COOKIE = 'sb-access-token';
@@ -50,7 +49,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
       return right({
         accessToken: data.session.access_token,
         refreshToken: data.session.refresh_token,
-        expiresAt: data.session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
+        expiresAt:
+          data.session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
       });
     } catch (err) {
       return left(this._unexpectedError(err));
@@ -82,13 +82,17 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
     }
   }
 
-  async refreshSession(cookies: AuthCookieApi): Promise<Either<DomainError, AuthSession>> {
+  async refreshSession(
+    cookies: AuthCookieApi,
+  ): Promise<Either<DomainError, AuthSession>> {
     try {
       const refreshToken = cookies.get(SUPABASE_REFRESH_TOKEN_COOKIE);
 
       if (!refreshToken) {
         return left(
-          new DomainError('NO_REFRESH_TOKEN', { message: 'No refresh token in cookies.' }),
+          new DomainError('NO_REFRESH_TOKEN', {
+            message: 'No refresh token in cookies.',
+          }),
         );
       }
 
@@ -111,7 +115,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
       return right({
         accessToken: data.session.access_token,
         refreshToken: data.session.refresh_token,
-        expiresAt: data.session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
+        expiresAt:
+          data.session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
       });
     } catch (err) {
       return left(this._unexpectedError(err));
@@ -126,7 +131,9 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
 
       if (!accessToken) {
         return left(
-          new DomainError('NO_ACCESS_TOKEN', { message: 'No access token in cookies.' }),
+          new DomainError('NO_ACCESS_TOKEN', {
+            message: 'No access token in cookies.',
+          }),
         );
       }
 
@@ -147,7 +154,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
       return right({
         id: data.user.id,
         email: data.user.email ?? '',
-        role: (data.user.app_metadata?.['role'] as string | undefined) ?? 'VISITOR',
+        role:
+          (data.user.app_metadata?.['role'] as string | undefined) ?? 'VISITOR',
       });
     } catch (err) {
       return left(this._unexpectedError(err));
@@ -155,7 +163,8 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
   }
 
   private _unexpectedError(err: unknown): DomainError {
-    const message = err instanceof Error ? err.message : 'Unexpected authentication error.';
+    const message =
+      err instanceof Error ? err.message : 'Unexpected authentication error.';
     return new DomainError('AUTH_UNEXPECTED_ERROR', { message });
   }
 }

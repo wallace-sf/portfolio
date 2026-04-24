@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-
 import { IUserRepository, User } from '@repo/core/identity';
 import { Email, Id } from '@repo/core/shared';
 

@@ -1,6 +1,10 @@
 import { Prisma } from '@prisma/client';
-
-import { IExperienceProps, Experience, EmploymentType, LocationType } from '@repo/core/portfolio';
+import {
+  IExperienceProps,
+  Experience,
+  EmploymentType,
+  LocationType,
+} from '@repo/core/portfolio';
 import { ILocalizedTextInput } from '@repo/core/shared';
 
 import { InfrastructureError } from '~/errors/InfrastructureError';
@@ -72,7 +76,9 @@ export class ExperienceMapper {
       logoUrl: experience.logo.url.value,
       logoAlt: experience.logo.alt.value,
       employmentType: experience.employment_type,
-      locationType: LOCATION_TYPE_REVERSE_MAP[experience.location_type] as never,
+      locationType: LOCATION_TYPE_REVERSE_MAP[
+        experience.location_type
+      ] as never,
       skillIds: experience.skills.map((id) => id.value),
       startAt: new Date(experience.period.startAt.value),
       endAt: experience.period.endAt

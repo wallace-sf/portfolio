@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-
-import { IProjectRepository, Project, ProjectStatus } from '@repo/core/portfolio';
+import {
+  IProjectRepository,
+  Project,
+  ProjectStatus,
+} from '@repo/core/portfolio';
 import { Id, Slug } from '@repo/core/shared';
 
 import { InfrastructureError } from '~/errors/InfrastructureError';

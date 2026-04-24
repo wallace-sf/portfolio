@@ -1,5 +1,4 @@
 import { Prisma, User as PrismaUser } from '@prisma/client';
-
 import { IUserProps, Role, User } from '@repo/core/identity';
 
 import { InfrastructureError } from '~/errors/InfrastructureError';

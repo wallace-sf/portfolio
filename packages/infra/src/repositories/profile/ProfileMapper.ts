@@ -1,6 +1,9 @@
 import { Prisma } from '@prisma/client';
-
-import { IProfileProps, IProfileStatProps, Profile } from '@repo/core/portfolio';
+import {
+  IProfileProps,
+  IProfileStatProps,
+  Profile,
+} from '@repo/core/portfolio';
 import { ILocalizedTextInput } from '@repo/core/shared';
 
 import { InfrastructureError } from '~/errors/InfrastructureError';
@@ -57,9 +60,10 @@ export class ProfileMapper {
     return result.value;
   }
 
-  static toPrisma(
-    profile: Profile,
-  ): Omit<Prisma.ProfileUncheckedCreateInput, 'stats' | 'socialNetworks'> & {
+  static toPrisma(profile: Profile): Omit<
+    Prisma.ProfileUncheckedCreateInput,
+    'stats' | 'socialNetworks'
+  > & {
     stats: ProfileStatData[];
   } {
     return {

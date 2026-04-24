@@ -35,7 +35,9 @@ export interface IAuthenticationGateway {
    * Obtain a fresh session using the refresh token stored in cookies.
    * Returns a new `AuthSession`; the caller updates the cookies.
    */
-  refreshSession(cookies: AuthCookieApi): Promise<Either<DomainError, AuthSession>>;
+  refreshSession(
+    cookies: AuthCookieApi,
+  ): Promise<Either<DomainError, AuthSession>>;
 
   /**
    * Decode and validate the access token stored in cookies.

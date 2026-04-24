@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-
 import { IProjectProps, Project, ProjectStatus } from '@repo/core/portfolio';
 import { ILocalizedTextInput } from '@repo/core/shared';
 
@@ -74,9 +73,7 @@ export class ProjectMapper {
       skillIds: project.skills.map((id) => id.value),
       createdAt: new Date(project.created_at.value),
       updatedAt: new Date(project.updated_at.value),
-      deletedAt: project.deleted_at
-        ? new Date(project.deleted_at.value)
-        : null,
+      deletedAt: project.deleted_at ? new Date(project.deleted_at.value) : null,
     };
   }
 }

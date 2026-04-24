@@ -1,14 +1,23 @@
-import { DomainError, Either, Locale, NotFoundError, Slug, ValidationError, left, right } from '@repo/core/shared';
 import { IProjectRepository, Project } from '@repo/core/portfolio';
+import {
+  DomainError,
+  Either,
+  Locale,
+  NotFoundError,
+  Slug,
+  ValidationError,
+  left,
+  right,
+} from '@repo/core/shared';
 
-import { UseCase } from '~/shared/UseCase';
 import { ProjectDetailDTO } from '~/portfolio/dtos/ProjectDetailDTO';
 import { ProjectSummaryDTO } from '~/portfolio/dtos/ProjectSummaryDTO';
+import { UseCase } from '~/shared/UseCase';
 
-export interface GetProjectBySlugInput {
+export type GetProjectBySlugInput = {
   slug: string;
   locale: Locale;
-}
+};
 
 export class GetProjectBySlug extends UseCase<
   GetProjectBySlugInput,
@@ -21,7 +30,9 @@ export class GetProjectBySlug extends UseCase<
 
   async execute(
     input: GetProjectBySlugInput,
-  ): Promise<Either<NotFoundError | ValidationError | DomainError, ProjectDetailDTO>> {
+  ): Promise<
+    Either<NotFoundError | ValidationError | DomainError, ProjectDetailDTO>
+  > {
     const slugResult = Slug.create(input.slug);
     if (slugResult.isLeft()) return left(slugResult.value);
 
@@ -29,7 +40,9 @@ export class GetProjectBySlug extends UseCase<
     try {
       project = await this.projectRepository.findBySlug(slugResult.value);
     } catch {
-      return left(new DomainError('FETCH_FAILED', { message: 'Failed to fetch project' }));
+      return left(
+        new DomainError('FETCH_FAILED', { message: 'Failed to fetch project' }),
+      );
     }
 
     if (!project) {
@@ -43,7 +56,9 @@ export class GetProjectBySlug extends UseCase<
       relatedProjects = [];
     }
 
-    const relatedDTOs = relatedProjects.map((p) => this.toSummaryDTO(p, input.locale));
+    const relatedDTOs = relatedProjects.map((p) =>
+      this.toSummaryDTO(p, input.locale),
+    );
     return right(this.toDetailDTO(project, input.locale, relatedDTOs));
   }
 
