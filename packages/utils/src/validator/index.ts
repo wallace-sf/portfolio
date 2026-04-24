@@ -1,1 +1,1 @@
-export * from '~/validator/Validator';
+export * from './Validator';

@@ -1,1 +1,1 @@
-export * from '~/env/validateEnv';
+export * from './validateEnv';
