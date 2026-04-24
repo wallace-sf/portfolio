@@ -1,7 +1,7 @@
-import { SkillType, SkillTypeValue } from '../../../src';
+import { SkillType } from '~/index';
 
 export class SkillTypeData {
-  static valid(): SkillTypeValue {
-    return SkillType.SKILLS[0] as SkillTypeValue;
+  static valid(): SkillType {
+    return SkillType.TECHNOLOGY;
   }
 }

@@ -21,3 +21,16 @@ description: Apply DDD, Clean Architecture, Either pattern, validation, and test
 - [docs/08-TESTING.md](../../../docs/08-TESTING.md) — testing strategy and naming
 
 Do not duplicate long content here; use the references above for full templates and rules.
+
+## Mandatory: tests ship with the code
+
+**Every implementation task must include tests committed in the same branch and PR.**
+
+- New gateway, adapter, or infra class → integration/unit tests for all public methods (happy path + error paths)
+- New use case → unit tests with fake ports
+- New port interface → contract tests using a fake implementation
+- New entity or value object → unit tests covering valid construction and all validation error cases
+
+A PR that adds production code without tests is **not done**. Do not open the PR, do not mark the task as done, do not move on to the next task until tests exist and pass.
+
+> Rationale: `SupabaseAuthenticationGateway` was shipped in one commit without tests, requiring a second commit to add them. This rule prevents that pattern.

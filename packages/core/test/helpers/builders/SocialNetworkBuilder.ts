@@ -1,4 +1,5 @@
-import { ISocialNetworkProps, SocialNetwork } from '../../../src';
+import { ISocialNetworkProps, SocialNetwork } from '~/index';
+
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 

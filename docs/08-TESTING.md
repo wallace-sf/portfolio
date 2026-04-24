@@ -9,8 +9,8 @@
 | Layer | Runner | Notes |
 |-------|--------|-------|
 | `packages/core` | **Vitest** | Fast, deterministic domain tests |
-| `packages/utils` | **Jest** | `node` / `browser` split |
-| `apps/web` | **Jest + Testing Library + jsdom** | UI components, rendering, interaction |
+| `packages/utils` | **Vitest** | `node` / `browser` split via `environmentMatchGlobs` |
+| `apps/web` | **Vitest + Testing Library + jsdom** | UI components, rendering, interaction |
 | E2E | **Playwright** | Main user flows (when surface area justifies) |
 
 ---

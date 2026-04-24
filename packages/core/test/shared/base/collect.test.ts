@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
-import { ValidationError } from '../../../src/shared/errors/ValidationError';
-import { collect, left, right } from '../../../src/shared/either';
+import { collect, left, right } from '~/shared/either';
+import { ValidationError } from '~/shared/errors/ValidationError';
 
 describe('collect()', () => {
   it('should return Right with all values when all eithers are Right', () => {
@@ -23,8 +23,14 @@ describe('collect()', () => {
   });
 
   it('should return Left with the first error and ignore subsequent eithers', () => {
-    const firstError = new ValidationError({ code: 'ERR_FIRST', message: 'first' });
-    const secondError = new ValidationError({ code: 'ERR_SECOND', message: 'second' });
+    const firstError = new ValidationError({
+      code: 'ERR_FIRST',
+      message: 'first',
+    });
+    const secondError = new ValidationError({
+      code: 'ERR_SECOND',
+      message: 'second',
+    });
 
     const result = collect([right(1), left(firstError), left(secondError)]);
 

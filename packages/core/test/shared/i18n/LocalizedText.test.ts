@@ -1,4 +1,4 @@
-import { LocalizedText, ValidationError } from '../../../src';
+import { LocalizedText, ValidationError } from '~/index';
 
 describe('LocalizedText', () => {
   describe('get(locale, fallback?)', () => {
@@ -25,21 +25,21 @@ describe('LocalizedText', () => {
       expect(result.value.get('es', 'pt-BR')).toBe('Olá');
     });
 
-    it('defaults to pt-BR when requested locale is missing and no fallback', () => {
+    it('defaults to en-US when requested locale is missing and no fallback', () => {
       const result = LocalizedText.create({ 'pt-BR': 'Olá', 'en-US': 'Hello' });
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value.get('es')).toBe('Olá');
+      expect(result.value.get('es')).toBe('Hello');
     });
 
-    it('defaults to pt-BR when both requested locale and fallback are missing', () => {
-      const result = LocalizedText.create({ 'pt-BR': 'Só PT-BR' });
+    it('defaults to en-US when both requested locale and fallback are missing', () => {
+      const result = LocalizedText.create({ 'en-US': 'Only EN-US' });
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value.get('en-US')).toBe('Só PT-BR');
-      expect(result.value.get('en-US', 'es')).toBe('Só PT-BR');
+      expect(result.value.get('pt-BR')).toBe('Only EN-US');
+      expect(result.value.get('pt-BR', 'es')).toBe('Only EN-US');
     });
   });
 
@@ -60,42 +60,50 @@ describe('LocalizedText', () => {
 
     it('treats empty strings as missing', () => {
       const result = LocalizedText.create({
-        'pt-BR': 'Olá',
-        'en-US': '',
+        'en-US': 'Hello',
+        'pt-BR': '',
         es: '   ',
       });
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value.get('en-US')).toBe('Olá');
-      expect(result.value.get('es')).toBe('Olá');
+      expect(result.value.get('pt-BR')).toBe('Hello');
+      expect(result.value.get('es')).toBe('Hello');
     });
   });
 
   describe('validation', () => {
-    it('should return Left when pt-BR is missing', () => {
-      const result = LocalizedText.create({ 'pt-BR': undefined as unknown as string });
+    it('should return Left when en-US is missing', () => {
+      const result = LocalizedText.create({
+        'en-US': undefined as unknown as string,
+      });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
-      expect((result.value as ValidationError).code).toBe(LocalizedText.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        LocalizedText.ERROR_CODE,
+      );
       expect((result.value as ValidationError).message).toBe(
-        'pt-BR is required and must be non-empty after trim.',
+        'en-US is required and must be non-empty after trim.',
       );
     });
 
-    it('should return Left for empty pt-BR string', () => {
-      const result = LocalizedText.create({ 'pt-BR': '' });
+    it('should return Left for empty en-US string', () => {
+      const result = LocalizedText.create({ 'en-US': '' });
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(LocalizedText.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        LocalizedText.ERROR_CODE,
+      );
     });
 
-    it('should return Left for whitespace-only pt-BR', () => {
-      const result = LocalizedText.create({ 'pt-BR': '   ' });
+    it('should return Left for whitespace-only en-US', () => {
+      const result = LocalizedText.create({ 'en-US': '   ' });
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(LocalizedText.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        LocalizedText.ERROR_CODE,
+      );
     });
   });
 
@@ -123,8 +131,8 @@ describe('LocalizedText', () => {
     });
 
     it('should not be equal when two LocalizedText instances have different content', () => {
-      const r1 = LocalizedText.create({ 'pt-BR': 'Olá' });
-      const r2 = LocalizedText.create({ 'pt-BR': 'Tchau' });
+      const r1 = LocalizedText.create({ 'en-US': 'Hello', 'pt-BR': 'Olá' });
+      const r2 = LocalizedText.create({ 'en-US': 'Goodbye', 'pt-BR': 'Tchau' });
 
       expect(r1.isRight() && r2.isRight()).toBe(true);
       if (!r1.isRight() || !r2.isRight()) return;

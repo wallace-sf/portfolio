@@ -1,4 +1,5 @@
-import { Language, ILanguageProps, FluencyValue } from '../../../src';
+import { Language, ILanguageProps, Fluency } from '~/index';
+
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 
@@ -31,7 +32,7 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
     return this;
   }
 
-  public withFluency(fluency: FluencyValue): LanguageBuilder {
+  public withFluency(fluency: Fluency): LanguageBuilder {
     this._props.fluency = fluency;
 
     return this;

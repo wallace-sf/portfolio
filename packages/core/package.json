@@ -7,11 +7,12 @@
   ],
   "main": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./shared": "./src/shared/index.ts",
-    "./portfolio": "./src/portfolio/index.ts",
-    "./blog": "./src/blog/index.ts",
-    "./contact": "./src/contact/index.ts"
+    ".": { "types": "./dist/types/index.d.ts", "default": "./src/index.ts" },
+    "./shared": { "types": "./dist/types/shared/index.d.ts", "default": "./src/shared/index.ts" },
+    "./portfolio": { "types": "./dist/types/portfolio/index.d.ts", "default": "./src/portfolio/index.ts" },
+    "./blog": { "types": "./dist/types/blog/index.d.ts", "default": "./src/blog/index.ts" },
+    "./contact": { "types": "./dist/types/contact/index.d.ts", "default": "./src/contact/index.ts" },
+    "./identity": { "types": "./dist/types/identity/index.d.ts", "default": "./src/identity/index.ts" }
   },
   "scripts": {
     "test": "vitest run",
@@ -21,7 +22,8 @@
     "lint:check": "eslint --ext .ts ./src",
     "format": "prettier --write ./src/**/*.ts",
     "format:check": "prettier --check ./src/**/*.ts",
-    "types": "tsc --noEmit --skipLibCheck"
+    "build:types": "tsc --build tsconfig.build.json",
+    "types": "tsc --build tsconfig.build.json"
   },
   "dependencies": {
     "@repo/utils": "workspace:*",

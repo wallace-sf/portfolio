@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test": "node ./scripts/assert-test-discovery.mjs && jest",
-    "test:watch": "jest --watchAll --collectCoverage",
+    "test": "node ./scripts/assert-test-discovery.mjs && vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -15,7 +16,9 @@
     "types": "tsc -p ./tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@repo/application": "workspace:*",
     "@repo/core": "workspace:*",
+    "@repo/infra": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "classnames": "^2.5.1",
@@ -39,9 +42,12 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "jest-environment-jsdom": "^29.7.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "jsdom": "^25.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.0.0"
   }
 }

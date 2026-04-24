@@ -14,7 +14,7 @@ Always prioritize clean, testable, extensible code.
 apps/
   web/          → Public portfolio (Next.js 14+ App Router)
   blog/         → Blog (future, post-MVP)
-  api/          → Backend (Next.js API Routes, future)
+  api/          → Optional dedicated HTTP app if routes outgrow apps/web/app/api
 
 packages/
   core/         → Domain + Shared Kernel (entities, VOs, repository interfaces)
@@ -44,6 +44,7 @@ All project documentation lives in `docs/` with a numbered structure.
 | Testing strategy | [08-TESTING](./docs/08-TESTING.md) |
 | Code templates (Either, VO, Entity) | [09-PATTERNS](./docs/09-PATTERNS.md) |
 | Domain and architectural terms | [10-GLOSSARY](./docs/10-GLOSSARY.md) |
+| Identity (auth, REST boundary) | [11-IDENTITY](./docs/11-IDENTITY.md) |
 
 ---
 
@@ -56,7 +57,7 @@ core ← application ← infra ← web / api
 - **`packages/core`**: zero framework dependencies (no React, Next.js, Prisma, Axios)
 - **`packages/application`**: depends only on `core`; defines port interfaces
 - **`packages/infra`**: implements ports; knows `core` and `application`
-- **`apps/web` / `apps/api`**: presentation; calls application layer only
+- **`apps/web` / `apps/api`**: **HTTP route handlers** compose infra + application (use cases). **Pages and React code consume only the REST API** — they do not import `@repo/application`. See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) and [05-API-CONTRACTS](./docs/05-API-CONTRACTS.md).
 
 See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) for full layer rules and ESLint enforcement.
 
@@ -193,7 +194,7 @@ interface IProjectRepository {
 2. **Verify work not done** — check: (a) `gh issue view <n>` — if closed, stop; (b) merged PRs; (c) git log; (d) existing branches
 3. **Set Task Master to In Progress**: `task-master set-status --id=<id> --status=in-progress`
 4. **Move GitHub issue to "In Progress"** in all linked Project boards
-5. **Create branch from issue**: `gh issue develop <issue-number> --checkout`
+5. **Create branch from issue**: `gh issue develop <issue-number> --checkout` — **immediately rebase onto develop**: `git rebase origin/develop` (`gh issue develop` uses the repo default branch, not `develop`)
 6. **Implement** — code, tests, commits
 7. **Open PR against `develop`**: `gh pr create --base develop`
 8. **Set Task Master to Done**: `task-master set-status --id=<id> --status=done`
@@ -212,13 +213,15 @@ interface IProjectRepository {
 
 - Business logic in React components, controllers, or repositories
 - Importing Prisma / ORM inside `core` or `application`
-- `useEffect` for data fetching — use TanStack Query or Server Components
+- `useEffect` for data fetching — use TanStack Query (client) or `fetch` to `/api/v1/...` (Server Components); never call use cases from components
 - `throw` for domain business-rule errors — use Either pattern
 - Public setters on entities — use business-semantic methods
 - `any` in types — use explicit types or `unknown`
 - `<img>` or `<a>` for internal Next.js navigation
 - Tests that verify implementation instead of behavior
 - Direct imports between bounded contexts — use only the Shared Kernel
+- Importing `@repo/application` or calling use cases from `apps/web` pages, layouts, or client components — use HTTP to `/api/v1/...` instead
+- Importing `@supabase/*` or other IdP SDKs from `apps/web` UI or `middleware.ts` — auth belongs behind `IAuthenticationGateway` in `@repo/infra` and REST routes; see [11-IDENTITY](./docs/11-IDENTITY.md)
 
 ---
 
@@ -229,6 +232,30 @@ interface IProjectRepository {
 - Maximum 200 lines per file
 - Import order: external libs → internal packages → relative imports
 - Test naming: `should <expected behavior> when <context>`
+- **Tests are mandatory for every implementation** — never commit a new class, port, adapter, use case, or gateway without accompanying tests in the same branch/PR. A PR without tests for new production code is incomplete. See [docs/08-TESTING.md](./docs/08-TESTING.md) for strategy and naming.
+
+---
+
+## Skill Router (auto-load guidance)
+
+Choose which skill to follow based on the user's intent. Then read the corresponding `SKILL.md` under `.claude/skills/<skill-name>/` and apply the instructions from its **Reference** links (single source of truth).
+
+| User intent / keywords | Skill | Action |
+|------------------------|-------|--------|
+| Tasks, task-master, parse-prd, set-status, next task, show task, task ID, expand, PRD, sprint, planning, backlog, `.taskmaster/` | **task-master** | Follow [.claude/skills/task-master/SKILL.md](.claude/skills/task-master/SKILL.md); use taskmaster.instructions.md and dev_workflow.instructions.md |
+| Rules, Cursor rules, VS Code rules, .instructions.md, globs, alwaysApply, rule structure | **vscode-rules** | Follow [.claude/skills/vscode-rules/SKILL.md](.claude/skills/vscode-rules/SKILL.md); use vscode_rules.instructions.md |
+| Self-improve, improve rules, evolve rules, new patterns, update instructions from code | **self-improve** | Follow [.claude/skills/self-improve/SKILL.md](.claude/skills/self-improve/SKILL.md); use self_improve.instructions.md and vscode_rules.instructions.md |
+| TDD, red-green-refactor, test-first, integration tests, fix bugs with tests | **tdd** | Follow [.claude/skills/tdd/SKILL.md](.claude/skills/tdd/SKILL.md); vertical slices, tracer bullets, behavior-focused tests |
+| Break down PRD into phases/plan, implementation plan, tracer bullets (plan file) | **prd-to-plan** | Follow [.claude/skills/prd-to-plan/SKILL.md](.claude/skills/prd-to-plan/SKILL.md); output in `./plans/` |
+| PRD to GitHub issues, convert PRD to issues, implementation tickets, work items | **prd-to-issues** | Follow [.claude/skills/prd-to-issues/SKILL.md](.claude/skills/prd-to-issues/SKILL.md); use `gh issue create` |
+| Improve architecture, shallow modules, refactor opportunities, testability, AI-navigable | **improve-codebase-architecture** | Follow [.claude/skills/improve-codebase-architecture/SKILL.md](.claude/skills/improve-codebase-architecture/SKILL.md); deepen modules, RFC issues |
+| Grill me, stress-test plan, grill design, interview about plan | **grill-me** | Follow [.claude/skills/grill-me/SKILL.md](.claude/skills/grill-me/SKILL.md); resolve decision tree |
+| Plan refactor, refactoring RFC, tiny commits refactor, safe incremental refactor | **request-refactor-plan** | Follow [.claude/skills/request-refactor-plan/SKILL.md](.claude/skills/request-refactor-plan/SKILL.md); file as GitHub issue |
+| Git guardrails, block dangerous git, block push/reset/clean, git safety hooks | **git-guardrails-claude-code** | Follow [.claude/skills/git-guardrails-claude-code/SKILL.md](.claude/skills/git-guardrails-claude-code/SKILL.md); PreToolUse hook |
+| Ubiquitous language, domain glossary, DDD terms, domain model terminology | **ubiquitous-language** | Follow [.claude/skills/ubiquitous-language/SKILL.md](.claude/skills/ubiquitous-language/SKILL.md); output UBIQUITOUS_LANGUAGE.md |
+| Implementation, DDD, Clean Architecture, Either, Validator, Entity, VO, use case, repository, or no other skill matches | **engineering-standards** | Follow [.claude/skills/engineering-standards/SKILL.md](.claude/skills/engineering-standards/SKILL.md); use CLAUDE.md (this file), docs/INDEX.md, 02/06/08/09-*.md |
+
+Default to **engineering-standards** when the request is about writing or refactoring code and no other skill context is clear.
 
 ---
 

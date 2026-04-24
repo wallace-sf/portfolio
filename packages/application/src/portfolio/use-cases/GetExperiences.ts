@@ -1,23 +1,29 @@
+import { Experience, IExperienceRepository } from '@repo/core/portfolio';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
-import { Experience, ExperienceSkill, IExperienceRepository } from '@repo/core/portfolio';
 
 import { UseCase } from '../../shared/UseCase';
 import { ExperienceDTO } from '../dtos/ExperienceDTO';
-import { ExperienceSkillDTO } from '../dtos/ExperienceSkillDTO';
 
-export interface GetExperiencesInput {
+export type GetExperiencesInput = {
   locale: Locale;
-}
+};
 
-export class GetExperiences extends UseCase<GetExperiencesInput, ExperienceDTO[]> {
+export class GetExperiences extends UseCase<
+  GetExperiencesInput,
+  ExperienceDTO[]
+> {
   constructor(private readonly experienceRepository: IExperienceRepository) {
     super();
   }
 
-  async execute(input: GetExperiencesInput): Promise<Either<DomainError, ExperienceDTO[]>> {
+  async execute(
+    input: GetExperiencesInput,
+  ): Promise<Either<DomainError, ExperienceDTO[]>> {
     try {
       const experiences = await this.experienceRepository.findAll();
-      const sorted = [...experiences].sort((a, b) => b.period.startAt.ms - a.period.startAt.ms);
+      const sorted = [...experiences].sort(
+        (a, b) => b.period.startAt.ms - a.period.startAt.ms,
+      );
       return right(sorted.map((e) => this.toDTO(e, input.locale)));
     } catch {
       return left(
@@ -39,20 +45,11 @@ export class GetExperiences extends UseCase<GetExperiencesInput, ExperienceDTO[]
         url: experience.logo.url.value,
         alt: experience.logo.alt.get(locale),
       },
-      employmentType: experience.employment_type.value,
-      locationType: experience.location_type.value,
+      employmentType: experience.employment_type,
+      locationType: experience.location_type,
       startAt: experience.period.startAt.value,
       endAt: experience.period.endAt?.value,
-      skills: experience.skills.map((s) => this.toSkillDTO(s, locale)),
-    };
-  }
-
-  private toSkillDTO(skill: ExperienceSkill, locale: Locale): ExperienceSkillDTO {
-    return {
-      id: skill.skill.id.value,
-      name: skill.skill.description.value,
-      type: skill.skill.type.value,
-      workDescription: skill.workDescription.get(locale),
+      skills: experience.skills.map((id) => id.value),
     };
   }
 }

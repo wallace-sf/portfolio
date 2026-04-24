@@ -1,4 +1,4 @@
-import { DateRange, ValidationError } from '../../../src';
+import { DateRange, ValidationError } from '~/index';
 
 const START = '2020-01-01T00:00:00.000Z';
 const END = '2023-12-31T00:00:00.000Z';
@@ -87,9 +87,7 @@ describe('DateRange', () => {
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
-      expect((result.value as ValidationError).code).toBe(
-        DateRange.ERROR_CODE,
-      );
+      expect((result.value as ValidationError).code).toBe(DateRange.ERROR_CODE);
       expect((result.value as ValidationError).message).toContain(
         'Start date must be before or equal to end date',
       );

@@ -1,4 +1,4 @@
-import { Name, ValidationError } from '../../../src';
+import { Name, ValidationError } from '~/index';
 
 describe('Name', () => {
   describe('when created from valid value', () => {
@@ -17,7 +17,9 @@ describe('Name', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
-      expect((result.value as ValidationError).message).toBe('The name must contain only letters.');
+      expect((result.value as ValidationError).message).toBe(
+        'The name must contain only letters.',
+      );
     });
 
     it('should return Left for empty string', () => {
@@ -31,7 +33,9 @@ describe('Name', () => {
       const result = Name.create('@');
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).message).toBe('The name must contain only letters.');
+      expect((result.value as ValidationError).message).toBe(
+        'The name must contain only letters.',
+      );
     });
 
     it('should return Left for value with underscores and symbols', () => {

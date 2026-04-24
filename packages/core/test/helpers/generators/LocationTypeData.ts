@@ -1,7 +1,7 @@
-import { LocationType, LocationTypeValue } from '../../../src';
+import { LocationType } from '~/index';
 
 export class LocationTypeData {
-  static valid(): LocationTypeValue {
-    return LocationType.LOCATIONS[0] as LocationTypeValue;
+  static valid(): LocationType {
+    return LocationType.REMOTE;
   }
 }

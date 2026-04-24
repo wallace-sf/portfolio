@@ -1,5 +1,6 @@
-import { IProfileProps, Profile } from '../../../src';
-import { IProfileStatProps } from '../../../src/portfolio/entities/profile/model/ProfileStat';
+import { IProfileProps, Profile } from '~/index';
+import { IProfileStatProps } from '~/portfolio/entities/profile/model/ProfileStat';
+
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 
@@ -11,11 +12,24 @@ export class ProfileBuilder extends EntityBuilder<IProfileProps> {
   static build(): ProfileBuilder {
     return new ProfileBuilder({
       name: 'Wallace',
-      headline: { 'pt-BR': 'Engenheiro de Software' },
-      bio: { 'pt-BR': 'Desenvolvedor apaixonado por DDD e Clean Architecture.' },
+      headline: {
+        'en-US': 'Software Engineer',
+        'pt-BR': 'Engenheiro de Software',
+      },
+      bio: {
+        'en-US': 'Developer passionate about DDD and Clean Architecture.',
+        'pt-BR': 'Desenvolvedor apaixonado por DDD e Clean Architecture.',
+      },
       photo: { url: Data.image.url(), alt: Data.image.alt() },
       stats: [
-        { label: { 'pt-BR': 'Anos de experiência' }, value: '5+', icon: 'briefcase' },
+        {
+          label: {
+            'en-US': 'Years of experience',
+            'pt-BR': 'Anos de experiência',
+          },
+          value: '5+',
+          icon: 'briefcase',
+        },
       ],
       featuredProjectSlugs: ['my-project', 'portfolio-app'],
     });

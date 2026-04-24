@@ -1,7 +1,9 @@
-import { IProfessionalValueProps, ProfessionalValue } from '../../../src';
+import { IProfessionalValueProps, ProfessionalValue } from '~/index';
+
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
 
+// eslint-disable-next-line max-len
 export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValueProps> {
   private constructor(props: IProfessionalValueProps) {
     super(props);

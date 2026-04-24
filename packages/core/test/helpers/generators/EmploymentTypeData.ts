@@ -1,7 +1,7 @@
-import { EmploymentType, EmploymentTypeValue } from '../../../src';
+import { EmploymentType } from '~/index';
 
 export class EmploymentTypeData {
-  static valid(): EmploymentTypeValue {
-    return EmploymentType.EMPLOYMENTS[0] as EmploymentTypeValue;
+  static valid(): EmploymentType {
+    return EmploymentType.FULL_TIME;
   }
 }

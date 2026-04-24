@@ -6,10 +6,10 @@
 
 ## Prerequisites
 
-- **Node.js** ≥ 18
+- **Node.js** ≥ 22
 - **pnpm** ≥ 8 (`npm install -g pnpm`)
 - **Git**
-- A Supabase project (for database-backed features)
+- A [Supabase](https://supabase.com) project (free tier is sufficient)
 
 ---
 
@@ -25,18 +25,40 @@ pnpm install
 
 ## Environment Variables
 
-Copy the example env file and fill in your Supabase credentials:
+Three gitignored env files, each with a different scope:
+
+| File | Loaded by | Purpose |
+|------|-----------|---------|
+| `.env` (root) | — | Production credentials — never use for local work |
+| `.env.local` (root) | Next.js (`next dev`) | Local dev server (Supabase dev project) |
+| `packages/infra/.env.test.local` | Vitest (`mode=test`) | Integration tests (Supabase dev project) |
+
+None of these files is committed to git.
+
+### Setup
+
+**1. Create the dev env file**
 
 ```bash
 cp .env.example .env.local
 ```
 
-Key variables:
+Fill in the credentials from your **Supabase dev project**
+(supabase.com → Project Settings → Database and API).
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
+**2. Create the test env file**
+
+```bash
+cp .env.local packages/infra/.env.test.local
+```
+
+Vitest loads `packages/infra/.env.test.local` automatically in test mode — no
+extra configuration needed.
+
+**3. Apply migrations**
+
+```bash
+pnpm --filter @repo/infra db:migrate
 ```
 
 ---
@@ -51,6 +73,8 @@ SUPABASE_SERVICE_ROLE_KEY=...
 | `pnpm lint` | Lint all packages |
 | `pnpm typecheck` | TypeScript check across all packages |
 | `pnpm format` | Prettier format |
+| `pnpm --filter @repo/infra db:migrate` | Apply pending migrations |
+| `pnpm --filter @repo/infra db:studio` | Open Prisma Studio (visual DB browser) |
 
 Run a single package:
 

@@ -26,6 +26,7 @@ coverage
 out/
 build
 dist
+*.tsbuildinfo
 
 
 # Debug
@@ -60,6 +61,8 @@ node_modules/
 # tasks.json
 # tasks/
 
-# Supabase
-supabase/.temp/
-supabase/.branches/
+# Local scratch / study files
+tmp/
+
+# TypeScript incremental build
+*.tsbuildinfo

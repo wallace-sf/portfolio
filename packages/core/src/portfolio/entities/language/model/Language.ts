@@ -4,8 +4,6 @@ import {
   collect,
   Either,
   Entity,
-  Fluency,
-  FluencyValue,
   IEntityProps,
   isLocale,
   left,
@@ -14,15 +12,18 @@ import {
   Name,
   right,
   ValidationError,
+  validateEnum,
 } from '../../../../shared';
+import { Fluency } from './Fluency';
 
 export interface ILanguageProps extends IEntityProps {
   name: string;
-  fluency: FluencyValue;
+  fluency: Fluency;
   locale: string;
 }
 
 export class Language extends Entity<Language, ILanguageProps> {
+  static readonly ERROR_CODE = 'INVALID_LANGUAGE';
   static readonly LOCALE_ERROR_CODE = 'INVALID_LOCALE';
 
   public readonly name: Name;
@@ -31,26 +32,31 @@ export class Language extends Entity<Language, ILanguageProps> {
 
   private constructor(
     props: ILanguageProps,
-    name: Name,
     fluency: Fluency,
+    name: Name,
     locale: Locale,
   ) {
     super(props);
-    this.name = name;
     this.fluency = fluency;
+    this.name = name;
     this.locale = locale;
   }
 
   static create(props: ILanguageProps): Either<ValidationError, Language> {
     const result = collect([
+      validateEnum(
+        props.fluency,
+        Object.values(Fluency),
+        Language.ERROR_CODE,
+        'Invalid fluency level.',
+      ),
       Name.create(props.name),
-      Fluency.create(props.fluency),
       Language._createLocale(props.locale),
     ]);
     if (result.isLeft()) return left(result.value);
 
-    const [name, fluency, locale] = result.value;
-    return right(new Language(props, name, fluency, locale as Locale));
+    const [fluency, name, locale] = result.value;
+    return right(new Language(props, fluency, name, locale as Locale));
   }
 
   private static _createLocale(value: string): Either<ValidationError, Locale> {

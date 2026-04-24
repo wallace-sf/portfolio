@@ -1,8 +1,4 @@
-import {
-  DomainError,
-  NotFoundError,
-  ValidationError,
-} from '../../../src';
+import { DomainError, NotFoundError, ValidationError } from '~/index';
 
 describe('DomainError', () => {
   it('stores code and details, has correct name', () => {

@@ -18,6 +18,8 @@ export class ProfessionalValue extends Entity<
   ProfessionalValue,
   IProfessionalValueProps
 > {
+  static readonly ERROR_CODE = 'INVALID_PROFESSIONAL_VALUE';
+
   public readonly icon: Text;
   public readonly content: Text;
 

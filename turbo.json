@@ -1,6 +1,17 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": ["**/.env.*local", "**/.env"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "RESEND_API_KEY",
+    "CONTACT_EMAIL_TO",
+    "CONTACT_EMAIL_FROM",
+    "ADMIN_EMAIL",
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
+    "NODE_ENV"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -26,7 +37,8 @@
       "dependsOn": ["^format:check"]
     },
     "types": {
-      "dependsOn": ["^types"]
+      "dependsOn": ["^types"],
+      "outputs": ["dist/types/**"]
     },
     "test": {
       "dependsOn": ["^test"]

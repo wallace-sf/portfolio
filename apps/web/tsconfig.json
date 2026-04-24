@@ -21,13 +21,20 @@
       }
     ]
   },
+  "references": [
+    { "path": "../../packages/utils/tsconfig.build.json" },
+    { "path": "../../packages/core/tsconfig.build.json" },
+    { "path": "../../packages/ui/tsconfig.build.json" },
+    { "path": "../../packages/application/tsconfig.build.json" },
+    { "path": "../../packages/infra/tsconfig.build.json" }
+  ],
   "include": [
     "next-env.d.ts",
     "next.config.js",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "jest.config.ts",
+    "vitest.config.ts",
     "test/**/*.ts",
     "tailwind.config.ts",
     "environment.d.ts"

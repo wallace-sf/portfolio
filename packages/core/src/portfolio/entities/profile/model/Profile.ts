@@ -3,7 +3,7 @@ import { Validator } from '@repo/utils/validator';
 import {
   collect,
   Either,
-  Entity,
+  AggregateRoot,
   IEntityProps,
   Image,
   left,
@@ -27,7 +27,7 @@ export interface IProfileProps extends IEntityProps {
   featuredProjectSlugs: string[];
 }
 
-export class Profile extends Entity<Profile, IProfileProps> {
+export class Profile extends AggregateRoot<Profile, IProfileProps> {
   static readonly ERROR_CODE = 'TOO_MANY_FEATURED_PROJECTS';
   private static readonly MAX_FEATURED_PROJECTS = 6;
 

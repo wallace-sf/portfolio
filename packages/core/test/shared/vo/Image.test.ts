@@ -1,7 +1,10 @@
-import { Image, ValidationError } from '../../../src';
+import { Image, ValidationError } from '~/index';
 
 const validUrl = 'https://example.com/image.png';
-const validAlt = { 'pt-BR': 'Imagem de capa do projeto' };
+const validAlt = {
+  'en-US': 'Project cover image',
+  'pt-BR': 'Imagem de capa do projeto',
+};
 
 describe('Image', () => {
   describe('when created from valid value', () => {
@@ -44,28 +47,22 @@ describe('Image', () => {
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
-      expect((result.value as ValidationError).code).toBe(
-        Image.ERROR_CODE_URL,
-      );
+      expect((result.value as ValidationError).code).toBe(Image.ERROR_CODE_URL);
     });
 
     it('should return Left when URL is empty', () => {
       const result = Image.create('', validAlt);
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(
-        Image.ERROR_CODE_URL,
-      );
+      expect((result.value as ValidationError).code).toBe(Image.ERROR_CODE_URL);
     });
 
-    it('should return Left with INVALID_LOCALIZED_TEXT when pt-BR alt is missing', () => {
-      const result = Image.create(validUrl, { 'pt-BR': '' });
+    it('should return Left with INVALID_LOCALIZED_TEXT when en-US alt is missing', () => {
+      const result = Image.create(validUrl, { 'en-US': '' });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
-      expect((result.value as ValidationError).code).toBe(
-        Image.ERROR_CODE_ALT,
-      );
+      expect((result.value as ValidationError).code).toBe(Image.ERROR_CODE_ALT);
     });
   });
 

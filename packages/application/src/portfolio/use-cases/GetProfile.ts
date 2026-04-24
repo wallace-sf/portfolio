@@ -1,21 +1,34 @@
-import { DomainError, Either, Locale, NotFoundError, left, right } from '@repo/core/shared';
 import { IProfileRepository, Profile, ProfileStat } from '@repo/core/portfolio';
+import {
+  DomainError,
+  Either,
+  Locale,
+  NotFoundError,
+  left,
+  right,
+} from '@repo/core/shared';
 
 import { UseCase } from '../../shared/UseCase';
 import { ProfileDTO } from '../dtos/ProfileDTO';
 import { ProfileStatDTO } from '../dtos/ProfileStatDTO';
 import { SocialNetworkDTO } from '../dtos/SocialNetworkDTO';
 
-export interface GetProfileInput {
+export type GetProfileInput = {
   locale: Locale;
-}
+};
 
-export class GetProfile extends UseCase<GetProfileInput, ProfileDTO, NotFoundError | DomainError> {
+export class GetProfile extends UseCase<
+  GetProfileInput,
+  ProfileDTO,
+  NotFoundError | DomainError
+> {
   constructor(private readonly profileRepository: IProfileRepository) {
     super();
   }
 
-  async execute(input: GetProfileInput): Promise<Either<NotFoundError | DomainError, ProfileDTO>> {
+  async execute(
+    input: GetProfileInput,
+  ): Promise<Either<NotFoundError | DomainError, ProfileDTO>> {
     try {
       const profile = await this.profileRepository.find();
       if (!profile) return left(new NotFoundError());

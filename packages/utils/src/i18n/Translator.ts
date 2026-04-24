@@ -1,6 +1,6 @@
-import { isNotNil } from '../validations';
 import { Translatei18n } from './Translatei18n';
 import { I18n } from './types';
+import { isNotNil } from '../validations';
 
 export class Translator {
   private static DEFAULT_LOCALE = 'en-US';

@@ -5,14 +5,17 @@
   "private": true,
   "exports": {
     "./Control": {
+      "types": "./dist/types/Control/index.d.ts",
       "import": "./dist/Control/index.js",
       "require": "./dist/Control/index.js"
     },
     "./Imagery": {
+      "types": "./dist/types/Imagery/index.d.ts",
       "import": "./dist/Imagery/index.js",
       "require": "./dist/Imagery/index.js"
     },
     "./View": {
+      "types": "./dist/types/View/index.d.ts",
       "import": "./dist/View/index.js",
       "require": "./dist/View/index.js"
     }
@@ -30,7 +33,8 @@
     "lint:check": "eslint --ext .ts,.tsx src",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
     "format:check": "prettier --check 'src/**/*.{ts,tsx}'",
-    "types": "tsc -p ./tsconfig.json --noEmit"
+    "build:types": "tsc --build tsconfig.build.json",
+    "types": "tsc --build tsconfig.build.json"
   },
   "dependencies": {
     "@iconify/react": "^5.0.2",
