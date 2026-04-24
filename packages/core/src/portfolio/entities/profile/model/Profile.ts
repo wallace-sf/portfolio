@@ -1,10 +1,6 @@
 import { Validator } from '@repo/utils/validator';
 
 import {
-  IProfileStatProps,
-  ProfileStat,
-} from '~/portfolio/entities/profile/model/ProfileStat';
-import {
   collect,
   Either,
   AggregateRoot,
@@ -15,11 +11,12 @@ import {
   right,
   Slug,
   ValidationError,
-} from '~/shared';
+} from '../../../../shared';
 import {
   ILocalizedTextInput,
   LocalizedText,
-} from '~/shared/i18n/LocalizedText';
+} from '../../../../shared/i18n/LocalizedText';
+import { IProfileStatProps, ProfileStat } from './ProfileStat';
 
 export interface IProfileProps extends IEntityProps {
   name: string;

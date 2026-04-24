@@ -1,4 +1,4 @@
-import { Profile } from '~/portfolio/entities/profile/model/Profile';
+import { Profile } from '../model/Profile';
 
 export interface IProfileRepository {
   find(): Promise<Profile | null>;

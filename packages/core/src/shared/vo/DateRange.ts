@@ -1,9 +1,9 @@
 import { Validator } from '@repo/utils/validator';
 
-import { ValueObject } from '~/shared/base/ValueObject';
-import { left, right, Either } from '~/shared/either';
-import { ValidationError } from '~/shared/errors';
-import { DateTime } from '~/shared/vo/DateTime';
+import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
+import { ValidationError } from '../errors';
+import { DateTime } from './DateTime';
 
 interface IDateRangeValue {
   startAt: DateTime;

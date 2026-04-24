@@ -10,9 +10,9 @@ import {
   right,
 } from '@repo/core/shared';
 
-import { ProjectDetailDTO } from '~/portfolio/dtos/ProjectDetailDTO';
-import { ProjectSummaryDTO } from '~/portfolio/dtos/ProjectSummaryDTO';
-import { UseCase } from '~/shared/UseCase';
+import { UseCase } from '../../shared/UseCase';
+import { ProjectDetailDTO } from '../dtos/ProjectDetailDTO';
+import { ProjectSummaryDTO } from '../dtos/ProjectSummaryDTO';
 
 export type GetProjectBySlugInput = {
   slug: string;

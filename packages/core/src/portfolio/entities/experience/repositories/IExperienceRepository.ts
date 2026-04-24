@@ -1,4 +1,4 @@
-import { Experience } from '~/portfolio/entities/experience/model/Experience';
-import { IRepository } from '~/shared/base/IRepository';
+import { IRepository } from '../../../../shared/base/IRepository';
+import { Experience } from '../model/Experience';
 
 export interface IExperienceRepository extends IRepository<Experience> {}

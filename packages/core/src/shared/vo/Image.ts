@@ -1,11 +1,8 @@
-import { ValueObject } from '~/shared/base/ValueObject';
-import { left, right, Either } from '~/shared/either';
-import { ValidationError } from '~/shared/errors';
-import {
-  ILocalizedTextInput,
-  LocalizedText,
-} from '~/shared/i18n/LocalizedText';
-import { Url } from '~/shared/vo/Url';
+import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
+import { ValidationError } from '../errors';
+import { ILocalizedTextInput, LocalizedText } from '../i18n/LocalizedText';
+import { Url } from './Url';
 
 interface IImageValue {
   url: Url;

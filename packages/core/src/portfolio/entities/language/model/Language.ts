@@ -1,6 +1,5 @@
 import { Validator } from '@repo/utils/validator';
 
-import { Fluency } from '~/portfolio/entities/language/model/Fluency';
 import {
   collect,
   Either,
@@ -14,7 +13,8 @@ import {
   right,
   ValidationError,
   validateEnum,
-} from '~/shared';
+} from '../../../../shared';
+import { Fluency } from './Fluency';
 
 export interface ILanguageProps extends IEntityProps {
   name: string;

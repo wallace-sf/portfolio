@@ -1,2 +1,2 @@
-export * from '~/identity/entities/user';
-export * from '~/identity/errors';
+export * from './entities/user';
+export * from './errors';

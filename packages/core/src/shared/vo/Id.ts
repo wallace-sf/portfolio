@@ -1,9 +1,9 @@
 import { Validator } from '@repo/utils/validator';
 import { v4 as uuid } from 'uuid';
 
-import { ValueObject } from '~/shared/base/ValueObject';
-import { left, right, Either } from '~/shared/either';
-import { ValidationError } from '~/shared/errors';
+import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
+import { ValidationError } from '../errors';
 
 export class Id extends ValueObject<string> {
   static readonly ERROR_CODE = 'INVALID_ID';

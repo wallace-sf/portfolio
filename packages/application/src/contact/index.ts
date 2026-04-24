@@ -1,3 +1,3 @@
-export * from '~/contact/dtos';
-export * from '~/contact/ports';
-export * from '~/contact/use-cases';
+export * from './dtos';
+export * from './ports';
+export * from './use-cases';

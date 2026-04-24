@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { IProfileRepository, Profile } from '@repo/core/portfolio';
 
-import { ProfileMapper } from '~/repositories/profile/ProfileMapper';
+import { ProfileMapper } from './ProfileMapper';
 
 const INCLUDE = {
   stats: { orderBy: { order: 'asc' as const } },

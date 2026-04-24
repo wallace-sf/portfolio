@@ -1,7 +1,7 @@
 import { IUserProps, IUserRepository, Role, User } from '@repo/core/identity';
 import { DomainError, Either, Email, Id, left, right } from '@repo/core/shared';
 
-import { UseCase } from '~/shared/UseCase';
+import { UseCase } from '../../shared/UseCase';
 
 export interface EnsureAppUserForAuthSessionInput {
   /** IdP stable subject (e.g. Supabase `sub` claim from JWT) */

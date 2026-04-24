@@ -1,8 +1,8 @@
 import { DomainError, Either } from '@repo/core/shared';
 
-import { AuthPrincipal } from '~/identity/dtos/AuthPrincipal';
-import { AuthSession } from '~/identity/dtos/AuthSession';
-import { AuthCookieApi } from '~/identity/ports/AuthCookieApi';
+import { AuthPrincipal } from '../dtos/AuthPrincipal';
+import { AuthSession } from '../dtos/AuthSession';
+import { AuthCookieApi } from './AuthCookieApi';
 
 export type SignInWithPasswordInput = {
   email: string;

@@ -8,7 +8,7 @@ import {
   right,
 } from '@repo/core/shared';
 
-import { UseCase } from '~/shared/UseCase';
+import { UseCase } from '../../shared/UseCase';
 
 export type EnsureAdminInput = {
   userId: string;

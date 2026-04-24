@@ -7,8 +7,8 @@ import {
 } from '@repo/core/shared';
 import { Validator } from '@repo/utils/validator';
 
-import { IContactMessageDTO } from '~/contact/dtos/ContactMessageDTO';
-import { IEmailService } from '~/contact/ports/IEmailService';
+import { IContactMessageDTO } from '../dtos/ContactMessageDTO';
+import { IEmailService } from '../ports/IEmailService';
 
 export type SendContactMessageInput = {
   name: string;

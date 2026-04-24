@@ -1,2 +1,2 @@
-export * from '~/identity/ports/AuthCookieApi';
-export * from '~/identity/ports/IAuthenticationGateway';
+export * from './AuthCookieApi';
+export * from './IAuthenticationGateway';

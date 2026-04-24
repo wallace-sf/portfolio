@@ -1,2 +1,2 @@
-export * from '~/shared/i18n/Locale';
-export * from '~/shared/i18n/LocalizedText';
+export * from './Locale';
+export * from './LocalizedText';

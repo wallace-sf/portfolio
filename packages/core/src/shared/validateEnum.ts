@@ -1,7 +1,7 @@
 import { Validator } from '@repo/utils/validator';
 
-import { Either, left, right } from '~/shared/either';
-import { ValidationError } from '~/shared/errors';
+import { Either, left, right } from './either';
+import { ValidationError } from './errors';
 
 export function validateEnum<T extends string>(
   value: T,

@@ -1,6 +1,6 @@
-import { Project } from '~/portfolio/entities/project/model/Project';
-import { Slug, Id } from '~/shared';
-import { IRepository } from '~/shared/base/IRepository';
+import { Slug, Id } from '../../../../shared';
+import { IRepository } from '../../../../shared/base/IRepository';
+import { Project } from '../model/Project';
 
 export interface IProjectRepository extends IRepository<Project> {
   findPublished(): Promise<Project[]>;

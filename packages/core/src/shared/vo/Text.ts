@@ -1,8 +1,8 @@
 import { Validator } from '@repo/utils/validator';
 
-import { ValueObject } from '~/shared/base/ValueObject';
-import { left, right, Either } from '~/shared/either';
-import { ValidationError } from '~/shared/errors';
+import { ValueObject } from '../base/ValueObject';
+import { left, right, Either } from '../either';
+import { ValidationError } from '../errors';
 
 interface ITextConfig {
   min?: number;
