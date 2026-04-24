@@ -8,10 +8,10 @@ import {
   right,
 } from '@repo/core/shared';
 
-import { ProfileDTO } from '~/portfolio/dtos/ProfileDTO';
-import { ProfileStatDTO } from '~/portfolio/dtos/ProfileStatDTO';
-import { SocialNetworkDTO } from '~/portfolio/dtos/SocialNetworkDTO';
-import { UseCase } from '~/shared/UseCase';
+import { UseCase } from '../../shared/UseCase';
+import { ProfileDTO } from '../dtos/ProfileDTO';
+import { ProfileStatDTO } from '../dtos/ProfileStatDTO';
+import { SocialNetworkDTO } from '../dtos/SocialNetworkDTO';
 
 export type GetProfileInput = {
   locale: Locale;

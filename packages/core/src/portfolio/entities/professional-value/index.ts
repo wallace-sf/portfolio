@@ -1,1 +1,1 @@
-export * from '~/portfolio/entities/professional-value/model/ProfessionalValue';
+export * from './model/ProfessionalValue';

@@ -1,1 +1,1 @@
-export * from '~/portfolio/entities/social-network/model/SocialNetwork';
+export * from './model/SocialNetwork';

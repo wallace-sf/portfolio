@@ -8,8 +8,8 @@ import {
   right,
 } from '@repo/core/shared';
 
-import { UserDTO } from '~/identity/dtos/UserDTO';
-import { UseCase } from '~/shared/UseCase';
+import { UseCase } from '../../shared/UseCase';
+import { UserDTO } from '../dtos/UserDTO';
 
 export interface GetCurrentUserInput {
   userId: string;

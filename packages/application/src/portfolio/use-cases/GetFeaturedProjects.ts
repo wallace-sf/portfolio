@@ -1,8 +1,8 @@
 import { IProjectRepository, Project } from '@repo/core/portfolio';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
-import { ProjectSummaryDTO } from '~/portfolio/dtos/ProjectSummaryDTO';
-import { UseCase } from '~/shared/UseCase';
+import { UseCase } from '../../shared/UseCase';
+import { ProjectSummaryDTO } from '../dtos/ProjectSummaryDTO';
 
 export type GetFeaturedProjectsInput = {
   locale: Locale;

@@ -1,3 +1,3 @@
-export * from '~/identity/dtos';
-export * from '~/identity/ports';
-export * from '~/identity/use-cases';
+export * from './dtos';
+export * from './ports';
+export * from './use-cases';

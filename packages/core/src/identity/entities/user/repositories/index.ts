@@ -1,1 +1,1 @@
-export * from '~/identity/entities/user/repositories/IUserRepository';
+export * from './IUserRepository';

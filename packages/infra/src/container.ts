@@ -9,14 +9,14 @@ import {
 import { validateEnv } from '@repo/utils/env';
 import { Resend } from 'resend';
 
-import { env } from '~/env';
-import { SupabaseAuthenticationGateway } from '~/identity/SupabaseAuthenticationGateway';
-import { prisma } from '~/prisma/client';
-import { PrismaExperienceRepository } from '~/repositories/experience/PrismaExperienceRepository';
-import { PrismaProfileRepository } from '~/repositories/profile/PrismaProfileRepository';
-import { PrismaProjectRepository } from '~/repositories/project/PrismaProjectRepository';
-import { PrismaUserRepository } from '~/repositories/user/PrismaUserRepository';
-import { ResendEmailService } from '~/services/ResendEmailService';
+import { env } from './env';
+import { SupabaseAuthenticationGateway } from './identity/SupabaseAuthenticationGateway';
+import { prisma } from './prisma/client';
+import { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
+import { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
+import { PrismaProjectRepository } from './repositories/project/PrismaProjectRepository';
+import { PrismaUserRepository } from './repositories/user/PrismaUserRepository';
+import { ResendEmailService } from './services/ResendEmailService';
 
 export type Container = {
   projectRepository: IProjectRepository;

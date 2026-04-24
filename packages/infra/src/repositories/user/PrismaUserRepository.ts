@@ -2,8 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import { IUserRepository, User } from '@repo/core/identity';
 import { Email, Id } from '@repo/core/shared';
 
-import { InfrastructureError } from '~/errors/InfrastructureError';
-import { UserMapper } from '~/repositories/user/UserMapper';
+import { InfrastructureError } from '../../errors/InfrastructureError';
+import { UserMapper } from './UserMapper';
 
 export class PrismaUserRepository implements IUserRepository {
   constructor(private readonly db: PrismaClient) {}

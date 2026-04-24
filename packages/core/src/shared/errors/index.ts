@@ -1,3 +1,3 @@
-export * from '~/shared/errors/DomainError';
-export * from '~/shared/errors/NotFoundError';
-export * from '~/shared/errors/ValidationError';
+export * from './DomainError';
+export * from './NotFoundError';
+export * from './ValidationError';

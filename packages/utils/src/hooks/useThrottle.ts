@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import _throttle from 'lodash/throttle';
 
-import { type NoopFunction } from '~/types';
+import { type NoopFunction } from '../types';
 
 interface IThrottleSettings {
   leading?: boolean;

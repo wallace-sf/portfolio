@@ -1,4 +1,3 @@
-import { SkillType } from '~/portfolio/entities/skill/model/SkillType';
 import {
   collect,
   Either,
@@ -9,7 +8,8 @@ import {
   Text,
   ValidationError,
   validateEnum,
-} from '~/shared';
+} from '../../../../shared';
+import { SkillType } from './SkillType';
 
 export interface ISkillProps extends IEntityProps {
   description: string;

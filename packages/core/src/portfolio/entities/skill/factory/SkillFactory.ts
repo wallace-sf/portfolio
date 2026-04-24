@@ -1,7 +1,7 @@
 import { Validator } from '@repo/utils/validator';
 
-import { ISkillProps, Skill } from '~/portfolio/entities/skill/model/Skill';
-import { Either, left, right, ValidationError } from '~/shared';
+import { Either, left, right, ValidationError } from '../../../../shared';
+import { ISkillProps, Skill } from '../model/Skill';
 
 export class SkillFactory {
   static readonly ERROR_CODE = 'ERROR_INVALID_SKILL_LIST';

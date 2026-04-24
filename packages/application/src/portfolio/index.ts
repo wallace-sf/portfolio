@@ -1,2 +1,2 @@
-export * from '~/portfolio/dtos';
-export * from '~/portfolio/use-cases';
+export * from './dtos';
+export * from './use-cases';

@@ -1,6 +1,6 @@
 import _get from 'lodash/get';
 
-import { I18n } from '~/i18n/types';
+import { I18n } from './types';
 
 export class Translatei18n {
   private _locale: string;
