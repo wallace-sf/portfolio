@@ -1,4 +1,5 @@
-import { ISkillProps, Skill, SkillType } from '../../../src';
+import { ISkillProps, Skill, SkillType } from '~/index';
+
 import { EntityBuilder } from './EntityBuilder';
 
 export class SkillBuilder extends EntityBuilder<ISkillProps> {

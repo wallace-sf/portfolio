@@ -1,4 +1,5 @@
-import { Skill, SkillFactory, SkillType, ValidationError } from '../../src';
+import { Skill, SkillFactory, SkillType, ValidationError } from '~/index';
+
 import { SkillBuilder } from '../helpers';
 
 describe('SkillFactory', () => {

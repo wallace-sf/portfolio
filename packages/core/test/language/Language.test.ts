@@ -1,4 +1,5 @@
-import { Fluency, Language, Name, ValidationError } from '../../src';
+import { Fluency, Language, Name, ValidationError } from '~/index';
+
 import { LanguageBuilder } from '../helpers';
 
 describe('Language', () => {

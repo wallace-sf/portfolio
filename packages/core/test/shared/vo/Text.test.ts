@@ -1,4 +1,4 @@
-import { Text, ValidationError } from '../../../src';
+import { Text, ValidationError } from '~/index';
 
 describe('Text', () => {
   describe('when created from valid value', () => {
@@ -41,7 +41,10 @@ describe('Text', () => {
     });
 
     it('should return Left with custom config message when exceeding max', () => {
-      const result = Text.create('This string is too long.', { min: 3, max: 20 });
+      const result = Text.create('This string is too long.', {
+        min: 3,
+        max: 20,
+      });
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).message).toBe(

@@ -1,4 +1,4 @@
-import { Url, ValidationError } from '../../../src';
+import { Url, ValidationError } from '~/index';
 
 describe('Url', () => {
   describe('when created from valid value', () => {
@@ -19,7 +19,9 @@ describe('Url', () => {
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
       expect((result.value as ValidationError).code).toBe(Url.ERROR_CODE);
-      expect((result.value as ValidationError).message).toBe('The value must be a valid URL.');
+      expect((result.value as ValidationError).message).toBe(
+        'The value must be a valid URL.',
+      );
     });
 
     it('should return Left for empty string', () => {

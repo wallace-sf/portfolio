@@ -1,11 +1,7 @@
-import {
-  LocalizedText,
-  Name,
-  Slug,
-  ValidationError,
-} from '../../src';
-import { Profile } from '../../src/portfolio/entities/profile/model/Profile';
-import { ProfileStat } from '../../src/portfolio/entities/profile/model/ProfileStat';
+import { LocalizedText, Name, Slug, ValidationError } from '~/index';
+import { Profile } from '~/portfolio/entities/profile/model/Profile';
+import { ProfileStat } from '~/portfolio/entities/profile/model/ProfileStat';
+
 import { Data } from '../helpers/generators';
 
 const validStat = {
@@ -17,7 +13,10 @@ const validStat = {
 const validProps = {
   name: 'Wallace',
   headline: { 'en-US': 'Software Engineer', 'pt-BR': 'Engenheiro de Software' },
-  bio: { 'en-US': 'Developer passionate about DDD and Clean Architecture.', 'pt-BR': 'Desenvolvedor apaixonado por DDD e Clean Architecture.' },
+  bio: {
+    'en-US': 'Developer passionate about DDD and Clean Architecture.',
+    'pt-BR': 'Desenvolvedor apaixonado por DDD e Clean Architecture.',
+  },
   photo: {
     url: Data.image.url(),
     alt: Data.image.alt(),

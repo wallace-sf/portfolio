@@ -5,7 +5,8 @@ import {
   ProjectStatus,
   Slug,
   ValidationError,
-} from '../../src';
+} from '~/index';
+
 import { ProjectBuilder } from '../helpers';
 
 describe('Project', () => {
@@ -19,8 +20,12 @@ describe('Project', () => {
 
     it('should create project with all required fields as VOs', () => {
       const title = { 'pt-BR': 'Meu Projeto', 'en-US': 'My Project' };
-      const caption = { 'en-US': 'A caption for the project.', 'pt-BR': 'Uma legenda para o projeto.' };
-      const content = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+      const caption = {
+        'en-US': 'A caption for the project.',
+        'pt-BR': 'Uma legenda para o projeto.',
+      };
+      const content =
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
       const skills = [
         'a0000000-0000-4000-8000-000000000001',
         'a0000000-0000-4000-8000-000000000002',
@@ -85,8 +90,14 @@ describe('Project', () => {
       const result = Project.create(
         ProjectBuilder.build()
           .withTheme({ 'en-US': 'Design System', 'pt-BR': 'Design System' })
-          .withSummary({ 'en-US': 'Project summary.', 'pt-BR': 'Resumo do projeto.' })
-          .withObjectives({ 'en-US': 'Project objective.', 'pt-BR': 'Objetivo do projeto.' })
+          .withSummary({
+            'en-US': 'Project summary.',
+            'pt-BR': 'Resumo do projeto.',
+          })
+          .withObjectives({
+            'en-US': 'Project objective.',
+            'pt-BR': 'Objetivo do projeto.',
+          })
           .withRole({ 'en-US': 'Tech Lead', 'pt-BR': 'Tech Lead' })
           .toProps(),
       );

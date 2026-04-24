@@ -1,4 +1,5 @@
-import { Skill, Text, ValidationError } from '../../src';
+import { Skill, Text, ValidationError } from '~/index';
+
 import { SkillBuilder } from '../helpers';
 
 describe('Skill', () => {
@@ -33,18 +34,14 @@ describe('Skill', () => {
     });
 
     it('should return Left when icon is missing', () => {
-      const result = Skill.create(
-        SkillBuilder.build().withoutIcon().toProps(),
-      );
+      const result = Skill.create(SkillBuilder.build().withoutIcon().toProps());
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
     });
 
     it('should return Left when type is invalid', () => {
-      const result = Skill.create(
-        SkillBuilder.build().withoutType().toProps(),
-      );
+      const result = Skill.create(SkillBuilder.build().withoutType().toProps());
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Skill.ERROR_CODE);

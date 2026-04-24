@@ -1,4 +1,4 @@
-import { EmploymentType } from '../../../src';
+import { EmploymentType } from '~/index';
 
 export class EmploymentTypeData {
   static valid(): EmploymentType {

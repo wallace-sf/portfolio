@@ -1,4 +1,4 @@
-import { ILocalizedTextInput } from '../../../src/shared/i18n/LocalizedText';
+import { ILocalizedTextInput } from '~/shared/i18n/LocalizedText';
 
 export class ImageData {
   static url(): string {
@@ -6,7 +6,10 @@ export class ImageData {
   }
 
   static alt(): ILocalizedTextInput {
-    return { 'en-US': 'Project cover image', 'pt-BR': 'Imagem de capa do projeto' };
+    return {
+      'en-US': 'Project cover image',
+      'pt-BR': 'Imagem de capa do projeto',
+    };
   }
 
   static altMultiLocale(): ILocalizedTextInput {

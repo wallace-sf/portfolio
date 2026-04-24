@@ -1,4 +1,4 @@
-import { LocalizedText, ValidationError } from '../../../src';
+import { LocalizedText, ValidationError } from '~/index';
 
 describe('LocalizedText', () => {
   describe('get(locale, fallback?)', () => {
@@ -74,11 +74,15 @@ describe('LocalizedText', () => {
 
   describe('validation', () => {
     it('should return Left when en-US is missing', () => {
-      const result = LocalizedText.create({ 'en-US': undefined as unknown as string });
+      const result = LocalizedText.create({
+        'en-US': undefined as unknown as string,
+      });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
-      expect((result.value as ValidationError).code).toBe(LocalizedText.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        LocalizedText.ERROR_CODE,
+      );
       expect((result.value as ValidationError).message).toBe(
         'en-US is required and must be non-empty after trim.',
       );
@@ -88,14 +92,18 @@ describe('LocalizedText', () => {
       const result = LocalizedText.create({ 'en-US': '' });
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(LocalizedText.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        LocalizedText.ERROR_CODE,
+      );
     });
 
     it('should return Left for whitespace-only en-US', () => {
       const result = LocalizedText.create({ 'en-US': '   ' });
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(LocalizedText.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        LocalizedText.ERROR_CODE,
+      );
     });
   });
 
