@@ -3,6 +3,7 @@ import { getContainer } from '@repo/infra';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { errorResponse, successResponse } from '~/lib/api/envelope';
+import { HttpErrorCodes } from '~/lib/api/error-codes';
 import { mapDomainErrorToHttp } from '~/lib/api/error-mapper';
 
 export async function POST(request: NextRequest) {
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => null);
     if (!body || typeof body !== 'object') {
       return NextResponse.json(
-        errorResponse('INVALID_INPUT', 'Invalid JSON body', 400),
+        errorResponse(HttpErrorCodes.INVALID_INPUT, 'Invalid JSON body', 400),
         {
           status: 400,
         },
@@ -35,7 +36,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(successResponse(null), { status: 201 });
   } catch {
     return NextResponse.json(
-      errorResponse('INTERNAL_ERROR', 'Internal server error', 500),
+      errorResponse(
+        HttpErrorCodes.INTERNAL_ERROR,
+        'Internal server error',
+        500,
+      ),
       {
         status: 500,
       },
