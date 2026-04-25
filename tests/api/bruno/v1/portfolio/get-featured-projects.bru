@@ -1,0 +1,15 @@
+meta {
+  name: Get Featured Projects
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/projects/featured?locale={{locale}}
+  body: none
+  auth: none
+}
+
+headers {
+  accept: application/json
+}

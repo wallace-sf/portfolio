@@ -1,19 +1,19 @@
-# Bruno base (via OpenAPI YAML)
+# Bruno collections
 
-This folder keeps a minimal Bruno collection setup, while endpoint contracts live in YAML so they remain tool-agnostic.
+Versioned Bruno collections live in subfolders.
 
-## Files
+## Available versions
 
-- `../openapi/portfolio-api.v1.yml`: source of truth for API requests/responses.
-- `./bruno.json`: base Bruno collection metadata.
+- `./v1`: current API v1 collection (`web-api`).
 
-## How to use with Bruno
+## How to use with Bruno Free
 
-1. Open Bruno and choose `Import Collection`.
-2. Select `tests/api/openapi/portfolio-api.v1.yml`.
-3. Set the environment variable `baseUrl` to `http://localhost:3000` (or your target URL).
-4. Run requests and optionally save generated `.bru` files in this folder.
+1. Open Bruno and choose `Open Collection`.
+2. Select `tests/api/bruno/v1`.
+3. In Bruno, select the `local` environment.
+4. Update `authEmail`, `authPassword`, and `projectSlug` in `v1/environments/local.bru` if needed.
 
-## Why YAML first
+## Notes
 
-OpenAPI YAML can be consumed by Bruno, Postman, Insomnia, Swagger UI, and CI tooling, avoiding lock-in to a single client.
+- The OpenAPI contract remains tool-agnostic at `../openapi/v1/web-api.yml`.
+- Cookie-based auth is handled by Bruno's cookie jar after `auth/post-sign-in`.
