@@ -13,11 +13,12 @@ import classNames from 'classnames';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import { useLayout, useTheme, Theme, useDarkMode } from '~hooks';
+import { useLayout } from '~hooks';
 import { usePathname } from '~i18n/routing';
 
 import { MenuItem } from '../MenuItem';
-import { LANGUAGES_OPTIONS, THEME_OPTIONS } from './constants';
+import { LANGUAGES_OPTIONS } from './constants';
+import { ThemeToggle } from './ThemeToggle';
 
 export const SideNavigation: FC = () => {
   const { open } = useLayout();
@@ -25,8 +26,6 @@ export const SideNavigation: FC = () => {
   const locale = useLocale();
   const { replace } = useRouter();
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
-  const isDarkMode = useDarkMode();
 
   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
     (event) => {
@@ -35,13 +34,6 @@ export const SideNavigation: FC = () => {
       replace(pathname !== '/' ? `/${value}${pathname}` : value);
     },
     [replace, pathname],
-  );
-
-  const onChangeTheme = useCallback<RadioGroupProps['onChange']>(
-    (event) => {
-      setTheme(event.target.value as Theme);
-    },
-    [setTheme],
   );
 
   const renderLanguages = useCallback<RadioGroupChildrenFn>(
@@ -62,27 +54,6 @@ export const SideNavigation: FC = () => {
       ));
     },
     [],
-  );
-
-  const renderThemes = useCallback<RadioGroupChildrenFn>(
-    ({ name, value, onChange }) => {
-      return THEME_OPTIONS.map(({ label, option, icon }) => (
-        <li key={option} className="flex flex-row gap-x-3">
-          <Radio
-            id={option}
-            name={name}
-            value={value}
-            onChange={onChange}
-            option={option}
-            icon={icon}
-            iconClassName={isDarkMode ? 'text-white' : 'text-black'}
-          >
-            {label}
-          </Radio>
-        </li>
-      ));
-    },
-    [isDarkMode],
   );
 
   return (
@@ -128,21 +99,7 @@ export const SideNavigation: FC = () => {
         >
           GitHub
         </MenuItem.Item2.Link>
-        <MenuItem.Item2.Expandable
-          title={t('theme')}
-          icon="material-symbols:contrast"
-          iconClassName="text-white"
-        >
-          <RadioGroup
-            name="theme"
-            value={theme}
-            onChange={onChangeTheme}
-            containerElementType="ul"
-            className="flex flex-col gap-y-2"
-          >
-            {renderThemes}
-          </RadioGroup>
-        </MenuItem.Item2.Expandable>
+        <ThemeToggle />
         <MenuItem.Item2.Expandable
           title={t('language')}
           icon="material-symbols:language"
