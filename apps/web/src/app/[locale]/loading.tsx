@@ -1,8 +1,8 @@
 export default function HomeLoading() {
   return (
-    <div className="animate-pulse" aria-busy="true" aria-label="Loading">
+    <div className="animate-pulse w-full" aria-busy="true" aria-label="Loading">
       {/* HeroBanner — image first in DOM (matches real component order) */}
-      <section className="flex flex-col bg-dark-300 xl:flex-row xl:rounded-xl xl:h-[424px]">
+      <section className="flex flex-col bg-dark-300 xl:flex xl:flex-row xl:rounded-xl xl:h-[424px]">
         <div className="h-[220px] bg-gray-700 xl:order-1 xl:w-1/2 xl:h-full xl:rounded-r-xl" />
         <div className="flex flex-col px-6 py-6 xl:order-0 xl:py-20 xl:pl-20 xl:w-1/2 gap-y-4">
           <div className="h-8 w-3/5 bg-gray-700 rounded" />
