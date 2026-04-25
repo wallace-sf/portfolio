@@ -1,35 +1,14 @@
 import { GetExperiences } from '@repo/application/portfolio';
 import { getContainer } from '@repo/infra';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
-import { errorResponse, successResponse } from '~/lib/api/envelope';
-import { HttpErrorCodes } from '~/lib/api/error-codes';
-import { mapDomainErrorToHttp } from '~/lib/api/error-mapper';
+import { handleRequest } from '~/lib/api/handler';
 import { resolveLocale } from '~/lib/api/locale';
 
 export async function GET(request: NextRequest) {
-  try {
+  return handleRequest(() => {
     const locale = resolveLocale(request);
     const { experienceRepository } = getContainer();
-    const useCase = new GetExperiences(experienceRepository);
-    const result = await useCase.execute({ locale });
-    if (result.isLeft()) {
-      const { status, code, message } = mapDomainErrorToHttp(result.value);
-      return NextResponse.json(errorResponse(code, message, status), {
-        status,
-      });
-    }
-    return NextResponse.json(successResponse(result.value));
-  } catch {
-    return NextResponse.json(
-      errorResponse(
-        HttpErrorCodes.INTERNAL_ERROR,
-        'Internal server error',
-        500,
-      ),
-      {
-        status: 500,
-      },
-    );
-  }
+    return new GetExperiences(experienceRepository).execute({ locale });
+  });
 }
