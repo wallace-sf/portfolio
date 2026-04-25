@@ -1,18 +1,41 @@
 export default function AboutLoading() {
   return (
     <div className="animate-pulse" aria-busy="true" aria-label="Loading">
+      {/* Section title */}
       <div className="h-8 w-64 bg-gray-700 rounded mx-4 my-6 xl:mx-auto xl:max-w-237.5" />
-      <div className="flex flex-row gap-x-4 mx-4 xl:mx-auto xl:max-w-237.5">
+
+      {/* ProfessionalValue cards — max-w-56, border, rounded-xl, flex row */}
+      <ul className="flex flex-row gap-x-4 mx-4 xl:mx-auto xl:max-w-237.5">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-32 w-full bg-gray-700 rounded-lg" />
+          <li
+            key={i}
+            className="w-full max-w-56 border border-dark-300 px-4 py-6 rounded-xl bg-dark-300/20 flex flex-col gap-y-3"
+          >
+            <div className="h-12 w-12 bg-gray-700 rounded" />
+            <div className="h-4 bg-gray-700 rounded w-full" />
+            <div className="h-4 bg-gray-700 rounded w-4/5" />
+            <div className="h-4 bg-gray-700 rounded w-3/5" />
+          </li>
         ))}
-      </div>
+      </ul>
+
+      {/* Divider */}
       <div className="h-px bg-gray-700 mx-4 my-6 xl:mx-auto xl:max-w-237.5" />
-      <div className="flex flex-col mx-4 gap-y-3 xl:mx-auto xl:max-w-237.5">
+
+      {/* ExperienceCard list — bg-dark-200, rounded-xl */}
+      <ul className="flex flex-col mx-4 gap-y-3 xl:mx-auto xl:max-w-237.5">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-24 bg-gray-700 rounded-lg" />
+          <li
+            key={i}
+            className="flex flex-col py-6 px-3 bg-dark-200 rounded-xl gap-y-3"
+          >
+            <div className="h-5 w-3/5 bg-gray-700 rounded" />
+            <div className="h-4 w-2/5 bg-gray-700 rounded" />
+            <div className="h-4 bg-gray-700 rounded w-full" />
+            <div className="h-4 bg-gray-700 rounded w-5/6" />
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
