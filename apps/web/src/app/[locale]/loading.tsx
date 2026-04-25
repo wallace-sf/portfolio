@@ -1,8 +1,12 @@
 export default function HomeLoading() {
   return (
-    <div className="animate-pulse w-full" aria-busy="true" aria-label="Loading">
-      {/* HeroBanner — image first in DOM (matches real component order) */}
-      <section className="flex flex-col bg-dark-300 xl:flex xl:flex-row xl:rounded-xl xl:h-[424px]">
+    <>
+      {/* HeroBanner — image first in DOM, matches real component order */}
+      <section
+        className="animate-pulse flex flex-col bg-dark-300 xl:flex xl:flex-row xl:rounded-xl xl:h-[424px]"
+        aria-busy="true"
+        aria-label="Loading"
+      >
         <div className="h-[220px] bg-gray-700 xl:order-1 xl:w-1/2 xl:h-full xl:rounded-r-xl" />
         <div className="flex flex-col px-6 py-6 xl:order-0 xl:py-20 xl:pl-20 xl:w-1/2 gap-y-4">
           <div className="h-8 w-3/5 bg-gray-700 rounded" />
@@ -16,10 +20,10 @@ export default function HomeLoading() {
       </section>
 
       {/* Projects section title */}
-      <div className="h-7 w-2/5 bg-gray-700 rounded mx-4 my-6 xl:mx-auto xl:max-w-237.5" />
+      <div className="animate-pulse h-7 w-2/5 bg-gray-700 rounded mx-4 my-6 xl:mx-auto xl:max-w-237.5" />
 
       {/* ProjectList — md:grid-cols-2, 4 cards */}
-      <ul className="mx-auto grid max-w-237.5 gap-4 md:grid-cols-2 xl:gap-6 pb-8 xl:pb-20 px-4 xl:px-0">
+      <ul className="animate-pulse mx-auto grid max-w-237.5 gap-4 md:grid-cols-2 xl:gap-6 pb-8 xl:pb-20 px-4 xl:px-0">
         {Array.from({ length: 4 }).map((_, i) => (
           <li key={i} className="bg-dark-300 p-3 rounded-5">
             <div className="h-[180px] xl:h-[244px] bg-gray-700 rounded-lg mb-4" />
@@ -32,7 +36,7 @@ export default function HomeLoading() {
       </ul>
 
       {/* Contact section */}
-      <section className="flex flex-col gap-x-6 xl:flex-row mx-4 mb-8 xl:mx-auto xl:w-full xl:max-w-237.5">
+      <section className="animate-pulse flex flex-col gap-x-6 xl:flex-row mx-4 mb-8 xl:mx-auto xl:w-full xl:max-w-237.5">
         {/* ContactForm */}
         <div className="flex flex-col flex-1 gap-y-4 mb-4 xl:mb-0">
           <div className="h-6 w-2/5 bg-gray-700 rounded" />
@@ -58,6 +62,6 @@ export default function HomeLoading() {
           <div className="h-10 w-full bg-gray-700 rounded" />
         </div>
       </section>
-    </div>
+    </>
   );
 }
