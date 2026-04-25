@@ -1,8 +1,8 @@
 import { SendContactMessage } from '@repo/application/contact';
 import { ValidationError, left } from '@repo/core/shared';
 import { getContainer } from '@repo/infra';
-import { NextRequest } from 'next/server';
 import { Validator } from '@repo/utils/validator';
+import { NextRequest } from 'next/server';
 
 import { handleRequest } from '~/lib/api/handler';
 
