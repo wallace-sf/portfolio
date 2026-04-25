@@ -1,0 +1,254 @@
+openapi: 3.1.0
+info:
+  title: Portfolio API
+  version: 1.0.0
+  description: Base contract for Next.js App Router endpoints under /api/v1.
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+tags:
+  - name: Portfolio
+  - name: Contact
+  - name: Auth
+  - name: Identity
+paths:
+  /api/v1/profile:
+    get:
+      tags: [Portfolio]
+      summary: Fetch profile data
+      operationId: getProfile
+      parameters:
+        - $ref: '#/components/parameters/LocaleQuery'
+      responses:
+        '200':
+          description: Profile payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+  /api/v1/experiences:
+    get:
+      tags: [Portfolio]
+      summary: Fetch experience list
+      operationId: getExperiences
+      parameters:
+        - $ref: '#/components/parameters/LocaleQuery'
+      responses:
+        '200':
+          description: Experiences payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+  /api/v1/projects:
+    get:
+      tags: [Portfolio]
+      summary: Fetch published projects
+      operationId: getProjects
+      parameters:
+        - $ref: '#/components/parameters/LocaleQuery'
+      responses:
+        '200':
+          description: Projects payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+  /api/v1/projects/featured:
+    get:
+      tags: [Portfolio]
+      summary: Fetch featured projects
+      operationId: getFeaturedProjects
+      parameters:
+        - $ref: '#/components/parameters/LocaleQuery'
+      responses:
+        '200':
+          description: Featured projects payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+  /api/v1/projects/{slug}:
+    get:
+      tags: [Portfolio]
+      summary: Fetch project details by slug
+      operationId: getProjectBySlug
+      parameters:
+        - $ref: '#/components/parameters/SlugPath'
+        - $ref: '#/components/parameters/LocaleQuery'
+      responses:
+        '200':
+          description: Project details payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/contact:
+    post:
+      tags: [Contact]
+      summary: Send contact message
+      operationId: sendContactMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+      responses:
+        '201':
+          description: Message accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '400':
+          description: Invalid payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/auth/sign-in:
+    post:
+      tags: [Auth]
+      summary: Sign in and set auth cookies
+      operationId: signIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+      responses:
+        '200':
+          description: Signed in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '400':
+          description: Invalid payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh auth session using cookies
+      operationId: refreshSession
+      responses:
+        '200':
+          description: Session refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '401':
+          description: Missing or invalid auth cookies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /api/v1/auth/sign-out:
+    post:
+      tags: [Auth]
+      summary: Sign out and clear auth cookies
+      operationId: signOut
+      responses:
+        '200':
+          description: Signed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+  /api/v1/me:
+    get:
+      tags: [Identity]
+      summary: Fetch current user from auth session
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  parameters:
+    LocaleQuery:
+      name: locale
+      in: query
+      required: false
+      description: Optional locale for localized content.
+      schema:
+        type: string
+        enum: [en-US, pt-BR, es]
+    SlugPath:
+      name: slug
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    Envelope:
+      type: object
+      additionalProperties: true
+      description: Generic response envelope produced by handleRequest helper.
+      properties:
+        data:
+          nullable: true
+        meta:
+          type: object
+          additionalProperties: true
+    ErrorEnvelope:
+      type: object
+      additionalProperties: true
+      properties:
+        error:
+          type: object
+          additionalProperties: true
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+          required: [code, message]
+      required: [error]
+    ContactRequest:
+      type: object
+      required: [name, email, message]
+      properties:
+        name:
+          type: string
+          example: Wallace
+        email:
+          type: string
+          format: email
+          example: wallace@example.com
+        message:
+          type: string
+          example: Hello, I would like to discuss a project.
+    SignInRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: wallace@example.com
+        password:
+          type: string
+          format: password
+          example: strong-password
