@@ -1,3 +1,4 @@
+import { UnauthorizedError } from '~/identity';
 import { DomainError, NotFoundError, ValidationError } from '~/index';
 
 describe('DomainError', () => {
@@ -31,10 +32,14 @@ describe('DomainError', () => {
 });
 
 describe('NotFoundError', () => {
+  it('exposes CODE = NOT_FOUND as a static constant', () => {
+    expect(NotFoundError.CODE).toBe('NOT_FOUND');
+  });
+
   it('defaults to NOT_FOUND code', () => {
     const error = new NotFoundError();
 
-    expect(error.code).toBe('NOT_FOUND');
+    expect(error.code).toBe(NotFoundError.CODE);
     expect(error.name).toBe('NotFoundError');
     expect(error).toBeInstanceOf(DomainError);
     expect(error).toBeInstanceOf(NotFoundError);
@@ -49,10 +54,14 @@ describe('NotFoundError', () => {
 });
 
 describe('ValidationError', () => {
+  it('exposes CODE = VALIDATION_ERROR as a static constant', () => {
+    expect(ValidationError.CODE).toBe('VALIDATION_ERROR');
+  });
+
   it('defaults to VALIDATION_ERROR when no args', () => {
     const error = new ValidationError();
 
-    expect(error.code).toBe('VALIDATION_ERROR');
+    expect(error.code).toBe(ValidationError.CODE);
     expect(error.name).toBe('ValidationError');
     expect(error).toBeInstanceOf(DomainError);
     expect(error).toBeInstanceOf(ValidationError);
@@ -83,5 +92,35 @@ describe('ValidationError', () => {
 
     expect(error.code).toBe('VALIDATION_ERROR');
     expect(error.details).toEqual(details);
+  });
+});
+
+describe('UnauthorizedError', () => {
+  it('exposes CODE = UNAUTHORIZED as a static constant', () => {
+    expect(UnauthorizedError.CODE).toBe('UNAUTHORIZED');
+  });
+
+  it('defaults to UNAUTHORIZED code and correct name', () => {
+    const error = new UnauthorizedError();
+
+    expect(error.code).toBe(UnauthorizedError.CODE);
+    expect(error.message).toBe('Unauthorized access');
+    expect(error.name).toBe('UnauthorizedError');
+    expect(error).toBeInstanceOf(DomainError);
+    expect(error).toBeInstanceOf(UnauthorizedError);
+  });
+
+  it('accepts custom message', () => {
+    const error = new UnauthorizedError({ message: 'Token expired' });
+
+    expect(error.code).toBe('UNAUTHORIZED');
+    expect(error.message).toBe('Token expired');
+  });
+
+  it('accepts optional details', () => {
+    const error = new UnauthorizedError({ details: { reason: 'token_expired' } });
+
+    expect(error.code).toBe('UNAUTHORIZED');
+    expect(error.details).toEqual({ reason: 'token_expired' });
   });
 });

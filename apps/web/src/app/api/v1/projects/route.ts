@@ -3,6 +3,7 @@ import { getContainer } from '@repo/infra';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { errorResponse, successResponse } from '~/lib/api/envelope';
+import { HttpErrorCodes } from '~/lib/api/error-codes';
 import { mapDomainErrorToHttp } from '~/lib/api/error-mapper';
 import { resolveLocale } from '~/lib/api/locale';
 
@@ -21,7 +22,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(successResponse(result.value));
   } catch {
     return NextResponse.json(
-      errorResponse('INTERNAL_ERROR', 'Internal server error', 500),
+      errorResponse(
+        HttpErrorCodes.INTERNAL_ERROR,
+        'Internal server error',
+        500,
+      ),
       {
         status: 500,
       },
