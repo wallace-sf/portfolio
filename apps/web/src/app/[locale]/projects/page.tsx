@@ -1,9 +1,16 @@
-import { FC } from 'react';
-
 import HeroProjects from '~assets/images/hero-projects.png';
 import { HeroBanner } from '~components/View';
+import { simulateError, simulateLoading } from '~/dev/simulate';
 
-const Projects: FC = () => {
+interface ProjectsProps {
+  searchParams?: { loading?: string; error?: string };
+}
+
+export default async function Projects({ searchParams }: ProjectsProps) {
+  if (searchParams?.loading)
+    await simulateLoading(Number(searchParams.loading) || 2000);
+  if (searchParams?.error) simulateError();
+
   return (
     <>
       <HeroBanner
@@ -16,6 +23,4 @@ const Projects: FC = () => {
       />
     </>
   );
-};
-
-export default Projects;
+}

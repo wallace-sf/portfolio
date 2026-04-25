@@ -1,5 +1,3 @@
-import { FC } from 'react';
-
 import {
   EmploymentType,
   IProfessionalValueProps,
@@ -9,6 +7,7 @@ import {
 import { Divider } from '@repo/ui/View';
 
 import { ProfessionalValue, ExperienceCard } from '~components/View';
+import { simulateError, simulateLoading } from '~/dev/simulate';
 
 const PROFESSIONAL_VALUES: IProfessionalValueProps[] = [
   {
@@ -111,7 +110,15 @@ const EXPERIENCES: IExperienceProps[] = [
   },
 ];
 
-const About: FC = () => {
+interface AboutProps {
+  searchParams?: { loading?: string; error?: string };
+}
+
+export default async function About({ searchParams }: AboutProps) {
+  if (searchParams?.loading)
+    await simulateLoading(Number(searchParams.loading) || 2000);
+  if (searchParams?.error) simulateError();
+
   return (
     <>
       <h4 className="text-white mx-4 my-6 !text-xl xl:block xl:mx-auto xl:my-8 xl:w-full xl:!text-[32px] xl:max-w-237.5">
@@ -135,6 +142,4 @@ const About: FC = () => {
       </ul>
     </>
   );
-};
-
-export default About;
+}

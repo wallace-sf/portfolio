@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
 import { ContactForm, HeroBanner, ProjectList, ContactInfo } from '~components';
+import { simulateError, simulateLoading } from '~/dev/simulate';
 
 const PROJECTS: IProjectProps[] = [
   {
@@ -109,7 +110,15 @@ const PROJECTS: IProjectProps[] = [
   },
 ];
 
-export default function Home() {
+interface HomeProps {
+  searchParams?: { loading?: string; error?: string };
+}
+
+export default async function Home({ searchParams }: HomeProps) {
+  if (searchParams?.loading)
+    await simulateLoading(Number(searchParams.loading) || 2000);
+  if (searchParams?.error) simulateError();
+
   const t = useTranslations('Home');
 
   return (
