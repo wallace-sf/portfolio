@@ -2,20 +2,25 @@ import { SendContactMessage } from '@repo/application/contact';
 import { ValidationError, left } from '@repo/core/shared';
 import { getContainer } from '@repo/infra';
 import { NextRequest } from 'next/server';
+import { Validator } from '@repo/utils/validator';
 
 import { handleRequest } from '~/lib/api/handler';
 
 export async function POST(request: NextRequest) {
   return handleRequest(async () => {
     const body = await request.json().catch(() => null);
-    if (!body || typeof body !== 'object') {
+
+    const { isValid, error } = Validator.of(body)
+      .notNil('Invalid JSON body.')
+      .refine((v) => typeof v === 'object', 'Invalid JSON body.')
+      .validate();
+
+    if (!isValid && error) {
       return left(
-        new ValidationError({
-          code: 'INVALID_INPUT',
-          message: 'Invalid JSON body',
-        }),
+        new ValidationError({ code: 'INVALID_INPUT', message: error }),
       );
     }
+
     const { emailService } = getContainer();
     return new SendContactMessage(emailService).execute({
       name: body.name ?? '',
