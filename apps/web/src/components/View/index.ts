@@ -1,4 +1,5 @@
 export * from './ContactInfo';
+export * from './ErrorView';
 export * from './ExperienceCard';
 export * from './Header';
 export * from './HeroBanner';

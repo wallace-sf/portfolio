@@ -27,6 +27,11 @@
     "language": "Language",
     "theme": "Theme"
   },
+  "Error": {
+    "title": "Something went wrong",
+    "description": "We couldn't load this content. Please try again.",
+    "retry": "Try again"
+  },
   "Validations": {
     "required": "Required field.",
     "min": "Minimum of 3 characters."

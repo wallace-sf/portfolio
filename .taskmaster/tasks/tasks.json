@@ -4214,9 +4214,9 @@
         "testStrategy": "pnpm --filter web build; tests per package conventions.",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [],
-        "updatedAt": "2026-04-02T03:21:49.111Z"
+        "updatedAt": "2026-04-25T18:26:42.000Z"
       },
       {
         "id": "28",
