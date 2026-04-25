@@ -9,7 +9,7 @@ Versioned Bruno collections live in subfolders.
 ## How to use with Bruno Free
 
 1. Open Bruno and choose `Open Collection`.
-2. Select `tests/api/bruno/v1`.
+2. Select `tests/api/bruno`.
 3. In Bruno, select the `local` environment.
 4. Update `authEmail`, `authPassword`, and `projectSlug` in `v1/environments/local.bru` if needed.
 
