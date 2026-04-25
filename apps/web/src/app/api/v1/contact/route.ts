@@ -4,6 +4,7 @@ import { getContainer } from '@repo/infra';
 import { Validator } from '@repo/utils/validator';
 import { NextRequest } from 'next/server';
 
+import { HttpErrorCodes } from '~/lib/api/error-codes';
 import { handleRequest } from '~/lib/api/handler';
 
 export async function POST(request: NextRequest) {
@@ -17,7 +18,10 @@ export async function POST(request: NextRequest) {
 
     if (!isValid && error) {
       return left(
-        new ValidationError({ code: 'INVALID_INPUT', message: error }),
+        new ValidationError({
+          code: HttpErrorCodes.INVALID_INPUT,
+          message: error,
+        }),
       );
     }
 
