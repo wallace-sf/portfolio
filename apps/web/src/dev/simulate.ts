@@ -5,8 +5,8 @@ export async function simulateLoading(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function simulateError(message = 'Simulated error — dev only'): never {
-  if (!isDev()) throw new Error('simulateError called outside development');
+export function simulateError(message = 'Simulated error — dev only'): void {
+  if (!isDev()) return;
   throw new Error(message);
 }
 

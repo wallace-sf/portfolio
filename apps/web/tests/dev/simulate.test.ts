@@ -16,8 +16,8 @@ describe('simulateLoading', () => {
 });
 
 describe('simulateError', () => {
-  it('should throw an Error outside development', () => {
-    expect(() => simulateError()).toThrow(Error);
+  it('should not throw outside development', () => {
+    expect(() => simulateError()).not.toThrow();
   });
 });
 
@@ -32,7 +32,7 @@ describe('applyDevSimulations', () => {
     expect(Date.now() - start).toBeLessThan(100);
   });
 
-  it('should throw when error param is present', async () => {
-    await expect(applyDevSimulations({ error: '1' })).rejects.toThrow(Error);
+  it('should not throw when error param is present outside development', async () => {
+    await expect(applyDevSimulations({ error: '1' })).resolves.toBeUndefined();
   });
 });

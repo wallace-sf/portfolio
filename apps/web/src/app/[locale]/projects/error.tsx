@@ -2,11 +2,11 @@
 
 import { ErrorView } from '~components/View';
 
-interface ErrorProps {
+interface ProjectsErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
 }
 
-export default function ProjectsError({ reset }: ErrorProps) {
+export default function ProjectsError({ reset }: ProjectsErrorProps) {
   return <ErrorView reset={reset} />;
 }
