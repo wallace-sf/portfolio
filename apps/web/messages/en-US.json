@@ -32,6 +32,11 @@
     "description": "We couldn't load this content. Please try again.",
     "retry": "Try again"
   },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "backToHome": "Back to home"
+  },
   "Validations": {
     "required": "Required field.",
     "min": "Minimum of 3 characters."

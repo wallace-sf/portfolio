@@ -32,6 +32,11 @@
     "description": "No pudimos cargar este contenido. Por favor, inténtelo de nuevo.",
     "retry": "Intentar de nuevo"
   },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "La página que estás buscando no existe o fue movida.",
+    "backToHome": "Volver al inicio"
+  },
   "Validations": {
     "required": "Campo obligatorio.",
     "min": "Mínimo de 3 caracteres."
