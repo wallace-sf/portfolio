@@ -22,8 +22,8 @@ export default function HomeLoading() {
 
       {/* ProjectList — md:grid-cols-2, 4 cards */}
       <ul className="mx-auto grid max-w-237.5 gap-4 md:grid-cols-2 xl:gap-6 pb-8 xl:pb-20">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <li key={i} className="bg-dark-300 p-3 rounded-5">
+        {(['card-1', 'card-2', 'card-3', 'card-4'] as const).map((key) => (
+          <li key={key} className="bg-dark-300 p-3 rounded-5">
             <div className="h-[180px] xl:h-[244px] bg-gray-700 rounded-lg mb-4" />
             <div className="h-5 w-3/4 bg-gray-700 rounded mb-2" />
             <div className="h-4 bg-gray-700 rounded mb-1" />

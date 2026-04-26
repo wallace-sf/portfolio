@@ -7,7 +7,7 @@ import {
 import { Divider } from '@repo/ui/View';
 
 import { ProfessionalValue, ExperienceCard } from '~components/View';
-import { simulateError, simulateLoading } from '~/dev/simulate';
+import { applyDevSimulations } from '~/dev/simulate';
 
 const PROFESSIONAL_VALUES: IProfessionalValueProps[] = [
   {
@@ -110,14 +110,12 @@ const EXPERIENCES: IExperienceProps[] = [
   },
 ];
 
-interface AboutProps {
+interface AboutPageProps {
   searchParams?: { loading?: string; error?: string };
 }
 
-export default async function About({ searchParams }: AboutProps) {
-  if (searchParams?.loading)
-    await simulateLoading(Number(searchParams.loading) || 2000);
-  if (searchParams?.error) simulateError();
+export default async function About({ searchParams }: AboutPageProps) {
+  await applyDevSimulations(searchParams);
 
   return (
     <>

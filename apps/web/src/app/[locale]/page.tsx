@@ -2,7 +2,7 @@ import { IProjectProps, ProjectStatus } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
 import { getTranslations } from 'next-intl/server';
 
-import { simulateError, simulateLoading } from '~/dev/simulate';
+import { applyDevSimulations } from '~/dev/simulate';
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
 import { ContactForm, HeroBanner, ProjectList, ContactInfo } from '~components';
 
@@ -110,14 +110,12 @@ const PROJECTS: IProjectProps[] = [
   },
 ];
 
-interface HomeProps {
+interface HomePageProps {
   searchParams?: { loading?: string; error?: string };
 }
 
-export default async function Home({ searchParams }: HomeProps) {
-  if (searchParams?.loading)
-    await simulateLoading(Number(searchParams.loading) || 2000);
-  if (searchParams?.error) simulateError();
+export default async function Home({ searchParams }: HomePageProps) {
+  await applyDevSimulations(searchParams);
 
   const t = await getTranslations('Home');
 

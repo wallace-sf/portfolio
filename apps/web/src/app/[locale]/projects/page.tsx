@@ -1,15 +1,13 @@
 import HeroProjects from '~assets/images/hero-projects.png';
 import { HeroBanner } from '~components/View';
-import { simulateError, simulateLoading } from '~/dev/simulate';
+import { applyDevSimulations } from '~/dev/simulate';
 
-interface ProjectsProps {
+interface ProjectsPageProps {
   searchParams?: { loading?: string; error?: string };
 }
 
-export default async function Projects({ searchParams }: ProjectsProps) {
-  if (searchParams?.loading)
-    await simulateLoading(Number(searchParams.loading) || 2000);
-  if (searchParams?.error) simulateError();
+export default async function Projects({ searchParams }: ProjectsPageProps) {
+  await applyDevSimulations(searchParams);
 
   return (
     <>
