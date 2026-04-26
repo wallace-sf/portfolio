@@ -27,6 +27,11 @@
     "language": "Idioma",
     "theme": "Tema"
   },
+  "Error": {
+    "title": "Algo deu errado",
+    "description": "Não foi possível carregar este conteúdo. Tente novamente.",
+    "retry": "Tentar novamente"
+  },
   "Validations": {
     "required": "Campo obrigatório.",
     "min": "Mínimo de 3 caracteres."

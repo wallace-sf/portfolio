@@ -1,7 +1,8 @@
 import { IProjectProps, ProjectStatus } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
+import { applyDevSimulations } from '~/dev/simulate';
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
 import { ContactForm, HeroBanner, ProjectList, ContactInfo } from '~components';
 
@@ -109,8 +110,14 @@ const PROJECTS: IProjectProps[] = [
   },
 ];
 
-export default function Home() {
-  const t = useTranslations('Home');
+interface HomePageProps {
+  searchParams?: { loading?: string; error?: string };
+}
+
+export default async function Home({ searchParams }: HomePageProps) {
+  await applyDevSimulations(searchParams);
+
+  const t = await getTranslations('Home');
 
   return (
     <>

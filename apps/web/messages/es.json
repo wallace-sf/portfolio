@@ -27,6 +27,11 @@
     "language": "Idioma",
     "theme": "Tema"
   },
+  "Error": {
+    "title": "Algo salió mal",
+    "description": "No pudimos cargar este contenido. Por favor, inténtelo de nuevo.",
+    "retry": "Intentar de nuevo"
+  },
   "Validations": {
     "required": "Campo obligatorio.",
     "min": "Mínimo de 3 caracteres."

@@ -1,9 +1,14 @@
-import { FC } from 'react';
-
 import HeroProjects from '~assets/images/hero-projects.png';
 import { HeroBanner } from '~components/View';
+import { applyDevSimulations } from '~/dev/simulate';
 
-const Projects: FC = () => {
+interface ProjectsPageProps {
+  searchParams?: { loading?: string; error?: string };
+}
+
+export default async function Projects({ searchParams }: ProjectsPageProps) {
+  await applyDevSimulations(searchParams);
+
   return (
     <>
       <HeroBanner
@@ -16,6 +21,4 @@ const Projects: FC = () => {
       />
     </>
   );
-};
-
-export default Projects;
+}
