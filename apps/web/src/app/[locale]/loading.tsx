@@ -16,7 +16,9 @@ export default function HomeLoading() {
       </section>
 
       {/* Projects section title */}
-      <div className="h-8 w-32 bg-gray-700 rounded mx-4 my-6 xl:mx-auto xl:max-w-237.5" />
+      <div className="w-full flex justify-start mx-4 my-6 xl:mx-auto xl:max-w-237.5">
+        <div className="h-8 w-32 bg-gray-700 rounded" />
+      </div>
 
       {/* ProjectList — md:grid-cols-2, 4 cards */}
       <ul className="mx-auto grid max-w-237.5 gap-4 md:grid-cols-2 xl:gap-6 pb-8 xl:pb-20">

@@ -2,9 +2,9 @@ import { IProjectProps, ProjectStatus } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
 import { getTranslations } from 'next-intl/server';
 
+import { simulateError, simulateLoading } from '~/dev/simulate';
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
 import { ContactForm, HeroBanner, ProjectList, ContactInfo } from '~components';
-import { simulateError, simulateLoading } from '~/dev/simulate';
 
 const PROJECTS: IProjectProps[] = [
   {
