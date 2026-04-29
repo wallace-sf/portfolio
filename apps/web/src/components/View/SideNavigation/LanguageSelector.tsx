@@ -18,6 +18,7 @@ import { LANGUAGES_OPTIONS } from './constants';
 
 export const LanguageSelector: FC = () => {
   const t = useTranslations('SideNavigation');
+  const tLang = useTranslations('Language');
   const locale = useLocale();
   const { replace } = useRouter();
   const pathname = usePathname();
@@ -33,7 +34,7 @@ export const LanguageSelector: FC = () => {
 
   const renderLanguages = useCallback<RadioGroupChildrenFn>(
     ({ name, value, onChange }) => {
-      return LANGUAGES_OPTIONS.map(({ label, icon, option }) => (
+      return LANGUAGES_OPTIONS.map(({ labelKey, icon, option }) => (
         <li key={option} className="flex flex-row gap-x-3">
           <Radio
             id={option}
@@ -43,12 +44,12 @@ export const LanguageSelector: FC = () => {
             option={option}
             icon={icon}
           >
-            {label}
+            {tLang(labelKey)}
           </Radio>
         </li>
       ));
     },
-    [],
+    [tLang],
   );
 
   return (

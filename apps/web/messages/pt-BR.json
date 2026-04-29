@@ -14,10 +14,15 @@
     "copy": "Copiar para a área de transferência"
   },
   "Home": {
-    "projects_title": "Projetos"
+    "projects_title": "Projetos",
+    "hero_title": "Wallace Ferreira",
+    "hero_caption": "Engenheiro de Software",
+    "hero_content": "Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla.",
+    "hero_image_alt": "Foto profissional 1 de Wallace Ferreira"
   },
   "ProjectCard": {
-    "view_project": "Ver projeto"
+    "view_project": "Ver projeto",
+    "image_alt": "Imagem do projeto"
   },
   "SideNavigation": {
     "home": "Início",
@@ -25,7 +30,19 @@
     "about": "Sobre mim",
     "resume": "Currículo",
     "language": "Idioma",
-    "theme": "Tema"
+    "theme": "Tema",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "Theme": {
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Sistema"
+  },
+  "Language": {
+    "enUS": "ENG",
+    "ptBR": "PT-BR",
+    "es": "ESP"
   },
   "Error": {
     "title": "Algo deu errado",

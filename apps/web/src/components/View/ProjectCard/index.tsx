@@ -27,7 +27,8 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   compact = false,
   skills,
 }) => {
-  const t = useTranslations('Clipboard');
+  const t = useTranslations('ProjectCard');
+  const tClipboard = useTranslations('Clipboard');
   const isXL = useBreakpoint('xl');
 
   return (
@@ -60,7 +61,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           <Image
             src="https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg"
             fill
-            alt="Imagem do projeto"
+            alt={t('image_alt')}
             className="object-cover"
             sizes="100%"
             priority
@@ -90,14 +91,14 @@ export const ProjectCard: FC<IProjectCardProps> = ({
             total={skills.length}
           />
           <Button.Base className="flex flex-row justify-center gap-x-2">
-            Ver projeto
+            {t('view_project')}
             <Icon icon="ic:round-arrow-forward" />
           </Button.Base>
         </footer>
       </section>
       <Button.Clipboard
         text="This is the text copied from project card."
-        tooltip={t('copy')}
+        tooltip={tClipboard('copy')}
         className={classNames(
           'absolute z-40 top-5 right-5 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300',
           {

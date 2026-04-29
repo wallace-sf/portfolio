@@ -17,6 +17,7 @@ import { THEME_OPTIONS } from './constants';
 
 export const ThemeToggle: FC = () => {
   const t = useTranslations('SideNavigation');
+  const tTheme = useTranslations('Theme');
   const { theme, setTheme } = useTheme();
   const isDarkMode = useDarkMode();
 
@@ -29,7 +30,7 @@ export const ThemeToggle: FC = () => {
 
   const renderThemes = useCallback<RadioGroupChildrenFn>(
     ({ name, value, onChange }) => {
-      return THEME_OPTIONS.map(({ label, option, icon }) => (
+      return THEME_OPTIONS.map(({ option, icon }) => (
         <li key={option} className="flex flex-row gap-x-3">
           <Radio
             id={option}
@@ -40,12 +41,12 @@ export const ThemeToggle: FC = () => {
             icon={icon}
             iconClassName={isDarkMode ? 'text-white' : 'text-black'}
           >
-            {label}
+            {tTheme(option)}
           </Radio>
         </li>
       ));
     },
-    [isDarkMode],
+    [isDarkMode, tTheme],
   );
 
   return (

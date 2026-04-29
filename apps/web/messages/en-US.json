@@ -14,10 +14,15 @@
     "copy": "Copy to clipboard"
   },
   "Home": {
-    "projects_title": "Projects"
+    "projects_title": "Projects",
+    "hero_title": "Wallace Ferreira",
+    "hero_caption": "Software Engineer",
+    "hero_content": "Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla.",
+    "hero_image_alt": "Professional Picture 1 of Wallace Ferreira"
   },
   "ProjectCard": {
-    "view_project": "View Project"
+    "view_project": "View Project",
+    "image_alt": "Project image"
   },
   "SideNavigation": {
     "home": "Home",
@@ -25,7 +30,19 @@
     "about": "About",
     "resume": "Resume",
     "language": "Language",
-    "theme": "Theme"
+    "theme": "Theme",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "Theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "Language": {
+    "enUS": "ENG",
+    "ptBR": "PT-BR",
+    "es": "SPA"
   },
   "Error": {
     "title": "Something went wrong",

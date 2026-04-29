@@ -123,10 +123,10 @@ export default async function Home({ searchParams }: HomePageProps) {
     <>
       <HeroBanner
         src={HeroLandingPage}
-        title="Wallace Ferreira"
-        caption="Software Engineer"
-        content="Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla."
-        alt="Professional Picture 1 of Wallace Ferreira"
+        title={t('hero_title')}
+        caption={t('hero_caption')}
+        content={t('hero_content')}
+        alt={t('hero_image_alt')}
         imageClassName="object-contain 2xl:object-cover"
       />
       <h4 className="text-white mx-4 my-6 !text-xl xl:block xl:mx-auto xl:my-8 xl:w-full xl:!text-[32px] xl:max-w-237.5">
