@@ -49,7 +49,7 @@ export const SideNavigation: FC = () => {
           icon="devicon:linkedin"
           newTab
         >
-          Linkedin
+          {t('linkedin')}
         </MenuItem.Item2.Link>
         <MenuItem.Item2.Link
           href={process.env.NEXT_PUBLIC_GITHUB_URL}
@@ -57,7 +57,7 @@ export const SideNavigation: FC = () => {
           iconClassName="text-white"
           newTab
         >
-          GitHub
+          {t('github')}
         </MenuItem.Item2.Link>
         <ThemeToggle />
         <LanguageSelector />
