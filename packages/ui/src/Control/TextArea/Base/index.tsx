@@ -8,7 +8,6 @@ import {
 
 import classNames from 'classnames';
 
-import { withFormik } from '~hocs';
 import { IFieldProps } from '~types';
 
 export interface ITextAreaProps
@@ -54,7 +53,3 @@ const Component: ForwardRefRenderFunction<
 Component.displayName = 'TextArea.Base';
 
 export const Base = forwardRef(Component);
-
-export const WithFormik = withFormik(Base, { errorBorder: true })({
-  type: 'text',
-});

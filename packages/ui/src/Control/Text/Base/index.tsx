@@ -6,7 +6,6 @@ import { isIn } from '@repo/utils';
 import classNames from 'classnames';
 
 import { Input, InputProps } from '~/Control/Input';
-import { withFormik } from '~hocs';
 import { IFieldProps } from '~types';
 
 export interface ITextProps extends Omit<InputProps, 'type'>, IFieldProps {
@@ -50,7 +49,3 @@ const Component: ForwardRefRenderFunction<
 Component.displayName = 'Text.Base';
 
 export const Base = forwardRef(Component);
-
-export const WithFormik = withFormik(Base, { errorBorder: true })({
-  type: 'text',
-});
