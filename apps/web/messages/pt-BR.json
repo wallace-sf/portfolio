@@ -2,8 +2,12 @@
   "ContactForm": {
     "title": "Entre em contato",
     "submit": "Enviar",
+    "namePlaceholder": "Seu nome",
+    "emailPlaceholder": "Seu e-mail",
     "messagePlaceholder": "Sua mensagem aqui...",
-    "subject": "Vamos conversar sobre um projeto?"
+    "subject": "Vamos conversar sobre um projeto?",
+    "success": "Mensagem enviada! Em breve entrarei em contato.",
+    "genericError": "Algo deu errado. Tente novamente."
   },
   "ContactInfo": {
     "email": "E-mail",
@@ -56,6 +60,7 @@
   },
   "Validations": {
     "required": "Campo obrigatório.",
-    "min": "Mínimo de 3 caracteres."
+    "min": "Mínimo de 3 caracteres.",
+    "email": "Informe um e-mail válido."
   }
 }
