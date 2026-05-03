@@ -111,11 +111,11 @@ const PROJECTS: IProjectProps[] = [
 ];
 
 interface HomePageProps {
-  searchParams?: { loading?: string; error?: string };
+  searchParams?: Promise<{ loading?: string; error?: string }>;
 }
 
 export default async function Home({ searchParams }: HomePageProps) {
-  await applyDevSimulations(searchParams);
+  await applyDevSimulations(await searchParams);
 
   const t = await getTranslations('Home');
 

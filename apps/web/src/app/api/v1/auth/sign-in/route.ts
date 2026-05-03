@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (sessionResult.isLeft()) return sessionResult;
 
     const session = sessionResult.value;
-    const cookieApi = createNextAuthCookieApi();
+    const cookieApi = await createNextAuthCookieApi();
     const expiresIn = session.expiresAt - Math.floor(Date.now() / 1000);
 
     cookieApi.set(SUPABASE_ACCESS_TOKEN_COOKIE, session.accessToken, {

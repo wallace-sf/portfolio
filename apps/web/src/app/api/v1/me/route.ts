@@ -13,7 +13,7 @@ export async function GET() {
   return handleRequest<UserDTO>(
     async (): Promise<Either<DomainError, UserDTO>> => {
       const { authGateway, userRepository } = getContainer();
-      const cookieApi = createNextAuthCookieApi();
+      const cookieApi = await createNextAuthCookieApi();
 
       const principalResult =
         await authGateway.getPrincipalFromCookies(cookieApi);

@@ -7,7 +7,7 @@ import { createNextAuthCookieApi } from '~/lib/auth/cookie';
 export async function POST() {
   return handleRequest(async () => {
     const { authGateway } = getContainer();
-    const cookieApi = createNextAuthCookieApi();
+    const cookieApi = await createNextAuthCookieApi();
 
     const result = await authGateway.signOut(cookieApi);
     if (result.isLeft()) return result;
