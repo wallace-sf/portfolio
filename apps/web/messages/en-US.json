@@ -6,8 +6,7 @@
     "emailPlaceholder": "Your e-mail",
     "messagePlaceholder": "Your message here...",
     "subject": "Let's talk about a project?",
-    "success": "Message sent! I'll get back to you soon.",
-    "genericError": "Something went wrong. Please try again."
+    "success": "Your email client has been opened. Please send the pre-filled message."
   },
   "ContactInfo": {
     "email": "Email",

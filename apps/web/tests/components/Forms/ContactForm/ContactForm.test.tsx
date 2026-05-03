@@ -56,22 +56,16 @@ vi.mock('@repo/ui/Control', () => ({
   },
 }));
 
-const mockFetch = vi.fn();
+let locationMock: { href: string };
 
 beforeEach(() => {
-  vi.clearAllMocks();
-  global.fetch = mockFetch;
+  locationMock = { href: '' };
+  vi.stubGlobal('location', locationMock);
 });
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function fillForm(name = 'Alice', email = 'alice@example.com', message = 'Hello') {
-  userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), name);
-  userEvent.type(screen.getByPlaceholderText('ContactForm.emailPlaceholder'), email);
-  userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), message);
-}
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -109,11 +103,7 @@ describe('ContactForm', () => {
     });
   });
 
-  it('should call POST /api/v1/contact with correct payload on valid submission', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: async () => ({ data: null, error: null }),
-    });
-
+  it('should set window.location.href to a mailto: link on valid submission', async () => {
     render(<ContactForm />);
 
     await userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), 'Alice');
@@ -122,19 +112,11 @@ describe('ContactForm', () => {
     await userEvent.click(screen.getByRole('button', { name: 'ContactForm.submit' }));
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith('/api/v1/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'Alice', email: 'alice@example.com', message: 'Hello' }),
-      });
+      expect(locationMock.href).toMatch(/^mailto:/);
     });
   });
 
-  it('should show success message after successful submission', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: async () => ({ data: null, error: null }),
-    });
-
+  it('should show success message after form submission', async () => {
     render(<ContactForm />);
 
     await userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), 'Alice');
@@ -144,48 +126,6 @@ describe('ContactForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText('ContactForm.success')).toBeInTheDocument();
-    });
-  });
-
-  it('should set field error when API returns INVALID_EMAIL', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: async () => ({
-        data: null,
-        error: { code: 'INVALID_EMAIL', message: 'Valid email is required.' },
-        meta: { status: 400 },
-      }),
-    });
-
-    render(<ContactForm />);
-
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), 'Alice');
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.emailPlaceholder'), 'alice@example.com');
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hello');
-    await userEvent.click(screen.getByRole('button', { name: 'ContactForm.submit' }));
-
-    await waitFor(() => {
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-    });
-  });
-
-  it('should show generic error when API returns unknown error code', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: async () => ({
-        data: null,
-        error: { code: 'INTERNAL_ERROR', message: 'Server error.' },
-        meta: { status: 500 },
-      }),
-    });
-
-    render(<ContactForm />);
-
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), 'Alice');
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.emailPlaceholder'), 'alice@example.com');
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hello');
-    await userEvent.click(screen.getByRole('button', { name: 'ContactForm.submit' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('ContactForm.genericError')).toBeInTheDocument();
     });
   });
 });

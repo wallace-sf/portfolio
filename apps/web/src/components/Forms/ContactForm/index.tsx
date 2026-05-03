@@ -7,58 +7,31 @@ import { Button, Text, TextArea } from '@repo/ui/Control';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
-import { ApiResponse } from '~/lib/api/envelope';
-
 import { contactSchema, ContactFormValues } from './contact-schema';
-
-type SubmitStatus = 'idle' | 'success' | 'error';
-
-const ERROR_CODE_TO_FIELD: Record<string, keyof ContactFormValues | undefined> =
-  {
-    INVALID_NAME: 'name',
-    INVALID_EMAIL: 'email',
-    INVALID_MESSAGE: 'message',
-  };
 
 export const ContactForm: FC = () => {
   const tForm = useTranslations('ContactForm');
   const tV = useTranslations('Validations');
-  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle');
+  const [submitted, setSubmitted] = useState(false);
 
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting, touchedFields },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
   });
 
-  const onSubmit = async (data: ContactFormValues) => {
-    setSubmitStatus('idle');
-
-    const res = await fetch('/api/v1/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    const json: ApiResponse<null> = await res.json();
-
-    if (json.error) {
-      const field = ERROR_CODE_TO_FIELD[json.error.code];
-      if (field) {
-        setError(field, { message: json.error.message });
-      } else {
-        setSubmitStatus('error');
-      }
-      return;
-    }
-
-    setSubmitStatus('success');
+  const onSubmit = (data: ContactFormValues) => {
+    const subject = encodeURIComponent(tForm('subject'));
+    const body = encodeURIComponent(
+      `${data.name} <${data.email}>\n\n${data.message}`,
+    );
+    window.location.href = `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    setSubmitted(true);
   };
 
-  if (submitStatus === 'success') {
+  if (submitted) {
     return (
       <div className="w-full">
         <h5 className="!text-white mb-6">{tForm('title')}</h5>
@@ -137,12 +110,6 @@ export const ContactForm: FC = () => {
           </span>
         )}
       </fieldset>
-
-      {submitStatus === 'error' && (
-        <p role="alert" className="text-error text-sm mb-4">
-          {tForm('genericError')}
-        </p>
-      )}
 
       <Button.Base
         type="submit"
