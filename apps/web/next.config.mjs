@@ -20,18 +20,4 @@ const nextConfig = {
   },
 };
 
-// next-intl v3 plugin injects experimental.turbo for Turbopack alias resolution,
-// but Next.js 15+ moved that config to the top-level `turbopack` key.
-// We migrate it here to silence the invalid-next-config warning.
-const withNextIntl = createNextIntlPlugin();
-const config = withNextIntl(nextConfig);
-
-if (config.experimental?.turbo) {
-  config.turbopack = { ...config.experimental.turbo, ...config.turbopack };
-  delete config.experimental.turbo;
-  if (Object.keys(config.experimental).length === 0) {
-    delete config.experimental;
-  }
-}
-
-export default config;
+export default createNextIntlPlugin()(nextConfig);
