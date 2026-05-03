@@ -39,19 +39,19 @@ beforeEach(() => {
 });
 
 describe('createNextAuthCookieApi', () => {
-  it('should return undefined when cookie does not exist', () => {
-    const api = createNextAuthCookieApi();
+  it('should return undefined when cookie does not exist', async () => {
+    const api = await createNextAuthCookieApi();
     expect(api.get('missing')).toBeUndefined();
   });
 
-  it('should return cookie value when cookie exists', () => {
+  it('should return cookie value when cookie exists', async () => {
     mockCookieStore.store['sb-access-token'] = 'my-token';
-    const api = createNextAuthCookieApi();
+    const api = await createNextAuthCookieApi();
     expect(api.get('sb-access-token')).toBe('my-token');
   });
 
-  it('should set cookie via underlying cookie store', () => {
-    const api = createNextAuthCookieApi();
+  it('should set cookie via underlying cookie store', async () => {
+    const api = await createNextAuthCookieApi();
     api.set('sb-access-token', 'access-123', { httpOnly: true, path: '/' });
     expect(mockCookieStore.set).toHaveBeenCalledWith('sb-access-token', 'access-123', {
       httpOnly: true,
@@ -59,14 +59,14 @@ describe('createNextAuthCookieApi', () => {
     });
   });
 
-  it('should delete cookie via underlying cookie store', () => {
-    const api = createNextAuthCookieApi();
+  it('should delete cookie via underlying cookie store', async () => {
+    const api = await createNextAuthCookieApi();
     api.delete('sb-refresh-token');
     expect(mockCookieStore.delete).toHaveBeenCalledWith('sb-refresh-token');
   });
 
-  it('should set with empty options when no options provided', () => {
-    const api = createNextAuthCookieApi();
+  it('should set with empty options when no options provided', async () => {
+    const api = await createNextAuthCookieApi();
     api.set('name', 'value');
     expect(mockCookieStore.set).toHaveBeenCalledWith('name', 'value', {});
   });

@@ -4,8 +4,8 @@ import type {
 } from '@repo/application/identity';
 import { cookies } from 'next/headers';
 
-export function createNextAuthCookieApi(): AuthCookieApi {
-  const jar = cookies();
+export async function createNextAuthCookieApi(): Promise<AuthCookieApi> {
+  const jar = await cookies();
   return {
     get(name: string): string | undefined {
       return jar.get(name)?.value;

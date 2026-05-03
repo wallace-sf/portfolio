@@ -23,7 +23,7 @@
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "classnames": "^2.5.1",
-    "next": "14.2.17",
+    "next": "16.2.4",
     "next-intl": "^3.25.0",
     "react": "^18",
     "react-dom": "^18",

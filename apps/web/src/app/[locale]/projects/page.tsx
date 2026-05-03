@@ -3,11 +3,11 @@ import { HeroBanner } from '~components/View';
 import { applyDevSimulations } from '~/dev/simulate';
 
 interface ProjectsPageProps {
-  searchParams?: { loading?: string; error?: string };
+  searchParams?: Promise<{ loading?: string; error?: string }>;
 }
 
 export default async function Projects({ searchParams }: ProjectsPageProps) {
-  await applyDevSimulations(searchParams);
+  await applyDevSimulations(await searchParams);
 
   return (
     <>

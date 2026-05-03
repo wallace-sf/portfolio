@@ -111,11 +111,11 @@ const EXPERIENCES: IExperienceProps[] = [
 ];
 
 interface AboutPageProps {
-  searchParams?: { loading?: string; error?: string };
+  searchParams?: Promise<{ loading?: string; error?: string }>;
 }
 
 export default async function About({ searchParams }: AboutPageProps) {
-  await applyDevSimulations(searchParams);
+  await applyDevSimulations(await searchParams);
 
   return (
     <>
