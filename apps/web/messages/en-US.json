@@ -2,8 +2,11 @@
   "ContactForm": {
     "title": "Contact us",
     "submit": "Send",
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "Your e-mail",
     "messagePlaceholder": "Your message here...",
-    "subject": "Let's talk about a project?"
+    "subject": "Let's talk about a project?",
+    "success": "Your email client has been opened. Please send the pre-filled message."
   },
   "ContactInfo": {
     "email": "Email",
@@ -56,6 +59,7 @@
   },
   "Validations": {
     "required": "Required field.",
-    "min": "Minimum of 3 characters."
+    "min": "Minimum of 3 characters.",
+    "email": "Enter a valid e-mail address."
   }
 }

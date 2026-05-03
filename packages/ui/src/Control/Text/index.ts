@@ -1,5 +1,5 @@
-import { Base, WithFormik } from './Base';
+import { Base } from './Base';
 
-export const Text = { Base, WithFormik };
+export const Text = { Base };
 
 export { type ITextProps } from './Base';
