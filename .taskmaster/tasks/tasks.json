@@ -3700,7 +3700,7 @@
   "sprint-3": {
     "tasks": [
       {
-        "id": 16,
+        "id": "16",
         "title": "[Identity] Fase 5 — Web: login, middleware, admin UI (REST; no IdP SDK)",
         "description": "GitHub #407. UI consumes only /api/v1 (auth, me); no @supabase/* in pages/middleware. Align with docs/11-IDENTITY.md.",
         "status": "pending",
@@ -3718,7 +3718,8 @@
             "details": "File: apps/web/src/app/[locale]/login/page.tsx. Server Component wrapping a client LoginForm. LoginForm uses RHF + Zod, submits to /api/v1/auth/sign-in, handles ApiResponse envelope. On success: router.push to admin or referrer. No @supabase/* imports.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 16
+            "parentTaskId": 16,
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3727,7 +3728,8 @@
             "details": "File: apps/web/src/middleware.ts. Check for session cookie on matcher paths (/[locale]/admin/*). No @supabase/* or IdP SDK. Call /api/v1/me internally or read cookie header. Redirect to /login if unauthenticated. Matcher: ['/[locale]/admin/:path*'].",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 16
+            "parentTaskId": 16,
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3736,7 +3738,8 @@
             "details": "File: apps/web/src/app/[locale]/admin/layout.tsx. RSC fetch to /api/v1/me with next/headers cookies forwarded. If 401→redirect to login. Otherwise render admin sidebar + children. No @supabase/*.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 16
+            "parentTaskId": 16,
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -3745,7 +3748,8 @@
             "details": "File: apps/web/src/app/[locale]/admin/_components/AdminSidebar.tsx. Client component. Sign-out button calls POST /api/v1/auth/sign-out then router.push to login. Navigation links to admin sub-routes.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 16
+            "parentTaskId": 16,
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -3754,13 +3758,14 @@
             "details": "middleware.test.ts: mock cookies, verify redirect on missing cookie, no redirect on valid cookie. LoginForm.test.tsx: mock fetch, verify submission with valid/invalid credentials, error display, redirect on success.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 16
+            "parentTaskId": 16,
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-04-02T03:25:09.894Z"
       },
       {
-        "id": 17,
+        "id": "17",
         "title": "REST envelope + portfolio/contact GET/POST handlers",
         "description": "GitHub #289. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/289",
@@ -3778,7 +3783,8 @@
             "details": "File: apps/web/src/lib/api/envelope.ts. Type: ApiResponse<T> = SuccessResponse<T> | ErrorResponse. successResponse(data, meta?) returns {data, error: null, meta}. errorResponse(code, message, status) returns {data: null, error: {code, message}, meta: {status}}. No business logic, pure factory functions.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 17
+            "parentTaskId": 17,
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3787,7 +3793,8 @@
             "details": "File: apps/web/src/lib/api/error-mapper.ts. mapDomainErrorToHttp(error: DomainError, locale: string): {status: number, code: string, message: string}. ValidationError→400, NotFoundError→404, default→500. Use i18n keys for messages. Unit test for each error type.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 17
+            "parentTaskId": 17,
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3796,7 +3803,8 @@
             "details": "Files: apps/web/src/app/api/v1/projects/route.ts and apps/web/src/app/api/v1/projects/featured/route.ts. Each handler: extract locale from Accept-Language header, call makeContainer(), execute use case, map Either result to ApiResponse using successResponse/errorResponse. No business logic in handler.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 17
+            "parentTaskId": 17,
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -3805,7 +3813,8 @@
             "details": "File: apps/web/src/app/api/v1/projects/[slug]/route.ts. Extract slug from params and locale from request. Call GetProjectBySlug use case. ValidationError→400, NotFoundError→404 via error mapper. Return ApiResponse<ProjectDetailDTO>.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 17
+            "parentTaskId": 17,
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -3814,7 +3823,8 @@
             "details": "Files: apps/web/src/app/api/v1/profile/route.ts and apps/web/src/app/api/v1/experiences/route.ts. Same pattern: extract locale, call container, execute use case, return ApiResponse. NotFoundError→404 for profile.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 17
+            "parentTaskId": 17,
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -3823,7 +3833,8 @@
             "details": "File: apps/web/src/app/api/v1/contact/route.ts. Parse JSON body, call SendContactMessage. ValidationError→400 with field error details. Success→201 with empty data. Rate limiting note in comments.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 17
+            "parentTaskId": 17,
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -3832,13 +3843,14 @@
             "details": "Tests: apps/web/src/lib/api/__tests__/envelope.test.ts, error-mapper.test.ts. Integration: apps/web/src/app/api/v1/projects/__tests__/route.test.ts covering: 200 success, 404 not found, 400 validation error. Mock makeContainer() in tests.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 17
+            "parentTaskId": 17,
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-04-02T03:21:49.111Z"
       },
       {
-        "id": 18,
+        "id": "18",
         "title": "ContactForm: RHF + Zod + POST /api/v1/contact",
         "description": "GitHub #290. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/290",
@@ -3856,7 +3868,8 @@
             "details": "pnpm add react-hook-form zod @hookform/resolvers to apps/web. File: apps/web/src/components/contact/contact-schema.ts. Schema: name (required, min 1), email (email format), message (required, min 1). Must mirror server-side validation to give instant feedback.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 18
+            "parentTaskId": 18,
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3865,7 +3878,8 @@
             "details": "File: apps/web/src/components/contact/ContactForm.tsx. Use useForm<ContactFormValues> with zodResolver(contactSchema). Replace field components with register(). Replace Formik error handling with formState.errors. Keep same UI/UX.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 18
+            "parentTaskId": 18,
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3874,13 +3888,14 @@
             "details": "In ContactForm onSubmit: fetch('/api/v1/contact', {method: 'POST', body: JSON.stringify(data)}). Parse ApiResponse<void>. On success: show confirmation. On error (400): map error.code to form errors via setError. On 500: show generic error.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 18
+            "parentTaskId": 18,
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-05-03T22:19:31.181Z"
       },
       {
-        "id": 19,
+        "id": "19",
         "title": "Home page: GET /api/v1/profile + /projects/featured",
         "description": "GitHub #291. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/291",
@@ -3889,12 +3904,12 @@
         "dependencies": [
           "17"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [],
-        "updatedAt": "2026-04-02T03:21:49.111Z"
+        "updatedAt": "2026-05-03T23:54:09.371Z"
       },
       {
-        "id": 20,
+        "id": "20",
         "title": "Portfolio list: GET /api/v1/projects",
         "description": "GitHub #292. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/292",
@@ -3908,7 +3923,7 @@
         "updatedAt": "2026-04-02T03:21:49.111Z"
       },
       {
-        "id": 21,
+        "id": "21",
         "title": "Project detail: GET /api/v1/projects/:slug",
         "description": "GitHub #293. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/293",
@@ -3926,7 +3941,8 @@
             "details": "File: apps/web/src/app/[locale]/projects/[slug]/page.tsx. RSC: fetch('/api/v1/projects/' + params.slug) with locale header. Parse ApiResponse<ProjectDetailDTO>. If 404→notFound(). Render full project detail using response data.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 21
+            "parentTaskId": 21,
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -3935,7 +3951,8 @@
             "details": "Files: apps/web/src/app/[locale]/projects/[slug]/loading.tsx (skeleton with same layout as project detail) and error.tsx (error boundary with retry button). Follow Next.js App Router conventions.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 21
+            "parentTaskId": 21,
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -3944,13 +3961,14 @@
             "details": "In project detail page.tsx: export async function generateStaticParams(). Fetch '/api/v1/projects' to get all published projects. Return array of {locale, slug} params. Set revalidate appropriately for ISR.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 21
+            "parentTaskId": 21,
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-04-02T03:21:49.111Z"
       },
       {
-        "id": 22,
+        "id": "22",
         "title": "Experiences page: GET /api/v1/experiences + SkillAccordion",
         "description": "GitHub #294. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/294",
@@ -3964,7 +3982,7 @@
         "updatedAt": "2026-04-02T03:21:49.111Z"
       },
       {
-        "id": 23,
+        "id": "23",
         "title": "ProjectCard: props aligned to API payload",
         "description": "GitHub #295. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/295",
@@ -3978,7 +3996,7 @@
         "updatedAt": "2026-04-02T03:21:49.111Z"
       },
       {
-        "id": 24,
+        "id": "24",
         "title": "StatCard component",
         "description": "GitHub #296. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/296",
@@ -3992,7 +4010,7 @@
         "updatedAt": "2026-04-02T03:21:49.111Z"
       },
       {
-        "id": 25,
+        "id": "25",
         "title": "ThemeToggle functional (sidebar)",
         "description": "GitHub #297. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/297",
@@ -4004,7 +4022,7 @@
         "updatedAt": "2026-04-25T22:59:02.000Z"
       },
       {
-        "id": 26,
+        "id": "26",
         "title": "LanguageSelector functional (sidebar)",
         "description": "GitHub #298. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/298",
@@ -4016,7 +4034,7 @@
         "updatedAt": "2026-04-02T03:21:49.111Z"
       },
       {
-        "id": 27,
+        "id": "27",
         "title": "loading.tsx + error.tsx per route segments",
         "description": "GitHub #299. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/299",
@@ -4028,7 +4046,7 @@
         "updatedAt": "2026-04-25T22:59:27.000Z"
       },
       {
-        "id": 28,
+        "id": "28",
         "title": "[Identity] Fase 3 — REST auth/* + GET /api/v1/me + cookie helper",
         "description": "GitHub #445. See .taskmaster/docs/prd-sprint-3.md.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/445",
@@ -4046,7 +4064,8 @@
             "details": "File: apps/web/src/lib/auth/cookie-api.ts. createNextAuthCookieApi(): AuthCookieApi. Uses next/headers cookies(). No @supabase/* imports here. Satisfies the IAuthenticationGateway contract for cookie reading/writing. Unit test with mock cookies.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 28
+            "parentTaskId": 28,
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -4055,7 +4074,8 @@
             "details": "File: apps/web/src/app/api/v1/auth/sign-in/route.ts. Parse {email, password} from body. Call authGateway.signInWithPassword(). Set session cookies via AuthCookieApi. Return 200 with user principal or 401 on invalid credentials. ApiResponse envelope.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 28
+            "parentTaskId": 28,
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -4064,7 +4084,8 @@
             "details": "Files: apps/web/src/app/api/v1/auth/sign-out/route.ts and /auth/refresh/route.ts. sign-out: call authGateway.signOut(), clear cookies, 200. refresh: call authGateway.refreshSession(), update cookies, 200 or 401.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 28
+            "parentTaskId": 28,
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -4073,7 +4094,8 @@
             "details": "File: apps/web/src/app/api/v1/me/route.ts. Call authGateway.getPrincipalFromCookies(). If no session→401. Call EnsureAppUserForAuthSession use case (links authSubject to User). Return GetCurrentUser result as ApiResponse<UserDTO>. 401 if not authenticated.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 28
+            "parentTaskId": 28,
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -4082,13 +4104,14 @@
             "details": "Mock IAuthenticationGateway with FakeAuthenticationGateway. Test: sign-in 200 with valid credentials, 401 with invalid. sign-out 200. /me 200 when authenticated, 401 without session. Use vitest + Next.js route handler testing patterns.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 28
+            "parentTaskId": 28,
+            "parentId": "undefined"
           }
         ],
         "updatedAt": "2026-04-02T03:21:49.111Z"
       },
       {
-        "id": 29,
+        "id": "29",
         "title": "Rate limiting for POST /api/v1/contact",
         "description": "Implement rate limiting on the public POST /api/v1/contact endpoint to prevent abuse (spam, Resend cost). Evaluate and choose between: (1) IP-based rate limit in middleware/edge with Upstash Redis; (2) CAPTCHA (hCaptcha/Turnstile) in form; (3) combination of both. Configurable limit via CONTACT_RATE_LIMIT_MAX env var. Return 429 with standard envelope { data: null, error: { code: 'RATE_LIMIT_EXCEEDED', message: '...' } }.",
         "details": "## Context\n\nThe `POST /api/v1/contact` endpoint is a **public** route that triggers email sending via Resend. Without protection, it's vulnerable to spam/abuse and can incur unnecessary costs. This task implements rate limiting aligned with the architecture documented in `docs/05-API-CONTRACTS.md`.\n\n## Current State (from codebase analysis)\n\n- **Use case**: `SendContactMessage` exists in `packages/application/src/contact/use-cases/SendContactMessage.ts` with validation (name, email, message via `Validator`).\n- **Email service**: `ResendEmailService` in `packages/infra` implements `IEmailService` port.\n- **Middleware**: `apps/web/src/middleware.ts` currently handles only i18n via `next-intl` (matcher excludes `/api`).\n- **Envelope pattern**: Documented in `docs/05-API-CONTRACTS.md` (success: `{ data, error: null }`, failure: `{ data: null, error: { code, message } }`).\n- **Error codes**: Standard codes exist (`INVALID_NAME`, `INVALID_EMAIL`, etc.); need to add `RATE_LIMIT_EXCEEDED`.\n- **No existing rate limiting infrastructure**: No Upstash Redis or CAPTCHA dependencies in `package.json`.\n\n## Implementation Options\n\n### Option 1: IP-based Rate Limiting with Upstash Redis (Edge/Middleware)\n\n**Pros:**\n- Server-side, cannot be bypassed by client\n- Works on Next.js Edge Runtime (Vercel-compatible)\n- Clean UX (no extra user friction)\n- Configurable limits via env var\n\n**Cons:**\n- Requires Upstash Redis account (free tier available)\n- Edge middleware adds latency to every request\n- IP-based can be limiting for shared IPs (corporate networks, VPNs)\n\n**Implementation:**\n1. Install `@upstash/redis` and `@upstash/ratelimit`\n2. Add env vars: `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `CONTACT_RATE_LIMIT_MAX` (default: 3 requests per hour per IP)\n3. Create rate limit helper in `apps/web/src/lib/rate-limit.ts`:\n   ```typescript\n   import { Redis } from '@upstash/redis';\n   import { Ratelimit } from '@upstash/ratelimit';\n\n   const redis = new Redis({\n     url: process.env.UPSTASH_REDIS_REST_URL!,\n     token: process.env.UPSTASH_REDIS_REST_TOKEN!,\n   });\n\n   export const contactRateLimit = new Ratelimit({\n     redis,\n     limiter: Ratelimit.slidingWindow(\n       parseInt(process.env.CONTACT_RATE_LIMIT_MAX ?? '3', 10),\n       '1 h'\n     ),\n     analytics: true,\n   });\n   ```\n4. Apply in route handler `apps/web/app/api/v1/contact/route.ts`:\n   ```typescript\n   import { contactRateLimit } from '@/lib/rate-limit';\n\n   export async function POST(request: Request) {\n     const ip = request.headers.get('x-forwarded-for') ?? 'unknown';\n     const { success, limit, remaining, reset } = await contactRateLimit.limit(ip);\n\n     if (!success) {\n       return Response.json(\n         {\n           data: null,\n           error: {\n             code: 'RATE_LIMIT_EXCEEDED',\n             message: 'Too many contact requests. Please try again later.',\n           },\n         },\n         {\n           status: 429,\n           headers: {\n             'X-RateLimit-Limit': limit.toString(),\n             'X-RateLimit-Remaining': remaining.toString(),\n             'X-RateLimit-Reset': new Date(reset).toISOString(),\n           },\n         }\n       );\n     }\n\n     // Continue with existing SendContactMessage use case...\n   }\n   ```\n\n### Option 2: CAPTCHA (hCaptcha or Cloudflare Turnstile)\n\n**Pros:**\n- Free tier (hCaptcha: 1M requests/month; Turnstile: unlimited)\n- Turnstile is invisible/frictionless (no \"select traffic lights\")\n- Blocks bots effectively\n- No infrastructure dependencies\n\n**Cons:**\n- Adds UX friction (even invisible CAPTCHA adds ~200ms)\n- Client-side integration required (ContactForm in Task 18)\n- Third-party dependency (privacy considerations)\n\n**Implementation (Turnstile recommended):**\n1. Install `@marsidev/react-turnstile` or similar\n2. Add env vars: `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`\n3. Add Turnstile widget to ContactForm (see Task 18)\n4. Verify token in route handler:\n   ```typescript\n   const formData = await request.formData();\n   const turnstileToken = formData.get('cf-turnstile-response');\n\n   const verifyResponse = await fetch(\n     'https://challenges.cloudflare.com/turnstile/v0/siteverify',\n     {\n       method: 'POST',\n       headers: { 'Content-Type': 'application/json' },\n       body: JSON.stringify({\n         secret: process.env.TURNSTILE_SECRET_KEY,\n         response: turnstileToken,\n       }),\n     }\n   );\n\n   const outcome = await verifyResponse.json();\n   if (!outcome.success) {\n     return Response.json(\n       { data: null, error: { code: 'CAPTCHA_FAILED', message: 'CAPTCHA verification failed.' } },\n       { status: 400 }\n     );\n   }\n   ```\n\n### Option 3: Combination (Recommended for Production)\n\n- **Rate limit** (5-10 requests/hour) for basic protection\n- **CAPTCHA** after first rate limit hit (progressive challenge)\n- Best balance of UX and security\n\n## Recommended Decision Path\n\n1. **MVP / Low Traffic**: Start with **Option 1 (Upstash Redis rate limiting)**\n   - Simplest to implement\n   - No client-side changes\n   - Free tier sufficient for portfolio contact forms\n   - Can add CAPTCHA later if abuse detected\n\n2. **High Traffic / Public Launch**: Use **Option 3 (Combination)**\n   - Rate limit prevents basic abuse\n   - CAPTCHA stops determined attackers\n\n## Implementation Steps (Option 1 — Recommended for MVP)\n\n1. **Install dependencies** (in `apps/web`):\n   ```bash\n   pnpm add @upstash/redis @upstash/ratelimit\n   ```\n\n2. **Update `.env.example`** and local `.env`:\n   ```bash\n   # Rate Limiting (Upstash Redis)\n   UPSTASH_REDIS_REST_URL=\"https://xxx.upstash.io\"\n   UPSTASH_REDIS_REST_TOKEN=\"AXXXxxx\"\n   # Max contact form submissions per IP per hour\n   CONTACT_RATE_LIMIT_MAX=\"3\"\n   ```\n\n3. **Create rate limit helper** at `apps/web/src/lib/rate-limit.ts`:\n   - Singleton Ratelimit instance\n   - Sliding window algorithm (configurable via env var)\n   - Export typed helper function\n\n4. **Update error codes** in `@repo/core/shared/errors`:\n   - Add `RATE_LIMIT_EXCEEDED` to `ERROR_MESSAGE` for i18n (en-US, pt-BR, es)\n   - Example: `\"Too many requests. Please try again in {reset} minutes.\"`\n\n5. **Apply rate limiting in route handler** `apps/web/app/api/v1/contact/route.ts`:\n   - Extract IP from `x-forwarded-for` header (Vercel/Edge provides this)\n   - Call `contactRateLimit.limit(ip)` before use case execution\n   - Return 429 with envelope on limit exceeded\n   - Include standard rate limit headers (`X-RateLimit-*`)\n\n6. **Update route handler to use DI container**:\n   - Import container from `@repo/infra`\n   - Get `SendContactMessage` use case\n   - Execute and map result to envelope (see `05-API-CONTRACTS.md`)\n\n7. **Document decision** in GitHub issue #452:\n   - Chosen approach (Option 1)\n   - Rationale (simplicity, cost, UX)\n   - Future migration path (add CAPTCHA if needed)\n   - Upstash setup instructions\n\n## Architecture Alignment\n\n- **Layer responsibility**: Rate limiting is an **infrastructure/edge concern**, not domain logic — correctly placed in route handler or middleware.\n- **Dependency rule**: Core/application layers unaware of rate limiting; `@repo/infra` or `apps/web` handle it.\n- **Error envelope**: Follows `05-API-CONTRACTS.md` standard (`{ data: null, error: { code, message } }`).\n- **HTTP status**: 429 is correct for rate limiting per RFC 6585.\n\n## Edge Cases to Handle\n\n- **Missing IP header**: Fallback to `'unknown'` (tighter rate limit for safety)\n- **Upstash unavailable**: Graceful degradation (log error, allow request — availability > perfect rate limiting)\n- **Rate limit headers**: Include in response for client visibility (Retry-After, X-RateLimit-Reset)\n\n## Testing Strategy (see below)\n\nUnit tests for rate limit helper, integration tests for route handler with mocked Upstash client.",
@@ -4101,7 +4124,7 @@
         "subtasks": []
       },
       {
-        "id": 30,
+        "id": "30",
         "title": "Custom not-found.tsx for apps/web with next-intl",
         "description": "Create a custom not-found.tsx page for apps/web (GitHub #300) that renders a styled 404 UI consistent with the @repo/ui design system and works correctly with next-intl locale prefix routing.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/300\n\n**Context**: The project uses Next.js 14 App Router with `next-intl` for internationalization. The routing structure is `app/[locale]/...` with supported locales: `en-US`, `es`, `pt-BR` (default: `en-US`). Currently, there is a catch-all route at `app/[locale]/[...rest]/page.tsx` that redirects to home, but no proper not-found page exists.\n\n**Implementation Steps**:\n\n1. **Create global not-found.tsx** (`apps/web/src/app/not-found.tsx`):\n   - This handles cases where Next.js cannot match a locale (invalid locale segments, missing locale prefix)\n   - Import `notFound` from `next/navigation` to trigger Next.js's not-found behavior\n   - Create a minimal, unstyled fallback UI (no next-intl access at this level)\n   - Example structure:\n     ```tsx\n     export default function GlobalNotFound() {\n       return (\n         <html>\n           <body>\n             <div>404 - Page Not Found</div>\n           </body>\n         </html>\n       );\n     }\n     ```\n\n2. **Create locale-aware not-found.tsx** (`apps/web/src/app/[locale]/not-found.tsx`):\n   - This is the primary 404 page users will see (within valid locale contexts)\n   - Use `useTranslations` from `next-intl` to access localized strings\n   - Add translation keys to `apps/web/messages/{locale}.json`:\n     ```json\n     \"NotFound\": {\n       \"title\": \"404 - Page Not Found\",\n       \"message\": \"The page you're looking for doesn't exist.\",\n       \"backHome\": \"Back to Home\"\n     }\n     ```\n   - Style using `@repo/ui` components (Button, Icon, Text, etc.) and Tailwind classes\n   - Match existing page styling patterns (see `apps/web/src/app/[locale]/page.tsx` for reference)\n   - Include a \"Back to Home\" button using `Link` from `~i18n/routing` (locale-aware navigation)\n   - Follow design system patterns:\n     - Use `classNames` utility for conditional styling\n     - Apply dark mode classes (`dark:bg-dark`, `text-white`, etc.)\n     - Use existing spacing/layout patterns (`mx-4 xl:mx-auto xl:max-w-237.5`)\n     - Leverage `@repo/ui/Control/Button` with appropriate variant\n     - Consider adding an icon from `@repo/ui/Imagery/Icon`\n\n3. **Update catch-all route** (`apps/web/src/app/[locale]/[...rest]/page.tsx`):\n   - Replace the current redirect logic with `notFound()` from `next/navigation`\n   - This ensures invalid routes trigger the locale-aware not-found page\n   - Remove the redirect import and usage:\n     ```tsx\n     import { notFound } from 'next/navigation';\n     \n     export default function CatchAllPage() {\n       notFound();\n     }\n     ```\n\n4. **Styling consistency**:\n   - Match the component structure of existing pages (HeroBanner pattern, section layout)\n   - Use the same font (`Inter` from Google Fonts, already configured in layout)\n   - Follow the existing color palette: `bg-primary`, `text-white`, `bg-dark`, `border-dark-500`, etc.\n   - Ensure responsive behavior with Tailwind breakpoints (`xl:`, `2xl:`)\n   - Center content using the same max-width pattern (`xl:max-w-237.5`)\n\n5. **File locations**:\n   - `apps/web/src/app/not-found.tsx` (global fallback, no locale context)\n   - `apps/web/src/app/[locale]/not-found.tsx` (locale-aware, primary 404 page)\n   - Update: `apps/web/src/app/[locale]/[...rest]/page.tsx`\n   - Add translations in: `apps/web/messages/en-US.json`, `apps/web/messages/pt-BR.json`, `apps/web/messages/es.json`\n\n**Technical Considerations**:\n- Next.js 14 App Router automatically uses `not-found.tsx` when `notFound()` is called or when no route matches\n- The `next-intl` middleware (`apps/web/src/middleware.ts`) handles locale detection before routing\n- Invalid locale prefixes will skip the `[locale]` segment and use the global `not-found.tsx`\n- Valid locale prefixes with invalid paths will use `[locale]/not-found.tsx`\n- No business logic required - this is purely presentational\n- No API calls or data fetching needed\n- Component should be a Server Component by default (no `'use client'` directive unless interactive features are added)\n\n**References**:\n- Next.js not-found.tsx: https://nextjs.org/docs/app/api-reference/file-conventions/not-found\n- next-intl routing: https://next-intl-docs.vercel.app/docs/routing\n- Existing design patterns: `apps/web/src/app/[locale]/page.tsx`, `apps/web/src/components/View/`\n- Design system components: `packages/ui/src/`",
@@ -4112,7 +4135,7 @@
         "subtasks": []
       },
       {
-        "id": 31,
+        "id": "31",
         "title": "Internationalize hardcoded strings in apps/web components",
         "description": "Audit all components in apps/web for hardcoded Portuguese/English strings and migrate them to next-intl translation files (en-US.json, pt-BR.json, es.json). Covers button labels, image alt texts, page content, social media labels, theme options, and language selector labels not yet extracted.",
         "details": "**GitHub Issue**: https://github.com/wallace-sf/portfolio/issues/301\n\n**Scope**: Extract remaining hardcoded strings in `apps/web/src/components` and `apps/web/src/app/[locale]` that are not yet using `next-intl`'s `useTranslations()` hook.\n\n**Identified hardcoded strings to extract:**\n\n1. **ProjectCard component** (`apps/web/src/components/View/ProjectCard/index.tsx`):\n   - Line 93: \"Ver projeto\" → should use `t('view_project')` from `ProjectCard` namespace (key already exists in translation files, but component uses hardcoded string)\n   - Line 63: \"Imagem do projeto\" → extract to `ProjectCard.image_alt` namespace\n\n2. **SideNavigation/constants.ts** (`apps/web/src/components/View/SideNavigation/constants.ts`):\n   - Theme labels: \"Light\", \"Dark\", \"System\" → extract to `Theme` namespace\n   - Language labels: \"ENG\", \"PT-BR\", \"SPA\" → extract to `Language` namespace\n   - Update `THEME_OPTIONS` and `LANGUAGES_OPTIONS` arrays to use translation keys\n\n3. **SideNavigation component** (`apps/web/src/components/View/SideNavigation/index.tsx`):\n   - Line 121: \"Linkedin\" → extract to `SideNavigation.linkedin`\n   - Line 129: \"GitHub\" → extract to `SideNavigation.github`\n\n4. **Home page** (`apps/web/src/app/[locale]/page.tsx`):\n   - Line 119: \"Wallace Ferreira\" → extract to `Home.hero_title`\n   - Line 120: \"Software Engineer\" → extract to `Home.hero_caption`\n   - Line 121: Lorem ipsum content → extract to `Home.hero_content`\n   - Line 122: \"Professional Picture 1 of Wallace Ferreira\" → extract to `Home.hero_image_alt`\n\n5. **Review all other components** for any remaining hardcoded strings in:\n   - `aria-label` attributes\n   - `placeholder` attributes (verify ContactForm already uses translations)\n   - Button text\n   - Error messages (verify they use domain-level ERROR_MESSAGE per docs/07-I18N.md)\n   - Image alt texts\n   - Page titles and meta descriptions\n\n**Implementation steps:**\n\n1. **Update translation files** (`apps/web/messages/{en-US,pt-BR,es}.json`):\n   ```json\n   // Add to all three locale files\n   {\n     \"ProjectCard\": {\n       \"view_project\": \"...\",\n       \"image_alt\": \"...\"\n     },\n     \"Theme\": {\n       \"light\": \"...\",\n       \"dark\": \"...\",\n       \"system\": \"...\"\n     },\n     \"Language\": {\n       \"en\": \"...\",\n       \"pt\": \"...\",\n       \"es\": \"...\"\n     },\n     \"SideNavigation\": {\n       // existing keys...\n       \"linkedin\": \"...\",\n       \"github\": \"...\"\n     },\n     \"Home\": {\n       // existing keys...\n       \"hero_title\": \"...\",\n       \"hero_caption\": \"...\",\n       \"hero_content\": \"...\",\n       \"hero_image_alt\": \"...\"\n     }\n   }\n   ```\n\n2. **Update ProjectCard component**:\n   - Import `useTranslations('ProjectCard')`\n   - Line 93: Replace \"Ver projeto\" with `t('view_project')` (note: translation key already exists but is not being used)\n   - Line 63: Replace \"Imagem do projeto\" with `t('image_alt')`\n\n3. **Refactor SideNavigation constants**:\n   - Move `THEME_OPTIONS` and `LANGUAGES_OPTIONS` from constants.ts into the component\n   - Use `useTranslations('Theme')` and `useTranslations('Language')` to populate labels dynamically\n   - Update render functions to use translated labels\n\n4. **Update SideNavigation component**:\n   - Replace \"Linkedin\" with `t('linkedin')`\n   - Replace \"GitHub\" with `t('github')`\n\n5. **Update Home page**:\n   - Import `useTranslations('Home')` (already imported for 'projects_title')\n   - Replace hardcoded hero strings with `t('hero_title')`, `t('hero_caption')`, `t('hero_content')`, `t('hero_image_alt')`\n\n6. **Audit remaining files**:\n   - Search for patterns: `/(alt|aria-label|placeholder|title)=[\"'](?!{).*[\"']/` to find attribute hardcoded strings\n   - Search for JSX text content that is not wrapped in `{t('...')}`\n   - Check `apps/web/src/app/[locale]/about/page.tsx` and other route pages\n\n7. **Ensure locale files are in sync**:\n   - All keys in `en-US.json` must exist in `pt-BR.json` and `es.json`\n   - Use `en-US` as `defaultLocale` per `docs/07-I18N.md` fallback chain\n   - Validate no missing keys across locales\n\n8. **Update components to use translations**:\n   - Ensure all components consuming hardcoded strings now use `useTranslations()` hook\n   - For Server Components, use `getTranslations()` from `next-intl/server`\n\n**Architecture alignment:**\n- Follow `docs/07-I18N.md`: UI translations via `next-intl`, messages in `apps/web/messages/{locale}.json`\n- Namespace keys by component/page (e.g., `ProjectCard`, `Home`, `Theme`)\n- Domain error messages remain in `@repo/core/shared/i18n/ERROR_MESSAGE` (out of scope for this task)\n- Locale fallback: requested locale → defaultLocale (en-US) → pt-BR → any available\n\n**Edge cases:**\n- Dynamic content from domain entities (project titles, captions) already use `LocalizedText` VO per PRD data structure\n- Do not extract placeholder data (Lorem ipsum in mock PROJECTS array) - that will be replaced by API data in other tasks\n- Social media URLs in `process.env.NEXT_PUBLIC_*` remain as environment variables",
@@ -4127,9 +4150,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-03T22:19:31.182Z",
+      "lastModified": "2026-05-03T23:54:09.371Z",
       "taskCount": 16,
-      "completedCount": 6,
+      "completedCount": 5,
       "tags": [
         "sprint-3"
       ]
