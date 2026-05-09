@@ -5,15 +5,28 @@ import { applyDevSimulations } from '~/dev/simulate';
 import { getInternalBaseUrl } from '~/lib/api/internal';
 import { ApiResponse } from '~/lib/api/envelope';
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
-import { ContactForm, HeroBanner, ProjectList, ContactInfo } from '~components';
+import {
+  ContactForm,
+  HeroBanner,
+  ProjectList,
+  ContactInfo,
+  StatCard,
+} from '~components';
 
 import { ProjectSummary } from '~components/View/ProjectList';
+
+interface ProfileStat {
+  label: string;
+  value: string;
+  icon: string;
+}
 
 interface ProfileHero {
   name: string;
   headline: string;
   bio: string;
   photo: { url: string; alt: string };
+  stats: ProfileStat[];
 }
 
 interface HomePageProps {
@@ -60,6 +73,18 @@ export default async function Home({ searchParams }: HomePageProps) {
         alt={profile?.photo.alt ?? t('hero_image_alt')}
         imageClassName="object-contain 2xl:object-cover"
       />
+      {profile?.stats && profile.stats.length > 0 && (
+        <section className="mx-4 my-6 grid grid-cols-2 gap-3 xl:mx-auto xl:my-8 xl:w-full xl:max-w-237.5 xl:grid-cols-4">
+          {profile.stats.map((stat) => (
+            <StatCard
+              key={stat.label}
+              label={stat.label}
+              value={stat.value}
+              icon={stat.icon}
+            />
+          ))}
+        </section>
+      )}
       <h4 className="text-white mx-4 my-6 !text-xl xl:block xl:mx-auto xl:my-8 xl:w-full xl:!text-[32px] xl:max-w-237.5">
         {t('projects_title')}
       </h4>
