@@ -11,6 +11,7 @@ const nextConfig = {
     NEXT_PUBLIC_WHATSAPP_URL: process.env.NEXT_PUBLIC_WHATSAPP_URL,
   },
   images: {
+    qualities: [100, 75],
     remotePatterns: [
       {
         protocol: 'https',
