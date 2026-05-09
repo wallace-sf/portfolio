@@ -28,7 +28,8 @@ const VALID_ENV = {
   RESEND_API_KEY: 're_test_key',
   CONTACT_EMAIL_TO: 'owner@example.com',
   CONTACT_EMAIL_FROM: 'onboarding@resend.dev',
-  ADMIN_EMAIL: 'admin@example.com',
+  SUPABASE_URL: 'https://test.supabase.co',
+  SUPABASE_ANON_KEY: 'test-anon-key',
 };
 
 describe('container', () => {

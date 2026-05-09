@@ -12,6 +12,7 @@ pre-commit:
     lint:
       run: CI=1 pnpm lint:check
     types:
-      run: CI=1 pnpm types
+      run: CI=1 pnpm types:ci
     test:
-      run: CI=1 pnpm test
+      run: CI=1 pnpm test:ci
+

@@ -8,9 +8,6 @@ export const env = {
   get CONTACT_EMAIL_FROM() {
     return process.env['CONTACT_EMAIL_FROM']!;
   },
-  get ADMIN_EMAIL() {
-    return process.env['ADMIN_EMAIL'] ?? 'admin@portfolio.dev';
-  },
   get SUPABASE_URL() {
     return process.env['SUPABASE_URL']!;
   },
