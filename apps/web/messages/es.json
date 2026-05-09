@@ -61,5 +61,20 @@
     "required": "Campo obligatorio.",
     "min": "Mínimo de 3 caracteres.",
     "email": "Introduce un correo electrónico válido."
+  },
+  "Projects": {
+    "hero_title": "Portafolio",
+    "hero_caption": "Conoce algunos de mis proyectos",
+    "hero_content": "Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla.",
+    "hero_image_alt": "Foto profesional 1 de Wallace Ferreira"
+  },
+  "About": {
+    "values_title": "Mis valores profesionales"
+  },
+  "Common": {
+    "loading": "Cargando"
+  },
+  "Header": {
+    "logo_alt": "Logo"
   }
 }
