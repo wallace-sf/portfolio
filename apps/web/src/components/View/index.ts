@@ -9,3 +9,4 @@ export * from './ProjectCard';
 export * from './ProjectList';
 export * from './SideNavigation';
 export * from './Skill';
+export * from './StatCard';
