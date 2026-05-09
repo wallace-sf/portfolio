@@ -31,14 +31,15 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
         className,
       )}
     >
-      <section className="flex flex-row justify-center xl:order-1 xl:w-1/2">
+      <section className="relative h-64 flex flex-row justify-center xl:order-1 xl:h-full xl:w-1/2">
         <Image
           src={src}
           alt={alt}
           priority
           quality={100}
+          fill
           className={imageClassName}
-          sizes="100vw"
+          sizes="(max-width: 1280px) 100vw, 50vw"
         />
       </section>
       <section className="flex flex-col px-6 pb-6 xl:order-0 xl:py-20 xl:pl-20 xl:w-1/2">
