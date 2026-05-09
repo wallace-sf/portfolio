@@ -61,5 +61,11 @@
     "required": "Campo obligatorio.",
     "min": "Mínimo de 3 caracteres.",
     "email": "Introduce un correo electrónico válido."
+  },
+  "Projects": {
+    "hero_title": "Portafolio",
+    "hero_caption": "Conoce algunos de mis proyectos",
+    "hero_content": "Una selección de proyectos en los que he trabajado — desde funcionalidades de producto hasta aplicaciones full-stack.",
+    "hero_image_alt": "Foto profesional 1 de Wallace Ferreira"
   }
 }
