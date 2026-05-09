@@ -2,13 +2,21 @@
 
 import { FC, useMemo } from 'react';
 
-import { IProjectProps } from '@repo/core/portfolio';
 import classNames from 'classnames';
 
 import { ProjectCard, IProjectCardProps } from '../ProjectCard';
 
+export interface ProjectSummary {
+  id: string;
+  slug: string;
+  title: string;
+  caption: string;
+  coverImage: { url: string; alt: string };
+  skills: string[];
+}
+
 interface IProjectListProps {
-  projects: IProjectProps[];
+  projects: ProjectSummary[];
   compact?: IProjectCardProps['compact'];
   view: IProjectCardProps['view'];
   className?: string;
@@ -25,8 +33,8 @@ export const ProjectList: FC<IProjectListProps> = ({
       <li key={project.id}>
         <ProjectCard
           skills={project.skills}
-          caption={project.caption?.['pt-BR'] ?? ''}
-          title={project.title?.['pt-BR'] ?? ''}
+          caption={project.caption}
+          title={project.title}
           compact={compact}
           view={view}
         />
