@@ -10,6 +10,15 @@ vi.mock('@repo/infra', () => ({
   getContainer: vi.fn(),
 }));
 
+vi.mock('~/lib/rate-limit', () => ({
+  checkContactRateLimit: vi.fn().mockResolvedValue({
+    success: true,
+    limit: 3,
+    remaining: 2,
+    reset: Date.now() + 3600_000,
+  }),
+}));
+
 const mockSend = vi.fn();
 
 beforeEach(() => {
@@ -27,6 +36,27 @@ function makeRequest(body: unknown): NextRequest {
 }
 
 describe('POST /api/v1/contact', () => {
+  describe('rate limiting', () => {
+    it('should return 429 when rate limit is exceeded', async () => {
+      const { checkContactRateLimit } = await import('~/lib/rate-limit');
+      vi.mocked(checkContactRateLimit).mockResolvedValueOnce({
+        success: false,
+        limit: 3,
+        remaining: 0,
+        reset: Date.now() + 3600_000,
+      });
+
+      const response = await POST(makeRequest({ name: 'Alice', email: 'alice@example.com', message: 'hi' }));
+      const body = await response.json();
+
+      expect(response.status).toBe(429);
+      expect(body.error.code).toBe('RATE_LIMIT_EXCEEDED');
+      expect(response.headers.get('X-RateLimit-Limit')).toBe('3');
+      expect(response.headers.get('X-RateLimit-Remaining')).toBe('0');
+      expect(response.headers.get('Retry-After')).toBeTruthy();
+    });
+  });
+
   it('should return 400 when body is null', async () => {
     const request = new NextRequest('http://localhost/api/v1/contact', {
       method: 'POST',
