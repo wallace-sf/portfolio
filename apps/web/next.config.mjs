@@ -13,10 +13,8 @@ const nextConfig = {
   images: {
     qualities: [100, 75],
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'cdn.pixabay.com',
-      },
+      { protocol: 'https', hostname: 'cdn.pixabay.com' },
+      { protocol: 'https', hostname: 'placehold.co' },
     ],
   },
 };
