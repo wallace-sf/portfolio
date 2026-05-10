@@ -2,6 +2,7 @@
 
 import { FC } from 'react';
 
+import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -101,9 +102,10 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           />
           <Link
             href={`/projects/${slug}`}
-            className="flex flex-row justify-center gap-x-2 items-center w-full py-2 px-4 rounded-lg bg-dark-600 hover:bg-dark-500 text-white text-body-sm transition-colors"
+            className="flex flex-row justify-center gap-x-2 items-center bg-primary text-body-sm !text-white !font-bold rounded-xl hover:bg-blue-dark transition-all duration-300 py-3 px-6"
           >
             {t('view_project')}
+            <Icon icon="ic:round-arrow-forward" />
           </Link>
         </footer>
       </section>

@@ -32,6 +32,12 @@ vi.mock('next/image', () => ({
   ),
 }));
 
+vi.mock('@repo/ui/Imagery', () => ({
+  Icon: ({ icon }: { icon: string; className?: string }) => (
+    <span data-testid={`icon-${icon}`} />
+  ),
+}));
+
 vi.mock('~/components/View/SkillGroup', () => ({
   SkillGroup: () => <div data-testid="skill-group" />,
 }));
