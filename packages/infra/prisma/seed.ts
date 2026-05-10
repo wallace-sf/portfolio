@@ -40,6 +40,12 @@ const ID = {
     previous:  '40000000-0000-4000-8000-000000000002',
     freelance: '40000000-0000-4000-8000-000000000003',
   },
+  professionalValues: {
+    quality:       '50000000-0000-4000-8000-000000000001',
+    agility:       '50000000-0000-4000-8000-000000000002',
+    versatility:   '50000000-0000-4000-8000-000000000003',
+    communication: '50000000-0000-4000-8000-000000000004',
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -261,6 +267,56 @@ async function seedExperiences() {
   console.log(`✔ ${experiences.length} experiences seeded`);
 }
 
+async function seedProfessionalValues() {
+  const values = [
+    {
+      id: ID.professionalValues.quality,
+      icon: 'material-symbols:diamond',
+      content: loc(
+        'Delivering high-quality products that meet client requirements',
+        'Entrega de produtos de alta qualidade que atendam aos requisitos do cliente',
+      ),
+      order: 0,
+    },
+    {
+      id: ID.professionalValues.agility,
+      icon: 'material-symbols:acute-rounded',
+      content: loc(
+        'Delivering solutions quickly and efficiently while maintaining quality',
+        'Agilidade na entrega de soluções de forma rápida e eficiente, mantendo a qualidade',
+      ),
+      order: 1,
+    },
+    {
+      id: ID.professionalValues.versatility,
+      icon: 'material-symbols:sdk-rounded',
+      content: loc(
+        'Ability to handle a variety of projects and technologies',
+        'Capacidade para lidar com uma variedade de projetos e tecnologias',
+      ),
+      order: 2,
+    },
+    {
+      id: ID.professionalValues.communication,
+      icon: 'material-symbols:3p-rounded',
+      content: loc(
+        'Clear and effective communication to ensure client expectations are met',
+        'Comunicação clara e eficaz para garantir que as expectativas do cliente sejam atendidas',
+      ),
+      order: 3,
+    },
+  ];
+
+  for (const value of values) {
+    await prisma.professionalValue.upsert({
+      where: { id: value.id },
+      update: { content: value.content, order: value.order },
+      create: value,
+    });
+  }
+  console.log(`✔ ${values.length} professional values seeded`);
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -280,6 +336,7 @@ async function main() {
   await seedProfile();
   await seedProjects();
   await seedExperiences();
+  await seedProfessionalValues();
 }
 
 main()
