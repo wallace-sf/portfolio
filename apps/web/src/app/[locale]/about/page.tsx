@@ -5,6 +5,7 @@ import {
   LocationType,
 } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
+import { getTranslations } from 'next-intl/server';
 
 import { ProfessionalValue, ExperienceCard } from '~components/View';
 import { applyDevSimulations } from '~/dev/simulate';
@@ -116,11 +117,12 @@ interface AboutPageProps {
 
 export default async function About({ searchParams }: AboutPageProps) {
   await applyDevSimulations(await searchParams);
+  const t = await getTranslations('About');
 
   return (
     <>
       <h4 className="text-white mx-4 my-6 !text-xl xl:block xl:mx-auto xl:my-8 xl:w-full xl:!text-[32px] xl:max-w-237.5">
-        Meus valores profissionais
+        {t('values_title')}
       </h4>
       <ul className="flex flex-row gap-x-4">
         {PROFESSIONAL_VALUES.map((professionalValue) => (

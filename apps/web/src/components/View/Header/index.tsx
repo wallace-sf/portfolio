@@ -4,6 +4,7 @@ import { FC } from 'react';
 
 import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 import logoDesktop from '~assets/images/logo-desktop.svg';
@@ -12,6 +13,7 @@ import { useLayout } from '~hooks';
 
 export const Header: FC = () => {
   const { open, toggle } = useLayout();
+  const t = useTranslations('Header');
 
   return (
     <header className="w-full xl:w-60 flex items-center xl:items-end justify-between xl:justify-center bg-dark-300 xl:!bg-dark-200 xl:bg-transparent px-4 py-3 xl:px-0 xl:py-0 transition-all duration-300 ease-linear h-header-mobile xl:h-header-desktop">
@@ -19,7 +21,7 @@ export const Header: FC = () => {
         src={logoDesktop}
         width={179}
         height={66}
-        alt="Logo"
+        alt={t('logo_alt')}
         className="hidden xl:block"
         priority
       />
@@ -27,7 +29,7 @@ export const Header: FC = () => {
         src={logoMobile}
         width={120}
         height={44}
-        alt="Logo"
+        alt={t('logo_alt')}
         className="block xl:hidden"
         priority
       />

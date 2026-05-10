@@ -67,5 +67,14 @@
     "hero_caption": "Conoce algunos de mis proyectos",
     "hero_content": "Una selección de proyectos en los que he trabajado — desde funcionalidades de producto hasta aplicaciones full-stack.",
     "hero_image_alt": "Foto profesional 1 de Wallace Ferreira"
+  },
+  "About": {
+    "values_title": "Mis valores profesionales"
+  },
+  "Common": {
+    "loading": "Cargando"
+  },
+  "Header": {
+    "logo_alt": "Logo"
   }
 }
