@@ -76,5 +76,14 @@
   },
   "Header": {
     "logo_alt": "Logo"
+  },
+  "ProjectDetail": {
+    "breadcrumb_home": "Home",
+    "breadcrumb_projects": "Projects",
+    "related_title": "Other projects",
+    "summary_label": "Summary",
+    "objectives_label": "Objectives",
+    "role_label": "Role",
+    "period_label": "Period"
   }
 }
