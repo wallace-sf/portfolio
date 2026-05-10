@@ -3932,7 +3932,7 @@
         "dependencies": [
           "17"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -3965,7 +3965,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-05-10T21:35:21.710Z"
+        "updatedAt": "2026-05-10T21:59:24.260Z"
       },
       {
         "id": "22",
@@ -4151,9 +4151,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-10T21:35:21.710Z",
+      "lastModified": "2026-05-10T21:59:24.260Z",
       "taskCount": 16,
-      "completedCount": 13,
+      "completedCount": 14,
       "tags": [
         "sprint-3"
       ]
