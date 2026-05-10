@@ -3774,7 +3774,7 @@
         "dependencies": [
           "6"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -3847,7 +3847,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-04-02T03:21:49.111Z"
+        "updatedAt": "2026-05-10T21:29:32.655Z"
       },
       {
         "id": "18",
@@ -4055,7 +4055,7 @@
         "dependencies": [
           "17"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -4108,7 +4108,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-04-02T03:21:49.111Z"
+        "updatedAt": "2026-05-10T21:29:32.671Z"
       },
       {
         "id": "29",
@@ -4151,9 +4151,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-10T21:23:49.261Z",
+      "lastModified": "2026-05-10T21:29:32.671Z",
       "taskCount": 16,
-      "completedCount": 11,
+      "completedCount": 13,
       "tags": [
         "sprint-3"
       ]
