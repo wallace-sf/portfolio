@@ -2,43 +2,42 @@
 
 import { FC } from 'react';
 
-import { IExperienceProps } from '@repo/core/portfolio';
 import { TextRich } from '@repo/ui/View';
-import { useLocale } from 'next-intl';
 
-import { useBreakpoint } from '~hooks';
+import { SkillAccordion } from '../SkillAccordion';
 
-import { SkillGroup } from '../SkillGroup';
+export interface IExperienceCardProps {
+  id: string;
+  company: string;
+  position: string;
+  location: string;
+  description?: string;
+  logo?: { url: string; alt: string };
+  employmentType: string;
+  locationType: string;
+  startAt: string;
+  endAt?: string;
+  skills: string[];
+}
 
-export const ExperienceCard: FC<IExperienceProps> = ({
+export const ExperienceCard: FC<IExperienceCardProps> = ({
   company,
   position,
+  location,
   description,
+  skills,
 }) => {
-  const isXL = useBreakpoint('xl');
-  const locale = useLocale() as keyof typeof position;
-  const skillProps: string[] = [];
-
   return (
     <article className="flex flex-col py-6 px-3 bg-dark-200 rounded-xl gap-y-3">
       <header className="flex flex-col justify-center gap-y-2">
-        <h5 className="text-white line-clamp-2">
-          {position[locale] ?? position['en-US']}
-        </h5>
-        <h6 className="text-dark-700 line-clamp-3">
-          {company[locale] ?? company['en-US']}
-        </h6>
+        <h5 className="text-white line-clamp-2">{position}</h5>
+        <h6 className="text-dark-700 line-clamp-3">{company}</h6>
+        <span className="text-body-xs !text-dark-700">{location}</span>
       </header>
-      <TextRich
-        className="text-white line-clamp-4"
-        content={description[locale] ?? description['en-US']}
-      />
-      <SkillGroup
-        skills={skillProps}
-        max={isXL ? 3 : 2}
-        initializeWithMax={2}
-        total={skillProps.length}
-      />
+      {description && (
+        <TextRich className="text-white line-clamp-4" content={description} />
+      )}
+      <SkillAccordion skills={skills} />
     </article>
   );
 };
