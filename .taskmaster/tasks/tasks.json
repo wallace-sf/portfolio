@@ -3703,7 +3703,7 @@
         "id": "16",
         "title": "[Identity] Fase 5 — Web: login, middleware, admin UI (REST; no IdP SDK)",
         "description": "GitHub #407. UI consumes only /api/v1 (auth, me); no @supabase/* in pages/middleware. Align with docs/11-IDENTITY.md.",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [
           "28"
         ],
@@ -3762,7 +3762,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-04-02T03:25:09.894Z"
+        "updatedAt": "2026-05-10T23:44:19.608Z"
       },
       {
         "id": "17",
@@ -4149,7 +4149,7 @@
         "updatedAt": "2026-05-10T21:23:49.261Z"
       },
       {
-        "id": 32,
+        "id": "32",
         "title": "ProfessionalValues: GET /api/v1/professional-values + locale support",
         "description": "Expose ProfessionalValue entities via REST with locale-aware content mapping. ProfessionalValue.content uses LocalizedText (Json in DB). Route resolves locale from Accept-Language header.",
         "status": "done",
@@ -4162,9 +4162,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-10T21:59:24.260Z",
-      "taskCount": 16,
-      "completedCount": 14,
+      "lastModified": "2026-05-10T23:44:19.608Z",
+      "taskCount": 17,
+      "completedCount": 16,
       "tags": [
         "sprint-3"
       ]
