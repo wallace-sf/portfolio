@@ -2,6 +2,7 @@
  * @vitest-environment node
  */
 import { type Container, getContainer } from '@repo/infra';
+import { NextRequest } from 'next/server';
 
 import { GET } from '~/app/api/v1/professional-values/route';
 
@@ -22,11 +23,17 @@ beforeEach(() => {
   } as unknown as Container);
 });
 
+function makeRequest(url: string): NextRequest {
+  return new NextRequest(url);
+}
+
 describe('GET /api/v1/professional-values', () => {
   it('should return 200 with empty array when no values exist', async () => {
     mockFindAll.mockResolvedValue([]);
 
-    const response = await GET();
+    const response = await GET(
+      makeRequest('http://localhost/api/v1/professional-values'),
+    );
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -37,7 +44,9 @@ describe('GET /api/v1/professional-values', () => {
   it('should return 500 when repository throws', async () => {
     mockFindAll.mockRejectedValue(new Error('DB connection failed'));
 
-    const response = await GET();
+    const response = await GET(
+      makeRequest('http://localhost/api/v1/professional-values'),
+    );
     const body = await response.json();
 
     expect(response.status).toBe(500);

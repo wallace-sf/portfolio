@@ -3,6 +3,7 @@ import {
   IProfessionalValueProps,
   ProfessionalValue,
 } from '@repo/core/portfolio';
+import { ILocalizedTextInput } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
 
@@ -14,10 +15,12 @@ type ProfessionalValueScalarData = Prisma.ProfessionalValueUncheckedCreateInput;
 
 export class ProfessionalValueMapper {
   static toDomain(raw: PrismaProfessionalValue): ProfessionalValue {
+    const asLocalized = (v: unknown) => v as ILocalizedTextInput;
+
     const props: IProfessionalValueProps = {
       id: raw.id,
       icon: raw.icon,
-      content: raw.content,
+      content: asLocalized(raw.content),
       created_at: raw.createdAt.toISOString(),
       updated_at: raw.updatedAt.toISOString(),
     };

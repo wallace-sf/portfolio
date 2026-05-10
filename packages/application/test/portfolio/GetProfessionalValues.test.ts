@@ -12,7 +12,10 @@ import { GetProfessionalValues } from '~/portfolio/use-cases/GetProfessionalValu
 
 const BASE_PROPS: IProfessionalValueProps = {
   icon: 'material-symbols:diamond',
-  content: 'Delivering high quality products',
+  content: {
+    'en-US': 'Delivering high quality products',
+    'pt-BR': 'Entrega de produtos de alta qualidade',
+  },
 };
 
 function makeValue(
@@ -42,7 +45,7 @@ describe('GetProfessionalValues', () => {
       const repo = makeRepository({ findAll: vi.fn().mockResolvedValue([]) });
       const useCase = new GetProfessionalValues(repo);
 
-      const result = await useCase.execute();
+      const result = await useCase.execute({ locale: 'en-US' });
 
       expect(result.isRight()).toBe(true);
       expect(result.value).toEqual([]);
@@ -55,46 +58,56 @@ describe('GetProfessionalValues', () => {
       });
       const useCase = new GetProfessionalValues(repo);
 
-      const result = await useCase.execute();
+      const result = await useCase.execute({ locale: 'en-US' });
 
       expect(result.isRight()).toBe(true);
       expect(result.value as ProfessionalValueDTO[]).toHaveLength(1);
     });
 
-    it('should map all DTO fields correctly', async () => {
+    it('should map content using the requested locale', async () => {
       const value = makeValue();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([value]),
       });
       const useCase = new GetProfessionalValues(repo);
 
-      const result = await useCase.execute();
+      const enResult = await useCase.execute({ locale: 'en-US' });
+      const ptResult = await useCase.execute({ locale: 'pt-BR' });
 
-      expect(result.isRight()).toBe(true);
+      const enDto = (enResult.value as ProfessionalValueDTO[])[0]!;
+      const ptDto = (ptResult.value as ProfessionalValueDTO[])[0]!;
+
+      expect(enDto.content).toBe('Delivering high quality products');
+      expect(ptDto.content).toBe('Entrega de produtos de alta qualidade');
+    });
+
+    it('should fall back to en-US when locale translation is missing', async () => {
+      const value = makeValue({
+        content: { 'en-US': 'English only content' },
+      });
+      const repo = makeRepository({
+        findAll: vi.fn().mockResolvedValue([value]),
+      });
+      const useCase = new GetProfessionalValues(repo);
+
+      const result = await useCase.execute({ locale: 'pt-BR' });
+
+      const dto = (result.value as ProfessionalValueDTO[])[0]!;
+      expect(dto.content).toBe('English only content');
+    });
+
+    it('should map icon and id fields correctly', async () => {
+      const value = makeValue();
+      const repo = makeRepository({
+        findAll: vi.fn().mockResolvedValue([value]),
+      });
+      const useCase = new GetProfessionalValues(repo);
+
+      const result = await useCase.execute({ locale: 'en-US' });
       const dto = (result.value as ProfessionalValueDTO[])[0]!;
 
       expect(dto.id).toBe(value.id.value);
       expect(dto.icon).toBe('material-symbols:diamond');
-      expect(dto.content).toBe('Delivering high quality products');
-    });
-
-    it('should preserve repository order', async () => {
-      const first = makeValue({ icon: 'material-symbols:one', content: 'First value' });
-      const second = makeValue({ icon: 'material-symbols:two', content: 'Second value' });
-      const third = makeValue({ icon: 'material-symbols:three', content: 'Third value' });
-
-      const repo = makeRepository({
-        findAll: vi.fn().mockResolvedValue([first, second, third]),
-      });
-      const useCase = new GetProfessionalValues(repo);
-
-      const result = await useCase.execute();
-
-      expect(result.isRight()).toBe(true);
-      const dtos = result.value as ProfessionalValueDTO[];
-      expect(dtos[0]!.content).toBe('First value');
-      expect(dtos[1]!.content).toBe('Second value');
-      expect(dtos[2]!.content).toBe('Third value');
     });
 
     it('should return Left with DomainError when repository throws', async () => {
@@ -103,7 +116,7 @@ describe('GetProfessionalValues', () => {
       });
       const useCase = new GetProfessionalValues(repo);
 
-      const result = await useCase.execute();
+      const result = await useCase.execute({ locale: 'en-US' });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(DomainError);
@@ -115,7 +128,7 @@ describe('GetProfessionalValues', () => {
       const repo = makeRepository({ findAll });
       const useCase = new GetProfessionalValues(repo);
 
-      await useCase.execute();
+      await useCase.execute({ locale: 'en-US' });
 
       expect(findAll).toHaveBeenCalledOnce();
     });

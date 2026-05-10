@@ -1,7 +1,15 @@
-import { IProfessionalValueProps, ProfessionalValue } from '~/index';
+import {
+  ILocalizedTextInput,
+  IProfessionalValueProps,
+  ProfessionalValue,
+} from '~/index';
 
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
+
+const DEFAULT_CONTENT: ILocalizedTextInput = {
+  'en-US': Data.text.text(),
+};
 
 // eslint-disable-next-line max-len
 export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValueProps> {
@@ -12,7 +20,7 @@ export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValuePr
   static build(): ProfessionalValueBuilder {
     return new ProfessionalValueBuilder({
       icon: Data.text.icon(),
-      content: Data.text.text(),
+      content: DEFAULT_CONTENT,
     });
   }
 
@@ -34,7 +42,7 @@ export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValuePr
     return this;
   }
 
-  public withContent(content: string): ProfessionalValueBuilder {
+  public withContent(content: ILocalizedTextInput): ProfessionalValueBuilder {
     this._props.content = content;
 
     return this;

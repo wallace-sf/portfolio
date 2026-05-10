@@ -3,7 +3,9 @@ import {
   Either,
   Entity,
   IEntityProps,
+  ILocalizedTextInput,
   left,
+  LocalizedText,
   right,
   Text,
   ValidationError,
@@ -11,7 +13,7 @@ import {
 
 export interface IProfessionalValueProps extends IEntityProps {
   icon: string;
-  content: string;
+  content: ILocalizedTextInput;
 }
 
 export class ProfessionalValue extends Entity<
@@ -21,12 +23,12 @@ export class ProfessionalValue extends Entity<
   static readonly ERROR_CODE = 'INVALID_PROFESSIONAL_VALUE';
 
   public readonly icon: Text;
-  public readonly content: Text;
+  public readonly content: LocalizedText;
 
   private constructor(
     props: IProfessionalValueProps,
     icon: Text,
-    content: Text,
+    content: LocalizedText,
   ) {
     super(props);
     this.icon = icon;
@@ -38,11 +40,11 @@ export class ProfessionalValue extends Entity<
   ): Either<ValidationError, ProfessionalValue> {
     const result = collect([
       Text.create(props.icon, { min: 2, max: 50 }),
-      Text.create(props.content, { min: 1, max: 125000 }),
+      LocalizedText.create(props.content),
     ]);
     if (result.isLeft()) return left(result.value);
 
-    const [icon, content] = result.value;
+    const [icon, content] = result.value as [Text, LocalizedText];
     return right(new ProfessionalValue(props, icon, content));
   }
 }
