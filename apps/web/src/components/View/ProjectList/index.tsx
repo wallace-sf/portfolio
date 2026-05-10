@@ -12,6 +12,7 @@ export interface ProjectSummary {
   title: string;
   caption: string;
   coverImage: { url: string; alt: string };
+  theme?: string;
   skills: string[];
 }
 
@@ -32,9 +33,12 @@ export const ProjectList: FC<IProjectListProps> = ({
     return projects.map((project) => (
       <li key={project.id}>
         <ProjectCard
-          skills={project.skills}
-          caption={project.caption}
+          slug={project.slug}
           title={project.title}
+          caption={project.caption}
+          coverImage={project.coverImage}
+          theme={project.theme}
+          skills={project.skills}
           compact={compact}
           view={view}
         />
