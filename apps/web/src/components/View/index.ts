@@ -1,3 +1,4 @@
+export * from './Breadcrumb';
 export * from './ContactInfo';
 export * from './ErrorView';
 export * from './ExperienceCard';
