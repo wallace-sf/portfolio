@@ -1,6 +1,9 @@
-export default function AboutLoading() {
+import { getTranslations } from 'next-intl/server';
+
+export default async function AboutLoading() {
+  const t = await getTranslations('Common');
   return (
-    <div className="animate-pulse" aria-busy="true" aria-label="Loading">
+    <div className="animate-pulse" aria-busy="true" aria-label={t('loading')}>
       {/* Section title */}
       <div className="h-8 w-64 bg-gray-700 rounded mx-4 my-6 xl:mx-auto xl:max-w-237.5" />
 
