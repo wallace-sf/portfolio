@@ -71,6 +71,9 @@
   "About": {
     "values_title": "Mis valores profesionales"
   },
+  "ExperienceCard": {
+    "skills_label": "Habilidades"
+  },
   "Common": {
     "loading": "Cargando"
   },

@@ -1,16 +1,17 @@
-import {
-  EmploymentType,
-  IProfessionalValueProps,
-  IExperienceProps,
-  LocationType,
-} from '@repo/core/portfolio';
+import { getLocale, getTranslations } from 'next-intl/server';
+
 import { Divider } from '@repo/ui/View';
-import { getTranslations } from 'next-intl/server';
 
-import { ProfessionalValue, ExperienceCard } from '~components/View';
+import {
+  ExperienceCard,
+  IExperienceCardProps,
+  ProfessionalValue,
+} from '~components/View';
 import { applyDevSimulations } from '~/dev/simulate';
+import { ApiResponse } from '~/lib/api/envelope';
+import { getInternalBaseUrl } from '~/lib/api/internal';
 
-const PROFESSIONAL_VALUES: IProfessionalValueProps[] = [
+const PROFESSIONAL_VALUES = [
   {
     id: '1',
     icon: 'material-symbols:acute-rounded',
@@ -37,87 +38,30 @@ const PROFESSIONAL_VALUES: IProfessionalValueProps[] = [
   },
 ];
 
-const EXPERIENCES: IExperienceProps[] = [
-  {
-    id: '1',
-    company: { 'en-US': 'WESF IT Services', 'pt-BR': 'WESF Serviços de TI' },
-    employment_type: EmploymentType.FREELANCE,
-    location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
-    position: {
-      'en-US': 'Full-Stack Developer',
-      'pt-BR': 'Desenvolvedor Full-Stack',
-    },
-    description: {
-      'en-US': 'Full-stack solution development for clients.',
-      'pt-BR': 'Desenvolvimento de soluções full-stack para clientes.',
-    },
-    logo: {
-      url: 'https://placehold.co/48x48',
-      alt: { 'en-US': 'WESF logo', 'pt-BR': 'WESF logo' },
-    },
-    location_type: LocationType.REMOTE,
-    skills: [],
-    start_at: '2021-01-01T00:00:00.000Z',
-    end_at: '2022-01-01T00:00:00.000Z',
-  },
-  {
-    id: '2',
-    company: { 'en-US': 'Galaxies', 'pt-BR': 'Galaxies' },
-    employment_type: EmploymentType.PART_TIME,
-    location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
-    position: {
-      'en-US': 'Front-end Developer',
-      'pt-BR': 'Desenvolvedor Front-end',
-    },
-    description: {
-      'en-US': 'Interface development for SaaS platform.',
-      'pt-BR': 'Desenvolvimento de interfaces para plataforma SaaS.',
-    },
-    logo: {
-      url: 'https://placehold.co/48x48',
-      alt: { 'en-US': 'Galaxies logo', 'pt-BR': 'Galaxies logo' },
-    },
-    location_type: LocationType.REMOTE,
-    skills: [],
-    start_at: '2022-01-01T00:00:00.000Z',
-    end_at: '2023-01-01T00:00:00.000Z',
-  },
-  {
-    id: '3',
-    company: {
-      'en-US':
-        'FDTE - Foundation for the Technological Development of Engineering',
-      'pt-BR':
-        'FDTE - Fundação para o Desenvolvimento Técnológico da Engenharia',
-    },
-    employment_type: EmploymentType.FULL_TIME,
-    location: { 'en-US': 'São Paulo, Brazil', 'pt-BR': 'São Paulo, Brasil' },
-    position: {
-      'en-US': 'Front-end Developer',
-      'pt-BR': 'Desenvolvedor Front-end',
-    },
-    description: {
-      'en-US': 'Systems development for engineering.',
-      'pt-BR': 'Desenvolvimento de sistemas para engenharia.',
-    },
-    logo: {
-      url: 'https://placehold.co/48x48',
-      alt: { 'en-US': 'FDTE logo', 'pt-BR': 'FDTE logo' },
-    },
-    location_type: LocationType.HYBRID,
-    skills: [],
-    start_at: '2023-01-01T00:00:00.000Z',
-    end_at: '2024-01-01T00:00:00.000Z',
-  },
-];
-
 interface AboutPageProps {
   searchParams?: Promise<{ loading?: string; error?: string }>;
 }
 
 export default async function About({ searchParams }: AboutPageProps) {
   await applyDevSimulations(await searchParams);
-  const t = await getTranslations('About');
+
+  const [t, locale, baseUrl] = await Promise.all([
+    getTranslations('About'),
+    getLocale(),
+    getInternalBaseUrl(),
+  ]);
+
+  const experiencesRes = await fetch(
+    `${baseUrl}/api/v1/experiences?locale=${locale}`,
+    { cache: 'no-store' },
+  ).catch(() => null);
+
+  let experiences: IExperienceCardProps[] = [];
+  if (experiencesRes?.ok) {
+    const body: ApiResponse<IExperienceCardProps[]> =
+      await experiencesRes.json();
+    if (!body.error) experiences = body.data;
+  }
 
   return (
     <>
@@ -133,7 +77,7 @@ export default async function About({ searchParams }: AboutPageProps) {
       </ul>
       <Divider className="mx-4" />
       <ul className="flex flex-col mx-4 gap-y-3 xl:gap-y-0">
-        {EXPERIENCES.map((experience) => (
+        {experiences.map((experience) => (
           <li key={experience.id} className="[&:last-of-type>hr]:hidden">
             <ExperienceCard {...experience} />
             <Divider className="hidden xl:block" />
