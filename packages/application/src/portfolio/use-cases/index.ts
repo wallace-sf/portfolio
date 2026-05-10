@@ -1,5 +1,9 @@
 export { GetExperiences, type GetExperiencesInput } from './GetExperiences';
 export {
+  GetProfessionalValues,
+  type GetProfessionalValuesInput,
+} from './GetProfessionalValues';
+export {
   GetFeaturedProjects,
   type GetFeaturedProjectsInput,
 } from './GetFeaturedProjects';
