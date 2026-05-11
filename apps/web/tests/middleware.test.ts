@@ -20,7 +20,7 @@ describe('middleware', () => {
   });
 
   it('should redirect to locale login when accessing admin without auth cookie', async () => {
-    const { middleware } = await import('~/middleware');
+    const { default: middleware } = await import('~/proxy');
     const request = new NextRequest('http://localhost:3000/en-US/admin');
     const response = middleware(request);
 
@@ -29,7 +29,7 @@ describe('middleware', () => {
   });
 
   it('should redirect to correct locale when accessing pt-BR admin without cookie', async () => {
-    const { middleware } = await import('~/middleware');
+    const { default: middleware } = await import('~/proxy');
     const request = new NextRequest(
       'http://localhost:3000/pt-BR/admin/dashboard',
     );
@@ -40,7 +40,7 @@ describe('middleware', () => {
   });
 
   it('should allow access to admin when sb-access-token cookie is present', async () => {
-    const { middleware } = await import('~/middleware');
+    const { default: middleware } = await import('~/proxy');
     const request = new NextRequest('http://localhost:3000/en-US/admin', {
       headers: { cookie: 'sb-access-token=test-token' },
     });
@@ -50,7 +50,7 @@ describe('middleware', () => {
   });
 
   it('should not redirect for non-admin paths without cookie', async () => {
-    const { middleware } = await import('~/middleware');
+    const { default: middleware } = await import('~/proxy');
     const request = new NextRequest('http://localhost:3000/en-US');
     const response = middleware(request);
 
