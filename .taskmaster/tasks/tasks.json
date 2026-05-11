@@ -3703,7 +3703,7 @@
         "id": "16",
         "title": "[Identity] Fase 5 — Web: login, middleware, admin UI (REST; no IdP SDK)",
         "description": "GitHub #407. UI consumes only /api/v1 (auth, me); no @supabase/* in pages/middleware. Align with docs/11-IDENTITY.md.",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [
           "28"
         ],
@@ -3762,7 +3762,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-05-10T23:44:19.608Z"
+        "updatedAt": "2026-05-10T23:55:34.106Z"
       },
       {
         "id": "17",
@@ -4162,9 +4162,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-10T23:44:19.608Z",
+      "lastModified": "2026-05-10T23:55:34.106Z",
       "taskCount": 17,
-      "completedCount": 16,
+      "completedCount": 17,
       "tags": [
         "sprint-3"
       ]
