@@ -88,5 +88,12 @@
     "objectives_label": "Objectives",
     "role_label": "Role",
     "period_label": "Period"
+  },
+  "LoginForm": {
+    "title": "Sign in",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "submit": "Sign in",
+    "genericError": "Invalid credentials. Please try again."
   }
 }

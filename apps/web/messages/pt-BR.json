@@ -88,5 +88,12 @@
     "objectives_label": "Objetivos",
     "role_label": "Função",
     "period_label": "Período"
+  },
+  "LoginForm": {
+    "title": "Entrar",
+    "emailPlaceholder": "Endereço de e-mail",
+    "passwordPlaceholder": "Senha",
+    "submit": "Entrar",
+    "genericError": "Credenciais inválidas. Tente novamente."
   }
 }
