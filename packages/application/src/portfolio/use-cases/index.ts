@@ -16,3 +16,12 @@ export {
   GetProjectBySlug,
   type GetProjectBySlugInput,
 } from './GetProjectBySlug';
+export { SaveProject, type SaveProjectInput } from './SaveProject';
+export { PublishProject, type PublishProjectInput } from './PublishProject';
+export { ArchiveProject, type ArchiveProjectInput } from './ArchiveProject';
+export { UpdateProfile, type UpdateProfileInput } from './UpdateProfile';
+export { SaveExperience, type SaveExperienceInput } from './SaveExperience';
+export {
+  DeleteExperience,
+  type DeleteExperienceInput,
+} from './DeleteExperience';

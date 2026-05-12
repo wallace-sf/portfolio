@@ -61,7 +61,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   public readonly role: LocalizedText | undefined;
   public readonly period: DateRange;
   public readonly featured: boolean;
-  public readonly status: ProjectStatus;
+  public status: ProjectStatus;
   public readonly relatedProjects: Slug[];
 
   private constructor(
@@ -203,5 +203,35 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
         relatedSlugs,
       ),
     );
+  }
+
+  publish(): Either<ValidationError, void> {
+    const { error, isValid } = Validator.of(this.status)
+      .refine(
+        (s) => s !== ProjectStatus.PUBLISHED,
+        'Project is already published.',
+      )
+      .validate();
+    if (!isValid && error)
+      return left(
+        new ValidationError({ code: Project.ERROR_CODE, message: error }),
+      );
+    this.status = ProjectStatus.PUBLISHED;
+    return right(undefined);
+  }
+
+  archive(): Either<ValidationError, void> {
+    const { error, isValid } = Validator.of(this.status)
+      .refine(
+        (s) => s !== ProjectStatus.ARCHIVED,
+        'Project is already archived.',
+      )
+      .validate();
+    if (!isValid && error)
+      return left(
+        new ValidationError({ code: Project.ERROR_CODE, message: error }),
+      );
+    this.status = ProjectStatus.ARCHIVED;
+    return right(undefined);
   }
 }
