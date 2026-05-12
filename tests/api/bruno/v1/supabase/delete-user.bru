@@ -1,0 +1,17 @@
+meta {
+  name: Delete User
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{supabaseUrl}}/auth/v1/admin/users/{{supabaseUserId}}
+  body: none
+  auth: none
+}
+
+headers {
+  apikey: {{supabaseServiceRoleKey}}
+  Authorization: Bearer {{supabaseServiceRoleKey}}
+  accept: application/json
+}
