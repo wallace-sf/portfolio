@@ -4182,7 +4182,7 @@
         "dependencies": [
           "2"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -4235,7 +4235,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-04-02T03:21:49.111Z"
+        "updatedAt": "2026-05-12T05:14:23.894Z"
       },
       {
         "id": "2",
@@ -4330,7 +4330,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-12T04:56:59.235Z",
+      "lastModified": "2026-05-12T05:14:23.894Z",
       "taskCount": 8,
       "completedCount": 2,
       "tags": [

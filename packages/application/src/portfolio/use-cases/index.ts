@@ -25,3 +25,4 @@ export {
   DeleteExperience,
   type DeleteExperienceInput,
 } from './DeleteExperience';
+export { DeleteProject, type DeleteProjectInput } from './DeleteProject';
