@@ -2,8 +2,11 @@
   "ContactForm": {
     "title": "Contáctenos",
     "submit": "Enviar",
+    "namePlaceholder": "Su nombre",
+    "emailPlaceholder": "Su correo electrónico",
     "messagePlaceholder": "Su mensaje aquí...",
-    "subject": "¿Hablamos sobre un proyecto?"
+    "subject": "¿Hablamos sobre un proyecto?",
+    "success": "Tu cliente de correo ha sido abierto. Por favor, envía el mensaje rellenado."
   },
   "ContactInfo": {
     "email": "Correo electrónico",
@@ -14,10 +17,15 @@
     "copy": "Copiar al portapapeles"
   },
   "Home": {
-    "projects_title": "Proyectos"
+    "projects_title": "Proyectos",
+    "hero_title": "Wallace Ferreira",
+    "hero_caption": "Ingeniero de Software",
+    "hero_content": "Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla.",
+    "hero_image_alt": "Foto profesional 1 de Wallace Ferreira"
   },
   "ProjectCard": {
-    "view_project": "Ver proyecto"
+    "view_project": "Ver proyecto",
+    "image_alt": "Imagen del proyecto"
   },
   "SideNavigation": {
     "home": "Inicio",
@@ -25,10 +33,67 @@
     "about": "Sobre mí",
     "resume": "Currículum",
     "language": "Idioma",
-    "theme": "Tema"
+    "theme": "Tema",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "Theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "Language": {
+    "enUS": "ENG",
+    "ptBR": "PT-BR",
+    "es": "ESP"
+  },
+  "Error": {
+    "title": "Algo salió mal",
+    "description": "No pudimos cargar este contenido. Por favor, inténtelo de nuevo.",
+    "retry": "Intentar de nuevo"
+  },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "La página que estás buscando no existe o fue movida.",
+    "backToHome": "Volver al inicio"
   },
   "Validations": {
     "required": "Campo obligatorio.",
-    "min": "Mínimo de 3 caracteres."
+    "min": "Mínimo de 3 caracteres.",
+    "email": "Introduce un correo electrónico válido."
+  },
+  "Projects": {
+    "hero_title": "Portafolio",
+    "hero_caption": "Conoce algunos de mis proyectos",
+    "hero_content": "Una selección de proyectos en los que he trabajado — desde funcionalidades de producto hasta aplicaciones full-stack.",
+    "hero_image_alt": "Foto profesional 1 de Wallace Ferreira"
+  },
+  "About": {
+    "values_title": "Mis valores profesionales"
+  },
+  "ExperienceCard": {
+    "skills_label": "Habilidades"
+  },
+  "Common": {
+    "loading": "Cargando"
+  },
+  "Header": {
+    "logo_alt": "Logo"
+  },
+  "ProjectDetail": {
+    "breadcrumb_home": "Inicio",
+    "breadcrumb_projects": "Proyectos",
+    "related_title": "Otros proyectos",
+    "summary_label": "Resumen",
+    "objectives_label": "Objetivos",
+    "role_label": "Rol",
+    "period_label": "Período"
+  },
+  "LoginForm": {
+    "title": "Iniciar sesión",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "submit": "Iniciar sesión",
+    "genericError": "Credenciales inválidas. Inténtalo de nuevo."
   }
 }

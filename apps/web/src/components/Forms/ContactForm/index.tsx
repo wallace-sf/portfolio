@@ -1,68 +1,123 @@
 'use client';
 
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useState } from 'react';
 
-import { Button, TextArea } from '@repo/ui/Control';
-import { Formik, Form } from 'formik';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Text, TextArea } from '@repo/ui/Control';
 import { useTranslations } from 'next-intl';
-import { useIsClient } from 'usehooks-ts';
+import { useForm } from 'react-hook-form';
 
-import { IContactFormValues } from './types';
-import { INITIAL_VALUES, createValidationSchema } from './utils';
+import { contactSchema, ContactFormValues } from './contact-schema';
 
 export const ContactForm: FC = () => {
-  const tContactForm = useTranslations('ContactForm');
-  const tValidations = useTranslations('Validations');
-  const isClient = useIsClient();
+  const tForm = useTranslations('ContactForm');
+  const tV = useTranslations('Validations');
+  const [submitted, setSubmitted] = useState(false);
 
-  const onSubmit = useCallback(
-    (values: IContactFormValues) => {
-      if (isClient) {
-        const a = document.createElement('a');
-        const { message } = values;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, touchedFields },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+  });
 
-        a.href =
-          'mailto:' +
-          encodeURIComponent('wallaceedua@gmail.com') +
-          '?subject=' +
-          encodeURIComponent(tContactForm('subject')) +
-          '&body=' +
-          encodeURIComponent(message);
+  const onSubmit = (data: ContactFormValues) => {
+    const subject = encodeURIComponent(tForm('subject'));
+    const body = encodeURIComponent(
+      `${data.name} <${data.email}>\n\n${data.message}`,
+    );
+    window.location.href = `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    setSubmitted(true);
+  };
 
-        a.click();
-      }
-    },
-    [isClient, tContactForm],
-  );
-
-  const validationSchema = useMemo(() => {
-    const required = tValidations('required');
-    const min = tValidations('min');
-
-    return createValidationSchema({ message: { required, min } });
-  }, [tValidations]);
+  if (submitted) {
+    return (
+      <div className="w-full">
+        <h5 className="!text-white mb-6">{tForm('title')}</h5>
+        <p className="text-accent">{tForm('success')}</p>
+      </div>
+    );
+  }
 
   return (
-    <Formik
-      initialValues={INITIAL_VALUES}
-      onSubmit={onSubmit}
-      validationSchema={validationSchema}
-    >
-      <Form className="w-full">
-        <h5 className="!text-white mb-6">{tContactForm('title')}</h5>
-        <fieldset className="w-full mb-6">
-          <TextArea.WithFormik
-            id="message"
-            name="message"
-            maxLength={2000}
-            className="min-h-32"
-            placeholder={tContactForm('messagePlaceholder')}
-          />
-        </fieldset>
-        <Button.Base type="submit" className="w-full xl:max-w-50">
-          {tContactForm('submit')}
-        </Button.Base>
-      </Form>
-    </Formik>
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
+      <h5 className="!text-white mb-6">{tForm('title')}</h5>
+
+      <fieldset className="w-full mb-4">
+        <Text.Base
+          type="text"
+          id="name"
+          placeholder={tForm('namePlaceholder')}
+          error={!!errors.name}
+          touched={!!touchedFields.name}
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? 'name-error' : undefined}
+          {...register('name')}
+        />
+        {errors.name && (
+          <span
+            id="name-error"
+            role="alert"
+            className="text-error text-xs mt-1 block"
+          >
+            {tV(errors.name.message as Parameters<typeof tV>[0])}
+          </span>
+        )}
+      </fieldset>
+
+      <fieldset className="w-full mb-4">
+        <Text.Base
+          type="email"
+          id="email"
+          placeholder={tForm('emailPlaceholder')}
+          error={!!errors.email}
+          touched={!!touchedFields.email}
+          aria-invalid={!!errors.email}
+          aria-describedby={errors.email ? 'email-error' : undefined}
+          {...register('email')}
+        />
+        {errors.email && (
+          <span
+            id="email-error"
+            role="alert"
+            className="text-error text-xs mt-1 block"
+          >
+            {tV(errors.email.message as Parameters<typeof tV>[0])}
+          </span>
+        )}
+      </fieldset>
+
+      <fieldset className="w-full mb-6">
+        <TextArea.Base
+          id="message"
+          maxLength={2000}
+          className="min-h-32"
+          placeholder={tForm('messagePlaceholder')}
+          error={!!errors.message}
+          touched={!!touchedFields.message}
+          aria-invalid={!!errors.message}
+          aria-describedby={errors.message ? 'message-error' : undefined}
+          {...register('message')}
+        />
+        {errors.message && (
+          <span
+            id="message-error"
+            role="alert"
+            className="text-error text-xs mt-1 block"
+          >
+            {tV(errors.message.message as Parameters<typeof tV>[0])}
+          </span>
+        )}
+      </fieldset>
+
+      <Button.Base
+        type="submit"
+        className="w-full xl:max-w-50"
+        disabled={isSubmitting}
+      >
+        {tForm('submit')}
+      </Button.Base>
+    </form>
   );
 };

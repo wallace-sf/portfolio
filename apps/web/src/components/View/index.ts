@@ -1,4 +1,6 @@
+export * from './Breadcrumb';
 export * from './ContactInfo';
+export * from './ErrorView';
 export * from './ExperienceCard';
 export * from './Header';
 export * from './HeroBanner';
@@ -8,3 +10,5 @@ export * from './ProjectCard';
 export * from './ProjectList';
 export * from './SideNavigation';
 export * from './Skill';
+export * from './SkillAccordion';
+export * from './StatCard';

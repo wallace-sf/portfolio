@@ -2,32 +2,38 @@
 
 import { FC } from 'react';
 
-import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
+import { Link } from '~i18n/routing';
 import { useBreakpoint } from '~hooks';
 
 import { SkillGroup } from '../SkillGroup';
 
 export interface IProjectCardProps {
   view: 'grid' | 'row';
+  slug: string;
   title: string;
   caption: string;
-  compact?: boolean;
+  coverImage: { url: string; alt: string };
+  theme?: string;
   skills: string[];
+  compact?: boolean;
 }
 
 export const ProjectCard: FC<IProjectCardProps> = ({
   view,
+  slug,
   title,
   caption,
+  coverImage,
+  theme,
   compact = false,
   skills,
 }) => {
-  const t = useTranslations('Clipboard');
+  const t = useTranslations('ProjectCard');
   const isXL = useBreakpoint('xl');
 
   return (
@@ -58,9 +64,9 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           )}
         >
           <Image
-            src="https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg"
+            src={coverImage.url}
             fill
-            alt="Imagem do projeto"
+            alt={coverImage.alt}
             className="object-cover"
             sizes="100%"
             priority
@@ -70,6 +76,11 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           <h3 className="text-body-lg !font-bold !text-white line-clamp-1">
             {title}
           </h3>
+          {theme && (
+            <span className="text-body-xs !text-dark-700 uppercase tracking-wide">
+              {theme}
+            </span>
+          )}
           <p
             className={classNames('text-body-sm !text-dark-900', {
               'line-clamp-2': compact,
@@ -89,30 +100,15 @@ export const ProjectCard: FC<IProjectCardProps> = ({
             initializeWithMax={2}
             total={skills.length}
           />
-          <Button.Base className="flex flex-row justify-center gap-x-2">
-            Ver projeto
+          <Link
+            href={`/projects/${slug}`}
+            className="flex flex-row justify-center gap-x-2 items-center bg-primary text-body-sm !text-white !font-bold rounded-xl hover:bg-blue-dark transition-all duration-300 py-3 px-6"
+          >
+            {t('view_project')}
             <Icon icon="ic:round-arrow-forward" />
-          </Button.Base>
+          </Link>
         </footer>
       </section>
-      <Button.Clipboard
-        text="This is the text copied from project card."
-        tooltip={t('copy')}
-        className={classNames(
-          'absolute z-40 top-5 right-5 flex items-center justify-center w-8 h-8 !p-0 !rounded-lg !bg-dark/80 hover:!bg-dark-200/80 transition-all duration-300',
-          {
-            'xl:top-3 xl:right-3': view === 'row',
-          },
-        )}
-      >
-        {(copied) =>
-          copied ? (
-            <Icon icon="material-symbols:check" className="text-xl" />
-          ) : (
-            <Icon icon="material-symbols:share" className="text-xl" />
-          )
-        }
-      </Button.Clipboard>
     </article>
   );
 };

@@ -1,44 +1,63 @@
 import { SendContactMessage } from '@repo/application/contact';
+import { ValidationError, left } from '@repo/core/shared';
 import { getContainer } from '@repo/infra';
+import { Validator } from '@repo/utils/validator';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { errorResponse, successResponse } from '~/lib/api/envelope';
-import { mapDomainErrorToHttp } from '~/lib/api/error-mapper';
+import { errorResponse } from '~/lib/api/envelope';
+import { HttpErrorCodes } from '~/lib/api/error-codes';
+import { handleRequest } from '~/lib/api/handler';
+import { checkContactRateLimit } from '~/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json().catch(() => null);
-    if (!body || typeof body !== 'object') {
-      return NextResponse.json(
-        errorResponse('INVALID_INPUT', 'Invalid JSON body', 400),
-        {
-          status: 400,
+  const ip =
+    request.headers.get('x-forwarded-for') ??
+    request.headers.get('x-real-ip') ??
+    'unknown';
+
+  const { success, limit, remaining, reset } = await checkContactRateLimit(ip);
+
+  if (!success) {
+    return NextResponse.json(
+      errorResponse(
+        HttpErrorCodes.RATE_LIMIT_EXCEEDED,
+        'Too many requests. Please try again later.',
+        429,
+      ),
+      {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': limit.toString(),
+          'X-RateLimit-Remaining': remaining.toString(),
+          'X-RateLimit-Reset': new Date(reset).toISOString(),
+          'Retry-After': Math.ceil((reset - Date.now()) / 1000).toString(),
         },
+      },
+    );
+  }
+
+  return handleRequest(async () => {
+    const body = await request.json().catch(() => null);
+
+    const { isValid, error } = Validator.of(body)
+      .notNil('Invalid JSON body.')
+      .refine((v) => typeof v === 'object', 'Invalid JSON body.')
+      .validate();
+
+    if (!isValid && error) {
+      return left(
+        new ValidationError({
+          code: HttpErrorCodes.INVALID_INPUT,
+          message: error,
+        }),
       );
     }
 
     const { emailService } = getContainer();
-    const useCase = new SendContactMessage(emailService);
-    const result = await useCase.execute({
+    return new SendContactMessage(emailService).execute({
       name: body.name ?? '',
       email: body.email ?? '',
       message: body.message ?? '',
     });
-
-    if (result.isLeft()) {
-      const { status, code, message } = mapDomainErrorToHttp(result.value);
-      return NextResponse.json(errorResponse(code, message, status), {
-        status,
-      });
-    }
-
-    return NextResponse.json(successResponse(null), { status: 201 });
-  } catch {
-    return NextResponse.json(
-      errorResponse('INTERNAL_ERROR', 'Internal server error', 500),
-      {
-        status: 500,
-      },
-    );
-  }
+  }, 201);
 }

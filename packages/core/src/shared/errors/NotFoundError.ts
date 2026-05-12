@@ -1,12 +1,10 @@
 import { DomainError } from './DomainError';
 
-/**
- * Entity/resource not found error.
- * Default code: NOT_FOUND.
- */
 export class NotFoundError extends DomainError {
+  static readonly CODE = 'NOT_FOUND';
+
   constructor(details?: Record<string, unknown>) {
-    super('NOT_FOUND', {
+    super(NotFoundError.CODE, {
       message: 'Resource not found',
       details,
     });

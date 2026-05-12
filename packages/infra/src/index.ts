@@ -7,6 +7,8 @@ export { ProjectMapper } from './repositories/project/ProjectMapper';
 export { PrismaProjectRepository } from './repositories/project/PrismaProjectRepository';
 export { ExperienceMapper } from './repositories/experience/ExperienceMapper';
 export { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
+export { ProfessionalValueMapper } from './repositories/professional-value/ProfessionalValueMapper';
+export { PrismaProfessionalValueRepository } from './repositories/professional-value/PrismaProfessionalValueRepository';
 export { ProfileMapper } from './repositories/profile/ProfileMapper';
 export { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
 export { ResendEmailService } from './services/ResendEmailService';

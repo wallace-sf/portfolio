@@ -1,4 +1,9 @@
-import { ProfessionalValue, Text, ValidationError } from '~/index';
+import {
+  LocalizedText,
+  ProfessionalValue,
+  Text,
+  ValidationError,
+} from '~/index';
 
 import { ProfessionalValueBuilder } from '../helpers';
 
@@ -15,7 +20,9 @@ describe('ProfessionalValue', () => {
 
     it('should create professional value with all fields as VOs', () => {
       const icon = 'arrow-right';
-      const content = 'Lorem ipsum odor amet, consectetuer adipiscing elit.';
+      const content = {
+        'en-US': 'Lorem ipsum odor amet, consectetuer adipiscing elit.',
+      };
 
       const result = ProfessionalValue.create(
         ProfessionalValueBuilder.build()
@@ -27,7 +34,8 @@ describe('ProfessionalValue', () => {
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
       expect(result.value.icon.value).toBe(icon);
-      expect(result.value.content.value).toBe(content);
+      expect(result.value.content).toBeInstanceOf(LocalizedText);
+      expect(result.value.content.get('en-US')).toBe(content['en-US']);
     });
   });
 
@@ -47,7 +55,9 @@ describe('ProfessionalValue', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        LocalizedText.ERROR_CODE,
+      );
     });
   });
 });

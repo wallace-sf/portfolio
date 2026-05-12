@@ -1,131 +1,94 @@
-import { IProjectProps, ProjectStatus } from '@repo/core/portfolio';
 import { Divider } from '@repo/ui/View';
-import { useTranslations } from 'next-intl';
+import { getLocale, getTranslations } from 'next-intl/server';
 
+import { applyDevSimulations } from '~/dev/simulate';
+import { getInternalBaseUrl } from '~/lib/api/internal';
+import { ApiResponse } from '~/lib/api/envelope';
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
-import { ContactForm, HeroBanner, ProjectList, ContactInfo } from '~components';
+import {
+  ContactForm,
+  HeroBanner,
+  ProjectList,
+  ContactInfo,
+  StatCard,
+} from '~components';
 
-const PROJECTS: IProjectProps[] = [
-  {
-    id: '1',
-    slug: 'fieldlink-enterprise',
-    coverImage: {
-      url: 'https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg',
-      alt: {
-        'en-US': 'Fieldlink Enterprise project image',
-        'pt-BR': 'Imagem do projeto Fieldlink Enterprise',
-      },
-    },
-    title: { 'en-US': 'Fieldlink Enterprise', 'pt-BR': 'Fieldlink Enterprise' },
-    caption: {
-      'en-US': 'Placeholder caption for Fieldlink Enterprise project.',
-      'pt-BR':
-        'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    },
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [
-      'a0000000-0000-4000-8000-000000000001',
-      'a0000000-0000-4000-8000-000000000002',
-      'a0000000-0000-4000-8000-000000000003',
-      'a0000000-0000-4000-8000-000000000004',
-    ],
-    period: { start: '2022-01-01', end: '2023-12-31' },
-    featured: true,
-    status: ProjectStatus.PUBLISHED,
-  },
-  {
-    id: '2',
-    slug: 'fieldlink-form-builder',
-    coverImage: {
-      url: 'https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg',
-      alt: {
-        'en-US': 'Fieldlink Form Builder project image',
-        'pt-BR': 'Imagem do projeto Fieldlink Form Builder',
-      },
-    },
-    title: {
-      'en-US': 'Fieldlink Form Builder',
-      'pt-BR': 'Fieldlink Form Builder',
-    },
-    caption: {
-      'en-US': 'Placeholder caption for Fieldlink Form Builder project.',
-      'pt-BR':
-        'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    },
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-    period: { start: '2023-01-01' },
-    featured: false,
-    status: ProjectStatus.PUBLISHED,
-  },
-  {
-    id: '3',
-    slug: 'fieldlink-rotas',
-    coverImage: {
-      url: 'https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg',
-      alt: {
-        'en-US': 'Fieldlink Rotas project image',
-        'pt-BR': 'Imagem do projeto Fieldlink Rotas',
-      },
-    },
-    title: { 'en-US': 'Fieldlink Rotas', 'pt-BR': 'Fieldlink Rotas' },
-    caption: {
-      'en-US': 'Placeholder caption for Fieldlink Rotas project.',
-      'pt-BR':
-        'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    },
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [],
-    period: { start: '2021-06-01', end: '2022-03-31' },
-    featured: false,
-    status: ProjectStatus.ARCHIVED,
-  },
-  {
-    id: '4',
-    slug: 'portfolio-platform',
-    coverImage: {
-      url: 'https://cdn.pixabay.com/photo/2024/10/16/06/03/ai-generated-9123876_1280.jpg',
-      alt: {
-        'en-US': 'Portfolio Platform project image',
-        'pt-BR': 'Imagem do projeto Portfolio Platform',
-      },
-    },
-    title: { 'en-US': 'Portfolio Platform', 'pt-BR': 'Portfolio Platform' },
-    caption: {
-      'en-US': 'Placeholder caption for Portfolio Platform project.',
-      'pt-BR':
-        'Ministro determinou que a Caixa regularize o pagamento à conta certa antes de a PGR analisar a volta da rede social ao ar no Brasil.',
-    },
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    skills: [
-      'b0000000-0000-4000-8000-000000000001',
-      'b0000000-0000-4000-8000-000000000002',
-      'b0000000-0000-4000-8000-000000000003',
-      'b0000000-0000-4000-8000-000000000004',
-    ],
-    period: { start: '2024-01-01' },
-    featured: true,
-    status: ProjectStatus.DRAFT,
-  },
-];
+import { ProjectSummary } from '~components/View/ProjectList';
 
-export default function Home() {
-  const t = useTranslations('Home');
+interface ProfileStat {
+  label: string;
+  value: string;
+  icon: string;
+}
+
+interface ProfileHero {
+  name: string;
+  headline: string;
+  bio: string;
+  photo: { url: string; alt: string };
+  stats: ProfileStat[];
+}
+
+interface HomePageProps {
+  searchParams?: Promise<{ loading?: string; error?: string }>;
+}
+
+export default async function Home({ searchParams }: HomePageProps) {
+  await applyDevSimulations(await searchParams);
+
+  const [t, locale, baseUrl] = await Promise.all([
+    getTranslations('Home'),
+    getLocale(),
+    getInternalBaseUrl(),
+  ]);
+
+  const [projectsRes, profileRes] = await Promise.all([
+    fetch(`${baseUrl}/api/v1/projects/featured?locale=${locale}`, {
+      cache: 'no-store',
+    }).catch(() => null),
+    fetch(`${baseUrl}/api/v1/profile?locale=${locale}`, {
+      cache: 'no-store',
+    }).catch(() => null),
+  ]);
+
+  let projects: ProjectSummary[] = [];
+  if (projectsRes?.ok) {
+    const body: ApiResponse<ProjectSummary[]> = await projectsRes.json();
+    if (!body.error) projects = body.data;
+  }
+
+  let profile: ProfileHero | null = null;
+  if (profileRes?.ok) {
+    const body: ApiResponse<ProfileHero> = await profileRes.json();
+    if (!body.error) profile = body.data;
+  }
 
   return (
     <>
       <HeroBanner
-        src={HeroLandingPage}
-        title="Wallace Ferreira"
-        caption="Software Engineer"
-        content="Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla."
-        alt="Professional Picture 1 of Wallace Ferreira"
+        src={profile?.photo.url ?? HeroLandingPage}
+        title={profile?.name ?? t('hero_title')}
+        caption={profile?.headline ?? t('hero_caption')}
+        content={profile?.bio ?? t('hero_content')}
+        alt={profile?.photo.alt ?? t('hero_image_alt')}
         imageClassName="object-contain 2xl:object-cover"
       />
+      {profile?.stats && profile.stats.length > 0 && (
+        <section className="mx-4 my-6 grid grid-cols-2 gap-3 xl:mx-auto xl:my-8 xl:w-full xl:max-w-237.5 xl:grid-cols-4">
+          {profile.stats.map((stat) => (
+            <StatCard
+              key={stat.label}
+              label={stat.label}
+              value={stat.value}
+              icon={stat.icon}
+            />
+          ))}
+        </section>
+      )}
       <h4 className="text-white mx-4 my-6 !text-xl xl:block xl:mx-auto xl:my-8 xl:w-full xl:!text-[32px] xl:max-w-237.5">
         {t('projects_title')}
       </h4>
-      <ProjectList projects={PROJECTS} view="grid" className="pb-8 xl:pb-20" />
+      <ProjectList projects={projects} view="grid" className="pb-8 xl:pb-20" />
       <section className="flex flex-col gap-x-6 xl:flex-row mx-4 xl:mx-auto xl:w-full xl:max-w-237.5">
         <ContactForm />
         <Divider className="xl:hidden" />

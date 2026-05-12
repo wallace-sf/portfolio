@@ -3,6 +3,7 @@ import { IAuthenticationGateway } from '@repo/application/identity';
 import { IUserRepository } from '@repo/core/identity';
 import {
   IExperienceRepository,
+  IProfessionalValueRepository,
   IProfileRepository,
   IProjectRepository,
 } from '@repo/core/portfolio';
@@ -14,6 +15,7 @@ import { SupabaseAuthenticationGateway } from './identity/SupabaseAuthentication
 import { prisma } from './prisma/client';
 import { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
 import { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
+import { PrismaProfessionalValueRepository } from './repositories/professional-value/PrismaProfessionalValueRepository';
 import { PrismaProjectRepository } from './repositories/project/PrismaProjectRepository';
 import { PrismaUserRepository } from './repositories/user/PrismaUserRepository';
 import { ResendEmailService } from './services/ResendEmailService';
@@ -21,6 +23,7 @@ import { ResendEmailService } from './services/ResendEmailService';
 export type Container = {
   projectRepository: IProjectRepository;
   experienceRepository: IExperienceRepository;
+  professionalValueRepository: IProfessionalValueRepository;
   profileRepository: IProfileRepository;
   emailService: IEmailService;
   userRepository: IUserRepository;
@@ -35,6 +38,7 @@ export function makeContainer(): Container {
   return {
     projectRepository: new PrismaProjectRepository(prisma),
     experienceRepository: new PrismaExperienceRepository(prisma),
+    professionalValueRepository: new PrismaProfessionalValueRepository(prisma),
     profileRepository: new PrismaProfileRepository(prisma),
     emailService: new ResendEmailService(resend, {
       recipientEmail: env.CONTACT_EMAIL_TO,

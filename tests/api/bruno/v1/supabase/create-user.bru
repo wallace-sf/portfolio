@@ -1,0 +1,26 @@
+meta {
+  name: Create User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{supabaseUrl}}/auth/v1/admin/users
+  body: json
+  auth: none
+}
+
+headers {
+  apikey: {{supabaseServiceRoleKey}}
+  Authorization: Bearer {{supabaseServiceRoleKey}}
+  content-type: application/json
+  accept: application/json
+}
+
+body:json {
+  {
+    "email": "{{authEmail}}",
+    "password": "{{authPassword}}",
+    "email_confirm": true
+  }
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Update User (password)
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{supabaseUrl}}/auth/v1/admin/users/{{supabaseUserId}}
+  body: json
+  auth: none
+}
+
+headers {
+  apikey: {{supabaseServiceRoleKey}}
+  Authorization: Bearer {{supabaseServiceRoleKey}}
+  content-type: application/json
+  accept: application/json
+}
+
+body:json {
+  {
+    "password": "{{authPassword}}"
+  }
+}

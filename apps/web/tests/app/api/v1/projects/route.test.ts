@@ -57,7 +57,9 @@ describe('GET /api/v1/projects', () => {
 describe('GET /api/v1/projects/[slug]', () => {
   it('should return 400 when slug is invalid', async () => {
     const request = makeRequest('http://localhost/api/v1/projects/ab');
-    const response = await GETBySlug(request, { params: { slug: 'ab' } });
+    const response = await GETBySlug(request, {
+      params: Promise.resolve({ slug: 'ab' }),
+    });
     const body = await response.json();
 
     expect(response.status).toBe(400);
@@ -70,7 +72,7 @@ describe('GET /api/v1/projects/[slug]', () => {
 
     const request = makeRequest('http://localhost/api/v1/projects/my-project');
     const response = await GETBySlug(request, {
-      params: { slug: 'my-project' },
+      params: Promise.resolve({ slug: 'my-project' }),
     });
     const body = await response.json();
 
