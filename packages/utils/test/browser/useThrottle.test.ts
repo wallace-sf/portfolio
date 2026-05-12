@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 
-import { useThrottle } from '../../src';
+import { useThrottle } from '../../src/hooks';
 
 describe('useThrottle', () => {
   it('should throttle the function calls', () => {

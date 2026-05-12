@@ -2,7 +2,7 @@
 
 import { FC, useCallback, useId, type ReactNode } from 'react';
 
-import { useThrottle } from '@repo/utils';
+import { useThrottle } from '@repo/utils/hooks';
 import { Tooltip } from 'react-tooltip';
 import { useBoolean, useCopyToClipboard } from 'usehooks-ts';
 

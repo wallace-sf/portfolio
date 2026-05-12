@@ -8,6 +8,7 @@
   "main": "src/index.ts",
   "exports": {
     ".": { "types": "./dist/types/index.d.ts", "default": "./src/index.ts" },
+    "./hooks": { "types": "./dist/types/hooks/index.d.ts", "default": "./src/hooks/index.ts" },
     "./validator": { "types": "./dist/types/validator/index.d.ts", "default": "./src/validator/index.ts" },
     "./env": { "types": "./dist/types/env/index.d.ts", "default": "./src/env/index.ts" }
   },
