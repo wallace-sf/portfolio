@@ -4182,7 +4182,7 @@
         "dependencies": [
           "2"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -4235,7 +4235,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-05-12T05:14:23.894Z"
+        "updatedAt": "2026-05-12T05:34:25.016Z"
       },
       {
         "id": "2",
@@ -4330,9 +4330,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-12T05:14:23.894Z",
+      "lastModified": "2026-05-12T05:34:25.016Z",
       "taskCount": 8,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "sprint-4"
       ]
