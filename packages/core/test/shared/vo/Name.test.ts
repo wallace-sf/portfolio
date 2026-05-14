@@ -56,6 +56,14 @@ describe('Name', () => {
   });
 
   describe('when compared', () => {
+    it('should return false when compared with null', () => {
+      const result = Name.create('John');
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.equals(null as any)).toBe(false);
+    });
+
     it('should be equal when two names have the same value', () => {
       const r1 = Name.create('John');
       const r2 = Name.create('John');

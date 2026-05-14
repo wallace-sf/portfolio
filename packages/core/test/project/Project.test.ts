@@ -135,6 +135,28 @@ describe('Project', () => {
       expect(result.value.skills).toHaveLength(0);
     });
 
+    it('should treat undefined skills as an empty list', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withoutSkills().toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.skills).toHaveLength(0);
+    });
+
+    it('should treat undefined relatedProjects as an empty list', () => {
+      const props = ProjectBuilder.build().toProps();
+      const result = Project.create({
+        ...props,
+        relatedProjects: undefined,
+      });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.relatedProjects).toHaveLength(0);
+    });
+
     it('should have undefined optional fields when not provided', () => {
       const result = Project.create(ProjectBuilder.build().toProps());
 
@@ -250,6 +272,74 @@ describe('Project', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
+    });
+  });
+
+  describe('publish()', () => {
+    it('should return Right and set status to PUBLISHED when project is in DRAFT', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withStatus(ProjectStatus.DRAFT).toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      const project = result.value;
+
+      const publishResult = project.publish();
+
+      expect(publishResult.isRight()).toBe(true);
+      expect(project.status).toBe(ProjectStatus.PUBLISHED);
+    });
+
+    it('should return Left when project is already PUBLISHED', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withStatus(ProjectStatus.PUBLISHED).toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      const project = result.value;
+
+      const publishResult = project.publish();
+
+      expect(publishResult.isLeft()).toBe(true);
+      expect((publishResult.value as ValidationError).code).toBe(
+        Project.ERROR_CODE,
+      );
+    });
+  });
+
+  describe('archive()', () => {
+    it('should return Right and set status to ARCHIVED when project is in DRAFT', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withStatus(ProjectStatus.DRAFT).toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      const project = result.value;
+
+      const archiveResult = project.archive();
+
+      expect(archiveResult.isRight()).toBe(true);
+      expect(project.status).toBe(ProjectStatus.ARCHIVED);
+    });
+
+    it('should return Left when project is already ARCHIVED', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withStatus(ProjectStatus.ARCHIVED).toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      const project = result.value;
+
+      const archiveResult = project.archive();
+
+      expect(archiveResult.isLeft()).toBe(true);
+      expect((archiveResult.value as ValidationError).code).toBe(
+        Project.ERROR_CODE,
+      );
     });
   });
 });

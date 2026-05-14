@@ -34,6 +34,6 @@ export class Text extends ValueObject<string, ITextConfig> {
       return left(
         new ValidationError({ code: Text.ERROR_CODE, message: error }),
       );
-    return right(new Text(value ?? '', config));
+    return right(new Text(value!, config));
   }
 }
