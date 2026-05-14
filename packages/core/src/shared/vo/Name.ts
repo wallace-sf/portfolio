@@ -26,7 +26,7 @@ export class Name extends ValueObject<string> {
         new ValidationError({ code: Name.ERROR_CODE, message: error }),
       );
 
-    return right(new Name(value ?? ''));
+    return right(new Name(value!));
   }
 
   public get normalized(): string {

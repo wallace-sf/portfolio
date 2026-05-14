@@ -120,6 +120,16 @@ describe('LocalizedText', () => {
     });
   });
 
+  describe('get(locale) with unknown locale', () => {
+    it('should fall back to en-US for a locale not in the enum', () => {
+      const result = LocalizedText.create({ 'pt-BR': 'Olá', 'en-US': 'Hello' });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.get('fr' as any)).toBe('Hello');
+    });
+  });
+
   describe('equals (deep comparison)', () => {
     it('should be equal when two LocalizedText instances have the same content', () => {
       const r1 = LocalizedText.create({ 'pt-BR': 'Olá', 'en-US': 'Hello' });
