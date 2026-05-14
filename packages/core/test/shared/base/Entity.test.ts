@@ -49,6 +49,30 @@ describe('Entity', () => {
     expect(e.deleted_at).toBeNull();
   });
 
+  it('should set deleted_at when a valid timestamp is provided', () => {
+    const timestamp = '2024-06-01T12:00:00.000Z';
+    const e = MyClass.new({ name: 'John', age: 20, deleted_at: timestamp });
+
+    expect(e.deleted_at).toBeInstanceOf(DateTime);
+    expect(e.deleted_at?.value).toBe(timestamp);
+  });
+
+  it('should throw when id is not a valid UUID', () => {
+    expect(() => MyClass.new({ id: 'not-a-uuid' })).toThrow();
+  });
+
+  it('should throw when created_at is not a valid ISO date', () => {
+    expect(() => MyClass.new({ created_at: 'not-a-date' })).toThrow();
+  });
+
+  it('should throw when updated_at is not a valid ISO date', () => {
+    expect(() => MyClass.new({ updated_at: 'not-a-date' })).toThrow();
+  });
+
+  it('should throw when deleted_at is not a valid ISO date', () => {
+    expect(() => MyClass.new({ deleted_at: 'not-a-date' })).toThrow();
+  });
+
   it('should freeze props to prevent external mutation', () => {
     const e = MyClass.new({ name: 'John', age: 20 });
 

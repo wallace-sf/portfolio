@@ -24,7 +24,7 @@ function trimOrUndefined(s: string | undefined): string | undefined {
 }
 
 function normalizeInput(input: ILocalizedTextInput): LocalizedTextValue {
-  const enUS = input['en-US']?.trim() ?? '';
+  const enUS = input['en-US'].trim();
   const ptBR = trimOrUndefined(input['pt-BR']);
   const es = trimOrUndefined(input.es);
 

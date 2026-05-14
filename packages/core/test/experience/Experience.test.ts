@@ -101,6 +101,16 @@ describe('Experience', () => {
       expect(result.value.skills).toHaveLength(0);
     });
 
+    it('should treat undefined skills as an empty list', () => {
+      const result = Experience.create(
+        ExperienceBuilder.build().withoutSkills().toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.skills).toHaveLength(0);
+    });
+
     it('should return Right when start_at equals end_at', () => {
       const date = '2022-01-01T00:00:00.000Z';
 
