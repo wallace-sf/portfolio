@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { DomainError } from '@repo/core/shared';
 
 import {
@@ -15,14 +16,12 @@ import { AuthCookieApi } from '@repo/application/identity';
 
 const SUPABASE_TEST_URL = process.env['SUPABASE_TEST_URL'];
 const SUPABASE_TEST_ANON_KEY = process.env['SUPABASE_TEST_ANON_KEY'];
-const SUPABASE_TEST_EMAIL = process.env['SUPABASE_TEST_EMAIL'];
-const SUPABASE_TEST_PASSWORD = process.env['SUPABASE_TEST_PASSWORD'];
+const SUPABASE_TEST_SERVICE_ROLE_KEY = process.env['SUPABASE_TEST_SERVICE_ROLE_KEY'];
 
 const missingEnv =
   !SUPABASE_TEST_URL ||
   !SUPABASE_TEST_ANON_KEY ||
-  !SUPABASE_TEST_EMAIL ||
-  !SUPABASE_TEST_PASSWORD;
+  !SUPABASE_TEST_SERVICE_ROLE_KEY;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -33,6 +32,12 @@ function makeGateway() {
     SUPABASE_TEST_URL!,
     SUPABASE_TEST_ANON_KEY!,
   );
+}
+
+function makeAdminClient(): SupabaseClient {
+  return createClient(SUPABASE_TEST_URL!, SUPABASE_TEST_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
 
 function makeCookieApi(initial: Record<string, string> = {}): AuthCookieApi & {
@@ -58,17 +63,41 @@ function makeCookieApi(initial: Record<string, string> = {}): AuthCookieApi & {
 describe.skipIf(missingEnv)(
   'SupabaseAuthenticationGateway — integration (real Supabase)',
   () => {
+    const TEST_EMAIL = `integration-test-${Date.now()}@example.com`;
+    const TEST_PASSWORD = `Test@${Date.now()}!`;
+    let testUserId: string;
+
+    beforeAll(async () => {
+      const admin = makeAdminClient();
+      const { data, error } = await admin.auth.admin.createUser({
+        email: TEST_EMAIL,
+        password: TEST_PASSWORD,
+        email_confirm: true,
+      });
+
+      if (error || !data.user) {
+        throw new Error(`Failed to create test user: ${error?.message}`);
+      }
+
+      testUserId = data.user.id;
+    });
+
+    afterAll(async () => {
+      if (testUserId) {
+        const admin = makeAdminClient();
+        await admin.auth.admin.deleteUser(testUserId);
+      }
+    });
+
     // -----------------------------------------------------------------------
     // signInWithPassword
     // -----------------------------------------------------------------------
 
     describe('signInWithPassword', () => {
       it('should return Right(AuthSession) with valid credentials', async () => {
-        const gateway = makeGateway();
-
-        const result = await gateway.signInWithPassword({
-          email: SUPABASE_TEST_EMAIL!,
-          password: SUPABASE_TEST_PASSWORD!,
+        const result = await makeGateway().signInWithPassword({
+          email: TEST_EMAIL,
+          password: TEST_PASSWORD,
         });
 
         expect(result.isRight()).toBe(true);
@@ -86,10 +115,8 @@ describe.skipIf(missingEnv)(
       });
 
       it('should return Left(INVALID_CREDENTIALS) with wrong password', async () => {
-        const gateway = makeGateway();
-
-        const result = await gateway.signInWithPassword({
-          email: SUPABASE_TEST_EMAIL!,
+        const result = await makeGateway().signInWithPassword({
+          email: TEST_EMAIL,
           password: 'definitely-wrong-password-xyz',
         });
 
@@ -98,9 +125,7 @@ describe.skipIf(missingEnv)(
       });
 
       it('should return Left(INVALID_CREDENTIALS) with non-existent email', async () => {
-        const gateway = makeGateway();
-
-        const result = await gateway.signInWithPassword({
+        const result = await makeGateway().signInWithPassword({
           email: 'nonexistent-user-xyz@example.invalid',
           password: 'any-password',
         });
@@ -116,11 +141,9 @@ describe.skipIf(missingEnv)(
 
     describe('signOut', () => {
       it('should return Right(void) and remove cookies when tokens are present', async () => {
-        const gateway = makeGateway();
-
-        const signInResult = await gateway.signInWithPassword({
-          email: SUPABASE_TEST_EMAIL!,
-          password: SUPABASE_TEST_PASSWORD!,
+        const signInResult = await makeGateway().signInWithPassword({
+          email: TEST_EMAIL,
+          password: TEST_PASSWORD,
         });
         expect(signInResult.isRight()).toBe(true);
 
@@ -128,13 +151,12 @@ describe.skipIf(missingEnv)(
           accessToken: string;
           refreshToken: string;
         };
-
         const cookies = makeCookieApi({
           [SUPABASE_ACCESS_TOKEN_COOKIE]: accessToken,
           [SUPABASE_REFRESH_TOKEN_COOKIE]: refreshToken,
         });
 
-        const result = await gateway.signOut(cookies);
+        const result = await makeGateway().signOut(cookies);
 
         expect(result.isRight()).toBe(true);
         expect(cookies.store[SUPABASE_ACCESS_TOKEN_COOKIE]).toBeUndefined();
@@ -142,9 +164,7 @@ describe.skipIf(missingEnv)(
       });
 
       it('should return Right(void) even when cookies are absent (no-op)', async () => {
-        const gateway = makeGateway();
-
-        const result = await gateway.signOut(makeCookieApi());
+        const result = await makeGateway().signOut(makeCookieApi());
 
         expect(result.isRight()).toBe(true);
       });
@@ -156,11 +176,9 @@ describe.skipIf(missingEnv)(
 
     describe('refreshSession', () => {
       it('should return Right(AuthSession) with new tokens when refresh token is valid', async () => {
-        const gateway = makeGateway();
-
-        const signInResult = await gateway.signInWithPassword({
-          email: SUPABASE_TEST_EMAIL!,
-          password: SUPABASE_TEST_PASSWORD!,
+        const signInResult = await makeGateway().signInWithPassword({
+          email: TEST_EMAIL,
+          password: TEST_PASSWORD,
         });
         expect(signInResult.isRight()).toBe(true);
 
@@ -169,7 +187,7 @@ describe.skipIf(missingEnv)(
           [SUPABASE_REFRESH_TOKEN_COOKIE]: refreshToken,
         });
 
-        const result = await gateway.refreshSession(cookies);
+        const result = await makeGateway().refreshSession(cookies);
 
         expect(result.isRight()).toBe(true);
         const newSession = result.value as {
@@ -181,21 +199,18 @@ describe.skipIf(missingEnv)(
       });
 
       it('should return Left(NO_REFRESH_TOKEN) when cookie is absent', async () => {
-        const gateway = makeGateway();
-
-        const result = await gateway.refreshSession(makeCookieApi());
+        const result = await makeGateway().refreshSession(makeCookieApi());
 
         expect(result.isLeft()).toBe(true);
         expect((result.value as DomainError).code).toBe('NO_REFRESH_TOKEN');
       });
 
       it('should return Left(INVALID_REFRESH_TOKEN) when token is bogus', async () => {
-        const gateway = makeGateway();
         const cookies = makeCookieApi({
           [SUPABASE_REFRESH_TOKEN_COOKIE]: 'totally-invalid-refresh-token',
         });
 
-        const result = await gateway.refreshSession(cookies);
+        const result = await makeGateway().refreshSession(cookies);
 
         expect(result.isLeft()).toBe(true);
         expect((result.value as DomainError).code).toBe('INVALID_REFRESH_TOKEN');
@@ -208,11 +223,9 @@ describe.skipIf(missingEnv)(
 
     describe('getPrincipalFromCookies', () => {
       it('should return Right(AuthPrincipal) with a valid access token', async () => {
-        const gateway = makeGateway();
-
-        const signInResult = await gateway.signInWithPassword({
-          email: SUPABASE_TEST_EMAIL!,
-          password: SUPABASE_TEST_PASSWORD!,
+        const signInResult = await makeGateway().signInWithPassword({
+          email: TEST_EMAIL,
+          password: TEST_PASSWORD,
         });
         expect(signInResult.isRight()).toBe(true);
 
@@ -221,7 +234,7 @@ describe.skipIf(missingEnv)(
           [SUPABASE_ACCESS_TOKEN_COOKIE]: accessToken,
         });
 
-        const result = await gateway.getPrincipalFromCookies(cookies);
+        const result = await makeGateway().getPrincipalFromCookies(cookies);
 
         expect(result.isRight()).toBe(true);
         const principal = result.value as {
@@ -229,28 +242,24 @@ describe.skipIf(missingEnv)(
           email: string;
           role: string;
         };
-        expect(typeof principal.id).toBe('string');
-        expect(principal.id.length).toBeGreaterThan(0);
-        expect(principal.email).toBe(SUPABASE_TEST_EMAIL);
+        expect(principal.id).toBe(testUserId);
+        expect(principal.email).toBe(TEST_EMAIL);
         expect(typeof principal.role).toBe('string');
       });
 
       it('should return Left(NO_ACCESS_TOKEN) when cookie is absent', async () => {
-        const gateway = makeGateway();
-
-        const result = await gateway.getPrincipalFromCookies(makeCookieApi());
+        const result = await makeGateway().getPrincipalFromCookies(makeCookieApi());
 
         expect(result.isLeft()).toBe(true);
         expect((result.value as DomainError).code).toBe('NO_ACCESS_TOKEN');
       });
 
       it('should return Left(INVALID_ACCESS_TOKEN) when token is bogus', async () => {
-        const gateway = makeGateway();
         const cookies = makeCookieApi({
           [SUPABASE_ACCESS_TOKEN_COOKIE]: 'not-a-real-jwt',
         });
 
-        const result = await gateway.getPrincipalFromCookies(cookies);
+        const result = await makeGateway().getPrincipalFromCookies(cookies);
 
         expect(result.isLeft()).toBe(true);
         expect((result.value as DomainError).code).toBe('INVALID_ACCESS_TOKEN');
