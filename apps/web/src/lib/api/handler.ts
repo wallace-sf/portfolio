@@ -16,6 +16,9 @@ export async function handleRequest<T>(
         status,
       });
     }
+    if (successStatus === 204) {
+      return new NextResponse(null, { status: 204 });
+    }
     return NextResponse.json(successResponse(result.value), {
       status: successStatus,
     });
