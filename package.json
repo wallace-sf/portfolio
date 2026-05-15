@@ -15,7 +15,8 @@
     "types:ci": "pnpm -r --filter=!storybooks types",
     "test:core": "pnpm -C packages/core test",
     "test:utils": "pnpm -C packages/utils test",
-    "test:web": "pnpm -C apps/web test"
+    "test:web": "pnpm -C apps/web test",
+    "seed": "pnpm --filter @repo/infra db:seed"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
