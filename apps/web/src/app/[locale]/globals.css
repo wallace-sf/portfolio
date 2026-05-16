@@ -1,8 +1,32 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* @tailwind directives live in packages/tailwind-config/tailwind.css, which
+   layout.tsx imports first. Declaring them here again would cause duplication. */
 
 :root {
   --header-height-desktop: 104px;
   --header-height-mobile: 68px;
+
+  /* Semantic color tokens — RGB channels so Tailwind opacity modifiers work (e.g. bg-surface/80) */
+  --tw-surface: 50 50 50; /* dark-300 #323232 */
+  --tw-surface-sunken: 40 40 40; /* dark-200 #282828 */
+  --tw-surface-base: 28 28 28; /* dark #1C1C1C */
+  --tw-content-primary: 255 255 255;
+  --tw-content-secondary: 186 186 186; /* dark-900 #BABABA */
+  --tw-content-muted: 141 141 141; /* dark-700 #8D8D8D */
+  --tw-border-default: 62 62 62; /* dark-400 #3E3E3E */
+  --tw-border-subtle: 50 50 50; /* dark-300 #323232 */
+  --tw-brand-primary: 68 82 255; /* primary #4452FF */
+  --tw-brand-accent: 142 251 157; /* accent #8EFB9D */
+}
+
+.light {
+  --tw-surface: 245 246 250; /* #F5F6FA */
+  --tw-surface-sunken: 255 255 255; /* #FFFFFF */
+  --tw-surface-base: 240 242 248; /* #F0F2F8 */
+  --tw-content-primary: 28 28 28; /* #1C1C1C */
+  --tw-content-secondary: 85 85 85; /* #555555 */
+  --tw-content-muted: 136 136 136; /* #888888 */
+  --tw-border-default: 209 213 219; /* #D1D5DB */
+  --tw-border-subtle: 229 231 235; /* #E5E7EB */
+  --tw-brand-primary: 88 101 255; /* #5865FF */
+  --tw-brand-accent: 111 227 127; /* #6FE37F */
 }

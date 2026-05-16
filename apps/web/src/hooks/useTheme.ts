@@ -17,10 +17,9 @@ export const useTheme = () => {
   const onThemeChange = useCallback(() => {
     if (!isClient) return;
 
-    document.documentElement.classList.toggle(
-      'dark',
-      theme === 'system' ? isDarkMode : theme === 'dark',
-    );
+    const isDark = theme === 'system' ? isDarkMode : theme === 'dark';
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.classList.toggle('light', !isDark);
   }, [theme, isClient, isDarkMode]);
 
   useEffect(() => {
