@@ -4352,7 +4352,7 @@
   "sprint-5": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "[Identity] Integration tests for SupabaseAuthenticationGateway against real Supabase",
         "description": "Create integration test suite in packages/infra/test/identity/SupabaseAuthenticationGateway.integration.test.ts that runs against a real Supabase test project. Tests must be skipped automatically (test.skipIf) when SUPABASE_TEST_* env vars are absent so CI stays safe. GitHub #463.",
         "details": "",
@@ -4361,19 +4361,17 @@
         "dependencies": [],
         "priority": "low",
         "subtasks": [],
-        "updatedAt": "2026-05-15T02:27:34.929Z"
+        "updatedAt": "2026-05-16T04:20:56.580Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-15T02:27:34.929Z",
+      "lastModified": "2026-05-16T04:20:56.580Z",
       "taskCount": 1,
       "completedCount": 1,
       "tags": [
         "sprint-5"
-      ],
-      "created": "2026-05-16T03:25:09.645Z",
-      "description": "Tasks for sprint-5 context"
+      ]
     }
   },
   "sprint-6": {
