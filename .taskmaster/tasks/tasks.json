@@ -4352,7 +4352,7 @@
   "sprint-5": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "[Identity] Integration tests for SupabaseAuthenticationGateway against real Supabase",
         "description": "Create integration test suite in packages/infra/test/identity/SupabaseAuthenticationGateway.integration.test.ts that runs against a real Supabase test project. Tests must be skipped automatically (test.skipIf) when SUPABASE_TEST_* env vars are absent so CI stays safe. GitHub #463.",
         "details": "",
@@ -4371,7 +4371,93 @@
       "completedCount": 1,
       "tags": [
         "sprint-5"
-      ]
+      ],
+      "created": "2026-05-16T03:25:09.645Z",
+      "description": "Tasks for sprint-5 context"
+    }
+  },
+  "sprint-6": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Épico 1 — Tokens semânticos no tailwind-config",
+        "description": "Criar camada de tokens semânticos sobre os primitivos existentes, permitindo que dark/light mode funcione via classe CSS sem alterar componentes. Bloqueador de todos os outros épicos.",
+        "details": "1.1 Adicionar tokens surface/content/border/brand/rounded-badge/rounded-card ao tailwind-config/index.ts. 1.2 Adicionar bloco .light {} com CSS vars no globals.css. 1.3 Corrigir useTheme para toggle da classe light no html além de dark (useDarkMode já detecta system — só falta o toggle de light). 1.4 Remover @tailwind base/components/utilities duplicados do globals.css (existem tanto no globals.css quanto no tailwind.css). GitHub issue: #558.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Épico 2 — Corrigir tokens hardcoded em todos os componentes",
+        "description": "Substituir todas as referências a tokens primitivos (bg-dark-*, text-dark-*, !text-white, rounded-3.75, rounded-5, max-w-237.5) por tokens semânticos. 22 arquivos identificados por grep completo do repositório.",
+        "details": "Executar após Épico 1. Arquivos: Header, HeroBanner, ProjectCard, ExperienceCard, Skill, ContactInfo, SideNavigation (+ LanguageSelector + ThemeToggle), tailwind.css, ProjectMetaGrid, StatCard, SkillAccordion, SkillGroup, Breadcrumb, MenuItem (Item1/Item2/Link/Expandable), ContactForm, LoginForm, ProfessionalValue, ProjectDetail (componente), AppLayout, ProjectList, ErrorView, @repo/ui (Text/Base, TextArea/Base, Label, Radio, Divider), pages inline. GitHub issue: #559.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Épico 3 — Migrar componentes de feature para apps/web/src/features",
+        "description": "Separar componentes com lógica de produto dos primitivos de UI reutilizáveis. Criar apps/web/src/features/ e migrar 8 componentes. Ao final, components/ deve conter apenas Layout/.",
+        "details": "Pode rodar em paralelo com Épico 2. 3.1 Criar estrutura de pastas features/home|projects|about|contact|shared. 3.2 HeroBanner → @repo/ui + wrappers de feature. 3.3 ProjectCard + ProjectList → features/home/ProjectsSection. 3.4 ExperienceCard → features/about/ExperiencesSection. 3.5 ProfessionalValue → features/about/ValuesSection. 3.6 ContactForm → features/contact. 3.7 ContactInfo → features/contact. 3.8 ProjectDetail → features/projects. 3.9 Remover components/View e components/Forms após zero imports. GitHub issue: #560.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Épico 4 — Atualizar pages para usar features",
+        "description": "Simplificar as pages do App Router para que sejam apenas orquestradores de features, sem lógica de renderização ou dados embutidos.",
+        "details": "Depende de Épico 3. 4.1 page.tsx (Home): importar HeroSection + ProjectsSection de ~features/home, ContactSection de ~features/contact. 4.2 about/page.tsx: importar ValuesSection + ExperiencesSection de ~features/about. 4.3 projects/page.tsx: encapsular fetch de /api/v1/projects em features/projects/ProjectsSection (Server Component); manter applyDevSimulations. GitHub issue: #561.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          "3"
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Épico 5 — Limpeza e organização final",
+        "description": "Polimento final: alias de path ~features, tokens semânticos de spacing (maxWidth) e box-shadows nomeados. Tarefa 5.2 é pré-requisito das tasks 2.17 e 2.18 do Épico 2.",
+        "details": "5.1 Adicionar alias ~features/* em apps/web/tsconfig.json. 5.2 Substituir spacing.237.5/278.5 por maxWidth.content/content-wide em tailwind-config/index.ts — PRE-REQUISITO das tasks 2.17 e 2.18. 5.3 Adicionar box-shadows nomeados card/header/menu/footer em tailwind-config/index.ts. GitHub issue: #562.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Épico 6 — Criar componentes e features ausentes no código",
+        "description": "Implementar os elementos visuais presentes no Figma mas sem correspondência no código: novos componentes @repo/ui e novas features em apps/web/src/features.",
+        "details": "Depende de Épico 1 e Épico 4. @repo/ui: 6.1 Badge (WithIcon/Text/Count — unifica Skill e SkillGroup). 6.2 Button variantes outline e ghost. 6.5 Avatar com badge de disponibilidade animado. 6.6 SectionHeader com overline. 6.8 Skeleton (Block/ProjectCard/ExperienceCard). 6.9 Text.Field + TextArea.Field com Formik. Features: 6.3 features/projects/FilterBar. 6.4 features/projects/ProjectsSection (view=row + filtro). 6.7 features/shared/Footer + AppLayout. GitHub issue: #563.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          "1",
+          "4"
+        ],
+        "priority": "medium",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-05-16T03:25:09.649Z",
+      "updated": "2026-05-16T03:25:49.646Z",
+      "description": "Sprint 6 — Design System & Feature Architecture"
     }
   }
 }
