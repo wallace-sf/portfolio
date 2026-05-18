@@ -22,17 +22,17 @@ export const Item1: FC<IGhostLinkProps> = ({
     <Link
       href={href}
       className={classNames(
-        'flex flex-row items-center hover:bg-dark-300 active:bg-dark-400 transition-all px-4 py-3 gap-4 rounded-lg [&>span]:hover:font-bold [&>span]:active:font-bold [&>*]:active:!text-white',
+        'flex flex-row items-center hover:bg-surface active:bg-surface-sunken transition-all px-4 py-3 gap-4 rounded-lg [&>span]:hover:font-bold [&>span]:active:font-bold [&>*]:active:!text-content-primary',
         className,
       )}
       target={newTab ? '_blank' : '_self'}
       rel={newTab ? 'noopener noreferrer' : undefined}
     >
       <Icon
-        className={classNames('text-dark-900', iconClassName)}
+        className={classNames('text-content-secondary', iconClassName)}
         icon={icon}
       />
-      <Text className="!text-dark-900">{children}</Text>
+      <Text className="!text-content-secondary">{children}</Text>
     </Link>
   );
 };
