@@ -4352,7 +4352,7 @@
   "sprint-5": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "[Identity] Integration tests for SupabaseAuthenticationGateway against real Supabase",
         "description": "Create integration test suite in packages/infra/test/identity/SupabaseAuthenticationGateway.integration.test.ts that runs against a real Supabase test project. Tests must be skipped automatically (test.skipIf) when SUPABASE_TEST_* env vars are absent so CI stays safe. GitHub #463.",
         "details": "",
@@ -4371,7 +4371,9 @@
       "completedCount": 1,
       "tags": [
         "sprint-5"
-      ]
+      ],
+      "created": "2026-05-16T04:40:44.117Z",
+      "description": "Tasks for sprint-5 context"
     }
   },
   "sprint-6": {
@@ -4540,9 +4542,27 @@
             "title": "Replace max-width and layout tokens in AppLayout, ProjectList, and verify completion",
             "description": "Replace max-w-237.5 and max-w-278.5 with semantic max-w-content and max-w-content-wide tokens in AppLayout and ProjectList. Run final verification grep to ensure zero primitive token occurrences remain. This task depends on Task 5.2 creating the semantic max-width tokens first.",
             "dependencies": [],
-            "details": "Files: apps/web/src/components/Layout/AppLayout/index.tsx, apps/web/src/components/View/ProjectList/index.tsx. Replace max-w-237.5 → max-w-content, 2xl:max-w-278.5 → 2xl:max-w-content-wide. After replacements, run verification command: grep -r 'bg-dark-\\|text-dark-\\|!text-white\\|!bg-dark\\|!text-dark\\|rounded-5\\b\\|rounded-3\\.75\\|border-dark-\\|max-w-237\\.5\\|max-w-278\\.5' apps/web/src/ packages/ui/src/ --include='*.tsx' --include='*.css'. Result must be zero occurrences. Note: This is the final subtask and serves as the epic completion verification.",
+            "details": "Files: apps/web/src/components/Layout/AppLayout/index.tsx, apps/web/src/components/View/ProjectList/index.tsx. Replace max-w-237.5 → max-w-content, 2xl:max-w-278.5 → 2xl:max-w-content-wide. After replacements, run verification command: grep -r 'bg-dark-\\|text-dark-\\|!text-white\\|!bg-dark\\|!text-dark\\|rounded-5\\b\\|rounded-3\\.75\\|border-dark-\\|max-w-237\\.5\\|max-w-278\\.5' apps/web/src/ packages/ui/src/ --include='*.tsx' --include='*.css'. Result must be zero occurrences. Note: This is the final subtask and serves as the epic completion verification.\n<info added on 2026-05-16T04:40:27.373Z>\nThe user request asks to add two new subtasks (2.11 and 2.12) after subtask 2.10. However, the current context indicates I'm being asked to update subtask 2.10 itself, not create new subtasks.\n\nLooking at the request more carefully, it appears the user wants me to document in subtask 2.10's details that two follow-up subtasks should be created. This would inform whoever works on 2.10 that additional work items need to be added to the epic.\n\nLet me analyze the codebase to understand the current state of spacing tokens and inline styles before generating the update.Based on my codebase analysis, I found:\n\n1. **Arbitrary px dimensions** in loading skeletons and components:\n   - `apps/web/src/app/[locale]/projects/[slug]/loading.tsx:7`: `h-[240px]` and `h-[400px]`\n   - `apps/web/src/components/View/ProjectCard/index.tsx:42`: `max-w-[343px]` and `max-w-[465px]`\n   - `apps/web/src/components/View/ProjectCard/index.tsx:44`: `xl:!max-h-[339px]`\n   - `apps/web/src/components/View/ProjectDetail/index.tsx:65`: `h-[240px]` and `h-[400px]`\n   - `apps/web/src/components/View/HeroBanner/index.tsx:30`: `xl:h-[424px]`\n\n2. **Inline styles with percentage widths** found at:\n   - `apps/web/src/app/[locale]/projects/[slug]/loading.tsx:37`: `style={{ width: ${w}% }}` with fixed values `[100, 90, 95, 80, 85]`\n\n3. **Current spacing scale** in `packages/tailwind-config/index.ts` shows custom spacing tokens already exist (lines 74-82), but these arbitrary pixel values are not mapped to the scale.\n\nNow I'll generate the update text:\n\nAfter completing subtask 2.10 verification, two follow-up subtasks must be created: (2.11) Migrate arbitrary px layout dimensions to tailwind-config spacing scale — Extract all h-[Xpx], max-w-[Xpx], min-h-[Xpx], and max-h-[Xpx] values currently used in ProjectCard (h-[180px], h-[244px], max-w-[343px], max-w-[465px], max-w-[441px], max-h-[339px]), ProjectDetail (h-[240px], h-[400px]), HeroBanner (h-[424px]), and loading skeletons (h-[240px], h-[400px] in apps/web/src/app/[locale]/projects/[slug]/loading.tsx) as named spacing tokens in packages/tailwind-config/index.ts (e.g., hero-mobile: '15rem' (240px), hero-desktop: '25rem' (400px), card-height-small: '11.25rem' (180px), card-height-large: '15.25rem' (244px), etc.), then replace all arbitrary classes with semantic Tailwind utilities (h-hero-mobile, xl:h-hero-desktop, etc.); (2.12) Replace inline style with Tailwind classes in the loading skeleton at apps/web/src/app/[locale]/projects/[slug]/loading.tsx:33-39 — The style={{ width: `${w}%` }} pattern on line 37 uses fixed percentage values [100, 90, 95, 80, 85] that should become static Tailwind percentage width classes (w-full for 100%, w-[90%] or nearest standard fraction for 90%, w-[95%] or w-full for 95%, w-4/5 for 80%, w-[85%] or nearest fraction for 85%) to eliminate runtime inline styles.\n</info added on 2026-05-16T04:40:27.373Z>",
             "status": "pending",
             "testStrategy": "Full application layout tests at all breakpoints. Verify content max-width behaves correctly at xl (max-w-content) and 2xl (max-w-content-wide) breakpoints. Run automated grep verification as acceptance criteria. Perform full visual regression test suite across all pages and components in both dark and light themes to confirm no primitive tokens remain."
+          },
+          {
+            "id": 11,
+            "title": "Migrate arbitrary px layout dimensions to spacing scale",
+            "description": "Add named spacing tokens to tailwind-config for all arbitrary px values used in components and replace h-[Xpx], max-w-[Xpx], min-h-[Xpx] classes with scale-based equivalents.",
+            "details": "Add to spacing in packages/tailwind-config/index.ts: 45 (180px - ProjectCard image), 60 (240px - ProjectDetail cover), 61 (244px - ProjectCard XL), 84.75 (339px - card max height), 85.75 (343px - card max width), 100 (400px - banner XL), 106 (424px - hero height), 110.25 (441px - card row), 116.25 (465px - card XL width). Then update ProjectCard, ProjectDetail, HeroBanner and all loading.tsx skeleton files to use the new scale classes.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 2
+          },
+          {
+            "id": 12,
+            "title": "Replace inline style with Tailwind classes in loading skeleton",
+            "description": "Remove the style={{ width: `${w}%` }} inline style in apps/web/src/app/[locale]/projects/[slug]/loading.tsx and replace with static Tailwind percentage classes.",
+            "details": "The w values are fixed: [100, 90, 95, 80, 85]. Map to Tailwind classes: 100→w-full, 90→w-[90%], 95→w-[95%], 80→w-4/5, 85→w-[85%]. Remove the inline style prop and the w variable entirely.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 2
           }
         ]
       },
@@ -4822,11 +4842,24 @@
             "testStrategy": "Unit tests for Text.Field and TextArea.Field with mocked Formik context ensuring correct rendering in all states (untouched, touched without error, touched with error, focused). Test that useField hook integration works correctly. Integration tests with ContactForm: verify fields display correctly, validation errors appear on blur, form submits with valid data. Visual regression tests comparing field states against Figma design (default, focused, error) in both light and dark modes. Accessibility tests: verify label association, error message announced to screen readers (aria-describedby)."
           }
         ]
+      },
+      {
+        "id": 7,
+        "title": "Migrate arbitrary px layout dimensions to tailwind-config spacing scale",
+        "description": "Add named spacing tokens (45, 60, 61, 84.75, 85.75, 100, 106, 110.25, 116.25) to packages/tailwind-config/index.ts and replace all hardcoded [Xpx] dimension classes in ProjectCard, ProjectDetail, HeroBanner, and loading.tsx skeleton files with corresponding scale classes.",
+        "details": "**Context:**\nCurrently, components use arbitrary px values in Tailwind classes (h-[180px], max-w-[343px], etc.), which bypasses the design token system and creates maintenance issues. This task extracts these values into the spacing scale alongside existing tokens like spacing.49, spacing.237.5.\n\n**Implementation steps:**\n\n1. **Add spacing tokens to packages/tailwind-config/index.ts** (lines 74-82)\n   Add the following entries to the `spacing` object in the `extend.spacing` section:\n   ```typescript\n   spacing: {\n     '2.5': '0.625rem',\n     15: '3.75rem',\n     24.5: '6.125rem',\n     45: '11.25rem',        // 180px - ProjectCard base image height\n     49: '12.25rem',\n     50: '12.5rem',\n     60: '15rem',           // 240px - ProjectDetail cover (mobile)\n     61: '15.25rem',        // 244px - ProjectCard XL image height\n     84.75: '21.1875rem',   // 339px - ProjectCard row max-height\n     85.75: '21.4375rem',   // 343px - ProjectCard base max-width\n     100: '25rem',          // 400px - ProjectDetail cover (XL), banner XL\n     106: '26.5rem',        // 424px - HeroBanner height\n     110.25: '27.5625rem',  // 441px - ProjectCard row image max-width\n     116.25: '29.0625rem',  // 465px - ProjectCard XL max-width\n     237.5: '59.375rem',\n     278.5: '69.625rem',\n   }\n   ```\n\n2. **Replace hardcoded dimensions in ProjectCard** (apps/web/src/components/View/ProjectCard/index.tsx)\n   - Line 42: `max-w-[343px]` → `max-w-85.75`\n   - Line 42: `xl:max-w-[465px]` → `xl:max-w-116.25`\n   - Line 44: `xl:!max-h-[339px]` → `xl:!max-h-84.75`\n   - Line 59: `h-[180px]` → `h-45`\n   - Line 59: `xl:h-[244px]` → `xl:h-61`\n   - Line 61: `xl:max-w-[441px]` → `xl:max-w-110.25`\n\n3. **Replace hardcoded dimensions in ProjectDetail** (apps/web/src/components/View/ProjectDetail/index.tsx)\n   - Line 65: `h-[240px]` → `h-60`\n   - Line 65: `xl:h-[400px]` → `xl:h-100`\n\n4. **Replace hardcoded dimensions in HeroBanner** (apps/web/src/components/View/HeroBanner/index.tsx)\n   - Line 30: `xl:h-[424px]` → `xl:h-106`\n\n5. **Replace hardcoded dimensions in loading.tsx skeleton files:**\n   \n   **apps/web/src/app/[locale]/loading.tsx:**\n   - Line 8: `xl:h-[424px]` → `xl:h-106`\n   - Line 30: `h-[180px]` → `h-45`\n   - Line 30: `xl:h-[244px]` → `xl:h-61`\n   \n   **apps/web/src/app/[locale]/projects/loading.tsx:**\n   - Line 8: `xl:h-[424px]` → `xl:h-106`\n   \n   **apps/web/src/app/[locale]/projects/[slug]/loading.tsx:**\n   - Line 7: `h-[240px]` → `h-60`\n   - Line 7: `xl:h-[400px]` → `xl:h-100`\n\n6. **Verify build and visual consistency**\n   Run `pnpm build` to ensure no Tailwind class errors, then visually verify all affected components maintain their exact dimensions.\n\n**Files modified:**\n- packages/tailwind-config/index.ts\n- apps/web/src/components/View/ProjectCard/index.tsx\n- apps/web/src/components/View/ProjectDetail/index.tsx\n- apps/web/src/components/View/HeroBanner/index.tsx\n- apps/web/src/app/[locale]/loading.tsx\n- apps/web/src/app/[locale]/projects/loading.tsx\n- apps/web/src/app/[locale]/projects/[slug]/loading.tsx\n\n**Design rationale:**\nFollowing the pattern established in spacing (e.g., 237.5 = 59.375rem), the new tokens use fractional Tailwind units (45 = 180px / 4, 106 = 424px / 4). This maintains consistency with the existing design system and ensures proper scaling with the base font-size.",
+        "testStrategy": "1. **Build validation:** Run `pnpm build` from project root — must complete without Tailwind class errors or unknown utility warnings.\n\n2. **Visual regression testing:** \n   - Start dev server: `pnpm dev`\n   - Navigate to homepage (`/`): verify HeroBanner height is 424px (XL viewport), ProjectCard images are 180px (mobile) / 244px (XL)\n   - Navigate to `/projects`: verify ProjectCard grid and row views maintain correct dimensions (max-w-343px base, max-w-465px XL, row max-h-339px)\n   - Navigate to any project detail page (e.g., `/projects/example-slug`): verify cover image is 240px (mobile) / 400px (XL)\n   - Test loading states by throttling network in DevTools — verify skeleton dimensions match component dimensions\n\n3. **Token verification:**\n   - Inspect packages/tailwind-config/index.ts: confirm all 9 new spacing tokens (45, 60, 61, 84.75, 85.75, 100, 106, 110.25, 116.25) are present\n   - Use browser DevTools to inspect computed styles of affected elements — verify pixel values match expected (e.g., h-45 = 180px, xl:h-106 = 424px)\n\n4. **Grep validation:**\n   Run `grep -r \"h-\\[.*px\\]\" apps/web/src/components/View/ProjectCard apps/web/src/components/View/ProjectDetail apps/web/src/components/View/HeroBanner apps/web/src/app/[locale]/loading.tsx apps/web/src/app/[locale]/projects` — should return zero matches for the targeted dimension values (180px, 240px, 244px, 339px, 343px, 400px, 424px, 441px, 465px)\n\n5. **Cross-browser check:** Verify layout consistency in Chrome, Firefox, and Safari (desktop + mobile viewports) to ensure rem-based spacing renders identically to previous px values.",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2026-05-16T03:25:09.649Z",
-      "updated": "2026-05-16T03:25:49.646Z",
+      "updated": "2026-05-16T04:41:49.913Z",
       "description": "Sprint 6 — Design System & Feature Architecture"
     }
   }

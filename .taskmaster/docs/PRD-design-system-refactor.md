@@ -459,6 +459,50 @@ Os componentes de controle do design system têm tokens hardcoded que impedem o 
 **`apps/web/src/app/[locale]/about/page.tsx`:**
 - `text-white` em headings inline → `text-content-primary`
 
+#### Tarefa 2.22 — Migrar dimensões px arbitrárias para o spacing scale
+
+Extrair todos os valores `h-[Xpx]`, `max-w-[Xpx]` e `min-h-[Xpx]` usados em componentes e loading skeletons para tokens nomeados no `spacing` do `packages/tailwind-config/index.ts`, substituindo as classes arbitrárias pelas equivalentes do scale.
+
+**Tokens a adicionar em `tailwind-config/index.ts`:**
+
+| Token | Valor px | Valor rem | Uso |
+|---|---|---|---|
+| `45` | 180px | 11.25rem | ProjectCard — altura da imagem |
+| `60` | 240px | 15rem | ProjectDetail — altura do cover |
+| `61` | 244px | 15.25rem | ProjectCard XL — altura da imagem |
+| `84.75` | 339px | 21.1875rem | Card — max-height row view |
+| `85.75` | 343px | 21.4375rem | Card — max-width |
+| `100` | 400px | 25rem | Banner XL — altura |
+| `106` | 424px | 26.5rem | HeroBanner — altura |
+| `110.25` | 441px | 27.5625rem | Card row view — max-width |
+| `116.25` | 465px | 29.0625rem | Card XL — max-width |
+
+**Arquivos a atualizar:**
+- `apps/web/src/components/View/ProjectCard/index.tsx`
+- `apps/web/src/components/View/ProjectDetail/index.tsx`
+- `apps/web/src/components/View/HeroBanner/index.tsx`
+- `apps/web/src/app/[locale]/loading.tsx`
+- `apps/web/src/app/[locale]/projects/loading.tsx`
+- `apps/web/src/app/[locale]/projects/[slug]/loading.tsx`
+
+---
+
+#### Tarefa 2.23 — Substituir inline style por classes Tailwind no loading skeleton
+
+**Arquivo:** `apps/web/src/app/[locale]/projects/[slug]/loading.tsx`
+
+O skeleton de texto usa `style={{ width: \`${w}%\` }}` com valores fixos `[100, 90, 95, 80, 85]`. Como os valores são estáticos, substituir por classes Tailwind:
+
+| Valor | Classe |
+|---|---|
+| 100% | `w-full` |
+| 90% | `w-[90%]` |
+| 95% | `w-[95%]` |
+| 80% | `w-4/5` |
+| 85% | `w-[85%]` |
+
+Remover a variável `w` e o prop `style` por completo.
+
 ---
 
 ### Épico 3 — Migrar componentes de feature para `apps/web/src/features`
