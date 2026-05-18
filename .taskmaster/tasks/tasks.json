@@ -251,9 +251,7 @@
             "id": 8,
             "title": "Migrate LocationType enum-based VO to Either pattern",
             "description": "Refactor LocationType value object from throw-based to Either-based error handling with location enum validation",
-            "dependencies": [
-              7
-            ],
+            "dependencies": [],
             "details": "Update packages/core/src/shared/vo/location-type/LocationType.ts:\n1. Change static create(value: string) to return Either<ValidationError, LocationType>\n2. Validate against enum values (REMOTE, ONSITE, HYBRID)\n3. Remove throw statements\n4. Update error code to 'INVALID_LOCATION_TYPE'\n5. Translate error messages to English\n6. Update test file packages/core/test/shared/vo/LocationType.test.ts to Either pattern",
             "status": "pending",
             "testStrategy": "Test create() with valid location type returns Right. Test create() with REMOTE, ONSITE, HYBRID each return Right. Test create() with invalid value returns Left with 'INVALID_LOCATION_TYPE'. Verify English error messages with valid options listed."
@@ -487,7 +485,6 @@
             "title": "Update all entity test builders to handle Either returns",
             "description": "Refactor ProjectBuilder, ExperienceBuilder, SkillBuilder, LanguageBuilder, ProfessionalValueBuilder, and SocialNetworkBuilder to unwrap Either values and throw on Left for test convenience",
             "dependencies": [
-              7,
               8
             ],
             "details": "1. Locate all test builder files (e.g., ProjectBuilder.ts, ExperienceBuilder.ts, etc.)\n2. For each builder's build() method:\n   - Call Entity.create() which now returns Either\n   - Unwrap result: const result = Entity.create(props); if (result.isLeft()) throw new Error(`Builder failed: ${result.value.message}`)\n   - Return result.value (the Right side)\n3. Update SkillBuilder to handle SkillFactory.bulk() Either return\n4. Ensure builders still provide fluent API for test setup\n5. Update any builder methods that internally create VOs to handle Either returns\n6. Verify builders throw descriptive errors when invalid props provided\n7. Check if builders are used in test setup and update accordingly",
@@ -701,7 +698,6 @@
               4,
               5,
               6,
-              7,
               8
             ],
             "details": "Update `packages/core/test/data/ProjectBuilder.ts`:\n- Add builder methods for: slug, coverImage, theme, summary, objectives, role, team, period, featured, status, relatedProjects\n- Add factory methods: `ProjectBuilder.draft()`, `ProjectBuilder.published()`, `ProjectBuilder.archived()`\n- Update default values to include all new required fields\n- Ensure builder supports fluent API for all fields\n- Update existing tests to use new builder methods",
@@ -1214,9 +1210,7 @@
             "id": 8,
             "title": "Migrate LocationType enum-based VO to Either pattern",
             "description": "Refactor LocationType value object from throw-based to Either-based error handling with location enum validation",
-            "dependencies": [
-              7
-            ],
+            "dependencies": [],
             "details": "Update packages/core/src/shared/vo/location-type/LocationType.ts:\n1. Change static create(value: string) to return Either<ValidationError, LocationType>\n2. Validate against enum values (REMOTE, ONSITE, HYBRID)\n3. Remove throw statements\n4. Update error code to 'INVALID_LOCATION_TYPE'\n5. Translate error messages to English\n6. Update test file packages/core/test/shared/vo/LocationType.test.ts to Either pattern",
             "status": "pending",
             "testStrategy": "Test create() with valid location type returns Right. Test create() with REMOTE, ONSITE, HYBRID each return Right. Test create() with invalid value returns Left with 'INVALID_LOCATION_TYPE'. Verify English error messages with valid options listed."
@@ -1458,7 +1452,6 @@
             "title": "Update all entity test builders to handle Either returns",
             "description": "Refactor ProjectBuilder, ExperienceBuilder, SkillBuilder, LanguageBuilder, ProfessionalValueBuilder, and SocialNetworkBuilder to unwrap Either values and throw on Left for test convenience",
             "dependencies": [
-              7,
               8
             ],
             "details": "1. Locate all test builder files (e.g., ProjectBuilder.ts, ExperienceBuilder.ts, etc.)\n2. For each builder's build() method:\n   - Call Entity.create() which now returns Either\n   - Unwrap result: const result = Entity.create(props); if (result.isLeft()) throw new Error(`Builder failed: ${result.value.message}`)\n   - Return result.value (the Right side)\n3. Update SkillBuilder to handle SkillFactory.bulk() Either return\n4. Ensure builders still provide fluent API for test setup\n5. Update any builder methods that internally create VOs to handle Either returns\n6. Verify builders throw descriptive errors when invalid props provided\n7. Check if builders are used in test setup and update accordingly",
@@ -1674,7 +1667,6 @@
               4,
               5,
               6,
-              7,
               8
             ],
             "details": "Update `packages/core/test/data/ProjectBuilder.ts`:\n- Add builder methods for: slug, coverImage, theme, summary, objectives, role, team, period, featured, status, relatedProjects\n- Add factory methods: `ProjectBuilder.draft()`, `ProjectBuilder.published()`, `ProjectBuilder.archived()`\n- Update default values to include all new required fields\n- Ensure builder supports fluent API for all fields\n- Update existing tests to use new builder methods",
@@ -2231,8 +2223,7 @@
               2,
               4,
               5,
-              6,
-              7
+              6
             ],
             "details": "Execute verification steps:\n\n1. Run `pnpm -C packages/application types` - must pass with zero errors\n2. Verify architectural compliance:\n   - All DTOs are plain TypeScript interfaces (no classes, no methods)\n   - All date fields use `string` type with ISO 8601 comment\n   - Nested objects use inline type definitions (e.g., `{ url: string; alt: string }`)\n   - Optional fields correctly marked with `?`\n   - Array types properly defined (e.g., `string[]`, `ExperienceSkillDTO[]`)\n3. Test barrel exports work correctly:\n   - Import from `@repo/application/portfolio` succeeds\n   - Import from `@repo/application/portfolio/dtos` succeeds\n4. Cross-reference with domain entities in `packages/core/src/portfolio/entities/` to ensure field mappings are complete and accurate",
             "status": "done",
@@ -2936,9 +2927,7 @@
             "id": 8,
             "title": "Test complete schema with seed data and queries",
             "description": "Validate the entire Prisma schema by creating comprehensive seed data covering all models and relations, then testing queries.",
-            "dependencies": [
-              7
-            ],
+            "dependencies": [],
             "details": "1. Create prisma/seed.ts with:\n   - Sample Project with JSONB LocalizedText fields (en, es)\n   - Sample Skills (3-4) with different types\n   - ProjectSkill relations linking project to skills\n   - Sample Experience with ExperienceSkill including workDescription\n   - Sample Profile with ProfileStats (ordered) and SocialNetworks\n   - Use realistic data matching domain constraints\n2. Add seed script: \"db:seed\": \"tsx prisma/seed.ts\"\n3. Run seed and verify data appears in Prisma Studio\n4. Test queries:\n   - prisma.project.findMany({ include: { skills: { include: { skill: true } } } })\n   - prisma.experience.findMany({ include: { skills: { include: { skill: true } } }, orderBy: { startAt: 'desc' } })\n   - prisma.profile.findFirst({ include: { stats: { orderBy: { order: 'asc' } }, socialNetworks: true } })\n5. Verify JSONB fields parse correctly and UUIDs are valid",
             "status": "pending",
             "testStrategy": "1. Run db:seed and verify no errors\n2. Check Prisma Studio shows all seeded data with correct relations\n3. Write simple test script that queries all models and logs results\n4. Verify JSONB fields return proper objects (not strings)\n5. Test filtering: prisma.project.findMany({ where: { status: 'PUBLISHED', featured: true } })\n6. Clean up: prisma migrate reset to test migration + seed workflow"
@@ -4379,12 +4368,12 @@
   "sprint-6": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Épico 1 — Tokens semânticos no tailwind-config",
         "description": "Criar camada de tokens semânticos sobre os primitivos existentes, permitindo que dark/light mode funcione via classe CSS sem alterar componentes. Bloqueador de todos os outros épicos.",
         "details": "1.1 Adicionar tokens surface/content/border/brand/rounded-badge/rounded-card ao tailwind-config/index.ts. 1.2 Adicionar bloco .light {} com CSS vars no globals.css. 1.3 Corrigir useTheme para toggle da classe light no html além de dark (useDarkMode já detecta system — só falta o toggle de light). 1.4 Remover @tailwind base/components/utilities duplicados do globals.css (existem tanto no globals.css quanto no tailwind.css). GitHub issue: #558.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": [
@@ -4395,7 +4384,8 @@
             "dependencies": [],
             "details": "Add to theme.extend in packages/tailwind-config/index.ts:\n\n1. colors.surface.DEFAULT → '#323232' (dark-300 - card background)\n2. colors.surface.sunken → '#282828' (dark-200 - elevated surfaces like sidebar/header)\n3. colors.surface.base → '#1C1C1C' (dark - page background)\n4. colors.content.primary → '#FFFFFF' (primary text)\n5. colors.content.secondary → '#BABABA' (dark-900 - secondary text)\n6. colors.content.muted → '#8D8D8D' (dark-700 - disabled/placeholder text)\n7. colors.border.default → '#3E3E3E' (dark-400 - default borders)\n8. colors.border.subtle → '#323232' (dark-300 - subtle borders)\n9. colors.brand.primary → '#4452FF' (primary action)\n10. colors.brand.accent → '#8EFB9D' (accent/badge highlight)\n11. borderRadius.badge → '0.9375rem' (replaces rounded-3.75 used in Skill, SkillGroup, SkillAccordion)\n12. borderRadius.card → '1.25rem' (replaces rounded-5 used in ProjectCard)\n\nValidation: Component using bg-surface should render #323232. Classes rounded-badge and rounded-card should be available in Tailwind.",
             "status": "pending",
-            "testStrategy": "Manual verification: Check that bg-surface class renders #323232 background color. Verify rounded-badge and rounded-card classes are available via Tailwind IntelliSense. Run pnpm build in packages/tailwind-config to ensure no errors."
+            "testStrategy": "Manual verification: Check that bg-surface class renders #323232 background color. Verify rounded-badge and rounded-card classes are available via Tailwind IntelliSense. Run pnpm build in packages/tailwind-config to ensure no errors.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -4406,7 +4396,8 @@
             ],
             "details": "Add to apps/web/src/app/[locale]/globals.css after existing :root block:\n\n```css\n/* Light mode: override base colors via class applied to <html> */\n.light {\n  --tw-surface: #F5F6FA;\n  --tw-surface-sunken: #FFFFFF;\n  --tw-content-primary: #1C1C1C;\n  --tw-content-secondary: #555555;\n  --tw-brand-primary: #5865FF;\n  --tw-brand-accent: #6FE37F;\n}\n```\n\nKeep existing :root block unchanged:\n```css\n:root {\n  --header-height-desktop: 104px;\n  --header-height-mobile: 68px;\n}\n```\n\nValidation: With .light class on <html> element, card backgrounds should change to #F5F6FA.",
             "status": "pending",
-            "testStrategy": "Manual verification: Use browser DevTools to add class=\"light\" to <html> element. Verify that elements using bg-surface change background color from #323232 (dark) to #F5F6FA (light). Check computed styles in DevTools."
+            "testStrategy": "Manual verification: Use browser DevTools to add class=\"light\" to <html> element. Verify that elements using bg-surface change background color from #323232 (dark) to #F5F6FA (light). Check computed styles in DevTools.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -4417,7 +4408,8 @@
             ],
             "details": "Modify the onThemeChange callback in apps/web/src/hooks/useTheme.ts:\n\nCurrent logic (lines 17-24):\n```ts\nconst onThemeChange = useCallback(() => {\n  if (!isClient) return;\n\n  document.documentElement.classList.toggle(\n    'dark',\n    theme === 'system' ? isDarkMode : theme === 'dark',\n  );\n}, [theme, isClient, isDarkMode]);\n```\n\nNew logic:\n```ts\nconst onThemeChange = useCallback(() => {\n  if (!isClient) return;\n\n  const isDark = theme === 'system' ? isDarkMode : theme === 'dark';\n  document.documentElement.classList.toggle('dark', isDark);\n  document.documentElement.classList.toggle('light', !isDark);\n}, [theme, isClient, isDarkMode]);\n```\n\nExpected behavior:\n- theme='dark': <html> has class 'dark', no 'light'\n- theme='light': <html> has class 'light', no 'dark'\n- theme='system': uses isDarkMode to decide which class to apply\n\nValidation: Changing theme in SideNavigation/ThemeToggle should visually alter colors in both dark and light modes.",
             "status": "pending",
-            "testStrategy": "Integration test: Toggle theme using SideNavigation component. Verify <html> element has correct classes: dark mode → class=\"dark\", light mode → class=\"light\", system mode → class matches OS preference. Verify visual color changes in UI match expected light/dark mode appearance."
+            "testStrategy": "Integration test: Toggle theme using SideNavigation component. Verify <html> element has correct classes: dark mode → class=\"dark\", light mode → class=\"light\", system mode → class matches OS preference. Verify visual color changes in UI match expected light/dark mode appearance.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -4426,7 +4418,8 @@
             "dependencies": [],
             "details": "Edit apps/web/src/app/[locale]/globals.css:\n\nCurrent state (lines 1-8):\n```css\n@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n:root {\n  --header-height-desktop: 104px;\n  --header-height-mobile: 68px;\n}\n```\n\nAfter removal:\n```css\n:root {\n  --header-height-desktop: 104px;\n  --header-height-mobile: 68px;\n}\n\n/* .light block added by subtask 2 will follow */\n```\n\nRationale: layout.tsx imports both @repo/tailwind-config/tailwind.css (which has @tailwind directives) and globals.css. Having @tailwind in both files creates duplicates. They should only exist in packages/tailwind-config/tailwind.css.\n\nValidation: Build without warnings about duplicate @tailwind. Base styles continue to function correctly.",
             "status": "pending",
-            "testStrategy": "Run pnpm build in apps/web and verify no warnings about duplicate @tailwind directives. Test that base typography styles (h1-h5, text-body-* utilities) still render correctly on all pages. Check that Tailwind utility classes still work as expected."
+            "testStrategy": "Run pnpm build in apps/web and verify no warnings about duplicate @tailwind directives. Test that base typography styles (h1-h5, text-body-* utilities) still render correctly on all pages. Check that Tailwind utility classes still work as expected.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -4440,17 +4433,19 @@
             ],
             "details": "End-to-end verification workflow:\n\n1. Run pnpm build in both packages/tailwind-config and apps/web - verify no errors or warnings\n2. Run pnpm dev in apps/web\n3. Open browser to localhost:3000\n4. Open DevTools and inspect <html> element\n5. Use SideNavigation/ThemeToggle to switch between light/dark/system modes\n6. Verify for each mode:\n   - Correct class on <html> (dark/light)\n   - Visual appearance matches expected theme\n   - Console has no errors\n7. Test a component using new semantic tokens (e.g., add temporary bg-surface class to a div)\n8. Verify Tailwind IntelliSense shows new semantic tokens (bg-surface, text-content-primary, rounded-badge, rounded-card)\n\nSuccess criteria:\n- Build completes without errors/warnings\n- Theme toggle works in all three modes\n- Semantic token classes are available and render correct colors\n- Light mode CSS vars activate when .light class is present\n- No console errors during theme switching",
             "status": "pending",
-            "testStrategy": "Manual end-to-end testing: Verify theme switching works across all pages (/, /projects, /about). Check browser DevTools for correct CSS variable values in :root and .light contexts. Verify no console errors. Test on multiple browsers (Chrome, Firefox) to ensure cross-browser compatibility. Document any visual regressions or unexpected behavior."
+            "testStrategy": "Manual end-to-end testing: Verify theme switching works across all pages (/, /projects, /about). Check browser DevTools for correct CSS variable values in :root and .light contexts. Verify no console errors. Test on multiple browsers (Chrome, Firefox) to ensure cross-browser compatibility. Document any visual regressions or unexpected behavior.",
+            "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-05-18T02:26:03.601Z"
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Épico 2 — Corrigir tokens hardcoded em todos os componentes",
         "description": "Substituir todas as referências a tokens primitivos (bg-dark-*, text-dark-*, !text-white, rounded-3.75, rounded-5, max-w-237.5) por tokens semânticos. 22 arquivos identificados por grep completo do repositório.",
         "details": "Executar após Épico 1. Arquivos: Header, HeroBanner, ProjectCard, ExperienceCard, Skill, ContactInfo, SideNavigation (+ LanguageSelector + ThemeToggle), tailwind.css, ProjectMetaGrid, StatCard, SkillAccordion, SkillGroup, Breadcrumb, MenuItem (Item1/Item2/Link/Expandable), ContactForm, LoginForm, ProfessionalValue, ProjectDetail (componente), AppLayout, ProjectList, ErrorView, @repo/ui (Text/Base, TextArea/Base, Label, Radio, Divider), pages inline. GitHub issue: #559.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "1"
         ],
@@ -4463,7 +4458,8 @@
             "dependencies": [],
             "details": "Files: apps/web/src/components/View/Header/index.tsx and apps/web/src/components/View/HeroBanner/index.tsx. In Header: replace bg-dark-300 xl:!bg-dark-200 → bg-surface xl:bg-surface-sunken, !bg-dark-600 → bg-surface-sunken, hover:!bg-dark-500 → hover:bg-surface, !text-dark-900 → text-content-secondary. In HeroBanner: replace bg-dark-300 → bg-surface, !text-dark-900 → text-content-secondary, !text-white !font-bold → text-content-primary font-bold, remove all !important modifiers.",
             "status": "pending",
-            "testStrategy": "Visual regression test to ensure header and hero banner render correctly in both dark and light modes. Verify no !important overrides remain by inspecting computed styles."
+            "testStrategy": "Visual regression test to ensure header and hero banner render correctly in both dark and light modes. Verify no !important overrides remain by inspecting computed styles.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -4472,7 +4468,8 @@
             "dependencies": [],
             "details": "Files: apps/web/src/components/View/ProjectCard/index.tsx, ExperienceCard/index.tsx, StatCard/index.tsx, ProfessionalValue/index.tsx. Replace bg-dark-300 → bg-surface, bg-dark-200 → bg-surface-sunken, rounded-5 → rounded-card, border-dark-300 → border-border-default or border-border-subtle (depending on context), text-white → text-content-primary, text-dark-700 → text-content-muted, text-dark-900 → text-content-secondary. Note: max-w-237.5 replacement depends on Task 5.2.",
             "status": "pending",
-            "testStrategy": "Component snapshot tests to verify cards render with correct semantic tokens. Visual regression tests for both themes. Check that opacity modifiers (e.g., bg-surface/20) work correctly."
+            "testStrategy": "Component snapshot tests to verify cards render with correct semantic tokens. Visual regression tests for both themes. Check that opacity modifiers (e.g., bg-surface/20) work correctly.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -4481,7 +4478,8 @@
             "dependencies": [],
             "details": "Files: apps/web/src/components/View/Skill/index.tsx, SkillGroup/index.tsx, SkillAccordion/index.tsx. Replace bg-dark-500 rounded-3.75 → bg-surface rounded-badge, !text-white → text-content-primary, !text-dark-700 → text-content-muted, text-dark-700 → text-content-muted. Remove all !important modifiers. Ensure pill/badge visual consistency across all three components.",
             "status": "pending",
-            "testStrategy": "Visual test to confirm skill badges have consistent rounded-badge appearance. Verify text colors adapt correctly to theme changes. Test accordion expand/collapse states maintain correct styling."
+            "testStrategy": "Visual test to confirm skill badges have consistent rounded-badge appearance. Verify text colors adapt correctly to theme changes. Test accordion expand/collapse states maintain correct styling.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -4490,7 +4488,8 @@
             "dependencies": [],
             "details": "Files: apps/web/src/components/View/SideNavigation/index.tsx, MenuItem/Item1/index.tsx, MenuItem/Item2/Link/index.tsx, MenuItem/Item2/Expandable/index.tsx, MenuItem/Item2/constants.ts, Breadcrumb/index.tsx. Replace dark:bg-dark-200 → dark:bg-surface-sunken, hover:bg-dark-300 → hover:bg-surface, active:bg-dark-400 → active:bg-surface-sunken, text-dark-900 → text-content-secondary, text-dark-1000 → text-content-secondary, !text-dark-700 → text-content-muted, hover:!text-white → hover:text-content-primary, !text-white → text-content-primary. Also update LanguageSelector and ThemeToggle icon colors to text-content-primary.",
             "status": "pending",
-            "testStrategy": "Navigation interaction tests: verify hover and active states work correctly. Test breadcrumb link states (default, hover, active). Verify sidebar appearance in responsive layouts (mobile and desktop). Theme toggle functionality test."
+            "testStrategy": "Navigation interaction tests: verify hover and active states work correctly. Test breadcrumb link states (default, hover, active). Verify sidebar appearance in responsive layouts (mobile and desktop). Theme toggle functionality test.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -4499,7 +4498,8 @@
             "dependencies": [],
             "details": "Files: apps/web/src/components/Forms/ContactForm/index.tsx, LoginForm/index.tsx, apps/web/src/components/View/ContactInfo/index.tsx. Replace !text-white → text-content-primary, !font-bold → font-bold (remove !important), !text-primary → text-brand-primary, bg-dark-300 → bg-surface, text-white in iconClassName → text-content-primary. Remove all !important modifiers from text and background utilities.",
             "status": "pending",
-            "testStrategy": "Form rendering tests for both themes. Verify icon colors match text-content-primary. Test form field focus states maintain correct border colors. Check that brand colors (text-brand-primary) are distinct from content colors."
+            "testStrategy": "Form rendering tests for both themes. Verify icon colors match text-content-primary. Test form field focus states maintain correct border colors. Check that brand colors (text-brand-primary) are distinct from content colors.",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -4508,7 +4508,8 @@
             "dependencies": [],
             "details": "Files: packages/ui/src/Control/Text/Base/index.tsx, TextArea/Base/index.tsx, Label/index.tsx, Radio/index.tsx, packages/ui/src/View/Divider/index.tsx. Replace bg-dark-300 → bg-surface, border-dark-500 → border-border-default, text-white → text-content-primary, placeholder:text-dark-500 → placeholder:text-content-muted, dark:border-dark-400 → dark:border-border-default, !text-white !font-bold → text-content-primary font-bold. Remove redundant dark:text-white after applying semantic tokens.",
             "status": "pending",
-            "testStrategy": "Storybook visual regression tests for all affected components. Test input and textarea components in various states (default, focus, active, disabled, error). Verify placeholder text has correct muted appearance. Test divider in both themes."
+            "testStrategy": "Storybook visual regression tests for all affected components. Test input and textarea components in various states (default, focus, active, disabled, error). Verify placeholder text has correct muted appearance. Test divider in both themes.",
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -4517,7 +4518,8 @@
             "dependencies": [],
             "details": "File: packages/tailwind-config/tailwind.css. In @layer base, replace text-dark in all headings (h1, h2, h3, h4, h5) with text-content-primary. In @layer utilities, remove text-dark from .text-body-xs, .text-body-sm, .text-body-md, .text-body-lg classes to allow color inheritance from context. This ensures headings have semantic colors and body text inherits theme-appropriate colors from parent elements.",
             "status": "pending",
-            "testStrategy": "Typography snapshot tests across the application. Verify all headings render with text-content-primary in both themes. Test body text utilities inherit correct colors from parent containers. Check that no hardcoded text-dark remains in CSS output."
+            "testStrategy": "Typography snapshot tests across the application. Verify all headings render with text-content-primary in both themes. Test body text utilities inherit correct colors from parent containers. Check that no hardcoded text-dark remains in CSS output.",
+            "parentId": "undefined"
           },
           {
             "id": 8,
@@ -4526,7 +4528,8 @@
             "dependencies": [],
             "details": "Files: apps/web/src/components/View/ProjectMetaGrid/index.tsx, ProjectDetail/index.tsx. In ProjectMetaGrid: replace bg-dark-300 → bg-surface, !text-dark-700 → text-content-muted, !text-white → text-content-primary. In ProjectDetail: replace !text-white → text-content-primary, !text-dark-700 → text-content-muted, !text-dark-900 → text-content-secondary. Note: xl:max-w-237.5 → xl:max-w-content replacement requires Task 5 subtask 2 to be completed first.",
             "status": "pending",
-            "testStrategy": "Project detail page visual regression tests. Verify meta grid displays correctly in both themes. Test that all text hierarchy (primary, secondary, muted) is visually distinct and appropriate for the theme. Check max-width constraints after Task 5.2 completion."
+            "testStrategy": "Project detail page visual regression tests. Verify meta grid displays correctly in both themes. Test that all text hierarchy (primary, secondary, muted) is visually distinct and appropriate for the theme. Check max-width constraints after Task 5.2 completion.",
+            "parentId": "undefined"
           },
           {
             "id": 9,
@@ -4535,7 +4538,8 @@
             "dependencies": [],
             "details": "Files: apps/web/src/app/[locale]/page.tsx, about/page.tsx, loading.tsx, about/loading.tsx, projects/loading.tsx, projects/[slug]/loading.tsx. Replace text-white → text-content-primary, bg-dark-300 → bg-surface, bg-dark-200 → bg-surface-sunken, rounded-5 → rounded-card, border-dark-300 → border-border-default. Note: max-w-237.5 and max-w-278.5 replacements require Task 5.2. Review !text-xl and !text-[32px] for possible replacement with semantic text utilities.",
             "status": "pending",
-            "testStrategy": "Full page rendering tests for home, about, and projects pages in both themes. Verify loading skeleton states match final component appearance. Test responsive breakpoints (xl, 2xl) with semantic max-width tokens. Check that custom font sizes (!text-xl, !text-[32px]) render consistently."
+            "testStrategy": "Full page rendering tests for home, about, and projects pages in both themes. Verify loading skeleton states match final component appearance. Test responsive breakpoints (xl, 2xl) with semantic max-width tokens. Check that custom font sizes (!text-xl, !text-[32px]) render consistently.",
+            "parentId": "undefined"
           },
           {
             "id": 10,
@@ -4544,7 +4548,8 @@
             "dependencies": [],
             "details": "Files: apps/web/src/components/Layout/AppLayout/index.tsx, apps/web/src/components/View/ProjectList/index.tsx. Replace max-w-237.5 → max-w-content, 2xl:max-w-278.5 → 2xl:max-w-content-wide. After replacements, run verification command: grep -r 'bg-dark-\\|text-dark-\\|!text-white\\|!bg-dark\\|!text-dark\\|rounded-5\\b\\|rounded-3\\.75\\|border-dark-\\|max-w-237\\.5\\|max-w-278\\.5' apps/web/src/ packages/ui/src/ --include='*.tsx' --include='*.css'. Result must be zero occurrences. Note: This is the final subtask and serves as the epic completion verification.\n<info added on 2026-05-16T04:40:27.373Z>\nThe user request asks to add two new subtasks (2.11 and 2.12) after subtask 2.10. However, the current context indicates I'm being asked to update subtask 2.10 itself, not create new subtasks.\n\nLooking at the request more carefully, it appears the user wants me to document in subtask 2.10's details that two follow-up subtasks should be created. This would inform whoever works on 2.10 that additional work items need to be added to the epic.\n\nLet me analyze the codebase to understand the current state of spacing tokens and inline styles before generating the update.Based on my codebase analysis, I found:\n\n1. **Arbitrary px dimensions** in loading skeletons and components:\n   - `apps/web/src/app/[locale]/projects/[slug]/loading.tsx:7`: `h-[240px]` and `h-[400px]`\n   - `apps/web/src/components/View/ProjectCard/index.tsx:42`: `max-w-[343px]` and `max-w-[465px]`\n   - `apps/web/src/components/View/ProjectCard/index.tsx:44`: `xl:!max-h-[339px]`\n   - `apps/web/src/components/View/ProjectDetail/index.tsx:65`: `h-[240px]` and `h-[400px]`\n   - `apps/web/src/components/View/HeroBanner/index.tsx:30`: `xl:h-[424px]`\n\n2. **Inline styles with percentage widths** found at:\n   - `apps/web/src/app/[locale]/projects/[slug]/loading.tsx:37`: `style={{ width: ${w}% }}` with fixed values `[100, 90, 95, 80, 85]`\n\n3. **Current spacing scale** in `packages/tailwind-config/index.ts` shows custom spacing tokens already exist (lines 74-82), but these arbitrary pixel values are not mapped to the scale.\n\nNow I'll generate the update text:\n\nAfter completing subtask 2.10 verification, two follow-up subtasks must be created: (2.11) Migrate arbitrary px layout dimensions to tailwind-config spacing scale — Extract all h-[Xpx], max-w-[Xpx], min-h-[Xpx], and max-h-[Xpx] values currently used in ProjectCard (h-[180px], h-[244px], max-w-[343px], max-w-[465px], max-w-[441px], max-h-[339px]), ProjectDetail (h-[240px], h-[400px]), HeroBanner (h-[424px]), and loading skeletons (h-[240px], h-[400px] in apps/web/src/app/[locale]/projects/[slug]/loading.tsx) as named spacing tokens in packages/tailwind-config/index.ts (e.g., hero-mobile: '15rem' (240px), hero-desktop: '25rem' (400px), card-height-small: '11.25rem' (180px), card-height-large: '15.25rem' (244px), etc.), then replace all arbitrary classes with semantic Tailwind utilities (h-hero-mobile, xl:h-hero-desktop, etc.); (2.12) Replace inline style with Tailwind classes in the loading skeleton at apps/web/src/app/[locale]/projects/[slug]/loading.tsx:33-39 — The style={{ width: `${w}%` }} pattern on line 37 uses fixed percentage values [100, 90, 95, 80, 85] that should become static Tailwind percentage width classes (w-full for 100%, w-[90%] or nearest standard fraction for 90%, w-[95%] or w-full for 95%, w-4/5 for 80%, w-[85%] or nearest fraction for 85%) to eliminate runtime inline styles.\n</info added on 2026-05-16T04:40:27.373Z>",
             "status": "pending",
-            "testStrategy": "Full application layout tests at all breakpoints. Verify content max-width behaves correctly at xl (max-w-content) and 2xl (max-w-content-wide) breakpoints. Run automated grep verification as acceptance criteria. Perform full visual regression test suite across all pages and components in both dark and light themes to confirm no primitive tokens remain."
+            "testStrategy": "Full application layout tests at all breakpoints. Verify content max-width behaves correctly at xl (max-w-content) and 2xl (max-w-content-wide) breakpoints. Run automated grep verification as acceptance criteria. Perform full visual regression test suite across all pages and components in both dark and light themes to confirm no primitive tokens remain.",
+            "parentId": "undefined"
           },
           {
             "id": 11,
@@ -4553,7 +4558,8 @@
             "details": "Add to spacing in packages/tailwind-config/index.ts: 45 (180px - ProjectCard image), 60 (240px - ProjectDetail cover), 61 (244px - ProjectCard XL), 84.75 (339px - card max height), 85.75 (343px - card max width), 100 (400px - banner XL), 106 (424px - hero height), 110.25 (441px - card row), 116.25 (465px - card XL width). Then update ProjectCard, ProjectDetail, HeroBanner and all loading.tsx skeleton files to use the new scale classes.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 2
+            "parentTaskId": 2,
+            "parentId": "undefined"
           },
           {
             "id": 12,
@@ -4562,12 +4568,14 @@
             "details": "The w values are fixed: [100, 90, 95, 80, 85]. Map to Tailwind classes: 100→w-full, 90→w-[90%], 95→w-[95%], 80→w-4/5, 85→w-[85%]. Remove the inline style prop and the w variable entirely.",
             "status": "pending",
             "dependencies": [],
-            "parentTaskId": 2
+            "parentTaskId": 2,
+            "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-05-18T03:43:44.870Z"
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Épico 3 — Migrar componentes de feature para apps/web/src/features",
         "description": "Separar componentes com lógica de produto dos primitivos de UI reutilizáveis. Criar apps/web/src/features/ e migrar 8 componentes. Ao final, components/ deve conter apenas Layout/.",
         "details": "Pode rodar em paralelo com Épico 2. 3.1 Criar estrutura de pastas features/home|projects|about|contact|shared. 3.2 HeroBanner → @repo/ui + wrappers de feature. 3.3 ProjectCard + ProjectList → features/home/ProjectsSection. 3.4 ExperienceCard → features/about/ExperiencesSection. 3.5 ProfessionalValue → features/about/ValuesSection. 3.6 ContactForm → features/contact. 3.7 ContactInfo → features/contact. 3.8 ProjectDetail → features/projects. 3.9 Remover components/View e components/Forms após zero imports. GitHub issue: #560.",
@@ -4585,7 +4593,8 @@
             "dependencies": [],
             "details": "Create the following directory structure:\n- apps/web/src/features/home (for homepage-specific features like HeroSection, ProjectsSection)\n- apps/web/src/features/projects (for project-related features like ProjectDetail)\n- apps/web/src/features/about (for about page features like ExperiencesSection, ValuesSection)\n- apps/web/src/features/contact (for contact-related features like ContactForm, ContactInfo)\n- apps/web/src/features/shared (for cross-feature shared components like Footer, AppLayout)\n\nEach directory should follow feature-based organization where components combine business logic with presentation, unlike primitives in @repo/ui which are purely presentational.",
             "status": "pending",
-            "testStrategy": "Verify directory structure exists with `ls -R apps/web/src/features`. No unit tests required for directory creation."
+            "testStrategy": "Verify directory structure exists with `ls -R apps/web/src/features`. No unit tests required for directory creation.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -4596,7 +4605,8 @@
             ],
             "details": "1. Create packages/ui/src/View/HeroBanner as a primitive component accepting props (src, title, caption, content, alt, className, imageClassName)\n2. Move styling and layout logic from apps/web/src/components/View/HeroBanner to the new @repo/ui version\n3. Export from packages/ui/src/View/index.ts\n4. Create apps/web/src/features/home/HeroSection/index.tsx that:\n   - Imports HeroBanner from @repo/ui/View\n   - Handles data fetching logic (currently in page.tsx)\n   - Maps ProfileHero API response to HeroBanner props\n   - Handles fallback to default HeroLandingPage image\n5. Update package.json exports if needed\n6. Keep as client component ('use client') if Next.js Image requires it\n\nThe primitive HeroBanner should be stateless and pure presentation; HeroSection contains product/feature logic.",
             "status": "pending",
-            "testStrategy": "Unit test HeroBanner primitive in packages/ui to verify rendering with different prop combinations. Integration test HeroSection to ensure it correctly fetches profile data and passes props to HeroBanner. Verify existing HeroBanner tests still pass after migration."
+            "testStrategy": "Unit test HeroBanner primitive in packages/ui to verify rendering with different prop combinations. Integration test HeroSection to ensure it correctly fetches profile data and passes props to HeroBanner. Verify existing HeroBanner tests still pass after migration.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -4607,7 +4617,8 @@
             ],
             "details": "1. Create apps/web/src/features/home/ProjectsSection/index.tsx as a Server Component that:\n   - Fetches featured projects from /api/v1/projects/featured\n   - Renders the section title (\"projects_title\" from translations)\n   - Composes ProjectList internally\n2. Move ProjectCard from apps/web/src/components/View/ProjectCard to apps/web/src/features/home/ProjectsSection/ProjectCard.tsx\n3. Move ProjectList from apps/web/src/components/View/ProjectList to apps/web/src/features/home/ProjectsSection/ProjectList.tsx\n4. Keep SkillGroup import from components/View/SkillGroup (will be migrated in Epic 2)\n5. Update all imports in page.tsx to use ProjectsSection instead of ProjectList\n6. Preserve view prop support (grid/row) for future FilterBar integration (Epic 6)\n7. Keep existing tests and update import paths\n\nProjectsSection becomes a feature module that owns both the data fetching and presentation for the homepage projects area.",
             "status": "pending",
-            "testStrategy": "Update existing ProjectCard.test.tsx to new location. Add integration tests for ProjectsSection verifying it fetches data and renders ProjectList correctly. Test both grid and row view modes. Verify translations and i18n routing still work."
+            "testStrategy": "Update existing ProjectCard.test.tsx to new location. Add integration tests for ProjectsSection verifying it fetches data and renders ProjectList correctly. Test both grid and row view modes. Verify translations and i18n routing still work.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -4618,7 +4629,8 @@
             ],
             "details": "1. Create apps/web/src/features/about/ExperiencesSection/index.tsx:\n   - Fetch experiences data from API (prepare for future endpoint)\n   - Move ExperienceCard from apps/web/src/components/View/ExperienceCard to apps/web/src/features/about/ExperiencesSection/ExperienceCard.tsx\n   - Export ExperiencesSection as Server Component\n2. Create apps/web/src/features/about/ValuesSection/index.tsx:\n   - Fetch professional values data from API (prepare for future endpoint)\n   - Move ProfessionalValue from apps/web/src/components/View/ProfessionalValue to apps/web/src/features/about/ValuesSection/ProfessionalValue.tsx\n   - Export ValuesSection as Server Component\n3. Update about/page.tsx imports (will be done in Epic 4, but prepare the structure)\n4. Preserve all styling and responsive behavior\n\nBoth sections encapsulate their data fetching and component composition, following the feature module pattern.",
             "status": "pending",
-            "testStrategy": "Create unit tests for ExperienceCard and ProfessionalValue in their new locations. Add integration tests for ExperiencesSection and ValuesSection that verify data fetching and rendering. Mock API responses for testing."
+            "testStrategy": "Create unit tests for ExperienceCard and ProfessionalValue in their new locations. Add integration tests for ExperiencesSection and ValuesSection that verify data fetching and rendering. Mock API responses for testing.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -4632,12 +4644,13 @@
             ],
             "details": "1. Create apps/web/src/features/contact/ContactSection/index.tsx:\n   - Import and compose ContactForm and ContactInfo\n   - Handle layout (flex-col gap + xl:flex-row with Divider)\n   - Export as client component if needed for form interactivity\n2. Move ContactForm from apps/web/src/components/Forms/ContactForm to apps/web/src/features/contact/ContactSection/ContactForm.tsx\n3. Move ContactInfo from apps/web/src/components/View/ContactInfo to apps/web/src/features/contact/ContactSection/ContactInfo.tsx\n4. Update page.tsx to import ContactSection instead of separate ContactForm/ContactInfo\n5. Move ProjectDetail from apps/web/src/components/View/ProjectDetail to apps/web/src/features/projects/ProjectDetail/index.tsx\n6. After all migrations (2, 3, 4, 5 complete), verify zero imports remain from components/Forms and components/View\n7. Delete apps/web/src/components/Forms directory\n8. Delete apps/web/src/components/View directory\n9. Verify components/ directory now contains only Layout/\n\nThis completes the separation: primitives in @repo/ui, features in apps/web/src/features, layout in apps/web/src/components/Layout.",
             "status": "pending",
-            "testStrategy": "Update existing ContactForm tests to new location. Add integration test for ContactSection verifying form submission and info display. Test ProjectDetail rendering in new location. After directory deletion, run `pnpm build` to ensure no broken imports. Verify all page routes still render correctly."
+            "testStrategy": "Update existing ContactForm tests to new location. Add integration test for ContactSection verifying form submission and info display. Test ProjectDetail rendering in new location. After directory deletion, run `pnpm build` to ensure no broken imports. Verify all page routes still render correctly.",
+            "parentId": "undefined"
           }
         ]
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Épico 4 — Atualizar pages para usar features",
         "description": "Simplificar as pages do App Router para que sejam apenas orquestradores de features, sem lógica de renderização ou dados embutidos.",
         "details": "Depende de Épico 3. 4.1 page.tsx (Home): importar HeroSection + ProjectsSection de ~features/home, ContactSection de ~features/contact. 4.2 about/page.tsx: importar ValuesSection + ExperiencesSection de ~features/about. 4.3 projects/page.tsx: encapsular fetch de /api/v1/projects em features/projects/ProjectsSection (Server Component); manter applyDevSimulations. GitHub issue: #561.",
@@ -4655,7 +4668,8 @@
             "dependencies": [],
             "details": "Current page.tsx (Home) fetches projects and profile data directly and renders HeroBanner, StatCard grid, ProjectList, ContactForm, and ContactInfo. After refactoring: (1) Import HeroSection from ~features/home (will encapsulate HeroBanner + StatCard grid + profile API call), (2) Import ProjectsSection from ~features/home (will encapsulate title + ProjectList + featured projects API call), (3) Import ContactSection from ~features/contact (will encapsulate ContactForm + Divider + ContactInfo in a flex layout). The page should become a simple orchestrator with no fetch calls or business logic. Keep applyDevSimulations call. Remove local interfaces ProfileStat, ProfileHero, HomePageProps if no longer needed.",
             "status": "pending",
-            "testStrategy": "Manual testing: verify home page renders correctly with all sections (hero, stats, projects, contact). Check that data is still fetched and displayed as before. Verify responsive layout works. Check browser console for errors. Test with both light and dark themes."
+            "testStrategy": "Manual testing: verify home page renders correctly with all sections (hero, stats, projects, contact). Check that data is still fetched and displayed as before. Verify responsive layout works. Check browser console for errors. Test with both light and dark themes.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -4666,7 +4680,8 @@
             ],
             "details": "Current about/page.tsx fetches experiences and professional-values data directly and renders ProfessionalValue cards in a <ul> and ExperienceCard items in another <ul>. After refactoring: (1) Import ValuesSection from ~features/about (will encapsulate the title, professional values API call, and ProfessionalValue rendering in <ul>), (2) Import ExperiencesSection from ~features/about (will encapsulate the Divider, experiences API call, and ExperienceCard rendering in <ul>). The page should only render <><ValuesSection /><ExperiencesSection /></> with no fetch calls. Keep applyDevSimulations call. Remove local interfaces AboutPageProps, IExperienceCardProps, IProfessionalValueCardProps if no longer needed.",
             "status": "pending",
-            "testStrategy": "Manual testing: verify about page renders professional values section and experiences section correctly. Check that API data is fetched and displayed. Verify styling and spacing match previous implementation. Test responsive behavior. Verify Divider placement between sections."
+            "testStrategy": "Manual testing: verify about page renders professional values section and experiences section correctly. Check that API data is fetched and displayed. Verify styling and spacing match previous implementation. Test responsive behavior. Verify Divider placement between sections.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -4677,7 +4692,8 @@
             ],
             "details": "Current projects/page.tsx fetches all projects from /api/v1/projects and renders HeroBanner + ProjectList. After refactoring: (1) Keep HeroBanner import and rendering (projects hero is page-specific), (2) Import ProjectsSection from ~features/projects (will be a Server Component that fetches from /api/v1/projects and renders ProjectList with view='grid' and className='py-8 xl:py-20'), (3) Pass applyDevSimulations behavior to ProjectsSection or keep it in the page. The page should render <><HeroBanner {...heroProps} /><ProjectsSection /></> with minimal logic. ProjectsSection must maintain applyDevSimulations support and call getLocale internally for API fetch.",
             "status": "pending",
-            "testStrategy": "Manual testing: verify projects page displays hero banner and project grid correctly. Confirm all projects are fetched and rendered. Test applyDevSimulations still works (loading/error states). Verify layout and spacing are preserved. Check responsive grid behavior."
+            "testStrategy": "Manual testing: verify projects page displays hero banner and project grid correctly. Confirm all projects are fetched and rendered. Test applyDevSimulations still works (loading/error states). Verify layout and spacing are preserved. Check responsive grid behavior.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -4686,7 +4702,8 @@
             "dependencies": [],
             "details": "Edit apps/web/tsconfig.json compilerOptions.paths to add: '~features/*': ['./src/features/*'] and '~features': ['./src/features/index.ts'] (if barrel export is used). This allows pages to import using ~features/home/HeroSection, ~features/about/ValuesSection, etc. This change can be done in parallel with Epic 3's feature component creation but must be completed before pages can successfully import from ~features. Verify no TypeScript compilation errors after adding the alias.",
             "status": "pending",
-            "testStrategy": "Run pnpm build in apps/web to verify TypeScript compilation succeeds. Check that IDE autocomplete recognizes ~features/* imports. Create a test import in any page file to confirm path resolution works (can be removed after verification)."
+            "testStrategy": "Run pnpm build in apps/web to verify TypeScript compilation succeeds. Check that IDE autocomplete recognizes ~features/* imports. Create a test import in any page file to confirm path resolution works (can be removed after verification).",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -4700,12 +4717,13 @@
             ],
             "details": "After all three pages are refactored to use feature components: (1) Remove unused imports like ApiResponse, getInternalBaseUrl, individual View components (HeroBanner, ProjectList, ContactForm, ContactInfo, ExperienceCard, ProfessionalValue) that are now encapsulated in features, (2) Remove local interface definitions like ProfileStat, ProfileHero, HomePageProps, IExperienceCardProps, IProfessionalValueCardProps, ProjectSummary if they're no longer referenced in the page files (they should move to feature component files), (3) Verify each page only imports what it needs: feature sections, applyDevSimulations, translations, and minimal Next.js utilities. Run linter to catch unused imports. Ensure pages are minimal orchestrators with no business logic.",
             "status": "pending",
-            "testStrategy": "Run pnpm lint in apps/web to catch unused imports. Run pnpm build to verify no TypeScript errors. Manually review each page file to confirm it's minimal (< 50 lines ideally). Test all three pages in browser to ensure functionality is preserved. Use git diff to confirm only imports/interfaces were removed, no logic changes."
+            "testStrategy": "Run pnpm lint in apps/web to catch unused imports. Run pnpm build to verify no TypeScript errors. Manually review each page file to confirm it's minimal (< 50 lines ideally). Test all three pages in browser to ensure functionality is preserved. Use git diff to confirm only imports/interfaces were removed, no logic changes.",
+            "parentId": "undefined"
           }
         ]
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Épico 5 — Limpeza e organização final",
         "description": "Polimento final: alias de path ~features, tokens semânticos de spacing (maxWidth) e box-shadows nomeados. Tarefa 5.2 é pré-requisito das tasks 2.17 e 2.18 do Épico 2.",
         "details": "5.1 Adicionar alias ~features/* em apps/web/tsconfig.json. 5.2 Substituir spacing.237.5/278.5 por maxWidth.content/content-wide em tailwind-config/index.ts — PRE-REQUISITO das tasks 2.17 e 2.18. 5.3 Adicionar box-shadows nomeados card/header/menu/footer em tailwind-config/index.ts. GitHub issue: #562.",
@@ -4721,7 +4739,8 @@
             "dependencies": [],
             "details": "In apps/web/tsconfig.json, add \"~features/*\": [\"./src/features/*\"] to the compilerOptions.paths object (line 5-17). This alias will allow importing feature modules using ~features/home, ~features/projects, etc. instead of relative paths. This prepares the project for Epic 3 task 3.1 which creates the features directory structure. Place the new alias after ~components entries and before ~contexts for alphabetical consistency.",
             "status": "pending",
-            "testStrategy": "Verify the alias resolves correctly by checking TypeScript compilation succeeds with `pnpm build` in apps/web. After Epic 3 creates the features directory, test imports using the new alias pattern (e.g., import { HeroSection } from '~features/home')."
+            "testStrategy": "Verify the alias resolves correctly by checking TypeScript compilation succeeds with `pnpm build` in apps/web. After Epic 3 creates the features directory, test imports using the new alias pattern (e.g., import { HeroSection } from '~features/home').",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -4730,7 +4749,8 @@
             "dependencies": [],
             "details": "In packages/tailwind-config/index.ts: (1) Remove spacing.237.5 and spacing.278.5 entries (lines 57-58). (2) Add a new maxWidth configuration object in theme.extend with: content: '59.375rem' (replaces 237.5) and 'content-wide': '69.625rem' (replaces 278.5). (3) Keep the spacing configuration for other values (2.5, 15, 24.5, 49, 50). The semantic names make the design intent clearer (content width constraints) vs generic spacing tokens. Found 16 usages across apps/web/src that will need migration in Epic 2.",
             "status": "pending",
-            "testStrategy": "After changes: (1) Run `pnpm build` in packages/tailwind-config to verify TypeScript compilation. (2) Run `pnpm build` in apps/web - expect build to succeed but runtime to show layout issues (expected until Epic 2 tasks 2.17-2.18 update component usages). (3) Verify the new tokens exist in generated Tailwind classes using `pnpm build && grep -r \"max-w-content\" apps/web/.next`."
+            "testStrategy": "After changes: (1) Run `pnpm build` in packages/tailwind-config to verify TypeScript compilation. (2) Run `pnpm build` in apps/web - expect build to succeed but runtime to show layout issues (expected until Epic 2 tasks 2.17-2.18 update component usages). (3) Verify the new tokens exist in generated Tailwind classes using `pnpm build && grep -r \"max-w-content\" apps/web/.next`.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -4739,12 +4759,13 @@
             "dependencies": [],
             "details": "In packages/tailwind-config/index.ts lines 37-43, refactor the boxShadow configuration: (1) Rename shadow-1 to 'header' (currently used in AppLayout line 30 for header shadow). (2) Add semantic aliases: 'card': use shadow-3 value, 'menu': use shadow-2 value, 'footer': use shadow-5 value. (3) Keep the numbered shadows (1-6) for backward compatibility during migration, but mark as deprecated in comments. (4) The values come from the design system: header for top navigation, card for project cards, menu for dropdown menus, footer for page footer elevation.",
             "status": "pending",
-            "testStrategy": "Run `pnpm build` in packages/tailwind-config and apps/web to verify successful compilation. Test that existing shadow-1 usage in AppLayout still works. Verify new semantic tokens are available by checking Tailwind IntelliSense shows shadow-header, shadow-card, shadow-menu, shadow-footer as autocomplete options in VS Code."
+            "testStrategy": "Run `pnpm build` in packages/tailwind-config and apps/web to verify successful compilation. Test that existing shadow-1 usage in AppLayout still works. Verify new semantic tokens are available by checking Tailwind IntelliSense shows shadow-header, shadow-card, shadow-menu, shadow-footer as autocomplete options in VS Code.",
+            "parentId": "undefined"
           }
         ]
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "Épico 6 — Criar componentes e features ausentes no código",
         "description": "Implementar os elementos visuais presentes no Figma mas sem correspondência no código: novos componentes @repo/ui e novas features em apps/web/src/features.",
         "details": "Depende de Épico 1 e Épico 4. @repo/ui: 6.1 Badge (WithIcon/Text/Count — unifica Skill e SkillGroup). 6.2 Button variantes outline e ghost. 6.5 Avatar com badge de disponibilidade animado. 6.6 SectionHeader com overline. 6.8 Skeleton (Block/ProjectCard/ExperienceCard). 6.9 Text.Field + TextArea.Field com Formik. Features: 6.3 features/projects/FilterBar. 6.4 features/projects/ProjectsSection (view=row + filtro). 6.7 features/shared/Footer + AppLayout. GitHub issue: #563.",
@@ -4763,7 +4784,8 @@
             "dependencies": [],
             "details": "The Badge component will unify the pill-style UI currently implemented separately in Skill/index.tsx (with icon) and SkillGroup/index.tsx (text-only). Create the component structure in packages/ui/src/View/Badge/ with three sub-components or variants: Badge.WithIcon (accepts icon key from Iconify + label string), Badge.Text (label only), and Badge.Count (displays +N for overflow). Use semantic tokens: bg-surface, rounded-badge (from task 1.1), text-content-primary. Export all variants from packages/ui/src/View/index.ts. Update Skill and SkillGroup to consume Badge internally instead of reimplementing the UI. Files to create: packages/ui/src/View/Badge/index.tsx, packages/ui/src/View/Badge/WithIcon.tsx, packages/ui/src/View/Badge/Text.tsx, packages/ui/src/View/Badge/Count.tsx. Files to update: apps/web/src/components/View/Skill/index.tsx, apps/web/src/components/View/SkillGroup/index.tsx, packages/ui/src/View/index.ts.",
             "status": "pending",
-            "testStrategy": "Unit tests for each Badge variant ensuring correct rendering with different props. Integration tests verifying Skill and SkillGroup render correctly after refactoring to use Badge. Visual regression tests comparing before/after screenshots to ensure pixel-perfect match with Figma design."
+            "testStrategy": "Unit tests for each Badge variant ensuring correct rendering with different props. Integration tests verifying Skill and SkillGroup render correctly after refactoring to use Badge. Visual regression tests comparing before/after screenshots to ensure pixel-perfect match with Figma design.",
+            "parentId": "undefined"
           },
           {
             "id": 2,
@@ -4772,7 +4794,8 @@
             "dependencies": [],
             "details": "Currently Button.Base only supports a filled style (bg-primary). The Figma design shows outline buttons in ProjectCard (\"Ver projeto\" with border + transparent background) and ghost buttons in listing sections (text with arrow icon, no border). Modify IButtonBaseProps to include variant: 'filled' | 'outline' | 'ghost', default 'filled'. Update the className logic to apply: filled → bg-brand-primary text-content-primary (current behavior), outline → border border-brand-primary text-brand-primary bg-transparent hover:bg-brand-primary/10, ghost → text-brand-primary underline-offset-4 hover:underline (or with arrow icon). Ensure all variants respect disabled state. Files to modify: packages/ui/src/Control/Button/Base/index.tsx. Files to update after this: apps/web/src/components/View/ProjectCard/index.tsx (replace inline button classes with Button.Base variant=\"outline\").",
             "status": "pending",
-            "testStrategy": "Unit tests for each variant ensuring correct className application. Test disabled state for all variants. Integration test with ProjectCard to verify outline variant renders correctly. Visual regression tests comparing button styles against Figma design for all three variants in light and dark modes."
+            "testStrategy": "Unit tests for each variant ensuring correct className application. Test disabled state for all variants. Integration test with ProjectCard to verify outline variant renders correctly. Visual regression tests comparing button styles against Figma design for all three variants in light and dark modes.",
+            "parentId": "undefined"
           },
           {
             "id": 3,
@@ -4783,7 +4806,8 @@
             ],
             "details": "The Figma design shows a horizontal filter bar on /projects page with clickable tags. Create FilterBar/index.tsx in features/projects/ with: FilterBar container component (horizontal scroll on mobile, flex-wrap on desktop), FilterTag component for individual tags with active/inactive states (can reuse Badge from subtask 1 with additional interactive behavior like onClick, keyboard navigation, aria-selected). Props: tags (array of {id, label}), activeTag (string or null for \"Todos\"), onFilterChange callback. Use semantic tokens for active state: bg-brand-primary, text-content-primary. Files to create: apps/web/src/features/projects/FilterBar/index.tsx, apps/web/src/features/projects/FilterBar/FilterTag.tsx, apps/web/src/features/projects/index.ts (export FilterBar). Depends on Badge component (subtask 1) for base pill styling.",
             "status": "pending",
-            "testStrategy": "Unit tests for FilterBar ensuring correct tag rendering and onFilterChange callback firing. Test keyboard navigation (arrow keys, Enter, Space). Integration test verifying mobile horizontal scroll and desktop flex-wrap behavior. Test active/inactive visual states match Figma. Accessibility tests: ARIA attributes, keyboard navigation, screen reader announcements."
+            "testStrategy": "Unit tests for FilterBar ensuring correct tag rendering and onFilterChange callback firing. Test keyboard navigation (arrow keys, Enter, Space). Integration test verifying mobile horizontal scroll and desktop flex-wrap behavior. Test active/inactive visual states match Figma. Accessibility tests: ARIA attributes, keyboard navigation, screen reader announcements.",
+            "parentId": "undefined"
           },
           {
             "id": 4,
@@ -4794,7 +4818,8 @@
             ],
             "details": "The /projects page currently fetches data in the page component and renders ProjectList view=\"grid\". Per Figma, it should use view=\"row\" (wide cards, image left + content right) and be filterable. Create features/projects/ProjectsSection/index.tsx as a Server Component that: fetches from /api/v1/projects (migrate fetch logic from apps/web/src/app/[locale]/projects/page.tsx including applyDevSimulations), manages filter state (client component wrapper for FilterBar interaction), renders FilterBar (subtask 3) + ProjectList with view=\"row\". Move ProjectCard and ProjectList from apps/web/src/components/View/ to features/projects/ProjectsSection/ (they are domain-coupled, not generic UI). Files to create: apps/web/src/features/projects/ProjectsSection/index.tsx, apps/web/src/features/projects/ProjectsSection/ProjectList.tsx (moved), apps/web/src/features/projects/ProjectsSection/ProjectCard.tsx (moved). Files to update: apps/web/src/app/[locale]/projects/page.tsx (simplify to import ProjectsSection). Depends on FilterBar (subtask 3).",
             "status": "pending",
-            "testStrategy": "Integration tests verifying correct data fetch from /api/v1/projects. Test filter logic: clicking FilterBar tag correctly filters displayed projects. Test view=\"row\" renders wide card layout per Figma. Test client/server component boundary correctly handles filter state. E2E test: navigate to /projects, verify FilterBar renders, click filter tag, verify filtered results display."
+            "testStrategy": "Integration tests verifying correct data fetch from /api/v1/projects. Test filter logic: clicking FilterBar tag correctly filters displayed projects. Test view=\"row\" renders wide card layout per Figma. Test client/server component boundary correctly handles filter state. E2E test: navigate to /projects, verify FilterBar renders, click filter tag, verify filtered results display.",
+            "parentId": "undefined"
           },
           {
             "id": 5,
@@ -4803,7 +4828,8 @@
             "dependencies": [],
             "details": "The Figma HeroSection shows an avatar with a status indicator. Currently apps/web/src/components/View/HeroBanner/index.tsx renders the photo directly via next/image without abstraction. Create Avatar component in packages/ui/src/Imagery/Avatar/index.tsx with props: src (string | StaticImageData), alt (string), size ('sm' | 'md' | 'lg'), status ('available' | 'busy' | 'unavailable' | undefined), statusLabel (string, e.g., \"Disponível para projetos\"). The component renders a circular image (next/image with rounded-full) and conditionally renders a badge positioned absolute at bottom-right with: green dot (w-3 h-3 bg-green-500 rounded-full with animate-pulse for available status), statusLabel text (text-body-xs text-content-primary bg-surface-sunken rounded-badge px-2 py-1). Files to create: packages/ui/src/Imagery/Avatar/index.tsx. Files to update: packages/ui/src/Imagery/index.ts (export Avatar), apps/web/src/components/View/HeroBanner/index.tsx (replace next/image with Avatar component, pass status=\"available\").",
             "status": "pending",
-            "testStrategy": "Unit tests for Avatar ensuring correct rendering with all size and status variants. Test that animate-pulse CSS animation applies only to available status. Visual regression tests comparing Avatar render against Figma design for all status states. Integration test with HeroBanner to verify Avatar with statusLabel displays correctly in HeroSection."
+            "testStrategy": "Unit tests for Avatar ensuring correct rendering with all size and status variants. Test that animate-pulse CSS animation applies only to available status. Visual regression tests comparing Avatar render against Figma design for all status states. Integration test with HeroBanner to verify Avatar with statusLabel displays correctly in HeroSection.",
+            "parentId": "undefined"
           },
           {
             "id": 6,
@@ -4812,7 +4838,8 @@
             "dependencies": [],
             "details": "The Figma design consistently uses a section header pattern: overline in uppercase (e.g., \"PROJETOS\", \"EXPERIÊNCIA\"), main heading (h2/h3/h4), optional description. Currently this is reimplemented inline in each page with hardcoded classes and no overline. Create SectionHeader/index.tsx with props: overline (string, optional), title (string, required), description (string, optional), as ('h2' | 'h3' | 'h4', default 'h2'), align ('left' | 'center', default 'left'). The overline should use text-body-xs uppercase tracking-wide text-content-muted. The title uses the heading styles from tailwind.css with text-content-primary. Description uses text-body-sm text-content-secondary. Files to create: packages/ui/src/View/SectionHeader/index.tsx. Files to update: packages/ui/src/View/index.ts (export SectionHeader), apps/web/src/app/[locale]/page.tsx, apps/web/src/app/[locale]/about/page.tsx, apps/web/src/app/[locale]/projects/page.tsx (replace inline headings with SectionHeader).",
             "status": "pending",
-            "testStrategy": "Unit tests for SectionHeader ensuring correct rendering with different prop combinations (with/without overline, with/without description, different 'as' values, left/center alignment). Test semantic HTML output (correct heading level). Visual regression tests comparing SectionHeader against Figma design for both left and center alignment. Integration tests with Home, About, and Projects pages to verify SectionHeader replaces inline headings correctly."
+            "testStrategy": "Unit tests for SectionHeader ensuring correct rendering with different prop combinations (with/without overline, with/without description, different 'as' values, left/center alignment). Test semantic HTML output (correct heading level). Visual regression tests comparing SectionHeader against Figma design for both left and center alignment. Integration tests with Home, About, and Projects pages to verify SectionHeader replaces inline headings correctly.",
+            "parentId": "undefined"
           },
           {
             "id": 7,
@@ -4821,7 +4848,8 @@
             "dependencies": [],
             "details": "The Figma shows a footer on all pages with copyright (\"© 2024 Wallace Ferreira\"), social media links (LinkedIn, GitHub icons), and a top shadow (shadow-footer token from task 5.3). Currently no footer exists in the code. Create features/shared/Footer/index.tsx with: copyright text (dynamic year via new Date().getFullYear()), social links array (LinkedIn, GitHub) rendered as Icon components from @repo/ui, top shadow using shadow-footer (created in task 5.3), bg-surface-sunken, text-content-secondary. Update apps/web/src/components/Layout/AppLayout/index.tsx to render Footer below <main> inside the flex column container. Files to create: apps/web/src/features/shared/Footer/index.tsx, apps/web/src/features/shared/index.ts (export Footer). Files to update: apps/web/src/components/Layout/AppLayout/index.tsx (add Footer after main). Note: shadow-footer token must exist (task 5.3 dependency), but can be implemented with inline shadow value if task 5.3 not complete yet.",
             "status": "pending",
-            "testStrategy": "Unit tests for Footer ensuring correct rendering of copyright with current year, social links with correct hrefs and icons. Test responsive behavior between 375px and 1512px viewport widths. Visual regression tests comparing Footer against Figma design in both light and dark modes. Integration test verifying Footer appears on all pages (/, /projects, /projects/[slug], /about). Accessibility test: verify social links have proper aria-labels."
+            "testStrategy": "Unit tests for Footer ensuring correct rendering of copyright with current year, social links with correct hrefs and icons. Test responsive behavior between 375px and 1512px viewport widths. Visual regression tests comparing Footer against Figma design in both light and dark modes. Integration test verifying Footer appears on all pages (/, /projects, /projects/[slug], /about). Accessibility test: verify social links have proper aria-labels.",
+            "parentId": "undefined"
           },
           {
             "id": 8,
@@ -4830,7 +4858,8 @@
             "dependencies": [],
             "details": "The Figma includes loading states for ProjectCard and ExperienceCard with animated shimmer effect. Currently no skeleton components exist. Create Skeleton/index.tsx with: Skeleton.Block as base component (accepts width, height, rounded props; renders a div with bg-surface animate-pulse and optional shimmer animation using linear-gradient background), Skeleton.ProjectCard (matches ProjectCard shape: image placeholder + text lines), Skeleton.ExperienceCard (matches ExperienceCard shape: header lines + description lines + skill pills). Use semantic tokens: bg-surface, bg-surface-sunken for shimmer overlay. Animation: combine Tailwind animate-pulse with custom shimmer gradient animation if needed. Files to create: packages/ui/src/View/Skeleton/index.tsx, packages/ui/src/View/Skeleton/Block.tsx, packages/ui/src/View/Skeleton/ProjectCard.tsx, packages/ui/src/View/Skeleton/ExperienceCard.tsx. Files to update: packages/ui/src/View/index.ts (export Skeleton), apps/web/src/features/projects/ProjectsSection/index.tsx or apps/web/src/components/View/ProjectList/index.tsx (render Skeleton.ProjectCard while loading).",
             "status": "pending",
-            "testStrategy": "Unit tests for each Skeleton component ensuring correct rendering with different props. Test that animate-pulse CSS animation applies. Visual regression tests comparing Skeleton components against Figma loading states. Integration test with ProjectList: verify Skeleton.ProjectCard displays during initial data fetch, then transitions to actual ProjectCard when data loads. Performance test: verify skeleton doesn't cause layout shift when replaced with real content."
+            "testStrategy": "Unit tests for each Skeleton component ensuring correct rendering with different props. Test that animate-pulse CSS animation applies. Visual regression tests comparing Skeleton components against Figma loading states. Integration test with ProjectList: verify Skeleton.ProjectCard displays during initial data fetch, then transitions to actual ProjectCard when data loads. Performance test: verify skeleton doesn't cause layout shift when replaced with real content.",
+            "parentId": "undefined"
           },
           {
             "id": 9,
@@ -4839,28 +4868,20 @@
             "dependencies": [],
             "details": "The Figma shows form fields with three clear states: default, focused (border-brand-primary), error (border-error + error message below). Currently ContactForm uses react-hook-form with manual composition of Text.Base, TextArea.Base, and error display. The PRD requests Formik integration. Create Text.Field and TextArea.Field in packages/ui/src/Control/Text/ and TextArea/ that: use Formik's useField hook to get field props, meta (touched, error), and helpers; compose Label (from @repo/ui) + Text.Base or TextArea.Base + error message div; apply correct border colors based on state (default: border-border-default, focused: border-brand-primary, error: border-error); display error message below field when meta.touched && meta.error. Props: name (string, required for Formik), label (string), placeholder (string), other input props. Files to create: packages/ui/src/Control/Text/Field.tsx, packages/ui/src/Control/TextArea/Field.tsx. Files to update: packages/ui/src/Control/Text/index.ts, packages/ui/src/Control/TextArea/index.ts (export Field variants), apps/web/src/components/Forms/ContactForm/index.tsx (refactor to use Formik + Field components instead of react-hook-form). Note: This changes ContactForm from react-hook-form to Formik; consider scope carefully or adapt to work with react-hook-form if Formik is not desired.",
             "status": "pending",
-            "testStrategy": "Unit tests for Text.Field and TextArea.Field with mocked Formik context ensuring correct rendering in all states (untouched, touched without error, touched with error, focused). Test that useField hook integration works correctly. Integration tests with ContactForm: verify fields display correctly, validation errors appear on blur, form submits with valid data. Visual regression tests comparing field states against Figma design (default, focused, error) in both light and dark modes. Accessibility tests: verify label association, error message announced to screen readers (aria-describedby)."
+            "testStrategy": "Unit tests for Text.Field and TextArea.Field with mocked Formik context ensuring correct rendering in all states (untouched, touched without error, touched with error, focused). Test that useField hook integration works correctly. Integration tests with ContactForm: verify fields display correctly, validation errors appear on blur, form submits with valid data. Visual regression tests comparing field states against Figma design (default, focused, error) in both light and dark modes. Accessibility tests: verify label association, error message announced to screen readers (aria-describedby).",
+            "parentId": "undefined"
           }
         ]
-      },
-      {
-        "id": 7,
-        "title": "Migrate arbitrary px layout dimensions to tailwind-config spacing scale",
-        "description": "Add named spacing tokens (45, 60, 61, 84.75, 85.75, 100, 106, 110.25, 116.25) to packages/tailwind-config/index.ts and replace all hardcoded [Xpx] dimension classes in ProjectCard, ProjectDetail, HeroBanner, and loading.tsx skeleton files with corresponding scale classes.",
-        "details": "**Context:**\nCurrently, components use arbitrary px values in Tailwind classes (h-[180px], max-w-[343px], etc.), which bypasses the design token system and creates maintenance issues. This task extracts these values into the spacing scale alongside existing tokens like spacing.49, spacing.237.5.\n\n**Implementation steps:**\n\n1. **Add spacing tokens to packages/tailwind-config/index.ts** (lines 74-82)\n   Add the following entries to the `spacing` object in the `extend.spacing` section:\n   ```typescript\n   spacing: {\n     '2.5': '0.625rem',\n     15: '3.75rem',\n     24.5: '6.125rem',\n     45: '11.25rem',        // 180px - ProjectCard base image height\n     49: '12.25rem',\n     50: '12.5rem',\n     60: '15rem',           // 240px - ProjectDetail cover (mobile)\n     61: '15.25rem',        // 244px - ProjectCard XL image height\n     84.75: '21.1875rem',   // 339px - ProjectCard row max-height\n     85.75: '21.4375rem',   // 343px - ProjectCard base max-width\n     100: '25rem',          // 400px - ProjectDetail cover (XL), banner XL\n     106: '26.5rem',        // 424px - HeroBanner height\n     110.25: '27.5625rem',  // 441px - ProjectCard row image max-width\n     116.25: '29.0625rem',  // 465px - ProjectCard XL max-width\n     237.5: '59.375rem',\n     278.5: '69.625rem',\n   }\n   ```\n\n2. **Replace hardcoded dimensions in ProjectCard** (apps/web/src/components/View/ProjectCard/index.tsx)\n   - Line 42: `max-w-[343px]` → `max-w-85.75`\n   - Line 42: `xl:max-w-[465px]` → `xl:max-w-116.25`\n   - Line 44: `xl:!max-h-[339px]` → `xl:!max-h-84.75`\n   - Line 59: `h-[180px]` → `h-45`\n   - Line 59: `xl:h-[244px]` → `xl:h-61`\n   - Line 61: `xl:max-w-[441px]` → `xl:max-w-110.25`\n\n3. **Replace hardcoded dimensions in ProjectDetail** (apps/web/src/components/View/ProjectDetail/index.tsx)\n   - Line 65: `h-[240px]` → `h-60`\n   - Line 65: `xl:h-[400px]` → `xl:h-100`\n\n4. **Replace hardcoded dimensions in HeroBanner** (apps/web/src/components/View/HeroBanner/index.tsx)\n   - Line 30: `xl:h-[424px]` → `xl:h-106`\n\n5. **Replace hardcoded dimensions in loading.tsx skeleton files:**\n   \n   **apps/web/src/app/[locale]/loading.tsx:**\n   - Line 8: `xl:h-[424px]` → `xl:h-106`\n   - Line 30: `h-[180px]` → `h-45`\n   - Line 30: `xl:h-[244px]` → `xl:h-61`\n   \n   **apps/web/src/app/[locale]/projects/loading.tsx:**\n   - Line 8: `xl:h-[424px]` → `xl:h-106`\n   \n   **apps/web/src/app/[locale]/projects/[slug]/loading.tsx:**\n   - Line 7: `h-[240px]` → `h-60`\n   - Line 7: `xl:h-[400px]` → `xl:h-100`\n\n6. **Verify build and visual consistency**\n   Run `pnpm build` to ensure no Tailwind class errors, then visually verify all affected components maintain their exact dimensions.\n\n**Files modified:**\n- packages/tailwind-config/index.ts\n- apps/web/src/components/View/ProjectCard/index.tsx\n- apps/web/src/components/View/ProjectDetail/index.tsx\n- apps/web/src/components/View/HeroBanner/index.tsx\n- apps/web/src/app/[locale]/loading.tsx\n- apps/web/src/app/[locale]/projects/loading.tsx\n- apps/web/src/app/[locale]/projects/[slug]/loading.tsx\n\n**Design rationale:**\nFollowing the pattern established in spacing (e.g., 237.5 = 59.375rem), the new tokens use fractional Tailwind units (45 = 180px / 4, 106 = 424px / 4). This maintains consistency with the existing design system and ensures proper scaling with the base font-size.",
-        "testStrategy": "1. **Build validation:** Run `pnpm build` from project root — must complete without Tailwind class errors or unknown utility warnings.\n\n2. **Visual regression testing:** \n   - Start dev server: `pnpm dev`\n   - Navigate to homepage (`/`): verify HeroBanner height is 424px (XL viewport), ProjectCard images are 180px (mobile) / 244px (XL)\n   - Navigate to `/projects`: verify ProjectCard grid and row views maintain correct dimensions (max-w-343px base, max-w-465px XL, row max-h-339px)\n   - Navigate to any project detail page (e.g., `/projects/example-slug`): verify cover image is 240px (mobile) / 400px (XL)\n   - Test loading states by throttling network in DevTools — verify skeleton dimensions match component dimensions\n\n3. **Token verification:**\n   - Inspect packages/tailwind-config/index.ts: confirm all 9 new spacing tokens (45, 60, 61, 84.75, 85.75, 100, 106, 110.25, 116.25) are present\n   - Use browser DevTools to inspect computed styles of affected elements — verify pixel values match expected (e.g., h-45 = 180px, xl:h-106 = 424px)\n\n4. **Grep validation:**\n   Run `grep -r \"h-\\[.*px\\]\" apps/web/src/components/View/ProjectCard apps/web/src/components/View/ProjectDetail apps/web/src/components/View/HeroBanner apps/web/src/app/[locale]/loading.tsx apps/web/src/app/[locale]/projects` — should return zero matches for the targeted dimension values (180px, 240px, 244px, 339px, 343px, 400px, 424px, 441px, 465px)\n\n5. **Cross-browser check:** Verify layout consistency in Chrome, Firefox, and Safari (desktop + mobile viewports) to ensure rem-based spacing renders identically to previous px values.",
-        "status": "pending",
-        "dependencies": [
-          1
-        ],
-        "priority": "medium",
-        "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2026-05-16T03:25:09.649Z",
-      "updated": "2026-05-16T04:41:49.913Z",
-      "description": "Sprint 6 — Design System & Feature Architecture"
+      "version": "1.0.0",
+      "lastModified": "2026-05-18T03:43:44.870Z",
+      "taskCount": 6,
+      "completedCount": 2,
+      "tags": [
+        "sprint-6"
+      ]
     }
   }
 }
