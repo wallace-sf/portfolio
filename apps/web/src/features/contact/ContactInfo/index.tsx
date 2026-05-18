@@ -7,8 +7,8 @@ import { Divider } from '@repo/ui/View';
 import { formatCellphone } from '@repo/utils';
 import { useTranslations } from 'next-intl';
 
-import { Link } from '~i18n/routing';
 import { MenuItem } from '~components/Layout/MenuItem';
+import { Link } from '~i18n/routing';
 
 export const ContactInfo: FC = () => {
   const t = useTranslations('ContactInfo');

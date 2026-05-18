@@ -1,12 +1,12 @@
 import { getLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
+import { ApiResponse } from '~/lib/api/envelope';
+import { getInternalBaseUrl } from '~/lib/api/internal';
 import {
   ProjectDetail,
   IProjectDetailProps,
 } from '~features/projects/ProjectDetail';
-import { ApiResponse } from '~/lib/api/envelope';
-import { getInternalBaseUrl } from '~/lib/api/internal';
 
 type ProjectDetailData = IProjectDetailProps & { id: string };
 

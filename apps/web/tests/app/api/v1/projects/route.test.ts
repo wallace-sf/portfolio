@@ -14,6 +14,7 @@ vi.mock('@repo/infra', () => ({
 const mockFindPublished = vi.fn();
 const mockFindBySlug = vi.fn();
 const mockFindRelated = vi.fn();
+const mockFindNamesByIds = vi.fn();
 
 beforeEach(() => {
   vi.mocked(getContainer).mockReturnValue({
@@ -22,8 +23,12 @@ beforeEach(() => {
       findBySlug: mockFindBySlug,
       findRelated: mockFindRelated,
     },
+    skillRepository: {
+      findNamesByIds: mockFindNamesByIds,
+    },
   } as unknown as Container);
   mockFindRelated.mockResolvedValue([]);
+  mockFindNamesByIds.mockResolvedValue(new Map());
 });
 
 function makeRequest(url: string): NextRequest {

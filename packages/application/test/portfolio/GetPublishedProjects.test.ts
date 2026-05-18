@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   IProjectProps,
   IProjectRepository,
+  ISkillRepository,
   Project,
   ProjectStatus,
 } from '@repo/core/portfolio';
@@ -50,6 +51,14 @@ function makeRepository(overrides: Partial<IProjectRepository> = {}): IProjectRe
   };
 }
 
+function makeSkillRepository(
+  map: Map<string, string> = new Map(),
+): ISkillRepository {
+  return {
+    findNamesByIds: vi.fn().mockResolvedValue(map),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -58,7 +67,7 @@ describe('GetPublishedProjects', () => {
   describe('execute()', () => {
     it('should return Right with empty array when repository returns no projects', async () => {
       const repo = makeRepository({ findPublished: vi.fn().mockResolvedValue([]) });
-      const useCase = new GetPublishedProjects(repo);
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -69,7 +78,7 @@ describe('GetPublishedProjects', () => {
     it('should return Right with mapped DTOs when repository returns projects', async () => {
       const project = makeProject();
       const repo = makeRepository({ findPublished: vi.fn().mockResolvedValue([project]) });
-      const useCase = new GetPublishedProjects(repo);
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -85,7 +94,7 @@ describe('GetPublishedProjects', () => {
       const repo = makeRepository({
         findPublished: vi.fn().mockResolvedValue([oldest, newest, middle]),
       });
-      const useCase = new GetPublishedProjects(repo);
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -102,7 +111,7 @@ describe('GetPublishedProjects', () => {
       const original = [oldest, newest];
 
       const repo = makeRepository({ findPublished: vi.fn().mockResolvedValue(original) });
-      const useCase = new GetPublishedProjects(repo);
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
       await useCase.execute({ locale: 'pt-BR' });
 
@@ -113,7 +122,7 @@ describe('GetPublishedProjects', () => {
     it('should map all DTO fields correctly for pt-BR locale', async () => {
       const project = makeProject();
       const repo = makeRepository({ findPublished: vi.fn().mockResolvedValue([project]) });
-      const useCase = new GetPublishedProjects(repo);
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -136,7 +145,7 @@ describe('GetPublishedProjects', () => {
         theme: { 'pt-BR': 'Tema PT', 'en-US': 'Theme EN' },
       });
       const repo = makeRepository({ findPublished: vi.fn().mockResolvedValue([project]) });
-      const useCase = new GetPublishedProjects(repo);
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
       const ptResult = await useCase.execute({ locale: 'pt-BR' });
       const enResult = await useCase.execute({ locale: 'en-US' });
@@ -153,27 +162,28 @@ describe('GetPublishedProjects', () => {
       expect(enDto.theme).toBe('Theme EN');
     });
 
-    it('should include skill IDs in DTO', async () => {
-      const skillIds = [
-        'a0000000-0000-4000-8000-000000000001',
-        'a0000000-0000-4000-8000-000000000002',
-      ];
-      const project = makeProject({ skills: skillIds });
+    it('should include resolved skill names in DTO', async () => {
+      const skillId1 = 'a0000000-0000-4000-8000-000000000001';
+      const skillId2 = 'a0000000-0000-4000-8000-000000000002';
+      const project = makeProject({ skills: [skillId1, skillId2] });
       const repo = makeRepository({ findPublished: vi.fn().mockResolvedValue([project]) });
-      const useCase = new GetPublishedProjects(repo);
+      const skillRepo = makeSkillRepository(
+        new Map([[skillId1, 'TypeScript'], [skillId2, 'React']]),
+      );
+      const useCase = new GetPublishedProjects(repo, skillRepo);
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
       expect(result.isRight()).toBe(true);
       const dto = (result.value as ProjectSummaryDTO[])[0]!;
-      expect(dto.skills).toEqual(skillIds);
+      expect(dto.skills).toEqual(['TypeScript', 'React']);
     });
 
     it('should return Left with DomainError when repository throws', async () => {
       const repo = makeRepository({
         findPublished: vi.fn().mockRejectedValue(new Error('DB connection failed')),
       });
-      const useCase = new GetPublishedProjects(repo);
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -185,7 +195,7 @@ describe('GetPublishedProjects', () => {
     it('should call findPublished() on the repository', async () => {
       const findPublished = vi.fn().mockResolvedValue([]);
       const repo = makeRepository({ findPublished });
-      const useCase = new GetPublishedProjects(repo);
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
       await useCase.execute({ locale: 'pt-BR' });
 

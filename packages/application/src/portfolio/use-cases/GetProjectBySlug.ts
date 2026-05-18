@@ -1,4 +1,8 @@
-import { IProjectRepository, Project } from '@repo/core/portfolio';
+import {
+  IProjectRepository,
+  ISkillRepository,
+  Project,
+} from '@repo/core/portfolio';
 import {
   DomainError,
   Either,
@@ -24,7 +28,10 @@ export class GetProjectBySlug extends UseCase<
   ProjectDetailDTO,
   NotFoundError | ValidationError | DomainError
 > {
-  constructor(private readonly projectRepository: IProjectRepository) {
+  constructor(
+    private readonly projectRepository: IProjectRepository,
+    private readonly skillRepository: ISkillRepository,
+  ) {
     super();
   }
 
@@ -56,16 +63,28 @@ export class GetProjectBySlug extends UseCase<
       relatedProjects = [];
     }
 
-    const relatedDTOs = relatedProjects.map((p) =>
-      this.toSummaryDTO(p, input.locale),
+    const allProjects = [project, ...relatedProjects];
+    const allIds = [
+      ...new Set(allProjects.flatMap((p) => p.skills.map((s) => s.value))),
+    ];
+    const skillNames = await this.skillRepository.findNamesByIds(
+      allIds,
+      input.locale,
     );
-    return right(this.toDetailDTO(project, input.locale, relatedDTOs));
+
+    const relatedDTOs = relatedProjects.map((p) =>
+      this.toSummaryDTO(p, input.locale, skillNames),
+    );
+    return right(
+      this.toDetailDTO(project, input.locale, relatedDTOs, skillNames),
+    );
   }
 
   private toDetailDTO(
     project: Project,
     locale: Locale,
     relatedProjects: ProjectSummaryDTO[],
+    skillNames: Map<string, string>,
   ): ProjectDetailDTO {
     return {
       id: project.id.value,
@@ -77,7 +96,7 @@ export class GetProjectBySlug extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((id) => id.value),
+      skills: project.skills.map((id) => skillNames.get(id.value) ?? id.value),
       publishedAt: project.period.startAt.value,
       content: project.content.value,
       summary: project.summary?.get(locale),
@@ -91,7 +110,11 @@ export class GetProjectBySlug extends UseCase<
     };
   }
 
-  private toSummaryDTO(project: Project, locale: Locale): ProjectSummaryDTO {
+  private toSummaryDTO(
+    project: Project,
+    locale: Locale,
+    skillNames: Map<string, string>,
+  ): ProjectSummaryDTO {
     return {
       id: project.id.value,
       slug: project.slug.value,
@@ -102,7 +125,7 @@ export class GetProjectBySlug extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((id) => id.value),
+      skills: project.skills.map((id) => skillNames.get(id.value) ?? id.value),
       publishedAt: project.period.startAt.value,
     };
   }

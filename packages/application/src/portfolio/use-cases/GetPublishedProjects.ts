@@ -1,4 +1,8 @@
-import { IProjectRepository, Project } from '@repo/core/portfolio';
+import {
+  IProjectRepository,
+  ISkillRepository,
+  Project,
+} from '@repo/core/portfolio';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
 import { UseCase } from '../../shared/UseCase';
@@ -12,7 +16,10 @@ export class GetPublishedProjects extends UseCase<
   GetPublishedProjectsInput,
   ProjectSummaryDTO[]
 > {
-  constructor(private readonly projectRepository: IProjectRepository) {
+  constructor(
+    private readonly projectRepository: IProjectRepository,
+    private readonly skillRepository: ISkillRepository,
+  ) {
     super();
   }
 
@@ -24,7 +31,14 @@ export class GetPublishedProjects extends UseCase<
       const sorted = [...projects].sort(
         (a, b) => b.period.startAt.ms - a.period.startAt.ms,
       );
-      return right(sorted.map((p) => this.toDTO(p, input.locale)));
+      const allIds = [
+        ...new Set(sorted.flatMap((p) => p.skills.map((s) => s.value))),
+      ];
+      const skillNames = await this.skillRepository.findNamesByIds(
+        allIds,
+        input.locale,
+      );
+      return right(sorted.map((p) => this.toDTO(p, input.locale, skillNames)));
     } catch {
       return left(
         new DomainError('FETCH_FAILED', {
@@ -34,7 +48,11 @@ export class GetPublishedProjects extends UseCase<
     }
   }
 
-  private toDTO(project: Project, locale: Locale): ProjectSummaryDTO {
+  private toDTO(
+    project: Project,
+    locale: Locale,
+    skillNames: Map<string, string>,
+  ): ProjectSummaryDTO {
     return {
       id: project.id.value,
       slug: project.slug.value,
@@ -45,7 +63,7 @@ export class GetPublishedProjects extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((id) => id.value),
+      skills: project.skills.map((id) => skillNames.get(id.value) ?? id.value),
       publishedAt: project.period.startAt.value,
     };
   }
