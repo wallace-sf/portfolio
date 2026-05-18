@@ -6,6 +6,7 @@ import {
   IProfessionalValueRepository,
   IProfileRepository,
   IProjectRepository,
+  ISkillRepository,
 } from '@repo/core/portfolio';
 import { validateEnv } from '@repo/utils/env';
 import { Resend } from 'resend';
@@ -14,14 +15,16 @@ import { env } from './env';
 import { SupabaseAuthenticationGateway } from './identity/SupabaseAuthenticationGateway';
 import { prisma } from './prisma/client';
 import { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
-import { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
 import { PrismaProfessionalValueRepository } from './repositories/professional-value/PrismaProfessionalValueRepository';
+import { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
 import { PrismaProjectRepository } from './repositories/project/PrismaProjectRepository';
+import { PrismaSkillRepository } from './repositories/skill/PrismaSkillRepository';
 import { PrismaUserRepository } from './repositories/user/PrismaUserRepository';
 import { ResendEmailService } from './services/ResendEmailService';
 
 export type Container = {
   projectRepository: IProjectRepository;
+  skillRepository: ISkillRepository;
   experienceRepository: IExperienceRepository;
   professionalValueRepository: IProfessionalValueRepository;
   profileRepository: IProfileRepository;
@@ -37,6 +40,7 @@ export function makeContainer(): Container {
 
   return {
     projectRepository: new PrismaProjectRepository(prisma),
+    skillRepository: new PrismaSkillRepository(prisma),
     experienceRepository: new PrismaExperienceRepository(prisma),
     professionalValueRepository: new PrismaProfessionalValueRepository(prisma),
     profileRepository: new PrismaProfileRepository(prisma),

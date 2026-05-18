@@ -1,7 +1,7 @@
 import { applyDevSimulations } from '~/dev/simulate';
+import { ExperiencesSection } from '~features/about/ExperiencesSection';
 import { HeroSection } from '~features/about/HeroSection';
 import { ValuesSection } from '~features/about/ValuesSection';
-import { ExperiencesSection } from '~features/about/ExperiencesSection';
 
 interface AboutPageProps {
   searchParams?: Promise<{ loading?: string; error?: string }>;

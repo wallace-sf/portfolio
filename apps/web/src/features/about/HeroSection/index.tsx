@@ -1,8 +1,8 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import HeroAbout from '~assets/images/hero-about.png';
 import { ApiResponse } from '~/lib/api/envelope';
 import { getInternalBaseUrl } from '~/lib/api/internal';
+import HeroAbout from '~assets/images/hero-about.png';
 import { HeroBanner } from '~features/shared/HeroBanner';
 
 interface ProfileHero {

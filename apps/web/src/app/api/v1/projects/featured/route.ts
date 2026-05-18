@@ -8,7 +8,9 @@ import { resolveLocale } from '~/lib/api/locale';
 export async function GET(request: NextRequest) {
   return handleRequest(() => {
     const locale = resolveLocale(request);
-    const { projectRepository } = getContainer();
-    return new GetFeaturedProjects(projectRepository).execute({ locale });
+    const { projectRepository, skillRepository } = getContainer();
+    return new GetFeaturedProjects(projectRepository, skillRepository).execute({
+      locale,
+    });
   });
 }

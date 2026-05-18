@@ -1,6 +1,5 @@
-import { getLocale, getTranslations } from 'next-intl/server';
-
 import { Divider } from '@repo/ui/View';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 import { ApiResponse } from '~/lib/api/envelope';
 import { getInternalBaseUrl } from '~/lib/api/internal';

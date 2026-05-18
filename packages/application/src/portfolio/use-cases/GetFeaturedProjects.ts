@@ -1,4 +1,8 @@
-import { IProjectRepository, Project } from '@repo/core/portfolio';
+import {
+  IProjectRepository,
+  ISkillRepository,
+  Project,
+} from '@repo/core/portfolio';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
 import { UseCase } from '../../shared/UseCase';
@@ -12,7 +16,10 @@ export class GetFeaturedProjects extends UseCase<
   GetFeaturedProjectsInput,
   ProjectSummaryDTO[]
 > {
-  constructor(private readonly projectRepository: IProjectRepository) {
+  constructor(
+    private readonly projectRepository: IProjectRepository,
+    private readonly skillRepository: ISkillRepository,
+  ) {
     super();
   }
 
@@ -21,7 +28,16 @@ export class GetFeaturedProjects extends UseCase<
   ): Promise<Either<DomainError, ProjectSummaryDTO[]>> {
     try {
       const projects = await this.projectRepository.findFeatured();
-      return right(projects.map((p) => this.toDTO(p, input.locale)));
+      const allIds = [
+        ...new Set(projects.flatMap((p) => p.skills.map((s) => s.value))),
+      ];
+      const skillNames = await this.skillRepository.findNamesByIds(
+        allIds,
+        input.locale,
+      );
+      return right(
+        projects.map((p) => this.toDTO(p, input.locale, skillNames)),
+      );
     } catch {
       return left(
         new DomainError('FETCH_FAILED', {
@@ -31,7 +47,11 @@ export class GetFeaturedProjects extends UseCase<
     }
   }
 
-  private toDTO(project: Project, locale: Locale): ProjectSummaryDTO {
+  private toDTO(
+    project: Project,
+    locale: Locale,
+    skillNames: Map<string, string>,
+  ): ProjectSummaryDTO {
     return {
       id: project.id.value,
       slug: project.slug.value,
@@ -42,7 +62,7 @@ export class GetFeaturedProjects extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((id) => id.value),
+      skills: project.skills.map((id) => skillNames.get(id.value) ?? id.value),
       publishedAt: project.period.startAt.value,
     };
   }

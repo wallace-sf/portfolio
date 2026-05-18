@@ -5,6 +5,7 @@ import {
   Experience,
   IExperienceProps,
   IExperienceRepository,
+  ISkillRepository,
   LocationType,
 } from '@repo/core/portfolio';
 import { DomainError } from '@repo/core/shared';
@@ -54,6 +55,14 @@ function makeRepository(
   };
 }
 
+function makeSkillRepository(
+  map: Map<string, string> = new Map(),
+): ISkillRepository {
+  return {
+    findNamesByIds: vi.fn().mockResolvedValue(map),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -62,7 +71,7 @@ describe('GetExperiences', () => {
   describe('execute()', () => {
     it('should return Right with empty array when repository returns no experiences', async () => {
       const repo = makeRepository({ findAll: vi.fn().mockResolvedValue([]) });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -75,7 +84,7 @@ describe('GetExperiences', () => {
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -103,7 +112,7 @@ describe('GetExperiences', () => {
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([oldest, newest, middle]),
       });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -128,7 +137,7 @@ describe('GetExperiences', () => {
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue(original),
       });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       await useCase.execute({ locale: 'pt-BR' });
 
@@ -145,7 +154,7 @@ describe('GetExperiences', () => {
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -172,7 +181,7 @@ describe('GetExperiences', () => {
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       const ptResult = await useCase.execute({ locale: 'pt-BR' });
       const enResult = await useCase.execute({ locale: 'en-US' });
@@ -189,14 +198,17 @@ describe('GetExperiences', () => {
       expect(enDto.position).toBe('Software Engineer');
     });
 
-    it('should map skill IDs as strings in the DTO', async () => {
+    it('should resolve skill names from the skill repository', async () => {
       const experience = makeExperience({
         skills: [SKILL_ID_1, SKILL_ID_2],
       });
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
-      const useCase = new GetExperiences(repo);
+      const skillRepo = makeSkillRepository(
+        new Map([[SKILL_ID_1, 'TypeScript'], [SKILL_ID_2, 'React']]),
+      );
+      const useCase = new GetExperiences(repo, skillRepo);
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -204,8 +216,8 @@ describe('GetExperiences', () => {
       const dto = (result.value as ExperienceDTO[])[0]!;
 
       expect(dto.skills).toHaveLength(2);
-      expect(dto.skills[0]).toBe(SKILL_ID_1);
-      expect(dto.skills[1]).toBe(SKILL_ID_2);
+      expect(dto.skills[0]).toBe('TypeScript');
+      expect(dto.skills[1]).toBe('React');
     });
 
     it('should map skills as empty array when experience has no skills', async () => {
@@ -213,7 +225,7 @@ describe('GetExperiences', () => {
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -227,7 +239,7 @@ describe('GetExperiences', () => {
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -240,7 +252,7 @@ describe('GetExperiences', () => {
       const repo = makeRepository({
         findAll: vi.fn().mockRejectedValue(new Error('DB connection failed')),
       });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
 
@@ -252,7 +264,7 @@ describe('GetExperiences', () => {
     it('should call findAll() on the repository', async () => {
       const findAll = vi.fn().mockResolvedValue([]);
       const repo = makeRepository({ findAll });
-      const useCase = new GetExperiences(repo);
+      const useCase = new GetExperiences(repo, makeSkillRepository());
 
       await useCase.execute({ locale: 'pt-BR' });
 

@@ -1,7 +1,7 @@
 import { applyDevSimulations } from '~/dev/simulate';
+import { ContactSection } from '~features/contact/ContactSection';
 import { HeroSection } from '~features/home/HeroSection';
 import { ProjectsSection } from '~features/home/ProjectsSection';
-import { ContactSection } from '~features/contact/ContactSection';
 
 interface HomePageProps {
   searchParams?: Promise<{ loading?: string; error?: string }>;

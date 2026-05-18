@@ -1,10 +1,10 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import HeroLandingPage from '~assets/images/hero-landing-page.png';
 import { ApiResponse } from '~/lib/api/envelope';
 import { getInternalBaseUrl } from '~/lib/api/internal';
-import { StatCard } from '~features/shared/StatCard';
+import HeroLandingPage from '~assets/images/hero-landing-page.png';
 import { HeroBanner } from '~features/shared/HeroBanner';
+import { StatCard } from '~features/shared/StatCard';
 
 interface ProfileStat {
   label: string;
