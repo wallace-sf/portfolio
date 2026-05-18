@@ -27,6 +27,9 @@ vi.mock('@repo/ui/View', () => ({
 }));
 
 vi.mock('~components/View', () => ({
+  HeroBanner: ({ title }: { title: string }) => (
+    <div data-testid="hero-banner">{title}</div>
+  ),
   ProfessionalValue: ({ content }: { content: string }) => (
     <div data-testid="professional-value">{content}</div>
   ),
@@ -100,6 +103,13 @@ function errorResponse() {
   });
 }
 
+const PROFILE = {
+  name: 'Wallace Ferreira',
+  headline: 'Frontend Engineer',
+  bio: 'Bio text.',
+  photo: { url: 'https://example.com/photo.jpg', alt: 'Profile photo' },
+};
+
 function mockApis({
   experiences = [] as unknown[] | null,
   professionalValues = [] as unknown[] | null,
@@ -116,6 +126,11 @@ function mockApis({
         : okResponse(professionalValues);
     if (url.includes('/api/v1/experiences'))
       return experiences === null ? errorResponse() : okResponse(experiences);
+    if (url.includes('/api/v1/profile'))
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ data: PROFILE, error: null }),
+      });
     return errorResponse();
   });
 }
