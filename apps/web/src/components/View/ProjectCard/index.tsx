@@ -39,9 +39,9 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   return (
     <article
       className={classNames(
-        'relative bg-dark-300 p-3 rounded-5 w-full h-full max-w-[343px] xl:max-w-[465px]',
+        'relative bg-surface p-3 rounded-5 w-full h-full max-w-85.75 xl:max-w-116.25',
         {
-          'xl:!max-w-237.5 xl:!max-h-[339px]': view === 'row',
+          'xl:!max-w-237.5 xl:!max-h-84.75': view === 'row',
         },
       )}
     >
@@ -56,9 +56,9 @@ export const ProjectCard: FC<IProjectCardProps> = ({
       >
         <header
           className={classNames(
-            'relative aspect-319/180 h-[180px] xl:h-[244px] rounded-b-lg overflow-hidden',
+            'relative aspect-319/180 h-45 xl:h-61 rounded-b-lg overflow-hidden',
             {
-              'xl:aspect-7/5 xl:row-span-2 xl:max-w-[441px] xl:h-auto xl:rounded-tr-lg':
+              'xl:aspect-7/5 xl:row-span-2 xl:max-w-110.25 xl:h-auto xl:rounded-tr-lg':
                 view === 'row',
             },
           )}
@@ -73,16 +73,16 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           />
         </header>
         <section className="flex flex-col gap-y-2 flex-grow pr-8">
-          <h3 className="text-body-lg !font-bold !text-white line-clamp-1">
+          <h3 className="text-body-lg !font-bold !text-content-primary line-clamp-1">
             {title}
           </h3>
           {theme && (
-            <span className="text-body-xs !text-dark-700 uppercase tracking-wide">
+            <span className="text-body-xs !text-content-muted uppercase tracking-wide">
               {theme}
             </span>
           )}
           <p
-            className={classNames('text-body-sm !text-dark-900', {
+            className={classNames('text-body-sm !text-content-secondary', {
               'line-clamp-2': compact,
             })}
           >

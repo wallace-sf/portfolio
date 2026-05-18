@@ -18,16 +18,16 @@ export const Breadcrumb: FC<IBreadcrumbProps> = ({ items }) => (
     <ol className="flex flex-row flex-wrap items-center gap-x-2 text-body-xs">
       {items.map((item, i) => (
         <li key={i} className="flex items-center gap-x-2">
-          {i > 0 && <span className="!text-dark-700">/</span>}
+          {i > 0 && <span className="!text-content-muted">/</span>}
           {item.href ? (
             <Link
               href={item.href}
-              className="!text-dark-700 hover:!text-white transition-colors"
+              className="!text-content-muted hover:!text-content-primary transition-colors"
             >
               {item.label}
             </Link>
           ) : (
-            <span className="!text-white">{item.label}</span>
+            <span className="!text-content-primary">{item.label}</span>
           )}
         </li>
       ))}

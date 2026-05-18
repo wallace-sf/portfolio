@@ -24,7 +24,7 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
       skills.slice(0, storedMax).map((skillId) => (
         <li
           key={skillId}
-          className="flex flex-row items-center bg-dark-500 py-1 px-3 rounded-3.75 text-body-xs !text-white"
+          className="flex flex-row items-center bg-surface-raised py-1 px-3 rounded-3.75 text-body-xs !text-content-primary"
         >
           {skillId}
         </li>
@@ -40,7 +40,7 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
     <ul className="flex flex-row gap-2 flex-wrap">
       {renderedSkills}
       {skills.length > storedMax ? (
-        <li className="flex flex-row items-center bg-dark-500 py-1 px-3 gap-x-2.5 rounded-3.75 text-white">
+        <li className="flex flex-row items-center bg-surface-raised py-1 px-3 gap-x-2.5 rounded-3.75 text-content-primary">
           +{total - storedMax}
         </li>
       ) : null}

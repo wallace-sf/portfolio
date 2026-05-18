@@ -15,9 +15,9 @@ export const ContactInfo: FC = () => {
   const t = useTranslations('ContactInfo');
 
   return (
-    <section className="flex flex-col gap-y-6 bg-dark-300 px-4 py-6 rounded-xl">
+    <section className="flex flex-col gap-y-6 bg-surface px-4 py-6 rounded-xl">
       <address>
-        <strong className="inline-block w-full text-body-base !text-white !font-bold not-italic mb-2">
+        <strong className="inline-block w-full text-body-base !text-content-primary !font-bold not-italic mb-2">
           {t('email')}
         </strong>
         <Link
@@ -26,7 +26,7 @@ export const ContactInfo: FC = () => {
         >
           {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
         </Link>
-        <strong className="inline-block w-full text-body-base !text-white !font-bold not-italic mb-2">
+        <strong className="inline-block w-full text-body-base !text-content-primary !font-bold not-italic mb-2">
           WhatsApp
         </strong>
         <Link
@@ -40,8 +40,8 @@ export const ContactInfo: FC = () => {
         </Link>
       </address>
       <Divider className="!my-0" />
-      <p className="text-body-sm !text-white">{t('paragraph1')}</p>
-      <p className="text-body-sm !text-white">{t('paragraph2')}</p>
+      <p className="text-body-sm !text-content-primary">{t('paragraph1')}</p>
+      <p className="text-body-sm !text-content-primary">{t('paragraph2')}</p>
       <nav className="flex flex-col gap-y-3">
         <MenuItem.Item2.Link
           href={process.env.NEXT_PUBLIC_LINKEDIN_URL}

@@ -62,7 +62,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
 
   return (
     <article className="flex flex-col gap-y-8 pb-12">
-      <div className="relative w-full h-[240px] xl:h-[400px] overflow-hidden">
+      <div className="relative w-full h-60 xl:h-100 overflow-hidden">
         <Image
           src={coverImage.url}
           fill
@@ -76,15 +76,15 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
         <Breadcrumb items={breadcrumbItems} />
 
         <header className="flex flex-col gap-y-2">
-          <h1 className="!text-2xl xl:!text-4xl !font-bold !text-white">
+          <h1 className="!text-2xl xl:!text-4xl !font-bold !text-content-primary">
             {title}
           </h1>
           {theme && (
-            <span className="text-body-xs !text-dark-700 uppercase tracking-wide">
+            <span className="text-body-xs !text-content-muted uppercase tracking-wide">
               {theme}
             </span>
           )}
-          <p className="text-body-sm !text-dark-900">{caption}</p>
+          <p className="text-body-sm !text-content-secondary">{caption}</p>
         </header>
 
         <SkillGroup
@@ -105,13 +105,13 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
         {content && (
           <TextRich
             content={content}
-            className="!text-white prose prose-invert max-w-none"
+            className="!text-content-primary prose prose-invert max-w-none"
           />
         )}
 
         {relatedProjects.length > 0 && (
           <section className="flex flex-col gap-y-6">
-            <h2 className="!text-xl !font-bold !text-white">
+            <h2 className="!text-xl !font-bold !text-content-primary">
               {t('related_title')}
             </h2>
             <ProjectList projects={relatedProjects} view="row" compact />

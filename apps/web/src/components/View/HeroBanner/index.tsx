@@ -27,7 +27,7 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
   return (
     <section
       className={classNames(
-        'flex flex-col bg-dark-300 gap-y-6 xl:gap-x-8 xl:flex xl:flex-row xl:rounded-xl xl:h-[424px]',
+        'flex flex-col bg-surface gap-y-6 xl:gap-x-8 xl:flex xl:flex-row xl:rounded-xl xl:h-106',
         className,
       )}
     >
@@ -43,9 +43,11 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
         />
       </section>
       <section className="flex flex-col px-6 pb-6 xl:order-0 xl:py-20 xl:pl-20 xl:w-1/2">
-        <h1 className="text-body-xl !text-dark-900 pb-2">{title}</h1>
-        <h2 className="text-body-xl !text-white !font-bold pb-8">{caption}</h2>
-        <p className="text-body-sm !text-white">{content}</p>
+        <h1 className="text-body-xl !text-content-secondary pb-2">{title}</h1>
+        <h2 className="text-body-xl !text-content-primary !font-bold pb-8">
+          {caption}
+        </h2>
+        <p className="text-body-sm !text-content-primary">{content}</p>
       </section>
     </section>
   );

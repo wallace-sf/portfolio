@@ -20,12 +20,12 @@ export const SkillAccordion: FC<ISkillAccordionProps> = ({ skills }) => {
       {({ expanded }) => (
         <>
           <Accordion.Header className="py-2">
-            <span className="text-body-xs !text-dark-700">
+            <span className="text-body-xs !text-content-muted">
               {t('skills_label')}
             </span>
             <Icon
               icon="ic:round-keyboard-arrow-down"
-              className={`text-dark-700 text-xl transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+              className={`text-content-muted text-xl transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
             />
           </Accordion.Header>
           <Accordion.Body>
@@ -33,7 +33,7 @@ export const SkillAccordion: FC<ISkillAccordionProps> = ({ skills }) => {
               {skills.map((skill) => (
                 <li
                   key={skill}
-                  className="flex flex-row items-center bg-dark-500 py-1 px-3 rounded-3.75 text-body-xs !text-white"
+                  className="flex flex-row items-center bg-surface-raised py-1 px-3 rounded-3.75 text-body-xs !text-content-primary"
                 >
                   {skill}
                 </li>
