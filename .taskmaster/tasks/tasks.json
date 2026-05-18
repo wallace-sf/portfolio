@@ -4656,7 +4656,7 @@
         "description": "Simplificar as pages do App Router para que sejam apenas orquestradores de features, sem lógica de renderização ou dados embutidos.",
         "details": "Depende de Épico 3. 4.1 page.tsx (Home): importar HeroSection + ProjectsSection de ~features/home, ContactSection de ~features/contact. 4.2 about/page.tsx: importar ValuesSection + ExperiencesSection de ~features/about. 4.3 projects/page.tsx: encapsular fetch de /api/v1/projects em features/projects/ProjectsSection (Server Component); manter applyDevSimulations. GitHub issue: #561.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "3"
         ],
@@ -4721,7 +4721,8 @@
             "testStrategy": "Run pnpm lint in apps/web to catch unused imports. Run pnpm build to verify no TypeScript errors. Manually review each page file to confirm it's minimal (< 50 lines ideally). Test all three pages in browser to ensure functionality is preserved. Use git diff to confirm only imports/interfaces were removed, no logic changes.",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-05-18T06:27:39.517Z"
       },
       {
         "id": "5",
@@ -4877,7 +4878,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-18T04:43:14.533Z",
+      "lastModified": "2026-05-18T06:27:39.517Z",
       "taskCount": 6,
       "completedCount": 3,
       "tags": [
