@@ -4580,7 +4580,7 @@
         "description": "Separar componentes com lógica de produto dos primitivos de UI reutilizáveis. Criar apps/web/src/features/ e migrar 8 componentes. Ao final, components/ deve conter apenas Layout/.",
         "details": "Pode rodar em paralelo com Épico 2. 3.1 Criar estrutura de pastas features/home|projects|about|contact|shared. 3.2 HeroBanner → @repo/ui + wrappers de feature. 3.3 ProjectCard + ProjectList → features/home/ProjectsSection. 3.4 ExperienceCard → features/about/ExperiencesSection. 3.5 ProfessionalValue → features/about/ValuesSection. 3.6 ContactForm → features/contact. 3.7 ContactInfo → features/contact. 3.8 ProjectDetail → features/projects. 3.9 Remover components/View e components/Forms após zero imports. GitHub issue: #560.",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [
           "1"
         ],
@@ -4648,7 +4648,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-05-18T04:09:20.444Z"
+        "updatedAt": "2026-05-18T04:43:14.533Z"
       },
       {
         "id": "4",
@@ -4877,9 +4877,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-18T04:09:20.445Z",
+      "lastModified": "2026-05-18T04:43:14.533Z",
       "taskCount": 6,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "sprint-6"
       ]
