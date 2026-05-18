@@ -1,12 +1,10 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import HeroProjects from '~assets/images/hero-projects.png';
-import { HeroBanner, ProjectList } from '~components/View';
+import { HeroSection } from '~features/projects/HeroSection';
+import { ProjectList, ProjectSummary } from '~features/home/ProjectsSection';
 import { applyDevSimulations } from '~/dev/simulate';
 import { ApiResponse } from '~/lib/api/envelope';
 import { getInternalBaseUrl } from '~/lib/api/internal';
-
-import { ProjectSummary } from '~components/View/ProjectList';
 
 interface ProjectsPageProps {
   searchParams?: Promise<{ loading?: string; error?: string }>;
@@ -34,13 +32,11 @@ export default async function Projects({ searchParams }: ProjectsPageProps) {
 
   return (
     <>
-      <HeroBanner
-        src={HeroProjects}
+      <HeroSection
         title={t('hero_title')}
         caption={t('hero_caption')}
         content={t('hero_content')}
         alt={t('hero_image_alt')}
-        imageClassName="object-contain p-6 xl:py-8"
       />
       <ProjectList projects={projects} view="grid" className="py-8 xl:py-20" />
     </>

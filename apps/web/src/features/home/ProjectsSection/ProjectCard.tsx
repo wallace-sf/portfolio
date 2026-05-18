@@ -9,8 +9,7 @@ import Image from 'next/image';
 
 import { Link } from '~i18n/routing';
 import { useBreakpoint } from '~hooks';
-
-import { SkillGroup } from '../SkillGroup';
+import { SkillGroup } from '~features/shared/SkillGroup';
 
 export interface IProjectCardProps {
   view: 'grid' | 'row';

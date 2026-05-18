@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import {
   ProjectDetail,
   IProjectDetailProps,
-} from '~components/View/ProjectDetail';
+} from '~features/projects/ProjectDetail';
 import { ApiResponse } from '~/lib/api/envelope';
 import { getInternalBaseUrl } from '~/lib/api/internal';
 

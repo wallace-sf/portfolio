@@ -38,11 +38,11 @@ vi.mock('@repo/ui/Imagery', () => ({
   ),
 }));
 
-vi.mock('~/components/View/SkillGroup', () => ({
+vi.mock('~/features/shared/SkillGroup', () => ({
   SkillGroup: () => <div data-testid="skill-group" />,
 }));
 
-import { ProjectCard } from '~/components/View/ProjectCard';
+import { ProjectCard } from '~/features/home/ProjectsSection';
 
 const defaultProps = {
   view: 'grid' as const,

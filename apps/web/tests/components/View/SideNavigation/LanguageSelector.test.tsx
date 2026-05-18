@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import { LanguageSelector } from '~/components/View/SideNavigation/LanguageSelector';
+import { LanguageSelector } from '~/components/Layout/SideNavigation/LanguageSelector';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -22,7 +22,7 @@ vi.mock('next-intl', () => ({
   useLocale: () => 'en-US',
 }));
 
-vi.mock('~/components/View/MenuItem/index', () => ({
+vi.mock('~/components/Layout/MenuItem/index', () => ({
   MenuItem: {
     Item2: {
       Expandable: ({ children }: { children: React.ReactNode }) => (

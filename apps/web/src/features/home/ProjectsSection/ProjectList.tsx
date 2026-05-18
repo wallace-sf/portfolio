@@ -4,7 +4,7 @@ import { FC, useMemo } from 'react';
 
 import classNames from 'classnames';
 
-import { ProjectCard, IProjectCardProps } from '../ProjectCard';
+import { ProjectCard, IProjectCardProps } from './ProjectCard';
 
 export interface ProjectSummary {
   id: string;

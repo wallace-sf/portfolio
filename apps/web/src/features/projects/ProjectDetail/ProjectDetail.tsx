@@ -6,10 +6,11 @@ import { TextRich } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
-import { Breadcrumb } from '../Breadcrumb';
-import { ProjectList, ProjectSummary } from '../ProjectList';
-import { ProjectMetaGrid } from '../ProjectMetaGrid';
-import { SkillGroup } from '../SkillGroup';
+import { ProjectList, ProjectSummary } from '~features/home/ProjectsSection';
+import { Breadcrumb } from '~features/shared/Breadcrumb';
+import { SkillGroup } from '~features/shared/SkillGroup';
+
+import { ProjectMetaGrid } from './ProjectMetaGrid';
 
 export interface IProjectDetailProps {
   slug: string;
