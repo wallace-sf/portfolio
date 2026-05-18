@@ -4,7 +4,7 @@ import { FC } from 'react';
 
 import { TextRich } from '@repo/ui/View';
 
-import { SkillAccordion } from '../SkillAccordion';
+import { SkillAccordion } from './SkillAccordion';
 
 export interface IExperienceCardProps {
   id: string;

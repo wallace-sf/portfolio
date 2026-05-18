@@ -7,7 +7,7 @@ vi.mock('@repo/ui/Imagery', () => ({
   ),
 }));
 
-import { StatCard } from '~/components/View/StatCard';
+import { StatCard } from '~/features/shared/StatCard';
 
 const defaultProps = {
   label: 'Years of experience',

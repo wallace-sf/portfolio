@@ -30,13 +30,24 @@ vi.mock('~assets/images/hero-landing-page.png', () => ({
   default: '/hero.png',
 }));
 
-vi.mock('~components', () => ({
-  HeroBanner: ({ title, caption }: { title: string; caption: string }) => (
+vi.mock('~features/home/HeroSection', () => ({
+  HeroSection: ({
+    profile,
+    title,
+    caption,
+  }: {
+    profile?: { name: string; headline: string } | null;
+    title: string;
+    caption: string;
+  }) => (
     <div data-testid="hero">
-      <span data-testid="hero-title">{title}</span>
-      <span data-testid="hero-caption">{caption}</span>
+      <span data-testid="hero-title">{profile?.name ?? title}</span>
+      <span data-testid="hero-caption">{profile?.headline ?? caption}</span>
     </div>
   ),
+}));
+
+vi.mock('~features/home/ProjectsSection', () => ({
   ProjectList: ({ projects }: { projects: unknown[] }) => (
     <ul data-testid="project-list">
       {(projects as { id: string; title: string }[]).map((p) => (
@@ -44,15 +55,23 @@ vi.mock('~components', () => ({
       ))}
     </ul>
   ),
+}));
+
+vi.mock('~features/contact/ContactForm', () => ({
   ContactForm: () => <div data-testid="contact-form" />,
+}));
+
+vi.mock('~features/contact/ContactInfo', () => ({
   ContactInfo: () => <div data-testid="contact-info" />,
+}));
+
+vi.mock('~features/shared/StatCard', () => ({
+  StatCard: () => null,
 }));
 
 vi.mock('@repo/ui/View', () => ({
   Divider: () => <hr />,
 }));
-
-vi.mock('~components/View/ProjectList', () => ({}));
 
 const mockFetch = vi.fn();
 

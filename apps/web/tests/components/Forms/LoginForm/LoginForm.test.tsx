@@ -55,7 +55,7 @@ beforeEach(() => {
 });
 
 async function renderForm() {
-  const { LoginForm } = await import('~/components/Forms/LoginForm');
+  const { LoginForm } = await import('~/features/login/LoginForm');
   render(<LoginForm />);
 }
 

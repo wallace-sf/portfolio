@@ -8,8 +8,7 @@ import { formatCellphone } from '@repo/utils';
 import { useTranslations } from 'next-intl';
 
 import { Link } from '~i18n/routing';
-
-import { MenuItem } from '../MenuItem';
+import { MenuItem } from '~components/Layout/MenuItem';
 
 export const ContactInfo: FC = () => {
   const t = useTranslations('ContactInfo');

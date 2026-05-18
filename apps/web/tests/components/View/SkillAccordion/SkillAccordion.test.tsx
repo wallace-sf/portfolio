@@ -24,7 +24,7 @@ vi.mock('@repo/ui/Control', () => {
   return { Accordion: { Root, Header, Body } };
 });
 
-import { SkillAccordion } from '~/components/View/SkillAccordion';
+import { SkillAccordion } from '~/features/about/ExperiencesSection/SkillAccordion';
 
 describe('SkillAccordion', () => {
   it('should render nothing when skills list is empty', () => {

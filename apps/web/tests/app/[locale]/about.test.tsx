@@ -26,13 +26,19 @@ vi.mock('@repo/ui/View', () => ({
   Divider: () => <hr />,
 }));
 
-vi.mock('~components/View', () => ({
+vi.mock('~features/shared/HeroBanner', () => ({
   HeroBanner: ({ title }: { title: string }) => (
     <div data-testid="hero-banner">{title}</div>
   ),
+}));
+
+vi.mock('~features/about/ValuesSection', () => ({
   ProfessionalValue: ({ content }: { content: string }) => (
     <div data-testid="professional-value">{content}</div>
   ),
+}));
+
+vi.mock('~features/about/ExperiencesSection', () => ({
   ExperienceCard: ({
     company,
     position,
@@ -45,7 +51,6 @@ vi.mock('~components/View', () => ({
       <span>{company}</span>
     </div>
   ),
-  IExperienceCardProps: undefined,
 }));
 
 const mockFetch = vi.fn();

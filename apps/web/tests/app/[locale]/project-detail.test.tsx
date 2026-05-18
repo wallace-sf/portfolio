@@ -23,7 +23,7 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-vi.mock('~components/View/ProjectDetail', () => ({
+vi.mock('~features/projects/ProjectDetail', () => ({
   ProjectDetail: ({ title, caption }: { title: string; caption: string }) => (
     <div data-testid="project-detail">
       <h1>{title}</h1>

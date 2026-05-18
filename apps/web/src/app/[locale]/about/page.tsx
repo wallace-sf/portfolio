@@ -2,13 +2,15 @@ import { getLocale, getTranslations } from 'next-intl/server';
 
 import { Divider } from '@repo/ui/View';
 
+import { HeroBanner } from '~features/shared/HeroBanner';
 import {
   ExperienceCard,
-  HeroBanner,
   IExperienceCardProps,
-  IProfessionalValueCardProps,
+} from '~features/about/ExperiencesSection';
+import {
   ProfessionalValue,
-} from '~components/View';
+  IProfessionalValueCardProps,
+} from '~features/about/ValuesSection';
 import HeroAbout from '~assets/images/hero-about.png';
 import { applyDevSimulations } from '~/dev/simulate';
 import { ApiResponse } from '~/lib/api/envelope';
