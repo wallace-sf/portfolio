@@ -18,7 +18,7 @@ export interface IProjectCardProps {
   caption: string;
   coverImage: { url: string; alt: string };
   theme?: string;
-  skills: string[];
+  skills: { name: string; icon: string }[];
   compact?: boolean;
 }
 

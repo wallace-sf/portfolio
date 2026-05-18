@@ -13,7 +13,7 @@ export interface ProjectSummary {
   caption: string;
   coverImage: { url: string; alt: string };
   theme?: string;
-  skills: string[];
+  skills: { name: string; icon: string }[];
 }
 
 interface IProjectListProps {

@@ -50,7 +50,7 @@ const defaultProps = {
   title: 'My Project',
   caption: 'A great project',
   coverImage: { url: 'https://example.com/image.jpg', alt: 'My project cover' },
-  skills: ['React', 'TypeScript'],
+  skills: [{ name: 'React', icon: '' }, { name: 'TypeScript', icon: '' }],
 };
 
 describe('ProjectCard', () => {

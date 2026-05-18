@@ -2,12 +2,15 @@
 
 import { FC, useMemo, useState } from 'react';
 
+import { Icon } from '@repo/ui/Imagery';
 import { useIsomorphicLayoutEffect } from 'usehooks-ts';
+
+export type SkillSummary = { name: string; icon: string };
 
 interface ISkillGroupProps {
   max: number;
   total: number;
-  skills: string[];
+  skills: SkillSummary[];
   initializeWithMax: number;
 }
 
@@ -21,12 +24,15 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
 
   const renderedSkills = useMemo(
     () =>
-      skills.slice(0, storedMax).map((skillId) => (
+      skills.slice(0, storedMax).map((skill) => (
         <li
-          key={skillId}
-          className="flex flex-row items-center bg-surface-raised py-1 px-3 rounded-3.75 text-body-xs !text-content-primary"
+          key={skill.name}
+          className="flex flex-row items-center bg-surface-raised py-1 px-3 gap-x-2 rounded-3.75 text-body-xs !text-content-primary"
         >
-          {skillId}
+          {skill.icon && (
+            <Icon icon={skill.icon} className="text-base min-w-fit" />
+          )}
+          <span>{skill.name}</span>
         </li>
       )),
     [skills, storedMax],

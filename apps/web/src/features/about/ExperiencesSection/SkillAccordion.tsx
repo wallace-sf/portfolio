@@ -7,7 +7,7 @@ import { Icon } from '@repo/ui/Imagery';
 import { useTranslations } from 'next-intl';
 
 interface ISkillAccordionProps {
-  skills: string[];
+  skills: { name: string; icon: string }[];
 }
 
 export const SkillAccordion: FC<ISkillAccordionProps> = ({ skills }) => {
@@ -32,10 +32,13 @@ export const SkillAccordion: FC<ISkillAccordionProps> = ({ skills }) => {
             <ul className="flex flex-row gap-2 flex-wrap pt-2">
               {skills.map((skill) => (
                 <li
-                  key={skill}
-                  className="flex flex-row items-center bg-surface-raised py-1 px-3 rounded-3.75 text-body-xs !text-content-primary"
+                  key={skill.name}
+                  className="flex flex-row items-center bg-surface-raised py-1 px-3 gap-x-2 rounded-3.75 text-body-xs !text-content-primary"
                 >
-                  {skill}
+                  {skill.icon && (
+                    <Icon icon={skill.icon} className="text-base min-w-fit" />
+                  )}
+                  <span>{skill.name}</span>
                 </li>
               ))}
             </ul>

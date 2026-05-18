@@ -52,7 +52,7 @@ function makeRepository(overrides: Partial<IProjectRepository> = {}): IProjectRe
 }
 
 function makeSkillRepository(
-  map: Map<string, string> = new Map(),
+  map: Map<string, { name: string; icon: string }> = new Map(),
 ): ISkillRepository {
   return {
     findNamesByIds: vi.fn().mockResolvedValue(map),

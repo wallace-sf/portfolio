@@ -18,7 +18,7 @@ export interface IProjectDetailProps {
   caption: string;
   coverImage: { url: string; alt: string };
   theme?: string;
-  skills: string[];
+  skills: { name: string; icon: string }[];
   summary?: string;
   objectives?: string;
   role?: string;
