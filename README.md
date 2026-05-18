@@ -176,9 +176,3 @@ pnpm dev
 ## Status
 
 This portfolio is a work in progress and is being actively refined as part of my career positioning for international opportunities.
-
----
-
-## License
-
-MIT
