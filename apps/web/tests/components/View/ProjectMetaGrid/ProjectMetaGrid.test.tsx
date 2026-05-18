@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { ProjectMetaGrid } from '~/components/View/ProjectMetaGrid';
+import { ProjectMetaGrid } from '~/features/projects/ProjectDetail/ProjectMetaGrid';
 
 const labels = {
   summary: 'Summary',

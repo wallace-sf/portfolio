@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* App-specific layout tokens — semantic color tokens live in packages/tailwind-config/tailwind.css */
 
 :root {
   --header-height-desktop: 104px;

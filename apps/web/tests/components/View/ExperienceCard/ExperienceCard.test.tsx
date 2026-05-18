@@ -6,13 +6,13 @@ vi.mock('@repo/ui/View', () => ({
   ),
 }));
 
-vi.mock('~/components/View/SkillAccordion', () => ({
+vi.mock('~/features/about/ExperiencesSection/SkillAccordion', () => ({
   SkillAccordion: ({ skills }: { skills: string[] }) => (
     <div data-testid="skill-accordion">{skills.join(',')}</div>
   ),
 }));
 
-import { ExperienceCard } from '~/components/View/ExperienceCard';
+import { ExperienceCard } from '~/features/about/ExperiencesSection';
 
 const defaultProps = {
   id: '1',

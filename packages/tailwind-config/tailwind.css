@@ -2,46 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Semantic color tokens — RGB channels so Tailwind opacity modifiers work (e.g. bg-surface/80) */
+  --tw-surface: 50 50 50; /* dark-300 #323232 */
+  --tw-surface-sunken: 40 40 40; /* dark-200 #282828 */
+  --tw-surface-base: 28 28 28; /* dark #1C1C1C */
+  --tw-surface-raised: 73 73 73; /* dark-500 #494949 */
+  --tw-content-primary: 255 255 255;
+  --tw-content-secondary: 186 186 186; /* dark-900 #BABABA */
+  --tw-content-muted: 141 141 141; /* dark-700 #8D8D8D */
+  --tw-border-default: 62 62 62; /* dark-400 #3E3E3E */
+  --tw-border-subtle: 50 50 50; /* dark-300 #323232 */
+  --tw-brand-primary: 68 82 255; /* primary #4452FF */
+  --tw-brand-accent: 142 251 157; /* accent #8EFB9D */
+}
+
+.light {
+  --tw-surface: 245 246 250; /* #F5F6FA */
+  --tw-surface-sunken: 255 255 255; /* #FFFFFF */
+  --tw-surface-base: 240 242 248; /* #F0F2F8 */
+  --tw-surface-raised: 229 231 235; /* #E5E7EB */
+  --tw-content-primary: 28 28 28; /* #1C1C1C */
+  --tw-content-secondary: 85 85 85; /* #555555 */
+  --tw-content-muted: 136 136 136; /* #888888 */
+  --tw-border-default: 209 213 219; /* #D1D5DB */
+  --tw-border-subtle: 229 231 235; /* #E5E7EB */
+  --tw-brand-primary: 88 101 255; /* #5865FF */
+  --tw-brand-accent: 111 227 127; /* #6FE37F */
+}
+
 @layer base {
   h1 {
-    @apply text-5xl font-bold leading-[67.2px] tracking-[0.24px] text-dark;
+    @apply text-5xl font-bold leading-[67.2px] tracking-[0.24px] text-content-primary;
   }
 
   h2 {
-    @apply text-[40px] font-bold leading-[56px] tracking-[0.2px] text-dark;
+    @apply text-[40px] font-bold leading-[56px] tracking-[0.2px] text-content-primary;
   }
 
   h3 {
-    @apply text-4xl font-bold leading-[50.4px] tracking-[0.18px] text-dark;
+    @apply text-4xl font-bold leading-[50.4px] tracking-[0.18px] text-content-primary;
   }
 
   h4 {
-    @apply text-[32px] font-bold leading-[44.8px] tracking-[0.16px] text-dark;
+    @apply text-[32px] font-bold leading-[44.8px] tracking-[0.16px] text-content-primary;
   }
 
   h5 {
-    @apply text-2xl font-bold leading-[33.6px] tracking-[0.12px] text-dark;
+    @apply text-2xl font-bold leading-[33.6px] tracking-[0.12px] text-content-primary;
   }
 }
 
 @layer utilities {
   .text-body-xl {
-    @apply text-2xl font-normal leading-[33.6px] tracking-[0.12px] text-dark;
+    @apply text-2xl font-normal leading-[33.6px] tracking-[0.12px] text-content-primary;
   }
 
   .text-body-lg {
-    @apply text-xl font-normal leading-7 tracking-[0.1px] text-dark;
+    @apply text-xl font-normal leading-7 tracking-[0.1px] text-content-primary;
   }
 
   .text-body-base {
-    @apply text-lg font-normal leading-[25.2px] tracking-[0.09px] text-dark;
+    @apply text-lg font-normal leading-[25.2px] tracking-[0.09px] text-content-primary;
   }
 
   .text-body-sm {
-    @apply text-base font-normal leading-[22.4px] tracking-[0.08px] text-dark;
+    @apply text-base font-normal leading-[22.4px] tracking-[0.08px] text-content-primary;
   }
 
   .text-body-xs {
-    @apply text-sm font-normal leading-[19.6px] tracking-[0.07px] text-dark;
+    @apply text-sm font-normal leading-[19.6px] tracking-[0.07px] text-content-primary;
   }
 }

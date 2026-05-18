@@ -26,13 +26,16 @@ vi.mock('~assets/images/hero-projects.png', () => ({
   default: '/hero-projects.png',
 }));
 
-vi.mock('~components/View', () => ({
-  HeroBanner: ({ title, caption }: { title: string; caption: string }) => (
+vi.mock('~features/projects/HeroSection', () => ({
+  HeroSection: ({ title, caption }: { title: string; caption: string }) => (
     <div data-testid="hero">
       <span data-testid="hero-title">{title}</span>
       <span data-testid="hero-caption">{caption}</span>
     </div>
   ),
+}));
+
+vi.mock('~features/home/ProjectsSection', () => ({
   ProjectList: ({ projects }: { projects: { id: string; title: string }[] }) => (
     <ul data-testid="project-list">
       {projects.map((p) => (
@@ -41,8 +44,6 @@ vi.mock('~components/View', () => ({
     </ul>
   ),
 }));
-
-vi.mock('~components/View/ProjectList', () => ({}));
 
 const mockFetch = vi.fn();
 

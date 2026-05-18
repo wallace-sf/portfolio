@@ -69,6 +69,10 @@
     "hero_image_alt": "Foto profesional 1 de Wallace Ferreira"
   },
   "About": {
+    "hero_title": "Wallace Ferreira",
+    "hero_caption": "Ingeniero Front-end · React · Next.js · TypeScript",
+    "hero_content": "Ingeniero front-end con más de 6 años de experiencia construyendo aplicaciones web escalables. Apasionado por la arquitectura limpia, el rendimiento y la accesibilidad.",
+    "hero_image_alt": "Wallace Ferreira — Ingeniero Front-end",
     "values_title": "Mis valores profesionales"
   },
   "ExperienceCard": {

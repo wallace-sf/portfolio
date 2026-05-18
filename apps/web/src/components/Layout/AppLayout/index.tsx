@@ -5,7 +5,8 @@ import { FC, useMemo, PropsWithChildren } from 'react';
 import classNames from 'classnames';
 import { useBoolean, useEventListener } from 'usehooks-ts';
 
-import { SideNavigation, Header } from '~components/View';
+import { Header } from '../Header';
+import { SideNavigation } from '../SideNavigation';
 import { LayoutProvider } from '~contexts';
 import { useThrottle, useBodyClass } from '~hooks';
 import { BREAKPOINTS_NUMBERS } from '~utils';

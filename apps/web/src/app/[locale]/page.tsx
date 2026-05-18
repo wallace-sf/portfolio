@@ -4,16 +4,11 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { applyDevSimulations } from '~/dev/simulate';
 import { getInternalBaseUrl } from '~/lib/api/internal';
 import { ApiResponse } from '~/lib/api/envelope';
-import HeroLandingPage from '~assets/images/hero-landing-page.png';
-import {
-  ContactForm,
-  HeroBanner,
-  ProjectList,
-  ContactInfo,
-  StatCard,
-} from '~components';
-
-import { ProjectSummary } from '~components/View/ProjectList';
+import { HeroSection } from '~features/home/HeroSection';
+import { ProjectList, ProjectSummary } from '~features/home/ProjectsSection';
+import { ContactForm } from '~features/contact/ContactForm';
+import { ContactInfo } from '~features/contact/ContactInfo';
+import { StatCard } from '~features/shared/StatCard';
 
 interface ProfileStat {
   label: string;
@@ -65,13 +60,12 @@ export default async function Home({ searchParams }: HomePageProps) {
 
   return (
     <>
-      <HeroBanner
-        src={profile?.photo.url ?? HeroLandingPage}
-        title={profile?.name ?? t('hero_title')}
-        caption={profile?.headline ?? t('hero_caption')}
-        content={profile?.bio ?? t('hero_content')}
-        alt={profile?.photo.alt ?? t('hero_image_alt')}
-        imageClassName="object-contain 2xl:object-cover"
+      <HeroSection
+        profile={profile}
+        title={t('hero_title')}
+        caption={t('hero_caption')}
+        content={t('hero_content')}
+        alt={t('hero_image_alt')}
       />
       {profile?.stats && profile.stats.length > 0 && (
         <section className="mx-4 my-6 grid grid-cols-2 gap-3 xl:mx-auto xl:my-8 xl:w-full xl:max-w-237.5 xl:grid-cols-4">

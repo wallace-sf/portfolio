@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import { ErrorView } from '~/components/View/ErrorView';
+import { ErrorView } from '~/features/shared/ErrorView';
 
 // ---------------------------------------------------------------------------
 // Mocks

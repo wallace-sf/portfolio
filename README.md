@@ -1,157 +1,178 @@
 # Wallace Ferreira — Portfolio
 
-> Personal portfolio built with clean architecture, DDD, and modern web technologies. Designed to showcase professional experience and projects to an international audience.
+Personal portfolio built to present my experience, selected projects, technical background and career direction as a Front-end Software Engineer.
 
 🌐 **Live:** [portfolio-web-kohl-two.vercel.app](https://portfolio-web-kohl-two.vercel.app)
+
+> [!NOTE]
+> This project is under active development. The public website and the repository are evolving as I refine the portfolio, improve the architecture and document technical decisions.
 
 ---
 
 ## Overview
 
-This is a monorepo containing the portfolio web application and its supporting packages. The project intentionally applies **Domain-Driven Design (DDD)** and **Clean Architecture** principles — not just as buzzwords, but as a way to keep the codebase maintainable, testable, and extensible as new features (like a blog) are added over time.
+This repository contains my personal portfolio and its supporting packages. It is not only a presentation website, but also a practical space where I apply front-end architecture, product-oriented UI decisions, maintainable code organization and production-minded development practices.
+
+The project is designed for an international audience and aims to communicate three things clearly:
+
+- my professional experience and selected work;
+- how I approach front-end engineering and architecture;
+- how I document and evolve a real project over time.
 
 ---
 
-## Tech Stack
+## What this project demonstrates
 
-| Layer         | Technology                                        |
-| ------------- | ------------------------------------------------- |
-| Monorepo      | Turborepo + pnpm workspaces                       |
-| Frontend      | Next.js 14 (App Router), TypeScript, Tailwind CSS |
-| Domain        | TypeScript (zero external dependencies)           |
-| Database      | Supabase (PostgreSQL) + Prisma ORM                |
-| Email         | Resend                                            |
-| i18n          | next-intl (pt-BR, en-US, es)                      |
-| Forms         | React Hook Form + Zod                             |
-| Data fetching | TanStack Query                                    |
-| Testing       | Vitest + Testing Library + Playwright             |
-| CI/CD         | GitHub Actions + Vercel                           |
+- Modern front-end development with Next.js, React and TypeScript
+- Monorepo organization with Turborepo and pnpm workspaces
+- Clean Architecture and DDD applied beyond buzzwords
+- Clear separation between domain, application, infrastructure and interface layers
+- Multilingual content for pt-BR, en-US and es
+- Form handling, validation and email delivery
+- Testing strategy across unit, integration and end-to-end layers
+- Deployment workflow with Vercel and GitHub Actions
 
 ---
 
-## Monorepo Structure
+## Tech stack
 
-```
+| Area | Technology |
+|---|---|
+| Monorepo | Turborepo, pnpm workspaces |
+| Frontend | Next.js, React, TypeScript, Tailwind CSS |
+| Architecture | Clean Architecture, DDD, SOLID |
+| Domain | TypeScript packages with framework-independent rules |
+| Database | Supabase PostgreSQL, Prisma ORM |
+| Email | Resend |
+| i18n | next-intl |
+| Forms | React Hook Form, Zod |
+| Data fetching | TanStack Query |
+| Testing | Vitest, Testing Library, Playwright |
+| CI/CD | GitHub Actions, Vercel |
+
+---
+
+## Project structure
+
+```txt
 apps/
-  web/          → Public portfolio (Next.js 14)
-  blog/         → Blog — post-MVP
+  web/          Public portfolio application
+  blog/         Blog application planned after MVP
 
 packages/
-  core/         → Domain layer: entities, value objects, repository interfaces
-  application/  → Use cases, DTOs, service ports
-  infra/        → Concrete repositories (Prisma + Supabase), email service
-  ui/           → Shared React component library
+  core/         Domain layer: entities, value objects, repository interfaces
+  application/  Use cases, DTOs and service ports
+  infra/        Prisma, Supabase and external service adapters
+  ui/           Shared React component library
+  utils/        Shared utilities
   eslint-config/
+  tailwind-config/
   typescript-config/
 ```
 
-The dependency rule flows inward only:
+The dependency rule points inward:
 
-```
-core ← application ← infra ← web
+```txt
+core ← application ← infra ← web / api
 ```
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for a full explanation of each layer and the decisions behind them.
+For a deeper explanation of layers, dependency rules and boundaries, see [docs/02-ARCHITECTURE.md](./docs/02-ARCHITECTURE.md).
 
 ---
 
-## Getting Started
+## Getting started
 
 ### Prerequisites
 
 - Node.js 22+
-- pnpm 9+
-- A [Supabase](https://supabase.com) project
+- pnpm 8.15.6+
+- A Supabase project or compatible PostgreSQL database
+- A Resend account if you want to test email delivery
 
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/wallace-sf/portfolio.git
 cd portfolio
-
-# Install dependencies
 pnpm install
 ```
 
-### Environment Variables
+### Environment variables
 
-Copy the example file and fill in your values:
+Create your local environment file from the example file and fill in the required values.
 
 ```bash
 cp .env.example .env.local
 ```
 
-| Variable         | Description                                        |
-| ---------------- | -------------------------------------------------- |
-| `DATABASE_URL`   | Supabase PostgreSQL connection string (pooled)     |
-| `DIRECT_URL`     | Supabase direct connection string (for migrations) |
-| `RESEND_API_KEY` | Resend API key for contact form emails             |
-
-### Database Setup
+### Database setup
 
 ```bash
-# Generate Prisma client
-pnpm db:generate
-
-# Run migrations
-pnpm db:migrate
-
-# Seed initial data
-pnpm db:seed
+pnpm --filter @repo/infra db:generate
+pnpm --filter @repo/infra db:migrate
+pnpm seed
 ```
 
-### Running Locally
+### Run locally
 
 ```bash
-# Run all apps and packages in development mode
 pnpm dev
-
-# Run only the web app
-pnpm dev --filter=web
 ```
 
 ---
 
-## Available Scripts
+## Available scripts
 
-| Script             | Description                         |
-| ------------------ | ----------------------------------- |
-| `pnpm dev`         | Start all apps in development mode  |
-| `pnpm build`       | Build all apps and packages         |
-| `pnpm lint`        | Lint all packages                   |
-| `pnpm typecheck`   | Type-check all packages             |
-| `pnpm test`        | Run all tests                       |
-| `pnpm db:generate` | Generate Prisma client              |
-| `pnpm db:migrate`  | Run database migrations             |
-| `pnpm db:seed`     | Seed the database with initial data |
+| Script | Description |
+|---|---|
+| `pnpm dev` | Start development mode for the monorepo, excluding Storybook |
+| `pnpm build` | Build all apps and packages through Turborepo |
+| `pnpm lint` | Run lint tasks |
+| `pnpm lint:check` | Check lint rules without applying fixes |
+| `pnpm format` | Run formatting tasks |
+| `pnpm format:check` | Check formatting |
+| `pnpm types` | Run type checks |
+| `pnpm test` | Run test tasks |
+| `pnpm test:ci` | Run CI test command |
+| `pnpm test:core` | Run core package tests |
+| `pnpm test:utils` | Run utils package tests |
+| `pnpm test:web` | Run web app tests |
+| `pnpm seed` | Seed data through `@repo/infra` |
 
 ---
 
-## Project Features (MVP)
+## Current features
 
-- 🌍 Multilingual support (pt-BR, en-US, es)
-- 🌙 Light / Dark / System theme
-- 💼 Professional experience with skill details per role
-- 🚀 Projects showcase with rich Markdown content
-- 📬 Contact form with email notification
-- 📄 Resume link
-- 🔗 GitHub and LinkedIn links
+- Multilingual support: pt-BR, en-US and es
+- Light, dark and system theme support
+- Professional experience section with role details
+- Projects showcase with rich Markdown content
+- Contact form with email notification
+- Resume link
+- GitHub and LinkedIn links
+
+---
 
 ## Roadmap
 
-- [ ] **V1** — Blog (posts, tags, categories)
-- [ ] **V2** — Admin panel for content management
-- [ ] **V3** — SEO improvements, OpenGraph, sitemap
+- [ ] Improve portfolio content and case study presentation
+- [ ] Add blog support with posts, tags and categories
+- [ ] Add admin panel for content management
+- [ ] Improve SEO, OpenGraph metadata and sitemap coverage
+- [ ] Expand automated test coverage around critical user flows
 
 ---
 
-## Architecture
+## Documentation
 
-This project applies Clean Architecture and Domain-Driven Design. Read [ARCHITECTURE.md](./ARCHITECTURE.md) for the full architectural overview, bounded contexts, and layer responsibilities.
+| Document | Purpose |
+|---|---|
+| [docs/INDEX.md](./docs/INDEX.md) | Documentation index |
+| [docs/02-ARCHITECTURE.md](./docs/02-ARCHITECTURE.md) | Architecture overview, dependency rule and layer responsibilities |
+| [docs/ROADMAP.md](./docs/ROADMAP.md) | Product and engineering roadmap |
 
 ---
 
-## License
+## Status
 
-MIT
+This portfolio is a work in progress and is being actively refined as part of my career positioning for international opportunities.

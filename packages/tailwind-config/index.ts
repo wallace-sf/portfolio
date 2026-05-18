@@ -30,6 +30,28 @@ export default plugin(() => {}, {
         error: '#b45454',
         primary: '#4452ff',
         success: '#34d399',
+        // Semantic layer — use these in components instead of primitive dark-* tokens.
+        // Values are CSS variable references so dark/light mode switching works without
+        // changing component classes. CSS vars are defined in globals.css.
+        surface: {
+          DEFAULT: 'rgb(var(--tw-surface) / <alpha-value>)',
+          sunken: 'rgb(var(--tw-surface-sunken) / <alpha-value>)',
+          base: 'rgb(var(--tw-surface-base) / <alpha-value>)',
+          raised: 'rgb(var(--tw-surface-raised) / <alpha-value>)',
+        },
+        content: {
+          primary: 'rgb(var(--tw-content-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--tw-content-secondary) / <alpha-value>)',
+          muted: 'rgb(var(--tw-content-muted) / <alpha-value>)',
+        },
+        border: {
+          default: 'rgb(var(--tw-border-default) / <alpha-value>)',
+          subtle: 'rgb(var(--tw-border-subtle) / <alpha-value>)',
+        },
+        brand: {
+          primary: 'rgb(var(--tw-brand-primary) / <alpha-value>)',
+          accent: 'rgb(var(--tw-brand-accent) / <alpha-value>)',
+        },
       },
       container: {
         center: true,
@@ -47,13 +69,23 @@ export default plugin(() => {}, {
         2.5: '0.625rem',
         4.5: '1.125rem',
         5: '1.25rem',
+        badge: '0.9375rem',
+        card: '1.25rem',
       },
       spacing: {
         '2.5': '0.625rem',
         15: '3.75rem',
         24.5: '6.125rem',
+        45: '11.25rem',
         49: '12.25rem',
         50: '12.5rem',
+        61: '15.25rem',
+        84.75: '21.1875rem',
+        85.75: '21.4375rem',
+        100: '25rem',
+        106: '26.5rem',
+        110.25: '27.5625rem',
+        116.25: '29.0625rem',
         237.5: '59.375rem',
         278.5: '69.625rem',
       },

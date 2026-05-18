@@ -16,7 +16,7 @@ vi.mock('~i18n/routing', () => ({
   ),
 }));
 
-import { Breadcrumb } from '~/components/View/Breadcrumb';
+import { Breadcrumb } from '~/features/shared/Breadcrumb';
 
 const items = [
   { label: 'Home', href: '/' },

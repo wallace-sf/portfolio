@@ -1,6 +1,6 @@
 'use client';
 
-import { ErrorView } from '~components/View';
+import { ErrorView } from '~features/shared/ErrorView';
 
 interface AboutErrorProps {
   error: Error & { digest?: string };

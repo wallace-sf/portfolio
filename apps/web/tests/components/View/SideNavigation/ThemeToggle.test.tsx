@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import { ThemeToggle } from '~/components/View/SideNavigation/ThemeToggle';
+import { ThemeToggle } from '~/components/Layout/SideNavigation/ThemeToggle';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -17,7 +17,7 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-vi.mock('~/components/View/MenuItem/index', () => ({
+vi.mock('~/components/Layout/MenuItem/index', () => ({
   MenuItem: {
     Item2: {
       Expandable: ({ children }: { children: React.ReactNode }) => (
