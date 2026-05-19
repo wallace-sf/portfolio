@@ -15,6 +15,11 @@ vi.mock('~features/home/HeroSection', () => ({
 
 vi.mock('~features/home/ProjectsSection', () => ({
   ProjectsSection: () => <div data-testid="projects-section" />,
+  ProjectsSkeleton: () => null,
+}));
+
+vi.mock('~features/shared/HeroBanner/HeroBannerSkeleton', () => ({
+  HeroBannerSkeleton: () => null,
 }));
 
 vi.mock('~features/contact/ContactSection', () => ({

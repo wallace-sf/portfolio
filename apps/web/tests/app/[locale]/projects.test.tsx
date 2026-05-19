@@ -17,6 +17,14 @@ vi.mock('~features/projects/ProjectsSection', () => ({
   ProjectsSection: () => <div data-testid="projects-section" />,
 }));
 
+vi.mock('~features/home/ProjectsSection', () => ({
+  ProjectsSkeleton: () => null,
+}));
+
+vi.mock('~features/shared/HeroBanner/HeroBannerSkeleton', () => ({
+  HeroBannerSkeleton: () => null,
+}));
+
 describe('Projects page', () => {
   it('should render all feature sections', async () => {
     const { default: Projects } = await import(

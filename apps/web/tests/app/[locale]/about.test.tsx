@@ -15,10 +15,16 @@ vi.mock('~features/about/HeroSection', () => ({
 
 vi.mock('~features/about/ValuesSection', () => ({
   ValuesSection: () => <div data-testid="values-section" />,
+  ValuesSkeleton: () => null,
 }));
 
 vi.mock('~features/about/ExperiencesSection', () => ({
   ExperiencesSection: () => <div data-testid="experiences-section" />,
+  ExperiencesSkeleton: () => null,
+}));
+
+vi.mock('~features/shared/HeroBanner/HeroBannerSkeleton', () => ({
+  HeroBannerSkeleton: () => null,
 }));
 
 describe('About page', () => {
