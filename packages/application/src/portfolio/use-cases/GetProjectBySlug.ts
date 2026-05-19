@@ -16,7 +16,7 @@ import {
 
 import { UseCase } from '../../shared/UseCase';
 import { ProjectDetailDTO } from '../dtos/ProjectDetailDTO';
-import { ProjectSummaryDTO } from '../dtos/ProjectSummaryDTO';
+import { ProjectSummaryDTO, SkillSummary } from '../dtos/ProjectSummaryDTO';
 
 export type GetProjectBySlugInput = {
   slug: string;
@@ -84,7 +84,7 @@ export class GetProjectBySlug extends UseCase<
     project: Project,
     locale: Locale,
     relatedProjects: ProjectSummaryDTO[],
-    skillNames: Map<string, string>,
+    skillNames: Map<string, SkillSummary>,
   ): ProjectDetailDTO {
     return {
       id: project.id.value,
@@ -96,7 +96,9 @@ export class GetProjectBySlug extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((id) => skillNames.get(id.value) ?? id.value),
+      skills: project.skills.map(
+        (id) => skillNames.get(id.value) ?? { name: id.value, icon: '' },
+      ),
       publishedAt: project.period.startAt.value,
       content: project.content.value,
       summary: project.summary?.get(locale),
@@ -113,7 +115,7 @@ export class GetProjectBySlug extends UseCase<
   private toSummaryDTO(
     project: Project,
     locale: Locale,
-    skillNames: Map<string, string>,
+    skillNames: Map<string, SkillSummary>,
   ): ProjectSummaryDTO {
     return {
       id: project.id.value,
@@ -125,7 +127,9 @@ export class GetProjectBySlug extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((id) => skillNames.get(id.value) ?? id.value),
+      skills: project.skills.map(
+        (id) => skillNames.get(id.value) ?? { name: id.value, icon: '' },
+      ),
       publishedAt: project.period.startAt.value,
     };
   }

@@ -13,14 +13,36 @@ vi.mock('@repo/ui/Imagery', () => ({
 
 vi.mock('@repo/ui/Control', () => {
   const { useState } = require('react');
-  const Root = ({ children }: { children: (ctx: { expanded: boolean; toggle: () => void }) => React.ReactNode }) => {
+  const Root = ({
+    children,
+  }: {
+    children: (ctx: {
+      expanded: boolean;
+      toggle: () => void;
+    }) => React.ReactNode;
+  }) => {
     const [expanded, setExpanded] = useState(false);
-    return <>{children({ expanded, toggle: () => setExpanded((v: boolean) => !v) })}</>;
+    return (
+      <>
+        {children({ expanded, toggle: () => setExpanded((v: boolean) => !v) })}
+      </>
+    );
   };
-  const Header = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void; className?: string }) => (
-    <button type="button" onClick={onClick}>{children}</button>
+  const Header = ({
+    children,
+    onClick,
+  }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+    className?: string;
+  }) => (
+    <button type="button" onClick={onClick}>
+      {children}
+    </button>
   );
-  const Body = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+  const Body = ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  );
   return { Accordion: { Root, Header, Body } };
 });
 
@@ -33,12 +55,27 @@ describe('SkillAccordion', () => {
   });
 
   it('should render the skills label', () => {
-    render(<SkillAccordion skills={['React', 'TypeScript']} />);
+    render(
+      <SkillAccordion
+        skills={[
+          { name: 'React', icon: '' },
+          { name: 'TypeScript', icon: '' },
+        ]}
+      />,
+    );
     expect(screen.getByText('ExperienceCard.skills_label')).toBeInTheDocument();
   });
 
   it('should render all skill items', () => {
-    render(<SkillAccordion skills={['React', 'TypeScript', 'Node.js']} />);
+    render(
+      <SkillAccordion
+        skills={[
+          { name: 'React', icon: '' },
+          { name: 'TypeScript', icon: '' },
+          { name: 'Node.js', icon: '' },
+        ]}
+      />,
+    );
     expect(screen.getByText('React')).toBeInTheDocument();
     expect(screen.getByText('TypeScript')).toBeInTheDocument();
     expect(screen.getByText('Node.js')).toBeInTheDocument();
@@ -46,7 +83,7 @@ describe('SkillAccordion', () => {
 
   it('should toggle expanded state on header click', async () => {
     const user = userEvent.setup();
-    render(<SkillAccordion skills={['React']} />);
+    render(<SkillAccordion skills={[{ name: 'React', icon: '' }]} />);
     const button = screen.getByRole('button');
     await user.click(button);
     expect(button).toBeInTheDocument();

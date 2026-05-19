@@ -7,6 +7,7 @@ import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
 import { UseCase } from '../../shared/UseCase';
 import { ExperienceDTO } from '../dtos/ExperienceDTO';
+import { SkillSummary } from '../dtos/ProjectSummaryDTO';
 
 export type GetExperiencesInput = {
   locale: Locale;
@@ -51,7 +52,7 @@ export class GetExperiences extends UseCase<
   private toDTO(
     experience: Experience,
     locale: Locale,
-    skillNames: Map<string, string>,
+    skillNames: Map<string, SkillSummary>,
   ): ExperienceDTO {
     return {
       id: experience.id.value,
@@ -68,7 +69,7 @@ export class GetExperiences extends UseCase<
       startAt: experience.period.startAt.value,
       endAt: experience.period.endAt?.value,
       skills: experience.skills.map(
-        (id) => skillNames.get(id.value) ?? id.value,
+        (id) => skillNames.get(id.value) ?? { name: id.value, icon: '' },
       ),
     };
   }

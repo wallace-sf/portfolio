@@ -56,7 +56,7 @@ function makeRepository(
 }
 
 function makeSkillRepository(
-  map: Map<string, string> = new Map(),
+  map: Map<string, { name: string; icon: string }> = new Map(),
 ): ISkillRepository {
   return {
     findNamesByIds: vi.fn().mockResolvedValue(map),
@@ -206,7 +206,10 @@ describe('GetExperiences', () => {
         findAll: vi.fn().mockResolvedValue([experience]),
       });
       const skillRepo = makeSkillRepository(
-        new Map([[SKILL_ID_1, 'TypeScript'], [SKILL_ID_2, 'React']]),
+        new Map([
+          [SKILL_ID_1, { name: 'TypeScript', icon: '' }],
+          [SKILL_ID_2, { name: 'React', icon: '' }],
+        ]),
       );
       const useCase = new GetExperiences(repo, skillRepo);
 
@@ -216,8 +219,8 @@ describe('GetExperiences', () => {
       const dto = (result.value as ExperienceDTO[])[0]!;
 
       expect(dto.skills).toHaveLength(2);
-      expect(dto.skills[0]).toBe('TypeScript');
-      expect(dto.skills[1]).toBe('React');
+      expect(dto.skills[0]).toEqual({ name: 'TypeScript', icon: '' });
+      expect(dto.skills[1]).toEqual({ name: 'React', icon: '' });
     });
 
     it('should map skills as empty array when experience has no skills', async () => {

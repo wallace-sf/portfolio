@@ -45,7 +45,7 @@ const PROJECT = {
   title: 'My Project',
   caption: 'A great project',
   coverImage: { url: 'https://example.com/img.jpg', alt: 'Cover' },
-  skills: ['React'],
+  skills: [{ name: 'React', icon: '' }],
   content: '# Hello',
   period: { startAt: '2024-01-01' },
   relatedProjects: [],

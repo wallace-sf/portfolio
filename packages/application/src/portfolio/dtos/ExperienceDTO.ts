@@ -1,3 +1,5 @@
+import { SkillSummary } from './ProjectSummaryDTO';
+
 export type ExperienceDTO = {
   id: string;
   company: string;
@@ -9,5 +11,5 @@ export type ExperienceDTO = {
   locationType: string;
   startAt: string;
   endAt?: string;
-  skills: string[];
+  skills: SkillSummary[];
 };

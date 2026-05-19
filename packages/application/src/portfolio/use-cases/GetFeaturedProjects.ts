@@ -6,7 +6,7 @@ import {
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
 import { UseCase } from '../../shared/UseCase';
-import { ProjectSummaryDTO } from '../dtos/ProjectSummaryDTO';
+import { ProjectSummaryDTO, SkillSummary } from '../dtos/ProjectSummaryDTO';
 
 export type GetFeaturedProjectsInput = {
   locale: Locale;
@@ -50,7 +50,7 @@ export class GetFeaturedProjects extends UseCase<
   private toDTO(
     project: Project,
     locale: Locale,
-    skillNames: Map<string, string>,
+    skillNames: Map<string, SkillSummary>,
   ): ProjectSummaryDTO {
     return {
       id: project.id.value,
@@ -62,7 +62,9 @@ export class GetFeaturedProjects extends UseCase<
         alt: project.coverImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
-      skills: project.skills.map((id) => skillNames.get(id.value) ?? id.value),
+      skills: project.skills.map(
+        (id) => skillNames.get(id.value) ?? { name: id.value, icon: '' },
+      ),
       publishedAt: project.period.startAt.value,
     };
   }

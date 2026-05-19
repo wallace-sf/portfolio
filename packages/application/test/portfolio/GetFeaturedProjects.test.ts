@@ -33,11 +33,14 @@ const BASE_PROPS: IProjectProps = {
 
 function makeProject(overrides: Partial<IProjectProps> = {}): Project {
   const result = Project.create({ ...BASE_PROPS, ...overrides });
-  if (result.isLeft()) throw new Error(`makeProject failed: ${result.value.message}`);
+  if (result.isLeft())
+    throw new Error(`makeProject failed: ${result.value.message}`);
   return result.value;
 }
 
-function makeRepository(overrides: Partial<IProjectRepository> = {}): IProjectRepository {
+function makeRepository(
+  overrides: Partial<IProjectRepository> = {},
+): IProjectRepository {
   return {
     findAll: vi.fn(),
     findPublished: vi.fn(),
@@ -52,7 +55,7 @@ function makeRepository(overrides: Partial<IProjectRepository> = {}): IProjectRe
 }
 
 function makeSkillRepository(
-  map: Map<string, string> = new Map(),
+  map: Map<string, { name: string; icon: string }> = new Map(),
 ): ISkillRepository {
   return {
     findNamesByIds: vi.fn().mockResolvedValue(map),
@@ -66,7 +69,9 @@ function makeSkillRepository(
 describe('GetFeaturedProjects', () => {
   describe('execute()', () => {
     it('should return Right with empty array when repository returns no projects', async () => {
-      const repo = makeRepository({ findFeatured: vi.fn().mockResolvedValue([]) });
+      const repo = makeRepository({
+        findFeatured: vi.fn().mockResolvedValue([]),
+      });
       const useCase = new GetFeaturedProjects(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
@@ -77,7 +82,9 @@ describe('GetFeaturedProjects', () => {
 
     it('should return Right with mapped DTOs when repository returns projects', async () => {
       const project = makeProject();
-      const repo = makeRepository({ findFeatured: vi.fn().mockResolvedValue([project]) });
+      const repo = makeRepository({
+        findFeatured: vi.fn().mockResolvedValue([project]),
+      });
       const useCase = new GetFeaturedProjects(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
@@ -88,7 +95,9 @@ describe('GetFeaturedProjects', () => {
 
     it('should map all DTO fields correctly for pt-BR locale', async () => {
       const project = makeProject();
-      const repo = makeRepository({ findFeatured: vi.fn().mockResolvedValue([project]) });
+      const repo = makeRepository({
+        findFeatured: vi.fn().mockResolvedValue([project]),
+      });
       const useCase = new GetFeaturedProjects(repo, makeSkillRepository());
 
       const result = await useCase.execute({ locale: 'pt-BR' });
@@ -111,7 +120,9 @@ describe('GetFeaturedProjects', () => {
       const project = makeProject({
         theme: { 'pt-BR': 'Tema PT', 'en-US': 'Theme EN' },
       });
-      const repo = makeRepository({ findFeatured: vi.fn().mockResolvedValue([project]) });
+      const repo = makeRepository({
+        findFeatured: vi.fn().mockResolvedValue([project]),
+      });
       const useCase = new GetFeaturedProjects(repo, makeSkillRepository());
 
       const ptResult = await useCase.execute({ locale: 'pt-BR' });
@@ -133,9 +144,14 @@ describe('GetFeaturedProjects', () => {
       const skillId1 = 'a0000000-0000-4000-8000-000000000001';
       const skillId2 = 'a0000000-0000-4000-8000-000000000002';
       const project = makeProject({ skills: [skillId1, skillId2] });
-      const repo = makeRepository({ findFeatured: vi.fn().mockResolvedValue([project]) });
+      const repo = makeRepository({
+        findFeatured: vi.fn().mockResolvedValue([project]),
+      });
       const skillRepo = makeSkillRepository(
-        new Map([[skillId1, 'TypeScript'], [skillId2, 'React']]),
+        new Map([
+          [skillId1, { name: 'TypeScript', icon: '' }],
+          [skillId2, { name: 'React', icon: '' }],
+        ]),
       );
       const useCase = new GetFeaturedProjects(repo, skillRepo);
 
@@ -143,12 +159,17 @@ describe('GetFeaturedProjects', () => {
 
       expect(result.isRight()).toBe(true);
       const dto = (result.value as ProjectSummaryDTO[])[0]!;
-      expect(dto.skills).toEqual(['TypeScript', 'React']);
+      expect(dto.skills).toEqual([
+        { name: 'TypeScript', icon: '' },
+        { name: 'React', icon: '' },
+      ]);
     });
 
     it('should return Left with DomainError when repository throws', async () => {
       const repo = makeRepository({
-        findFeatured: vi.fn().mockRejectedValue(new Error('DB connection failed')),
+        findFeatured: vi
+          .fn()
+          .mockRejectedValue(new Error('DB connection failed')),
       });
       const useCase = new GetFeaturedProjects(repo, makeSkillRepository());
 
