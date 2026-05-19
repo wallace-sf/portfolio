@@ -5,11 +5,12 @@ import { FC, useMemo, PropsWithChildren } from 'react';
 import classNames from 'classnames';
 import { useBoolean, useEventListener } from 'usehooks-ts';
 
-import { Header } from '../Header';
-import { SideNavigation } from '../SideNavigation';
 import { LayoutProvider } from '~contexts';
 import { useThrottle, useBodyClass } from '~hooks';
 import { BREAKPOINTS_NUMBERS } from '~utils';
+
+import { Header } from '../Header';
+import { SideNavigation } from '../SideNavigation';
 
 export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const { value: open, setFalse: close, toggle } = useBoolean(false);

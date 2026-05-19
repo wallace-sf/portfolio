@@ -1,19 +1,19 @@
-import { FC } from 'react';
+import { getTranslations } from 'next-intl/server';
 
 import HeroProjects from '~assets/images/hero-projects.png';
 import { HeroBanner } from '~features/shared/HeroBanner';
 
-interface IHeroSectionProps {
-  title: string;
-  caption: string;
-  content: string;
-  alt: string;
-}
+export async function HeroSection() {
+  const t = await getTranslations('Projects');
 
-export const HeroSection: FC<IHeroSectionProps> = (props) => (
-  <HeroBanner
-    {...props}
-    src={HeroProjects}
-    imageClassName="object-contain p-6 xl:py-8"
-  />
-);
+  return (
+    <HeroBanner
+      src={HeroProjects}
+      title={t('hero_title')}
+      caption={t('hero_caption')}
+      content={t('hero_content')}
+      alt={t('hero_image_alt')}
+      imageClassName="object-contain p-6 xl:py-8"
+    />
+  );
+}

@@ -17,7 +17,7 @@ export interface IExperienceCardProps {
   locationType: string;
   startAt: string;
   endAt?: string;
-  skills: string[];
+  skills: { name: string; icon: string }[];
 }
 
 export const ExperienceCard: FC<IExperienceCardProps> = ({

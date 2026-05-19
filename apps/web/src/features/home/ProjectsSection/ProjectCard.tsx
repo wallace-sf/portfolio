@@ -7,9 +7,9 @@ import classNames from 'classnames';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
-import { Link } from '~i18n/routing';
-import { useBreakpoint } from '~hooks';
 import { SkillGroup } from '~features/shared/SkillGroup';
+import { useBreakpoint } from '~hooks';
+import { Link } from '~i18n/routing';
 
 export interface IProjectCardProps {
   view: 'grid' | 'row';
@@ -18,7 +18,7 @@ export interface IProjectCardProps {
   caption: string;
   coverImage: { url: string; alt: string };
   theme?: string;
-  skills: string[];
+  skills: { name: string; icon: string }[];
   compact?: boolean;
 }
 

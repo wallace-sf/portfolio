@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   IProjectProps,
   IProjectRepository,
+  ISkillRepository,
   Project,
   ProjectStatus,
 } from '@repo/core/portfolio';
@@ -50,6 +51,14 @@ function makeRepository(overrides: Partial<IProjectRepository> = {}): IProjectRe
   };
 }
 
+function makeSkillRepository(
+  map: Map<string, { name: string; icon: string }> = new Map(),
+): ISkillRepository {
+  return {
+    findNamesByIds: vi.fn().mockResolvedValue(map),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -62,7 +71,7 @@ describe('GetProjectBySlug', () => {
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([]),
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
 
@@ -80,7 +89,7 @@ describe('GetProjectBySlug', () => {
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([]),
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
 
@@ -108,7 +117,7 @@ describe('GetProjectBySlug', () => {
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([]),
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
 
@@ -130,7 +139,7 @@ describe('GetProjectBySlug', () => {
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([]),
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const enResult = await useCase.execute({ slug: 'my-project', locale: 'en-US' });
 
@@ -149,7 +158,7 @@ describe('GetProjectBySlug', () => {
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([related]),
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
 
@@ -167,7 +176,7 @@ describe('GetProjectBySlug', () => {
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated,
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
 
@@ -179,7 +188,7 @@ describe('GetProjectBySlug', () => {
         findBySlug: vi.fn().mockResolvedValue(null),
         findRelated: vi.fn().mockResolvedValue([]),
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const result = await useCase.execute({ slug: 'non-existent', locale: 'pt-BR' });
 
@@ -189,7 +198,7 @@ describe('GetProjectBySlug', () => {
 
     it('should return Left with ValidationError when slug is invalid', async () => {
       const repo = makeRepository();
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const result = await useCase.execute({ slug: 'ab', locale: 'pt-BR' });
 
@@ -200,7 +209,7 @@ describe('GetProjectBySlug', () => {
     it('should not call repository when slug is invalid', async () => {
       const findBySlug = vi.fn();
       const repo = makeRepository({ findBySlug });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       await useCase.execute({ slug: '', locale: 'pt-BR' });
 
@@ -211,7 +220,7 @@ describe('GetProjectBySlug', () => {
       const repo = makeRepository({
         findBySlug: vi.fn().mockRejectedValue(new Error('DB error')),
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
 
@@ -226,7 +235,7 @@ describe('GetProjectBySlug', () => {
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockRejectedValue(new Error('DB error')),
       });
-      const useCase = new GetProjectBySlug(repo);
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
       const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
 

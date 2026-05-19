@@ -4656,7 +4656,7 @@
         "description": "Simplificar as pages do App Router para que sejam apenas orquestradores de features, sem lógica de renderização ou dados embutidos.",
         "details": "Depende de Épico 3. 4.1 page.tsx (Home): importar HeroSection + ProjectsSection de ~features/home, ContactSection de ~features/contact. 4.2 about/page.tsx: importar ValuesSection + ExperiencesSection de ~features/about. 4.3 projects/page.tsx: encapsular fetch de /api/v1/projects em features/projects/ProjectsSection (Server Component); manter applyDevSimulations. GitHub issue: #561.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "3"
         ],
@@ -4721,7 +4721,8 @@
             "testStrategy": "Run pnpm lint in apps/web to catch unused imports. Run pnpm build to verify no TypeScript errors. Manually review each page file to confirm it's minimal (< 50 lines ideally). Test all three pages in browser to ensure functionality is preserved. Use git diff to confirm only imports/interfaces were removed, no logic changes.",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-05-18T06:27:39.517Z"
       },
       {
         "id": "5",
@@ -4771,7 +4772,7 @@
         "description": "Implementar os elementos visuais presentes no Figma mas sem correspondência no código: novos componentes @repo/ui e novas features em apps/web/src/features.",
         "details": "Depende de Épico 1 e Épico 4. @repo/ui: 6.1 Badge (WithIcon/Text/Count — unifica Skill e SkillGroup). 6.2 Button variantes outline e ghost. 6.5 Avatar com badge de disponibilidade animado. 6.6 SectionHeader com overline. 6.8 Skeleton (Block/ProjectCard/ExperienceCard). 6.9 Text.Field + TextArea.Field com Formik. Features: 6.3 features/projects/FilterBar. 6.4 features/projects/ProjectsSection (view=row + filtro). 6.7 features/shared/Footer + AppLayout. GitHub issue: #563.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [
           "1",
           "4"
@@ -4784,9 +4785,10 @@
             "description": "Create unified Badge component in @repo/ui/src/View/Badge/ to replace Skill and SkillGroup implementations with three variants: WithIcon (icon + label), Text (label only), and Count (+N overflow indicator).",
             "dependencies": [],
             "details": "The Badge component will unify the pill-style UI currently implemented separately in Skill/index.tsx (with icon) and SkillGroup/index.tsx (text-only). Create the component structure in packages/ui/src/View/Badge/ with three sub-components or variants: Badge.WithIcon (accepts icon key from Iconify + label string), Badge.Text (label only), and Badge.Count (displays +N for overflow). Use semantic tokens: bg-surface, rounded-badge (from task 1.1), text-content-primary. Export all variants from packages/ui/src/View/index.ts. Update Skill and SkillGroup to consume Badge internally instead of reimplementing the UI. Files to create: packages/ui/src/View/Badge/index.tsx, packages/ui/src/View/Badge/WithIcon.tsx, packages/ui/src/View/Badge/Text.tsx, packages/ui/src/View/Badge/Count.tsx. Files to update: apps/web/src/components/View/Skill/index.tsx, apps/web/src/components/View/SkillGroup/index.tsx, packages/ui/src/View/index.ts.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests for each Badge variant ensuring correct rendering with different props. Integration tests verifying Skill and SkillGroup render correctly after refactoring to use Badge. Visual regression tests comparing before/after screenshots to ensure pixel-perfect match with Figma design.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-05-19T03:50:07.060Z"
           },
           {
             "id": 2,
@@ -4794,9 +4796,10 @@
             "description": "Extend packages/ui/src/Control/Button/Base/index.tsx to support three variants: filled (current default), outline (border + transparent bg), and ghost (no border, text with optional icon).",
             "dependencies": [],
             "details": "Currently Button.Base only supports a filled style (bg-primary). The Figma design shows outline buttons in ProjectCard (\"Ver projeto\" with border + transparent background) and ghost buttons in listing sections (text with arrow icon, no border). Modify IButtonBaseProps to include variant: 'filled' | 'outline' | 'ghost', default 'filled'. Update the className logic to apply: filled → bg-brand-primary text-content-primary (current behavior), outline → border border-brand-primary text-brand-primary bg-transparent hover:bg-brand-primary/10, ghost → text-brand-primary underline-offset-4 hover:underline (or with arrow icon). Ensure all variants respect disabled state. Files to modify: packages/ui/src/Control/Button/Base/index.tsx. Files to update after this: apps/web/src/components/View/ProjectCard/index.tsx (replace inline button classes with Button.Base variant=\"outline\").",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests for each variant ensuring correct className application. Test disabled state for all variants. Integration test with ProjectCard to verify outline variant renders correctly. Visual regression tests comparing button styles against Figma design for all three variants in light and dark modes.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-05-19T03:50:10.327Z"
           },
           {
             "id": 3,
@@ -4838,9 +4841,10 @@
             "description": "Create packages/ui/src/View/SectionHeader/ component with overline (uppercase small label), main heading, and optional description to standardize section titles across all pages per Figma pattern.",
             "dependencies": [],
             "details": "The Figma design consistently uses a section header pattern: overline in uppercase (e.g., \"PROJETOS\", \"EXPERIÊNCIA\"), main heading (h2/h3/h4), optional description. Currently this is reimplemented inline in each page with hardcoded classes and no overline. Create SectionHeader/index.tsx with props: overline (string, optional), title (string, required), description (string, optional), as ('h2' | 'h3' | 'h4', default 'h2'), align ('left' | 'center', default 'left'). The overline should use text-body-xs uppercase tracking-wide text-content-muted. The title uses the heading styles from tailwind.css with text-content-primary. Description uses text-body-sm text-content-secondary. Files to create: packages/ui/src/View/SectionHeader/index.tsx. Files to update: packages/ui/src/View/index.ts (export SectionHeader), apps/web/src/app/[locale]/page.tsx, apps/web/src/app/[locale]/about/page.tsx, apps/web/src/app/[locale]/projects/page.tsx (replace inline headings with SectionHeader).",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit tests for SectionHeader ensuring correct rendering with different prop combinations (with/without overline, with/without description, different 'as' values, left/center alignment). Test semantic HTML output (correct heading level). Visual regression tests comparing SectionHeader against Figma design for both left and center alignment. Integration tests with Home, About, and Projects pages to verify SectionHeader replaces inline headings correctly.",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2026-05-19T03:50:13.734Z"
           },
           {
             "id": 7,
@@ -4872,14 +4876,15 @@
             "testStrategy": "Unit tests for Text.Field and TextArea.Field with mocked Formik context ensuring correct rendering in all states (untouched, touched without error, touched with error, focused). Test that useField hook integration works correctly. Integration tests with ContactForm: verify fields display correctly, validation errors appear on blur, form submits with valid data. Visual regression tests comparing field states against Figma design (default, focused, error) in both light and dark modes. Accessibility tests: verify label association, error message announced to screen readers (aria-describedby).",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-05-19T03:50:13.734Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-18T04:43:14.533Z",
+      "lastModified": "2026-05-19T03:50:13.735Z",
       "taskCount": 6,
-      "completedCount": 3,
+      "completedCount": 4,
       "tags": [
         "sprint-6"
       ]

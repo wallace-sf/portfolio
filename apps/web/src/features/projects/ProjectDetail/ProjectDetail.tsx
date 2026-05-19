@@ -6,7 +6,10 @@ import { TextRich } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
-import { ProjectList, ProjectSummary } from '~features/home/ProjectsSection';
+import {
+  ProjectList,
+  ProjectSummary,
+} from '~features/home/ProjectsSection/ProjectList';
 import { Breadcrumb } from '~features/shared/Breadcrumb';
 import { SkillGroup } from '~features/shared/SkillGroup';
 
@@ -18,7 +21,7 @@ export interface IProjectDetailProps {
   caption: string;
   coverImage: { url: string; alt: string };
   theme?: string;
-  skills: string[];
+  skills: { name: string; icon: string }[];
   summary?: string;
   objectives?: string;
   role?: string;

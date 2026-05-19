@@ -2,12 +2,15 @@
 
 import { FC, useMemo, useState } from 'react';
 
+import { Badge } from '@repo/ui/View';
 import { useIsomorphicLayoutEffect } from 'usehooks-ts';
+
+export type SkillSummary = { name: string; icon: string };
 
 interface ISkillGroupProps {
   max: number;
   total: number;
-  skills: string[];
+  skills: SkillSummary[];
   initializeWithMax: number;
 }
 
@@ -21,14 +24,17 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
 
   const renderedSkills = useMemo(
     () =>
-      skills.slice(0, storedMax).map((skillId) => (
-        <li
-          key={skillId}
-          className="flex flex-row items-center bg-surface-raised py-1 px-3 rounded-3.75 text-body-xs !text-content-primary"
-        >
-          {skillId}
-        </li>
-      )),
+      skills.slice(0, storedMax).map((skill) =>
+        skill.icon ? (
+          <li key={skill.name}>
+            <Badge.WithIcon label={skill.name} icon={skill.icon} />
+          </li>
+        ) : (
+          <li key={skill.name}>
+            <Badge.Text label={skill.name} />
+          </li>
+        ),
+      ),
     [skills, storedMax],
   );
 
@@ -40,8 +46,8 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
     <ul className="flex flex-row gap-2 flex-wrap">
       {renderedSkills}
       {skills.length > storedMax ? (
-        <li className="flex flex-row items-center bg-surface-raised py-1 px-3 gap-x-2.5 rounded-3.75 text-content-primary">
-          +{total - storedMax}
+        <li>
+          <Badge.Count count={total - storedMax} />
         </li>
       ) : null}
     </ul>

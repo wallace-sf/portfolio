@@ -1,8 +1,13 @@
-import { Experience, IExperienceRepository } from '@repo/core/portfolio';
+import {
+  Experience,
+  IExperienceRepository,
+  ISkillRepository,
+} from '@repo/core/portfolio';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
 import { UseCase } from '../../shared/UseCase';
 import { ExperienceDTO } from '../dtos/ExperienceDTO';
+import { SkillSummary } from '../dtos/ProjectSummaryDTO';
 
 export type GetExperiencesInput = {
   locale: Locale;
@@ -12,7 +17,10 @@ export class GetExperiences extends UseCase<
   GetExperiencesInput,
   ExperienceDTO[]
 > {
-  constructor(private readonly experienceRepository: IExperienceRepository) {
+  constructor(
+    private readonly experienceRepository: IExperienceRepository,
+    private readonly skillRepository: ISkillRepository,
+  ) {
     super();
   }
 
@@ -24,7 +32,14 @@ export class GetExperiences extends UseCase<
       const sorted = [...experiences].sort(
         (a, b) => b.period.startAt.ms - a.period.startAt.ms,
       );
-      return right(sorted.map((e) => this.toDTO(e, input.locale)));
+      const allIds = [
+        ...new Set(sorted.flatMap((e) => e.skills.map((s) => s.value))),
+      ];
+      const skillNames = await this.skillRepository.findNamesByIds(
+        allIds,
+        input.locale,
+      );
+      return right(sorted.map((e) => this.toDTO(e, input.locale, skillNames)));
     } catch {
       return left(
         new DomainError('FETCH_FAILED', {
@@ -34,7 +49,11 @@ export class GetExperiences extends UseCase<
     }
   }
 
-  private toDTO(experience: Experience, locale: Locale): ExperienceDTO {
+  private toDTO(
+    experience: Experience,
+    locale: Locale,
+    skillNames: Map<string, SkillSummary>,
+  ): ExperienceDTO {
     return {
       id: experience.id.value,
       company: experience.company.get(locale),
@@ -49,7 +68,9 @@ export class GetExperiences extends UseCase<
       locationType: experience.location_type,
       startAt: experience.period.startAt.value,
       endAt: experience.period.endAt?.value,
-      skills: experience.skills.map((id) => id.value),
+      skills: experience.skills.map(
+        (id) => skillNames.get(id.value) ?? { name: id.value, icon: '' },
+      ),
     };
   }
 }
