@@ -1,21 +1,24 @@
 'use client';
 
-import { FC, ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes, FC } from 'react';
 
 import classNames from 'classnames';
 
-type Variant = 'large' | 'small';
+type Size = 'large' | 'small';
+type Appearance = 'filled' | 'outline' | 'ghost';
 
 export interface IButtonBaseProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: Variant;
+  size?: Size;
+  appearance?: Appearance;
   unstyled?: boolean;
 }
 
 export const ButtonBase: FC<IButtonBaseProps> = ({
   children,
   className,
-  variant = 'large',
+  size = 'large',
+  appearance = 'filled',
   unstyled = false,
   ...props
 }) => {
@@ -25,10 +28,19 @@ export const ButtonBase: FC<IButtonBaseProps> = ({
       {...props}
       className={classNames(
         {
-          'bg-primary text-body-sm !text-white !font-bold rounded-xl disabled:bg-blue-light hover:bg-blue-dark transition-all duration-300':
+          'text-body-sm !font-bold rounded-xl transition-all duration-300':
             !unstyled,
-          'py-3 px-6': !unstyled && variant === 'large',
-          'py-2 px-6': !unstyled && variant === 'small',
+          'py-3 px-6': !unstyled && size === 'large',
+          'py-2 px-6': !unstyled && size === 'small',
+
+          'bg-brand-primary !text-white disabled:opacity-50 hover:opacity-90':
+            !unstyled && appearance === 'filled',
+
+          'border border-brand-primary !text-brand-primary bg-transparent disabled:opacity-50 hover:bg-brand-primary/10':
+            !unstyled && appearance === 'outline',
+
+          'bg-transparent !text-content-primary disabled:opacity-50 hover:bg-surface-raised':
+            !unstyled && appearance === 'ghost',
         },
         className,
       )}
