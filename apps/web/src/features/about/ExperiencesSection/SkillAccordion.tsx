@@ -4,6 +4,7 @@ import { FC } from 'react';
 
 import { Accordion } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
+import { Badge } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 
 interface ISkillAccordionProps {
@@ -31,14 +32,12 @@ export const SkillAccordion: FC<ISkillAccordionProps> = ({ skills }) => {
           <Accordion.Body>
             <ul className="flex flex-row gap-2 flex-wrap pt-2">
               {skills.map((skill) => (
-                <li
-                  key={skill.name}
-                  className="flex flex-row items-center bg-surface-raised py-1 px-3 gap-x-2 rounded-3.75 text-body-xs !text-content-primary"
-                >
-                  {skill.icon && (
-                    <Icon icon={skill.icon} className="text-base min-w-fit" />
+                <li key={skill.name}>
+                  {skill.icon ? (
+                    <Badge.WithIcon label={skill.name} icon={skill.icon} />
+                  ) : (
+                    <Badge.Text label={skill.name} />
                   )}
-                  <span>{skill.name}</span>
                 </li>
               ))}
             </ul>
