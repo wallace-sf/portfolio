@@ -17,12 +17,8 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
-    "web#build": {
+    "site#build": {
       "env": ["NEXT_PUBLIC_*"]
-    },
-    "storybook#dev": {
-      "cache": false,
-      "persistent": true
     },
     "lint": {
       "dependsOn": ["^lint"]
