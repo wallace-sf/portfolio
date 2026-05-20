@@ -27,12 +27,12 @@ O **front-end** consome apenas **REST**; não importa `@repo/application` nem **
 
 | Layer | O que pode saber sobre Supabase (ou outro IdP) |
 |-------|-----------------------------------------------|
-| **`apps/web` (UI, `middleware.ts`)** | **Nada.** Só `fetch` a `/api/v1/...`. |
-| **`apps/web/app/api/**` (Route Handlers)** | **Não** importar `@supabase/*`. Usar `getContainer()` e o porto `IAuthenticationGateway` em `@repo/infra`. |
+| **`apps/site` (UI, `middleware.ts`)** | **Nada.** Só `fetch` a `/api/v1/...`. |
+| **`apps/site/app/api/**` (Route Handlers)** | **Não** importar `@supabase/*`. Usar `getContainer()` e o porto `IAuthenticationGateway` em `@repo/infra`. |
 | **`@repo/application`** | Só o **contrato** do porto (`AuthCookieApi`, `IAuthenticationGateway`, DTOs de erro). Sem SDK do IdP. |
 | **`@repo/infra`** | **Única** camada com `@supabase/supabase-js` / `@supabase/ssr` enquanto esse for o adaptador. Outro fornecedor = nova classe + wiring. |
 
-**Ponte Next.js (fina):** um helper `createNextAuthCookieApi()` em `apps/web` pode mapear `cookies()` de `next/headers` para `AuthCookieApi` — é cola de framework, **não** é Supabase.
+**Ponte Next.js (fina):** um helper `createNextAuthCookieApi()` em `apps/site` pode mapear `cookies()` de `next/headers` para `AuthCookieApi` — é cola de framework, **não** é Supabase.
 
 ---
 
@@ -62,9 +62,10 @@ Browser          Route Handler              @repo/infra                    BD
 | **core** | `User`, `Role`, `IUserRepository`, `UnauthorizedError` |
 | **application** | `GetCurrentUser`, `EnsureAdmin`, `UserDTO` |
 | **infra** | `PrismaUserRepository`, tabela `User` |
-| **Planeado** | `IAuthenticationGateway`, `EnsureAppUserForAuthSession`, coluna `authSubject`, rotas `auth/*`, handlers REST |
+| **Implementado** | `POST /api/v1/auth/sign-in`, `sign-out`, `refresh`, `GET /api/v1/me`, `/{locale}/login` |
+| **Planeado** | `IAuthenticationGateway`, `EnsureAppUserForAuthSession`, coluna `authSubject` |
 
-Contrato HTTP: [05-API-CONTRACTS](./05-API-CONTRACTS.md). Plano por fases: [plans/identity-mvp.md](../plans/identity-mvp.md).
+Contrato HTTP: [05-API-CONTRACTS](./05-API-CONTRACTS.md).
 
 ---
 
@@ -85,10 +86,10 @@ Contrato HTTP: [05-API-CONTRACTS](./05-API-CONTRACTS.md). Plano por fases: [plan
 
 ---
 
-## UI (planeado)
+## UI
 
-- `/{locale}/login` — formulário + `fetch` a **`POST /api/v1/auth/sign-in`** (sem SDK do IdP no cliente).
-- `/{locale}/admin/*` — dados via `/api/v1/me` e `/api/v1/admin/*`.
+- `/{locale}/login` — formulário + `fetch` a **`POST /api/v1/auth/sign-in`** (sem SDK do IdP no cliente). ✅ Implementado.
+- `/{locale}/admin/*` — dados via `/api/v1/me` e `/api/v1/admin/*`. ✅ Implementado (estrutura base).
 
 ---
 
@@ -98,4 +99,3 @@ Contrato HTTP: [05-API-CONTRACTS](./05-API-CONTRACTS.md). Plano por fases: [plan
 - [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md) — portos e casos de uso
 - [05-API-CONTRACTS](./05-API-CONTRACTS.md) — rotas e códigos de erro
 - [ROADMAP](./ROADMAP.md)
-- [packages/infra/README.md](../packages/infra/README.md)

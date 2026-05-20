@@ -6,8 +6,8 @@
 
 ## REST as the only presentation boundary
 
-- **`apps/web` must not** import `@repo/application` or call use cases from pages, layouts, or client components.
-- **Route handlers** (Next.js Route Handlers under `apps/web/app/api/...`, or a future `apps/api` app) are the **composition root**: they wire `@repo/infra`, invoke use cases, and return JSON.
+- **`apps/site` must not** import `@repo/application` or call use cases from pages, layouts, or client components.
+- **Route handlers** (Next.js Route Handlers under `apps/site/app/api/...`, or a future `apps/api` app) are the **composition root**: they wire `@repo/infra`, invoke use cases, and return JSON.
 - This keeps a single HTTP contract for browsers, SSR, and external clients.
 
 See [02-ARCHITECTURE](./02-ARCHITECTURE.md) and [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md).
@@ -108,7 +108,7 @@ try {
 - **Resolution:** handler obtains **`authSubject`** (opaque external id) from the gateway, maps to application `User.id` via **`authSubject`** column + `IUserRepository` (when implemented), then passes `userId` to use cases.
 - **Passwords:** never stored in the application `User` table — only at the IdP.
 
-### Auth routes (planned)
+### Auth routes
 
 | Method | Path | Purpose |
 |--------|------|---------|
@@ -160,7 +160,7 @@ Query parameters such as `locale` should align with `@repo/core` `Locale` and ex
 
 ---
 
-### Admin-only endpoints (`/api/v1/admin/*`) — planned
+### Admin-only endpoints (`/api/v1/admin/*`)
 
 **Rule:** every handler under this prefix calls `EnsureAdmin` after resolving `userId`. Missing session → **401** `AUTH_REQUIRED`; not admin → **401** `UNAUTHORIZED`.
 
