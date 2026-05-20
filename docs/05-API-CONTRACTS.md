@@ -40,7 +40,7 @@ All API responses follow a consistent envelope:
 | `UnauthorizedError` / failed `EnsureAdmin` | 401 (`UNAUTHORIZED`) |
 | Unexpected / infrastructure | 500 |
 
-Use **403** for “authenticated but forbidden **for this resource**” (ex.: recurso de outro dono). Sessão ausente e falta de papel admin usam **401** com códigos distintos.
+Use **403** for “authenticated but forbidden **for this resource**” (e.g. a resource owned by a different user). Missing session and missing admin role both use **401** with distinct codes.
 
 ---
 
@@ -56,10 +56,10 @@ Examples:
 | `ERROR_INVALID_TEXT` | 400 | Text length constraint violated |
 | `INVALID_SLUG` | 400 | Slug format violated |
 | `NOT_FOUND` | 404 | Resource not found |
-| `AUTH_REQUIRED` | 401 | Sem sessão ou impossível resolver `userId` |
-| `UNAUTHORIZED` | 401 | Autenticado mas sem permissão (ex.: não é `ADMIN`) |
-| `AUTH_INVALID_CREDENTIALS` | 401 | Sign-in rejeitado pelo IdP (planeado) |
-| `AUTH_SUBJECT_CONFLICT` | 409 | Email já ligado a outro `authSubject` (planeado) |
+| `AUTH_REQUIRED` | 401 | No session or unable to resolve `userId` |
+| `UNAUTHORIZED` | 401 | Authenticated but not authorized (e.g. not `ADMIN`) |
+| `AUTH_INVALID_CREDENTIALS` | 401 | Sign-in rejected by the IdP (planned) |
+| `AUTH_SUBJECT_CONFLICT` | 409 | Email already linked to another `authSubject` (planned) |
 | `INTERNAL_ERROR` | 500 | Unexpected server error |
 
 ---
@@ -156,7 +156,7 @@ Query parameters such as `locale` should align with `@repo/core` `Locale` and ex
 
 | Method | Path | Use case | Auth |
 |--------|------|----------|------|
-| `GET` | `/api/v1/me` | `GetCurrentUser` | **Authenticated** — sem sessão / sem `User` → **401** `AUTH_REQUIRED` |
+| `GET` | `/api/v1/me` | `GetCurrentUser` | **Authenticated** — no session / no `User` → **401** `AUTH_REQUIRED` |
 
 ---
 

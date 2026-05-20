@@ -11,7 +11,7 @@
 | **Portfolio** | Projects, experience, skills, profile, values | Project, Experience, Skill, ProfessionalValue, Language, SocialNetwork | Active |
 | **Blog** | Posts, tags, publication | BlogPost, Tag | Stub (future) |
 | **Contact** | Contact form capture and delivery | `SendContactMessage`, `IEmailService` | Application + infra (API route pending) |
-| **Identity** | Autenticação, autorização, papéis | User, Role, `IUserRepository`, use cases na application | Em uso (domínio + casos de uso; API HTTP em evolução) |
+| **Identity** | Authentication, authorization, roles | User, Role, `IUserRepository`, use cases in application | Active (domain + use cases; HTTP API in place) |
 | **Shared Kernel** | Cross-context primitives | Id, Text, DateTime, Name, Url, enums, Either, errors | Active |
 
 ```text
@@ -79,7 +79,7 @@ import { Slug, Either, ValidationError }  from '@repo/core/shared';
 - `Entity`, `ValueObject`, `IEntityProps`
 - `Id`, `Text`, `DateTime`, `Name`, `Url`
 - `EmploymentType`, `LocationType`, `SkillType`, `Fluency`
-- `Slug`, `Image`, `DateRange`, `LocalizedText`, `Email` (planejado)
+- `Slug`, `Image`, `DateRange`, `LocalizedText`, `Email` (planned)
 - `Either<L, R>`, `ValidationError`, `DomainError`, `NotFoundError`, `UnauthorizedError` (identity)
 - `ERROR_MESSAGE` (domain error codes with `pt-BR` / `en-US` translations)
 
@@ -137,21 +137,21 @@ src/
 
 ## Identity Context
 
-**Responsabilidade:** utilizador de back-office, papéis (`Role.ADMIN` | `Role.VISITOR`), e regras de autorização expressas nos casos de uso (`EnsureAdmin`, `GetCurrentUser`). Autenticação com fornecedor (ex.: Supabase Auth) fica na **infra** e no **middleware**; o domínio recebe identificadores já validados na borda HTTP.
+**Responsibility:** back-office user, roles (`Role.ADMIN` | `Role.VISITOR`), and authorization rules expressed in use cases (`EnsureAdmin`, `GetCurrentUser`). Authentication with the provider (e.g. Supabase Auth) lives in **infra** and **middleware**; the domain receives identifiers already validated at the HTTP edge.
 
-**Modelos em `packages/core`:**
+**Models in `packages/core`:**
 
-| Class | Role | Descrição |
-|-------|------|-----------|
+| Class | Role | Description |
+|-------|------|-------------|
 | `User` | Aggregate root | `Name`, `Email`, `Role` |
 | `Role` | Enum | `ADMIN` \| `VISITOR` |
 | `IUserRepository` | Interface | `findById`, `findByEmail` |
 
 **Application (`packages/application/identity`):** `GetCurrentUser`, `EnsureAdmin`.
 
-**API:** ver [05-API-CONTRACTS](./05-API-CONTRACTS.md) (`GET /api/v1/me`, rotas admin futuras). **Regra:** o front-end não chama estes casos de uso diretamente — apenas HTTP.
+**API:** see [05-API-CONTRACTS](./05-API-CONTRACTS.md) (`GET /api/v1/me`, future admin routes). **Rule:** the front-end does not call these use cases directly — HTTP only.
 
-Ver [11-IDENTITY](./11-IDENTITY.md) e [plans/identity-mvp.md](../plans/identity-mvp.md).
+See [11-IDENTITY](./11-IDENTITY.md).
 
 ---
 

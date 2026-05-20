@@ -97,27 +97,27 @@ A contact form submission. Contains name, email, and message body.
 
 ### User
 
-Aggregate root em `@repo/core/identity`. Identificador (`Id`), `Name`, `Email`, `Role`. Métodos `isAdmin()` / `isVisitor()`. O vínculo com o IdP será tipicamente uma coluna **`authSubject`** (UUID estável, ex. `sub` do Supabase) na persistência — **planeado**; senhas ficam só no IdP.
+Aggregate root in `@repo/core/identity`. Identifier (`Id`), `Name`, `Email`, `Role`. Methods `isAdmin()` / `isVisitor()`. The link to the IdP will typically be an **`authSubject`** column (stable UUID, e.g. Supabase's `sub` claim) in persistence — **planned**; passwords stay only at the IdP.
 
 ### authSubject
 
-Identificador externo do utilizador no provedor de auth (ex. id em `auth.users`). Liga a sessão ao registo `User` da aplicação; ver [11-IDENTITY](./11-IDENTITY.md).
+The external identifier of the user at the auth provider (e.g. id in `auth.users`). Links the session to the application `User` record; see [11-IDENTITY](./11-IDENTITY.md).
 
 ### IAuthenticationGateway (application port)
 
-Contrato para ler sessão, sign-in, sign-out e refresh **sem** expor Supabase à application ou ao front. Implementação concreta na infra; ver [11-IDENTITY](./11-IDENTITY.md).
+Contract for reading the session, sign-in, sign-out, and refresh **without** exposing Supabase to the application or the front-end. Concrete implementation in infra; see [11-IDENTITY](./11-IDENTITY.md).
 
 ### Role
 
-Enum (`ADMIN` | `VISITOR`). `ADMIN` desbloqueia operações de gestão quando a API e os casos de uso (`EnsureAdmin`) o exigem.
+Enum (`ADMIN` | `VISITOR`). `ADMIN` unlocks management operations when the API and use cases (`EnsureAdmin`) require it.
 
 ### EnsureAdmin (application use case)
 
-Caso de uso que verifica se o utilizador existe e é `ADMIN`; caso contrário devolve `UnauthorizedError`. Substitui um objeto `AccessPolicy` separado enquanto as regras forem binárias.
+Use case that verifies whether the user exists and is `ADMIN`; otherwise returns `UnauthorizedError`. Replaces a separate `AccessPolicy` object while rules remain binary.
 
 ### UnauthorizedError
 
-Erro de domínio (`code` `UNAUTHORIZED`) para falhas de autorização (ex.: utilizador autenticado sem privilégio de admin). Na API, mapeia tipicamente a HTTP **401** (ver [05-API-CONTRACTS](./05-API-CONTRACTS.md)).
+Domain error (`code` `UNAUTHORIZED`) for authorization failures (e.g. authenticated user without admin privilege). Maps to HTTP **401** at the API layer (see [05-API-CONTRACTS](./05-API-CONTRACTS.md)).
 
 ---
 
@@ -286,7 +286,7 @@ An interface defined in the application layer representing a dependency on an ex
 DomainError (abstract)
   └── ValidationError    — invariant violations, invalid input
   └── NotFoundError      — entity lookup failures
-  └── UnauthorizedError  — auth/authorization failures (planejado)
+  └── UnauthorizedError  — auth/authorization failures (planned)
 ```
 
 All domain errors use a static `ERROR_CODE` constant in `SCREAMING_SNAKE_CASE` (e.g., `INVALID_SLUG`, `INVALID_DATE_RANGE`).
