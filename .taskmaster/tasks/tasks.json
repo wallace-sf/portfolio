@@ -4973,7 +4973,72 @@
         "priority": "medium",
         "dependencies": [],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create new Next.js admin app with pnpm",
+            "description": "Initialize a new Next.js application in apps/admin using pnpm create next-app with TypeScript, App Router, Tailwind, and no src directory",
+            "dependencies": [],
+            "details": "Run `pnpm create next-app apps/admin --typescript --app --tailwind --no-src-dir` to scaffold the new admin application. Verify the app structure matches monorepo conventions (no src/ directory, uses app/ router). Ensure package.json is created with correct name (@repo/admin or similar). Create basic app/layout.tsx and app/page.tsx if not auto-generated. This establishes the foundation for the admin app before moving routes.",
+            "status": "pending",
+            "testStrategy": "Verify apps/admin directory exists with correct structure (app/, package.json, tsconfig.json, tailwind.config.ts). Run `pnpm install` at root to ensure workspace recognizes new app. Test `pnpm --filter admin dev` starts successfully (even if showing default Next.js page)."
+          },
+          {
+            "id": 2,
+            "title": "Move login and admin routes from apps/site to apps/admin",
+            "description": "Migrate all /{locale}/login and /{locale}/admin/* pages from apps/site to apps/admin, preserving [locale] dynamic routing structure",
+            "dependencies": [
+              1
+            ],
+            "details": "Move apps/site/src/app/[locale]/login/page.tsx to apps/admin/app/[locale]/login/page.tsx. Move all pages under apps/site/src/app/[locale]/admin/* to apps/admin/app/[locale]/admin/*. Preserve directory structure and file names exactly. Update any relative imports in moved files to reflect new app location. Delete original files from apps/site after successful move. Ensure [locale] param handling remains consistent.",
+            "status": "pending",
+            "testStrategy": "Verify apps/site no longer contains login or admin directories under app/[locale]/. Verify apps/admin/app/[locale]/login/page.tsx and apps/admin/app/[locale]/admin/* exist. Grep apps/site for 'admin' and 'login' route references (should return zero results in app/ directory)."
+          },
+          {
+            "id": 3,
+            "title": "Move and scope middleware.ts to apps/admin",
+            "description": "Transfer authentication middleware from apps/site to apps/admin and configure it to only protect admin routes, removing it from public site",
+            "dependencies": [
+              2
+            ],
+            "details": "Move apps/site/middleware.ts to apps/admin/middleware.ts. Update middleware config.matcher to scope only to admin app routes (e.g., matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'] or more specific to /[locale]/admin/* and /[locale]/login). Remove any middleware configuration from apps/site. Verify middleware only runs for admin app pages. Update any auth redirect logic to point to admin app login route.",
+            "status": "pending",
+            "testStrategy": "Run `pnpm --filter admin dev` and verify middleware executes on /login and /admin/* routes. Run `pnpm --filter site dev` and verify NO middleware executes (check network tab for middleware headers/redirects). Test unauthenticated access to admin routes redirects to /login. Verify public site routes are not protected."
+          },
+          {
+            "id": 4,
+            "title": "Copy dependencies and shared components to apps/admin or @repo/ui",
+            "description": "Identify and migrate all dependencies, components, utilities, and types used by admin/login pages to apps/admin or promote to @repo/ui if shared",
+            "dependencies": [
+              3
+            ],
+            "details": "Analyze moved pages for imports (components, utilities, hooks, types). For admin-specific code, copy to apps/admin/components, apps/admin/lib, apps/admin/types. For potentially shared UI components, move to packages/ui/src and update imports in both apps. Update apps/admin/package.json with required dependencies (next-intl, auth libs, form libraries, etc.). Ensure no broken imports remain in apps/admin. Update tsconfig paths if needed for @repo/* imports.",
+            "status": "pending",
+            "testStrategy": "Run `pnpm --filter admin build` and verify zero module resolution errors. Check all imports resolve correctly. Run `pnpm --filter site build` to ensure no regressions. Test that shared components in @repo/ui work in both apps if moved. Verify apps/admin/package.json has all necessary dependencies."
+          },
+          {
+            "id": 5,
+            "title": "Update turbo.json, root package.json, and workspace config",
+            "description": "Configure Turborepo, root scripts, and pnpm workspace to recognize and build apps/admin alongside apps/site",
+            "dependencies": [
+              4
+            ],
+            "details": "In turbo.json, add pipeline entries: `admin#build`, `admin#dev`, `admin#lint`, `admin#type-check` mirroring site app config. Set correct `dependsOn` and `outputs` for admin tasks. Add environment variables for admin app if needed. In root package.json, add scripts: `dev:admin` → `pnpm --filter admin dev`, `build:admin` → `pnpm --filter admin build`. Verify pnpm-workspace.yaml includes `apps/*` (should already exist). Test workspace recognizes admin app.",
+            "status": "pending",
+            "testStrategy": "Run `pnpm run dev:admin` from root and verify admin app starts. Run `pnpm run build:admin` from root and verify successful build. Run `turbo run build --filter=admin` and verify Turborepo caching works. Check `pnpm list --filter admin` shows correct dependencies. Verify no turbo.json syntax errors."
+          },
+          {
+            "id": 6,
+            "title": "Verify separation and test both apps independently",
+            "description": "Confirm apps/site has zero admin/login routes, then test both apps run and build independently without errors or cross-contamination",
+            "dependencies": [
+              5
+            ],
+            "details": "Run `grep -r 'admin\\|login' apps/site/app` to verify no admin/login routes remain (ignore mentions in comments/docs). Run `pnpm --filter site dev` and manually test public portfolio pages load correctly without auth middleware. Run `pnpm --filter admin dev` and test login page and admin CRUD pages load with auth middleware active. Run `pnpm build` at root to verify both apps build successfully in monorepo. Check build outputs in apps/site/.next and apps/admin/.next. Document any issues found.",
+            "status": "pending",
+            "testStrategy": "Execute `grep -r 'admin\\|login' apps/site/app` → expect zero route files. Test `pnpm --filter site dev` → public pages accessible without auth. Test `pnpm --filter admin dev` → /login and /admin/* require auth. Run `pnpm build` → both apps build without errors. Verify apps/site and apps/admin are fully independent (no shared state or middleware leakage)."
+          }
+        ]
       },
       {
         "id": 8,
@@ -4998,7 +5063,72 @@
           6
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Eliminate all 'any' types across packages/core, packages/application, and apps/site/src/app/api",
+            "description": "Find and replace all 'any' type annotations with explicit types or 'unknown' across core domain packages and API routes",
+            "dependencies": [],
+            "details": "1. Run `grep -r 'any' packages/core/src packages/application/src apps/site/src/app/api` to identify all occurrences (exclude node_modules, .next)\n2. For each occurrence, analyze the context and determine the appropriate explicit type\n3. Replace 'any' with explicit types (union types, branded types, generics) or 'unknown' where type is truly dynamic\n4. Focus on packages/core (7 known instances), packages/application, and apps/site/src/app/api\n5. Verify TypeScript compilation succeeds after each change\n6. Ensure no 'any' remains except in type definition files or unavoidable third-party integrations",
+            "status": "pending",
+            "testStrategy": "1. Run `grep -r 'any' packages/core/src packages/application/src apps/site/src/app/api` and verify zero results\n2. Run `pnpm types` and verify zero type errors\n3. Verify TypeScript strict mode is enabled in all tsconfig.json files\n4. Run unit tests for modified files to ensure type changes don't break behavior"
+          },
+          {
+            "id": 2,
+            "title": "Verify architectural boundaries and enforce layer dependencies",
+            "description": "Audit and enforce architectural rules: no cross-context imports, no use cases in UI layer, no @repo/application in pages, no @supabase outside infra",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Verify no direct imports between bounded contexts (portfolio ↔ identity):\n   - Grep for '@repo/core/portfolio' in packages/core/src/identity and vice versa\n   - Only shared kernel imports allowed between contexts\n2. Verify no use cases called from pages, layouts, or client components:\n   - Grep for '@repo/application' in apps/site/src/app excluding api/ directory\n   - Ensure all use case calls are in route handlers only\n3. Verify no @repo/application imports in apps/site pages (only in route handlers):\n   - Confirmed correct pattern in initial analysis\n4. Verify no @supabase/* imports outside @repo/infra:\n   - Run `grep -r '@supabase' packages/core packages/application apps/site`\n   - All auth gateway implementations must be behind IAuthenticationGateway interface\n5. Document any violations and create refactoring tasks if needed",
+            "status": "pending",
+            "testStrategy": "1. Run grep commands for each boundary rule and verify zero violations\n2. Review ESLint configuration to ensure boundary rules are enforced\n3. Test that architecture documentation (docs/02-ARCHITECTURE.md) accurately reflects implementation\n4. Verify dependency graph using package.json imports matches intended architecture"
+          },
+          {
+            "id": 3,
+            "title": "Verify REST boundary: envelope structure, HTTP status codes, and handler responsibilities",
+            "description": "Ensure all route handlers follow REST contract: response envelope { data, error }, correct status codes, no domain logic in handlers",
+            "dependencies": [
+              2
+            ],
+            "details": "1. Audit all route handlers in apps/site/src/app/api/v1/:\n   - Verify each returns `{ data: T | null, error: Error | null }` envelope\n   - Verify correct HTTP status codes: 200 (success), 400 (validation), 401 (unauthorized), 404 (not found), 500 (server error)\n2. Verify no domain logic in route handlers:\n   - Handlers should only: parse request, call use case, map Either to envelope, return response\n   - All business rules must be in entities, VOs, or use cases\n3. Verify error mapping:\n   - ValidationError → 400\n   - NotFoundError → 404\n   - UnauthorizedError → 401\n   - All other errors → 500\n4. Check consistency with docs/05-API-CONTRACTS.md\n5. Review contact, auth, identity, projects, experiences, profile, admin endpoints",
+            "status": "pending",
+            "testStrategy": "1. Manual inspection of all route handler files\n2. Verify response types match ApiResponse<T> from docs/05-API-CONTRACTS.md\n3. Test error scenarios return correct status codes (covered in tasks #3 and #4)\n4. Grep for business logic keywords (e.g., 'validate', 'calculate', 'transform') in route handlers\n5. Ensure all handlers follow the pattern: request → use case → Either → envelope → response"
+          },
+          {
+            "id": 4,
+            "title": "Run all test suites and fix failures",
+            "description": "Execute all test commands (test:core, test:utils, test:site, test) and resolve any failing tests across the monorepo",
+            "dependencies": [
+              3
+            ],
+            "details": "1. Run `pnpm test:core` — core domain tests (entities, VOs, shared kernel)\n   - Fix any failing tests in packages/core\n2. Run `pnpm test:utils` — utility tests (Validator, formatters, etc.)\n   - Fix any failing tests in packages/utils\n3. Run `pnpm test:site` — site-specific tests (route handlers, components)\n   - Fix any failing tests in apps/site\n4. Run `pnpm test` — full test suite across all packages\n   - Verify all 288+ test files pass\n5. For each failure:\n   - Analyze root cause (implementation bug vs. test bug)\n   - Fix implementation or update test to match correct behavior\n   - Ensure fixes align with DDD/Clean Architecture principles\n6. Verify test coverage remains high (target >80% for core and application layers)",
+            "status": "pending",
+            "testStrategy": "1. Run `pnpm test` and verify zero failures\n2. Run `pnpm test:coverage` and verify coverage thresholds are met\n3. Verify test naming follows convention: 'should <expected behavior> when <context>'\n4. Ensure tests focus on behavior, not implementation details\n5. Verify integration tests cover happy path and error scenarios"
+          },
+          {
+            "id": 5,
+            "title": "Run linters and fix all violations",
+            "description": "Execute ESLint, Prettier, and TypeScript type checking across all packages and resolve all violations",
+            "dependencies": [
+              4
+            ],
+            "details": "1. Run `pnpm lint` — ESLint across all packages\n   - Fix all linting errors and warnings\n   - Focus on architectural rule violations flagged by custom ESLint rules\n2. Run `pnpm format` — Prettier formatting\n   - Auto-fix formatting issues\n   - Verify consistent code style across monorepo\n3. Run `pnpm types` — TypeScript type checking\n   - Fix all type errors (should be zero after subtask #1)\n   - Verify strict mode is enabled in all tsconfig.json files\n4. Review ESLint configuration:\n   - Ensure rules enforce architectural boundaries (e.g., no-restricted-imports)\n   - Verify rules align with docs/02-ARCHITECTURE.md\n5. Set up pre-commit hooks if not already configured:\n   - Run lint-staged on staged files\n   - Block commits with linting errors",
+            "status": "pending",
+            "testStrategy": "1. Run `pnpm lint` and verify zero errors and warnings\n2. Run `pnpm format` and verify no files are modified (already formatted)\n3. Run `pnpm types` and verify zero type errors\n4. Verify ESLint rules are enforced in CI pipeline\n5. Test pre-commit hooks by staging files with intentional violations"
+          },
+          {
+            "id": 6,
+            "title": "Document remaining technical debt in GitHub issues",
+            "description": "Identify, document, and create GitHub issues for any remaining technical debt, architectural improvements, or deferred work discovered during quality review",
+            "dependencies": [
+              5
+            ],
+            "details": "1. Review findings from subtasks #1-5 and identify remaining technical debt:\n   - Unavoidable 'any' types (e.g., third-party library integrations)\n   - Architectural improvements that require larger refactors\n   - Test coverage gaps\n   - Performance optimizations\n   - Missing features or incomplete implementations\n2. For each item, create a GitHub issue:\n   - Clear title and description\n   - Label appropriately (tech-debt, enhancement, refactor)\n   - Link to relevant code locations\n   - Estimate complexity (low/medium/high)\n   - Assign to appropriate milestone (if applicable)\n3. Prioritize issues:\n   - Critical: blocks MVP or violates core principles\n   - High: impacts maintainability or scalability\n   - Medium: nice-to-have improvements\n   - Low: cosmetic or minor optimizations\n4. Update project documentation (docs/INDEX.md or TECHNICAL_DEBT.md) with summary of known issues",
+            "status": "pending",
+            "testStrategy": "1. Verify all identified technical debt items have corresponding GitHub issues\n2. Review issues for clarity and completeness\n3. Ensure issues are linked to relevant code locations or documentation\n4. Verify issues are labeled and prioritized correctly\n5. Confirm no critical technical debt is left undocumented"
+          }
+        ]
       },
       {
         "id": 10,
