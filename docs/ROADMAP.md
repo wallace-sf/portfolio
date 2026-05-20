@@ -1,109 +1,105 @@
-# Roadmap — MVP and Next Steps
+# Roadmap — Portfolio
 
-Evolution view for the portfolio, aligned with Clean Architecture, DDD, i18n, and Supabase. It can be mirrored in a project board or issue tracker.
+Evolution view for the portfolio, aligned with Clean Architecture, DDD, i18n, and Supabase.
 
 ---
 
 ## Index
 
-- [MVP (Current and In Progress)](#mvp-current-and-in-progress)
-- [Phase 1 — REST API and Web Consumption](#phase-1--rest-api-and-web-consumption)
-- [Phase 2 — Blog and Supabase](#phase-2--blog-and-supabase)
-- [Phase 3 — Contact Delivery at the Edge](#phase-3--contact-delivery-at-the-edge)
-- [Phase 4 — Identity (sessions and admin UI)](#phase-4--identity-sessions-and-admin-ui)
-- [Continuous Improvements](#continuous-improvements)
+- [Sprints Concluídos](#sprints-concluídos)
+- [MVP Round 2 — Em planejamento](#mvp-round-2--em-planejamento)
+- [Pós-MVP](#pós-mvp)
 
 ---
 
-## MVP (Current and In Progress)
+## Sprints Concluídos
 
-- [x] Monorepo (`pnpm` + Turborepo)
-- [x] Next.js 14 (App Router) in `apps/web`
+### Core (Sprint 0)
+
+- [x] Either pattern (`Left`, `Right`, `left`, `right`)
+- [x] Base classes: `Entity`, `ValueObject`, `AggregateRoot`
+- [x] `Validator` com chain of responsibility
+- [x] Migração do test runner para Vitest
+
+### Domain (Sprint 1)
+
+- [x] Value Objects: `Slug`, `Name`, `Url`, `LocalizedText`, `DateRange`, `Email`
+- [x] Entidades: `Project`, `Experience`, `Profile`, `Skill`, `ContactMessage`
+- [x] Repository interfaces: `IProjectRepository`, `IExperienceRepository`, `IProfileRepository`
+- [x] `User`, `Role`, `IUserRepository`, `UnauthorizedError` (Identity context)
+
+### Infrastructure (Sprint 2)
+
+- [x] Prisma schema (Project, Experience, Skill, Profile, User)
+- [x] Repositórios: `PrismaProjectRepository`, `PrismaExperienceRepository`, `PrismaProfileRepository`, `PrismaUserRepository`
+- [x] Container DI (`makeContainer`, `getContainer`)
+- [x] Email adapter (`ResendEmailService`)
+- [x] Migrations e seed
+
+### Application (Sprint 2–3)
+
+- [x] Use cases: `GetPublishedProjects`, `GetFeaturedProjects`, `GetProjectBySlug`
+- [x] Use cases: `GetExperiences`, `GetProfile`, `GetProfessionalValues`
+- [x] Use case: `SendContactMessage`
+- [x] Use cases: `GetCurrentUser`, `EnsureAdmin`
+- [x] DTOs para todos os contextos implementados
+
+### REST API — `apps/site` (Sprint 3–4)
+
+- [x] Envelope e error mapper (`successResponse`, `errorResponse`, `mapErrorToResponse`)
+- [x] `GET /api/v1/projects`, `/projects/featured`, `/projects/:slug`
+- [x] `GET /api/v1/experiences`, `/profile`, `/professional-values`, `/me`
+- [x] `POST /api/v1/contact` com rate limiting (Upstash)
+- [x] `POST /api/v1/auth/sign-in`, `sign-out`, `refresh`
+- [x] `GET|POST /api/v1/admin/projects`, `/admin/projects/:id`
+- [x] `POST /api/v1/admin/projects/:id/publish`, `/archive`
+- [x] `GET|PATCH /api/v1/admin/profile`
+- [x] `GET|POST|PATCH|DELETE /api/v1/admin/experiences`
+
+### Presentation — `apps/site` (Sprint 3–5)
+
 - [x] i18n (`next-intl`): `pt-BR`, `en-US`, `es`
-- [x] Pages: Home, Projects, About
-- [x] Domain in `@repo/core`: Portfolio + Identity (`User`, `Role`, …)
-- [x] `packages/application`: Portfolio use cases, Identity (`GetCurrentUser`, `EnsureAdmin`), `SendContactMessage`
-- [x] `packages/infra`: Prisma repositories, email adapter (`ResendEmailService`)
-- [x] Shared UI components in `@repo/ui`; Storybook in `apps/storybooks`
-- [ ] **REST Route Handlers** implementing [05-API-CONTRACTS](./05-API-CONTRACTS.md) (`/api/v1/...`)
-- [ ] **Web**: replace static data with `fetch` / TanStack Query to the REST API only (no direct `@repo/application` imports from pages)
-- [ ] Environment variables documented and optionally populated for links / contact data
+- [x] Páginas: Home, Projects, Projects/[slug], About, Login, Admin
+- [x] `loading.tsx` e `error.tsx` por segmento de rota
+- [x] Middleware de locale e autenticação
+- [x] Formulário de contato com validação (React Hook Form + Zod)
+- [x] Formulário de login
+
+### Design System — `@repo/ui` (Sprint 6)
+
+- [x] Componente `Badge` com variantes
+- [x] `Button` com variantes de aparência
+- [x] `SectionHeader`
 
 ---
 
-## Phase 1 — REST API and Web Consumption
+## MVP Round 2 — Em planejamento
 
-- [ ] **Route handlers** in `apps/web/app/api/v1/...` (or extract `apps/api` if the surface grows)
-- [ ] **Envelope and errors** per [05-API-CONTRACTS](./05-API-CONTRACTS.md) and [06-VALIDATION](./06-VALIDATION.md)
-- [ ] **Portfolio**: `GET` projects (published, featured, by slug), experiences, profile
-- [ ] **Identity**: `GET /api/v1/me` (session required); admin routes call `EnsureAdmin` before mutations
-- [ ] **Web**: all data reads/writes through HTTP; align with authorization table in [05-API-CONTRACTS](./05-API-CONTRACTS.md)
+Itens necessários antes do lançamento do MVP, tendo como referência o portfolio de [Paul Scanlon](https://www.paulie.dev/).
 
----
-
-## Phase 2 — Blog and Supabase
-
-- [ ] **Domain**
-  - `BlogPost`, `Tag` in `@repo/core` (or in a dedicated `blog/` module)
-- [ ] **Supabase schema (Blog)**
-  - `posts`, `tags`, `post_tags`
-- [ ] **Infra**
-  - `PostMapper`, `TagMapper`, `PostRepositorySupabase`, `TagRepositorySupabase`
-- [ ] **API**
-  - `GET /api/v1/posts`, `GET /api/v1/posts/:slug`, `GET /api/v1/tags` (see [05-API-CONTRACTS](./05-API-CONTRACTS.md))
-- [ ] **Web**
-  - Pages for post listing and post-by-slug
-  - Localized content strategy for Blog (for example, `LocalizedText` or locale-specific columns; see [07-I18N](./07-I18N.md))
+- [ ] **Revisão de estilização** — rodada com Figma para identificar o que terminar e alterar nos componentes
+- [ ] **Dados realistas** — substituir seeds por dados mais próximos do conteúdo real do portfolio
+- [ ] **Teste de endpoints** — validar todos os routes handlers (`/api/v1/...`) manualmente
+- [ ] **i18n no core** — implementar `LocalizedText` e i18n no domínio (`@repo/core`)
+- [ ] **Remover textos hardcoded** — textos fixos em `@repo/core` devem usar as mensagens localizáveis
+- [ ] **Mover admin para app exclusivo** — extrair `/{locale}/login` e `/{locale}/admin` para `apps/admin`
+- [ ] **Revisão geral de código** — quality pass antes do lançamento
 
 ---
 
-## Phase 3 — Contact Delivery at the Edge
+## Pós-MVP
 
-- [x] `SendContactMessage` use case and `IEmailService` implementation
-- [ ] **`POST /api/v1/contact`** with Zod validation, rate limit and / or CAPTCHA (to be decided)
-- [ ] **Web**: contact form submits to `POST /api/v1/contact`; errors use stable codes and i18n
-
----
-
-## Phase 4 — Identity (sessions and admin UI)
-
-> Core + application já têm `User`, `GetCurrentUser`, `EnsureAdmin`. Falta **gateway de auth**, **`authSubject`**, **rotas REST** e UI — ver [plans/identity-mvp.md](../plans/identity-mvp.md).
-
-- [x] **Domain** (`packages/core`): `User`, `Role`, `IUserRepository`, `UnauthorizedError`
-- [x] **Infrastructure**: Prisma `User` model and repository
-- [x] **Application**: `GetCurrentUser`, `EnsureAdmin`
-- [ ] **`IAuthenticationGateway`** + adaptador Supabase **só em `@repo/infra`**
-- [ ] **Dados**: `User.authSubject`, `findByAuthSubject` / `linkAuthSubject`, caso de uso `EnsureAppUserForAuthSession`
-- [ ] **REST**: `POST /api/v1/auth/sign-in`, `sign-out`, `refresh`, `GET /api/v1/me` ([05-API-CONTRACTS](./05-API-CONTRACTS.md))
-- [ ] **Middleware / Web**: login e admin sem SDK do IdP no cliente
-
-Modelo de papéis: `ADMIN | VISITOR`.
-
----
-
-## Phase 4 — Identity (Auth)
-
-> **Status:** planejado. Plano detalhado em [11-IDENTITY](./11-IDENTITY.md) e [plans/identity-mvp.md](../plans/identity-mvp.md).
-
-- [ ] **Domain** (`packages/core`)
-  - User, Role, Email, AccessPolicy, IUserRepository, UnauthorizedError
-- [ ] **Infrastructure** (`packages/infra`)
-  - Migration tabela `users`; SupabaseUserRepository; seed admin
-- [ ] **Application** (`packages/application`)
-  - GetCurrentUserUseCase, EnsureAdminUseCase
-- [ ] **Web** (`apps/web`)
-  - Middleware auth; página login; layout admin; getAuthenticatedUser
-
-Modelo de papéis: `ADMIN | VISITOR`. Rotas protegidas: `/[locale]/admin/*`. Login: `/[locale]/login`.
+- [ ] **Blog** (`apps/blog`) — `BlogPost`, `Tag`, API pública, páginas de listagem e detalhe
+- [ ] **`IAuthenticationGateway`** — gateway Supabase plugável, `authSubject`, `EnsureAppUserForAuthSession`
+- [ ] **API em repositório próprio** — extrair route handlers para repositório dedicado
+- [ ] **Playwright E2E** — testes end-to-end para fluxos críticos
+- [ ] **CI/CD** — reativar GitHub Actions quando plano permitir runners
 
 ---
 
 ## Continuous Improvements
 
-- **Validation**: Zod in the API and row decoding; gradual migration from Yup to Zod in forms; see [06-VALIDATION](./06-VALIDATION.md)
-- **Errors**: complete `ERROR_MESSAGE` with `es`; standardize codes and HTTP mapping across endpoints
-- **Domain content i18n**: define and implement `LocalizedText` or translation columns / tables for Projects and Blog
-- **Tests**: coverage for use cases, repositories (with local DB or mocks), and Route Handlers
-- **Quality**: CI for lint, format, types, and tests; PR previews where applicable
-- **`apps/api`**: if the API grows significantly, extract Route Handlers into a dedicated app in the monorepo
-- **Documentation**: keep READMEs and `docs/` in sync with decisions and code
+- **Validação:** Zod nas APIs e decodificação de row; migração gradual para Zod nos formulários
+- **Erros:** completar `ERROR_MESSAGE` com `es`; padronizar códigos e mapeamento HTTP
+- **Testes:** cobertura de use cases, repositórios (DB local) e route handlers
+- **Documentação:** manter `docs/` em sincronia com decisões e código

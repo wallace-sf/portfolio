@@ -12,17 +12,15 @@ Always prioritize clean, testable, extensible code.
 
 ```text
 apps/
-  web/          → Public portfolio (Next.js 14+ App Router)
+  site/         → Public portfolio (Next.js 16+ App Router)
   blog/         → Blog (future, post-MVP)
-  api/          → Optional dedicated HTTP app if routes outgrow apps/web/app/api
+  admin/        → Dedicated admin app (future, post-MVP)
 
 packages/
   core/         → Domain + Shared Kernel (entities, VOs, repository interfaces)
   application/  → Use Cases, DTOs, ports
   infra/        → Concrete repositories (Prisma + Supabase)
   ui/           → Shared design system (React components)
-  markdown/     → MDX / Markdown parser
-  i18n/         → Shared translations
   utils/        → Shared utilities (Validator, formatters)
 ```
 
@@ -51,13 +49,13 @@ All project documentation lives in `docs/` with a numbered structure.
 ## 🏛️ Core Principle — Dependency Rule
 
 ```text
-core ← application ← infra ← web / api
+core ← application ← infra ← site / admin
 ```
 
 - **`packages/core`**: zero framework dependencies (no React, Next.js, Prisma, Axios)
 - **`packages/application`**: depends only on `core`; defines port interfaces
 - **`packages/infra`**: implements ports; knows `core` and `application`
-- **`apps/web` / `apps/api`**: **HTTP route handlers** compose infra + application (use cases). **Pages and React code consume only the REST API** — they do not import `@repo/application`. See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) and [05-API-CONTRACTS](./docs/05-API-CONTRACTS.md).
+- **`apps/site` / `apps/admin`**: **HTTP route handlers** compose infra + application (use cases). **Pages and React code consume only the REST API** — they do not import `@repo/application`. See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) and [05-API-CONTRACTS](./docs/05-API-CONTRACTS.md).
 
 See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) for full layer rules and ESLint enforcement.
 
@@ -220,8 +218,8 @@ interface IProjectRepository {
 - `<img>` or `<a>` for internal Next.js navigation
 - Tests that verify implementation instead of behavior
 - Direct imports between bounded contexts — use only the Shared Kernel
-- Importing `@repo/application` or calling use cases from `apps/web` pages, layouts, or client components — use HTTP to `/api/v1/...` instead
-- Importing `@supabase/*` or other IdP SDKs from `apps/web` UI or `middleware.ts` — auth belongs behind `IAuthenticationGateway` in `@repo/infra` and REST routes; see [11-IDENTITY](./docs/11-IDENTITY.md)
+- Importing `@repo/application` or calling use cases from `apps/site` pages, layouts, or client components — use HTTP to `/api/v1/...` instead
+- Importing `@supabase/*` or other IdP SDKs from `apps/site` UI or `middleware.ts` — auth belongs behind `IAuthenticationGateway` in `@repo/infra` and REST routes; see [11-IDENTITY](./docs/11-IDENTITY.md)
 
 ---
 
@@ -233,29 +231,6 @@ interface IProjectRepository {
 - Import order: external libs → internal packages → relative imports
 - Test naming: `should <expected behavior> when <context>`
 - **Tests are mandatory for every implementation** — never commit a new class, port, adapter, use case, or gateway without accompanying tests in the same branch/PR. A PR without tests for new production code is incomplete. See [docs/08-TESTING.md](./docs/08-TESTING.md) for strategy and naming.
-
----
-
-## Skill Router (auto-load guidance)
-
-Choose which skill to follow based on the user's intent. Then read the corresponding `SKILL.md` under `.claude/skills/<skill-name>/` and apply the instructions from its **Reference** links (single source of truth).
-
-| User intent / keywords | Skill | Action |
-|------------------------|-------|--------|
-| Tasks, task-master, parse-prd, set-status, next task, show task, task ID, expand, PRD, sprint, planning, backlog, `.taskmaster/` | **task-master** | Follow [.claude/skills/task-master/SKILL.md](.claude/skills/task-master/SKILL.md); use taskmaster.instructions.md and dev_workflow.instructions.md |
-| Rules, Cursor rules, VS Code rules, .instructions.md, globs, alwaysApply, rule structure | **vscode-rules** | Follow [.claude/skills/vscode-rules/SKILL.md](.claude/skills/vscode-rules/SKILL.md); use vscode_rules.instructions.md |
-| Self-improve, improve rules, evolve rules, new patterns, update instructions from code | **self-improve** | Follow [.claude/skills/self-improve/SKILL.md](.claude/skills/self-improve/SKILL.md); use self_improve.instructions.md and vscode_rules.instructions.md |
-| TDD, red-green-refactor, test-first, integration tests, fix bugs with tests | **tdd** | Follow [.claude/skills/tdd/SKILL.md](.claude/skills/tdd/SKILL.md); vertical slices, tracer bullets, behavior-focused tests |
-| Break down PRD into phases/plan, implementation plan, tracer bullets (plan file) | **prd-to-plan** | Follow [.claude/skills/prd-to-plan/SKILL.md](.claude/skills/prd-to-plan/SKILL.md); output in `./plans/` |
-| PRD to GitHub issues, convert PRD to issues, implementation tickets, work items | **prd-to-issues** | Follow [.claude/skills/prd-to-issues/SKILL.md](.claude/skills/prd-to-issues/SKILL.md); use `gh issue create` |
-| Improve architecture, shallow modules, refactor opportunities, testability, AI-navigable | **improve-codebase-architecture** | Follow [.claude/skills/improve-codebase-architecture/SKILL.md](.claude/skills/improve-codebase-architecture/SKILL.md); deepen modules, RFC issues |
-| Grill me, stress-test plan, grill design, interview about plan | **grill-me** | Follow [.claude/skills/grill-me/SKILL.md](.claude/skills/grill-me/SKILL.md); resolve decision tree |
-| Plan refactor, refactoring RFC, tiny commits refactor, safe incremental refactor | **request-refactor-plan** | Follow [.claude/skills/request-refactor-plan/SKILL.md](.claude/skills/request-refactor-plan/SKILL.md); file as GitHub issue |
-| Git guardrails, block dangerous git, block push/reset/clean, git safety hooks | **git-guardrails-claude-code** | Follow [.claude/skills/git-guardrails-claude-code/SKILL.md](.claude/skills/git-guardrails-claude-code/SKILL.md); PreToolUse hook |
-| Ubiquitous language, domain glossary, DDD terms, domain model terminology | **ubiquitous-language** | Follow [.claude/skills/ubiquitous-language/SKILL.md](.claude/skills/ubiquitous-language/SKILL.md); output UBIQUITOUS_LANGUAGE.md |
-| Implementation, DDD, Clean Architecture, Either, Validator, Entity, VO, use case, repository, or no other skill matches | **engineering-standards** | Follow [.claude/skills/engineering-standards/SKILL.md](.claude/skills/engineering-standards/SKILL.md); use CLAUDE.md (this file), docs/INDEX.md, 02/06/08/09-*.md |
-
-Default to **engineering-standards** when the request is about writing or refactoring code and no other skill context is clear.
 
 ---
 

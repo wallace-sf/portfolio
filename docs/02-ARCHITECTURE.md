@@ -17,11 +17,11 @@
 Dependencies point **only inward**:
 
 ```text
-core ← application ← infra ← web / api
+core ← application ← infra ← site / admin
 ```
 
 ```text
-     Web / API (Next.js, React)
+  Site / Admin (Next.js, React)
           │
           ▼
    Application (use cases, ports)
@@ -44,7 +44,7 @@ core ← application ← infra ← web / api
 | **Domain** | `@repo/core` | Entities, Value Objects, invariants, repository interfaces. Zero framework dependencies. |
 | **Application** | `@repo/application` | Use cases, ports (interfaces), DTOs/view models. Orchestrates the domain. |
 | **Infrastructure** | `@repo/infra` | Repository implementations (Prisma + Supabase), external service adapters. |
-| **Interface** | `apps/web`, `apps/api` | HTTP route handlers (REST) compose use cases; React renders data obtained via **HTTP** from the app. |
+| **Interface** | `apps/site`, `apps/admin` | HTTP route handlers (REST) compose use cases; React renders data obtained via **HTTP** from the app. |
 
 ---
 
@@ -73,11 +73,11 @@ Allowed: plain TypeScript, `@repo/utils`, `uuid`.
 - Implements the port interfaces defined in `core` / `application`
 - Knows `core` and `application`, never the other way around
 
-### `apps/web` and `apps/api`
+### `apps/site` and `apps/admin`
 
 - **REST is mandatory for presentation:** pages, layouts, and client components fetch the **HTTP API** (`/api/v1/...`). They must **not** import or call `@repo/application` use cases directly.
-- **No auth vendor in the UI:** `apps/web` must **not** import `@supabase/*`, `next-auth/*`, or other IdP SDKs from pages, layouts, client components, hooks, or `middleware.ts`. Authentication is **pluggable** behind `IAuthenticationGateway` (see [11-IDENTITY](./11-IDENTITY.md)); the browser uses only your REST routes (e.g. `POST /api/v1/auth/sign-in`).
-- **Composition root:** only **HTTP route handlers** (e.g. `apps/web/app/api/**` or `apps/api`) wire `@repo/infra` with `@repo/application` and invoke use cases. Handlers obtain the auth gateway from the container — never embed Supabase in a `page.tsx`.
+- **No auth vendor in the UI:** `apps/site` must **not** import `@supabase/*`, `next-auth/*`, or other IdP SDKs from pages, layouts, client components, hooks, or `middleware.ts`. Authentication is **pluggable** behind `IAuthenticationGateway` (see [11-IDENTITY](./11-IDENTITY.md)); the browser uses only your REST routes (e.g. `POST /api/v1/auth/sign-in`).
+- **Composition root:** only **HTTP route handlers** (e.g. `apps/site/app/api/**` or `apps/api`) wire `@repo/infra` with `@repo/application` and invoke use cases. Handlers obtain the auth gateway from the container — never embed Supabase in a `page.tsx`.
 - Never import concrete repositories from presentation code.
 - React components must contain no business logic.
 
@@ -103,7 +103,7 @@ Allowed: plain TypeScript, `@repo/utils`, `uuid`.
 ## Current State vs Target Architecture
 
 - **`packages/core`**, **`packages/application`**, and **`packages/infra`** are in place (Portfolio + Identity domain, Prisma repositories, use cases, DTOs).
-- **REST boundary**: new presentation code must go through the documented API ([05-API-CONTRACTS](./05-API-CONTRACTS.md)); route handlers are added or extended as needed. Legacy static data in `apps/web` should be migrated behind the same HTTP surface.
+- **REST boundary**: new presentation code must go through the documented API ([05-API-CONTRACTS](./05-API-CONTRACTS.md)); route handlers are added or extended as needed. Legacy static data in `apps/site` should be migrated behind the same HTTP surface.
 - **Rule**: do not bypass the API from the front-end — even on the server, use `fetch` to the app’s own API (or a shared route-handler module called only from `app/api`, not from `page.tsx`).
 
 ---

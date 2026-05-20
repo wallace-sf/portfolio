@@ -24,7 +24,7 @@ It is also a **technical reference** for applying Clean Architecture, Domain-Dri
 
 | Concern | Technology |
 |---------|------------|
-| Frontend | Next.js 14+ (App Router), React, Tailwind CSS |
+| Frontend | Next.js 16+ (App Router), React, Tailwind CSS |
 | Domain layer | TypeScript, DDD, Either pattern, Value Objects |
 | Data fetching | **HTTP only** — TanStack Query (client) and server-side `fetch` to the REST API; pages and components do **not** import `@repo/application` use cases (see [02-ARCHITECTURE](./02-ARCHITECTURE.md)) |
 | Forms | React Hook Form + Zod |
@@ -41,17 +41,15 @@ It is also a **technical reference** for applying Clean Architecture, Domain-Dri
 
 ```text
 apps/
-  web/          → Public portfolio (Next.js App Router)
+  site/         → Public portfolio (Next.js 16+ App Router)
   blog/         → Blog (future, post-MVP)
-  api/          → Optional dedicated API app if the HTTP surface outgrows `apps/web/app/api`
+  admin/        → Dedicated admin app (future, post-MVP)
 
 packages/
   core/         → Domain + Shared Kernel (entities, VOs, repositories)
   application/  → Use Cases, DTOs, ports
   infra/        → Concrete repositories (Prisma + Supabase)
   ui/           → Shared design system (React components)
-  markdown/     → MDX / Markdown parser and renderer
-  i18n/         → Shared translations
   utils/        → Shared utilities (Validator, formatters)
   eslint-config/
   typescript-config/

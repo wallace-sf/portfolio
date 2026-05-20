@@ -80,7 +80,7 @@ Run a single package:
 
 ```bash
 pnpm --filter @repo/core test
-pnpm --filter web dev
+pnpm --filter site dev
 ```
 
 ---
@@ -88,7 +88,7 @@ pnpm --filter web dev
 ## Monorepo Build Order
 
 ```text
-packages/core → packages/application → packages/infra → apps/web
+packages/core → packages/application → packages/infra → apps/site
 ```
 
 Turborepo handles this automatically via `dependsOn` in `turbo.json`.
