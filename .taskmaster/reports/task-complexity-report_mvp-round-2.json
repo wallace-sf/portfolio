@@ -1,0 +1,93 @@
+{
+	"meta": {
+		"generatedAt": "2026-05-20T23:00:40.201Z",
+		"tasksAnalyzed": 10,
+		"totalTasks": 10,
+		"analysisCount": 10,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Implement ERROR_MESSAGE i18n Dictionary in @repo/core",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break this task into: (1) audit all ERROR_CODE constants across 20 entities/VOs (Slug, Name, Text, Email, Url, Id, Image, DateTime, DateRange, LocalizedText, Project, Experience, Skill, Profile, User, etc.), (2) create ERROR_MESSAGE.ts file with Record<Locale, Record<string, { message: string }>> structure, (3) populate with pt-BR and en-US translations for each code, (4) create getErrorMessage helper with locale fallback logic, (5) update ValidationError/NotFoundError/UnauthorizedError constructors to accept only code, and (6) write comprehensive unit tests for dictionary completeness and fallback behavior.",
+			"reasoning": "MODERATE-HIGH complexity. I found 20 files with ERROR_CODE constants across packages/core/src. Each file has 1-4 error codes (totaling ~30-40 codes). The dictionary structure is straightforward, but requires meticulous auditing to ensure no codes are missed. Translation for pt-BR adds work. The helper function and error class updates are simple but critical. Test coverage requirements add complexity."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Remove Hardcoded Error Messages from @repo/core Domain Code",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break this task into: (1) audit and update all VOs (Slug, Name, Text, Email, Url, Id, Image, DateTime, DateRange, LocalizedText) to remove inline messages from ValidationError instantiations, (2) audit and update all entities (Project, Experience, Skill, Profile, User, Language, SocialNetwork, ProfessionalValue, ProfileStat) to use code-only ValidationError, (3) update ValidationError constructor to make message optional with default 'Validation failed', (4) run grep to verify zero string literals remain in error instantiations, and (5) add unit tests verifying all ValidationError instances use ERROR_CODE only.",
+			"reasoning": "MODERATE complexity. I found 24 files with ValidationError usage. Current pattern is: new ValidationError({ code: Foo.ERROR_CODE, message: 'text' }). Need to change to: new ValidationError({ code: Foo.ERROR_CODE }). This is a repetitive but straightforward refactor. The ValidationError constructor change is trivial. Risk is low since tests will catch any missed instances. Depends on task #1 being complete."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Manual Endpoint Testing — Public Portfolio Routes",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break this task into: (1) set up local environment (pnpm dev, pnpm seed), create manual test script/Postman collection, (2) test all public endpoints (GET /api/v1/projects, /projects/featured, /projects/:slug, /experiences, /profile, /professional-values) for happy path (200, correct envelope), not found (404), and invalid input (400), (3) document all findings in .taskmaster/docs/endpoint-testing-results.md with detailed results table, and (4) create follow-up GitHub issues for any broken endpoints.",
+			"reasoning": "MODERATE complexity. I found 18 route handlers in apps/site/src/app/api/v1/. Public routes are simpler (no auth). Most handlers follow clean pattern: resolve container → call use case → return handleRequest. Testing is manual but straightforward. Main complexity is methodical documentation and edge case discovery. Depends on tasks #1 and #2 for error message verification."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Manual Endpoint Testing — Contact, Auth, Identity, and Admin Routes",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break this task into: (1) test contact endpoint (POST /api/v1/contact) for valid/invalid payloads and rate-limiting, (2) test auth endpoints (sign-in, sign-out, refresh) for valid/invalid credentials and session management, (3) test identity endpoint (GET /api/v1/me) with and without session, (4) set up admin user via seed and test all admin CRUD endpoints (projects, experiences, profile) with authorization checks (401 without auth, 401 with non-admin), and (5) document findings and create follow-up issues.",
+			"reasoning": "MODERATE-HIGH complexity. Auth and admin routes require session management, authorization testing, and rate-limiting verification. More edge cases than public routes. I observed route handlers in apps/site/src/app/api/v1/admin/* with EnsureAdmin checks. Auth may be partially implemented per docs/11-IDENTITY.md. Requires careful documentation of current state vs. expected behavior. Depends on task #3."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Create Realistic Seed Data",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break this task into: (1) update Profile, Skills, and ProfessionalValues in packages/infra/prisma/seed.ts with realistic content (real name, bio 100-200 words, better photo text), (2) replace Projects array with 2-4 real projects (meaningful titles, captions, content 200+ words, correct skills, periods, ensure 2+ PUBLISHED featured), (3) replace Experiences array with 2-3 real experiences (accurate companies, positions, rich descriptions 150+ words, real dates), (4) run pnpm prisma db seed to verify zero errors, and (5) manually verify data appears correctly in UI.",
+			"reasoning": "LOW-MODERATE complexity. I reviewed packages/infra/prisma/seed.ts — it's well-structured with stable IDs and idempotent upserts. Current data is generic but structurally sound. Main work is content writing (bio, descriptions, etc.), not code changes. Seeders use good patterns (loc helper, img helper). Low technical risk. Main effort is content creation and verification."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Audit Application-Layer Orchestration in Route Handlers",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break this task into: (1) review all 18 route handlers in apps/site/src/app/api/v1/ and identify violations (if/else branching on domain internals, multiple use-case calls with business decisions, business logic in handlers), (2) for each violation, extract orchestration into new use case or enhance existing use case, (3) refactor route handlers to follow pattern: resolve container → call one use case → mapToHttpResponse, (4) document all findings in .taskmaster/docs/orchestration-audit.md with violation details and refactor recommendations, and (5) create follow-up GitHub issues for non-critical refactors.",
+			"reasoning": "MODERATE complexity. I reviewed route handlers — most follow clean pattern (e.g., GET /api/v1/projects calls one use case). However, admin routes like POST /api/v1/admin/projects have auth checks (resolveSessionUserId) before use case call, which is acceptable. Need to identify true violations (business logic in handlers). Manual code review is time-consuming. Refactors may touch multiple files. ESLint architecture rules help verify."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Create apps/admin and Move Login/Admin Routes",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break this task into: (1) create new Next.js app with pnpm create next-app apps/admin, (2) move /{locale}/login and /{locale}/admin/* pages from apps/site to apps/admin, (3) move middleware.ts from apps/site to apps/admin (scope to admin only), (4) copy necessary dependencies, components, and utilities to apps/admin or move to @repo/ui, (5) update turbo.json (add admin#build, admin#dev, admin#lint), root package.json (dev:admin, build:admin), and workspace config, (6) verify apps/site has zero login/admin routes remaining (grep for 'admin', 'login'), and (7) test both apps run independently (pnpm --filter site dev, pnpm --filter admin dev) and build successfully (pnpm build).",
+			"reasoning": "MODERATE-HIGH complexity. I found apps/site/src/app/[locale]/login/page.tsx and apps/site/src/app/[locale]/admin/* pages. This is a significant structural change affecting build config, middleware, routing, and shared dependencies. Need to ensure clean separation without breaking existing functionality. Monorepo tooling (Turbo, pnpm workspaces) adds complexity. Testing both apps independently is critical. Risk of missing shared components or utilities."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Figma Styling Review and Component Updates",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break this task into: (1) review Figma design against current implementation for all pages (Home, Projects, About, Contact, Admin) and document discrepancies (missing components, incorrect spacing/typography/colors, inconsistent variants, responsive issues), (2) create checklist in .taskmaster/docs/figma-review-checklist.md prioritizing by visual impact, (3) implement changes in @repo/ui components (Button, Card, Input, etc.) to match design tokens, (4) update page layouts in apps/site/src/app/[locale]/* and test responsive breakpoints (mobile 375px, tablet 768px, desktop 1440px), and (5) perform visual regression testing (before/after screenshots, verify typography hierarchy, color palette, interactive states).",
+			"reasoning": "MODERATE-HIGH complexity. I found 19 page/layout files in apps/site/src/app/[locale]/**/*.tsx. Design review is subjective and time-consuming. Requires access to Figma file. Component updates may cascade to multiple pages. Responsive testing across breakpoints adds effort. Visual regression requires careful comparison. Reference to Paul Scanlon's portfolio suggests high design standards. Risk of scope creep if many discrepancies found."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "General Code Quality Review and Cleanup",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break this task into: (1) eliminate all 'any' types across packages/core, packages/application, apps/site/src/app/api (grep -r 'any', replace with explicit types or unknown), (2) verify architectural boundaries (no cross-context imports portfolio ↔ identity, no use cases in pages/layouts/client components, no @repo/application in apps/site pages except route handlers, no @supabase outside @repo/infra), (3) verify REST boundary (all route handlers follow envelope: { data, error }, correct HTTP status codes, no domain logic in handlers), (4) run all tests and fix failures (pnpm test:core, test:utils, test:site, test), (5) run linters and fix violations (pnpm lint, pnpm format, pnpm types), and (6) document remaining technical debt in GitHub issues.",
+			"reasoning": "HIGH complexity. This is a comprehensive quality pass touching many areas. I found 7 'any' usages in packages/core/src (low but non-zero). 288 test files exist — running all tests and fixing failures is time-consuming. Architectural boundary verification requires extensive grepping and manual review. I confirmed @repo/application is only imported in apps/site/src/app/api/* route handlers (correct). ESLint/Prettier/TypeScript checks may surface many issues. Depends on tasks #2 and #6."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Document Findings and Create Follow-up Issues",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break this task into: (1) review all documentation created during tasks #3, #4, #6, #8, #9 (.taskmaster/docs/endpoint-testing-results.md, orchestration-audit.md, figma-review-checklist.md, code quality notes), (2) for each finding, assess severity (blocker, critical, medium, low) and determine if launch-blocking or post-MVP, (3) create GitHub issues with gh issue create (proper labels: bug, refactor, enhancement, milestone: MVP Round 2, link to parent issues #588, #543, #589, #594), (4) create launch checklist in .taskmaster/docs/launch-checklist.md (tests passing, endpoints working, realistic seed data, Figma match, zero violations, docs updated, admin app separated if task #7 complete), (5) update project README with MVP Round 2 status, known post-MVP work, deployment instructions, and (6) perform final smoke test (view projects, submit contact form, admin login).",
+			"reasoning": "MODERATE complexity. Consolidation task depending on outputs from tasks #3, #4, #6, #8, #9. Main work is synthesis, prioritization, and issue creation. GitHub CLI (gh issue create) makes issue creation straightforward. Launch checklist creation is critical but manageable. Final smoke test is manual but scoped. Risk is missing findings if dependent tasks are incomplete. Depends on tasks #3, #4, #6, #8, #9."
+		}
+	]
+}

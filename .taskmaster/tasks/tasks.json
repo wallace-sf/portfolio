@@ -4889,5 +4889,139 @@
         "sprint-6"
       ]
     }
+  },
+  "mvp-round-2": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Implement ERROR_MESSAGE i18n Dictionary in @repo/core",
+        "description": "Create comprehensive ERROR_MESSAGE dictionary with pt-BR and en-US translations for all domain error codes across core entities and value objects",
+        "details": "1. Create `packages/core/src/shared/i18n/ERROR_MESSAGE.ts` with structure: `ERROR_MESSAGE: Record<Locale, Record<string, { message: string }>>`\n2. Audit all ERROR_CODE constants across VOs (Slug, Name, Text, Email, Url, Id, Image, DateTime, DateRange, LocalizedText) and entities (Project, Experience, Skill, Profile, User, etc.)\n3. For each code, add entries in both `pt-BR` and `en-US` with human-readable messages\n4. Export ERROR_MESSAGE from `@repo/core/shared/i18n/index.ts`\n5. Create helper function `getErrorMessage(locale: Locale, code: string): string | undefined`\n6. Update `ValidationError`, `NotFoundError`, `UnauthorizedError` to accept only `code` (no inline messages)\n7. Ensure all codes match pattern: INVALID_*, NOT_FOUND, UNAUTHORIZED, AUTH_*, ERROR_*\n\nExample structure:\n```typescript\nexport const ERROR_MESSAGE: Record<Locale, Record<string, { message: string }>> = {\n  'en-US': {\n    'INVALID_SLUG': { message: 'Slug must be kebab-case (a-z, 0-9, hyphens only)' },\n    'INVALID_EMAIL': { message: 'Invalid email format' },\n    'NOT_FOUND': { message: 'Resource not found' },\n    // ... all codes\n  },\n  'pt-BR': {\n    'INVALID_SLUG': { message: 'Slug deve estar em kebab-case (a-z, 0-9, hífens apenas)' },\n    'INVALID_EMAIL': { message: 'Formato de e-mail inválido' },\n    'NOT_FOUND': { message: 'Recurso não encontrado' },\n    // ... all codes\n  }\n};\n```",
+        "testStrategy": "1. Unit tests verifying ERROR_MESSAGE has entries for all ERROR_CODE constants\n2. Test `getErrorMessage` returns correct message for each locale\n3. Test fallback behavior: en-US → pt-BR → undefined\n4. Verify no hardcoded messages remain in ValidationError instantiations\n5. Test that all domain code paths returning ValidationError use stable codes",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Remove Hardcoded Error Messages from @repo/core Domain Code",
+        "description": "Replace all inline human-readable error messages in entities and VOs with stable ERROR_CODE constants, ensuring ValidationError only receives codes",
+        "details": "1. Audit all entities (Project, Experience, Skill, Profile, User, Language, SocialNetwork, ProfessionalValue, ProfileStat) for ValidationError instantiations\n2. Audit all VOs (Slug, Name, Text, Email, Url, Id, Image, DateTime, DateRange, LocalizedText) for ValidationError instantiations\n3. Replace pattern:\n   BEFORE: `return left(new ValidationError({ code: Foo.ERROR_CODE, message: 'Human readable text' }))`\n   AFTER: `return left(new ValidationError({ code: Foo.ERROR_CODE }))`\n4. Ensure each class has a static `ERROR_CODE` constant\n5. Update Validator chain messages to be generic/internal (not user-facing) since edge will resolve from ERROR_MESSAGE\n6. Verify no plain string literals appear in error instantiations\n7. Update ValidationError constructor to make message optional, defaulting to 'Validation failed'\n8. Run ESLint and fix any violations\n\nFocus files:\n- packages/core/src/shared/vo/*.ts (Slug, Name, Text, Url, Email, Id, Image, DateTime, DateRange)\n- packages/core/src/portfolio/entities/**/*.ts\n- packages/core/src/identity/entities/**/*.ts\n- packages/core/src/shared/errors/ValidationError.ts",
+        "testStrategy": "1. Unit tests verify all ValidationError instances use ERROR_CODE only\n2. Test that domain validation still returns left() with correct codes\n3. Grep for string literals in ValidationError constructors (should be zero)\n4. Test entity.create() methods return ValidationError with code-only\n5. Integration test: ensure edge can resolve messages via ERROR_MESSAGE[locale][code]",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Manual Endpoint Testing — Public Portfolio Routes",
+        "description": "Manually test all public portfolio API endpoints (GET /api/v1/projects, /projects/featured, /projects/:slug, /experiences, /profile) for correct envelope and HTTP status codes",
+        "details": "1. Set up local development environment: `pnpm dev`, seed database: `pnpm seed`\n2. Create manual test script or use Postman/Insomnia/curl\n3. Test each endpoint for:\n   - Happy path: returns `{ data: <T>, error: null }` with 200\n   - Not found cases: returns `{ data: null, error: { code, message } }` with 404\n   - Invalid input (if applicable): returns 400 with error envelope\n4. Endpoints to test:\n   - GET /api/v1/projects — list all published projects\n   - GET /api/v1/projects/featured — list featured projects\n   - GET /api/v1/projects/:slug — project by slug (test valid slug and 404 case)\n   - GET /api/v1/experiences — list all experiences\n   - GET /api/v1/profile — get profile\n   - GET /api/v1/professional-values — list professional values\n5. Document findings in `.taskmaster/docs/endpoint-testing-results.md`\n6. Create follow-up GitHub issues for any broken endpoints\n7. Verify error messages resolve from ERROR_MESSAGE (requires task #1, #2)\n\nValidation checklist:\n- Response always has `data` and `error` keys\n- Success: `data` is non-null, `error` is null, status 200\n- Failure: `data` is null, `error` has `code` and `message`, correct status\n- No 500 errors for expected failures",
+        "testStrategy": "Manual testing protocol:\n1. Execute each endpoint with valid and invalid inputs\n2. Verify response envelope structure matches API contract (docs/05-API-CONTRACTS.md)\n3. Confirm HTTP status codes: 200 (success), 400 (validation), 404 (not found)\n4. Document all edge cases and unexpected behaviors\n5. Cross-reference with ERROR_MESSAGE to ensure message localization works",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Manual Endpoint Testing — Contact, Auth, Identity, and Admin Routes",
+        "description": "Manually test contact form, authentication, identity, and admin CRUD endpoints for correct envelope, status codes, and authorization",
+        "details": "1. Test Contact endpoint:\n   - POST /api/v1/contact with valid payload → 200\n   - POST /api/v1/contact with invalid payload → 400\n   - POST /api/v1/contact rate-limit behavior (requires multiple requests)\n2. Test Auth endpoints (pending full implementation per docs/11-IDENTITY.md):\n   - POST /api/v1/auth/sign-in with valid credentials → 200 with session\n   - POST /api/v1/auth/sign-in with invalid credentials → 401\n   - POST /api/v1/auth/sign-out → 200\n   - POST /api/v1/auth/refresh → 200 or 401\n3. Test Identity endpoint:\n   - GET /api/v1/me without session → 401 with AUTH_REQUIRED\n   - GET /api/v1/me with session → 200 with user data\n4. Test Admin endpoints (requires auth as admin):\n   - Projects: POST, PUT, DELETE, GET /api/v1/admin/projects/* (CRUD)\n   - Publish/Archive: POST /api/v1/admin/projects/:slug/publish, /archive\n   - Profile: PUT /api/v1/admin/profile\n   - Experiences: POST, PUT, DELETE, GET /api/v1/admin/experiences/* (CRUD)\n   - Test 401 UNAUTHORIZED when not admin\n5. Document findings in `.taskmaster/docs/endpoint-testing-results.md`\n6. Create follow-up issues for broken endpoints\n\nNote: Auth endpoints may be partially implemented; document current state",
+        "testStrategy": "Manual testing protocol:\n1. Set up test admin user via seed (ADMIN_EMAIL env var)\n2. Test auth flow: sign-in → get session → call protected endpoints\n3. Test authorization: call admin endpoints without auth → 401, with non-admin → 401\n4. Verify rate limiting on contact endpoint (multiple rapid requests)\n5. Confirm all responses follow envelope contract\n6. Document any missing implementations for post-MVP work",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Create Realistic Seed Data",
+        "description": "Replace placeholder seed data with content close to real portfolio: real projects, experiences, skills, and profile with meaningful descriptions",
+        "details": "1. Update `packages/infra/prisma/seed.ts` with realistic data:\n   - Profile: Real name, headline, bio (100-200 words), real photo URL or placeholder with better text\n   - Skills: Keep existing tech stack (TypeScript, React, Next.js, etc.), add more relevant skills\n   - Projects: Replace with 2-4 real or near-real projects with:\n     * Meaningful titles, captions, and content (200+ words each)\n     * Correct skill associations\n     * Real period dates\n     * At least 2 PUBLISHED featured projects\n   - Experiences: Replace with 2-3 real experiences with:\n     * Accurate company names, positions, locations\n     * Rich descriptions (150+ words per experience)\n     * Correct employment type and location type\n     * Real date ranges\n   - Professional values: Keep or enhance with more authentic content\n2. Ensure seeds remain idempotent (use upsert with stable IDs)\n3. Update image placeholders to use better text or real URLs\n4. Verify `pnpm prisma db seed` runs without errors\n5. Manually verify seeded data appears correctly in UI\n\nGoal: Seeds should represent the actual portfolio content or be very close, not generic placeholders",
+        "testStrategy": "1. Run `pnpm prisma db seed` and verify zero errors\n2. Query database to confirm all entities created\n3. Verify at least 2 published projects exist\n4. Verify at least 2 experiences exist\n5. Load frontend and confirm realistic data appears on Home, Projects, About pages\n6. Test that related projects, skills, and experiences link correctly",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Audit Application-Layer Orchestration in Route Handlers",
+        "description": "Audit all route handlers in apps/site/src/app/api/ to ensure no orchestration logic (branching on domain results, multiple use-case calls) leaks into the web adapter",
+        "details": "1. Review all 18 route handlers under `apps/site/src/app/api/v1/`:\n   - Public: projects, projects/featured, projects/[slug], experiences, profile, professional-values\n   - Contact: contact\n   - Auth: auth/sign-in, auth/sign-out, auth/refresh\n   - Identity: me\n   - Admin: admin/projects/*, admin/profile, admin/experiences/*\n2. Identify violations:\n   - Route handlers with if/else branching on domain model internals\n   - Multiple use-case calls in sequence with business decisions between them\n   - Business logic that should be in a use case\n3. For each violation:\n   - Extract orchestration into a new use case or enhance existing use case\n   - Simplify route handler to: resolve container → call one use case → map result to HTTP\n4. Document findings in `.taskmaster/docs/orchestration-audit.md`\n5. Create follow-up GitHub issues for refactors\n6. Ensure architecture ESLint rules pass\n\nPattern to enforce:\n```typescript\nexport async function GET(req: Request) {\n  const container = resolveContainer();\n  const result = await container.useCase.execute(params);\n  return mapToHttpResponse(result);\n}\n```",
+        "testStrategy": "1. Manual code review of all route handlers\n2. Identify handlers with >20 lines or multiple use-case calls\n3. Verify each handler calls exactly one use case (or thin orchestrator)\n4. Check no domain model interrogation (e.g., `if (project.status === ...)`) in handlers\n5. Run `pnpm lint` and ensure architecture rules pass\n6. Document violations and create issues for post-MVP if not critical",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Create apps/admin and Move Login/Admin Routes",
+        "description": "Extract /{locale}/login and /{locale}/admin/* routes from apps/site into new dedicated apps/admin Next.js app, scoping auth middleware to admin only",
+        "details": "1. Create new Next.js app: `pnpm create next-app apps/admin --typescript --app --tailwind --no-src-dir`\n2. Set up admin app structure:\n   - `apps/admin/app/[locale]/login/page.tsx` — move from apps/site\n   - `apps/admin/app/[locale]/admin/*` — move all admin pages\n   - `apps/admin/middleware.ts` — auth middleware (move from apps/site, scope to admin)\n   - Copy necessary dependencies, components, and utilities\n3. Update `turbo.json`:\n   - Add `admin#build`, `admin#dev`, `admin#lint`, etc.\n   - Set correct env vars for admin app\n4. Update root `package.json`:\n   - Add scripts for admin: `dev:admin`, `build:admin`\n5. Update workspace config (pnpm-workspace.yaml if needed)\n6. Move shared components to `@repo/ui` if needed\n7. Ensure apps/site has ZERO login/admin routes remaining\n8. Test both apps run independently:\n   - `pnpm --filter site dev` — public portfolio only\n   - `pnpm --filter admin dev` — admin panel and login\n9. Update documentation (README, docs/) to reflect new structure\n10. Verify both apps build: `pnpm build`\n\nGoal: Complete separation of public site and admin app",
+        "testStrategy": "1. Verify apps/site has no login or admin routes (grep for 'admin', 'login')\n2. Verify apps/admin runs independently: `pnpm --filter admin dev`\n3. Test login flow in apps/admin\n4. Test admin CRUD operations in apps/admin\n5. Verify auth middleware only active in apps/admin (no impact on apps/site)\n6. Run `pnpm build` and ensure both apps build successfully\n7. Verify no shared state or dependencies between apps beyond packages/*",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Figma Styling Review and Component Updates",
+        "description": "Conduct Figma design review to identify unfinished or inconsistent components, then implement all required visual changes in @repo/ui and apps/site",
+        "details": "1. Review Figma design against current implementation:\n   - Home page: Hero, Stats, Featured Projects, About preview\n   - Projects page: Project grid, filters, Project detail\n   - About page: Bio, Experiences timeline, Skills grid, Professional Values\n   - Contact form\n   - Admin pages (if designed)\n2. Document discrepancies:\n   - Missing components\n   - Incorrect spacing, typography, colors\n   - Inconsistent component variants\n   - Responsive behavior issues\n3. Create a checklist in `.taskmaster/docs/figma-review-checklist.md`:\n   - List all components requiring changes\n   - Prioritize by visual impact\n4. Implement changes:\n   - Update `@repo/ui` components (Button, Card, Input, etc.)\n   - Update page layouts in `apps/site/src/app/[locale]/*`\n   - Ensure Tailwind classes match design tokens\n   - Test responsive breakpoints (mobile, tablet, desktop)\n5. Visual regression testing:\n   - Compare before/after screenshots\n   - Verify on multiple screen sizes\n6. Update Storybook stories if needed\n\nReference: [Paul Scanlon's portfolio](https://www.paulie.dev/) for inspiration",
+        "testStrategy": "1. Side-by-side comparison: Figma vs. running app\n2. Test all pages on mobile (375px), tablet (768px), desktop (1440px)\n3. Verify typography hierarchy matches design\n4. Verify color palette matches (check contrast ratios)\n5. Test interactive states (hover, focus, active) on all components\n6. Review Storybook to ensure component variants are complete\n7. User acceptance: have stakeholder review visuals",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "General Code Quality Review and Cleanup",
+        "description": "Comprehensive quality pass: eliminate 'any' types, enforce architectural boundaries, verify REST contract, ensure all tests pass, and enforce ESLint rules",
+        "details": "1. Eliminate all `any` types:\n   - Run `grep -r 'any' packages/*/src apps/*/src` (exclude node_modules, .next)\n   - Replace with explicit types or `unknown`\n   - Focus on `packages/core`, `packages/application`, `apps/site/src/app/api`\n2. Verify architectural boundaries:\n   - No direct imports between bounded contexts (portfolio ↔ identity)\n   - No use cases called from pages, layouts, or client components in apps/site\n   - No `@repo/application` imports in apps/site pages (only in route handlers)\n   - No `@supabase/*` outside `@repo/infra` (grep for '@supabase')\n3. Verify REST boundary:\n   - All route handlers follow response envelope: `{ data, error }`\n   - No domain logic in route handlers (see task #6)\n   - All errors map to correct HTTP status codes\n4. Run all tests and fix failures:\n   - `pnpm test:core` — core domain tests\n   - `pnpm test:utils` — utils tests\n   - `pnpm test:site` — site tests\n   - `pnpm test` — full test suite\n5. Run linters and fix violations:\n   - `pnpm lint` — ESLint across all packages\n   - `pnpm format` — Prettier formatting\n   - `pnpm types` — TypeScript type checking\n6. Document any remaining technical debt in GitHub issues\n\nGoal: Zero linting errors, zero `any` types, all tests green, architecture rules enforced",
+        "testStrategy": "1. Run `pnpm lint` and verify zero errors\n2. Run `pnpm types` and verify zero type errors\n3. Run `pnpm test` and verify all tests pass\n4. Grep for 'any' in src directories — zero results (excluding type definitions)\n5. Grep for '@repo/application' in apps/site/src/app — only in api/ route handlers\n6. Grep for '@supabase' in apps/site — zero results\n7. Verify no cross-context imports (portfolio importing identity entities)\n8. Run `pnpm build` and verify successful build",
+        "priority": "high",
+        "dependencies": [
+          2,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Document Findings and Create Follow-up Issues",
+        "description": "Consolidate all audit findings from tasks #3, #4, #6, #8, #9 into GitHub issues in MVP Round 2 milestone, prioritize, and prepare launch checklist",
+        "details": "1. Review documentation created during previous tasks:\n   - `.taskmaster/docs/endpoint-testing-results.md` (tasks #3, #4)\n   - `.taskmaster/docs/orchestration-audit.md` (task #6)\n   - `.taskmaster/docs/figma-review-checklist.md` (task #8)\n   - Any code quality notes from task #9\n2. For each finding:\n   - Assess severity: blocker, critical, medium, low\n   - Determine if it must be fixed before launch or post-MVP\n3. Create GitHub issues:\n   - Use `gh issue create` with proper labels (bug, refactor, enhancement)\n   - Assign to MVP Round 2 milestone if launch-blocking\n   - Link to parent issue (e.g., #588, #543, #589, #594)\n4. Create launch checklist in `.taskmaster/docs/launch-checklist.md`:\n   - All tests passing\n   - All endpoints working\n   - Realistic seed data\n   - Figma design matches\n   - Zero architectural violations\n   - Documentation updated\n   - Admin app separated (if task #7 complete)\n5. Update project README with:\n   - MVP Round 2 completion status\n   - Known post-MVP work items\n   - Deployment instructions\n6. Prepare for launch: final smoke test\n\nGoal: Clear view of launch readiness and post-MVP backlog",
+        "testStrategy": "1. Verify all findings documented in `.taskmaster/docs/`\n2. Verify GitHub issues created for each finding\n3. Verify issues tagged with correct milestone and labels\n4. Review launch checklist completeness\n5. Stakeholder review: confirm all launch-blocking items addressed\n6. Final manual smoke test of critical flows (view projects, submit contact form, admin login)",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4,
+          6,
+          8,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-05-20T22:57:44.775Z",
+      "updated": "2026-05-20T22:57:44.775Z",
+      "description": "Tasks for mvp-round-2 context"
+    }
   }
 }
