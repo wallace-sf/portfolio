@@ -1,101 +1,101 @@
 # 11 — Identity
 
-> Bounded context de identidade: utilizadores, papéis, **autenticação** (sessão) e **autorização** (admin). Complementa [03-BOUNDED-CONTEXTS](./03-BOUNDED-CONTEXTS.md) e [05-API-CONTRACTS](./05-API-CONTRACTS.md).
+> Identity bounded context: users, roles, **authentication** (session) and **authorization** (admin). Complements [03-BOUNDED-CONTEXTS](./03-BOUNDED-CONTEXTS.md) and [05-API-CONTRACTS](./05-API-CONTRACTS.md).
 
 ---
 
-## O que é “auth” neste projeto
+## What "auth" means in this project
 
-Em DDD, **Identity** é um **bounded context** próprio: modela *quem* é o utilizador e *que* pode fazer no sistema (via `Role` e casos de uso como `EnsureAdmin`). **Não** é apenas “middleware”: a regra “só ADMIN pode…” vive no domínio e na camada de aplicação.
+In DDD, **Identity** is its own **bounded context**: it models *who* the user is and *what* they can do in the system (via `Role` and use cases like `EnsureAdmin`). It is **not** just "middleware": the rule "only ADMIN can…" lives in the domain and application layers.
 
-- **Autenticação** (sessão, credenciais): deve ser abstraída por um **porto na application** (`IAuthenticationGateway`), com **implementação na infra** (ex.: Supabase). O **front-end** não referencia o SDK do fornecedor.
-- **Autorização:** **`EnsureAdmin`**, **`GetCurrentUser`**, e futuros casos de uso — invocados **apenas** a partir de **route handlers**, nunca a partir de componentes React.
+- **Authentication** (session, credentials): must be abstracted by a **port in the application layer** (`IAuthenticationGateway`), with an **implementation in infra** (e.g. Supabase). The **front-end** does not reference the vendor's SDK.
+- **Authorization:** **`EnsureAdmin`**, **`GetCurrentUser`**, and future use cases — invoked **only** from **route handlers**, never from React components.
 
-O **front-end** consome apenas **REST**; não importa `@repo/application` nem **`@supabase/*`**.
-
----
-
-## Senhas e `authSubject` (modelo alvo)
-
-- **O projeto não armazena senhas** na tabela de aplicação (`User` no Prisma). Credenciais ficam no **provedor de auth** (ex.: `auth.users` no Supabase).
-- Na **tua** base guardas perfil e papéis, e uma coluna estável que liga à conta de auth — por exemplo **`authSubject`** (UUID igual ao id do utilizador no Supabase Auth / claim `sub` do JWT).
-- Fluxo mental: `auth.users` (IdP) ↔ `User` (Prisma) via `authSubject`; email e nome podem existir nos dois lados, mas a **senha** só no IdP.
+The **front-end** consumes only **REST**; it does not import `@repo/application` or **`@supabase/*`**.
 
 ---
 
-## Fornecedor plugável (Clean Architecture)
+## Passwords and `authSubject` (target model)
 
-| Layer | O que pode saber sobre Supabase (ou outro IdP) |
-|-------|-----------------------------------------------|
-| **`apps/site` (UI, `middleware.ts`)** | **Nada.** Só `fetch` a `/api/v1/...`. |
-| **`apps/site/app/api/**` (Route Handlers)** | **Não** importar `@supabase/*`. Usar `getContainer()` e o porto `IAuthenticationGateway` em `@repo/infra`. |
-| **`@repo/application`** | Só o **contrato** do porto (`AuthCookieApi`, `IAuthenticationGateway`, DTOs de erro). Sem SDK do IdP. |
-| **`@repo/infra`** | **Única** camada com `@supabase/supabase-js` / `@supabase/ssr` enquanto esse for o adaptador. Outro fornecedor = nova classe + wiring. |
-
-**Ponte Next.js (fina):** um helper `createNextAuthCookieApi()` em `apps/site` pode mapear `cookies()` de `next/headers` para `AuthCookieApi` — é cola de framework, **não** é Supabase.
+- **The project does not store passwords** in the application table (`User` in Prisma). Credentials live at the **auth provider** (e.g. `auth.users` in Supabase).
+- In your database you store profile and roles, plus a stable column linking to the auth account — for example **`authSubject`** (UUID equal to the user's id in Supabase Auth / `sub` claim of the JWT).
+- Mental model: `auth.users` (IdP) ↔ `User` (Prisma) via `authSubject`; email and name may exist on both sides, but the **password** stays only at the IdP.
 
 ---
 
-## Fluxo alvo (email + password)
+## Pluggable provider (Clean Architecture)
+
+| Layer | What it may know about Supabase (or another IdP) |
+|-------|--------------------------------------------------|
+| **`apps/site` (UI, `middleware.ts`)** | **Nothing.** Only `fetch` to `/api/v1/...`. |
+| **`apps/site/app/api/**` (Route Handlers)** | Do **not** import `@supabase/*`. Use `getContainer()` and the `IAuthenticationGateway` port in `@repo/infra`. |
+| **`@repo/application`** | Only the port **contract** (`AuthCookieApi`, `IAuthenticationGateway`, error DTOs). No IdP SDK. |
+| **`@repo/infra`** | The **only** layer with `@supabase/supabase-js` / `@supabase/ssr` while that is the adapter. Another provider = new class + wiring. |
+
+**Thin Next.js bridge:** a `createNextAuthCookieApi()` helper in `apps/site` can map `cookies()` from `next/headers` to `AuthCookieApi` — this is framework glue, **not** Supabase.
+
+---
+
+## Target flow (email + password)
 
 ```text
-Browser          Route Handler              @repo/infra                    BD
+Browser          Route Handler              @repo/infra                    DB
    │                    │                         │                          │
-   │── POST sign-in ───►│── container.gateway ─────►│ adaptador (ex. Supabase)  │
+   │── POST sign-in ───►│── container.gateway ─────►│ adapter (e.g. Supabase)   │
    │                    │◄── Set-Cookie ───────────│                          │
    │                    │── principal (sub, email) ───────────────────────────►│
-   │                    │── EnsureAppUserForAuthSession (planeado)              │
+   │                    │── EnsureAppUserForAuthSession (planned)               │
    │                    │── GetCurrentUser(userId)                               │
    │◄── UserDTO ────────│                                                      │
 ```
 
-1. Login: `POST /api/v1/auth/sign-in` com JSON `{ email, password }` — o adaptador valida no IdP e define cookies de sessão.
-2. Sessão: handlers leem cookies via gateway → **`authSubject`** + email → repositório resolve ou cria `User` (ver [plans/identity-mvp.md](../plans/identity-mvp.md)).
-3. `GET /api/v1/me`: mesmo pipeline até `GetCurrentUser`.
+1. Login: `POST /api/v1/auth/sign-in` with JSON `{ email, password }` — the adapter validates at the IdP and sets session cookies.
+2. Session: handlers read cookies via gateway → **`authSubject`** + email → repository resolves or creates `User`.
+3. `GET /api/v1/me`: same pipeline through `GetCurrentUser`.
 
 ---
 
-## Estado atual (código)
+## Current state (code)
 
-| Layer | Conteúdo |
+| Layer | Contents |
 |-------|----------|
 | **core** | `User`, `Role`, `IUserRepository`, `UnauthorizedError` |
 | **application** | `GetCurrentUser`, `EnsureAdmin`, `UserDTO` |
-| **infra** | `PrismaUserRepository`, tabela `User` |
-| **Implementado** | `POST /api/v1/auth/sign-in`, `sign-out`, `refresh`, `GET /api/v1/me`, `/{locale}/login` |
-| **Planeado** | `IAuthenticationGateway`, `EnsureAppUserForAuthSession`, coluna `authSubject` |
+| **infra** | `PrismaUserRepository`, `User` table |
+| **Implemented** | `POST /api/v1/auth/sign-in`, `sign-out`, `refresh`, `GET /api/v1/me`, `/{locale}/login` |
+| **Planned** | `IAuthenticationGateway`, `EnsureAppUserForAuthSession`, `authSubject` column |
 
-Contrato HTTP: [05-API-CONTRACTS](./05-API-CONTRACTS.md).
-
----
-
-## Papéis
-
-- **ADMIN** — endpoints `/api/v1/admin/*` e UI `/{locale}/admin/*` (quando existirem).
-- **VISITOR** — autenticado sem privilégios de admin; `GET /api/v1/me` permitido; admin API → **401** após `EnsureAdmin`.
+HTTP contract: [05-API-CONTRACTS](./05-API-CONTRACTS.md).
 
 ---
 
-## Casos de uso (hoje e alvo)
+## Roles
 
-| Caso de uso | Finalidade | Estado |
-|-------------|------------|--------|
-| `GetCurrentUser` | Dado `userId` de domínio, devolve `UserDTO`. | Implementado |
-| `EnsureAdmin` | Utilizador existe e é `ADMIN`; senão `UnauthorizedError`. | Implementado |
-| `EnsureAppUserForAuthSession` | Liga `authSubject` ao `User` (por subject ou email) ou cria `VISITOR`. | **Planeado** |
+- **ADMIN** — endpoints `/api/v1/admin/*` and UI `/{locale}/admin/*`.
+- **VISITOR** — authenticated without admin privileges; `GET /api/v1/me` allowed; admin API → **401** after `EnsureAdmin`.
+
+---
+
+## Use cases (current and planned)
+
+| Use case | Purpose | Status |
+|----------|---------|--------|
+| `GetCurrentUser` | Given a domain `userId`, returns `UserDTO`. | Implemented |
+| `EnsureAdmin` | User exists and is `ADMIN`; otherwise `UnauthorizedError`. | Implemented |
+| `EnsureAppUserForAuthSession` | Links `authSubject` to `User` (by subject or email) or creates a `VISITOR`. | **Planned** |
 
 ---
 
 ## UI
 
-- `/{locale}/login` — formulário + `fetch` a **`POST /api/v1/auth/sign-in`** (sem SDK do IdP no cliente). ✅ Implementado.
-- `/{locale}/admin/*` — dados via `/api/v1/me` e `/api/v1/admin/*`. ✅ Implementado (estrutura base).
+- `/{locale}/login` — form + `fetch` to **`POST /api/v1/auth/sign-in`** (no IdP SDK on the client). ✅ Implemented.
+- `/{locale}/admin/*` — data via `/api/v1/me` and `/api/v1/admin/*`. ✅ Implemented (base structure).
 
 ---
 
-## Ver também
+## See Also
 
-- [02-ARCHITECTURE](./02-ARCHITECTURE.md) — regras da camada interface
-- [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md) — portos e casos de uso
-- [05-API-CONTRACTS](./05-API-CONTRACTS.md) — rotas e códigos de erro
+- [02-ARCHITECTURE](./02-ARCHITECTURE.md) — interface layer rules
+- [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md) — ports and use cases
+- [05-API-CONTRACTS](./05-API-CONTRACTS.md) — routes and error codes
 - [ROADMAP](./ROADMAP.md)

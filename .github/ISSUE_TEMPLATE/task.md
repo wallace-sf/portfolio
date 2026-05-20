@@ -1,25 +1,25 @@
 ---
 name: Task
-about: Feature, refactor, fix ou chore rastreado pelo Task Master
+about: Feature, refactor, fix, or chore tracked by Task Master
 title: "[T-XX] "
 labels: "mvp, priority: medium"
 ---
 
-## Contexto
+## Context
 
-<!-- Por que essa tarefa existe? O que motiva a mudança? -->
+<!-- Why does this task exist? What motivates the change? -->
 
-## Critério de aceite
+## Acceptance criteria
 
-<!-- Lista de itens verificáveis que definem "done" -->
+<!-- Verifiable items that define "done" -->
 - [ ]
 
-## Arquivos
+## Files
 
-<!-- Arquivos relevantes a criar ou modificar -->
-- `path/to/file` ← criar | atualizar
+<!-- Relevant files to create or modify -->
+- `path/to/file` ← create | update
 
-## Dependências
+## Dependencies
 
-<!-- Issues ou PRs que devem ser concluídos antes desta -->
+<!-- Issues or PRs that must be completed before this one -->
 - #
