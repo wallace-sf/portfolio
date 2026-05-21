@@ -4977,11 +4977,12 @@
         "testStrategy": "1. Manual code review of all route handlers\n2. Identify handlers with >20 lines or multiple use-case calls\n3. Verify each handler calls exactly one use case (or thin orchestrator)\n4. Check no domain model interrogation (e.g., `if (project.status === ...)`) in handlers\n5. Run `pnpm lint` and ensure architecture rules pass\n6. Document violations and create issues for post-MVP if not critical",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 6,
         "recommendedSubtasks": 4,
-        "expansionPrompt": "Break this task into: (1) review all 18 route handlers in apps/site/src/app/api/v1/ and identify violations (if/else branching on domain internals, multiple use-case calls with business decisions, business logic in handlers), (2) for each violation, extract orchestration into new use case or enhance existing use case, (3) refactor route handlers to follow pattern: resolve container → call one use case → mapToHttpResponse, (4) document all findings in .taskmaster/docs/orchestration-audit.md with violation details and refactor recommendations, and (5) create follow-up GitHub issues for non-critical refactors."
+        "expansionPrompt": "Break this task into: (1) review all 18 route handlers in apps/site/src/app/api/v1/ and identify violations (if/else branching on domain internals, multiple use-case calls with business decisions, business logic in handlers), (2) for each violation, extract orchestration into new use case or enhance existing use case, (3) refactor route handlers to follow pattern: resolve container → call one use case → mapToHttpResponse, (4) document all findings in .taskmaster/docs/orchestration-audit.md with violation details and refactor recommendations, and (5) create follow-up GitHub issues for non-critical refactors.",
+        "updatedAt": "2026-05-21T20:39:48.528Z"
       },
       {
         "id": "7",
@@ -5198,9 +5199,9 @@
         "testStrategy": "Add unit tests covering: (1) chained rules where first fails with empty string message - verify second rule is not evaluated; (2) chained rules where first fails with no message - verify `isValid = false` and loop stops; (3) verify existing tests still pass to ensure no regression in normal flow with truthy messages.",
         "priority": "high",
         "dependencies": [],
-        "status": "done",
+        "status": "in-progress",
         "subtasks": [],
-        "updatedAt": "2026-05-21T01:54:32.223Z"
+        "updatedAt": "2026-05-21T01:17:57.552Z"
       },
       {
         "id": "12",
@@ -5212,9 +5213,8 @@
         "dependencies": [
           "11"
         ],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-05-21T19:11:01.124Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "13",
@@ -5226,9 +5226,8 @@
         "dependencies": [
           "12"
         ],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-05-21T19:11:04.277Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "14",
@@ -5240,9 +5239,8 @@
         "dependencies": [
           "12"
         ],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-05-21T19:11:07.387Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "15",
@@ -5254,9 +5252,8 @@
         "dependencies": [
           "12"
         ],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-05-21T19:11:10.600Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "16",
@@ -5268,9 +5265,8 @@
         "dependencies": [
           "12"
         ],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-05-21T19:11:13.943Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "17",
@@ -5282,9 +5278,8 @@
         "dependencies": [
           "12"
         ],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-05-21T19:11:17.093Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "18",
@@ -5310,9 +5305,8 @@
         "dependencies": [
           "12"
         ],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-05-21T19:11:20.312Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "20",
@@ -5336,9 +5330,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-21T19:11:20.312Z",
+      "lastModified": "2026-05-21T20:39:48.528Z",
       "taskCount": 20,
-      "completedCount": 10,
+      "completedCount": 3,
       "tags": [
         "mvp-round-2"
       ]
