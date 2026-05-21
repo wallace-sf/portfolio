@@ -4373,7 +4373,7 @@
         "description": "Criar camada de tokens semânticos sobre os primitivos existentes, permitindo que dark/light mode funcione via classe CSS sem alterar componentes. Bloqueador de todos os outros épicos.",
         "details": "1.1 Adicionar tokens surface/content/border/brand/rounded-badge/rounded-card ao tailwind-config/index.ts. 1.2 Adicionar bloco .light {} com CSS vars no globals.css. 1.3 Corrigir useTheme para toggle da classe light no html além de dark (useDarkMode já detecta system — só falta o toggle de light). 1.4 Remover @tailwind base/components/utilities duplicados do globals.css (existem tanto no globals.css quanto no tailwind.css). GitHub issue: #558.",
         "testStrategy": "",
-        "status": "done",
+        "status": "in-progress",
         "dependencies": [],
         "priority": "high",
         "subtasks": [
@@ -4437,7 +4437,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-05-18T02:26:03.601Z"
+        "updatedAt": "2026-05-20T23:11:42.844Z"
       },
       {
         "id": "2",
@@ -4882,9 +4882,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-19T03:50:13.735Z",
+      "lastModified": "2026-05-20T23:11:42.844Z",
       "taskCount": 6,
-      "completedCount": 4,
+      "completedCount": 3,
       "tags": [
         "sprint-6"
       ]
