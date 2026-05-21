@@ -17,8 +17,8 @@ export class Slug extends ValueObject<string> {
     const normalized = raw?.trim().toLowerCase() ?? '';
 
     const { isValid } = Validator.of(normalized)
-      .length(3, Slug.MAX_LENGTH, 'invalid-slug')
-      .regex(Slug.SLUG_REGEX, 'invalid-slug')
+      .length(3, Slug.MAX_LENGTH)
+      .regex(Slug.SLUG_REGEX)
       .validate();
 
     if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
