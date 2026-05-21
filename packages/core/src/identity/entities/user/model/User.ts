@@ -39,12 +39,7 @@ export class User extends AggregateRoot<User, IUserProps> {
 
   static create(props: IUserProps): Either<ValidationError, User> {
     const result = collect([
-      validateEnum(
-        props.role,
-        Object.values(Role),
-        User.ERROR_CODE,
-        `Role must be one of: ${Object.values(Role).join(', ')}.`,
-      ),
+      validateEnum(props.role, Object.values(Role), User.ERROR_CODE),
       Name.create(props.name),
       Email.create(props.email),
       User._createAuthSubject(props.authSubject),

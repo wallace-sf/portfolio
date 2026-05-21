@@ -38,12 +38,7 @@ export class Skill extends AggregateRoot<Skill, ISkillProps> {
 
   static create(props: ISkillProps): Either<ValidationError, Skill> {
     const result = collect([
-      validateEnum(
-        props.type,
-        Object.values(SkillType),
-        Skill.ERROR_CODE,
-        'Invalid skill type.',
-      ),
+      validateEnum(props.type, Object.values(SkillType), Skill.ERROR_CODE),
       Text.create(props.description),
       Text.create(props.icon, { min: 2, max: 50 }),
     ]);

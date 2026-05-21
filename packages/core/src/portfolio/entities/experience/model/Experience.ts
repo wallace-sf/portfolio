@@ -77,13 +77,11 @@ export class Experience extends AggregateRoot<Experience, IExperienceProps> {
         props.employment_type,
         Object.values(EmploymentType),
         Experience.ERROR_CODE,
-        'Invalid employment type.',
       ),
       validateEnum(
         props.location_type,
         Object.values(LocationType),
         Experience.ERROR_CODE,
-        'Invalid location type.',
       ),
       LocalizedText.create(props.company ?? { 'en-US': '' }),
       LocalizedText.create(props.position ?? { 'en-US': '' }),
