@@ -4933,12 +4933,12 @@
         "dependencies": [
           "2"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [],
         "complexity": 5,
         "recommendedSubtasks": 3,
         "expansionPrompt": "Break this task into: (1) set up local environment (pnpm dev, pnpm seed), create manual test script/Postman collection, (2) test all public endpoints (GET /api/v1/projects, /projects/featured, /projects/:slug, /experiences, /profile, /professional-values) for happy path (200, correct envelope), not found (404), and invalid input (400), (3) document all findings in .taskmaster/docs/endpoint-testing-results.md with detailed results table, and (4) create follow-up GitHub issues for any broken endpoints.",
-        "updatedAt": "2026-05-21T20:53:45.950Z"
+        "updatedAt": "2026-05-21T20:57:01.275Z"
       },
       {
         "id": "4",
@@ -5338,9 +5338,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-21T20:53:45.950Z",
+      "lastModified": "2026-05-21T20:57:01.275Z",
       "taskCount": 20,
-      "completedCount": 11,
+      "completedCount": 12,
       "tags": [
         "mvp-round-2"
       ]
