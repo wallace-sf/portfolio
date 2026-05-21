@@ -5,6 +5,7 @@ import {
   Project,
 } from '@repo/core/portfolio';
 import {
+  ConflictError,
   DomainError,
   Either,
   NotFoundError,
@@ -24,7 +25,11 @@ export type SaveProjectInput = {
 export class SaveProject extends UseCase<
   SaveProjectInput,
   void,
-  ValidationError | UnauthorizedError | NotFoundError | DomainError
+  | ValidationError
+  | ConflictError
+  | UnauthorizedError
+  | NotFoundError
+  | DomainError
 > {
   constructor(
     private readonly projectRepository: IProjectRepository,
@@ -37,7 +42,11 @@ export class SaveProject extends UseCase<
     input: SaveProjectInput,
   ): Promise<
     Either<
-      ValidationError | UnauthorizedError | NotFoundError | DomainError,
+      | ValidationError
+      | ConflictError
+      | UnauthorizedError
+      | NotFoundError
+      | DomainError,
       void
     >
   > {
@@ -50,7 +59,8 @@ export class SaveProject extends UseCase<
     try {
       await this.projectRepository.save(projectResult.value);
       return right(undefined);
-    } catch {
+    } catch (err) {
+      if (err instanceof ConflictError) return left(err);
       return left(
         new DomainError('SAVE_FAILED', { message: 'Failed to save project' }),
       );

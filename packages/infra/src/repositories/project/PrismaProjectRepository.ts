@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import {
   IProjectRepository,
   Project,
   ProjectStatus,
 } from '@repo/core/portfolio';
-import { Id, Slug } from '@repo/core/shared';
+import { ConflictError, Id, Slug } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
 import { ProjectMapper } from './ProjectMapper';
@@ -78,11 +78,21 @@ export class PrismaProjectRepository implements IProjectRepository {
   async save(project: Project): Promise<void> {
     const data = ProjectMapper.toPrisma(project);
 
-    await this.db.project.upsert({
-      where: { id: data.id as string },
-      create: data,
-      update: data,
-    });
+    try {
+      await this.db.project.upsert({
+        where: { id: data.id as string },
+        create: data,
+        update: data,
+      });
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new ConflictError();
+      }
+      throw err;
+    }
   }
 
   async delete(id: Id): Promise<void> {

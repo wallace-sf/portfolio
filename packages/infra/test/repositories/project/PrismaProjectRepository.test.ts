@@ -4,6 +4,8 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { ProjectStatus } from '@repo/core/portfolio';
 import { Id, Slug } from '@repo/core/shared';
 
+import { ConflictError } from '@repo/core/shared';
+
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
 import { ProjectMapper } from '../../../src/repositories/project/ProjectMapper';
 import { PrismaProjectRepository } from '../../../src/repositories/project/PrismaProjectRepository';
@@ -206,6 +208,18 @@ describe('PrismaProjectRepository', () => {
       expect(found).not.toBeNull();
       expect(found!.slug.value).toBe(raw.slug);
       expect(found!.skills).toHaveLength(2);
+    });
+
+    it('should throw ValidationError when slug is already taken by another project', async () => {
+      const seeded = await seedProject();
+
+      const duplicateRaw = buildPrismaProject({
+        slug: seeded.slug,
+        id: crypto.randomUUID(),
+      });
+      const duplicateProject = ProjectMapper.toDomain(duplicateRaw);
+
+      await expect(repo.save(duplicateProject)).rejects.toThrow(ConflictError);
     });
 
     it('should update an existing project on upsert', async () => {

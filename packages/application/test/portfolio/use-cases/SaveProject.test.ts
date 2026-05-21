@@ -6,7 +6,12 @@ import {
   IProjectRepository,
   ProjectStatus,
 } from '@repo/core/portfolio';
-import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
+import {
+  ConflictError,
+  DomainError,
+  NotFoundError,
+  ValidationError,
+} from '@repo/core/shared';
 
 import { EnsureAdmin } from '~/identity/use-cases/EnsureAdmin';
 import { SaveProject } from '~/portfolio/use-cases/SaveProject';
@@ -104,7 +109,7 @@ describe('SaveProject', () => {
       expect(result.value).toBeInstanceOf(ValidationError);
     });
 
-    it('should return Left(DomainError) when repository throws', async () => {
+    it('should return Left(DomainError) when repository throws a generic error', async () => {
       const admin = makeUser(Role.ADMIN);
       const { useCase } = makeUseCase(admin, {
         save: vi.fn().mockRejectedValue(new Error('DB error')),
@@ -117,6 +122,21 @@ describe('SaveProject', () => {
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(DomainError);
+    });
+
+    it('should return Left(ConflictError) when repository throws a ConflictError (e.g. duplicate slug)', async () => {
+      const admin = makeUser(Role.ADMIN);
+      const { useCase } = makeUseCase(admin, {
+        save: vi.fn().mockRejectedValue(new ConflictError()),
+      });
+
+      const result = await useCase.execute({
+        userId: ADMIN_UUID,
+        projectProps: VALID_PROJECT_PROPS,
+      });
+
+      expect(result.isLeft()).toBe(true);
+      expect(result.value).toBeInstanceOf(ConflictError);
     });
   });
 
