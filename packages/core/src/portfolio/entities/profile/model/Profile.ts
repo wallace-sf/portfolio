@@ -60,7 +60,7 @@ export class Profile extends AggregateRoot<Profile, IProfileProps> {
     const { isValid } = Validator.of(props.featuredProjectSlugs)
       .refine(
         (slugs) => slugs.length <= Profile.MAX_FEATURED_PROJECTS,
-        `Maximum ${Profile.MAX_FEATURED_PROJECTS} featured projects allowed, got ${props.featuredProjectSlugs.length}.`,
+        'max-featured-projects',
       )
       .validate();
 
