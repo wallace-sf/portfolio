@@ -4373,7 +4373,7 @@
         "description": "Criar camada de tokens semânticos sobre os primitivos existentes, permitindo que dark/light mode funcione via classe CSS sem alterar componentes. Bloqueador de todos os outros épicos.",
         "details": "1.1 Adicionar tokens surface/content/border/brand/rounded-badge/rounded-card ao tailwind-config/index.ts. 1.2 Adicionar bloco .light {} com CSS vars no globals.css. 1.3 Corrigir useTheme para toggle da classe light no html além de dark (useDarkMode já detecta system — só falta o toggle de light). 1.4 Remover @tailwind base/components/utilities duplicados do globals.css (existem tanto no globals.css quanto no tailwind.css). GitHub issue: #558.",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": [
@@ -4437,7 +4437,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-05-20T23:11:42.844Z"
+        "updatedAt": "2026-05-21T01:26:26.748Z"
       },
       {
         "id": "2",
@@ -4730,7 +4730,7 @@
         "description": "Polimento final: alias de path ~features, tokens semânticos de spacing (maxWidth) e box-shadows nomeados. Tarefa 5.2 é pré-requisito das tasks 2.17 e 2.18 do Épico 2.",
         "details": "5.1 Adicionar alias ~features/* em apps/web/tsconfig.json. 5.2 Substituir spacing.237.5/278.5 por maxWidth.content/content-wide em tailwind-config/index.ts — PRE-REQUISITO das tasks 2.17 e 2.18. 5.3 Adicionar box-shadows nomeados card/header/menu/footer em tailwind-config/index.ts. GitHub issue: #562.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "low",
         "subtasks": [
@@ -4764,7 +4764,8 @@
             "testStrategy": "Run `pnpm build` in packages/tailwind-config and apps/web to verify successful compilation. Test that existing shadow-1 usage in AppLayout still works. Verify new semantic tokens are available by checking Tailwind IntelliSense shows shadow-header, shadow-card, shadow-menu, shadow-footer as autocomplete options in VS Code.",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-05-21T01:26:29.870Z"
       },
       {
         "id": "6",
@@ -4772,7 +4773,7 @@
         "description": "Implementar os elementos visuais presentes no Figma mas sem correspondência no código: novos componentes @repo/ui e novas features em apps/web/src/features.",
         "details": "Depende de Épico 1 e Épico 4. @repo/ui: 6.1 Badge (WithIcon/Text/Count — unifica Skill e SkillGroup). 6.2 Button variantes outline e ghost. 6.5 Avatar com badge de disponibilidade animado. 6.6 SectionHeader com overline. 6.8 Skeleton (Block/ProjectCard/ExperienceCard). 6.9 Text.Field + TextArea.Field com Formik. Features: 6.3 features/projects/FilterBar. 6.4 features/projects/ProjectsSection (view=row + filtro). 6.7 features/shared/Footer + AppLayout. GitHub issue: #563.",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [
           "1",
           "4"
@@ -4877,14 +4878,14 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2026-05-19T03:50:13.734Z"
+        "updatedAt": "2026-05-21T01:26:32.924Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-20T23:11:42.844Z",
-      "taskCount": 6,
-      "completedCount": 3,
+      "lastModified": "2026-05-21T01:26:32.924Z",
+      "taskCount": 16,
+      "completedCount": 6,
       "tags": [
         "sprint-6"
       ]
@@ -4900,7 +4901,7 @@
         "testStrategy": "1. Unit tests verifying ERROR_MESSAGE has entries for all ERROR_CODE constants\n2. Test `getErrorMessage` returns correct message for each locale\n3. Test fallback behavior: en-US → pt-BR → undefined\n4. Verify no hardcoded messages remain in ValidationError instantiations\n5. Test that all domain code paths returning ValidationError use stable codes",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -4913,7 +4914,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -5143,6 +5144,142 @@
           6,
           8,
           9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "11",
+        "title": "Fix chain-loop bug in Validator.validate()",
+        "description": "Replace truthy-string guard with explicit boolean flag to ensure failed rules stop the chain regardless of message value",
+        "details": "Add a private `_failed: boolean = false` field to the Validator class. In the `validate()` method's loop, set `this._failed = !isValid` before setting `this._error`. Replace `if (this._error) break;` with `if (this._failed) break;` to ensure the loop stops on first failure even when error message is empty string. Default error to 'validation-error' when message is null: `this._error = isValid ? null : (error ?? 'validation-error');`. This fixes the latent bug where empty string messages (`''`) prevented the break condition from working, allowing later rules to overwrite earlier failures.",
+        "testStrategy": "Add unit tests covering: (1) chained rules where first fails with empty string message - verify second rule is not evaluated; (2) chained rules where first fails with no message - verify `isValid = false` and loop stops; (3) verify existing tests still pass to ensure no regression in normal flow with truthy messages.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-05-21T01:17:57.552Z"
+      },
+      {
+        "id": "12",
+        "title": "Make message parameter optional in all Validator rule methods",
+        "description": "Update all rule method signatures to make the `message` parameter optional, defaulting to 'validation-error' internally when not provided",
+        "details": "Update method signatures for all rule methods in `Validator.ts`: `refine()`, `length()`, `regex()`, `email()`, `notEmpty()`, `notNil()`, `in()`, `alpha()`, `empty()`, `nil()`, `string()`, `uuid()`, `url()`, `datetime()`, `gt()`, `gte()`, `lt()`, `lte()`. Change each `error: string` parameter to `error?: string`. In the `append()` private method, use the provided error or default to 'validation-error': `this.append(validation, error ?? 'validation-error')`. For `length()` which uses Mustache templating, only apply templating when message is provided: `error ? Mustache.render(error, config) : 'validation-error'`. This ensures backward compatibility while allowing call sites to omit messages.",
+        "testStrategy": "Add unit tests for each rule method: (1) rule called without message parameter - verify it validates correctly and returns `isValid` correctly; (2) rule called with message - verify message is returned in error field; (3) rule called without message that fails - verify `isValid = false` and error is 'validation-error'; (4) verify all existing tests still pass with explicit messages.",
+        "priority": "high",
+        "dependencies": [
+          "11"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "13",
+        "title": "Remove mock placeholder messages from core Value Objects",
+        "description": "Remove all mock placeholder message arguments from Validator calls in core VOs: Slug, Email, Name, Text, Url, Id, DateTime, DateRange",
+        "details": "Update the following core VO files to remove the second parameter from all Validator rule calls:\n- `packages/core/src/shared/vo/Slug.ts`: remove 'invalid-slug' from `.length()` and `.regex()` calls\n- `packages/core/src/shared/vo/Email.ts`: remove 'invalid-email' from `.length()` and `.email()` calls\n- `packages/core/src/shared/vo/Name.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/Text.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/Url.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/Id.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/DateTime.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/DateRange.ts`: remove placeholder messages from validator calls\nAfter removal, each `.validate()` call will still destructure `{ isValid }` and return `left(new ValidationError({ code: VO.ERROR_CODE }))` when invalid, preserving existing behavior since messages are resolved at application layer via ERROR_MESSAGE.",
+        "testStrategy": "Run existing unit tests for all modified VOs to ensure behavior is unchanged. Verify: (1) valid inputs still create VOs successfully; (2) invalid inputs still return ValidationError with correct ERROR_CODE; (3) no tests check the `error` string from validate() since it's unused in domain layer; (4) all VO tests pass without modification.",
+        "priority": "medium",
+        "dependencies": [
+          "12"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "14",
+        "title": "Remove mock placeholder messages from core LocalizedText",
+        "description": "Remove the mock placeholder message from the Validator call in LocalizedText.create()",
+        "details": "Update `packages/core/src/shared/i18n/LocalizedText.ts` line 48-50. Change from:\n```typescript\nconst { isValid } = Validator.of(input?.['en-US']?.trim() ?? '')\n  .notEmpty('en-US is required and must be non-empty after trim.')\n  .validate();\n```\nto:\n```typescript\nconst { isValid } = Validator.of(input?.['en-US']?.trim() ?? '')\n  .notEmpty()\n  .validate();\n```\nThe message 'en-US is required and must be non-empty after trim.' is never used since the code only reads `isValid` and creates `ValidationError({ code: LocalizedText.ERROR_CODE })` on failure. Message resolution happens at application layer via ERROR_MESSAGE.",
+        "testStrategy": "Run existing LocalizedText unit tests to verify: (1) valid inputs still create LocalizedText successfully; (2) invalid inputs (empty en-US) still return ValidationError with INVALID_LOCALIZED_TEXT code; (3) no behavior change since error string is unused; (4) all tests pass without modification.",
+        "priority": "medium",
+        "dependencies": [
+          "12"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "15",
+        "title": "Remove mock placeholder messages from core validateEnum utility",
+        "description": "Update the validateEnum helper function to not require a message parameter when calling Validator",
+        "details": "Update `packages/core/src/shared/validateEnum.ts` to remove the message parameter from the `.in()` call. The current implementation likely passes an empty string or placeholder. Change to:\n```typescript\nconst { isValid } = Validator.of(value)\n  .in(allowedValues)\n  .validate();\n```\nThis function is used in Project.create() and other entities to validate enum values. It returns a ValidationError with the provided error code on failure, so the validator's internal error message is unused.",
+        "testStrategy": "Run tests that use validateEnum (e.g., Project entity tests, Language entity tests) to verify: (1) valid enum values pass validation; (2) invalid enum values return ValidationError with correct error code; (3) no behavior change since the validator error string was already unused; (4) all entity tests pass.",
+        "priority": "medium",
+        "dependencies": [
+          "12"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "16",
+        "title": "Remove mock placeholder messages from core entities",
+        "description": "Remove mock placeholder message arguments from Validator calls in Language, Profile, Project entities and SkillFactory",
+        "details": "Update the following entity/factory files to remove message parameters from Validator rule calls:\n- `packages/core/src/portfolio/entities/language/model/Language.ts`: remove any placeholder messages from validator calls\n- `packages/core/src/portfolio/entities/profile/model/Profile.ts`: remove any placeholder messages from validator calls\n- `packages/core/src/portfolio/entities/project/model/Project.ts`: remove empty string `''` from `.in()` call on line 103, remove 'self-reference' from `.refine()` on line 169, remove 'duplicate-slugs' from `.refine()` on line 174, and remove empty strings from `.refine()` calls in `publish()` and `archive()` methods (lines 202, 212)\n- `packages/core/src/portfolio/entities/skill/factory/SkillFactory.ts`: remove any placeholder messages from validator calls\nAll these entities only read `isValid` from `.validate()` and construct `ValidationError({ code: ENTITY.ERROR_CODE })` on failure, so the error strings are unused.",
+        "testStrategy": "Run existing unit tests for all modified entities and factories: (1) Language tests; (2) Profile tests; (3) Project tests (especially self-reference and duplicate validation); (4) SkillFactory tests. Verify all tests pass without modification, confirming no behavior change since error messages were unused.",
+        "priority": "medium",
+        "dependencies": [
+          "12"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "17",
+        "title": "Remove mock placeholder messages from application layer",
+        "description": "Remove mock placeholder message arguments from Validator calls in SendContactMessage use case",
+        "details": "Update `packages/application/src/contact/use-cases/SendContactMessage.ts` to remove the message parameters from Validator calls:\n- Line 26: remove 'invalid-name' from `.notEmpty()` call\n- Line 31-32: remove 'invalid-email' from `.notEmpty()` and `.email()` calls\n- Line 38: remove 'invalid-message' from `.notEmpty()` call\nThe use case only reads `isValid` from each `.validate()` call and returns `ValidationError({ code: 'INVALID_NAME' | 'INVALID_EMAIL' | 'INVALID_MESSAGE' })` on failure. Error messages are resolved at the route handler layer via ERROR_MESSAGE, so these placeholder strings are unused.",
+        "testStrategy": "Run existing SendContactMessage use case tests to verify: (1) valid inputs execute successfully; (2) invalid name returns INVALID_NAME error; (3) invalid email returns INVALID_EMAIL error; (4) invalid message returns INVALID_MESSAGE error; (5) all tests pass without modification, confirming no behavior change.",
+        "priority": "medium",
+        "dependencies": [
+          "12"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "18",
+        "title": "Add comprehensive Validator unit tests for optional message behavior",
+        "description": "Extend the Validator test suite to cover the new optional message parameter behavior and chain-loop fix",
+        "details": "Add new test cases to `packages/utils/test/node/Validator.test.ts` covering:\n1. Chain-loop fix: \n   - Test that chained rules stop on first failure when first rule has empty string message\n   - Test that chained rules stop on first failure when first rule has no message\n   - Verify second rule in chain is not evaluated after first fails (use spy/mock on predicate)\n2. Optional message parameter:\n   - Test each rule method (refine, length, regex, email, notEmpty, notNil, in, alpha, etc.) called without message - verify isValid is correct\n   - Test that omitted message returns 'validation-error' in error field when validation fails\n   - Test mixed chain: some rules with message, some without\n3. Backward compatibility:\n   - Verify all existing tests still pass\n   - Test that rules with explicit messages still return those messages in error field",
+        "testStrategy": "Run the extended test suite with `pnpm test` in packages/utils. Verify: (1) all new tests pass; (2) all existing tests still pass; (3) code coverage for Validator.ts remains high (>90%); (4) tests demonstrate both the bug fix and the new optional parameter behavior.",
+        "priority": "high",
+        "dependencies": [
+          "11",
+          "12"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "19",
+        "title": "Verify no breaking changes in HTTP boundary validators",
+        "description": "Audit and confirm that route handler validators in apps/site that intentionally carry messages are not affected by this change",
+        "details": "Review HTTP route handlers in `apps/site/src/app/api/v1/` to identify validators that intentionally provide messages (e.g., contact route, auth routes). These are HTTP-boundary validators that validate request bodies and may provide user-facing error messages. Verify:\n1. These validators can continue to pass message parameters (backward compatible)\n2. No accidental removal of messages that are actually used\n3. The optional parameter change doesn't break any route handler validation logic\nSpecifically check:\n- `apps/site/src/app/api/v1/contact/route.ts`\n- `apps/site/src/app/api/v1/auth/sign-in/route.ts`\n- Any other route handlers using Validator with `.notNil()` or `.refine()` on JSON body\nThese files are out of scope for message removal since they may rely on validator error messages at the HTTP boundary.",
+        "testStrategy": "Run integration/API tests for route handlers to verify: (1) validation still works correctly; (2) error responses still contain appropriate messages; (3) no regressions in request validation; (4) explicit messages in route handlers are still respected and returned.",
+        "priority": "low",
+        "dependencies": [
+          "12"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "20",
+        "title": "Update project documentation to reflect optional message parameter",
+        "description": "Update documentation files to reflect that Validator message parameters are now optional and explain when to use them",
+        "details": "Update the following documentation files to reflect the Validator API change:\n1. `docs/06-VALIDATION.md`: Update Validator examples to show message parameter as optional. Explain:\n   - In domain layer (core), message parameter should be omitted since messages are resolved at application layer via ERROR_MESSAGE\n   - In application layer use cases, message parameter should be omitted for the same reason\n   - In HTTP boundary validators (route handlers), message parameter may be provided if needed for direct user-facing errors\n2. `docs/09-PATTERNS.md`: Update Value Object template to show Validator calls without message parameters\n3. `CLAUDE.md`: Update the 'Domain Validation (core)' section to show examples without message parameters\nProvide clear guidance on the new convention: domain and application layers omit messages, HTTP boundaries may include them if needed.",
+        "testStrategy": "Manual review of documentation: (1) verify examples are correct and runnable; (2) verify guidance is clear on when to omit vs. provide messages; (3) check that all code snippets in docs are updated to match new convention; (4) have another developer review for clarity.",
+        "priority": "low",
+        "dependencies": [
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17"
         ],
         "status": "pending",
         "subtasks": []
