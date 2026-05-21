@@ -210,7 +210,7 @@ describe('PrismaProjectRepository', () => {
       expect(found!.skills).toHaveLength(2);
     });
 
-    it('should throw ValidationError when slug is already taken by another project', async () => {
+    it('should throw ConflictError when slug is already taken by another project', async () => {
       const seeded = await seedProject();
 
       const duplicateRaw = buildPrismaProject({
