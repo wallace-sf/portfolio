@@ -55,7 +55,7 @@ export class Language extends Entity<Language, ILanguageProps> {
 
   private static _createLocale(value: string): Either<ValidationError, Locale> {
     const { isValid } = Validator.of(value)
-      .refine((v) => isLocale(v), '')
+      .refine((v) => isLocale(v))
       .validate();
     if (!isValid)
       return left(new ValidationError({ code: Language.LOCALE_ERROR_CODE }));

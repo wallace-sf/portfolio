@@ -29,10 +29,7 @@ export class DateRange extends ValueObject<IDateRangeValue> {
       if (endResult.isLeft()) return left(endResult.value);
 
       const { isValid } = Validator.of(startResult.value.ms)
-        .refine(
-          (startMs) => startMs <= endResult.value.ms,
-          'Start date must be before or equal to end date.',
-        )
+        .refine((startMs) => startMs <= endResult.value.ms)
         .validate();
 
       if (!isValid)

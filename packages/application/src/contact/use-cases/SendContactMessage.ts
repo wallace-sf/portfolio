@@ -23,19 +23,19 @@ export class SendContactMessage {
     input: SendContactMessageInput,
   ): Promise<Either<ValidationError | DomainError, void>> {
     const { isValid: nameValid } = Validator.of(input.name?.trim() ?? '')
-      .notEmpty('invalid-name')
+      .notEmpty()
       .validate();
     if (!nameValid) return left(new ValidationError({ code: 'INVALID_NAME' }));
 
     const { isValid: emailValid } = Validator.of(input.email?.trim() ?? '')
-      .notEmpty('invalid-email')
-      .email('invalid-email')
+      .notEmpty()
+      .email()
       .validate();
     if (!emailValid)
       return left(new ValidationError({ code: 'INVALID_EMAIL' }));
 
     const { isValid: messageValid } = Validator.of(input.message?.trim() ?? '')
-      .notEmpty('invalid-message')
+      .notEmpty()
       .validate();
     if (!messageValid)
       return left(new ValidationError({ code: 'INVALID_MESSAGE' }));

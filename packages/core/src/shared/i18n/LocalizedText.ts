@@ -46,7 +46,7 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
     input: ILocalizedTextInput,
   ): Either<ValidationError, LocalizedText> {
     const { isValid } = Validator.of(input?.['en-US']?.trim() ?? '')
-      .notEmpty('en-US is required and must be non-empty after trim.')
+      .notEmpty()
       .validate();
 
     if (!isValid)

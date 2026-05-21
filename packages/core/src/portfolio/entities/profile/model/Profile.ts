@@ -58,10 +58,7 @@ export class Profile extends AggregateRoot<Profile, IProfileProps> {
 
   static create(props: IProfileProps): Either<ValidationError, Profile> {
     const { isValid } = Validator.of(props.featuredProjectSlugs)
-      .refine(
-        (slugs) => slugs.length <= Profile.MAX_FEATURED_PROJECTS,
-        'max-featured-projects',
-      )
+      .refine((slugs) => slugs.length <= Profile.MAX_FEATURED_PROJECTS)
       .validate();
 
     if (!isValid)

@@ -100,7 +100,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   static create(props: IProjectProps): Either<ValidationError, Project> {
     {
       const { isValid } = Validator.of(props.status)
-        .in(Object.values(ProjectStatus), '')
+        .in(Object.values(ProjectStatus))
         .validate();
       if (!isValid)
         return left(new ValidationError({ code: Project.ERROR_CODE }));
@@ -164,14 +164,11 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
 
     {
       const { isValid } = Validator.of(relatedSlugs)
-        .refine(
-          (slugs) => !slugs.some((s) => s.value === ownSlugValue),
-          'self-reference',
-        )
+        .refine((slugs) => !slugs.some((s) => s.value === ownSlugValue))
         .refine((slugs) => {
           const values = slugs.map((s) => s.value);
           return new Set(values).size === values.length;
-        }, 'duplicate-slugs')
+        })
         .validate();
       if (!isValid)
         return left(new ValidationError({ code: Project.ERROR_CODE }));
@@ -199,7 +196,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
 
   publish(): Either<ValidationError, void> {
     const { isValid } = Validator.of(this.status)
-      .refine((s) => s !== ProjectStatus.PUBLISHED, '')
+      .refine((s) => s !== ProjectStatus.PUBLISHED)
       .validate();
     if (!isValid)
       return left(new ValidationError({ code: Project.ERROR_CODE }));
@@ -209,7 +206,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
 
   archive(): Either<ValidationError, void> {
     const { isValid } = Validator.of(this.status)
-      .refine((s) => s !== ProjectStatus.ARCHIVED, '')
+      .refine((s) => s !== ProjectStatus.ARCHIVED)
       .validate();
     if (!isValid)
       return left(new ValidationError({ code: Project.ERROR_CODE }));
