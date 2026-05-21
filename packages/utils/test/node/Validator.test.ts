@@ -365,6 +365,20 @@ describe('Validator', () => {
       expect(secondRuleCalled.value).toBe(false);
     });
 
+    it('should stop chain on first failure even when message is omitted', () => {
+      const secondRuleCalled = { value: false };
+      const result = Validator.of('x')
+        .refine(() => false)
+        .refine(() => {
+          secondRuleCalled.value = true;
+          return true;
+        }, 'second-rule')
+        .validate();
+
+      expect(result.isValid).toBe(false);
+      expect(secondRuleCalled.value).toBe(false);
+    });
+
     it('should stop chain on first failure and not let passing rule overwrite failure', () => {
       const result = Validator.of('x')
         .refine(() => false, '')
@@ -392,6 +406,223 @@ describe('Validator', () => {
 
       expect(result.isValid).toBe(true);
       expect(result.error).toBeNull();
+    });
+  });
+
+  describe('optional message parameter', () => {
+    describe('default fallback', () => {
+      it('should return "validation-error" when refine fails without message', () => {
+        const result = Validator.of(7).refine((v) => v <= 6).validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when alpha fails without message', () => {
+        const result = Validator.of('x03').alpha().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when length fails without message', () => {
+        const result = Validator.of('toolong').length(1, 3).validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when email fails without message', () => {
+        const result = Validator.of('not-an-email').email().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when url fails without message', () => {
+        const result = Validator.of('not-a-url').url().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when uuid fails without message', () => {
+        const result = Validator.of('not-a-uuid').uuid().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when datetime fails without message', () => {
+        const result = Validator.of('not-a-date').datetime().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when notEmpty fails without message', () => {
+        const result = Validator.of('').notEmpty().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when notNil fails without message', () => {
+        const result = Validator.of(null).notNil().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when nil fails without message', () => {
+        const result = Validator.of('value').nil().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when string fails without message', () => {
+        const result = Validator.of(42).string().validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when in fails without message', () => {
+        const result = Validator.of('baz').in(['foo', 'bar']).validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when regex fails without message', () => {
+        const result = Validator.of('My Slug!').regex(/^[a-z0-9-]+$/).validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when gt fails without message', () => {
+        const result = Validator.of(0).gt(1).validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when gte fails without message', () => {
+        const result = Validator.of(0).gte(1).validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when lt fails without message', () => {
+        const result = Validator.of(1).lt(0).validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should return "validation-error" when lte fails without message', () => {
+        const result = Validator.of(2).lte(1).validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+    });
+
+    describe('null error on success', () => {
+      it('should return null error when refine passes without message', () => {
+        const result = Validator.of(4).refine((v) => v <= 6).validate();
+
+        expect(result.isValid).toBe(true);
+        expect(result.error).toBeNull();
+      });
+
+      it('should return null error when notEmpty passes without message', () => {
+        const result = Validator.of('hello').notEmpty().validate();
+
+        expect(result.isValid).toBe(true);
+        expect(result.error).toBeNull();
+      });
+
+      it('should return null error when email passes without message', () => {
+        const result = Validator.of('user@example.com').email().validate();
+
+        expect(result.isValid).toBe(true);
+        expect(result.error).toBeNull();
+      });
+    });
+
+    describe('mixed chain', () => {
+      it('should use explicit message from the failing rule when mixed with rules without messages', () => {
+        const result = Validator.of('')
+          .notEmpty()
+          .email('INVALID_EMAIL')
+          .validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('validation-error');
+      });
+
+      it('should use explicit message when the rule with message fails first', () => {
+        const result = Validator.of('not-an-email')
+          .notEmpty('REQUIRED')
+          .email('INVALID_EMAIL')
+          .validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('INVALID_EMAIL');
+      });
+
+      it('should return null error when all mixed rules pass', () => {
+        const result = Validator.of('user@example.com')
+          .notEmpty()
+          .email('INVALID_EMAIL')
+          .validate();
+
+        expect(result.isValid).toBe(true);
+        expect(result.error).toBeNull();
+      });
+
+      it('should stop on first failure and not evaluate subsequent rules', () => {
+        const thirdRuleCalled = { value: false };
+        const result = Validator.of('')
+          .notEmpty()
+          .refine(() => {
+            thirdRuleCalled.value = true;
+            return true;
+          })
+          .validate();
+
+        expect(result.isValid).toBe(false);
+        expect(thirdRuleCalled.value).toBe(false);
+      });
+    });
+
+    describe('backward compatibility', () => {
+      it('should return explicit message when provided and validation fails', () => {
+        const result = Validator.of('x03').alpha('ALPHA_ERROR').validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('ALPHA_ERROR');
+      });
+
+      it('should return explicit message for length with mustache interpolation', () => {
+        const result = Validator.of('toolong')
+          .length(1, 3, 'Must be between {{min}} and {{max}} chars.')
+          .validate();
+
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe('Must be between 1 and 3 chars.');
+      });
+
+      it('should return null error when validation passes regardless of explicit message', () => {
+        const result = Validator.of('hello').notEmpty('REQUIRED').validate();
+
+        expect(result.isValid).toBe(true);
+        expect(result.error).toBeNull();
+      });
     });
   });
 });
