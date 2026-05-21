@@ -8,7 +8,7 @@ export class SkillFactory {
 
   static bulk(props: ISkillProps[]): Either<ValidationError, Skill[]> {
     const { isValid } = Validator.of(props)
-      .refine(Array.isArray, 'Skills must be provided as an array.')
+      .refine(Array.isArray, 'invalid-skill-list')
       .validate();
 
     if (!isValid)
