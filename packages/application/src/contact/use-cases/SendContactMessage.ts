@@ -22,39 +22,23 @@ export class SendContactMessage {
   async execute(
     input: SendContactMessageInput,
   ): Promise<Either<ValidationError | DomainError, void>> {
-    const nameResult = Validator.of(input.name?.trim() ?? '')
-      .notEmpty('Name is required.')
+    const { isValid: nameValid } = Validator.of(input.name?.trim() ?? '')
+      .notEmpty('invalid-name')
       .validate();
-    if (!nameResult.isValid && nameResult.error)
-      return left(
-        new ValidationError({
-          code: 'INVALID_NAME',
-          message: nameResult.error,
-        }),
-      );
+    if (!nameValid) return left(new ValidationError({ code: 'INVALID_NAME' }));
 
-    const emailResult = Validator.of(input.email?.trim() ?? '')
-      .notEmpty('Email is required.')
-      .email('Valid email is required.')
+    const { isValid: emailValid } = Validator.of(input.email?.trim() ?? '')
+      .notEmpty('invalid-email')
+      .email('invalid-email')
       .validate();
-    if (!emailResult.isValid && emailResult.error)
-      return left(
-        new ValidationError({
-          code: 'INVALID_EMAIL',
-          message: emailResult.error,
-        }),
-      );
+    if (!emailValid)
+      return left(new ValidationError({ code: 'INVALID_EMAIL' }));
 
-    const messageResult = Validator.of(input.message?.trim() ?? '')
-      .notEmpty('Message is required.')
+    const { isValid: messageValid } = Validator.of(input.message?.trim() ?? '')
+      .notEmpty('invalid-message')
       .validate();
-    if (!messageResult.isValid && messageResult.error)
-      return left(
-        new ValidationError({
-          code: 'INVALID_MESSAGE',
-          message: messageResult.error,
-        }),
-      );
+    if (!messageValid)
+      return left(new ValidationError({ code: 'INVALID_MESSAGE' }));
 
     const dto: IContactMessageDTO = {
       name: input.name.trim(),
