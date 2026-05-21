@@ -33,7 +33,9 @@ i18n: `Accept-Language: pt-BR` and `en-US` both return correctly localized conte
 | Valid body `{ name, email, message }` | 201 | — |
 | Missing / invalid field | 400 | `INVALID_NAME` |
 | Malformed JSON | 400 | `INVALID_INPUT` |
-| Rate limit | ⚠️ not testable locally | `UPSTASH_REDIS_REST_URL` not set in `.env.local` — `checkContactRateLimit` returns `success: true` when Redis is unavailable |
+| Rate limit (4th+ request in 1h window) | 429 | `RATE_LIMIT_EXCEEDED` |
+
+Headers verified: `retry-after`, `x-ratelimit-limit: 3`, `x-ratelimit-remaining: 0`, `x-ratelimit-reset` ✅
 
 ---
 
