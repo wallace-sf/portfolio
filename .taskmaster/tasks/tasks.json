@@ -4933,11 +4933,12 @@
         "dependencies": [
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 5,
         "recommendedSubtasks": 3,
-        "expansionPrompt": "Break this task into: (1) set up local environment (pnpm dev, pnpm seed), create manual test script/Postman collection, (2) test all public endpoints (GET /api/v1/projects, /projects/featured, /projects/:slug, /experiences, /profile, /professional-values) for happy path (200, correct envelope), not found (404), and invalid input (400), (3) document all findings in .taskmaster/docs/endpoint-testing-results.md with detailed results table, and (4) create follow-up GitHub issues for any broken endpoints."
+        "expansionPrompt": "Break this task into: (1) set up local environment (pnpm dev, pnpm seed), create manual test script/Postman collection, (2) test all public endpoints (GET /api/v1/projects, /projects/featured, /projects/:slug, /experiences, /profile, /professional-values) for happy path (200, correct envelope), not found (404), and invalid input (400), (3) document all findings in .taskmaster/docs/endpoint-testing-results.md with detailed results table, and (4) create follow-up GitHub issues for any broken endpoints.",
+        "updatedAt": "2026-05-21T20:57:01.275Z"
       },
       {
         "id": "4",
@@ -4949,11 +4950,12 @@
         "dependencies": [
           "3"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 7,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break this task into: (1) test contact endpoint (POST /api/v1/contact) for valid/invalid payloads and rate-limiting, (2) test auth endpoints (sign-in, sign-out, refresh) for valid/invalid credentials and session management, (3) test identity endpoint (GET /api/v1/me) with and without session, (4) set up admin user via seed and test all admin CRUD endpoints (projects, experiences, profile) with authorization checks (401 without auth, 401 with non-admin), and (5) document findings and create follow-up issues."
+        "expansionPrompt": "Break this task into: (1) test contact endpoint (POST /api/v1/contact) for valid/invalid payloads and rate-limiting, (2) test auth endpoints (sign-in, sign-out, refresh) for valid/invalid credentials and session management, (3) test identity endpoint (GET /api/v1/me) with and without session, (4) set up admin user via seed and test all admin CRUD endpoints (projects, experiences, profile) with authorization checks (401 without auth, 401 with non-admin), and (5) document findings and create follow-up issues.",
+        "updatedAt": "2026-05-21T21:38:03.909Z"
       },
       {
         "id": "5",
@@ -5337,9 +5339,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-21T20:46:22.298Z",
+      "lastModified": "2026-05-21T21:38:03.909Z",
       "taskCount": 20,
-      "completedCount": 11,
+      "completedCount": 13,
       "tags": [
         "mvp-round-2"
       ]
