@@ -6,11 +6,15 @@ import { handleRequest } from '~/lib/api/handler';
 import { resolveLocale } from '~/lib/api/locale';
 
 export async function GET(request: NextRequest) {
-  return handleRequest(() => {
-    const locale = resolveLocale(request);
-    const { experienceRepository, skillRepository } = getContainer();
-    return new GetExperiences(experienceRepository, skillRepository).execute({
-      locale,
-    });
-  });
+  const locale = resolveLocale(request);
+  return handleRequest(
+    () => {
+      const { experienceRepository, skillRepository } = getContainer();
+      return new GetExperiences(experienceRepository, skillRepository).execute({
+        locale,
+      });
+    },
+    200,
+    locale,
+  );
 }

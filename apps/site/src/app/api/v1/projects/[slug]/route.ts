@@ -11,12 +11,16 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
-  return handleRequest(() => {
-    const locale = resolveLocale(request);
-    const { projectRepository, skillRepository } = getContainer();
-    return new GetProjectBySlug(projectRepository, skillRepository).execute({
-      slug,
-      locale,
-    });
-  });
+  const locale = resolveLocale(request);
+  return handleRequest(
+    () => {
+      const { projectRepository, skillRepository } = getContainer();
+      return new GetProjectBySlug(projectRepository, skillRepository).execute({
+        slug,
+        locale,
+      });
+    },
+    200,
+    locale,
+  );
 }

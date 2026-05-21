@@ -28,8 +28,8 @@ describe('SkillFactory', () => {
       expect((result.value as ValidationError).code).toBe(
         SkillFactory.ERROR_CODE,
       );
-      expect((result.value as ValidationError).message).toContain(
-        'Skills must be provided as an array.',
+      expect((result.value as ValidationError).message).toBe(
+        SkillFactory.ERROR_CODE,
       );
     });
 

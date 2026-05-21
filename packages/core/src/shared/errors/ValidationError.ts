@@ -9,7 +9,7 @@ export class ValidationError extends DomainError {
     details?: Record<string, unknown>;
   }) {
     const code = options?.code ?? ValidationError.CODE;
-    const message = options?.message ?? 'Validation failed';
+    const message = options?.message ?? code;
     super(code, { message, details: options?.details });
     this.name = 'ValidationError';
     Object.setPrototypeOf(this, ValidationError.prototype);

@@ -19,9 +19,7 @@ describe('Id', () => {
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
       expect((result.value as ValidationError).code).toBe(Id.ERROR_CODE);
-      expect((result.value as ValidationError).message).toBe(
-        'The value must be a valid UUID.',
-      );
+      expect((result.value as ValidationError).message).toBe(Id.ERROR_CODE);
     });
 
     it('should return Left with ValidationError for non-UUID string', () => {

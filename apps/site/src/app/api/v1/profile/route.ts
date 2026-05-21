@@ -6,9 +6,13 @@ import { handleRequest } from '~/lib/api/handler';
 import { resolveLocale } from '~/lib/api/locale';
 
 export async function GET(request: NextRequest) {
-  return handleRequest(() => {
-    const locale = resolveLocale(request);
-    const { profileRepository } = getContainer();
-    return new GetProfile(profileRepository).execute({ locale });
-  });
+  const locale = resolveLocale(request);
+  return handleRequest(
+    () => {
+      const { profileRepository } = getContainer();
+      return new GetProfile(profileRepository).execute({ locale });
+    },
+    200,
+    locale,
+  );
 }

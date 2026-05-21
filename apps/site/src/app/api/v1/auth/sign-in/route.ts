@@ -10,72 +10,77 @@ import { NextRequest } from 'next/server';
 
 import { HttpErrorCodes } from '~/lib/api/error-codes';
 import { handleRequest } from '~/lib/api/handler';
+import { resolveLocale } from '~/lib/api/locale';
 import { createNextAuthCookieApi } from '~/lib/auth/cookie';
 
 export async function POST(request: NextRequest) {
-  return handleRequest(async () => {
-    const body = await request.json().catch(() => null);
+  const locale = resolveLocale(request);
+  return handleRequest(
+    async () => {
+      const body = await request.json().catch(() => null);
 
-    const { isValid, error } = Validator.of(body)
-      .notNil('Invalid JSON body.')
-      .refine((v) => typeof v === 'object', 'Invalid JSON body.')
-      .validate();
+      const { isValid } = Validator.of(body)
+        .notNil('Invalid JSON body.')
+        .refine((v) => typeof v === 'object', 'Invalid JSON body.')
+        .validate();
 
-    if (!isValid && error) {
-      return left(
-        new ValidationError({
-          code: HttpErrorCodes.INVALID_INPUT,
-          message: error,
-        }),
-      );
-    }
+      if (!isValid) {
+        return left(
+          new ValidationError({ code: HttpErrorCodes.INVALID_INPUT }),
+        );
+      }
 
-    const { authGateway, userRepository } = getContainer();
+      const { authGateway, userRepository } = getContainer();
 
-    const sessionResult = await authGateway.signInWithPassword({
-      email: body.email ?? '',
-      password: body.password ?? '',
-    });
+      const sessionResult = await authGateway.signInWithPassword({
+        email: body.email ?? '',
+        password: body.password ?? '',
+      });
 
-    if (sessionResult.isLeft()) return sessionResult;
+      if (sessionResult.isLeft()) return sessionResult;
 
-    const session = sessionResult.value;
-    const cookieApi = await createNextAuthCookieApi();
-    const expiresIn = session.expiresAt - Math.floor(Date.now() / 1000);
+      const session = sessionResult.value;
+      const cookieApi = await createNextAuthCookieApi();
+      const expiresIn = session.expiresAt - Math.floor(Date.now() / 1000);
 
-    cookieApi.set(SUPABASE_ACCESS_TOKEN_COOKIE, session.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: expiresIn,
-      path: '/',
-    });
-    cookieApi.set(SUPABASE_REFRESH_TOKEN_COOKIE, session.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30,
-      path: '/',
-    });
+      cookieApi.set(SUPABASE_ACCESS_TOKEN_COOKIE, session.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: expiresIn,
+        path: '/',
+      });
+      cookieApi.set(SUPABASE_REFRESH_TOKEN_COOKIE, session.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 30,
+        path: '/',
+      });
 
-    const principalResult = await authGateway.getPrincipalFromCookies({
-      get: (name) =>
-        name === SUPABASE_ACCESS_TOKEN_COOKIE ? session.accessToken : undefined,
-      set: () => {},
-      delete: () => {},
-    });
+      const principalResult = await authGateway.getPrincipalFromCookies({
+        get: (name) =>
+          name === SUPABASE_ACCESS_TOKEN_COOKIE
+            ? session.accessToken
+            : undefined,
+        set: () => {},
+        delete: () => {},
+      });
 
-    if (principalResult.isLeft()) return principalResult;
+      if (principalResult.isLeft()) return principalResult;
 
-    const ensureResult = await new EnsureAppUserForAuthSession(
-      userRepository,
-    ).execute({
-      authSubject: principalResult.value.id,
-      email: principalResult.value.email,
-    });
+      const ensureResult = await new EnsureAppUserForAuthSession(
+        userRepository,
+      ).execute({
+        authSubject: principalResult.value.id,
+        email: principalResult.value.email,
+      });
 
-    if (ensureResult.isLeft()) return ensureResult;
+      if (ensureResult.isLeft()) return ensureResult;
 
-    return right(null as unknown);
-  });
+      return right(null as unknown);
+    },
+    200,
+    locale,
+  );
 }

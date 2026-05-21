@@ -1,7 +1,13 @@
 /**
  * @vitest-environment node
  */
-import { DomainError, NotFoundError, ValidationError, left, right } from '@repo/core/shared';
+import {
+  DomainError,
+  NotFoundError,
+  ValidationError,
+  left,
+  right,
+} from '@repo/core/shared';
 
 import { handleRequest } from '~/lib/api/handler';
 
@@ -40,15 +46,17 @@ describe('handleRequest', () => {
     expect(body.error.code).toBe('NOT_FOUND');
   });
 
-  it('should return 400 with original code when factory resolves left(ValidationError)', async () => {
+  it('should return 400 with localized message when factory resolves left(ValidationError)', async () => {
     const response = await handleRequest(() =>
-      Promise.resolve(left(new ValidationError({ code: 'INVALID_SLUG', message: 'Bad slug' }))),
+      Promise.resolve(left(new ValidationError({ code: 'INVALID_SLUG' }))),
     );
     const body = await response.json();
 
     expect(response.status).toBe(400);
     expect(body.error.code).toBe('INVALID_SLUG');
-    expect(body.error.message).toBe('Bad slug');
+    expect(body.error.message).toBe(
+      'Slug must be kebab-case (lowercase letters, digits, and hyphens only), between 3 and 100 characters.',
+    );
   });
 
   it('should return 500 with INTERNAL_ERROR when factory throws', async () => {
@@ -64,7 +72,9 @@ describe('handleRequest', () => {
 
   it('should return 500 when factory returns left with unknown DomainError', async () => {
     const response = await handleRequest(() =>
-      Promise.resolve(left(new DomainError('FETCH_FAILED', { message: 'timeout' }))),
+      Promise.resolve(
+        left(new DomainError('FETCH_FAILED', { message: 'timeout' })),
+      ),
     );
     const body = await response.json();
 
