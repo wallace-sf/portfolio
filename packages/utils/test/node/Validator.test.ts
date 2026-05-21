@@ -349,4 +349,49 @@ describe('Validator', () => {
       expect(validator.isValid).toBe(false);
     });
   });
+
+  describe('chain-loop bug fix', () => {
+    it('should stop chain on first failure even when message is empty string', () => {
+      const secondRuleCalled = { value: false };
+      const result = Validator.of('x')
+        .refine(() => false, '')
+        .refine(() => {
+          secondRuleCalled.value = true;
+          return true;
+        }, 'second-rule')
+        .validate();
+
+      expect(result.isValid).toBe(false);
+      expect(secondRuleCalled.value).toBe(false);
+    });
+
+    it('should stop chain on first failure and not let passing rule overwrite failure', () => {
+      const result = Validator.of('x')
+        .refine(() => false, '')
+        .refine(() => true, 'second-rule')
+        .validate();
+
+      expect(result.isValid).toBe(false);
+    });
+
+    it('should continue chain when first rule passes', () => {
+      const result = Validator.of('x')
+        .refine(() => true, '')
+        .refine(() => false, 'second-fails')
+        .validate();
+
+      expect(result.isValid).toBe(false);
+      expect(result.error).toBe('second-fails');
+    });
+
+    it('should return isValid true when all rules pass with empty messages', () => {
+      const result = Validator.of('x')
+        .refine(() => true, '')
+        .refine(() => true, '')
+        .validate();
+
+      expect(result.isValid).toBe(true);
+      expect(result.error).toBeNull();
+    });
+  });
 });

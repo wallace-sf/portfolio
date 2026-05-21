@@ -9,6 +9,7 @@ export type Validation = <TValue>(value: TValue) => boolean;
 export class Validator<TValue> {
   private readonly _validations: Array<[Validation, string]>;
   private _error: string | null = null;
+  private _failed: boolean = false;
   private _value: TValue;
 
   private constructor(value: TValue) {
@@ -31,9 +32,10 @@ export class Validator<TValue> {
     for (const [validation, error] of this._validations) {
       const isValid = validation(this._value);
 
+      this._failed = !isValid;
       this._error = isValid ? null : error;
 
-      if (this._error) break;
+      if (this._failed) break;
     }
 
     return { isValid: this.isValid, error: this.error };
@@ -44,7 +46,7 @@ export class Validator<TValue> {
   }
 
   get isValid(): boolean {
-    return this._error == null;
+    return !this._failed;
   }
 
   public length(min: number, max: number, error: string): Validator<TValue> {
