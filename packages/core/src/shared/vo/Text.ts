@@ -22,13 +22,7 @@ export class Text extends ValueObject<string, ITextConfig> {
   ): Either<ValidationError, Text> {
     const { min = 3, max = 50 } = config ?? {};
 
-    const { isValid } = Validator.of(value)
-      .length(
-        min,
-        max,
-        'The value must be between {{min}} and {{max}} characters.',
-      )
-      .validate();
+    const { isValid } = Validator.of(value).length(min, max).validate();
 
     if (!isValid) return left(new ValidationError({ code: Text.ERROR_CODE }));
     return right(new Text(value!, config));
