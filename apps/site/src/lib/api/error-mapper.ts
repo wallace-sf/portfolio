@@ -1,5 +1,10 @@
 import { UnauthorizedError } from '@repo/core/identity';
-import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
+import {
+  ConflictError,
+  DomainError,
+  NotFoundError,
+  ValidationError,
+} from '@repo/core/shared';
 
 import { HttpErrorCodes } from './error-codes';
 
@@ -16,6 +21,7 @@ const HTTP_STATUS_REGISTRY: ReadonlyArray<
 > = [
   [NotFoundError, 404],
   [ValidationError, 400],
+  [ConflictError, 409],
   [UnauthorizedError, 401],
 ];
 
