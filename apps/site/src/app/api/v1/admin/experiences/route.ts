@@ -5,20 +5,26 @@ import { getContainer } from '@repo/infra';
 import { NextRequest } from 'next/server';
 
 import { handleRequest } from '~/lib/api/handler';
+import { resolveLocale } from '~/lib/api/locale';
 import { resolveSessionUserId } from '~/lib/auth/ensure-admin';
 
 export async function POST(request: NextRequest) {
-  return handleRequest(async () => {
-    const userIdResult = await resolveSessionUserId();
-    if (userIdResult.isLeft()) return left(userIdResult.value);
+  const locale = resolveLocale(request);
+  return handleRequest(
+    async () => {
+      const userIdResult = await resolveSessionUserId();
+      if (userIdResult.isLeft()) return left(userIdResult.value);
 
-    const body = await request.json();
-    const { experienceRepository, userRepository } = getContainer();
-    const ensureAdmin = new EnsureAdmin(userRepository);
+      const body = await request.json();
+      const { experienceRepository, userRepository } = getContainer();
+      const ensureAdmin = new EnsureAdmin(userRepository);
 
-    return new SaveExperience(experienceRepository, ensureAdmin).execute({
-      userId: userIdResult.value,
-      experienceProps: body,
-    });
-  }, 201);
+      return new SaveExperience(experienceRepository, ensureAdmin).execute({
+        userId: userIdResult.value,
+        experienceProps: body,
+      });
+    },
+    201,
+    locale,
+  );
 }

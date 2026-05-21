@@ -5,25 +5,31 @@ import { getContainer } from '@repo/infra';
 import { NextRequest } from 'next/server';
 
 import { handleRequest } from '~/lib/api/handler';
+import { resolveLocale } from '~/lib/api/locale';
 import { resolveSessionUserId } from '~/lib/auth/ensure-admin';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   const { id } = await params;
-  return handleRequest(async () => {
-    const userIdResult = await resolveSessionUserId();
-    if (userIdResult.isLeft()) return left(userIdResult.value);
+  const locale = resolveLocale(request);
+  return handleRequest(
+    async () => {
+      const userIdResult = await resolveSessionUserId();
+      if (userIdResult.isLeft()) return left(userIdResult.value);
 
-    const body = await request.json();
-    const { projectRepository, userRepository } = getContainer();
-    const ensureAdmin = new EnsureAdmin(userRepository);
+      const body = await request.json();
+      const { projectRepository, userRepository } = getContainer();
+      const ensureAdmin = new EnsureAdmin(userRepository);
 
-    return new SaveProject(projectRepository, ensureAdmin).execute({
-      userId: userIdResult.value,
-      projectProps: { ...body, id },
-    });
-  });
+      return new SaveProject(projectRepository, ensureAdmin).execute({
+        userId: userIdResult.value,
+        projectProps: { ...body, id },
+      });
+    },
+    200,
+    locale,
+  );
 }
 
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {

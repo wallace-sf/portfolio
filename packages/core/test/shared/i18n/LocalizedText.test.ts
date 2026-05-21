@@ -84,7 +84,7 @@ describe('LocalizedText', () => {
         LocalizedText.ERROR_CODE,
       );
       expect((result.value as ValidationError).message).toBe(
-        'en-US is required and must be non-empty after trim.',
+        LocalizedText.ERROR_CODE,
       );
     });
 

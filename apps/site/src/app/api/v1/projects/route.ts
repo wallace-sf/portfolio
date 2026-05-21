@@ -6,11 +6,16 @@ import { handleRequest } from '~/lib/api/handler';
 import { resolveLocale } from '~/lib/api/locale';
 
 export async function GET(request: NextRequest) {
-  return handleRequest(() => {
-    const locale = resolveLocale(request);
-    const { projectRepository, skillRepository } = getContainer();
-    return new GetPublishedProjects(projectRepository, skillRepository).execute(
-      { locale },
-    );
-  });
+  const locale = resolveLocale(request);
+  return handleRequest(
+    () => {
+      const { projectRepository, skillRepository } = getContainer();
+      return new GetPublishedProjects(
+        projectRepository,
+        skillRepository,
+      ).execute({ locale });
+    },
+    200,
+    locale,
+  );
 }

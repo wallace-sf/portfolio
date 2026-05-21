@@ -61,12 +61,7 @@ export class User extends AggregateRoot<User, IUserProps> {
     if (value == null) return right(null);
     const result = Id.create(value);
     if (result.isLeft())
-      return left(
-        new ValidationError({
-          code: User.ERROR_CODE,
-          message: result.value.message,
-        }),
-      );
+      return left(new ValidationError({ code: User.ERROR_CODE }));
     return result;
   }
 

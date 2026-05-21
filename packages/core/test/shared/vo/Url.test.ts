@@ -19,9 +19,7 @@ describe('Url', () => {
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
       expect((result.value as ValidationError).code).toBe(Url.ERROR_CODE);
-      expect((result.value as ValidationError).message).toBe(
-        'The value must be a valid URL.',
-      );
+      expect((result.value as ValidationError).message).toBe(Url.ERROR_CODE);
     });
 
     it('should return Left for empty string', () => {

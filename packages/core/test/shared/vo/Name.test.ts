@@ -17,9 +17,7 @@ describe('Name', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
-      expect((result.value as ValidationError).message).toBe(
-        'The name must contain only letters.',
-      );
+      expect((result.value as ValidationError).message).toBe(Name.ERROR_CODE);
     });
 
     it('should return Left for empty string', () => {
@@ -33,9 +31,7 @@ describe('Name', () => {
       const result = Name.create('@');
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).message).toBe(
-        'The name must contain only letters.',
-      );
+      expect((result.value as ValidationError).message).toBe(Name.ERROR_CODE);
     });
 
     it('should return Left for value with underscores and symbols', () => {
@@ -49,9 +45,7 @@ describe('Name', () => {
       const result = Name.create('João da silva'.repeat(10));
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).message).toBe(
-        'The name must be between 3 and 100 characters.',
-      );
+      expect((result.value as ValidationError).message).toBe(Name.ERROR_CODE);
     });
   });
 

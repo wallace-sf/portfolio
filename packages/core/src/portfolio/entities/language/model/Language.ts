@@ -60,19 +60,14 @@ export class Language extends Entity<Language, ILanguageProps> {
   }
 
   private static _createLocale(value: string): Either<ValidationError, Locale> {
-    const { error, isValid } = Validator.of(value)
+    const { isValid } = Validator.of(value)
       .refine(
         (v) => isLocale(v),
         `Locale must be one of: ${LOCALES.join(', ')}.`,
       )
       .validate();
-    if (!isValid && error)
-      return left(
-        new ValidationError({
-          code: Language.LOCALE_ERROR_CODE,
-          message: error,
-        }),
-      );
+    if (!isValid)
+      return left(new ValidationError({ code: Language.LOCALE_ERROR_CODE }));
     return right(value as Locale);
   }
 }

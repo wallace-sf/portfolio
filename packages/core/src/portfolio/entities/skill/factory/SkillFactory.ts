@@ -7,14 +7,12 @@ export class SkillFactory {
   static readonly ERROR_CODE = 'ERROR_INVALID_SKILL_LIST';
 
   static bulk(props: ISkillProps[]): Either<ValidationError, Skill[]> {
-    const { error, isValid } = Validator.of(props)
+    const { isValid } = Validator.of(props)
       .refine(Array.isArray, 'Skills must be provided as an array.')
       .validate();
 
-    if (!isValid && error)
-      return left(
-        new ValidationError({ code: SkillFactory.ERROR_CODE, message: error }),
-      );
+    if (!isValid)
+      return left(new ValidationError({ code: SkillFactory.ERROR_CODE }));
 
     const skills: Skill[] = [];
 

@@ -20,7 +20,7 @@ describe('DateTime', () => {
       expect(result.value).toBeInstanceOf(ValidationError);
       expect((result.value as ValidationError).code).toBe(DateTime.ERROR_CODE);
       expect((result.value as ValidationError).message).toBe(
-        'The value must be a valid date and time.',
+        DateTime.ERROR_CODE,
       );
     });
   });

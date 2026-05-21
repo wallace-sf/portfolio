@@ -7,9 +7,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { errorResponse } from '~/lib/api/envelope';
 import { HttpErrorCodes } from '~/lib/api/error-codes';
 import { handleRequest } from '~/lib/api/handler';
+import { resolveLocale } from '~/lib/api/locale';
 import { checkContactRateLimit } from '~/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
+  const locale = resolveLocale(request);
   const ip =
     request.headers.get('x-forwarded-for') ??
     request.headers.get('x-real-ip') ??
@@ -36,28 +38,29 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return handleRequest(async () => {
-    const body = await request.json().catch(() => null);
+  return handleRequest(
+    async () => {
+      const body = await request.json().catch(() => null);
 
-    const { isValid, error } = Validator.of(body)
-      .notNil('Invalid JSON body.')
-      .refine((v) => typeof v === 'object', 'Invalid JSON body.')
-      .validate();
+      const { isValid } = Validator.of(body)
+        .notNil('Invalid JSON body.')
+        .refine((v) => typeof v === 'object', 'Invalid JSON body.')
+        .validate();
 
-    if (!isValid && error) {
-      return left(
-        new ValidationError({
-          code: HttpErrorCodes.INVALID_INPUT,
-          message: error,
-        }),
-      );
-    }
+      if (!isValid) {
+        return left(
+          new ValidationError({ code: HttpErrorCodes.INVALID_INPUT }),
+        );
+      }
 
-    const { emailService } = getContainer();
-    return new SendContactMessage(emailService).execute({
-      name: body.name ?? '',
-      email: body.email ?? '',
-      message: body.message ?? '',
-    });
-  }, 201);
+      const { emailService } = getContainer();
+      return new SendContactMessage(emailService).execute({
+        name: body.name ?? '',
+        email: body.email ?? '',
+        message: body.message ?? '',
+      });
+    },
+    201,
+    locale,
+  );
 }

@@ -22,7 +22,7 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
     },
     INVALID_DATE_TIME: { message: 'Invalid date or time value.' },
     INVALID_LOCALIZED_TEXT: {
-      message: 'Localized text requires a non-empty pt-BR value.',
+      message: 'Localized text requires a non-empty en-US value.',
     },
 
     // Portfolio context — entities
