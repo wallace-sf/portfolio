@@ -14,8 +14,8 @@ export class Email extends ValueObject<string> {
   static create(value?: string): Either<ValidationError, Email> {
     const normalized = value?.trim().toLowerCase() ?? '';
     const { isValid } = Validator.of(normalized)
-      .length(3, 254, 'Email must be between {{min}} and {{max}} characters.')
-      .email('Email must be a valid format (e.g., user@example.com).')
+      .length(3, 254, 'invalid-email')
+      .email('invalid-email')
       .validate();
 
     if (!isValid) return left(new ValidationError({ code: Email.ERROR_CODE }));

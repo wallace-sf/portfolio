@@ -17,11 +17,8 @@ export class Slug extends ValueObject<string> {
     const normalized = raw?.trim().toLowerCase() ?? '';
 
     const { isValid } = Validator.of(normalized)
-      .length(3, Slug.MAX_LENGTH, 'Slug must be at least 3 characters.')
-      .regex(
-        Slug.SLUG_REGEX,
-        'Slug must be kebab-case (lowercase letters, numbers and hyphens only).',
-      )
+      .length(3, Slug.MAX_LENGTH, 'invalid-slug')
+      .regex(Slug.SLUG_REGEX, 'invalid-slug')
       .validate();
 
     if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
