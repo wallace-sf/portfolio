@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { FC } from "react";
+import { FC } from 'react';
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 interface AdminSidebarProps {
   locale: string;
@@ -11,10 +11,10 @@ interface AdminSidebarProps {
 export const AdminSidebar: FC<AdminSidebarProps> = ({ locale }) => {
   const router = useRouter();
 
-  const siteApiUrl = process.env.NEXT_PUBLIC_SITE_API_URL ?? "";
+  const siteApiUrl = process.env.NEXT_PUBLIC_SITE_API_URL ?? '';
 
   const handleSignOut = () => {
-    fetch(`${siteApiUrl}/api/v1/auth/sign-out`, { method: "POST" })
+    fetch(`${siteApiUrl}/api/v1/auth/sign-out`, { method: 'POST' })
       .catch(() => null)
       .finally(() => router.push(`/${locale}/login`));
   };
