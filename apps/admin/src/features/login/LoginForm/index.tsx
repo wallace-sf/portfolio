@@ -24,12 +24,10 @@ export const LoginForm: FC = () => {
     formState: { errors, isSubmitting, touchedFields },
   } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
 
-  const siteApiUrl = process.env.NEXT_PUBLIC_SITE_API_URL ?? '';
-
   const onSubmit = async (data: LoginFormValues) => {
     setServerError(null);
     try {
-      const res = await fetch(`${siteApiUrl}/api/v1/auth/sign-in`, {
+      const res = await fetch('/api/v1/auth/sign-in', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

@@ -11,10 +11,8 @@ interface AdminSidebarProps {
 export const AdminSidebar: FC<AdminSidebarProps> = ({ locale }) => {
   const router = useRouter();
 
-  const siteApiUrl = process.env.NEXT_PUBLIC_SITE_API_URL ?? '';
-
   const handleSignOut = () => {
-    fetch(`${siteApiUrl}/api/v1/auth/sign-out`, { method: 'POST' })
+    fetch('/api/v1/auth/sign-out', { method: 'POST' })
       .catch(() => null)
       .finally(() => router.push(`/${locale}/login`));
   };
