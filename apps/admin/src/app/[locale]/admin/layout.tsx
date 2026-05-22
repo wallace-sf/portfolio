@@ -1,9 +1,9 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { getInternalBaseUrl } from '~/lib/api/internal';
+import { getSiteApiUrl } from "~lib/api/internal";
 
-import { AdminSidebar } from './_components/AdminSidebar';
+import { AdminSidebar } from "./_components/AdminSidebar";
 
 export default async function AdminLayout({
   children,
@@ -14,15 +14,18 @@ export default async function AdminLayout({
 }) {
   const { locale } = await params;
 
-  const [baseUrl, jar] = await Promise.all([getInternalBaseUrl(), cookies()]);
+  const [siteApiUrl, jar] = await Promise.all([
+    Promise.resolve(getSiteApiUrl()),
+    cookies(),
+  ]);
   const cookieHeader = jar
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
-    .join('; ');
+    .join("; ");
 
-  const res = await fetch(`${baseUrl}/api/v1/me`, {
+  const res = await fetch(`${siteApiUrl}/api/v1/me`, {
     headers: { cookie: cookieHeader },
-    cache: 'no-store',
+    cache: "no-store",
   }).catch(() => null);
 
   if (!res?.ok) redirect(`/${locale}/login`);

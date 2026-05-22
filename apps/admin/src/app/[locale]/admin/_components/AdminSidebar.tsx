@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { FC } from 'react';
+import { FC } from "react";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 interface AdminSidebarProps {
   locale: string;
@@ -11,9 +11,12 @@ interface AdminSidebarProps {
 export const AdminSidebar: FC<AdminSidebarProps> = ({ locale }) => {
   const router = useRouter();
 
-  const handleSignOut = async () => {
-    await fetch('/api/v1/auth/sign-out', { method: 'POST' }).catch(() => null);
-    router.push(`/${locale}/login`);
+  const siteApiUrl = process.env.NEXT_PUBLIC_SITE_API_URL ?? "";
+
+  const handleSignOut = () => {
+    fetch(`${siteApiUrl}/api/v1/auth/sign-out`, { method: "POST" })
+      .catch(() => null)
+      .finally(() => router.push(`/${locale}/login`));
   };
 
   return (
@@ -27,6 +30,7 @@ export const AdminSidebar: FC<AdminSidebarProps> = ({ locale }) => {
         </a>
       </nav>
       <button
+        type="button"
         onClick={handleSignOut}
         className="m-4 py-2 px-4 bg-dark-200 text-white rounded hover:text-accent"
       >

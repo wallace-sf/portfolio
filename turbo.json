@@ -10,6 +10,7 @@
     "ADMIN_EMAIL",
     "SUPABASE_URL",
     "SUPABASE_ANON_KEY",
+    "SITE_API_URL",
     "NODE_ENV"
   ],
   "tasks": {
@@ -19,6 +20,9 @@
     },
     "site#build": {
       "env": ["NEXT_PUBLIC_*"]
+    },
+    "admin#build": {
+      "env": ["NEXT_PUBLIC_*", "SITE_API_URL"]
     },
     "lint": {
       "dependsOn": ["^lint"]

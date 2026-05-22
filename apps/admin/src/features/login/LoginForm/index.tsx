@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { FC, useState } from 'react';
+import { FC, useState } from "react";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Text } from '@repo/ui/Control';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Text } from "@repo/ui/Control";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
-import { ApiResponse } from '~/lib/api/envelope';
+import { ApiResponse } from "~lib/api/envelope";
 
-import { loginSchema, LoginFormValues } from './login-schema';
+import { loginSchema, LoginFormValues } from "./login-schema";
 
 export const LoginForm: FC = () => {
-  const t = useTranslations('LoginForm');
-  const tV = useTranslations('Validations');
+  const t = useTranslations("LoginForm");
+  const tV = useTranslations("Validations");
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -24,22 +24,24 @@ export const LoginForm: FC = () => {
     formState: { errors, isSubmitting, touchedFields },
   } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
 
+  const siteApiUrl = process.env.NEXT_PUBLIC_SITE_API_URL ?? "";
+
   const onSubmit = async (data: LoginFormValues) => {
     setServerError(null);
     try {
-      const res = await fetch('/api/v1/auth/sign-in', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch(`${siteApiUrl}/api/v1/auth/sign-in`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       const body: ApiResponse<null> = await res.json();
       if (!res.ok || body.error) {
-        setServerError(t('genericError'));
+        setServerError(t("genericError"));
         return;
       }
-      router.push('admin');
+      router.push("admin");
     } catch {
-      setServerError(t('genericError'));
+      setServerError(t("genericError"));
     }
   };
 
@@ -49,18 +51,18 @@ export const LoginForm: FC = () => {
       className="w-full max-w-sm"
       noValidate
     >
-      <h5 className="!text-white mb-6">{t('title')}</h5>
+      <h5 className="!text-white mb-6">{t("title")}</h5>
 
       <fieldset className="w-full mb-4">
         <Text.Base
           type="email"
           id="email"
-          placeholder={t('emailPlaceholder')}
+          placeholder={t("emailPlaceholder")}
           error={!!errors.email}
           touched={!!touchedFields.email}
           aria-invalid={!!errors.email}
-          aria-describedby={errors.email ? 'email-error' : undefined}
-          {...register('email')}
+          aria-describedby={errors.email ? "email-error" : undefined}
+          {...register("email")}
         />
         {errors.email && (
           <span
@@ -77,12 +79,12 @@ export const LoginForm: FC = () => {
         <Text.Base
           type="password"
           id="password"
-          placeholder={t('passwordPlaceholder')}
+          placeholder={t("passwordPlaceholder")}
           error={!!errors.password}
           touched={!!touchedFields.password}
           aria-invalid={!!errors.password}
-          aria-describedby={errors.password ? 'password-error' : undefined}
-          {...register('password')}
+          aria-describedby={errors.password ? "password-error" : undefined}
+          {...register("password")}
         />
         {errors.password && (
           <span
@@ -102,7 +104,7 @@ export const LoginForm: FC = () => {
       )}
 
       <Button.Base type="submit" className="w-full" disabled={isSubmitting}>
-        {t('submit')}
+        {t("submit")}
       </Button.Base>
     </form>
   );
