@@ -1,0 +1,14 @@
+{
+  "LoginForm": {
+    "title": "Iniciar sesión",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "submit": "Iniciar sesión",
+    "genericError": "Credenciales inválidas. Inténtalo de nuevo."
+  },
+  "Validations": {
+    "required": "Campo obligatorio.",
+    "min": "Mínimo de 3 caracteres.",
+    "email": "Introduce un correo electrónico válido."
+  }
+}

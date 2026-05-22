@@ -1,0 +1,14 @@
+{
+  "LoginForm": {
+    "title": "Sign in",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "submit": "Sign in",
+    "genericError": "Invalid credentials. Please try again."
+  },
+  "Validations": {
+    "required": "Required field.",
+    "min": "Minimum of 3 characters.",
+    "email": "Enter a valid e-mail address."
+  }
+}

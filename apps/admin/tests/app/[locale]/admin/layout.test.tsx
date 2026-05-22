@@ -5,10 +5,6 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 
-// ---------------------------------------------------------------------------
-// Mocks
-// ---------------------------------------------------------------------------
-
 vi.mock('next/headers', () => ({
   cookies: vi.fn().mockResolvedValue({
     getAll: () => [{ name: 'session', value: 'abc123' }],
@@ -21,8 +17,8 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-vi.mock('~/lib/api/internal', () => ({
-  getInternalBaseUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
+vi.mock('~lib/api/internal', () => ({
+  getSiteApiUrl: vi.fn().mockReturnValue('http://localhost:3000'),
 }));
 
 vi.mock('~/app/[locale]/admin/_components/AdminSidebar', () => ({
@@ -38,10 +34,6 @@ beforeEach(() => {
   global.fetch = mockFetch;
 });
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 async function renderLayout(locale = 'en-US') {
   const { default: AdminLayout } = await import(
     '~/app/[locale]/admin/layout'
@@ -53,10 +45,6 @@ async function renderLayout(locale = 'en-US') {
     }),
   );
 }
-
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
 
 describe('AdminLayout', () => {
   it('should redirect to login when /api/v1/me returns non-ok response', async () => {

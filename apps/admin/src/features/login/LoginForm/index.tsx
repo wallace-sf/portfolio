@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { ApiResponse } from '~/lib/api/envelope';
+import { ApiResponse } from '~lib/api/envelope';
 
 import { loginSchema, LoginFormValues } from './login-schema';
 
