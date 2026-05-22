@@ -4996,7 +4996,7 @@
         "testStrategy": "1. Verify apps/site has no login or admin routes (grep for 'admin', 'login')\n2. Verify apps/admin runs independently: `pnpm --filter admin dev`\n3. Test login flow in apps/admin\n4. Test admin CRUD operations in apps/admin\n5. Verify auth middleware only active in apps/admin (no impact on apps/site)\n6. Run `pnpm build` and ensure both apps build successfully\n7. Verify no shared state or dependencies between apps beyond packages/*",
         "priority": "medium",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -5072,7 +5072,7 @@
         "complexity": 8,
         "recommendedSubtasks": 6,
         "expansionPrompt": "Break this task into: (1) create new Next.js app with pnpm create next-app apps/admin, (2) move /{locale}/login and /{locale}/admin/* pages from apps/site to apps/admin, (3) move middleware.ts from apps/site to apps/admin (scope to admin only), (4) copy necessary dependencies, components, and utilities to apps/admin or move to @repo/ui, (5) update turbo.json (add admin#build, admin#dev, admin#lint), root package.json (dev:admin, build:admin), and workspace config, (6) verify apps/site has zero login/admin routes remaining (grep for 'admin', 'login'), and (7) test both apps run independently (pnpm --filter site dev, pnpm --filter admin dev) and build successfully (pnpm build).",
-        "updatedAt": "2026-05-21T22:59:51.165Z"
+        "updatedAt": "2026-05-22T02:08:23.946Z"
       },
       {
         "id": "8",
@@ -5382,9 +5382,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-21T22:59:51.165Z",
+      "lastModified": "2026-05-22T02:08:23.947Z",
       "taskCount": 23,
-      "completedCount": 14,
+      "completedCount": 15,
       "tags": [
         "mvp-round-2"
       ]
