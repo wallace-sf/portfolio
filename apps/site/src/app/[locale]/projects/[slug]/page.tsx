@@ -1,5 +1,6 @@
 import { getLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
 import { ApiResponse } from '~/lib/api/envelope';
 import { getInternalBaseUrl } from '~/lib/api/internal';
@@ -11,7 +12,43 @@ import {
 type ProjectDetailData = IProjectDetailProps & { id: string };
 
 interface ProjectDetailPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: ProjectDetailPageProps): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const baseUrl = await getInternalBaseUrl();
+
+  const res = await fetch(
+    `${baseUrl}/api/v1/projects/${slug}?locale=${locale}`,
+    {
+      cache: 'no-store',
+    },
+  ).catch(() => null);
+
+  if (!res?.ok) return {};
+
+  const body: ApiResponse<{
+    title: string;
+    caption: string;
+    coverImageUrl: string;
+    coverImageAlt: string;
+  }> = await res.json();
+  if (body.error) return {};
+
+  const { title, caption, coverImageUrl, coverImageAlt } = body.data;
+
+  return {
+    title,
+    description: caption,
+    openGraph: {
+      title,
+      description: caption,
+      images: [{ url: coverImageUrl, alt: coverImageAlt }],
+    },
+  };
 }
 
 export default async function ProjectDetailPage({

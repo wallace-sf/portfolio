@@ -76,7 +76,7 @@ describe('ProjectDetailPage', () => {
     const { default: Page } = await import(
       '~/app/[locale]/projects/[slug]/page'
     );
-    render(await Page({ params: Promise.resolve({ slug: 'my-project' }) }));
+    render(await Page({ params: Promise.resolve({ locale: 'en-US', slug: 'my-project' }) }));
     expect(screen.getByTestId('project-detail')).toBeInTheDocument();
     expect(screen.getByText('My Project')).toBeInTheDocument();
   });
@@ -88,7 +88,7 @@ describe('ProjectDetailPage', () => {
       '~/app/[locale]/projects/[slug]/page'
     );
     await expect(
-      Page({ params: Promise.resolve({ slug: 'missing' }) }),
+      Page({ params: Promise.resolve({ locale: 'en-US', slug: 'missing' }) }),
     ).rejects.toThrow('NEXT_NOT_FOUND');
     expect(notFound).toHaveBeenCalled();
   });
@@ -100,7 +100,7 @@ describe('ProjectDetailPage', () => {
       '~/app/[locale]/projects/[slug]/page'
     );
     await expect(
-      Page({ params: Promise.resolve({ slug: 'my-project' }) }),
+      Page({ params: Promise.resolve({ locale: 'en-US', slug: 'my-project' }) }),
     ).rejects.toThrow('NEXT_NOT_FOUND');
     expect(notFound).toHaveBeenCalled();
   });
@@ -119,7 +119,7 @@ describe('ProjectDetailPage', () => {
       '~/app/[locale]/projects/[slug]/page'
     );
     await expect(
-      Page({ params: Promise.resolve({ slug: 'my-project' }) }),
+      Page({ params: Promise.resolve({ locale: 'en-US', slug: 'my-project' }) }),
     ).rejects.toThrow('NEXT_NOT_FOUND');
     expect(notFound).toHaveBeenCalled();
   });
