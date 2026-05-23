@@ -59,7 +59,12 @@ export const SideNavigation: FC = () => {
         >
           {t('github')}
         </MenuItem.Item2.Link>
-        <MenuItem.Item2.Link href="/feed.xml" icon="mdi:rss" newTab>
+        <MenuItem.Item2.Link
+          href="/feed.xml"
+          icon="mdi:rss"
+          iconClassName="text-white"
+          newTab
+        >
           {t('rss')}
         </MenuItem.Item2.Link>
         <ThemeToggle />
