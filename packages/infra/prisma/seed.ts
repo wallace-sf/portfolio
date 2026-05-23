@@ -32,6 +32,11 @@ const ID = {
     nestjs:        '20000000-0000-4000-8000-000000000011',
     aws:           '20000000-0000-4000-8000-000000000012',
     tailwindcss:   '20000000-0000-4000-8000-000000000013',
+    javascript:    '20000000-0000-4000-8000-000000000014',
+    accessibility: '20000000-0000-4000-8000-000000000015',
+    cicd:          '20000000-0000-4000-8000-000000000016',
+    designSystems: '20000000-0000-4000-8000-000000000017',
+    shopify:       '20000000-0000-4000-8000-000000000018',
   },
   projects: {
     portfolio:        '30000000-0000-4000-8000-000000000001',
@@ -78,6 +83,11 @@ async function seedSkills() {
     { id: ID.skills.graphql,       icon: 'logos:graphql',             type: 'TECHNOLOGY' as const, description: loc('GraphQL',       'GraphQL') },
     { id: ID.skills.nestjs,        icon: 'logos:nestjs',              type: 'TECHNOLOGY' as const, description: loc('NestJS',        'NestJS') },
     { id: ID.skills.aws,           icon: 'logos:aws',                 type: 'TECHNOLOGY' as const, description: loc('AWS',           'AWS') },
+    { id: ID.skills.javascript,    icon: 'logos:javascript',           type: 'TECHNOLOGY' as const, description: loc('JavaScript',    'JavaScript') },
+    { id: ID.skills.accessibility, icon: 'material-symbols:accessibility', type: 'TECHNOLOGY' as const, description: loc('Accessibility', 'Acessibilidade') },
+    { id: ID.skills.cicd,          icon: 'mdi:infinity',              type: 'TECHNOLOGY' as const, description: loc('CI/CD',         'CI/CD') },
+    { id: ID.skills.designSystems, icon: 'mdi:palette-swatch-outline', type: 'TECHNOLOGY' as const, description: loc('Design Systems', 'Design Systems') },
+    { id: ID.skills.shopify,       icon: 'logos:shopify',             type: 'TECHNOLOGY' as const, description: loc('Shopify',       'Shopify') },
     { id: ID.skills.communication, icon: 'mdi:comment-text',          type: 'SOFT'       as const, description: loc('Communication', 'Comunicação') },
     { id: ID.skills.leadership,    icon: 'mdi:account-group',         type: 'SOFT'       as const, description: loc('Leadership',    'Liderança') },
   ];
@@ -279,7 +289,7 @@ async function seedExperiences() {
       locationType:   'HYBRID' as const,
       startAt:        new Date('2024-10-01'),
       endAt:          null,
-      skillIds:       [ID.skills.typescript, ID.skills.react, ID.skills.nextjs, ID.skills.tailwindcss, ID.skills.leadership],
+      skillIds:       [ID.skills.typescript, ID.skills.react, ID.skills.nextjs, ID.skills.tailwindcss, ID.skills.accessibility, ID.skills.shopify, ID.skills.leadership],
     },
     {
       id: ID.experiences.wesf,
@@ -296,7 +306,7 @@ async function seedExperiences() {
       locationType:   'ONSITE' as const,
       startAt:        new Date('2023-09-01'),
       endAt:          new Date('2024-04-30'),
-      skillIds:       [ID.skills.typescript, ID.skills.react, ID.skills.nodejs, ID.skills.nestjs, ID.skills.postgresql, ID.skills.aws, ID.skills.tailwindcss],
+      skillIds:       [ID.skills.typescript, ID.skills.react, ID.skills.nodejs, ID.skills.nestjs, ID.skills.postgresql, ID.skills.aws, ID.skills.tailwindcss, ID.skills.designSystems],
     },
     {
       id: ID.experiences.galaxies,
@@ -330,7 +340,7 @@ async function seedExperiences() {
       locationType:   'HYBRID' as const,
       startAt:        new Date('2020-03-01'),
       endAt:          new Date('2023-05-31'),
-      skillIds:       [ID.skills.typescript, ID.skills.react, ID.skills.nodejs, ID.skills.leadership, ID.skills.communication],
+      skillIds:       [ID.skills.typescript, ID.skills.react, ID.skills.nodejs, ID.skills.cicd, ID.skills.designSystems, ID.skills.accessibility, ID.skills.leadership, ID.skills.communication],
     },
   ];
 
