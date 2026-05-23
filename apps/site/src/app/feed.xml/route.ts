@@ -6,7 +6,6 @@ interface ProjectItem {
   slug: string;
   title: string;
   caption: string;
-  createdAt: string;
 }
 
 function escapeXml(value: string): string {
@@ -30,11 +29,6 @@ export async function GET(): Promise<Response> {
     if (!body.error) projects.push(...body.data);
   }
 
-  const lastBuildDate =
-    projects.length > 0 && projects[0]
-      ? new Date(projects[0].createdAt).toUTCString()
-      : new Date().toUTCString();
-
   const items = projects
     .map(
       (p) => `
@@ -43,7 +37,6 @@ export async function GET(): Promise<Response> {
       <link>${SITE_URL}/projects/${escapeXml(p.slug)}</link>
       <description>${escapeXml(p.caption)}</description>
       <guid isPermaLink="true">${SITE_URL}/projects/${escapeXml(p.slug)}</guid>
-      <pubDate>${new Date(p.createdAt).toUTCString()}</pubDate>
     </item>`,
     )
     .join('');
@@ -55,7 +48,7 @@ export async function GET(): Promise<Response> {
     <link>${SITE_URL}</link>
     <description>Frontend Software Engineer — scalable web applications built with React, Next.js, and TypeScript.</description>
     <language>en-US</language>
-    <lastBuildDate>${lastBuildDate}</lastBuildDate>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>
     ${items}
   </channel>
