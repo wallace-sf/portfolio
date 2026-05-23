@@ -144,8 +144,8 @@ async function seedProjects() {
     {
       id: ID.projects.portfolio,
       slug: 'personal-portfolio',
-      coverImageUrl: 'https://opengraph.githubassets.com/1/wallace-sf/portfolio',
-      coverImageAlt: loc('Personal Portfolio repository on GitHub', 'Repositório do Portfólio Pessoal no GitHub'),
+      coverImageUrl: 'https://placehold.co/1200x630/0f172a/38bdf8?text=Portfolio',
+      coverImageAlt: loc('Personal Portfolio cover image', 'Imagem de capa do Portfólio Pessoal'),
       title:   loc('Personal Portfolio', 'Portfólio Pessoal'),
       caption: loc(
         'A full-stack portfolio built with Next.js, DDD, and Clean Architecture in a Turborepo monorepo.',
