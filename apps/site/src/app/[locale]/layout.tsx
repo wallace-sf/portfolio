@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Inter } from 'next/font/google';
+import type { Metadata } from 'next';
 
 import { AppLayout } from '~components';
 
@@ -9,6 +10,28 @@ import '@repo/tailwind-config/tailwind.css';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'Wallace Ferreira',
+    template: '%s | Wallace Ferreira',
+  },
+  description:
+    'Frontend Software Engineer with 6+ years of experience building scalable, performant, and accessible web products with React, Next.js, and TypeScript.',
+  openGraph: {
+    type: 'website',
+    siteName: 'Wallace Ferreira',
+    images: [
+      { url: 'https://github.com/wallace-sf.png', alt: 'Wallace Ferreira' },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
+};
 
 export default async function RootLayout({
   children,
