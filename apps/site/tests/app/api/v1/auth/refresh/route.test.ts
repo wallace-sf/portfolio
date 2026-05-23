@@ -25,7 +25,7 @@ vi.mock('next/headers', () => ({
 const mockRefresh = vi.fn();
 
 beforeEach(() => {
-  mockCookieStore.store = {};
+  mockCookieStore.store = { 'sb-refresh-token': 'refresh-token-456' };
   vi.clearAllMocks();
 
   mockCookieStore.get.mockImplementation((name: string) => {
@@ -69,11 +69,40 @@ describe('POST /api/v1/auth/refresh', () => {
     );
   });
 
-  it('should return 401 when no refresh token is present', async () => {
+  it('should pass the refresh token string directly to the gateway', async () => {
+    const { right } = await import('@repo/core/shared');
+    const expiresAt = Math.floor(Date.now() / 1000) + 3600;
+    mockRefresh.mockResolvedValue(
+      right({ accessToken: 'new-access', refreshToken: 'new-refresh', expiresAt }),
+    );
+
+    await POST();
+
+    expect(mockRefresh).toHaveBeenCalledOnce();
+    expect(mockRefresh).toHaveBeenCalledWith('refresh-token-456');
+  });
+
+  it('should pass empty string when no refresh token cookie is present', async () => {
+    const { left } = await import('@repo/core/shared');
+    const { DomainError } = await import('@repo/core/shared');
+    mockCookieStore.store = {};
+    mockRefresh.mockResolvedValue(
+      left(new DomainError('NO_REFRESH_TOKEN', { message: 'No refresh token.' })),
+    );
+
+    const response = await POST();
+    const body = await response.json();
+
+    expect(mockRefresh).toHaveBeenCalledWith('');
+    expect(response.status).toBe(401);
+    expect(body.error.code).toBe('AUTH_REQUIRED');
+  });
+
+  it('should return 401 when refresh token is invalid', async () => {
     const { left } = await import('@repo/core/shared');
     const { DomainError } = await import('@repo/core/shared');
     mockRefresh.mockResolvedValue(
-      left(new DomainError('NO_REFRESH_TOKEN', { message: 'No refresh token.' })),
+      left(new DomainError('INVALID_REFRESH_TOKEN', { message: 'Token expired.' })),
     );
 
     const response = await POST();
