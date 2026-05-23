@@ -35,7 +35,8 @@
     "language": "Language",
     "theme": "Theme",
     "linkedin": "LinkedIn",
-    "github": "GitHub"
+    "github": "GitHub",
+    "rss": "RSS Feed"
   },
   "Theme": {
     "light": "Light",

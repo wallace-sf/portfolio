@@ -31,6 +31,13 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
   },
+  alternates: {
+    types: {
+      'application/rss+xml': [
+        { url: `${SITE_URL}/feed.xml`, title: 'Wallace Ferreira' },
+      ],
+    },
+  },
 };
 
 export default async function RootLayout({
