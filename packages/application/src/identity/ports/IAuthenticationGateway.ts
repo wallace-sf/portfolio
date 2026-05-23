@@ -47,4 +47,13 @@ export interface IAuthenticationGateway {
   getPrincipalFromCookies(
     cookies: AuthCookieApi,
   ): Promise<Either<DomainError, AuthPrincipal>>;
+
+  /**
+   * Decode and validate the access token from an in-memory `AuthSession`.
+   * Use this immediately after `signInWithPassword` to avoid constructing
+   * a fake cookie reader.
+   */
+  getPrincipalFromSession(
+    session: AuthSession,
+  ): Promise<Either<DomainError, AuthPrincipal>>;
 }

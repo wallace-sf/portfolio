@@ -1,5 +1,5 @@
-import { EnsureAppUserForAuthSession } from '@repo/application/identity';
-import { ValidationError, left, right } from '@repo/core/shared';
+import { SignIn } from '@repo/application/identity';
+import { ValidationError, left } from '@repo/core/shared';
 import {
   SUPABASE_ACCESS_TOKEN_COOKIE,
   SUPABASE_REFRESH_TOKEN_COOKIE,
@@ -32,14 +32,14 @@ export async function POST(request: NextRequest) {
 
       const { authGateway, userRepository } = getContainer();
 
-      const sessionResult = await authGateway.signInWithPassword({
+      const result = await new SignIn(authGateway, userRepository).execute({
         email: body.email ?? '',
         password: body.password ?? '',
       });
 
-      if (sessionResult.isLeft()) return sessionResult;
+      if (result.isLeft()) return result;
 
-      const session = sessionResult.value;
+      const session = result.value;
       const cookieApi = await createNextAuthCookieApi();
       const expiresIn = session.expiresAt - Math.floor(Date.now() / 1000);
 
@@ -58,27 +58,7 @@ export async function POST(request: NextRequest) {
         path: '/',
       });
 
-      const principalResult = await authGateway.getPrincipalFromCookies({
-        get: (name) =>
-          name === SUPABASE_ACCESS_TOKEN_COOKIE
-            ? session.accessToken
-            : undefined,
-        set: () => {},
-        delete: () => {},
-      });
-
-      if (principalResult.isLeft()) return principalResult;
-
-      const ensureResult = await new EnsureAppUserForAuthSession(
-        userRepository,
-      ).execute({
-        authSubject: principalResult.value.id,
-        email: principalResult.value.email,
-      });
-
-      if (ensureResult.isLeft()) return ensureResult;
-
-      return right(null as unknown);
+      return result;
     },
     200,
     locale,

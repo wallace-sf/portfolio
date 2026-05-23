@@ -24,8 +24,7 @@ vi.mock('next/headers', () => ({
 }));
 
 const mockSignIn = vi.fn();
-const mockGetPrincipal = vi.fn();
-const mockEnsureUser = vi.fn();
+const mockGetPrincipalFromSession = vi.fn();
 
 beforeEach(() => {
   mockCookieStore.store = {};
@@ -42,7 +41,8 @@ beforeEach(() => {
   vi.mocked(getContainer).mockReturnValue({
     authGateway: {
       signInWithPassword: mockSignIn,
-      getPrincipalFromCookies: mockGetPrincipal,
+      getPrincipalFromCookies: vi.fn(),
+      getPrincipalFromSession: mockGetPrincipalFromSession,
       signOut: vi.fn(),
       refreshSession: vi.fn(),
     },
@@ -111,7 +111,7 @@ describe('POST /api/v1/auth/sign-in', () => {
     mockSignIn.mockResolvedValue(
       right({ accessToken: 'access-123', refreshToken: 'refresh-456', expiresAt }),
     );
-    mockGetPrincipal.mockResolvedValue(
+    mockGetPrincipalFromSession.mockResolvedValue(
       right({ id: VALID_UUID, email: 'user@example.com', role: 'VISITOR' }),
     );
 
