@@ -91,6 +91,20 @@ export class FakeAuthenticationGateway implements IAuthenticationGateway {
     return right(stored.principal);
   }
 
+  async getPrincipalFromSession(
+    session: AuthSession,
+  ): Promise<Either<DomainError, AuthPrincipal>> {
+    if (this.forcedError) return left(this.forcedError);
+
+    const email = this._emailFromToken(session.accessToken);
+    const stored = email ? this.users.get(email) : undefined;
+    if (!stored) {
+      return left(new DomainError('INVALID_ACCESS_TOKEN', { message: 'Access token is invalid or expired.' }));
+    }
+
+    return right(stored.principal);
+  }
+
   // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------

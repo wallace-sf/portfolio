@@ -268,3 +268,83 @@ describe('IAuthenticationGateway — getPrincipalFromCookies', () => {
     expect(result.value).toBe(error);
   });
 });
+
+// ---------------------------------------------------------------------------
+// getPrincipalFromSession
+// ---------------------------------------------------------------------------
+
+describe('IAuthenticationGateway — getPrincipalFromSession', () => {
+  let gateway: FakeAuthenticationGateway;
+
+  beforeEach(() => {
+    gateway = new FakeAuthenticationGateway(SEED_USERS);
+  });
+
+  it('should return Right(AuthPrincipal) when session access token is valid', async () => {
+    const session = {
+      accessToken: 'access:admin@example.com:xyz',
+      refreshToken: 'refresh:admin@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isRight()).toBe(true);
+    expect(result.value).toEqual(ADMIN_PRINCIPAL);
+  });
+
+  it('should return the correct principal for each user', async () => {
+    const session = {
+      accessToken: 'access:visitor@example.com:xyz',
+      refreshToken: 'refresh:visitor@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isRight()).toBe(true);
+    expect(result.value).toEqual(VISITOR_PRINCIPAL);
+  });
+
+  it('should return Left(DomainError) when access token is malformed', async () => {
+    const session = {
+      accessToken: 'malformed-token',
+      refreshToken: 'refresh:admin@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isLeft()).toBe(true);
+    expect((result.value as DomainError).code).toBe('INVALID_ACCESS_TOKEN');
+  });
+
+  it('should return Left(DomainError) when access token references unknown user', async () => {
+    const session = {
+      accessToken: 'access:ghost@example.com:xyz',
+      refreshToken: 'refresh:ghost@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isLeft()).toBe(true);
+    expect((result.value as DomainError).code).toBe('INVALID_ACCESS_TOKEN');
+  });
+
+  it('should return Left(DomainError) when a forced error is set', async () => {
+    const error = new DomainError('IDP_UNAVAILABLE', { message: 'Service is down.' });
+    gateway.simulateError(error);
+
+    const session = {
+      accessToken: 'access:admin@example.com:xyz',
+      refreshToken: 'refresh:admin@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBe(error);
+  });
+});

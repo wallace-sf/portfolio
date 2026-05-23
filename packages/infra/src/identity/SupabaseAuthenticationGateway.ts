@@ -162,6 +162,35 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
     }
   }
 
+  async getPrincipalFromSession(
+    session: AuthSession,
+  ): Promise<Either<DomainError, AuthPrincipal>> {
+    try {
+      const supabase = createClient(this.supabaseUrl, this.supabaseAnonKey, {
+        auth: { persistSession: false },
+      });
+
+      const { data, error } = await supabase.auth.getUser(session.accessToken);
+
+      if (error || !data.user) {
+        return left(
+          new DomainError('INVALID_ACCESS_TOKEN', {
+            message: error?.message ?? 'Access token is invalid or expired.',
+          }),
+        );
+      }
+
+      return right({
+        id: data.user.id,
+        email: data.user.email ?? '',
+        role:
+          (data.user.app_metadata?.['role'] as string | undefined) ?? 'VISITOR',
+      });
+    } catch (err) {
+      return left(this._unexpectedError(err));
+    }
+  }
+
   private _unexpectedError(err: unknown): DomainError {
     const message =
       err instanceof Error ? err.message : 'Unexpected authentication error.';
