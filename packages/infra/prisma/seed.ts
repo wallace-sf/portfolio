@@ -241,8 +241,21 @@ Developed while working at FDTE on industrial and public-sector platforms that r
 
   for (const project of projects) {
     await prisma.project.upsert({
-      where: { slug: project.slug },
-      update: { featured: project.featured, status: project.status },
+      where: { id: project.id },
+      update: {
+        slug: project.slug,
+        title: project.title,
+        caption: project.caption,
+        content: project.content,
+        coverImageUrl: project.coverImageUrl,
+        coverImageAlt: project.coverImageAlt,
+        featured: project.featured,
+        status: project.status,
+        periodStart: project.periodStart,
+        periodEnd: project.periodEnd,
+        skillIds: project.skillIds,
+        relatedProjectSlugs: project.relatedProjectSlugs,
+      },
       create: project,
     });
   }
