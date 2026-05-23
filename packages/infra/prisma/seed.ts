@@ -117,7 +117,7 @@ async function seedProfile() {
         "I'm a Frontend Engineer with over 6 years of experience specialized in building scalable, performant, and accessible web products with React, Next.js, and TypeScript. My experience includes leading frontend design, development and now working for AI-assisted customer platforms and global commerce solutions, serving over 800 clients worldwide. Passionate about product-oriented environments, I focus on architecture, UX, and quality to deliver impactful results.",
         'Sou um Engenheiro Frontend com mais de 6 anos de experiência especializado em construir produtos web escaláveis, performáticos e acessíveis com React, Next.js e TypeScript. Minha experiência inclui liderança de design e desenvolvimento frontend, atuando em plataformas de atendimento ao cliente com IA e soluções de comércio global, atendendo mais de 800 clientes no mundo. Apaixonado por ambientes orientados a produto, foco em arquitetura, UX e qualidade para entregar resultados de impacto.',
       ),
-      photoUrl: 'https://github.com/wallace-sf.png',
+      photoUrl: 'https://placehold.co/400x400/1e293b/f8fafc?text=Photo',
       photoAlt: loc('Wallace Ferreira', 'Wallace Ferreira'),
       featuredProjectSlugs: ['personal-portfolio', 'b2b-ecommerce-platform'],
       stats: {
@@ -144,8 +144,8 @@ async function seedProjects() {
     {
       id: ID.projects.portfolio,
       slug: 'personal-portfolio',
-      coverImageUrl: 'https://placehold.co/1200x630/0f172a/38bdf8?text=Portfolio',
-      coverImageAlt: loc('Personal Portfolio cover image', 'Imagem de capa do Portfólio Pessoal'),
+      coverImageUrl: 'https://opengraph.githubassets.com/1/wallace-sf/portfolio',
+      coverImageAlt: loc('Personal Portfolio repository on GitHub', 'Repositório do Portfólio Pessoal no GitHub'),
       title:   loc('Personal Portfolio', 'Portfólio Pessoal'),
       caption: loc(
         'A full-stack portfolio built with Next.js, DDD, and Clean Architecture in a Turborepo monorepo.',
