@@ -57,11 +57,11 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
     }
   }
 
-  async signOut(cookies: AuthCookieApi): Promise<Either<DomainError, void>> {
+  async signOut(
+    accessToken: string,
+    refreshToken: string,
+  ): Promise<Either<DomainError, void>> {
     try {
-      const accessToken = cookies.get(SUPABASE_ACCESS_TOKEN_COOKIE);
-      const refreshToken = cookies.get(SUPABASE_REFRESH_TOKEN_COOKIE);
-
       if (accessToken && refreshToken) {
         const supabase = createClient(this.supabaseUrl, this.supabaseAnonKey, {
           auth: { persistSession: false },
@@ -73,9 +73,6 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
         await supabase.auth.signOut();
       }
 
-      cookies.delete(SUPABASE_ACCESS_TOKEN_COOKIE);
-      cookies.delete(SUPABASE_REFRESH_TOKEN_COOKIE);
-
       return right(undefined);
     } catch (err) {
       return left(this._unexpectedError(err));
@@ -83,11 +80,9 @@ export class SupabaseAuthenticationGateway implements IAuthenticationGateway {
   }
 
   async refreshSession(
-    cookies: AuthCookieApi,
+    refreshToken: string,
   ): Promise<Either<DomainError, AuthSession>> {
     try {
-      const refreshToken = cookies.get(SUPABASE_REFRESH_TOKEN_COOKIE);
-
       if (!refreshToken) {
         return left(
           new DomainError('NO_REFRESH_TOKEN', {

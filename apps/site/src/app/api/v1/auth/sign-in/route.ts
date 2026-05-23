@@ -1,17 +1,13 @@
 import { SignIn } from '@repo/application/identity';
 import { ValidationError, left } from '@repo/core/shared';
-import {
-  SUPABASE_ACCESS_TOKEN_COOKIE,
-  SUPABASE_REFRESH_TOKEN_COOKIE,
-  getContainer,
-} from '@repo/infra';
+import { getContainer } from '@repo/infra';
 import { Validator } from '@repo/utils/validator';
 import { NextRequest } from 'next/server';
 
 import { HttpErrorCodes } from '~/lib/api/error-codes';
 import { handleRequest } from '~/lib/api/handler';
 import { resolveLocale } from '~/lib/api/locale';
-import { createNextAuthCookieApi } from '~/lib/auth/cookie';
+import { createNextAuthCookieApi, setSessionCookies } from '~/lib/auth/cookie';
 
 export async function POST(request: NextRequest) {
   const locale = resolveLocale(request);
@@ -41,22 +37,8 @@ export async function POST(request: NextRequest) {
 
       const session = result.value;
       const cookieApi = await createNextAuthCookieApi();
-      const expiresIn = session.expiresAt - Math.floor(Date.now() / 1000);
 
-      cookieApi.set(SUPABASE_ACCESS_TOKEN_COOKIE, session.accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: expiresIn,
-        path: '/',
-      });
-      cookieApi.set(SUPABASE_REFRESH_TOKEN_COOKIE, session.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 30,
-        path: '/',
-      });
+      setSessionCookies(cookieApi, session);
 
       return result;
     },
