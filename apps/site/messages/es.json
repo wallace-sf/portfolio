@@ -74,7 +74,13 @@
     "hero_caption": "Ingeniero Front-end · React · Next.js · TypeScript",
     "hero_content": "Ingeniero front-end con más de 6 años de experiencia construyendo aplicaciones web escalables. Apasionado por la arquitectura limpia, el rendimiento y la accesibilidad.",
     "hero_image_alt": "Wallace Ferreira — Ingeniero Front-end",
-    "values_title": "Mis valores profesionales"
+    "values_title": "Mis valores profesionales",
+    "story_title": "Mi historia",
+    "story_content": "Placeholder — a completar con la narrativa de tu trayectoria: cómo llegaste al desarrollo frontend, los hitos clave, las experiencias que formaron tu enfoque técnico y lo que define tu camino hoy.",
+    "exploring_title": "Qué estoy explorando",
+    "exploring_content": "Placeholder — a completar con tu foco de aprendizaje actual: tecnologías, metodologías o áreas que estás estudiando o experimentando activamente ahora.",
+    "passions_title": "Qué me impulsa",
+    "passions_content": "Placeholder — a completar con lo que más valoras en la ingeniería de software: principios, prácticas o aspectos del trabajo que te motivan de forma consistente."
   },
   "ExperienceCard": {
     "skills_label": "Habilidades"

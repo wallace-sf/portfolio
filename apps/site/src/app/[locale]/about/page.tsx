@@ -9,6 +9,7 @@ import {
   ExperiencesSkeleton,
 } from '~features/about/ExperiencesSection';
 import { HeroSection } from '~features/about/HeroSection';
+import { NarrativeSection } from '~features/about/NarrativeSection';
 import { ValuesSection, ValuesSkeleton } from '~features/about/ValuesSection';
 import { HeroBannerSkeleton } from '~features/shared/HeroBanner/HeroBannerSkeleton';
 
@@ -65,6 +66,7 @@ export default async function About({ searchParams }: AboutPageProps) {
       <Suspense fallback={<HeroBannerSkeleton />}>
         <HeroSection />
       </Suspense>
+      <NarrativeSection />
       <Suspense fallback={<ValuesSkeleton />}>
         <ValuesSection />
       </Suspense>

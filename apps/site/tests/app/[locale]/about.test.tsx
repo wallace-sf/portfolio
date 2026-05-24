@@ -23,6 +23,10 @@ vi.mock('~features/about/ExperiencesSection', () => ({
   ExperiencesSkeleton: () => null,
 }));
 
+vi.mock('~features/about/NarrativeSection', () => ({
+  NarrativeSection: () => <div data-testid="narrative-section" />,
+}));
+
 vi.mock('~features/shared/HeroBanner/HeroBannerSkeleton', () => ({
   HeroBannerSkeleton: () => null,
 }));
@@ -33,6 +37,7 @@ describe('About page', () => {
     render(await About({ searchParams: Promise.resolve({}) }));
 
     expect(screen.getByTestId('hero-section')).toBeInTheDocument();
+    expect(screen.getByTestId('narrative-section')).toBeInTheDocument();
     expect(screen.getByTestId('values-section')).toBeInTheDocument();
     expect(screen.getByTestId('experiences-section')).toBeInTheDocument();
   });

@@ -74,7 +74,13 @@
     "hero_caption": "Frontend Engineer · React · Next.js · TypeScript",
     "hero_content": "Frontend engineer with over 6 years of experience building scalable web applications. Passionate about clean architecture, performance, and accessibility.",
     "hero_image_alt": "Wallace Ferreira — Frontend Engineer",
-    "values_title": "My professional values"
+    "values_title": "My professional values",
+    "story_title": "My story",
+    "story_content": "Placeholder — to be filled with a career arc narrative: how you got into frontend engineering, key turning points, the experiences that shaped your technical approach, and what defines your trajectory today.",
+    "exploring_title": "What I'm exploring",
+    "exploring_content": "Placeholder — to be filled with your current learning focus: technologies, methodologies, or domains you're actively studying or experimenting with right now.",
+    "passions_title": "What drives me",
+    "passions_content": "Placeholder — to be filled with what you care most about in software engineering: principles, practices, or aspects of the craft that consistently motivate you."
   },
   "ExperienceCard": {
     "skills_label": "Skills"
