@@ -19,7 +19,7 @@ export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
     close();
   }, 500);
 
-  const value = useMemo(() => ({ open, toggle }), [open, toggle]);
+  const value = useMemo(() => ({ open, toggle, close }), [open, toggle, close]);
 
   useEventListener('resize', () => {
     if (window.innerWidth < BREAKPOINTS_NUMBERS.lg) throttle();

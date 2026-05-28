@@ -9,12 +9,15 @@ export const useLayout = () => {
 
   invariant(context, 'useLayout must be used within a LayoutProvider.');
 
-  const { open, toggle } = context;
+  const { open, toggle, close } = context;
 
   return {
     open,
     toggle: useCallback(() => {
       if (toggle != null) toggle();
     }, [toggle]),
+    close: useCallback(() => {
+      if (close != null) close();
+    }, [close]),
   };
 };

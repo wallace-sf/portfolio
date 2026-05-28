@@ -5,6 +5,7 @@ import { FC, useState } from 'react';
 import { TextRich } from '@repo/ui/View';
 
 import { SkillGroup } from '~features/shared/SkillGroup';
+import { useLayout } from '~hooks';
 
 import { TechnologiesModal } from '../TechnologiesModal';
 
@@ -36,6 +37,7 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
   skills,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const { close } = useLayout();
 
   return (
     <>
@@ -59,7 +61,10 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
             max={3}
             initializeWithMax={3}
             total={skills.length}
-            onShowAll={() => setModalOpen(true)}
+            onShowAll={() => {
+              close?.();
+              setModalOpen(true);
+            }}
           />
         )}
       </article>

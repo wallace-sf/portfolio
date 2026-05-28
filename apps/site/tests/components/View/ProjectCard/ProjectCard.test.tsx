@@ -7,6 +7,7 @@ vi.mock('next-intl', () => ({
 
 vi.mock('~hooks', () => ({
   useBreakpoint: () => false,
+  useLayout: () => ({ open: false, toggle: vi.fn(), close: vi.fn() }),
 }));
 
 vi.mock('~i18n/routing', () => ({

@@ -11,12 +11,7 @@ vi.mock('@iconify/react', () => ({
   ),
 }));
 
-
-const mockLock = vi.fn();
-const mockUnlock = vi.fn();
-
 vi.mock('usehooks-ts', () => ({
-  useScrollLock: () => ({ lock: mockLock, unlock: mockUnlock, isLocked: false }),
   useOnClickOutside: vi.fn(),
   useEventListener: vi.fn(),
 }));
@@ -29,6 +24,7 @@ async function importModal() {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.resetModules();
+  document.body.style.overflow = '';
 });
 
 describe('Modal', () => {
@@ -110,20 +106,15 @@ describe('Modal', () => {
     expect(dialog).not.toHaveAttribute('aria-labelledby');
   });
 
-  it('should call lock when open becomes true', async () => {
+  it('should render overlay with fixed positioning when open', async () => {
     const Modal = await importModal();
-    const { rerender } = render(
-      <Modal open={false} onClose={vi.fn()}>
-        <p>content</p>
-      </Modal>,
-    );
-
-    rerender(
+    render(
       <Modal open onClose={vi.fn()}>
         <p>content</p>
       </Modal>,
     );
 
-    expect(mockLock).toHaveBeenCalled();
+    const overlay = screen.getByRole('dialog').parentElement;
+    expect(overlay).toHaveClass('fixed');
   });
 });

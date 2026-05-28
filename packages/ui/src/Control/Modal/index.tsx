@@ -4,11 +4,7 @@ import { FC, ReactNode, useCallback, useEffect, useId, useRef } from 'react';
 
 import { Icon } from '@iconify/react';
 import { createPortal } from 'react-dom';
-import {
-  useEventListener,
-  useOnClickOutside,
-  useScrollLock,
-} from 'usehooks-ts';
+import { useEventListener, useOnClickOutside } from 'usehooks-ts';
 
 export interface IModalProps {
   open: boolean;
@@ -24,13 +20,6 @@ export const Modal: FC<IModalProps> = ({ open, onClose, title, children }) => {
   const titleId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
-
-  const { lock, unlock } = useScrollLock({ autoLock: false });
-
-  useEffect(() => {
-    if (open) lock();
-    else unlock();
-  }, [open, lock, unlock]);
 
   useOnClickOutside(containerRef, onClose);
 
