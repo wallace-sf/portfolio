@@ -1,16 +1,17 @@
 import { Suspense } from 'react';
+
 import type { Metadata } from 'next';
 
 import { applyDevSimulations } from '~/dev/simulate';
 import { ApiResponse } from '~/lib/api/envelope';
 import { getInternalBaseUrl } from '~/lib/api/internal';
+import { ContactSection } from '~features/contact/ContactSection';
 import { HeroSection } from '~features/home/HeroSection';
 import {
   ProjectsSection,
   ProjectsSkeleton,
 } from '~features/home/ProjectsSection';
 import { HeroBannerSkeleton } from '~features/shared/HeroBanner/HeroBannerSkeleton';
-import { ContactSection } from '~features/contact/ContactSection';
 
 interface HomePageProps {
   params?: Promise<{ locale: string }>;

@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+
 import type { Metadata } from 'next';
 
 import { applyDevSimulations } from '~/dev/simulate';
