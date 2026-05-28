@@ -5470,8 +5470,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:33.388Z"
       },
       {
         "id": "41",
@@ -5485,8 +5486,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:36.452Z"
       },
       {
         "id": "42",
@@ -5500,8 +5502,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:39.521Z"
       },
       {
         "id": "43",
@@ -5515,8 +5518,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:42.689Z"
       },
       {
         "id": "44",
@@ -5530,8 +5534,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:45.746Z"
       },
       {
         "id": "45",
@@ -5545,8 +5550,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:48.776Z"
       },
       {
         "id": "46",
@@ -5560,8 +5566,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:51.833Z"
       },
       {
         "id": "47",
@@ -5575,8 +5582,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:54.871Z"
       },
       {
         "id": "48",
@@ -5590,8 +5598,9 @@
           "38",
           "39"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:57.909Z"
       },
       {
         "id": "49",
@@ -5604,8 +5613,9 @@
           "40",
           "41"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:12:17.740Z"
       },
       {
         "id": "50",
@@ -5836,9 +5846,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-28T00:02:24.572Z",
+      "lastModified": "2026-05-28T00:12:17.741Z",
       "taskCount": 30,
-      "completedCount": 4,
+      "completedCount": 13,
       "tags": [
         "figma-pixel-perfect"
       ]
