@@ -30,7 +30,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   caption,
   coverImage,
   theme,
-  compact = false,
+  compact: _compact = false,
   skills,
 }) => {
   const t = useTranslations('ProjectCard');
