@@ -25,6 +25,7 @@
   },
   "ProjectCard": {
     "view_project": "Ver proyecto",
+    "share_tooltip": "Copiar enlace",
     "image_alt": "Imagen del proyecto"
   },
   "SideNavigation": {

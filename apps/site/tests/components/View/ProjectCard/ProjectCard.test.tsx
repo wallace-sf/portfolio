@@ -38,6 +38,22 @@ vi.mock('@repo/ui/Imagery', () => ({
   ),
 }));
 
+vi.mock('@repo/ui/Control', () => ({
+  Button: {
+    Clipboard: ({
+      children,
+      className,
+    }: {
+      children: ((copied: boolean) => React.ReactNode) | React.ReactNode;
+      className?: string;
+    }) => (
+      <button className={className}>
+        {children instanceof Function ? children(false) : children}
+      </button>
+    ),
+  },
+}));
+
 vi.mock('~/features/shared/SkillGroup', () => ({
   SkillGroup: () => <div data-testid="skill-group" />,
 }));

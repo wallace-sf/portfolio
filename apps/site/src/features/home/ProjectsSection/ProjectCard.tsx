@@ -2,6 +2,7 @@
 
 import { FC } from 'react';
 
+import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { useTranslations } from 'next-intl';
@@ -44,6 +45,19 @@ export const ProjectCard: FC<IProjectCardProps> = ({
         },
       )}
     >
+      <Button.Clipboard
+        unstyled
+        text={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects/${slug}`}
+        tooltip={t('share_tooltip')}
+        className="absolute top-3 right-3 z-10 flex items-center justify-center w-9 h-9 rounded-lg bg-surface-raised hover:bg-surface-interactive transition-colors"
+      >
+        {(copied) => (
+          <Icon
+            icon={copied ? 'ic:round-check' : 'ic:round-share'}
+            className="text-xl text-content-secondary"
+          />
+        )}
+      </Button.Clipboard>
       <section
         className={classNames(
           'flex flex-col h-full gap-y-4 rounded-lg overflow-hidden',
@@ -80,11 +94,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
               {theme}
             </span>
           )}
-          <p
-            className={classNames('text-body-sm !text-content-secondary', {
-              'line-clamp-2': compact,
-            })}
-          >
+          <p className="text-body-sm !text-content-secondary line-clamp-2">
             {caption}
           </p>
         </section>
