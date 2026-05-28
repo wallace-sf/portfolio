@@ -5404,422 +5404,423 @@
   "figma-pixel-perfect": {
     "tasks": [
       {
-        "id": 36,
+        "id": "36",
         "title": "Add missing semantic tokens to tailwind-config index.ts",
         "description": "Extend the semantic color tokens in packages/tailwind-config/index.ts with missing tokens for surface-overlay, surface-interactive, content-disabled, border-muted, and brand hover/active states",
         "details": "Update packages/tailwind-config/index.ts:\n\n1. Add to surface object:\n   - overlay: 'rgb(var(--tw-surface-overlay) / <alpha-value>)'\n   - interactive: 'rgb(var(--tw-surface-interactive) / <alpha-value>)'\n\n2. Add to content object:\n   - disabled: 'rgb(var(--tw-content-disabled) / <alpha-value>)'\n\n3. Add to border object:\n   - muted: 'rgb(var(--tw-border-muted) / <alpha-value>)'\n\n4. Add to brand object:\n   - 'primary-hover': 'rgb(var(--tw-brand-primary-hover) / <alpha-value>)'\n   - 'primary-active': 'rgb(var(--tw-brand-primary-active) / <alpha-value>)'\n\n5. Update error and success tokens:\n   - error: 'rgb(var(--tw-error) / <alpha-value>)'\n   - success: 'rgb(var(--tw-success) / <alpha-value>)'\n\nAll tokens must use RGB CSS variable references for alpha-value compatibility.",
         "testStrategy": "1. Build packages/tailwind-config to ensure no TypeScript errors\n2. Verify that Tailwind classes like bg-surface-overlay, text-content-disabled, border-border-muted, bg-brand-primary-hover are generated in the compiled CSS\n3. Test in a component that these classes apply correctly\n4. Run pnpm build at root to ensure no conflicts",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-05-27T23:56:32.376Z"
       },
       {
-        "id": 37,
+        "id": "37",
         "title": "Add CSS variables for dark mode in tailwind.css",
         "description": "Add missing CSS variable definitions for dark mode (:root selector) in packages/tailwind-config/tailwind.css",
         "details": "Update the :root block in packages/tailwind-config/tailwind.css with:\n\n--tw-surface-overlay: 38 38 38; /* #262626 */\n--tw-surface-interactive: 73 73 73; /* #494949 */\n--tw-content-disabled: 164 164 164; /* #A4A4A4 */\n--tw-border-muted: 73 73 73; /* #494949 */\n--tw-brand-primary-hover: 50 61 205; /* #323DCD */\n--tw-brand-primary-active: 161 168 255; /* #A1A8FF */\n--tw-error: 255 82 116; /* #FF5274 */\n--tw-success: 113 216 117; /* #71D875 */\n\nEnsure RGB format (space-separated) for Tailwind opacity modifier compatibility.",
         "testStrategy": "1. Inspect generated CSS to verify variables are present in :root\n2. Apply dark mode in browser dev tools\n3. Check that color values match Figma specs exactly\n4. Verify opacity modifiers work (e.g., bg-surface-overlay/80)",
         "priority": "high",
         "dependencies": [
-          36
+          "36"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 38,
+        "id": "38",
         "title": "Add CSS variables for light mode in tailwind.css",
         "description": "Add missing CSS variable definitions for light mode (.light selector) in packages/tailwind-config/tailwind.css",
         "details": "Update the .light block in packages/tailwind-config/tailwind.css with:\n\n--tw-surface-overlay: 255 255 255; /* #FFFFFF */\n--tw-surface-interactive: 235 235 235; /* #EBEBEB */\n--tw-content-disabled: 164 164 164; /* #A4A4A4 */\n--tw-border-muted: 186 186 186; /* #BABABA */\n--tw-brand-primary-hover: 65 79 255; /* #414FFF */\n--tw-brand-primary-active: 192 197 255; /* #C0C5FF */\n--tw-error: 244 53 100; /* #F43564 */\n--tw-success: 82 206 122; /* #52CE7A */\n\nNote: Some values like content-disabled (#A4A4A4) are same across modes, but others differ.",
         "testStrategy": "1. Toggle to light mode via ThemeToggle component\n2. Inspect computed styles to verify light mode variables are applied\n3. Compare visual output with Figma light mode specs\n4. Test opacity modifiers in light mode",
         "priority": "high",
         "dependencies": [
-          36
+          "36"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 39,
+        "id": "39",
         "title": "Verify ThemeToggle implementation",
         "description": "Ensure ThemeToggle component correctly applies/removes .light class on document.documentElement for theme switching",
         "details": "Review apps/site/src/components/Layout/SideNavigation/ThemeToggle.tsx and the useDarkMode/useTheme hooks to confirm:\n\n1. Theme toggle adds/removes .light class to <html> element (document.documentElement)\n2. The darkMode: 'selector' configuration in tailwind-config is correct\n3. Theme state persists across page navigation\n4. Initial theme loads correctly on SSR/first paint\n\nIf implementation is correct, no changes needed. If issues found, fix the theme application logic.",
         "testStrategy": "1. Click theme toggle in SideNavigation\n2. Verify .light class is added/removed from <html> element in dev tools\n3. Refresh page and verify theme persists\n4. Navigate between pages and verify theme remains consistent\n5. Test with browser's prefers-color-scheme media query",
         "priority": "medium",
         "dependencies": [
-          37,
-          38
+          "37",
+          "38"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 40,
+        "id": "40",
         "title": "Replace hardcoded tokens in Header component",
         "description": "Replace primitive dark-* color tokens with semantic tokens in apps/site/src/components/Layout/Header/index.tsx",
         "details": "Update Header component class names:\n\nCurrent → Semantic:\n- bg-surface (keep as is)\n- xl:bg-surface-sunken (keep as is)\n- !bg-surface-raised → bg-surface-raised (remove ! if possible, prefer proper specificity)\n- hover:!bg-surface → hover:bg-surface\n- !text-content-secondary → text-content-secondary\n\nRemove all ! important overrides where possible by adjusting class order or specificity. Keep semantic tokens.",
         "testStrategy": "1. Visual regression test: Header should look identical before/after\n2. Test mobile menu toggle (hamburger icon)\n3. Verify hover states work correctly\n4. Test in both dark and light modes\n5. Check responsive behavior at xl breakpoint",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 41,
+        "id": "41",
         "title": "Replace hardcoded tokens in HeroBanner component",
         "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/shared/HeroBanner/index.tsx",
         "details": "Update HeroBanner component:\n\n1. Replace color classes:\n   - bg-surface (already correct)\n   - !text-content-secondary → text-content-secondary\n   - !text-content-primary → text-content-primary\n\n2. Remove ! important overrides by adjusting class ordering\n\n3. Keep existing bg-surface as it already uses semantic token\n\nDo NOT change typography sizes yet (that's a separate pixel-perfect task).",
         "testStrategy": "1. Test HeroBanner on home page\n2. Test HeroBanner on about page\n3. Verify both dark and light mode rendering\n4. Ensure text colors follow semantic token values\n5. No visual regressions in layout or spacing",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 42,
+        "id": "42",
         "title": "Replace hardcoded tokens in StatCard component",
         "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/shared/StatCard/index.tsx",
         "details": "Read the StatCard component and replace any primitive dark-* or hardcoded color tokens with semantic equivalents:\n\n- bg-dark-* → bg-surface (or appropriate surface variant)\n- text-white → text-content-primary\n- text-dark-* → text-content-secondary/muted based on usage\n- border colors → border-default/subtle\n\nEnsure the component uses bg-surface, text-content-primary for numbers, and text-content-primary for labels as per Figma specs. Icon should use brand-accent.",
         "testStrategy": "1. Verify StatCard appearance on pages where it's used\n2. Test both dark and light modes\n3. Verify icon color uses brand-accent (#8EFB9D dark / #6FE37F light)\n4. Check number and label text colors match specs\n5. No layout shifts or visual regressions",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 43,
+        "id": "43",
         "title": "Replace hardcoded tokens in ProjectCard component",
         "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/home/ProjectsSection/ProjectCard.tsx",
         "details": "Update ProjectCard component (grid view):\n\n1. Replace bg-surface (already correct if using semantic)\n2. Replace rounded-5 → rounded-xl (12px per Figma)\n3. Replace color classes:\n   - !text-white → text-content-primary\n   - !text-content-secondary (keep if already semantic)\n   - bg-primary → bg-brand-primary\n   - hover:bg-blue-dark → hover:bg-brand-primary-hover (using new token)\n   - text-body-sm !text-white → text-body-sm text-white (remove !)\n\n4. Update button classes to use semantic brand tokens\n\nNote: This task focuses on token replacement; pixel-perfect adjustments are in task 49.",
         "testStrategy": "1. Test ProjectCard in grid view on home page\n2. Verify hover state on button uses brand-primary-hover\n3. Test both dark and light modes\n4. Ensure title and description colors are correct\n5. Verify border-radius is 12px (rounded-xl)",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 44,
+        "id": "44",
         "title": "Replace hardcoded tokens in ExperienceCard component",
         "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/about/ExperiencesSection/ExperienceCard.tsx",
         "details": "Update ExperienceCard:\n\n1. Replace bg-surface-sunken (verify it's using semantic token, not bg-dark-200)\n2. Replace text colors:\n   - text-white → text-content-primary\n   - text-dark-700 → text-content-muted\n   - Ensure company/position use text-content-primary\n   - Ensure location uses text-content-muted\n\n3. Verify rounded-xl is used (not custom radius)\n\nNote: Functionality changes (duration, toggle, badges) are separate tasks (51, 59).",
         "testStrategy": "1. Test ExperienceCard on about page\n2. Verify background uses surface-sunken\n3. Test text color hierarchy in dark/light modes\n4. Ensure no hardcoded dark-* tokens remain\n5. Visual comparison with Figma",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 45,
+        "id": "45",
         "title": "Replace hardcoded tokens in ProfessionalValue component",
         "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/about/ValuesSection/ProfessionalValue.tsx",
         "details": "Update ProfessionalValue card:\n\n1. Verify/update background: bg-surface\n2. Verify/update border: border-surface (or remove if not needed per Figma)\n3. Update text colors:\n   - text-white → text-content-primary\n   - Ensure icon uses brand-accent\n\n4. Verify border-radius: rounded-xl (12px)\n\nFigma specs: 225×199px card, fill #323232, border-radius 12px, padding 24px/16px, icon 48×48px fill #8EFB9D, text 16px/400 #FFFFFF.",
         "testStrategy": "1. Test ProfessionalValue cards in about page\n2. Verify 4-column grid layout\n3. Test icon color matches brand-accent\n4. Test dark and light mode rendering\n5. Ensure rich text with <strong> styling works",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 46,
+        "id": "46",
         "title": "Replace hardcoded tokens in ContactSection components",
         "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/contact/ (ContactSection, ContactInfo, ContactForm)",
         "details": "Update all contact-related components:\n\n1. ContactSection container:\n   - bg-dark-300 → bg-surface-overlay (new token for #262626)\n   - Update wrapper to use semantic tokens\n\n2. ContactForm:\n   - Input borders/backgrounds → use semantic surface/border tokens\n   - Button: bg-primary → bg-brand-primary\n   - Text: !text-white → text-content-primary\n\n3. ContactInfo:\n   - Text colors → text-content-primary/secondary/muted\n   - Icon colors → text-content-secondary\n\nEnsure bg-surface-overlay is used for the contact section background (#262626 dark / #FFFFFF light).",
         "testStrategy": "1. Test ContactSection on all pages (should be in AppLayout footer)\n2. Verify bg-surface-overlay applies (#262626 dark, #FFFFFF light)\n3. Test form input styling and validation states\n4. Test button hover states\n5. Verify ghost link styling for LinkedIn/GitHub",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 47,
+        "id": "47",
         "title": "Replace hardcoded tokens in SkillGroup and Skill components",
         "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/shared/SkillGroup/ (SkillGroup and Skill)",
         "details": "Update Skill badges:\n\n1. Badge background:\n   - bg-dark-500 → bg-surface-interactive\n\n2. Badge text:\n   - !text-white → text-content-primary\n\n3. Verify border-radius matches Figma:\n   - Small badges: rounded-[15px]\n   - Pill badges (for modal): rounded-[44px]\n\n4. Ensure icon colors are preserved from Iconify defaults or use brand-accent where appropriate",
         "testStrategy": "1. Test SkillGroup rendering in ExperienceCard\n2. Test SkillGroup rendering in ProjectCard\n3. Verify badge background is surface-interactive\n4. Test hover states if applicable\n5. Verify dark and light mode rendering",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 48,
+        "id": "48",
         "title": "Replace hardcoded tokens in @repo/ui components",
         "description": "Replace primitive tokens with semantic tokens in packages/ui/src/Control/ (Input, Label, Button)",
         "details": "Update UI library components:\n\n1. Input (packages/ui/src/Control/Input/index.tsx):\n   - Border states: border-content-disabled (default dark), border-content-secondary (light default)\n   - Focus: border-content-secondary (dark), border-content-muted (light hovered)\n   - Success: border-success\n   - Error: border-error\n   - Placeholder: text-content-secondary\n\n2. Label:\n   - Dark: text-content-primary\n   - Light: text-content-secondary\n\n3. Button.Base:\n   - Verify bg-brand-primary, hover states use semantic tokens\n   - Active state: bg-brand-primary-active with text-content-primary (dark) or text-surface (light inverts)\n\nRefer to FIGMA_SPECS.md §Input and §Button for exact state specifications.",
         "testStrategy": "1. Test all Input states (default, focused, success, error) in dark/light modes\n2. Test Button states (default, hover, active, disabled) in dark/light modes\n3. Test Label rendering in forms\n4. Run Storybook tests if available\n5. Test in ContactForm to ensure integration works",
         "priority": "medium",
         "dependencies": [
-          37,
-          38,
-          39
+          "37",
+          "38",
+          "39"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 49,
+        "id": "49",
         "title": "HeroBanner pixel-perfect typography corrections",
         "description": "Correct HeroBanner typography to match Figma specs exactly for Home and About variants",
         "details": "Update apps/site/src/features/shared/HeroBanner/index.tsx:\n\n1. Add props to support different sizes:\n   - titleSize?: 'lg' | 'xl' (lg=40px for Home, xl=48px for About)\n   - titleAs?: 'h1' | 'h2' (semantic HTML)\n\n2. Home variant (via home/HeroSection):\n   - Overline (name): 24px/400 (not current 24px from text-body-xl)\n   - Title (cargo): 40px/700 (create text-[40px] or use H2 40px/700)\n   - Bio: 16px/400 (text-body-sm)\n   - Column text: w-[474px]\n\n3. About variant (via about/HeroSection):\n   - Overline (cargo): 24px/400\n   - Name (H1): 48px/700 (use h1 or text-5xl)\n   - Bio: 16px/400\n   - Column text: w-[382px]\n\n4. Remove placeholder photo prop — src should come from parent feature\n\nUpdate consuming features (home/HeroSection, about/HeroSection) to pass correct props.",
         "testStrategy": "1. Measure typography in browser dev tools:\n   - Home: cargo should be 40px/700\n   - About: name should be 48px/700\n2. Verify column widths match Figma (474px Home, 382px About)\n3. Visual comparison with Figma screenshots\n4. Test responsive behavior\n5. Verify semantic HTML (h1, h2) is correct",
         "priority": "high",
         "dependencies": [
-          40,
-          41
+          "40",
+          "41"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 50,
+        "id": "50",
         "title": "StatCard pixel-perfect layout and styling",
         "description": "Update StatCard to match Figma specs exactly: 463×152px, horizontal layout with icon and text",
         "details": "Update apps/site/src/features/shared/StatCard/index.tsx per FIGMA_SPECS.md §StatCard:\n\nContainer:\n- bg-surface rounded-xl w-full h-[152px]\n- Layout: flex flex-row items-center gap-4\n\nIcon:\n- 72×72px container\n- Iconify icon 54×54px fill=brand-accent\n\nText wrapper:\n- VERTICAL layout, gap-4, pb-2.5\n- Number: text-4xl font-bold text-content-primary (36px/700)\n- Label: text-lg font-normal text-content-primary pl-5 (18px/400)\n\nGrid (where StatCards are rendered):\n- flex flex-row gap-6 (24px gap between cards)\n\nResponsive: See FIGMA_SPECS.md §StatCards por breakpoint for width adjustments at 1280px/1024px/640px/375px.",
         "testStrategy": "1. Measure card dimensions: should be 152px height, ~463px width (desktop)\n2. Verify gap between icon and text is 16px (gap-4)\n3. Verify number is 36px/700, label is 18px/400\n4. Test icon color matches brand-accent\n5. Test responsive behavior at different breakpoints",
         "priority": "high",
         "dependencies": [
-          37,
-          38,
-          42
+          "37",
+          "38",
+          "42"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 51,
+        "id": "51",
         "title": "ProjectCard pixel-perfect grid view styling",
         "description": "Update ProjectCard grid view to match Figma specs: 463×418px with precise padding, gaps, and button styling",
         "details": "Update apps/site/src/features/home/ProjectsSection/ProjectCard.tsx per FIGMA_SPECS.md §ProjectCard (grid view):\n\nCard:\n- 463×418px, bg-surface, rounded-xl\n\nImage area:\n- h-[244px], padding: 12px 12px 0 12px\n- Image: rounded-lg object-cover\n\nContent area:\n- padding: 16px 24px 24px 24px, gap-5 (20px), HORIZONTAL layout\n- Text block: gap-4 (16px), VERTICAL\n  - Title: 24px/700/text-content-primary (text-2xl font-bold)\n  - Description: 16px/400/text-content-secondary, line-clamp-2\n  - Badges: gap-3 (12px)\n- Button (self-end): 54×54px, bg-brand-primary, rounded-xl\n  - Icon: UI/arrow_forward (white, 24×24)\n\nIntegrate Button.Clipboard on card hover (existing @repo/ui component).\n\nGrid layout (ProjectsSection): gap-6 (24px) between cards.",
         "testStrategy": "1. Measure card: 463×418px\n2. Verify image area height: 244px with 12px padding\n3. Verify content padding: 16/24/24/24\n4. Verify button: 54×54px at bottom-right\n5. Test Button.Clipboard appears on hover\n6. Visual comparison with Figma",
         "priority": "high",
         "dependencies": [
-          37,
-          38,
-          43
+          "37",
+          "38",
+          "43"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 52,
+        "id": "52",
         "title": "ProjectCard pixel-perfect row view styling",
         "description": "Update ProjectCard row view to match Figma specs: 950×339px horizontal layout for projects page",
         "details": "Update apps/site/src/features/projects/ProjectsSection/index.tsx (or create row variant in ProjectCard) per FIGMA_SPECS.md §ProjectCard (row view):\n\nCard:\n- 950×339px, bg-surface, rounded-xl, HORIZONTAL layout\n\nImage (left):\n- 465×339px, padding: 12px\n- Image inside: 441×315px, rounded-lg\n\nContent (right):\n- 485×339px, padding: 24px, gap-5 (20px), HORIZONTAL\n- Text block (363px): gap-4 (16px), VERTICAL\n  - Title, description, badges (same as grid view)\n- Button column (54px): SPACE_BETWEEN, VERTICAL\n  - UI/share icon (24×24) at top\n  - Arrow button 54×54px bg-brand-primary rounded-xl at bottom\n\nList layout: VERTICAL, gap-6 (24px).",
         "testStrategy": "1. Measure card: 950×339px\n2. Verify image area: 465×339px with 12px padding\n3. Verify content area: 485×339px with 24px padding\n4. Verify share icon at top-right\n5. Verify arrow button at bottom-right\n6. Test on projects page",
         "priority": "high",
         "dependencies": [
-          37,
-          38,
-          43
+          "37",
+          "38",
+          "43"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 53,
+        "id": "53",
         "title": "ExperienceCard pixel-perfect styling and duration calculation",
         "description": "Update ExperienceCard to match Figma specs with calculated duration, correct typography, and separators",
         "details": "Update apps/site/src/features/about/ExperiencesSection/ExperienceCard.tsx per FIGMA_SPECS.md §ExperienceCard:\n\nTypography:\n- Cargo (H2): 24px/700/text-content-primary\n- Empresa: 20px/700/text-content-primary (uppercase)\n- Período + duração: 16px/400 inline\n- Localização: 16px/400/text-content-disabled (#A4A4A4)\n- \"Ver mais\": 14px/400/text-content-disabled (not brand-primary)\n\nFunctionality:\n1. calculateDuration(start, end) → \"Xa Xm\" format (end=null means today)\n2. Implement toggle \"Ver mais\" with state: line-clamp-1 default, expanded on click\n3. Render max 3 badges + \"+N\" badge if more\n4. Separators: border-b border-border-default between cards\n\nLayout:\n- Gap between cards: gap-10 (40px)\n- Badges: bg-surface-interactive rounded-[15px] h-7 px-3 py-1\n\nExperiencesSection list: VERTICAL layout with separators.",
         "testStrategy": "1. Test duration calculation: mock experiences with different date ranges\n2. Test \"Ver mais\" toggle expands/collapses description\n3. Verify only 3 badges shown, +N badge appears if > 3\n4. Verify separators between cards\n5. Verify empresa is 20px/700 (not 16px)\n6. Visual comparison with Figma",
         "priority": "high",
         "dependencies": [
-          37,
-          38,
-          44
+          "37",
+          "38",
+          "44"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 54,
+        "id": "54",
         "title": "ProfessionalValue pixel-perfect styling and rich text",
         "description": "Update ProfessionalValue card to match Figma specs: 225×199px with rich text support for highlighted keywords",
         "details": "Update apps/site/src/features/about/ValuesSection/ProfessionalValue.tsx per FIGMA_SPECS.md §ProfessionalValueCard:\n\nCard:\n- 225×199px, bg-surface, rounded-xl\n- padding: 24px (top/bottom) 16px (left/right)\n- gap-2.5 (10px), VERTICAL layout\n\nContent:\n- Icon: 48×48px, Iconify, fill=brand-accent\n- Text: 16px/400/text-content-primary, w-[194px]\n- Rich text: <strong className=\"text-brand-accent font-bold\">keyword</strong>\n\nValuesSection:\n- Grid: grid grid-cols-4 gap-4 items-stretch\n- Title: text-4xl font-bold text-content-primary text-left (32px, left-aligned, not centered)\n\nEnsure TextRich component (already exists in @repo/ui) supports strong tags with custom classes.",
         "testStrategy": "1. Measure card: 225×199px\n2. Verify icon is 48×48px with brand-accent color\n3. Test rich text: highlighted keywords should be brand-accent and bold\n4. Verify 4-column grid with equal heights (items-stretch)\n5. Verify title is left-aligned, not centered\n6. Visual comparison with Figma",
         "priority": "high",
         "dependencies": [
-          37,
-          38,
-          45
+          "37",
+          "38",
+          "45"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 55,
+        "id": "55",
         "title": "Input and Label pixel-perfect state styling",
         "description": "Update Input and Label components to match Figma specs for all states (default, focused, success, error) in dark and light modes",
         "details": "Update packages/ui/src/Control/Input/index.tsx and Label/index.tsx per FIGMA_SPECS.md §Input:\n\nInput:\n- h-11 px-2 py-3 rounded-xl border\n- Placeholder: 14px/400/text-content-secondary\n\nStates (dark):\n- default: border-content-disabled (#555555)\n- focused: border-content-secondary (#BABABA)\n- success: border-success (#71D875) + UI/check_circle icon\n- error: border-error (#FF5274) + UI/cancel icon\n\nStates (light):\n- default: border-content-secondary (#BABABA)\n- hovered: border-content-muted (#555555)\n- success: border-success (#52CE7A) + check icon\n- error: border-error (#F43564) + cancel icon\n\nLabel:\n- Dark: 16px/700/text-content-primary\n- Light: 16px/700/text-content-secondary\n\nError message:\n- text-xs text-error (below input)\n- 12px/400, color from error token\n\nWrapper: VERTICAL gap-1 (4px between label, input, error).",
         "testStrategy": "1. Test all input states in dark mode\n2. Test all input states in light mode\n3. Verify icon appearance (check/cancel) on success/error\n4. Verify error message styling\n5. Test in ContactForm integration\n6. Measure border colors with dev tools color picker",
         "priority": "high",
         "dependencies": [
-          37,
-          38,
-          48
+          "37",
+          "38",
+          "48"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 56,
+        "id": "56",
         "title": "Breadcrumb pixel-perfect styling",
         "description": "Update Breadcrumb component to match Figma specs with active state styling and arrow separators",
         "details": "Update apps/site/src/features/shared/Breadcrumb/index.tsx per FIGMA_SPECS.md §Breadcrumb:\n\nBreadcrumb row: flex items-center gap-1\n\nItem default:\n- px-3 py-1.5, 14px/400/text-content-secondary\n- hover: underline\n\nItem active (last/current):\n- px-3 py-1.5, rounded-lg\n- Dark: bg-surface text-content-primary\n- Light: bg-border-subtle text-content-secondary\n\nSeparator:\n- UI/arrow_forward_ios icon (20×20)\n- Dark: text-content-disabled\n- Light: text-content-muted (#8D8D8D)\n\nNavigation bar (on ProjectDetail page):\n- flex justify-between items-center h-12\n- Left: \"← Voltar\" with UI/arrow_back (24×24) + text 16px/400/text-content-primary\n- Right: Breadcrumb component",
         "testStrategy": "1. Test Breadcrumb on ProjectDetail page\n2. Verify active item has background (dark: surface, light: border-subtle)\n3. Verify separator icons are 20×20\n4. Test hover states\n5. Test \"← Voltar\" link functionality\n6. Visual comparison with Figma",
         "priority": "medium",
         "dependencies": [
-          37,
-          38
+          "37",
+          "38"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 57,
+        "id": "57",
         "title": "ContactSection pixel-perfect layout and form styling",
         "description": "Update ContactSection to match Figma specs: 1272px container with two-column layout, form validation, and ghost links",
         "details": "Update apps/site/src/features/contact/ContactSection/index.tsx per FIGMA_SPECS.md §Contact Section:\n\nContainer:\n- 1272px wide, bg-surface-overlay\n- padding: py-10 px-[161px]\n\nLayout: 950px inner, gap-16 (64px), HORIZONTAL\n\nColumn 1 (form, 560px):\n- Title: 20px/700/text-content-primary\n- Fields: gap-6 (24px), VERTICAL\n  - Row 1: Nome* (268px) + Sobrenome (268px) — 2 columns\n  - Row 2: E-mail* (560px full width)\n  - Row 3: Mensagem* (textarea h-[124px], 560px)\n- Button: w-[216px] h-[46px] bg-brand-primary rounded-xl\n- Use react-hook-form + zod (already installed)\n\nColumn 2 (info, 326px):\n- Title: 24px/700/text-content-primary\n- Email + WhatsApp with UI/content_copy icon (24×24, text-content-secondary)\n- Separador: border-b-2 border-border-default\n- Text: 16px/400/text-content-primary\n- Ghost links: LinkedIn + GitHub (w-[157px])\n  - Ghost link styling per FIGMA_SPECS.md §Button (Ghost Link)\n\nResponsive: See §Contact Section por breakpoint for mobile layout (VERTICAL stacking).",
         "testStrategy": "1. Measure container: 1272px wide\n2. Verify inner layout: 950px with 64px gap\n3. Test form validation with react-hook-form\n4. Test copy icons for email/WhatsApp\n5. Test ghost links hover states\n6. Test responsive behavior at 640px and 375px\n7. Verify bg-surface-overlay (#262626 dark, #FFFFFF light)",
         "priority": "high",
         "dependencies": [
-          37,
-          38,
-          46,
-          55
+          "37",
+          "38",
+          "46",
+          "55"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 58,
+        "id": "58",
         "title": "Create Modal component in @repo/ui",
         "description": "Implement reusable Modal component in packages/ui/src/Control/Modal with overlay, portal, focus trap, and ESC/click-outside close",
         "details": "Create packages/ui/src/Control/Modal/index.tsx per FIGMA_SPECS.md §Modal de Tecnologias:\n\nProps:\n- open: boolean\n- onClose: () => void\n- title?: string\n- children: ReactNode\n\nImplementation:\n- Overlay: bg-black/60, fixed inset-0 z-50, flex items-center justify-center\n- Container: bg-surface rounded-xl p-6 w-[690px] max-h-[80vh] overflow-y-auto\n- Close button: UI/close icon (24×24) at top-right\n- Close on: ESC key, click overlay, close button click\n- Focus trap: prevent tab outside modal when open\n- Use createPortal to render at body level\n- Prevent body scroll when modal is open\n\nAccessibility:\n- role=\"dialog\"\n- aria-modal=\"true\"\n- aria-labelledby for title\n- Focus management on open/close\n\nExport as Modal namespace or named export.",
         "testStrategy": "1. Create Storybook story for Modal\n2. Test open/close via button\n3. Test ESC key closes modal\n4. Test clicking overlay closes modal\n5. Test focus trap (tab stays inside modal)\n6. Test body scroll lock\n7. Test in both dark and light modes\n8. Test with long content (scroll within modal)",
         "priority": "high",
         "dependencies": [
-          37,
-          38
+          "37",
+          "38"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 59,
+        "id": "59",
         "title": "Create TechnologiesModal component in features/about",
         "description": "Implement TechnologiesModal with Basic and Detailed states, using Modal from @repo/ui and Accordion",
         "details": "Create apps/site/src/features/about/TechnologiesModal/index.tsx per FIGMA_SPECS.md §Modal de Tecnologias:\n\nProps:\n- open: boolean\n- onClose: () => void\n- company: string\n- position: string\n- technologies: { name: string; icon: string; description?: string }[]\n\nState: 'basic' | 'detailed' (toggle button or auto-expand if descriptions exist)\n\nBasic state:\n- Header: Title \"Tecnologias utilizadas\" (24px/700), company/position line (20px/700 + 16px/400)\n- Close button: UI/close (24×24)\n- Badges: bg-surface-interactive rounded-[44px] px-3 py-2 h-[38px]\n  - Icon 20×20 + text 16px/400/text-content-primary, gap-2.5 (10px)\n\nDetailed state:\n- Title shrinks to 20px/700\n- Company/position: text-content-secondary\n- Separator: border-b border-border-muted after header\n- Accordion items (use @repo/ui/Control/Accordion):\n  - Trigger: icon 24×24 + label 16px/700/text-content-primary + chevron\n  - Body: 14px/400/text-content-secondary\n  - Separator: border-b border-border-default between items\n\nUse Modal component from task 58.",
         "testStrategy": "1. Test modal opens from ExperienceCard \"+N\" badge\n2. Test Basic state renders all technology badges\n3. Test toggle to Detailed state\n4. Test Accordion expand/collapse\n5. Test close via X button, ESC, overlay click\n6. Test in dark and light modes\n7. Visual comparison with Figma",
         "priority": "high",
         "dependencies": [
-          58
+          "58"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 60,
+        "id": "60",
         "title": "Integrate TechnologiesModal into ExperienceCard",
         "description": "Update ExperienceCard to open TechnologiesModal when \"+N\" badge is clicked",
         "details": "Update apps/site/src/features/about/ExperiencesSection/ExperienceCard.tsx:\n\n1. Add state for modal: const [modalOpen, setModalOpen] = useState(false)\n2. Render TechnologiesModal component with props:\n   - open={modalOpen}\n   - onClose={() => setModalOpen(false)}\n   - company={company}\n   - position={position}\n   - technologies={skills}\n\n3. Update \"+N\" badge to be clickable:\n   - Add onClick={() => setModalOpen(true)}\n   - Add cursor-pointer class\n   - Add hover state styling\n\n4. Ensure max 3 badges are shown + \"+N\" badge (as per task 53)\n\nImport TechnologiesModal from features/about/TechnologiesModal.",
         "testStrategy": "1. Test clicking \"+N\" badge opens modal\n2. Verify modal receives correct props (company, position, technologies)\n3. Test closing modal returns focus to badge\n4. Test with experiences that have > 3 technologies\n5. Verify badge count is correct (+1, +2, etc.)",
         "priority": "medium",
         "dependencies": [
-          53,
-          59
+          "53",
+          "59"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 61,
+        "id": "61",
         "title": "Create CurriculumCTA component in features/about",
         "description": "Implement CurriculumCTA component with illustration and external link button",
         "details": "Create apps/site/src/features/about/CurriculumCTA/index.tsx per FIGMA_SPECS.md §CurriculumCTA:\n\nContainer:\n- 951×381px, bg-surface, rounded-xl\n- padding: 32px, gap-14 (56px), HORIZONTAL\n\nColumn 1 (left, 320×317px):\n- Static illustration image (decorative developer/code illustration)\n- Use Next.js Image component\n\nColumn 2 (right, 511×250px):\n- gap-8 (32px), VERTICAL\n- Text: 24px/400/text-content-primary, w-[511px]\n  - \"Acesse meu currículo para descobrir detalhes exclusivos sobre meus projetos, conquistas e habilidades técnicas.\"\n- Button: 292×48px, bg-brand-primary, rounded-xl, gap-2 (8px)\n  - Label: \"Acessar currículo\" 16px/700/text-white\n  - Icon: UI/open_in_new (24×24)\n  - URL: prop or environment variable (NEXT_PUBLIC_RESUME_URL)\n\nProps:\n- resumeUrl?: string (optional, fallback to env var)\n- className?: string",
         "testStrategy": "1. Measure container: 951×381px\n2. Verify illustration is 320×317px\n3. Verify button is 292×48px\n4. Test button link opens in new tab (_blank)\n5. Test in dark and light modes\n6. Visual comparison with Figma",
         "priority": "medium",
         "dependencies": [
-          37,
-          38
+          "37",
+          "38"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 62,
+        "id": "62",
         "title": "Verify and update ProjectDetail page implementation",
         "description": "Ensure ProjectDetail page matches Figma specs with all sections: navigation, hero, info grid, content blocks, and related projects",
         "details": "Review apps/site/src/features/projects/ProjectDetail/ProjectDetail.tsx per FIGMA_SPECS.md §ProjectDetail:\n\nVerify/implement these sections:\n\n1. Navigation bar (Frame 4685):\n   - \"← Voltar\" link + Breadcrumb component (task 56)\n   - flex justify-between items-center h-12\n\n2. Hero (Frame 4705):\n   - Image: 951×485px rounded-lg\n   - Title H1: 40px/700/text-content-primary\n   - Description: 20px/400/text-content-primary\n   - Badges row: gap-3 (12px)\n\n3. Info Grid (ProjectMetaGrid):\n   - Two cards: Resumo + Objetivos (463×150px each, gap-6)\n   - Meta info row: Função | Habilidades | Equipe | Data (gap-10)\n\n4. Content blocks:\n   - Full-width image: 951×404px\n   - Full text block: overline 16px/700 + H2 32px/700 + body 20px/400\n   - Split block: image 549×404px + text 368px\n\n5. Related projects:\n   - Title: 32px/700/text-content-primary\n   - 2 × ProjectCard (grid view), gap-6\n\nEnsure all spacing (gap-10, gap-6, gap-4) matches Figma.",
         "testStrategy": "1. Navigate to a project detail page\n2. Verify all sections are present and correctly ordered\n3. Measure section dimensions and gaps\n4. Test \"← Voltar\" navigation\n5. Test breadcrumb links\n6. Visual comparison with Figma layout\n7. Test responsive behavior",
         "priority": "medium",
         "dependencies": [
-          51,
-          56
+          "51",
+          "56"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 63,
+        "id": "63",
         "title": "Integrate CurriculumCTA into About page",
         "description": "Add CurriculumCTA component to the About page after ExperiencesSection",
         "details": "Update apps/site/src/app/[locale]/about/page.tsx:\n\n1. Import CurriculumCTA from ~features/about/CurriculumCTA\n2. Add <CurriculumCTA /> after <ExperiencesSection />\n3. Ensure proper spacing (gap-20 or gap-10 based on design system)\n4. Pass resumeUrl prop if needed (or rely on env var)\n\nLayout order:\n- HeroSection\n- ValuesSection\n- ExperiencesSection\n- CurriculumCTA ← new\n- (ContactSection is in AppLayout footer, not page-specific)",
         "testStrategy": "1. Navigate to /about page\n2. Verify CurriculumCTA appears after experiences\n3. Test button link works\n4. Verify spacing between sections\n5. Test in dark and light modes\n6. Test responsive layout",
         "priority": "low",
         "dependencies": [
-          61
+          "61"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 64,
+        "id": "64",
         "title": "Verify ContactSection is in AppLayout footer",
         "description": "Ensure ContactSection is rendered in AppLayout footer on all pages, not duplicated in individual page components",
         "details": "Review apps/site/src/components/Layout/AppLayout/index.tsx:\n\n1. Verify <ContactSection /> is rendered below <main>{children}</main>\n2. Ensure it's not imported/rendered in individual page files (home, about, projects)\n3. Verify layout structure:\n   - Header\n   - SideNavigation\n   - main (page content)\n   - ContactSection (footer)\n4. Ensure proper spacing above ContactSection\n\nIf ContactSection is missing from AppLayout, add it. If it's duplicated in pages, remove from pages.",
         "testStrategy": "1. Navigate to all pages (home, about, projects, project detail)\n2. Verify ContactSection appears on every page\n3. Verify it appears only once per page\n4. Verify consistent positioning at bottom\n5. Test in dark and light modes",
         "priority": "medium",
         "dependencies": [
-          57
+          "57"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 65,
+        "id": "65",
         "title": "Verify tsconfig path aliases include ~features",
         "description": "Ensure apps/site/tsconfig.json has all required path aliases for clean imports",
         "details": "Review apps/site/tsconfig.json and verify \"paths\" includes:\n\n```json\n\"paths\": {\n  \"~components\": [\"./src/components/index.ts\"],\n  \"~features/*\": [\"./src/features/*\"],\n  \"~hooks\": [\"./src/hooks/index.ts\"],\n  \"~assets/*\": [\"./src/assets/*\"],\n  \"~i18n/*\": [\"./src/i18n/*\"]\n}\n```\n\nIf missing, add them. Ensure no conflicts with existing aliases.\n\nVerify that all import statements in the codebase use these aliases (e.g., ~features/shared/HeroBanner, not relative ../../features/shared/HeroBanner).",
@@ -5831,9 +5832,13 @@
       }
     ],
     "metadata": {
-      "created": "2026-05-27T01:56:37.691Z",
-      "updated": "2026-05-27T03:24:24.472Z",
-      "description": "Tasks for design-system-refactor context"
+      "version": "1.0.0",
+      "lastModified": "2026-05-27T23:56:32.377Z",
+      "taskCount": 30,
+      "completedCount": 0,
+      "tags": [
+        "figma-pixel-perfect"
+      ]
     }
   }
 }
