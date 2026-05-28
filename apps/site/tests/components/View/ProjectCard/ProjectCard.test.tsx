@@ -58,6 +58,10 @@ vi.mock('~/features/shared/SkillGroup', () => ({
   SkillGroup: () => <div data-testid="skill-group" />,
 }));
 
+vi.mock('~features/about/TechnologiesModal', () => ({
+  TechnologiesModal: () => null,
+}));
+
 import { ProjectCard } from '~/features/home/ProjectsSection';
 
 const defaultProps = {

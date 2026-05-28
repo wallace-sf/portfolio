@@ -10,9 +10,24 @@ vi.mock('@repo/ui/View', () => ({
   }) => <p className={className}>{content}</p>,
 }));
 
-vi.mock('@repo/ui/Imagery', () => ({
-  Icon: ({ icon }: { icon: string }) => (
-    <span data-testid={`icon-${icon}`} />
+vi.mock('~features/shared/SkillGroup', () => ({
+  SkillGroup: ({
+    onShowAll,
+    total,
+  }: {
+    skills: unknown[];
+    max: number;
+    total: number;
+    initializeWithMax: number;
+    onShowAll?: () => void;
+  }) => (
+    <div data-testid="skill-group">
+      {onShowAll && total > 3 && (
+        <button type="button" onClick={onShowAll} data-testid="show-all">
+          +{total - 3}
+        </button>
+      )}
+    </div>
   ),
 }));
 
@@ -22,9 +37,8 @@ vi.mock('~features/about/TechnologiesModal', () => ({
     company,
   }: {
     open: boolean;
-    company: string;
+    company?: string;
     onClose: () => void;
-    position: string;
     technologies: unknown[];
   }) =>
     open ? (
@@ -76,29 +90,19 @@ describe('ExperienceCard', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should render skill badges for visible skills', () => {
+  it('should render SkillGroup when skills are provided', () => {
     render(<ExperienceCard {...defaultProps} />);
-    expect(screen.getByText('React')).toBeInTheDocument();
-    expect(screen.getByText('TypeScript')).toBeInTheDocument();
+    expect(screen.getByTestId('skill-group')).toBeInTheDocument();
   });
 
-  it('should show +N badge when skills exceed MAX_VISIBLE', () => {
-    const manySkills = Array.from({ length: 5 }, (_, i) => ({
-      name: `Skill${i}`,
-      icon: '',
-    }));
-    render(<ExperienceCard {...defaultProps} skills={manySkills} />);
-    expect(screen.getByText('+2')).toBeInTheDocument();
-  });
-
-  it('should open TechnologiesModal when +N badge is clicked', () => {
+  it('should open TechnologiesModal when show-all is triggered', () => {
     const manySkills = Array.from({ length: 5 }, (_, i) => ({
       name: `Skill${i}`,
       icon: '',
     }));
     render(<ExperienceCard {...defaultProps} skills={manySkills} />);
 
-    fireEvent.click(screen.getByText('+2'));
+    fireEvent.click(screen.getByTestId('show-all'));
 
     expect(screen.getByTestId('technologies-modal')).toBeInTheDocument();
   });

@@ -12,6 +12,7 @@ interface ISkillGroupProps {
   total: number;
   skills: SkillSummary[];
   initializeWithMax: number;
+  onShowAll?: () => void;
 }
 
 export const SkillGroup: FC<ISkillGroupProps> = ({
@@ -19,6 +20,7 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
   skills,
   total,
   initializeWithMax,
+  onShowAll,
 }) => {
   const [storedMax, setStoredMax] = useState<number>(initializeWithMax);
 
@@ -47,7 +49,17 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
       {renderedSkills}
       {skills.length > storedMax ? (
         <li>
-          <Badge.Count count={total - storedMax} />
+          {onShowAll ? (
+            <button
+              type="button"
+              onClick={onShowAll}
+              className="hover:opacity-80 transition-opacity"
+            >
+              <Badge.Count count={total - storedMax} />
+            </button>
+          ) : (
+            <Badge.Count count={total - storedMax} />
+          )}
         </li>
       ) : null}
     </ul>

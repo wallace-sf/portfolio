@@ -14,8 +14,8 @@ export interface ITechnology {
 export interface ITechnologiesModalProps {
   open: boolean;
   onClose: () => void;
-  company: string;
-  position: string;
+  company?: string;
+  position?: string;
   technologies: ITechnology[];
 }
 
@@ -33,23 +33,29 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
 
   return (
     <Modal open={open} onClose={onClose} title="Tecnologias utilizadas">
-      <div className="flex items-center gap-3 mb-6">
-        <span className="text-xl font-bold text-content-primary">
-          {company}
-        </span>
-        <span className="text-base font-normal text-content-primary">
-          {position}
-        </span>
-        {hasDescriptions && (
-          <button
-            type="button"
-            onClick={() => setView(isDetailed ? 'basic' : 'detailed')}
-            className="ml-auto text-body-xs text-brand-primary hover:opacity-80 transition-opacity"
-          >
-            {isDetailed ? 'Visão compacta' : 'Ver detalhes'}
-          </button>
-        )}
-      </div>
+      {(company || position || hasDescriptions) && (
+        <div className="flex items-center gap-3 mb-6">
+          {company && (
+            <span className="text-xl font-bold text-content-primary">
+              {company}
+            </span>
+          )}
+          {position && (
+            <span className="text-base font-normal text-content-primary">
+              {position}
+            </span>
+          )}
+          {hasDescriptions && (
+            <button
+              type="button"
+              onClick={() => setView(isDetailed ? 'basic' : 'detailed')}
+              className="ml-auto text-body-xs text-brand-primary hover:opacity-80 transition-opacity"
+            >
+              {isDetailed ? 'Visão compacta' : 'Ver detalhes'}
+            </button>
+          )}
+        </div>
+      )}
 
       {isDetailed && <hr className="border-t border-border-muted mb-6" />}
 

@@ -1,12 +1,13 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
+import { TechnologiesModal } from '~features/about/TechnologiesModal';
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { useBreakpoint } from '~hooks';
 import { Link } from '~i18n/routing';
@@ -34,6 +35,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
 }) => {
   const t = useTranslations('ProjectCard');
   const isXL = useBreakpoint('xl');
+  const [modalOpen, setModalOpen] = useState(false);
 
   if (view === 'row') {
     return (
@@ -68,6 +70,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
               max={3}
               initializeWithMax={3}
               total={skills.length}
+              onShowAll={() => setModalOpen(true)}
             />
             <Link
               href={`/projects/${slug}`}
@@ -92,6 +95,12 @@ export const ProjectCard: FC<IProjectCardProps> = ({
             />
           )}
         </Button.Clipboard>
+
+        <TechnologiesModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          technologies={skills}
+        />
       </article>
     );
   }
@@ -138,6 +147,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           max={isXL ? 3 : 2}
           initializeWithMax={2}
           total={skills.length}
+          onShowAll={() => setModalOpen(true)}
         />
         <Link
           href={`/projects/${slug}`}
@@ -147,6 +157,12 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           <Icon icon="ic:round-arrow-forward" className="text-xl" />
         </Link>
       </div>
+
+      <TechnologiesModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        technologies={skills}
+      />
     </article>
   );
 };
