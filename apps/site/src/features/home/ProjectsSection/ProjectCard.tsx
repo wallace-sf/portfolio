@@ -107,20 +107,6 @@ export const ProjectCard: FC<IProjectCardProps> = ({
 
   return (
     <article className="relative bg-surface rounded-xl overflow-hidden">
-      <Button.Clipboard
-        unstyled
-        text={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects/${slug}`}
-        tooltip={t('share_tooltip')}
-        className="absolute top-3 right-3 z-10 flex items-center justify-center w-9 h-9 rounded-lg bg-surface-raised hover:bg-surface-interactive transition-colors"
-      >
-        {(copied) => (
-          <Icon
-            icon={copied ? 'ic:round-check' : 'ic:round-share'}
-            className="text-xl text-content-secondary"
-          />
-        )}
-      </Button.Clipboard>
-
       <div className="relative h-[244px] mx-3 mt-3 rounded-lg overflow-hidden">
         <Image
           src={coverImage.url}
@@ -130,6 +116,19 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           sizes="463px"
           priority
         />
+        <Button.Clipboard
+          unstyled
+          text={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects/${slug}`}
+          tooltip={t('share_tooltip')}
+          className="absolute top-2 right-2 z-10 flex items-center justify-center w-9 h-9 rounded-lg bg-surface-raised hover:bg-surface-interactive transition-colors"
+        >
+          {(copied) => (
+            <Icon
+              icon={copied ? 'ic:round-check' : 'ic:round-share'}
+              className="text-xl text-content-secondary"
+            />
+          )}
+        </Button.Clipboard>
       </div>
 
       <div className="flex flex-col p-4 gap-4">
