@@ -56,14 +56,19 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
       >
         <p className="text-body-xl text-content-secondary pb-2">{title}</p>
         <TitleTag
-          className={classNames('text-content-primary font-bold pb-8', {
-            'text-[40px] leading-[56px]': titleSize === 'lg',
-            'text-5xl leading-[67.2px]': titleSize === 'xl',
-          })}
+          className={classNames(
+            'text-content-primary font-bold mb-8 line-clamp-2',
+            {
+              'text-[40px] leading-[56px]': titleSize === 'lg',
+              'text-5xl leading-[67.2px]': titleSize === 'xl',
+            },
+          )}
         >
           {caption}
         </TitleTag>
-        <p className="text-body-sm text-content-primary">{content}</p>
+        <p className="text-body-sm text-content-primary line-clamp-3">
+          {content}
+        </p>
       </section>
     </section>
   );
