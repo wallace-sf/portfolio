@@ -10,13 +10,17 @@ interface IStatCardProps {
 
 export const StatCard: FC<IStatCardProps> = ({ label, value, icon }) => {
   return (
-    <article className="flex items-center gap-x-3 border border-subtle px-4 py-4 rounded-xl bg-surface/20">
-      <Icon icon={icon} className="text-4xl text-accent shrink-0" />
-      <div className="flex flex-col">
-        <span className="text-content-primary font-semibold text-lg leading-tight">
+    <article className="flex flex-row items-center gap-4 bg-surface rounded-xl w-full h-[152px] px-4">
+      <div className="flex items-center justify-center w-[72px] h-[72px] shrink-0">
+        <Icon icon={icon} className="text-[54px] text-brand-accent" />
+      </div>
+      <div className="flex flex-col gap-1 pb-2.5">
+        <span className="text-4xl font-bold text-content-primary leading-[50.4px]">
           {value}
         </span>
-        <span className="text-content-muted text-sm">{label}</span>
+        <span className="text-lg font-normal text-content-primary leading-[25.2px] pl-5">
+          {label}
+        </span>
       </div>
     </article>
   );

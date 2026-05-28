@@ -5613,9 +5613,9 @@
           "40",
           "41"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [],
-        "updatedAt": "2026-05-28T00:12:17.740Z"
+        "updatedAt": "2026-05-28T00:16:37.231Z"
       },
       {
         "id": "50",
@@ -5629,8 +5629,9 @@
           "38",
           "42"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:26:18.914Z"
       },
       {
         "id": "51",
@@ -5846,9 +5847,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-28T00:12:17.741Z",
+      "lastModified": "2026-05-28T00:26:18.914Z",
       "taskCount": 30,
-      "completedCount": 13,
+      "completedCount": 15,
       "tags": [
         "figma-pixel-perfect"
       ]
