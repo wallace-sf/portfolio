@@ -33,7 +33,7 @@ export const ButtonBase: FC<IButtonBaseProps> = ({
           'py-3 px-6': !unstyled && size === 'large',
           'py-2 px-6': !unstyled && size === 'small',
 
-          'bg-brand-primary !text-white disabled:opacity-50 hover:opacity-90':
+          'bg-brand-primary text-content-primary disabled:opacity-50 hover:bg-brand-primary-hover':
             !unstyled && appearance === 'filled',
 
           'border border-brand-primary !text-brand-primary bg-transparent disabled:opacity-50 hover:bg-brand-primary/10':

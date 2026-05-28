@@ -101,7 +101,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           />
           <Link
             href={`/projects/${slug}`}
-            className="flex flex-row justify-center gap-x-2 items-center bg-primary text-body-sm !text-white !font-bold rounded-xl hover:bg-blue-dark transition-all duration-300 py-3 px-6"
+            className="flex flex-row justify-center gap-x-2 items-center bg-brand-primary text-body-sm text-content-primary !font-bold rounded-xl hover:bg-brand-primary-hover transition-all duration-300 py-3 px-6"
           >
             {t('view_project')}
             <Icon icon="ic:round-arrow-forward" />

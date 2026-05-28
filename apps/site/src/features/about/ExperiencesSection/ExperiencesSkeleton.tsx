@@ -6,7 +6,7 @@ export function ExperiencesSkeleton() {
         {(['exp-1', 'exp-2', 'exp-3'] as const).map((key) => (
           <li
             key={key}
-            className="flex flex-col py-6 px-3 bg-dark-200 rounded-xl gap-y-3"
+            className="flex flex-col py-6 px-3 bg-surface-sunken rounded-xl gap-y-3"
           >
             <div className="h-5 w-3/5 bg-gray-700 rounded" />
             <div className="h-4 w-2/5 bg-gray-700 rounded" />

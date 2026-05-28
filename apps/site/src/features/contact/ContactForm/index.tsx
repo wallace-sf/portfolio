@@ -34,7 +34,7 @@ export const ContactForm: FC = () => {
   if (submitted) {
     return (
       <div className="w-full">
-        <h5 className="!text-white mb-6">{tForm('title')}</h5>
+        <h5 className="text-content-primary mb-6">{tForm('title')}</h5>
         <p className="text-accent">{tForm('success')}</p>
       </div>
     );
@@ -42,7 +42,7 @@ export const ContactForm: FC = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
-      <h5 className="!text-white mb-6">{tForm('title')}</h5>
+      <h5 className="text-content-primary mb-6">{tForm('title')}</h5>
 
       <fieldset className="w-full mb-4">
         <Text.Base

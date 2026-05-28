@@ -20,7 +20,7 @@ export const ContactInfo: FC = () => {
           {t('email')}
         </strong>
         <Link
-          className="inline-block w-full text-body-sm !text-primary !underline not-italic mb-6"
+          className="inline-block w-full text-body-sm text-brand-primary !underline not-italic mb-6"
           href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}
         >
           {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
@@ -29,7 +29,7 @@ export const ContactInfo: FC = () => {
           WhatsApp
         </strong>
         <Link
-          className="flex flex-row items-center gap-x-2 w-full text-body-sm !text-primary !underline not-italic"
+          className="flex flex-row items-center gap-x-2 w-full text-body-sm text-brand-primary !underline not-italic"
           href={process.env.NEXT_PUBLIC_WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"

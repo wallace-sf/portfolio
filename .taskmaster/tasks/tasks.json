@@ -5411,9 +5411,9 @@
         "testStrategy": "1. Build packages/tailwind-config to ensure no TypeScript errors\n2. Verify that Tailwind classes like bg-surface-overlay, text-content-disabled, border-border-muted, bg-brand-primary-hover are generated in the compiled CSS\n3. Test in a component that these classes apply correctly\n4. Run pnpm build at root to ensure no conflicts",
         "priority": "high",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [],
-        "updatedAt": "2026-05-27T23:56:32.376Z"
+        "updatedAt": "2026-05-28T00:02:15.400Z"
       },
       {
         "id": "37",
@@ -5425,8 +5425,9 @@
         "dependencies": [
           "36"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:02:18.460Z"
       },
       {
         "id": "38",
@@ -5438,8 +5439,9 @@
         "dependencies": [
           "36"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:02:21.544Z"
       },
       {
         "id": "39",
@@ -5452,8 +5454,9 @@
           "37",
           "38"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:02:24.571Z"
       },
       {
         "id": "40",
@@ -5833,9 +5836,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-27T23:56:32.377Z",
+      "lastModified": "2026-05-28T00:02:24.572Z",
       "taskCount": 30,
-      "completedCount": 0,
+      "completedCount": 4,
       "tags": [
         "figma-pixel-perfect"
       ]
