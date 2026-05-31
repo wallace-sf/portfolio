@@ -9,7 +9,7 @@ import Image from 'next/image';
 
 import { TechnologiesModal } from '~features/about/TechnologiesModal';
 import { SkillGroup } from '~features/shared/SkillGroup';
-import { useBreakpoint, useLayout } from '~hooks';
+import { useBreakpoint } from '~hooks';
 import { Link } from '~i18n/routing';
 
 export interface IProjectCardProps {
@@ -36,7 +36,6 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   const t = useTranslations('ProjectCard');
   const isXL = useBreakpoint('xl');
   const [modalOpen, setModalOpen] = useState(false);
-  const { close } = useLayout();
 
   if (view === 'row') {
     return (
@@ -72,7 +71,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
               initializeWithMax={3}
               total={skills.length}
               onShowAll={() => {
-                close?.();
+                // close?.();
                 setModalOpen(true);
               }}
             />

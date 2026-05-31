@@ -7,7 +7,6 @@ vi.mock('next-intl', () => ({
 
 vi.mock('~hooks', () => ({
   useBreakpoint: () => false,
-  useLayout: () => ({ open: false, toggle: vi.fn(), close: vi.fn() }),
 }));
 
 vi.mock('~i18n/routing', () => ({
@@ -71,13 +70,18 @@ const defaultProps = {
   title: 'My Project',
   caption: 'A great project',
   coverImage: { url: 'https://example.com/image.jpg', alt: 'My project cover' },
-  skills: [{ name: 'React', icon: '' }, { name: 'TypeScript', icon: '' }],
+  skills: [
+    { name: 'React', icon: '' },
+    { name: 'TypeScript', icon: '' },
+  ],
 };
 
 describe('ProjectCard', () => {
   it('should render a link to the project detail page', () => {
     render(<ProjectCard {...defaultProps} />);
-    const link = screen.getByRole('link', { name: /ProjectCard\.view_project/i });
+    const link = screen.getByRole('link', {
+      name: /ProjectCard\.view_project/i,
+    });
     expect(link).toHaveAttribute('href', '/projects/my-project');
   });
 

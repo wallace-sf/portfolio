@@ -1,11 +1,11 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useState, useCallback } from 'react';
 
 import { TextRich } from '@repo/ui/View';
+import { useScrollLock, useBoolean } from 'usehooks-ts';
 
 import { SkillGroup } from '~features/shared/SkillGroup';
-import { useLayout } from '~hooks';
 
 import { TechnologiesModal } from '../TechnologiesModal';
 
@@ -36,8 +36,18 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
   description,
   skills,
 }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const { close } = useLayout();
+  const { lock, unlock } = useScrollLock({ autoLock: false });
+  const { value, setTrue, setFalse } = useBoolean(false);
+
+  const handleShowAll = useCallback(() => {
+    setTrue();
+    lock();
+  }, [lock, setTrue]);
+
+  const handleClose = useCallback(() => {
+    setFalse();
+    unlock();
+  }, [unlock, setFalse]);
 
   return (
     <>
@@ -61,17 +71,13 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
             max={3}
             initializeWithMax={3}
             total={skills.length}
-            onShowAll={() => {
-              close?.();
-              setModalOpen(true);
-            }}
+            onShowAll={!value ? handleShowAll : undefined}
           />
         )}
       </article>
-
       <TechnologiesModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={value}
+        onClose={handleClose}
         company={company}
         position={position}
         technologies={skills}
