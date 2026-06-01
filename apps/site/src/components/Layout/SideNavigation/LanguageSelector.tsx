@@ -13,8 +13,8 @@ import { useRouter } from 'next/navigation';
 
 import { usePathname } from '~i18n/routing';
 
-import { MenuItem } from '../MenuItem';
 import { LANGUAGES_OPTIONS } from './constants';
+import { MenuItem } from './MenuItem';
 
 export const LanguageSelector: FC = () => {
   const t = useTranslations('SideNavigation');

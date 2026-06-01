@@ -12,8 +12,8 @@ import { useTranslations } from 'next-intl';
 
 import { Theme, useDarkMode, useTheme } from '~hooks';
 
-import { MenuItem } from '../MenuItem';
 import { THEME_OPTIONS } from './constants';
+import { MenuItem } from './MenuItem';
 
 export const ThemeToggle: FC = () => {
   const t = useTranslations('SideNavigation');

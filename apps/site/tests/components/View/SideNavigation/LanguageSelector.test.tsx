@@ -22,7 +22,7 @@ vi.mock('next-intl', () => ({
   useLocale: () => 'en-US',
 }));
 
-vi.mock('~/components/Layout/MenuItem/index', () => ({
+vi.mock('~/components/Layout/SideNavigation/MenuItem', () => ({
   MenuItem: {
     Item2: {
       Expandable: ({ children }: { children: React.ReactNode }) => (
