@@ -57,17 +57,12 @@ export class Profile extends AggregateRoot<Profile, IProfileProps> {
   }
 
   static create(props: IProfileProps): Either<ValidationError, Profile> {
-    const { error, isValid } = Validator.of(props.featuredProjectSlugs)
-      .refine(
-        (slugs) => slugs.length <= Profile.MAX_FEATURED_PROJECTS,
-        `Maximum ${Profile.MAX_FEATURED_PROJECTS} featured projects allowed, got ${props.featuredProjectSlugs.length}.`,
-      )
+    const { isValid } = Validator.of(props.featuredProjectSlugs)
+      .refine((slugs) => slugs.length <= Profile.MAX_FEATURED_PROJECTS)
       .validate();
 
-    if (!isValid && error)
-      return left(
-        new ValidationError({ code: Profile.ERROR_CODE, message: error }),
-      );
+    if (!isValid)
+      return left(new ValidationError({ code: Profile.ERROR_CODE }));
 
     const requiredResult = collect([
       Name.create(props.name),

@@ -16,18 +16,12 @@ export class Slug extends ValueObject<string> {
   static create(raw?: string): Either<ValidationError, Slug> {
     const normalized = raw?.trim().toLowerCase() ?? '';
 
-    const { error, isValid } = Validator.of(normalized)
-      .length(3, Slug.MAX_LENGTH, 'Slug must be at least 3 characters.')
-      .regex(
-        Slug.SLUG_REGEX,
-        'Slug must be kebab-case (lowercase letters, numbers and hyphens only).',
-      )
+    const { isValid } = Validator.of(normalized)
+      .length(3, Slug.MAX_LENGTH)
+      .regex(Slug.SLUG_REGEX)
       .validate();
 
-    if (!isValid && error)
-      return left(
-        new ValidationError({ code: Slug.ERROR_CODE, message: error }),
-      );
+    if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
 
     return right(new Slug(normalized));
   }

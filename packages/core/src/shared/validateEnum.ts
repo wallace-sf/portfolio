@@ -7,12 +7,10 @@ export function validateEnum<T extends string>(
   value: T,
   allowed: T[],
   code: string,
-  message: string,
+  message = '',
 ): Either<ValidationError, T> {
-  const { error, isValid } = Validator.of(value)
+  const { isValid } = Validator.of(value)
     .in(allowed as string[], message)
     .validate();
-  return isValid
-    ? right(value)
-    : left(new ValidationError({ code, message: error! }));
+  return isValid ? right(value) : left(new ValidationError({ code }));
 }

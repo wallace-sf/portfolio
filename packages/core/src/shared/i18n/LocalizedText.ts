@@ -45,14 +45,12 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
   static create(
     input: ILocalizedTextInput,
   ): Either<ValidationError, LocalizedText> {
-    const { error, isValid } = Validator.of(input?.['en-US']?.trim() ?? '')
-      .notEmpty('en-US is required and must be non-empty after trim.')
+    const { isValid } = Validator.of(input?.['en-US']?.trim() ?? '')
+      .notEmpty()
       .validate();
 
-    if (!isValid && error)
-      return left(
-        new ValidationError({ code: LocalizedText.ERROR_CODE, message: error }),
-      );
+    if (!isValid)
+      return left(new ValidationError({ code: LocalizedText.ERROR_CODE }));
 
     return right(new LocalizedText(normalizeInput(input)));
   }

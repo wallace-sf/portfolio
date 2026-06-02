@@ -4,3 +4,4 @@ export {
   type EnsureAppUserForAuthSessionInput,
 } from './EnsureAppUserForAuthSession';
 export { GetCurrentUser, type GetCurrentUserInput } from './GetCurrentUser';
+export { SignIn, type SignInInput } from './SignIn';

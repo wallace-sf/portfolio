@@ -60,9 +60,7 @@ describe('Slug', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Slug.ERROR_CODE);
-      expect((result.value as ValidationError).message).toContain(
-        'at least 3 characters',
-      );
+      expect((result.value as ValidationError).message).toBe(Slug.ERROR_CODE);
     });
 
     it('should return Left for slug with spaces', () => {

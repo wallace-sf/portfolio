@@ -3,8 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev --filter=!storybooks",
-    "storybook": "turbo storybook",
+    "dev": "turbo dev",
     "lint": "turbo lint",
     "lint:check": "turbo lint:check",
     "format": "turbo format",
@@ -12,10 +11,10 @@
     "types": "turbo types",
     "test": "turbo test",
     "test:ci": "pnpm -r --filter=!@repo/infra test",
-    "types:ci": "pnpm -r --filter=!storybooks types",
+    "types:ci": "pnpm -r types",
     "test:core": "pnpm -C packages/core test",
     "test:utils": "pnpm -C packages/utils test",
-    "test:web": "pnpm -C apps/web test",
+    "test:site": "pnpm -C apps/site test",
     "seed": "pnpm --filter @repo/infra db:seed"
   },
   "devDependencies": {

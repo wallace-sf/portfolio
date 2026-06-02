@@ -36,9 +36,8 @@ describe('Email', () => {
       const result = Email.create('invalid-email');
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).message).toContain(
-        'valid format',
-      );
+      expect((result.value as ValidationError).code).toBe(Email.ERROR_CODE);
+      expect((result.value as ValidationError).message).toBe(Email.ERROR_CODE);
     });
 
     it('should return Left for invalid format (no domain)', () => {
@@ -52,7 +51,8 @@ describe('Email', () => {
       const result = Email.create(longEmail);
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).message).toContain('between');
+      expect((result.value as ValidationError).code).toBe(Email.ERROR_CODE);
+      expect((result.value as ValidationError).message).toBe(Email.ERROR_CODE);
     });
   });
 

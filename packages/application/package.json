@@ -7,7 +7,8 @@
     ".": { "types": "./dist/types/index.d.ts", "default": "./src/index.ts" },
     "./identity": { "types": "./dist/types/identity/index.d.ts", "default": "./src/identity/index.ts" },
     "./portfolio": { "types": "./dist/types/portfolio/index.d.ts", "default": "./src/portfolio/index.ts" },
-    "./contact": { "types": "./dist/types/contact/index.d.ts", "default": "./src/contact/index.ts" }
+    "./contact": { "types": "./dist/types/contact/index.d.ts", "default": "./src/contact/index.ts" },
+    "./shared": { "types": "./dist/types/shared/index.d.ts", "default": "./src/shared/index.ts" }
   },
   "scripts": {
     "test": "vitest run",

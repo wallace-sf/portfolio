@@ -8,13 +8,21 @@
   --tw-surface-sunken: 40 40 40; /* dark-200 #282828 */
   --tw-surface-base: 28 28 28; /* dark #1C1C1C */
   --tw-surface-raised: 73 73 73; /* dark-500 #494949 */
+  --tw-surface-overlay: 38 38 38; /* #262626 — contact section bg */
+  --tw-surface-interactive: 73 73 73; /* #494949 — badges, hover states */
   --tw-content-primary: 255 255 255;
   --tw-content-secondary: 186 186 186; /* dark-900 #BABABA */
   --tw-content-muted: 141 141 141; /* dark-700 #8D8D8D */
+  --tw-content-disabled: 164 164 164; /* #A4A4A4 — "Ver mais", secondary icons */
   --tw-border-default: 62 62 62; /* dark-400 #3E3E3E */
   --tw-border-subtle: 50 50 50; /* dark-300 #323232 */
+  --tw-border-muted: 73 73 73; /* #494949 — modal separator */
   --tw-brand-primary: 68 82 255; /* primary #4452FF */
   --tw-brand-accent: 142 251 157; /* accent #8EFB9D */
+  --tw-brand-primary-hover: 50 61 205; /* #323DCD */
+  --tw-brand-primary-active: 161 168 255; /* #A1A8FF */
+  --tw-error: 255 82 116; /* #FF5274 */
+  --tw-success: 113 216 117; /* #71D875 */
 }
 
 .light {
@@ -22,13 +30,21 @@
   --tw-surface-sunken: 255 255 255; /* #FFFFFF */
   --tw-surface-base: 240 242 248; /* #F0F2F8 */
   --tw-surface-raised: 229 231 235; /* #E5E7EB */
+  --tw-surface-overlay: 255 255 255; /* #FFFFFF */
+  --tw-surface-interactive: 235 235 235; /* #EBEBEB */
   --tw-content-primary: 28 28 28; /* #1C1C1C */
   --tw-content-secondary: 85 85 85; /* #555555 */
   --tw-content-muted: 136 136 136; /* #888888 */
+  --tw-content-disabled: 164 164 164; /* #A4A4A4 */
   --tw-border-default: 209 213 219; /* #D1D5DB */
   --tw-border-subtle: 229 231 235; /* #E5E7EB */
+  --tw-border-muted: 186 186 186; /* #BABABA */
   --tw-brand-primary: 88 101 255; /* #5865FF */
   --tw-brand-accent: 111 227 127; /* #6FE37F */
+  --tw-brand-primary-hover: 65 79 255; /* #414FFF */
+  --tw-brand-primary-active: 192 197 255; /* #C0C5FF */
+  --tw-error: 244 53 100; /* #F43564 */
+  --tw-success: 82 206 122; /* #52CE7A */
 }
 
 @layer base {

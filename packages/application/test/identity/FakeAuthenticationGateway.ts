@@ -6,7 +6,6 @@ import { AuthPrincipal } from '~/identity/dtos/AuthPrincipal';
 import { AuthSession } from '~/identity/dtos/AuthSession';
 
 const ACCESS_TOKEN_COOKIE = 'sb-access-token';
-const REFRESH_TOKEN_COOKIE = 'sb-refresh-token';
 
 type StoredUser = { password: string; principal: AuthPrincipal };
 
@@ -48,20 +47,21 @@ export class FakeAuthenticationGateway implements IAuthenticationGateway {
     return right(this._makeSession(credentials.email));
   }
 
-  async signOut(cookies: AuthCookieApi): Promise<Either<DomainError, void>> {
+  async signOut(
+    _accessToken: string,
+    _refreshToken: string,
+  ): Promise<Either<DomainError, void>> {
     if (this.forcedError) return left(this.forcedError);
-
-    cookies.delete(ACCESS_TOKEN_COOKIE);
-    cookies.delete(REFRESH_TOKEN_COOKIE);
     return right(undefined);
   }
 
-  async refreshSession(cookies: AuthCookieApi): Promise<Either<DomainError, AuthSession>> {
+  async refreshSession(
+    refreshToken: string,
+  ): Promise<Either<DomainError, AuthSession>> {
     if (this.forcedError) return left(this.forcedError);
 
-    const refreshToken = cookies.get(REFRESH_TOKEN_COOKIE);
     if (!refreshToken) {
-      return left(new DomainError('NO_REFRESH_TOKEN', { message: 'No refresh token in cookies.' }));
+      return left(new DomainError('NO_REFRESH_TOKEN', { message: 'No refresh token.' }));
     }
 
     const email = this._emailFromToken(refreshToken);
@@ -83,6 +83,20 @@ export class FakeAuthenticationGateway implements IAuthenticationGateway {
     }
 
     const email = this._emailFromToken(accessToken);
+    const stored = email ? this.users.get(email) : undefined;
+    if (!stored) {
+      return left(new DomainError('INVALID_ACCESS_TOKEN', { message: 'Access token is invalid or expired.' }));
+    }
+
+    return right(stored.principal);
+  }
+
+  async getPrincipalFromSession(
+    session: AuthSession,
+  ): Promise<Either<DomainError, AuthPrincipal>> {
+    if (this.forcedError) return left(this.forcedError);
+
+    const email = this._emailFromToken(session.accessToken);
     const stored = email ? this.users.get(email) : undefined;
     if (!stored) {
       return left(new DomainError('INVALID_ACCESS_TOKEN', { message: 'Access token is invalid or expired.' }));

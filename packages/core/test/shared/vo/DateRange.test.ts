@@ -88,8 +88,8 @@ describe('DateRange', () => {
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
       expect((result.value as ValidationError).code).toBe(DateRange.ERROR_CODE);
-      expect((result.value as ValidationError).message).toContain(
-        'Start date must be before or equal to end date',
+      expect((result.value as ValidationError).message).toBe(
+        DateRange.ERROR_CODE,
       );
     });
   });

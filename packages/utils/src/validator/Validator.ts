@@ -9,6 +9,7 @@ export type Validation = <TValue>(value: TValue) => boolean;
 export class Validator<TValue> {
   private readonly _validations: Array<[Validation, string]>;
   private _error: string | null = null;
+  private _failed: boolean = false;
   private _value: TValue;
 
   private constructor(value: TValue) {
@@ -21,7 +22,7 @@ export class Validator<TValue> {
     return new Validator<TValue>(value);
   }
 
-  private append(validation: Validation, error: string) {
+  private append(validation: Validation, error = 'validation-error') {
     this._validations.push([validation, error]);
 
     return this;
@@ -31,9 +32,10 @@ export class Validator<TValue> {
     for (const [validation, error] of this._validations) {
       const isValid = validation(this._value);
 
+      this._failed = !isValid;
       this._error = isValid ? null : error;
 
-      if (this._error) break;
+      if (this._failed) break;
     }
 
     return { isValid: this.isValid, error: this.error };
@@ -44,21 +46,21 @@ export class Validator<TValue> {
   }
 
   get isValid(): boolean {
-    return this._error == null;
+    return !this._failed;
   }
 
-  public length(min: number, max: number, error: string): Validator<TValue> {
+  public length(min: number, max: number, error?: string): Validator<TValue> {
     const config = { min, max };
 
     this.append(
       (value) => z.string().min(min).max(max).safeParse(value).success,
-      Mustache.render(error, config),
+      error ? Mustache.render(error, config) : undefined,
     );
 
     return this;
   }
 
-  public alpha(error: string): Validator<TValue> {
+  public alpha(error?: string): Validator<TValue> {
     this.append(
       (value) => z.string().regex(ALPHA_REGEX).safeParse(value).success,
       error,
@@ -67,55 +69,55 @@ export class Validator<TValue> {
     return this;
   }
 
-  public empty(error: string): Validator<TValue> {
+  public empty(error?: string): Validator<TValue> {
     this.append((value) => z.string().max(0).safeParse(value).success, error);
 
     return this;
   }
 
-  public notEmpty(error: string): Validator<TValue> {
+  public notEmpty(error?: string): Validator<TValue> {
     this.append((value) => z.string().min(1).safeParse(value).success, error);
 
     return this;
   }
 
-  public nil(error: string): Validator<TValue> {
+  public nil(error?: string): Validator<TValue> {
     this.append((value) => value == null, error);
 
     return this;
   }
 
-  public notNil(error: string): Validator<TValue> {
+  public notNil(error?: string): Validator<TValue> {
     this.append((value) => value != null, error);
 
     return this;
   }
 
-  public string(error: string): Validator<TValue> {
+  public string(error?: string): Validator<TValue> {
     this.append((value) => z.string().safeParse(value).success, error);
 
     return this;
   }
 
-  public uuid(error: string): Validator<TValue> {
+  public uuid(error?: string): Validator<TValue> {
     this.append((value) => z.string().uuid().safeParse(value).success, error);
 
     return this;
   }
 
-  public email(error: string): Validator<TValue> {
+  public email(error?: string): Validator<TValue> {
     this.append((value) => z.string().email().safeParse(value).success, error);
 
     return this;
   }
 
-  public url(error: string): Validator<TValue> {
+  public url(error?: string): Validator<TValue> {
     this.append((value) => z.string().url().safeParse(value).success, error);
 
     return this;
   }
 
-  public datetime(error: string): Validator<TValue> {
+  public datetime(error?: string): Validator<TValue> {
     this.append(
       (value) =>
         z.string().safeParse(value).success &&
@@ -126,7 +128,7 @@ export class Validator<TValue> {
     return this;
   }
 
-  public in(values: string[], error: string): Validator<TValue> {
+  public in(values: string[], error?: string): Validator<TValue> {
     this.append(
       (value) =>
         z.string().safeParse(value).success && values.includes(value as string),
@@ -136,7 +138,7 @@ export class Validator<TValue> {
     return this;
   }
 
-  public gt(valueB: number, error: string): Validator<TValue> {
+  public gt(valueB: number, error?: string): Validator<TValue> {
     this.append(
       (value) => z.number().gt(valueB).safeParse(value).success,
       error,
@@ -145,7 +147,7 @@ export class Validator<TValue> {
     return this;
   }
 
-  public gte(valueB: number, error: string): Validator<TValue> {
+  public gte(valueB: number, error?: string): Validator<TValue> {
     this.append(
       (value) => z.number().gte(valueB).safeParse(value).success,
       error,
@@ -154,7 +156,7 @@ export class Validator<TValue> {
     return this;
   }
 
-  public lt(valueB: number, error: string): Validator<TValue> {
+  public lt(valueB: number, error?: string): Validator<TValue> {
     this.append(
       (value) => z.number().lt(valueB).safeParse(value).success,
       error,
@@ -163,7 +165,7 @@ export class Validator<TValue> {
     return this;
   }
 
-  public lte(valueB: number, error: string): Validator<TValue> {
+  public lte(valueB: number, error?: string): Validator<TValue> {
     this.append(
       (value) => z.number().lte(valueB).safeParse(value).success,
       error,
@@ -172,7 +174,7 @@ export class Validator<TValue> {
     return this;
   }
 
-  public regex(pattern: RegExp, error: string): Validator<TValue> {
+  public regex(pattern: RegExp, error?: string): Validator<TValue> {
     this.append(
       (value) => z.string().regex(pattern).safeParse(value).success,
       error,
@@ -183,7 +185,7 @@ export class Validator<TValue> {
 
   public refine(
     predicate: (value: TValue) => boolean,
-    error: string,
+    error?: string,
   ): Validator<TValue> {
     this.append((value) => predicate(value as unknown as TValue), error);
 

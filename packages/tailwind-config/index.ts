@@ -27,9 +27,9 @@ export default plugin(() => {}, {
         'dark-900': '#bababa',
         accent: '#8efb9d',
         dark: '#1C1C1C',
-        error: '#b45454',
+        error: 'rgb(var(--tw-error) / <alpha-value>)',
         primary: '#4452ff',
-        success: '#34d399',
+        success: 'rgb(var(--tw-success) / <alpha-value>)',
         // Semantic layer — use these in components instead of primitive dark-* tokens.
         // Values are CSS variable references so dark/light mode switching works without
         // changing component classes. CSS vars are defined in globals.css.
@@ -38,19 +38,26 @@ export default plugin(() => {}, {
           sunken: 'rgb(var(--tw-surface-sunken) / <alpha-value>)',
           base: 'rgb(var(--tw-surface-base) / <alpha-value>)',
           raised: 'rgb(var(--tw-surface-raised) / <alpha-value>)',
+          overlay: 'rgb(var(--tw-surface-overlay) / <alpha-value>)',
+          interactive: 'rgb(var(--tw-surface-interactive) / <alpha-value>)',
         },
         content: {
           primary: 'rgb(var(--tw-content-primary) / <alpha-value>)',
           secondary: 'rgb(var(--tw-content-secondary) / <alpha-value>)',
           muted: 'rgb(var(--tw-content-muted) / <alpha-value>)',
+          disabled: 'rgb(var(--tw-content-disabled) / <alpha-value>)',
         },
         border: {
           default: 'rgb(var(--tw-border-default) / <alpha-value>)',
           subtle: 'rgb(var(--tw-border-subtle) / <alpha-value>)',
+          muted: 'rgb(var(--tw-border-muted) / <alpha-value>)',
         },
         brand: {
           primary: 'rgb(var(--tw-brand-primary) / <alpha-value>)',
           accent: 'rgb(var(--tw-brand-accent) / <alpha-value>)',
+          'primary-hover': 'rgb(var(--tw-brand-primary-hover) / <alpha-value>)',
+          'primary-active':
+            'rgb(var(--tw-brand-primary-active) / <alpha-value>)',
         },
       },
       container: {

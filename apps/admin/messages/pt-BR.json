@@ -1,0 +1,14 @@
+{
+  "LoginForm": {
+    "title": "Entrar",
+    "emailPlaceholder": "Endereço de e-mail",
+    "passwordPlaceholder": "Senha",
+    "submit": "Entrar",
+    "genericError": "Credenciais inválidas. Tente novamente."
+  },
+  "Validations": {
+    "required": "Campo obrigatório.",
+    "min": "Mínimo de 3 caracteres.",
+    "email": "Informe um e-mail válido."
+  }
+}

@@ -39,12 +39,7 @@ export class User extends AggregateRoot<User, IUserProps> {
 
   static create(props: IUserProps): Either<ValidationError, User> {
     const result = collect([
-      validateEnum(
-        props.role,
-        Object.values(Role),
-        User.ERROR_CODE,
-        `Role must be one of: ${Object.values(Role).join(', ')}.`,
-      ),
+      validateEnum(props.role, Object.values(Role), User.ERROR_CODE),
       Name.create(props.name),
       Email.create(props.email),
       User._createAuthSubject(props.authSubject),
@@ -61,12 +56,7 @@ export class User extends AggregateRoot<User, IUserProps> {
     if (value == null) return right(null);
     const result = Id.create(value);
     if (result.isLeft())
-      return left(
-        new ValidationError({
-          code: User.ERROR_CODE,
-          message: result.value.message,
-        }),
-      );
+      return left(new ValidationError({ code: User.ERROR_CODE }));
     return result;
   }
 

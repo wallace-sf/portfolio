@@ -17,12 +17,9 @@ export class Id extends ValueObject<string> {
   }
 
   static create(value: string): Either<ValidationError, Id> {
-    const { error, isValid } = Validator.of(value)
-      .uuid('The value must be a valid UUID.')
-      .validate();
+    const { isValid } = Validator.of(value).uuid().validate();
 
-    if (!isValid && error)
-      return left(new ValidationError({ code: Id.ERROR_CODE, message: error }));
+    if (!isValid) return left(new ValidationError({ code: Id.ERROR_CODE }));
     return right(new Id(value));
   }
 }

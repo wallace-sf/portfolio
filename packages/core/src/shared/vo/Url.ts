@@ -12,14 +12,9 @@ export class Url extends ValueObject<string> {
   }
 
   static create(value?: string): Either<ValidationError, Url> {
-    const { error, isValid } = Validator.of(value)
-      .url('The value must be a valid URL.')
-      .validate();
+    const { isValid } = Validator.of(value).url().validate();
 
-    if (!isValid && error)
-      return left(
-        new ValidationError({ code: Url.ERROR_CODE, message: error }),
-      );
+    if (!isValid) return left(new ValidationError({ code: Url.ERROR_CODE }));
     return right(new Url(value!));
   }
 }

@@ -28,9 +28,7 @@ describe('Text', () => {
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
       expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
-      expect((result.value as ValidationError).message).toBe(
-        'The value must be between 3 and 50 characters.',
-      );
+      expect((result.value as ValidationError).message).toBe(Text.ERROR_CODE);
     });
 
     it('should return Left for undefined (default config)', () => {
@@ -40,16 +38,15 @@ describe('Text', () => {
       expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
     });
 
-    it('should return Left with custom config message when exceeding max', () => {
+    it('should return Left with code when exceeding max', () => {
       const result = Text.create('This string is too long.', {
         min: 3,
         max: 20,
       });
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).message).toBe(
-        'The value must be between 3 and 20 characters.',
-      );
+      expect((result.value as ValidationError).code).toBe(Text.ERROR_CODE);
+      expect((result.value as ValidationError).message).toBe(Text.ERROR_CODE);
     });
   });
 

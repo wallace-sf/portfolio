@@ -26,17 +26,20 @@ export interface IAuthenticationGateway {
   ): Promise<Either<DomainError, AuthSession>>;
 
   /**
-   * Invalidate the current session.
-   * Reads the access token from cookies to identify the session at the IdP.
+   * Invalidate the current session at the IdP.
+   * The caller is responsible for clearing cookies after this returns.
    */
-  signOut(cookies: AuthCookieApi): Promise<Either<DomainError, void>>;
+  signOut(
+    accessToken: string,
+    refreshToken: string,
+  ): Promise<Either<DomainError, void>>;
 
   /**
-   * Obtain a fresh session using the refresh token stored in cookies.
-   * Returns a new `AuthSession`; the caller updates the cookies.
+   * Exchange a refresh token for a new session.
+   * Returns a new `AuthSession`; the caller is responsible for updating cookies.
    */
   refreshSession(
-    cookies: AuthCookieApi,
+    refreshToken: string,
   ): Promise<Either<DomainError, AuthSession>>;
 
   /**
@@ -46,5 +49,14 @@ export interface IAuthenticationGateway {
    */
   getPrincipalFromCookies(
     cookies: AuthCookieApi,
+  ): Promise<Either<DomainError, AuthPrincipal>>;
+
+  /**
+   * Decode and validate the access token from an in-memory `AuthSession`.
+   * Use this immediately after `signInWithPassword` to avoid constructing
+   * a fake cookie reader.
+   */
+  getPrincipalFromSession(
+    session: AuthSession,
   ): Promise<Either<DomainError, AuthPrincipal>>;
 }

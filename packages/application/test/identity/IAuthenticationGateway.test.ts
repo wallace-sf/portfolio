@@ -102,23 +102,17 @@ describe('IAuthenticationGateway — signOut', () => {
     gateway = new FakeAuthenticationGateway(SEED_USERS);
   });
 
-  it('should return Right(void) and remove tokens from cookies', async () => {
-    const cookies = makeCookieApi({
-      'sb-access-token': 'access:admin@example.com:abc',
-      'sb-refresh-token': 'refresh:admin@example.com:abc',
-    });
-
-    const result = await gateway.signOut(cookies);
+  it('should return Right(void) when called with valid tokens', async () => {
+    const result = await gateway.signOut(
+      'access:admin@example.com:abc',
+      'refresh:admin@example.com:abc',
+    );
 
     expect(result.isRight()).toBe(true);
-    expect(cookies.store['sb-access-token']).toBeUndefined();
-    expect(cookies.store['sb-refresh-token']).toBeUndefined();
   });
 
-  it('should return Right(void) even when cookies are already empty', async () => {
-    const cookies = makeCookieApi();
-
-    const result = await gateway.signOut(cookies);
+  it('should return Right(void) when called with empty tokens', async () => {
+    const result = await gateway.signOut('', '');
 
     expect(result.isRight()).toBe(true);
   });
@@ -127,7 +121,7 @@ describe('IAuthenticationGateway — signOut', () => {
     const error = new DomainError('IDP_UNAVAILABLE', { message: 'Service is down.' });
     gateway.simulateError(error);
 
-    const result = await gateway.signOut(makeCookieApi());
+    const result = await gateway.signOut('access-token', 'refresh-token');
 
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBe(error);
@@ -146,11 +140,7 @@ describe('IAuthenticationGateway — refreshSession', () => {
   });
 
   it('should return Right(AuthSession) with a new session when refresh token is valid', async () => {
-    const cookies = makeCookieApi({
-      'sb-refresh-token': 'refresh:admin@example.com:abc',
-    });
-
-    const result = await gateway.refreshSession(cookies);
+    const result = await gateway.refreshSession('refresh:admin@example.com:abc');
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toMatchObject({
@@ -160,28 +150,22 @@ describe('IAuthenticationGateway — refreshSession', () => {
     });
   });
 
-  it('should return Left(DomainError) when no refresh token cookie is present', async () => {
-    const cookies = makeCookieApi();
-
-    const result = await gateway.refreshSession(cookies);
+  it('should return Left(DomainError) when refresh token is empty', async () => {
+    const result = await gateway.refreshSession('');
 
     expect(result.isLeft()).toBe(true);
     expect((result.value as DomainError).code).toBe('NO_REFRESH_TOKEN');
   });
 
   it('should return Left(DomainError) when refresh token is malformed', async () => {
-    const cookies = makeCookieApi({ 'sb-refresh-token': 'malformed-token' });
-
-    const result = await gateway.refreshSession(cookies);
+    const result = await gateway.refreshSession('malformed-token');
 
     expect(result.isLeft()).toBe(true);
     expect((result.value as DomainError).code).toBe('INVALID_REFRESH_TOKEN');
   });
 
   it('should return Left(DomainError) when refresh token references unknown user', async () => {
-    const cookies = makeCookieApi({ 'sb-refresh-token': 'refresh:ghost@example.com:abc' });
-
-    const result = await gateway.refreshSession(cookies);
+    const result = await gateway.refreshSession('refresh:ghost@example.com:abc');
 
     expect(result.isLeft()).toBe(true);
     expect((result.value as DomainError).code).toBe('INVALID_REFRESH_TOKEN');
@@ -191,7 +175,7 @@ describe('IAuthenticationGateway — refreshSession', () => {
     const error = new DomainError('IDP_UNAVAILABLE', { message: 'Service is down.' });
     gateway.simulateError(error);
 
-    const result = await gateway.refreshSession(makeCookieApi());
+    const result = await gateway.refreshSession('refresh:admin@example.com:abc');
 
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBe(error);
@@ -263,6 +247,86 @@ describe('IAuthenticationGateway — getPrincipalFromCookies', () => {
     gateway.simulateError(error);
 
     const result = await gateway.getPrincipalFromCookies(makeCookieApi());
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBe(error);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getPrincipalFromSession
+// ---------------------------------------------------------------------------
+
+describe('IAuthenticationGateway — getPrincipalFromSession', () => {
+  let gateway: FakeAuthenticationGateway;
+
+  beforeEach(() => {
+    gateway = new FakeAuthenticationGateway(SEED_USERS);
+  });
+
+  it('should return Right(AuthPrincipal) when session access token is valid', async () => {
+    const session = {
+      accessToken: 'access:admin@example.com:xyz',
+      refreshToken: 'refresh:admin@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isRight()).toBe(true);
+    expect(result.value).toEqual(ADMIN_PRINCIPAL);
+  });
+
+  it('should return the correct principal for each user', async () => {
+    const session = {
+      accessToken: 'access:visitor@example.com:xyz',
+      refreshToken: 'refresh:visitor@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isRight()).toBe(true);
+    expect(result.value).toEqual(VISITOR_PRINCIPAL);
+  });
+
+  it('should return Left(DomainError) when access token is malformed', async () => {
+    const session = {
+      accessToken: 'malformed-token',
+      refreshToken: 'refresh:admin@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isLeft()).toBe(true);
+    expect((result.value as DomainError).code).toBe('INVALID_ACCESS_TOKEN');
+  });
+
+  it('should return Left(DomainError) when access token references unknown user', async () => {
+    const session = {
+      accessToken: 'access:ghost@example.com:xyz',
+      refreshToken: 'refresh:ghost@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
+
+    expect(result.isLeft()).toBe(true);
+    expect((result.value as DomainError).code).toBe('INVALID_ACCESS_TOKEN');
+  });
+
+  it('should return Left(DomainError) when a forced error is set', async () => {
+    const error = new DomainError('IDP_UNAVAILABLE', { message: 'Service is down.' });
+    gateway.simulateError(error);
+
+    const session = {
+      accessToken: 'access:admin@example.com:xyz',
+      refreshToken: 'refresh:admin@example.com:xyz',
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+    };
+
+    const result = await gateway.getPrincipalFromSession(session);
 
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBe(error);

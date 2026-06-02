@@ -6,8 +6,8 @@
 
 ## REST as the only presentation boundary
 
-- **`apps/web` must not** import `@repo/application` or call use cases from pages, layouts, or client components.
-- **Route handlers** (Next.js Route Handlers under `apps/web/app/api/...`, or a future `apps/api` app) are the **composition root**: they wire `@repo/infra`, invoke use cases, and return JSON.
+- **`apps/site` must not** import `@repo/application` or call use cases from pages, layouts, or client components.
+- **Route handlers** (Next.js Route Handlers under `apps/site/app/api/...`, or a future `apps/api` app) are the **composition root**: they wire `@repo/infra`, invoke use cases, and return JSON.
 - This keeps a single HTTP contract for browsers, SSR, and external clients.
 
 See [02-ARCHITECTURE](./02-ARCHITECTURE.md) and [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md).
@@ -40,7 +40,7 @@ All API responses follow a consistent envelope:
 | `UnauthorizedError` / failed `EnsureAdmin` | 401 (`UNAUTHORIZED`) |
 | Unexpected / infrastructure | 500 |
 
-Use **403** for “authenticated but forbidden **for this resource**” (ex.: recurso de outro dono). Sessão ausente e falta de papel admin usam **401** com códigos distintos.
+Use **403** for “authenticated but forbidden **for this resource**” (e.g. a resource owned by a different user). Missing session and missing admin role both use **401** with distinct codes.
 
 ---
 
@@ -56,10 +56,10 @@ Examples:
 | `ERROR_INVALID_TEXT` | 400 | Text length constraint violated |
 | `INVALID_SLUG` | 400 | Slug format violated |
 | `NOT_FOUND` | 404 | Resource not found |
-| `AUTH_REQUIRED` | 401 | Sem sessão ou impossível resolver `userId` |
-| `UNAUTHORIZED` | 401 | Autenticado mas sem permissão (ex.: não é `ADMIN`) |
-| `AUTH_INVALID_CREDENTIALS` | 401 | Sign-in rejeitado pelo IdP (planeado) |
-| `AUTH_SUBJECT_CONFLICT` | 409 | Email já ligado a outro `authSubject` (planeado) |
+| `AUTH_REQUIRED` | 401 | No session or unable to resolve `userId` |
+| `UNAUTHORIZED` | 401 | Authenticated but not authorized (e.g. not `ADMIN`) |
+| `AUTH_INVALID_CREDENTIALS` | 401 | Sign-in rejected by the IdP (planned) |
+| `AUTH_SUBJECT_CONFLICT` | 409 | Email already linked to another `authSubject` (planned) |
 | `INTERNAL_ERROR` | 500 | Unexpected server error |
 
 ---
@@ -108,7 +108,7 @@ try {
 - **Resolution:** handler obtains **`authSubject`** (opaque external id) from the gateway, maps to application `User.id` via **`authSubject`** column + `IUserRepository` (when implemented), then passes `userId` to use cases.
 - **Passwords:** never stored in the application `User` table — only at the IdP.
 
-### Auth routes (planned)
+### Auth routes
 
 | Method | Path | Purpose |
 |--------|------|---------|
@@ -156,11 +156,11 @@ Query parameters such as `locale` should align with `@repo/core` `Locale` and ex
 
 | Method | Path | Use case | Auth |
 |--------|------|----------|------|
-| `GET` | `/api/v1/me` | `GetCurrentUser` | **Authenticated** — sem sessão / sem `User` → **401** `AUTH_REQUIRED` |
+| `GET` | `/api/v1/me` | `GetCurrentUser` | **Authenticated** — no session / no `User` → **401** `AUTH_REQUIRED` |
 
 ---
 
-### Admin-only endpoints (`/api/v1/admin/*`) — planned
+### Admin-only endpoints (`/api/v1/admin/*`)
 
 **Rule:** every handler under this prefix calls `EnsureAdmin` after resolving `userId`. Missing session → **401** `AUTH_REQUIRED`; not admin → **401** `UNAUTHORIZED`.
 
