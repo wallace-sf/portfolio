@@ -5,7 +5,6 @@ import type { Metadata } from 'next';
 import { applyDevSimulations } from '~/dev/simulate';
 import { ApiResponse } from '~/lib/api/envelope';
 import { getInternalBaseUrl } from '~/lib/api/internal';
-import { ContactSection } from '~features/contact/ContactSection';
 import { HeroSection } from '~features/home/HeroSection';
 import {
   ProjectsSection,
@@ -64,7 +63,6 @@ export default async function Home({ searchParams }: HomePageProps) {
       <Suspense fallback={<ProjectsSkeleton />}>
         <ProjectsSection />
       </Suspense>
-      <ContactSection />
     </>
   );
 }

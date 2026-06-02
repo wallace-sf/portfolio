@@ -22,10 +22,6 @@ vi.mock('~features/shared/HeroBanner/HeroBannerSkeleton', () => ({
   HeroBannerSkeleton: () => null,
 }));
 
-vi.mock('~features/contact/ContactSection', () => ({
-  ContactSection: () => <div data-testid="contact-section" />,
-}));
-
 describe('Home page', () => {
   it('should render all feature sections', async () => {
     const { default: Home } = await import('~/app/[locale]/page');
@@ -33,6 +29,5 @@ describe('Home page', () => {
 
     expect(screen.getByTestId('hero-section')).toBeInTheDocument();
     expect(screen.getByTestId('projects-section')).toBeInTheDocument();
-    expect(screen.getByTestId('contact-section')).toBeInTheDocument();
   });
 });

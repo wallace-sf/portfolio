@@ -1,3 +1,5 @@
+'use client';
+
 import { ContactForm } from '~features/contact/ContactForm';
 import { ContactInfo } from '~features/contact/ContactInfo';
 
