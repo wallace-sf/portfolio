@@ -78,7 +78,10 @@
     "values_title": "My professional values"
   },
   "ExperienceCard": {
-    "skills_label": "Skills"
+    "skills_label": "Skills",
+    "see_more": "See more",
+    "see_less": "See less",
+    "present": "Present"
   },
   "Common": {
     "loading": "Loading"
