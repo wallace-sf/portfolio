@@ -123,7 +123,10 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
             <h2 className="text-[32px] font-bold text-content-primary">
               {t('related_title')}
             </h2>
-            <ProjectList projects={relatedProjects} view="grid" />
+            <ProjectList
+              projects={relatedProjects}
+              view={relatedProjects.length === 1 ? 'row' : 'grid'}
+            />
           </section>
         )}
       </div>
