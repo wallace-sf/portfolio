@@ -9,6 +9,7 @@
     "success": "Seu cliente de e-mail foi aberto. Por favor, envie a mensagem pré-preenchida."
   },
   "ContactInfo": {
+    "title": "Entre em contato",
     "email": "E-mail",
     "paragraph1": "Não gosta de preencher formulário? Sem problemas!",
     "paragraph2": "Sinta-se à vontade para me enviar uma mensagem no WhatsApp ou me enviar um e-mail."
