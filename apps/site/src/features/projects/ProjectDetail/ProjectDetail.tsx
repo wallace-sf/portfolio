@@ -116,19 +116,17 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
           labels={metaLabels}
         />
 
-        {content && (
-          <TextRich
-            content={content}
-            className="text-content-primary prose prose-invert max-w-none"
-          />
-        )}
+        {content && <TextRich content={content} />}
 
         {relatedProjects.length > 0 && (
           <section className="flex flex-col gap-y-6">
             <h2 className="text-[32px] font-bold text-content-primary">
               {t('related_title')}
             </h2>
-            <ProjectList projects={relatedProjects} view="grid" />
+            <ProjectList
+              projects={relatedProjects}
+              view={relatedProjects.length === 1 ? 'row' : 'grid'}
+            />
           </section>
         )}
       </div>
