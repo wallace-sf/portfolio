@@ -9,6 +9,8 @@ import {
   IProjectDetailProps,
 } from '~features/projects/ProjectDetail';
 
+export const dynamic = 'force-dynamic';
+
 type ProjectDetailData = IProjectDetailProps & { id: string };
 
 interface ProjectDetailPageProps {
@@ -33,12 +35,11 @@ export async function generateMetadata({
   const body: ApiResponse<{
     title: string;
     caption: string;
-    coverImageUrl: string;
-    coverImageAlt: string;
+    coverImage: { url: string; alt: string };
   }> = await res.json();
   if (body.error) return {};
 
-  const { title, caption, coverImageUrl, coverImageAlt } = body.data;
+  const { title, caption, coverImage } = body.data;
 
   return {
     title,
@@ -46,7 +47,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description: caption,
-      images: [{ url: coverImageUrl, alt: coverImageAlt }],
+      images: [{ url: coverImage.url, alt: coverImage.alt }],
     },
   };
 }
@@ -73,24 +74,4 @@ export default async function ProjectDetailPage({
   const project = body.data;
 
   return <ProjectDetail {...project} />;
-}
-
-export async function generateStaticParams() {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_URL ??
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000');
-
-  try {
-    const res = await fetch(`${baseUrl}/api/v1/projects`, {
-      cache: 'force-cache',
-    });
-    if (!res.ok) return [];
-    const body: ApiResponse<{ slug: string }[]> = await res.json();
-    if (body.error) return [];
-    return body.data.map((p) => ({ slug: p.slug }));
-  } catch {
-    return [];
-  }
 }
