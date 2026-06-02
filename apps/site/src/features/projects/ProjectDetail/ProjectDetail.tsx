@@ -2,9 +2,12 @@
 
 import { FC, useMemo } from 'react';
 
+import { Icon } from '@repo/ui/Imagery';
 import { TextRich } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+
+import { Link } from '~i18n/routing';
 
 import {
   ProjectList,
@@ -66,6 +69,19 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
 
   return (
     <article className="flex flex-col gap-y-8 pb-12">
+      <div className="mx-4 xl:mx-auto xl:w-full xl:max-w-237.5">
+        <div className="flex items-center justify-between h-12">
+          <Link
+            href="/projects"
+            className="flex items-center gap-x-2 text-base font-bold text-content-primary"
+          >
+            <Icon icon="material-symbols:arrow-back" className="text-2xl" />
+            {t('back')}
+          </Link>
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+      </div>
+
       <div className="relative w-full h-60 xl:h-100 overflow-hidden">
         <Image
           src={coverImage.url}
@@ -77,8 +93,6 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
       </div>
 
       <div className="mx-4 xl:mx-auto xl:w-full xl:max-w-237.5 flex flex-col gap-y-6">
-        <Breadcrumb items={breadcrumbItems} />
-
         <header className="flex flex-col gap-y-2">
           <h1 className="!text-2xl xl:!text-4xl !font-bold !text-content-primary">
             {title}

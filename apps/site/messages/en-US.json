@@ -93,6 +93,7 @@
   "ProjectDetail": {
     "breadcrumb_home": "Home",
     "breadcrumb_projects": "Projects",
+    "back": "Back",
     "related_title": "Other projects",
     "summary_label": "Summary",
     "objectives_label": "Objectives",
