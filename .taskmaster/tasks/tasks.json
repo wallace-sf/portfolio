@@ -5854,15 +5854,16 @@
         "testStrategy": "1. Check tsconfig.json has all aliases\n2. Run pnpm typecheck in apps/site\n3. Search for relative imports that should use aliases\n4. Verify IDE autocomplete works with aliases\n5. Run pnpm build to ensure no resolution errors",
         "priority": "low",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T03:00:54.761Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-06-02T02:46:26.512Z",
+      "lastModified": "2026-06-02T03:00:54.761Z",
       "taskCount": 30,
-      "completedCount": 28,
+      "completedCount": 29,
       "tags": [
         "figma-pixel-perfect"
       ]
