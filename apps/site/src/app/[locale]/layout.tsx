@@ -1,8 +1,8 @@
 import classNames from 'classnames';
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Inter } from 'next/font/google';
-import type { Metadata } from 'next';
 
 import { AppLayout } from '~components';
 

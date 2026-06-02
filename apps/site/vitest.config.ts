@@ -9,6 +9,11 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['@testing-library/jest-dom/vitest'],
     include: ['tests/**/*.test.{ts,tsx}'],
+    server: {
+      deps: {
+        inline: [/next-intl/],
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

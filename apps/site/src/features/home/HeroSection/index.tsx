@@ -45,6 +45,9 @@ export async function HeroSection() {
         caption={profile?.headline ?? t('hero_caption')}
         content={profile?.bio ?? t('hero_content')}
         alt={profile?.photo.alt ?? t('hero_image_alt')}
+        titleSize="lg"
+        titleAs="h2"
+        textColumnClassName="xl:w-[474px]"
         imageClassName="object-contain 2xl:object-cover"
       />
       {profile?.stats && profile.stats.length > 0 && (

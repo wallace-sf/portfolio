@@ -2,9 +2,12 @@
 
 import { FC, useMemo } from 'react';
 
+import { Icon } from '@repo/ui/Imagery';
 import { TextRich } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+
+import { Link } from '~i18n/routing';
 
 import {
   ProjectList,
@@ -34,7 +37,6 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
   title,
   caption,
   coverImage,
-  theme,
   skills,
   summary,
   objectives,
@@ -65,38 +67,46 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
   );
 
   return (
-    <article className="flex flex-col gap-y-8 pb-12">
-      <div className="relative w-full h-60 xl:h-100 overflow-hidden">
-        <Image
-          src={coverImage.url}
-          fill
-          alt={coverImage.alt}
-          className="object-cover"
-          priority
-        />
-      </div>
+    <article className="flex flex-col gap-y-10 pb-12">
+      <div className="mx-4 xl:mx-auto xl:w-full xl:max-w-237.5 flex flex-col gap-y-10">
+        <div className="flex items-center justify-between h-12">
+          <Link
+            href="/projects"
+            className="flex items-center gap-x-2 text-base text-content-primary"
+          >
+            <Icon icon="material-symbols:arrow-back" className="text-2xl" />
+            {t('back')}
+          </Link>
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
 
-      <div className="mx-4 xl:mx-auto xl:w-full xl:max-w-237.5 flex flex-col gap-y-6">
-        <Breadcrumb items={breadcrumbItems} />
+        <div className="flex flex-col gap-y-6">
+          <div className="relative w-full xl:h-[485px] h-60 rounded-lg overflow-hidden">
+            <Image
+              src={coverImage.url}
+              fill
+              alt={coverImage.alt}
+              className="object-cover"
+              priority
+            />
+          </div>
 
-        <header className="flex flex-col gap-y-2">
-          <h1 className="!text-2xl xl:!text-4xl !font-bold !text-content-primary">
-            {title}
-          </h1>
-          {theme && (
-            <span className="text-body-xs !text-content-muted uppercase tracking-wide">
-              {theme}
-            </span>
+          <header className="flex flex-col gap-y-3">
+            <h1 className="text-[40px] font-bold text-content-primary">
+              {title}
+            </h1>
+            <p className="text-xl text-content-primary">{caption}</p>
+          </header>
+
+          {skills.length > 0 && (
+            <SkillGroup
+              skills={skills}
+              max={skills.length}
+              initializeWithMax={skills.length}
+              total={skills.length}
+            />
           )}
-          <p className="text-body-sm !text-content-secondary">{caption}</p>
-        </header>
-
-        <SkillGroup
-          skills={skills}
-          max={skills.length}
-          initializeWithMax={skills.length}
-          total={skills.length}
-        />
+        </div>
 
         <ProjectMetaGrid
           summary={summary}
@@ -109,16 +119,16 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
         {content && (
           <TextRich
             content={content}
-            className="!text-content-primary prose prose-invert max-w-none"
+            className="text-content-primary prose prose-invert max-w-none"
           />
         )}
 
         {relatedProjects.length > 0 && (
           <section className="flex flex-col gap-y-6">
-            <h2 className="!text-xl !font-bold !text-content-primary">
+            <h2 className="text-[32px] font-bold text-content-primary">
               {t('related_title')}
             </h2>
-            <ProjectList projects={relatedProjects} view="row" compact />
+            <ProjectList projects={relatedProjects} view="grid" />
           </section>
         )}
       </div>

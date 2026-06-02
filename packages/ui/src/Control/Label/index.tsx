@@ -19,7 +19,7 @@ export const Label: FC<ILabelProps> = ({
       id={`${htmlFor}-label`}
       htmlFor={htmlFor}
       className={classNames(
-        'block text-body-sm xl:text-body-base !text-white !font-bold mb-2 text-start',
+        'block text-base font-bold text-content-primary [.light_&]:text-content-secondary text-start',
         className,
       )}
     >

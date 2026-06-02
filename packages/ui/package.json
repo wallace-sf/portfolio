@@ -6,17 +6,17 @@
   "exports": {
     "./Control": {
       "types": "./dist/types/Control/index.d.ts",
-      "import": "./dist/Control/index.js",
+      "import": "./dist/Control/index.mjs",
       "require": "./dist/Control/index.js"
     },
     "./Imagery": {
       "types": "./dist/types/Imagery/index.d.ts",
-      "import": "./dist/Imagery/index.js",
+      "import": "./dist/Imagery/index.mjs",
       "require": "./dist/Imagery/index.js"
     },
     "./View": {
       "types": "./dist/types/View/index.d.ts",
-      "import": "./dist/View/index.js",
+      "import": "./dist/View/index.mjs",
       "require": "./dist/View/index.js"
     }
   },
@@ -41,6 +41,7 @@
     "@repo/utils": "workspace:*",
     "classnames": "^2.5.1",
     "react": "^18",
+    "react-dom": "^18",
     "react-markdown": "^9.0.1",
     "react-tooltip": "^5.28.0",
     "rehype-raw": "^7.0.0",
@@ -55,6 +56,7 @@
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/react": "^18",
+    "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",

@@ -7,10 +7,22 @@
   ],
   "main": "src/index.ts",
   "exports": {
-    ".": { "types": "./dist/types/index.d.ts", "default": "./src/index.ts" },
-    "./hooks": { "types": "./dist/types/hooks/index.d.ts", "default": "./src/hooks/index.ts" },
-    "./validator": { "types": "./dist/types/validator/index.d.ts", "default": "./src/validator/index.ts" },
-    "./env": { "types": "./dist/types/env/index.d.ts", "default": "./src/env/index.ts" }
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./hooks": {
+      "types": "./dist/types/hooks/index.d.ts",
+      "default": "./src/hooks/index.ts"
+    },
+    "./validator": {
+      "types": "./dist/types/validator/index.d.ts",
+      "default": "./src/validator/index.ts"
+    },
+    "./env": {
+      "types": "./dist/types/env/index.d.ts",
+      "default": "./src/env/index.ts"
+    }
   },
   "scripts": {
     "test": "vitest run",
@@ -28,7 +40,7 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@testing-library/react": "^16.0.1",
-    "@types/lodash": "*",
+    "@types/lodash": "^4.17.9",
     "@types/luxon": "^3.4.2",
     "@types/mustache": "^4.2.5",
     "@types/react": "^18",
@@ -41,6 +53,7 @@
   },
   "dependencies": {
     "imask": "^7.6.1",
+    "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "mustache": "^4.2.0",
     "react": "^18",

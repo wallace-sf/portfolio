@@ -2,45 +2,71 @@
 
 import { FC } from 'react';
 
+import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import { Divider } from '@repo/ui/View';
 import { formatCellphone } from '@repo/utils';
 import { useTranslations } from 'next-intl';
 
-import { MenuItem } from '~components/Layout/MenuItem';
-import { Link } from '~i18n/routing';
+import { MenuItem } from '~/components/Layout/SideNavigation/MenuItem';
 
 export const ContactInfo: FC = () => {
   const t = useTranslations('ContactInfo');
+  const tClip = useTranslations('Clipboard');
 
   return (
-    <section className="flex flex-col gap-y-6 bg-surface px-4 py-6 rounded-xl">
-      <address>
-        <strong className="inline-block w-full text-body-base !text-content-primary !font-bold not-italic mb-2">
-          {t('email')}
-        </strong>
-        <Link
-          className="inline-block w-full text-body-sm !text-primary !underline not-italic mb-6"
-          href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}
-        >
-          {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
-        </Link>
-        <strong className="inline-block w-full text-body-base !text-content-primary !font-bold not-italic mb-2">
-          WhatsApp
-        </strong>
-        <Link
-          className="flex flex-row items-center gap-x-2 w-full text-body-sm !text-primary !underline not-italic"
-          href={process.env.NEXT_PUBLIC_WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon icon="twemoji:flag-brazil" />
-          {formatCellphone(process.env.NEXT_PUBLIC_CONTACT_NUMBER)}
-        </Link>
+    <section className="flex flex-col gap-y-6 xl:w-[326px]">
+      <h2 className="text-2xl font-bold text-content-primary">{t('title')}</h2>
+
+      <address className="flex flex-col gap-y-6 not-italic">
+        <div className="flex flex-col gap-y-1">
+          <strong className="text-base font-bold text-content-primary">
+            {t('email')}
+          </strong>
+          <div className="flex items-center gap-x-2">
+            <span className="text-base text-content-secondary">
+              {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
+            </span>
+            <Button.Clipboard
+              text={process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? ''}
+              tooltip={tClip('copy')}
+              unstyled
+            >
+              <Icon
+                icon="material-symbols:content-copy"
+                className="text-content-secondary text-2xl"
+              />
+            </Button.Clipboard>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-y-1">
+          <strong className="text-base font-bold text-content-primary">
+            WhatsApp
+          </strong>
+          <div className="flex items-center gap-x-2">
+            <span className="text-base text-content-secondary">
+              {formatCellphone(process.env.NEXT_PUBLIC_CONTACT_NUMBER)}
+            </span>
+            <Button.Clipboard
+              text={process.env.NEXT_PUBLIC_CONTACT_NUMBER ?? ''}
+              tooltip={tClip('copy')}
+              unstyled
+            >
+              <Icon
+                icon="material-symbols:content-copy"
+                className="text-content-secondary text-2xl"
+              />
+            </Button.Clipboard>
+          </div>
+        </div>
       </address>
-      <Divider className="!my-0" />
-      <p className="text-body-sm !text-content-primary">{t('paragraph1')}</p>
-      <p className="text-body-sm !text-content-primary">{t('paragraph2')}</p>
+
+      <Divider className="!my-0 border-b-2" />
+
+      <p className="text-base text-content-primary">{t('paragraph1')}</p>
+      <p className="text-base text-content-primary">{t('paragraph2')}</p>
+
       <nav className="flex flex-col gap-y-3">
         <MenuItem.Item2.Link
           href={process.env.NEXT_PUBLIC_LINKEDIN_URL}

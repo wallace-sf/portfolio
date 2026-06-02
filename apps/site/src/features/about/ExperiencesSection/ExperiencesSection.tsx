@@ -1,4 +1,3 @@
-import { Divider } from '@repo/ui/View';
 import { getLocale } from 'next-intl/server';
 
 import { ApiResponse } from '~/lib/api/envelope';
@@ -23,11 +22,13 @@ export async function ExperiencesSection() {
   }
 
   return (
-    <ul className="flex flex-col mx-4 gap-y-3 xl:gap-y-0">
+    <ul className="flex flex-col">
       {experiences.map((experience) => (
-        <li key={experience.id} className="[&:last-of-type>hr]:hidden">
+        <li
+          key={experience.id}
+          className="border-b border-border-default last:border-b-0"
+        >
           <ExperienceCard {...experience} />
-          <Divider className="hidden xl:block" />
         </li>
       ))}
     </ul>

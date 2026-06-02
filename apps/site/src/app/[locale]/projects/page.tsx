@@ -1,10 +1,11 @@
 import { Suspense } from 'react';
+
 import type { Metadata } from 'next';
 
 import { applyDevSimulations } from '~/dev/simulate';
+import { ProjectsSkeleton } from '~features/home/ProjectsSection';
 import { HeroSection } from '~features/projects/HeroSection';
 import { ProjectsSection } from '~features/projects/ProjectsSection';
-import { ProjectsSkeleton } from '~features/home/ProjectsSection';
 import { HeroBannerSkeleton } from '~features/shared/HeroBanner/HeroBannerSkeleton';
 
 interface ProjectsPageProps {

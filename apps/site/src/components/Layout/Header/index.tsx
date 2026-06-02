@@ -9,10 +9,13 @@ import Image from 'next/image';
 
 import logoDesktop from '~assets/images/logo-desktop.svg';
 import logoMobile from '~assets/images/logo-mobile.svg';
-import { useLayout } from '~hooks';
 
-export const Header: FC = () => {
-  const { open, toggle } = useLayout();
+interface HeaderProps {
+  open: boolean;
+  toggle: () => void;
+}
+
+export const Header: FC<HeaderProps> = ({ open, toggle }) => {
   const t = useTranslations('Header');
 
   return (

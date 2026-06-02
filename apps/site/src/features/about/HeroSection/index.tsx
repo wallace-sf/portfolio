@@ -32,10 +32,13 @@ export async function HeroSection() {
   return (
     <HeroBanner
       src={HeroAbout}
-      title={profile?.name ?? t('hero_title')}
-      caption={profile?.headline ?? t('hero_caption')}
+      title={profile?.headline ?? t('hero_caption')}
+      caption={profile?.name ?? t('hero_title')}
       content={profile?.bio ?? t('hero_content')}
       alt={t('hero_image_alt')}
+      titleSize="xl"
+      titleAs="h1"
+      textColumnClassName="xl:w-[382px]"
       imageClassName="object-contain"
     />
   );

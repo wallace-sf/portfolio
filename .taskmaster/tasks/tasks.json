@@ -2017,7 +2017,8 @@
         "sprint-0"
       ],
       "created": "2026-04-08T02:21:25.775Z",
-      "description": "Tasks for sprint-0 context"
+      "description": "Tasks for sprint-0 context",
+      "updated": "2026-04-08T02:21:25.775Z"
     }
   },
   "sprint-1": {
@@ -3685,7 +3686,8 @@
         "sprint-2"
       ],
       "created": "2026-05-15T02:07:35.808Z",
-      "description": "Tasks for sprint-2 context"
+      "description": "Tasks for sprint-2 context",
+      "updated": "2026-05-15T02:07:35.808Z"
     }
   },
   "sprint-3": {
@@ -4160,7 +4162,8 @@
         "sprint-3"
       ],
       "created": "2026-05-15T02:07:35.808Z",
-      "description": "Tasks for sprint-3 context"
+      "description": "Tasks for sprint-3 context",
+      "updated": "2026-05-15T02:07:35.808Z"
     }
   },
   "sprint-4": {
@@ -4335,7 +4338,8 @@
         "sprint-4"
       ],
       "created": "2026-05-15T02:07:35.808Z",
-      "description": "Tasks for sprint-4 context"
+      "description": "Tasks for sprint-4 context",
+      "updated": "2026-05-15T02:07:35.808Z"
     }
   },
   "sprint-5": {
@@ -4362,7 +4366,8 @@
         "sprint-5"
       ],
       "created": "2026-05-16T04:40:44.117Z",
-      "description": "Tasks for sprint-5 context"
+      "description": "Tasks for sprint-5 context",
+      "updated": "2026-05-16T04:40:44.117Z"
     }
   },
   "sprint-6": {
@@ -4890,13 +4895,14 @@
         "sprint-6"
       ],
       "created": "2026-05-21T22:21:12.815Z",
-      "description": "Tasks for sprint-6 context"
+      "description": "Tasks for sprint-6 context",
+      "updated": "2026-05-21T22:21:12.815Z"
     }
   },
   "mvp-round-2": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Implement ERROR_MESSAGE i18n Dictionary in @repo/core",
         "description": "Create comprehensive ERROR_MESSAGE dictionary with pt-BR and en-US translations for all domain error codes across core entities and value objects",
         "details": "1. Create `packages/core/src/shared/i18n/ERROR_MESSAGE.ts` with structure: `ERROR_MESSAGE: Record<Locale, Record<string, { message: string }>>`\n2. Audit all ERROR_CODE constants across VOs (Slug, Name, Text, Email, Url, Id, Image, DateTime, DateRange, LocalizedText) and entities (Project, Experience, Skill, Profile, User, etc.)\n3. For each code, add entries in both `pt-BR` and `en-US` with human-readable messages\n4. Export ERROR_MESSAGE from `@repo/core/shared/i18n/index.ts`\n5. Create helper function `getErrorMessage(locale: Locale, code: string): string | undefined`\n6. Update `ValidationError`, `NotFoundError`, `UnauthorizedError` to accept only `code` (no inline messages)\n7. Ensure all codes match pattern: INVALID_*, NOT_FOUND, UNAUTHORIZED, AUTH_*, ERROR_*\n\nExample structure:\n```typescript\nexport const ERROR_MESSAGE: Record<Locale, Record<string, { message: string }>> = {\n  'en-US': {\n    'INVALID_SLUG': { message: 'Slug must be kebab-case (a-z, 0-9, hyphens only)' },\n    'INVALID_EMAIL': { message: 'Invalid email format' },\n    'NOT_FOUND': { message: 'Resource not found' },\n    // ... all codes\n  },\n  'pt-BR': {\n    'INVALID_SLUG': { message: 'Slug deve estar em kebab-case (a-z, 0-9, hífens apenas)' },\n    'INVALID_EMAIL': { message: 'Formato de e-mail inválido' },\n    'NOT_FOUND': { message: 'Recurso não encontrado' },\n    // ... all codes\n  }\n};\n```",
@@ -4910,7 +4916,7 @@
         "expansionPrompt": "Break this task into: (1) audit all ERROR_CODE constants across 20 entities/VOs (Slug, Name, Text, Email, Url, Id, Image, DateTime, DateRange, LocalizedText, Project, Experience, Skill, Profile, User, etc.), (2) create ERROR_MESSAGE.ts file with Record<Locale, Record<string, { message: string }>> structure, (3) populate with pt-BR and en-US translations for each code, (4) create getErrorMessage helper with locale fallback logic, (5) update ValidationError/NotFoundError/UnauthorizedError constructors to accept only code, and (6) write comprehensive unit tests for dictionary completeness and fallback behavior."
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Remove Hardcoded Error Messages from @repo/core Domain Code",
         "description": "Replace all inline human-readable error messages in entities and VOs with stable ERROR_CODE constants, ensuring ValidationError only receives codes",
         "details": "1. Audit all entities (Project, Experience, Skill, Profile, User, Language, SocialNetwork, ProfessionalValue, ProfileStat) for ValidationError instantiations\n2. Audit all VOs (Slug, Name, Text, Email, Url, Id, Image, DateTime, DateRange, LocalizedText) for ValidationError instantiations\n3. Replace pattern:\n   BEFORE: `return left(new ValidationError({ code: Foo.ERROR_CODE, message: 'Human readable text' }))`\n   AFTER: `return left(new ValidationError({ code: Foo.ERROR_CODE }))`\n4. Ensure each class has a static `ERROR_CODE` constant\n5. Update Validator chain messages to be generic/internal (not user-facing) since edge will resolve from ERROR_MESSAGE\n6. Verify no plain string literals appear in error instantiations\n7. Update ValidationError constructor to make message optional, defaulting to 'Validation failed'\n8. Run ESLint and fix any violations\n\nFocus files:\n- packages/core/src/shared/vo/*.ts (Slug, Name, Text, Url, Email, Id, Image, DateTime, DateRange)\n- packages/core/src/portfolio/entities/**/*.ts\n- packages/core/src/identity/entities/**/*.ts\n- packages/core/src/shared/errors/ValidationError.ts",
@@ -4926,7 +4932,7 @@
         "expansionPrompt": "Break this task into: (1) audit and update all VOs (Slug, Name, Text, Email, Url, Id, Image, DateTime, DateRange, LocalizedText) to remove inline messages from ValidationError instantiations, (2) audit and update all entities (Project, Experience, Skill, Profile, User, Language, SocialNetwork, ProfessionalValue, ProfileStat) to use code-only ValidationError, (3) update ValidationError constructor to make message optional with default 'Validation failed', (4) run grep to verify zero string literals remain in error instantiations, and (5) add unit tests verifying all ValidationError instances use ERROR_CODE only."
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Manual Endpoint Testing — Public Portfolio Routes",
         "description": "Manually test all public portfolio API endpoints (GET /api/v1/projects, /projects/featured, /projects/:slug, /experiences, /profile) for correct envelope and HTTP status codes",
         "details": "1. Set up local development environment: `pnpm dev`, seed database: `pnpm seed`\n2. Create manual test script or use Postman/Insomnia/curl\n3. Test each endpoint for:\n   - Happy path: returns `{ data: <T>, error: null }` with 200\n   - Not found cases: returns `{ data: null, error: { code, message } }` with 404\n   - Invalid input (if applicable): returns 400 with error envelope\n4. Endpoints to test:\n   - GET /api/v1/projects — list all published projects\n   - GET /api/v1/projects/featured — list featured projects\n   - GET /api/v1/projects/:slug — project by slug (test valid slug and 404 case)\n   - GET /api/v1/experiences — list all experiences\n   - GET /api/v1/profile — get profile\n   - GET /api/v1/professional-values — list professional values\n5. Document findings in `.taskmaster/docs/endpoint-testing-results.md`\n6. Create follow-up GitHub issues for any broken endpoints\n7. Verify error messages resolve from ERROR_MESSAGE (requires task #1, #2)\n\nValidation checklist:\n- Response always has `data` and `error` keys\n- Success: `data` is non-null, `error` is null, status 200\n- Failure: `data` is null, `error` has `code` and `message`, correct status\n- No 500 errors for expected failures",
@@ -4943,7 +4949,7 @@
         "updatedAt": "2026-05-21T20:57:01.275Z"
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Manual Endpoint Testing — Contact, Auth, Identity, and Admin Routes",
         "description": "Manually test contact form, authentication, identity, and admin CRUD endpoints for correct envelope, status codes, and authorization",
         "details": "1. Test Contact endpoint:\n   - POST /api/v1/contact with valid payload → 200\n   - POST /api/v1/contact with invalid payload → 400\n   - POST /api/v1/contact rate-limit behavior (requires multiple requests)\n2. Test Auth endpoints (pending full implementation per docs/11-IDENTITY.md):\n   - POST /api/v1/auth/sign-in with valid credentials → 200 with session\n   - POST /api/v1/auth/sign-in with invalid credentials → 401\n   - POST /api/v1/auth/sign-out → 200\n   - POST /api/v1/auth/refresh → 200 or 401\n3. Test Identity endpoint:\n   - GET /api/v1/me without session → 401 with AUTH_REQUIRED\n   - GET /api/v1/me with session → 200 with user data\n4. Test Admin endpoints (requires auth as admin):\n   - Projects: POST, PUT, DELETE, GET /api/v1/admin/projects/* (CRUD)\n   - Publish/Archive: POST /api/v1/admin/projects/:slug/publish, /archive\n   - Profile: PUT /api/v1/admin/profile\n   - Experiences: POST, PUT, DELETE, GET /api/v1/admin/experiences/* (CRUD)\n   - Test 401 UNAUTHORIZED when not admin\n5. Document findings in `.taskmaster/docs/endpoint-testing-results.md`\n6. Create follow-up issues for broken endpoints\n\nNote: Auth endpoints may be partially implemented; document current state",
@@ -4960,7 +4966,7 @@
         "updatedAt": "2026-05-21T21:38:03.909Z"
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Create Realistic Seed Data",
         "description": "Replace placeholder seed data with content close to real portfolio: real projects, experiences, skills, and profile with meaningful descriptions",
         "details": "1. Update `packages/infra/prisma/seed.ts` with realistic data:\n   - Profile: Real name, headline, bio (100-200 words), real photo URL or placeholder with better text\n   - Skills: Keep existing tech stack (TypeScript, React, Next.js, etc.), add more relevant skills\n   - Projects: Replace with 2-4 real or near-real projects with:\n     * Meaningful titles, captions, and content (200+ words each)\n     * Correct skill associations\n     * Real period dates\n     * At least 2 PUBLISHED featured projects\n   - Experiences: Replace with 2-3 real experiences with:\n     * Accurate company names, positions, locations\n     * Rich descriptions (150+ words per experience)\n     * Correct employment type and location type\n     * Real date ranges\n   - Professional values: Keep or enhance with more authentic content\n2. Ensure seeds remain idempotent (use upsert with stable IDs)\n3. Update image placeholders to use better text or real URLs\n4. Verify `pnpm prisma db seed` runs without errors\n5. Manually verify seeded data appears correctly in UI\n\nGoal: Seeds should represent the actual portfolio content or be very close, not generic placeholders",
@@ -4975,7 +4981,7 @@
         "updatedAt": "2026-05-23T02:09:36.893Z"
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Audit Application-Layer Orchestration in Route Handlers",
         "description": "Audit all route handlers in apps/site/src/app/api/ to ensure no orchestration logic (branching on domain results, multiple use-case calls) leaks into the web adapter",
         "details": "1. Review all 18 route handlers under `apps/site/src/app/api/v1/`:\n   - Public: projects, projects/featured, projects/[slug], experiences, profile, professional-values\n   - Contact: contact\n   - Auth: auth/sign-in, auth/sign-out, auth/refresh\n   - Identity: me\n   - Admin: admin/projects/*, admin/profile, admin/experiences/*\n2. Identify violations:\n   - Route handlers with if/else branching on domain model internals\n   - Multiple use-case calls in sequence with business decisions between them\n   - Business logic that should be in a use case\n3. For each violation:\n   - Extract orchestration into a new use case or enhance existing use case\n   - Simplify route handler to: resolve container → call one use case → map result to HTTP\n4. Document findings in `.taskmaster/docs/orchestration-audit.md`\n5. Create follow-up GitHub issues for refactors\n6. Ensure architecture ESLint rules pass\n\nPattern to enforce:\n```typescript\nexport async function GET(req: Request) {\n  const container = resolveContainer();\n  const result = await container.useCase.execute(params);\n  return mapToHttpResponse(result);\n}\n```",
@@ -4990,7 +4996,7 @@
         "updatedAt": "2026-05-21T20:39:48.528Z"
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "Create apps/admin and Move Login/Admin Routes",
         "description": "Extract /{locale}/login and /{locale}/admin/* routes from apps/site into new dedicated apps/admin Next.js app, scoping auth middleware to admin only",
         "details": "1. Create new Next.js app: `pnpm create next-app apps/admin --typescript --app --tailwind --no-src-dir`\n2. Set up admin app structure:\n   - `apps/admin/app/[locale]/login/page.tsx` — move from apps/site\n   - `apps/admin/app/[locale]/admin/*` — move all admin pages\n   - `apps/admin/middleware.ts` — auth middleware (move from apps/site, scope to admin)\n   - Copy necessary dependencies, components, and utilities\n3. Update `turbo.json`:\n   - Add `admin#build`, `admin#dev`, `admin#lint`, etc.\n   - Set correct env vars for admin app\n4. Update root `package.json`:\n   - Add scripts for admin: `dev:admin`, `build:admin`\n5. Update workspace config (pnpm-workspace.yaml if needed)\n6. Move shared components to `@repo/ui` if needed\n7. Ensure apps/site has ZERO login/admin routes remaining\n8. Test both apps run independently:\n   - `pnpm --filter site dev` — public portfolio only\n   - `pnpm --filter admin dev` — admin panel and login\n9. Update documentation (README, docs/) to reflect new structure\n10. Verify both apps build: `pnpm build`\n\nGoal: Complete separation of public site and admin app",
@@ -5076,21 +5082,21 @@
         "updatedAt": "2026-05-22T02:08:23.946Z"
       },
       {
-        "id": "8",
+        "id": 8,
         "title": "Figma Styling Review and Component Updates",
         "description": "Conduct Figma design review to identify unfinished or inconsistent components, then implement all required visual changes in @repo/ui and apps/site",
         "details": "1. Review Figma design against current implementation:\n   - Home page: Hero, Stats, Featured Projects, About preview\n   - Projects page: Project grid, filters, Project detail\n   - About page: Bio, Experiences timeline, Skills grid, Professional Values\n   - Contact form\n   - Admin pages (if designed)\n2. Document discrepancies:\n   - Missing components\n   - Incorrect spacing, typography, colors\n   - Inconsistent component variants\n   - Responsive behavior issues\n3. Create a checklist in `.taskmaster/docs/figma-review-checklist.md`:\n   - List all components requiring changes\n   - Prioritize by visual impact\n4. Implement changes:\n   - Update `@repo/ui` components (Button, Card, Input, etc.)\n   - Update page layouts in `apps/site/src/app/[locale]/*`\n   - Ensure Tailwind classes match design tokens\n   - Test responsive breakpoints (mobile, tablet, desktop)\n5. Visual regression testing:\n   - Compare before/after screenshots\n   - Verify on multiple screen sizes\n6. Update Storybook stories if needed\n\nReference: [Paul Scanlon's portfolio](https://www.paulie.dev/) for inspiration",
         "testStrategy": "1. Side-by-side comparison: Figma vs. running app\n2. Test all pages on mobile (375px), tablet (768px), desktop (1440px)\n3. Verify typography hierarchy matches design\n4. Verify color palette matches (check contrast ratios)\n5. Test interactive states (hover, focus, active) on all components\n6. Review Storybook to ensure component variants are complete\n7. User acceptance: have stakeholder review visuals",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [],
         "complexity": 7,
         "recommendedSubtasks": 5,
         "expansionPrompt": "Break this task into: (1) review Figma design against current implementation for all pages (Home, Projects, About, Contact, Admin) and document discrepancies (missing components, incorrect spacing/typography/colors, inconsistent variants, responsive issues), (2) create checklist in .taskmaster/docs/figma-review-checklist.md prioritizing by visual impact, (3) implement changes in @repo/ui components (Button, Card, Input, etc.) to match design tokens, (4) update page layouts in apps/site/src/app/[locale]/* and test responsive breakpoints (mobile 375px, tablet 768px, desktop 1440px), and (5) perform visual regression testing (before/after screenshots, verify typography hierarchy, color palette, interactive states)."
       },
       {
-        "id": "9",
+        "id": 9,
         "title": "General Code Quality Review and Cleanup",
         "description": "Comprehensive quality pass: eliminate 'any' types, enforce architectural boundaries, verify REST contract, ensure all tests pass, and enforce ESLint rules",
         "details": "1. Eliminate all `any` types:\n   - Run `grep -r 'any' packages/*/src apps/*/src` (exclude node_modules, .next)\n   - Replace with explicit types or `unknown`\n   - Focus on `packages/core`, `packages/application`, `apps/site/src/app/api`\n2. Verify architectural boundaries:\n   - No direct imports between bounded contexts (portfolio ↔ identity)\n   - No use cases called from pages, layouts, or client components in apps/site\n   - No `@repo/application` imports in apps/site pages (only in route handlers)\n   - No `@supabase/*` outside `@repo/infra` (grep for '@supabase')\n3. Verify REST boundary:\n   - All route handlers follow response envelope: `{ data, error }`\n   - No domain logic in route handlers (see task #6)\n   - All errors map to correct HTTP status codes\n4. Run all tests and fix failures:\n   - `pnpm test:core` — core domain tests\n   - `pnpm test:utils` — utils tests\n   - `pnpm test:site` — site tests\n   - `pnpm test` — full test suite\n5. Run linters and fix violations:\n   - `pnpm lint` — ESLint across all packages\n   - `pnpm format` — Prettier formatting\n   - `pnpm types` — TypeScript type checking\n6. Document any remaining technical debt in GitHub issues\n\nGoal: Zero linting errors, zero `any` types, all tests green, architecture rules enforced",
@@ -5178,7 +5184,7 @@
         "expansionPrompt": "Break this task into: (1) eliminate all 'any' types across packages/core, packages/application, apps/site/src/app/api (grep -r 'any', replace with explicit types or unknown), (2) verify architectural boundaries (no cross-context imports portfolio ↔ identity, no use cases in pages/layouts/client components, no @repo/application in apps/site pages except route handlers, no @supabase outside @repo/infra), (3) verify REST boundary (all route handlers follow envelope: { data, error }, correct HTTP status codes, no domain logic in handlers), (4) run all tests and fix failures (pnpm test:core, test:utils, test:site, test), (5) run linters and fix violations (pnpm lint, pnpm format, pnpm types), and (6) document remaining technical debt in GitHub issues."
       },
       {
-        "id": "10",
+        "id": 10,
         "title": "Document Findings and Create Follow-up Issues",
         "description": "Consolidate all audit findings from tasks #3, #4, #6, #8, #9 into GitHub issues in MVP Round 2 milestone, prioritize, and prepare launch checklist",
         "details": "1. Review documentation created during previous tasks:\n   - `.taskmaster/docs/endpoint-testing-results.md` (tasks #3, #4)\n   - `.taskmaster/docs/orchestration-audit.md` (task #6)\n   - `.taskmaster/docs/figma-review-checklist.md` (task #8)\n   - Any code quality notes from task #9\n2. For each finding:\n   - Assess severity: blocker, critical, medium, low\n   - Determine if it must be fixed before launch or post-MVP\n3. Create GitHub issues:\n   - Use `gh issue create` with proper labels (bug, refactor, enhancement)\n   - Assign to MVP Round 2 milestone if launch-blocking\n   - Link to parent issue (e.g., #588, #543, #589, #594)\n4. Create launch checklist in `.taskmaster/docs/launch-checklist.md`:\n   - All tests passing\n   - All endpoints working\n   - Realistic seed data\n   - Figma design matches\n   - Zero architectural violations\n   - Documentation updated\n   - Admin app separated (if task #7 complete)\n5. Update project README with:\n   - MVP Round 2 completion status\n   - Known post-MVP work items\n   - Deployment instructions\n6. Prepare for launch: final smoke test\n\nGoal: Clear view of launch readiness and post-MVP backlog",
@@ -5198,7 +5204,7 @@
         "expansionPrompt": "Break this task into: (1) review all documentation created during tasks #3, #4, #6, #8, #9 (.taskmaster/docs/endpoint-testing-results.md, orchestration-audit.md, figma-review-checklist.md, code quality notes), (2) for each finding, assess severity (blocker, critical, medium, low) and determine if launch-blocking or post-MVP, (3) create GitHub issues with gh issue create (proper labels: bug, refactor, enhancement, milestone: MVP Round 2, link to parent issues #588, #543, #589, #594), (4) create launch checklist in .taskmaster/docs/launch-checklist.md (tests passing, endpoints working, realistic seed data, Figma match, zero violations, docs updated, admin app separated if task #7 complete), (5) update project README with MVP Round 2 status, known post-MVP work, deployment instructions, and (6) perform final smoke test (view projects, submit contact form, admin login)."
       },
       {
-        "id": "11",
+        "id": 11,
         "title": "Fix chain-loop bug in Validator.validate()",
         "description": "Replace truthy-string guard with explicit boolean flag to ensure failed rules stop the chain regardless of message value",
         "details": "Add a private `_failed: boolean = false` field to the Validator class. In the `validate()` method's loop, set `this._failed = !isValid` before setting `this._error`. Replace `if (this._error) break;` with `if (this._failed) break;` to ensure the loop stops on first failure even when error message is empty string. Default error to 'validation-error' when message is null: `this._error = isValid ? null : (error ?? 'validation-error');`. This fixes the latent bug where empty string messages (`''`) prevented the break condition from working, allowing later rules to overwrite earlier failures.",
@@ -5210,7 +5216,7 @@
         "updatedAt": "2026-05-21T20:46:00.990Z"
       },
       {
-        "id": "12",
+        "id": 12,
         "title": "Make message parameter optional in all Validator rule methods",
         "description": "Update all rule method signatures to make the `message` parameter optional, defaulting to 'validation-error' internally when not provided",
         "details": "Update method signatures for all rule methods in `Validator.ts`: `refine()`, `length()`, `regex()`, `email()`, `notEmpty()`, `notNil()`, `in()`, `alpha()`, `empty()`, `nil()`, `string()`, `uuid()`, `url()`, `datetime()`, `gt()`, `gte()`, `lt()`, `lte()`. Change each `error: string` parameter to `error?: string`. In the `append()` private method, use the provided error or default to 'validation-error': `this.append(validation, error ?? 'validation-error')`. For `length()` which uses Mustache templating, only apply templating when message is provided: `error ? Mustache.render(error, config) : 'validation-error'`. This ensures backward compatibility while allowing call sites to omit messages.",
@@ -5224,7 +5230,7 @@
         "updatedAt": "2026-05-21T20:46:03.972Z"
       },
       {
-        "id": "13",
+        "id": 13,
         "title": "Remove mock placeholder messages from core Value Objects",
         "description": "Remove all mock placeholder message arguments from Validator calls in core VOs: Slug, Email, Name, Text, Url, Id, DateTime, DateRange",
         "details": "Update the following core VO files to remove the second parameter from all Validator rule calls:\n- `packages/core/src/shared/vo/Slug.ts`: remove 'invalid-slug' from `.length()` and `.regex()` calls\n- `packages/core/src/shared/vo/Email.ts`: remove 'invalid-email' from `.length()` and `.email()` calls\n- `packages/core/src/shared/vo/Name.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/Text.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/Url.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/Id.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/DateTime.ts`: remove placeholder messages from validator calls\n- `packages/core/src/shared/vo/DateRange.ts`: remove placeholder messages from validator calls\nAfter removal, each `.validate()` call will still destructure `{ isValid }` and return `left(new ValidationError({ code: VO.ERROR_CODE }))` when invalid, preserving existing behavior since messages are resolved at application layer via ERROR_MESSAGE.",
@@ -5238,7 +5244,7 @@
         "updatedAt": "2026-05-21T20:46:07.152Z"
       },
       {
-        "id": "14",
+        "id": 14,
         "title": "Remove mock placeholder messages from core LocalizedText",
         "description": "Remove the mock placeholder message from the Validator call in LocalizedText.create()",
         "details": "Update `packages/core/src/shared/i18n/LocalizedText.ts` line 48-50. Change from:\n```typescript\nconst { isValid } = Validator.of(input?.['en-US']?.trim() ?? '')\n  .notEmpty('en-US is required and must be non-empty after trim.')\n  .validate();\n```\nto:\n```typescript\nconst { isValid } = Validator.of(input?.['en-US']?.trim() ?? '')\n  .notEmpty()\n  .validate();\n```\nThe message 'en-US is required and must be non-empty after trim.' is never used since the code only reads `isValid` and creates `ValidationError({ code: LocalizedText.ERROR_CODE })` on failure. Message resolution happens at application layer via ERROR_MESSAGE.",
@@ -5252,7 +5258,7 @@
         "updatedAt": "2026-05-21T20:46:10.257Z"
       },
       {
-        "id": "15",
+        "id": 15,
         "title": "Remove mock placeholder messages from core validateEnum utility",
         "description": "Update the validateEnum helper function to not require a message parameter when calling Validator",
         "details": "Update `packages/core/src/shared/validateEnum.ts` to remove the message parameter from the `.in()` call. The current implementation likely passes an empty string or placeholder. Change to:\n```typescript\nconst { isValid } = Validator.of(value)\n  .in(allowedValues)\n  .validate();\n```\nThis function is used in Project.create() and other entities to validate enum values. It returns a ValidationError with the provided error code on failure, so the validator's internal error message is unused.",
@@ -5266,7 +5272,7 @@
         "updatedAt": "2026-05-21T20:46:13.271Z"
       },
       {
-        "id": "16",
+        "id": 16,
         "title": "Remove mock placeholder messages from core entities",
         "description": "Remove mock placeholder message arguments from Validator calls in Language, Profile, Project entities and SkillFactory",
         "details": "Update the following entity/factory files to remove message parameters from Validator rule calls:\n- `packages/core/src/portfolio/entities/language/model/Language.ts`: remove any placeholder messages from validator calls\n- `packages/core/src/portfolio/entities/profile/model/Profile.ts`: remove any placeholder messages from validator calls\n- `packages/core/src/portfolio/entities/project/model/Project.ts`: remove empty string `''` from `.in()` call on line 103, remove 'self-reference' from `.refine()` on line 169, remove 'duplicate-slugs' from `.refine()` on line 174, and remove empty strings from `.refine()` calls in `publish()` and `archive()` methods (lines 202, 212)\n- `packages/core/src/portfolio/entities/skill/factory/SkillFactory.ts`: remove any placeholder messages from validator calls\nAll these entities only read `isValid` from `.validate()` and construct `ValidationError({ code: ENTITY.ERROR_CODE })` on failure, so the error strings are unused.",
@@ -5280,7 +5286,7 @@
         "updatedAt": "2026-05-21T20:46:16.294Z"
       },
       {
-        "id": "17",
+        "id": 17,
         "title": "Remove mock placeholder messages from application layer",
         "description": "Remove mock placeholder message arguments from Validator calls in SendContactMessage use case",
         "details": "Update `packages/application/src/contact/use-cases/SendContactMessage.ts` to remove the message parameters from Validator calls:\n- Line 26: remove 'invalid-name' from `.notEmpty()` call\n- Line 31-32: remove 'invalid-email' from `.notEmpty()` and `.email()` calls\n- Line 38: remove 'invalid-message' from `.notEmpty()` call\nThe use case only reads `isValid` from each `.validate()` call and returns `ValidationError({ code: 'INVALID_NAME' | 'INVALID_EMAIL' | 'INVALID_MESSAGE' })` on failure. Error messages are resolved at the route handler layer via ERROR_MESSAGE, so these placeholder strings are unused.",
@@ -5294,7 +5300,7 @@
         "updatedAt": "2026-05-21T20:46:19.264Z"
       },
       {
-        "id": "18",
+        "id": 18,
         "title": "Add comprehensive Validator unit tests for optional message behavior",
         "description": "Extend the Validator test suite to cover the new optional message parameter behavior and chain-loop fix",
         "details": "Add new test cases to `packages/utils/test/node/Validator.test.ts` covering:\n1. Chain-loop fix: \n   - Test that chained rules stop on first failure when first rule has empty string message\n   - Test that chained rules stop on first failure when first rule has no message\n   - Verify second rule in chain is not evaluated after first fails (use spy/mock on predicate)\n2. Optional message parameter:\n   - Test each rule method (refine, length, regex, email, notEmpty, notNil, in, alpha, etc.) called without message - verify isValid is correct\n   - Test that omitted message returns 'validation-error' in error field when validation fails\n   - Test mixed chain: some rules with message, some without\n3. Backward compatibility:\n   - Verify all existing tests still pass\n   - Test that rules with explicit messages still return those messages in error field",
@@ -5308,7 +5314,7 @@
         "subtasks": []
       },
       {
-        "id": "19",
+        "id": 19,
         "title": "Verify no breaking changes in HTTP boundary validators",
         "description": "Audit and confirm that route handler validators in apps/site that intentionally carry messages are not affected by this change",
         "details": "Review HTTP route handlers in `apps/site/src/app/api/v1/` to identify validators that intentionally provide messages (e.g., contact route, auth routes). These are HTTP-boundary validators that validate request bodies and may provide user-facing error messages. Verify:\n1. These validators can continue to pass message parameters (backward compatible)\n2. No accidental removal of messages that are actually used\n3. The optional parameter change doesn't break any route handler validation logic\nSpecifically check:\n- `apps/site/src/app/api/v1/contact/route.ts`\n- `apps/site/src/app/api/v1/auth/sign-in/route.ts`\n- Any other route handlers using Validator with `.notNil()` or `.refine()` on JSON body\nThese files are out of scope for message removal since they may rely on validator error messages at the HTTP boundary.",
@@ -5322,7 +5328,7 @@
         "updatedAt": "2026-05-21T20:46:22.297Z"
       },
       {
-        "id": "20",
+        "id": 20,
         "title": "Update project documentation to reflect optional message parameter",
         "description": "Update documentation files to reflect that Validator message parameters are now optional and explain when to use them",
         "details": "Update the following documentation files to reflect the Validator API change:\n1. `docs/06-VALIDATION.md`: Update Validator examples to show message parameter as optional. Explain:\n   - In domain layer (core), message parameter should be omitted since messages are resolved at application layer via ERROR_MESSAGE\n   - In application layer use cases, message parameter should be omitted for the same reason\n   - In HTTP boundary validators (route handlers), message parameter may be provided if needed for direct user-facing errors\n2. `docs/09-PATTERNS.md`: Update Value Object template to show Validator calls without message parameters\n3. `CLAUDE.md`: Update the 'Domain Validation (core)' section to show examples without message parameters\nProvide clear guidance on the new convention: domain and application layers omit messages, HTTP boundaries may include them if needed.",
@@ -5341,7 +5347,7 @@
         "subtasks": []
       },
       {
-        "id": "21",
+        "id": 21,
         "title": "Extract sign-in orchestration into SignIn use case",
         "description": "Refactor POST /api/v1/auth/sign-in to extract application-layer orchestration (getPrincipalFromSession + EnsureAppUserForAuthSession) into a new SignIn use case in @repo/application/identity",
         "details": "**Context:**\nCurrently, `apps/site/src/app/api/v1/auth/sign-in/route.ts` has application-layer orchestration logic embedded in the route handler:\n- Lines 61-68: calls `authGateway.getPrincipalFromCookies()` with a manually constructed cookie API\n- Lines 72-79: instantiates and calls `EnsureAppUserForAuthSession` use case directly\nThis violates Clean Architecture — the route handler should only handle HTTP concerns (request parsing, cookie setting, response formatting) and delegate business orchestration to a use case.\n\n**Implementation Steps:**\n\n1. **Add `getPrincipalFromSession(session: AuthSession)` to `IAuthenticationGateway`** (`packages/application/src/identity/ports/IAuthenticationGateway.ts`):\n   - New method signature: `getPrincipalFromSession(session: AuthSession): Promise<Either<DomainError, AuthPrincipal>>`\n   - Purpose: decode and validate the access token from an `AuthSession` object (obtained from `signInWithPassword`) without requiring cookies\n   - This replaces the manual cookie API construction currently in the route handler (lines 61-68)\n   - Update the port's JSDoc to document this method\n\n2. **Implement `getPrincipalFromSession` in `SupabaseAuthenticationGateway`** (`packages/infra/src/identity/SupabaseAuthenticationGateway.ts`):\n   - Use the existing `getUserFromAccessToken(accessToken: string)` private method (or similar logic)\n   - Extract `session.accessToken` and decode it to obtain `AuthPrincipal { id, email, role }`\n   - Return `left(DomainError)` on invalid token, `right(AuthPrincipal)` on success\n\n3. **Create `SignIn` use case** in `packages/application/src/identity/use-cases/SignIn.ts`:\n   - Extends `UseCase<SignInInput, void, ValidationError | DomainError>`\n   - Input type: `{ email: string; password: string }`\n   - Constructor dependencies: `authGateway: IAuthenticationGateway`, `userRepository: IUserRepository`\n   - Execution flow:\n     a. Validate email and password are non-empty strings using `Validator` (return `left(ValidationError({ code: 'INVALID_INPUT' }))` on failure)\n     b. Call `authGateway.signInWithPassword({ email, password })` — propagate error on `isLeft()`\n     c. Call `authGateway.getPrincipalFromSession(session)` — propagate error on `isLeft()`\n     d. Call `new EnsureAppUserForAuthSession(userRepository).execute({ authSubject: principal.id, email: principal.email })` — propagate error on `isLeft()`\n     e. Return `right(void)` on success\n   - This extracts steps 1, 3, and 4 from the current route handler\n\n4. **Export `SignIn` from `@repo/application/identity`**:\n   - Add to `packages/application/src/identity/use-cases/index.ts`\n   - Add to `packages/application/src/identity/index.ts`\n\n5. **Refactor route handler** (`apps/site/src/app/api/v1/auth/sign-in/route.ts`):\n   - Remove lines 33-79 (current orchestration logic)\n   - Replace with:\n     ```typescript\n     const { authGateway, userRepository } = getContainer();\n     const signInResult = await new SignIn(authGateway, userRepository).execute({\n       email: body.email ?? '',\n       password: body.password ?? '',\n     });\n     if (signInResult.isLeft()) return signInResult;\n\n     // Session already established by use case; retrieve it again for cookie setting\n     const sessionResult = await authGateway.signInWithPassword({ email: body.email, password: body.password });\n     if (sessionResult.isLeft()) return sessionResult;\n     const session = sessionResult.value;\n     ```\n   - **Alternative (preferred)**: Modify `SignIn` use case to return `AuthSession` instead of `void`, so route handler can set cookies without re-calling `signInWithPassword`:\n     - Change use case output type to `AuthSession`\n     - Return `right(session)` at step (e)\n     - Route handler receives session directly: `const session = signInResult.value;`\n   - Keep cookie-setting logic (lines 43-59) unchanged — this is HTTP boundary responsibility\n   - Remove import of `EnsureAppUserForAuthSession` (no longer needed in route handler)\n   - Import `SignIn` instead\n\n6. **Update tests**:\n   - Create unit tests for `SignIn` use case in `packages/application/test/identity/SignIn.test.ts`:\n     * Test successful sign-in flow\n     * Test invalid credentials from gateway\n     * Test getPrincipalFromSession failure\n     * Test EnsureAppUserForAuthSession failure (conflict, creation failure)\n     * Test validation errors (empty email, empty password)\n   - Update `apps/site/tests/app/api/v1/auth/sign-in/route.test.ts`:\n     * Mock `SignIn` use case execution instead of direct gateway/repository calls\n     * Verify route handler still sets cookies correctly on success\n     * Verify error responses (400, 401) still work\n   - Update `FakeAuthenticationGateway` in `packages/application/test/identity/FakeAuthenticationGateway.ts` to implement `getPrincipalFromSession`\n\n**Key Design Decisions:**\n- The use case should return `AuthSession` (not `void`) so the route handler can set cookies without re-authenticating\n- All domain/application orchestration (steps 1/3/4 from original route) moves into the use case\n- Route handler responsibility: parse request, call use case, set HTTP-only cookies, format response\n- This aligns with Clean Architecture and the guidance in `docs/11-IDENTITY.md` and `docs/02-ARCHITECTURE.md`\n\n**Files to modify:**\n- `packages/application/src/identity/ports/IAuthenticationGateway.ts`\n- `packages/infra/src/identity/SupabaseAuthenticationGateway.ts`\n- `packages/application/src/identity/use-cases/SignIn.ts` (new)\n- `packages/application/src/identity/use-cases/index.ts`\n- `packages/application/src/identity/index.ts`\n- `apps/site/src/app/api/v1/auth/sign-in/route.ts`\n- `packages/application/test/identity/SignIn.test.ts` (new)\n- `packages/application/test/identity/FakeAuthenticationGateway.ts`\n- `apps/site/tests/app/api/v1/auth/sign-in/route.test.ts`",
@@ -5355,7 +5361,7 @@
         "updatedAt": "2026-05-23T00:39:12.876Z"
       },
       {
-        "id": "22",
+        "id": 22,
         "title": "Consolidate cookie management in refreshSession gateway method",
         "description": "Refactor POST /api/v1/auth/refresh to move all cookie-setting logic from the route handler into IAuthenticationGateway.refreshSession(), ensuring a single responsibility for session refresh and eliminating duplicated cookie configuration.",
         "details": "**Context:**\n\nCurrently, `apps/site/src/app/api/v1/auth/refresh/route.ts` (lines 22-35) sets authentication cookies **after** calling `authGateway.refreshSession()`. This violates single responsibility and creates duplication — the same cookie configuration logic exists (or will exist) in multiple route handlers (sign-in, refresh). The cookie-setting logic should be encapsulated within the gateway method itself.\n\n**Current Implementation:**\n\nRoute handler (`apps/site/src/app/api/v1/auth/refresh/route.ts`):\n- Line 14: Creates `cookieApi` via `createNextAuthCookieApi()`\n- Line 16: Calls `authGateway.refreshSession(cookieApi)`\n- Lines 19-35: Manually sets `SUPABASE_ACCESS_TOKEN_COOKIE` and `SUPABASE_REFRESH_TOKEN_COOKIE` with calculated `expiresIn` and hardcoded options\n\nGateway method (`packages/infra/src/identity/SupabaseAuthenticationGateway.ts`, lines 85-124):\n- Reads refresh token from cookies\n- Calls Supabase SDK to refresh session\n- Returns `Either<DomainError, AuthSession>` with tokens\n- **Does not set cookies**\n\n**Target Architecture:**\n\nThe `IAuthenticationGateway.refreshSession()` method should:\n1. Read the refresh token from `cookies` (already does this)\n2. Call the IdP to refresh the session (already does this)\n3. **Set the new access and refresh tokens in cookies** (new responsibility)\n4. Return `Either<DomainError, void>` instead of `AuthSession` (signature change required)\n\nThe route handler should:\n1. Create `cookieApi`\n2. Call `authGateway.refreshSession(cookieApi)`\n3. Return `right(null)` on success (no further cookie manipulation)\n\n**Implementation Steps:**\n\n1. **Update `IAuthenticationGateway` interface** (`packages/application/src/identity/ports/IAuthenticationGateway.ts`):\n   - Change line 38 signature from `Promise<Either<DomainError, AuthSession>>` to `Promise<Either<DomainError, void>>`\n   - Update JSDoc comment (line 35-37) to clarify that the method now sets cookies internally\n\n2. **Update `SupabaseAuthenticationGateway.refreshSession()`** (`packages/infra/src/identity/SupabaseAuthenticationGateway.ts`):\n   - After successfully obtaining `data.session` (line 114), extract `accessToken`, `refreshToken`, `expiresAt`\n   - Calculate `expiresIn = expiresAt - Math.floor(Date.now() / 1000)`\n   - Call `cookies.set(SUPABASE_ACCESS_TOKEN_COOKIE, accessToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: expiresIn, path: '/' })`\n   - Call `cookies.set(SUPABASE_REFRESH_TOKEN_COOKIE, refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 60 * 60 * 24 * 30, path: '/' })`\n   - Return `right(undefined)` instead of `right({ accessToken, refreshToken, expiresAt })`\n\n3. **Simplify route handler** (`apps/site/src/app/api/v1/auth/refresh/route.ts`):\n   - Keep lines 11-16 (create cookieApi, call refreshSession)\n   - Remove lines 19-35 (manual cookie setting)\n   - Change line 37 from `return right(null as unknown)` to direct return of `sessionResult` (since it's now `Either<DomainError, void>`)\n\n4. **Update `FakeAuthenticationGateway`** (`packages/application/test/identity/FakeAuthenticationGateway.ts`):\n   - Update `refreshSession()` signature to return `Promise<Either<DomainError, void>>`\n   - Add cookie-setting logic in the fake implementation (call `cookies.set()` for both tokens)\n   - Return `right(undefined)`\n\n5. **Update contract tests** (`packages/application/test/identity/IAuthenticationGateway.test.ts`):\n   - Verify `refreshSession()` now returns `Either<DomainError, void>`\n   - Add assertion that cookies are set with correct names and options\n\n**Files to Modify:**\n\n- `packages/application/src/identity/ports/IAuthenticationGateway.ts` (interface signature)\n- `packages/infra/src/identity/SupabaseAuthenticationGateway.ts` (implementation)\n- `apps/site/src/app/api/v1/auth/refresh/route.ts` (route handler simplification)\n- `packages/application/test/identity/FakeAuthenticationGateway.ts` (test double)\n- `packages/application/test/identity/IAuthenticationGateway.test.ts` (contract tests)\n\n**Environment Variable Access:**\n\nThe gateway (`SupabaseAuthenticationGateway`) currently lives in `@repo/infra` and does not directly access `process.env.NODE_ENV`. Options:\n- **Option A (recommended)**: Pass `secure` flag as a constructor parameter to `SupabaseAuthenticationGateway` from the container initialization in `apps/site`\n- **Option B**: Accept that `@repo/infra` reads `process.env.NODE_ENV` (common pattern in infrastructure layer)\n- **Option C**: Extract cookie configuration to a separate injectable `CookieConfigProvider` port\n\nFor pragmatism and consistency with the existing pattern in `signOut()` (lines 76-77), use **Option B** — `@repo/infra` may read `process.env.NODE_ENV` as part of infrastructure concerns.\n\n**Consistency Note:**\n\nThe `signOut()` method (lines 60-83) already sets/deletes cookies internally. This refactoring aligns `refreshSession()` with the same pattern.",
@@ -5368,7 +5374,7 @@
         "subtasks": []
       },
       {
-        "id": "23",
+        "id": 23,
         "title": "Fix duplicate slug 500 error in POST /admin/projects",
         "description": "Catch Prisma P2002 unique constraint error in PrismaProjectRepository.save() and return left(new ValidationError({ code: 'INVALID_PROJECT' })) to ensure duplicate slug violations return 400 instead of 500.",
         "details": "**Context:**\n\nIssue #609 reports that POST /api/v1/admin/projects with a duplicate slug returns 500 instead of 400. Root cause: Prisma's P2002 unique constraint error (thrown when violating unique constraints like the `slug` column) is not caught in `packages/infra/src/repositories/project/PrismaProjectRepository.ts:78-86` (`save()` method). The unhandled exception bubbles up to `apps/site/src/lib/api/handler.ts:29` where it's caught by the top-level catch block and mapped to 500.\n\n**Current Implementation:**\n\n`packages/infra/src/repositories/project/PrismaProjectRepository.ts:78-86`:\n```typescript\nasync save(project: Project): Promise<void> {\n  const data = ProjectMapper.toPrisma(project);\n\n  await this.db.project.upsert({\n    where: { id: data.id as string },\n    create: data,\n    update: data,\n  });\n}\n```\n\nThe method does not catch Prisma errors. When a duplicate slug is provided, Prisma throws:\n```\nPrismaClientKnownRequestError: Unique constraint failed on the fields: (`slug`)\ncode: 'P2002'\n```\n\nThis exception propagates to `packages/application/src/portfolio/use-cases/SaveProject.ts:50-57`, which has a generic catch block:\n```typescript\ntry {\n  await this.projectRepository.save(projectResult.value);\n  return right(undefined);\n} catch {\n  return left(\n    new DomainError('SAVE_FAILED', { message: 'Failed to save project' }),\n  );\n}\n```\n\n`SAVE_FAILED` is not in `CODE_REGISTRY` in `apps/site/src/lib/api/error-mapper.ts:24-40`, so it defaults to 500 in `mapDomainErrorToHttp():58-62`.\n\n**Solution:**\n\n1. **Update `PrismaProjectRepository.save()`** to catch `PrismaClientKnownRequestError` with code `P2002` and return `left(new ValidationError({ code: 'INVALID_PROJECT' }))`.\n2. **Change method signature** from `async save(project: Project): Promise<void>` to `async save(project: Project): Promise<Either<ValidationError, void>>`.\n3. **Update `IProjectRepository` interface** in `packages/core/src/portfolio/repositories/IProjectRepository.ts` to match the new signature.\n4. **Update `SaveProject` use case** in `packages/application/src/portfolio/use-cases/SaveProject.ts:50-57` to handle the Either result from `save()` instead of using try-catch.\n5. **Import Prisma error type**: `import { Prisma } from '@prisma/client';` in `PrismaProjectRepository.ts`.\n\n**Updated `PrismaProjectRepository.save()` implementation:**\n```typescript\nimport { Prisma } from '@prisma/client';\nimport { Either, left, right, ValidationError } from '@repo/core/shared';\n\nasync save(project: Project): Promise<Either<ValidationError, void>> {\n  const data = ProjectMapper.toPrisma(project);\n\n  try {\n    await this.db.project.upsert({\n      where: { id: data.id as string },\n      create: data,\n      update: data,\n    });\n    return right(undefined);\n  } catch (error) {\n    if (\n      error instanceof Prisma.PrismaClientKnownRequestError &&\n      error.code === 'P2002'\n    ) {\n      return left(new ValidationError({ code: 'INVALID_PROJECT' }));\n    }\n    throw error; // Re-throw unexpected errors\n  }\n}\n```\n\n**Updated `IProjectRepository` interface:**\n```typescript\nsave(project: Project): Promise<Either<ValidationError, void>>;\n```\n\n**Updated `SaveProject` use case:**\n```typescript\nconst saveResult = await this.projectRepository.save(projectResult.value);\nif (saveResult.isLeft()) return left(saveResult.value);\nreturn right(undefined);\n```\n\n**Why this works:**\n- `ValidationError` is mapped to 400 in `apps/site/src/lib/api/error-mapper.ts:18` via `HTTP_STATUS_REGISTRY`.\n- `INVALID_PROJECT` error code is already defined in `packages/core/src/shared/i18n/ERROR_MESSAGE.ts:29` with localized messages.\n- The route handler in `apps/site/src/app/api/v1/admin/projects/route.ts:11-30` will automatically map the error to 400 via `handleRequest()` and `mapDomainErrorToHttp()`.\n\n**Files to modify:**\n1. `packages/core/src/portfolio/repositories/IProjectRepository.ts` (interface)\n2. `packages/infra/src/repositories/project/PrismaProjectRepository.ts` (implementation)\n3. `packages/application/src/portfolio/use-cases/SaveProject.ts` (use case)\n\n**Other repositories using `save()`:**\nSearch for other implementations of `IProjectRepository` or other repositories with `save()` methods to ensure consistency (e.g., UserRepository, etc.). Update their signatures and callers if needed.",
@@ -5389,6 +5395,478 @@
       "completedCount": 17,
       "tags": [
         "mvp-round-2"
+      ],
+      "created": "2026-05-27T01:56:30.316Z",
+      "description": "Tasks for mvp-round-2 context",
+      "updated": "2026-05-27T01:56:30.316Z"
+    }
+  },
+  "figma-pixel-perfect": {
+    "tasks": [
+      {
+        "id": "36",
+        "title": "Add missing semantic tokens to tailwind-config index.ts",
+        "description": "Extend the semantic color tokens in packages/tailwind-config/index.ts with missing tokens for surface-overlay, surface-interactive, content-disabled, border-muted, and brand hover/active states",
+        "details": "Update packages/tailwind-config/index.ts:\n\n1. Add to surface object:\n   - overlay: 'rgb(var(--tw-surface-overlay) / <alpha-value>)'\n   - interactive: 'rgb(var(--tw-surface-interactive) / <alpha-value>)'\n\n2. Add to content object:\n   - disabled: 'rgb(var(--tw-content-disabled) / <alpha-value>)'\n\n3. Add to border object:\n   - muted: 'rgb(var(--tw-border-muted) / <alpha-value>)'\n\n4. Add to brand object:\n   - 'primary-hover': 'rgb(var(--tw-brand-primary-hover) / <alpha-value>)'\n   - 'primary-active': 'rgb(var(--tw-brand-primary-active) / <alpha-value>)'\n\n5. Update error and success tokens:\n   - error: 'rgb(var(--tw-error) / <alpha-value>)'\n   - success: 'rgb(var(--tw-success) / <alpha-value>)'\n\nAll tokens must use RGB CSS variable references for alpha-value compatibility.",
+        "testStrategy": "1. Build packages/tailwind-config to ensure no TypeScript errors\n2. Verify that Tailwind classes like bg-surface-overlay, text-content-disabled, border-border-muted, bg-brand-primary-hover are generated in the compiled CSS\n3. Test in a component that these classes apply correctly\n4. Run pnpm build at root to ensure no conflicts",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:02:15.400Z"
+      },
+      {
+        "id": "37",
+        "title": "Add CSS variables for dark mode in tailwind.css",
+        "description": "Add missing CSS variable definitions for dark mode (:root selector) in packages/tailwind-config/tailwind.css",
+        "details": "Update the :root block in packages/tailwind-config/tailwind.css with:\n\n--tw-surface-overlay: 38 38 38; /* #262626 */\n--tw-surface-interactive: 73 73 73; /* #494949 */\n--tw-content-disabled: 164 164 164; /* #A4A4A4 */\n--tw-border-muted: 73 73 73; /* #494949 */\n--tw-brand-primary-hover: 50 61 205; /* #323DCD */\n--tw-brand-primary-active: 161 168 255; /* #A1A8FF */\n--tw-error: 255 82 116; /* #FF5274 */\n--tw-success: 113 216 117; /* #71D875 */\n\nEnsure RGB format (space-separated) for Tailwind opacity modifier compatibility.",
+        "testStrategy": "1. Inspect generated CSS to verify variables are present in :root\n2. Apply dark mode in browser dev tools\n3. Check that color values match Figma specs exactly\n4. Verify opacity modifiers work (e.g., bg-surface-overlay/80)",
+        "priority": "high",
+        "dependencies": [
+          "36"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:02:18.460Z"
+      },
+      {
+        "id": "38",
+        "title": "Add CSS variables for light mode in tailwind.css",
+        "description": "Add missing CSS variable definitions for light mode (.light selector) in packages/tailwind-config/tailwind.css",
+        "details": "Update the .light block in packages/tailwind-config/tailwind.css with:\n\n--tw-surface-overlay: 255 255 255; /* #FFFFFF */\n--tw-surface-interactive: 235 235 235; /* #EBEBEB */\n--tw-content-disabled: 164 164 164; /* #A4A4A4 */\n--tw-border-muted: 186 186 186; /* #BABABA */\n--tw-brand-primary-hover: 65 79 255; /* #414FFF */\n--tw-brand-primary-active: 192 197 255; /* #C0C5FF */\n--tw-error: 244 53 100; /* #F43564 */\n--tw-success: 82 206 122; /* #52CE7A */\n\nNote: Some values like content-disabled (#A4A4A4) are same across modes, but others differ.",
+        "testStrategy": "1. Toggle to light mode via ThemeToggle component\n2. Inspect computed styles to verify light mode variables are applied\n3. Compare visual output with Figma light mode specs\n4. Test opacity modifiers in light mode",
+        "priority": "high",
+        "dependencies": [
+          "36"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:02:21.544Z"
+      },
+      {
+        "id": "39",
+        "title": "Verify ThemeToggle implementation",
+        "description": "Ensure ThemeToggle component correctly applies/removes .light class on document.documentElement for theme switching",
+        "details": "Review apps/site/src/components/Layout/SideNavigation/ThemeToggle.tsx and the useDarkMode/useTheme hooks to confirm:\n\n1. Theme toggle adds/removes .light class to <html> element (document.documentElement)\n2. The darkMode: 'selector' configuration in tailwind-config is correct\n3. Theme state persists across page navigation\n4. Initial theme loads correctly on SSR/first paint\n\nIf implementation is correct, no changes needed. If issues found, fix the theme application logic.",
+        "testStrategy": "1. Click theme toggle in SideNavigation\n2. Verify .light class is added/removed from <html> element in dev tools\n3. Refresh page and verify theme persists\n4. Navigate between pages and verify theme remains consistent\n5. Test with browser's prefers-color-scheme media query",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:02:24.571Z"
+      },
+      {
+        "id": "40",
+        "title": "Replace hardcoded tokens in Header component",
+        "description": "Replace primitive dark-* color tokens with semantic tokens in apps/site/src/components/Layout/Header/index.tsx",
+        "details": "Update Header component class names:\n\nCurrent → Semantic:\n- bg-surface (keep as is)\n- xl:bg-surface-sunken (keep as is)\n- !bg-surface-raised → bg-surface-raised (remove ! if possible, prefer proper specificity)\n- hover:!bg-surface → hover:bg-surface\n- !text-content-secondary → text-content-secondary\n\nRemove all ! important overrides where possible by adjusting class order or specificity. Keep semantic tokens.",
+        "testStrategy": "1. Visual regression test: Header should look identical before/after\n2. Test mobile menu toggle (hamburger icon)\n3. Verify hover states work correctly\n4. Test in both dark and light modes\n5. Check responsive behavior at xl breakpoint",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:33.388Z"
+      },
+      {
+        "id": "41",
+        "title": "Replace hardcoded tokens in HeroBanner component",
+        "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/shared/HeroBanner/index.tsx",
+        "details": "Update HeroBanner component:\n\n1. Replace color classes:\n   - bg-surface (already correct)\n   - !text-content-secondary → text-content-secondary\n   - !text-content-primary → text-content-primary\n\n2. Remove ! important overrides by adjusting class ordering\n\n3. Keep existing bg-surface as it already uses semantic token\n\nDo NOT change typography sizes yet (that's a separate pixel-perfect task).",
+        "testStrategy": "1. Test HeroBanner on home page\n2. Test HeroBanner on about page\n3. Verify both dark and light mode rendering\n4. Ensure text colors follow semantic token values\n5. No visual regressions in layout or spacing",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:36.452Z"
+      },
+      {
+        "id": "42",
+        "title": "Replace hardcoded tokens in StatCard component",
+        "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/shared/StatCard/index.tsx",
+        "details": "Read the StatCard component and replace any primitive dark-* or hardcoded color tokens with semantic equivalents:\n\n- bg-dark-* → bg-surface (or appropriate surface variant)\n- text-white → text-content-primary\n- text-dark-* → text-content-secondary/muted based on usage\n- border colors → border-default/subtle\n\nEnsure the component uses bg-surface, text-content-primary for numbers, and text-content-primary for labels as per Figma specs. Icon should use brand-accent.",
+        "testStrategy": "1. Verify StatCard appearance on pages where it's used\n2. Test both dark and light modes\n3. Verify icon color uses brand-accent (#8EFB9D dark / #6FE37F light)\n4. Check number and label text colors match specs\n5. No layout shifts or visual regressions",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:39.521Z"
+      },
+      {
+        "id": "43",
+        "title": "Replace hardcoded tokens in ProjectCard component",
+        "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/home/ProjectsSection/ProjectCard.tsx",
+        "details": "Update ProjectCard component (grid view):\n\n1. Replace bg-surface (already correct if using semantic)\n2. Replace rounded-5 → rounded-xl (12px per Figma)\n3. Replace color classes:\n   - !text-white → text-content-primary\n   - !text-content-secondary (keep if already semantic)\n   - bg-primary → bg-brand-primary\n   - hover:bg-blue-dark → hover:bg-brand-primary-hover (using new token)\n   - text-body-sm !text-white → text-body-sm text-white (remove !)\n\n4. Update button classes to use semantic brand tokens\n\nNote: This task focuses on token replacement; pixel-perfect adjustments are in task 49.",
+        "testStrategy": "1. Test ProjectCard in grid view on home page\n2. Verify hover state on button uses brand-primary-hover\n3. Test both dark and light modes\n4. Ensure title and description colors are correct\n5. Verify border-radius is 12px (rounded-xl)",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:42.689Z"
+      },
+      {
+        "id": "44",
+        "title": "Replace hardcoded tokens in ExperienceCard component",
+        "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/about/ExperiencesSection/ExperienceCard.tsx",
+        "details": "Update ExperienceCard:\n\n1. Replace bg-surface-sunken (verify it's using semantic token, not bg-dark-200)\n2. Replace text colors:\n   - text-white → text-content-primary\n   - text-dark-700 → text-content-muted\n   - Ensure company/position use text-content-primary\n   - Ensure location uses text-content-muted\n\n3. Verify rounded-xl is used (not custom radius)\n\nNote: Functionality changes (duration, toggle, badges) are separate tasks (51, 59).",
+        "testStrategy": "1. Test ExperienceCard on about page\n2. Verify background uses surface-sunken\n3. Test text color hierarchy in dark/light modes\n4. Ensure no hardcoded dark-* tokens remain\n5. Visual comparison with Figma",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:45.746Z"
+      },
+      {
+        "id": "45",
+        "title": "Replace hardcoded tokens in ProfessionalValue component",
+        "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/about/ValuesSection/ProfessionalValue.tsx",
+        "details": "Update ProfessionalValue card:\n\n1. Verify/update background: bg-surface\n2. Verify/update border: border-surface (or remove if not needed per Figma)\n3. Update text colors:\n   - text-white → text-content-primary\n   - Ensure icon uses brand-accent\n\n4. Verify border-radius: rounded-xl (12px)\n\nFigma specs: 225×199px card, fill #323232, border-radius 12px, padding 24px/16px, icon 48×48px fill #8EFB9D, text 16px/400 #FFFFFF.",
+        "testStrategy": "1. Test ProfessionalValue cards in about page\n2. Verify 4-column grid layout\n3. Test icon color matches brand-accent\n4. Test dark and light mode rendering\n5. Ensure rich text with <strong> styling works",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:48.776Z"
+      },
+      {
+        "id": "46",
+        "title": "Replace hardcoded tokens in ContactSection components",
+        "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/contact/ (ContactSection, ContactInfo, ContactForm)",
+        "details": "Update all contact-related components:\n\n1. ContactSection container:\n   - bg-dark-300 → bg-surface-overlay (new token for #262626)\n   - Update wrapper to use semantic tokens\n\n2. ContactForm:\n   - Input borders/backgrounds → use semantic surface/border tokens\n   - Button: bg-primary → bg-brand-primary\n   - Text: !text-white → text-content-primary\n\n3. ContactInfo:\n   - Text colors → text-content-primary/secondary/muted\n   - Icon colors → text-content-secondary\n\nEnsure bg-surface-overlay is used for the contact section background (#262626 dark / #FFFFFF light).",
+        "testStrategy": "1. Test ContactSection on all pages (should be in AppLayout footer)\n2. Verify bg-surface-overlay applies (#262626 dark, #FFFFFF light)\n3. Test form input styling and validation states\n4. Test button hover states\n5. Verify ghost link styling for LinkedIn/GitHub",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:51.833Z"
+      },
+      {
+        "id": "47",
+        "title": "Replace hardcoded tokens in SkillGroup and Skill components",
+        "description": "Replace primitive tokens with semantic tokens in apps/site/src/features/shared/SkillGroup/ (SkillGroup and Skill)",
+        "details": "Update Skill badges:\n\n1. Badge background:\n   - bg-dark-500 → bg-surface-interactive\n\n2. Badge text:\n   - !text-white → text-content-primary\n\n3. Verify border-radius matches Figma:\n   - Small badges: rounded-[15px]\n   - Pill badges (for modal): rounded-[44px]\n\n4. Ensure icon colors are preserved from Iconify defaults or use brand-accent where appropriate",
+        "testStrategy": "1. Test SkillGroup rendering in ExperienceCard\n2. Test SkillGroup rendering in ProjectCard\n3. Verify badge background is surface-interactive\n4. Test hover states if applicable\n5. Verify dark and light mode rendering",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:54.871Z"
+      },
+      {
+        "id": "48",
+        "title": "Replace hardcoded tokens in @repo/ui components",
+        "description": "Replace primitive tokens with semantic tokens in packages/ui/src/Control/ (Input, Label, Button)",
+        "details": "Update UI library components:\n\n1. Input (packages/ui/src/Control/Input/index.tsx):\n   - Border states: border-content-disabled (default dark), border-content-secondary (light default)\n   - Focus: border-content-secondary (dark), border-content-muted (light hovered)\n   - Success: border-success\n   - Error: border-error\n   - Placeholder: text-content-secondary\n\n2. Label:\n   - Dark: text-content-primary\n   - Light: text-content-secondary\n\n3. Button.Base:\n   - Verify bg-brand-primary, hover states use semantic tokens\n   - Active state: bg-brand-primary-active with text-content-primary (dark) or text-surface (light inverts)\n\nRefer to FIGMA_SPECS.md §Input and §Button for exact state specifications.",
+        "testStrategy": "1. Test all Input states (default, focused, success, error) in dark/light modes\n2. Test Button states (default, hover, active, disabled) in dark/light modes\n3. Test Label rendering in forms\n4. Run Storybook tests if available\n5. Test in ContactForm to ensure integration works",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38",
+          "39"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:08:57.909Z"
+      },
+      {
+        "id": "49",
+        "title": "HeroBanner pixel-perfect typography corrections",
+        "description": "Correct HeroBanner typography to match Figma specs exactly for Home and About variants",
+        "details": "Update apps/site/src/features/shared/HeroBanner/index.tsx:\n\n1. Add props to support different sizes:\n   - titleSize?: 'lg' | 'xl' (lg=40px for Home, xl=48px for About)\n   - titleAs?: 'h1' | 'h2' (semantic HTML)\n\n2. Home variant (via home/HeroSection):\n   - Overline (name): 24px/400 (not current 24px from text-body-xl)\n   - Title (cargo): 40px/700 (create text-[40px] or use H2 40px/700)\n   - Bio: 16px/400 (text-body-sm)\n   - Column text: w-[474px]\n\n3. About variant (via about/HeroSection):\n   - Overline (cargo): 24px/400\n   - Name (H1): 48px/700 (use h1 or text-5xl)\n   - Bio: 16px/400\n   - Column text: w-[382px]\n\n4. Remove placeholder photo prop — src should come from parent feature\n\nUpdate consuming features (home/HeroSection, about/HeroSection) to pass correct props.",
+        "testStrategy": "1. Measure typography in browser dev tools:\n   - Home: cargo should be 40px/700\n   - About: name should be 48px/700\n2. Verify column widths match Figma (474px Home, 382px About)\n3. Visual comparison with Figma screenshots\n4. Test responsive behavior\n5. Verify semantic HTML (h1, h2) is correct",
+        "priority": "high",
+        "dependencies": [
+          "40",
+          "41"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:16:37.231Z"
+      },
+      {
+        "id": "50",
+        "title": "StatCard pixel-perfect layout and styling",
+        "description": "Update StatCard to match Figma specs exactly: 463×152px, horizontal layout with icon and text",
+        "details": "Update apps/site/src/features/shared/StatCard/index.tsx per FIGMA_SPECS.md §StatCard:\n\nContainer:\n- bg-surface rounded-xl w-full h-[152px]\n- Layout: flex flex-row items-center gap-4\n\nIcon:\n- 72×72px container\n- Iconify icon 54×54px fill=brand-accent\n\nText wrapper:\n- VERTICAL layout, gap-4, pb-2.5\n- Number: text-4xl font-bold text-content-primary (36px/700)\n- Label: text-lg font-normal text-content-primary pl-5 (18px/400)\n\nGrid (where StatCards are rendered):\n- flex flex-row gap-6 (24px gap between cards)\n\nResponsive: See FIGMA_SPECS.md §StatCards por breakpoint for width adjustments at 1280px/1024px/640px/375px.",
+        "testStrategy": "1. Measure card dimensions: should be 152px height, ~463px width (desktop)\n2. Verify gap between icon and text is 16px (gap-4)\n3. Verify number is 36px/700, label is 18px/400\n4. Test icon color matches brand-accent\n5. Test responsive behavior at different breakpoints",
+        "priority": "high",
+        "dependencies": [
+          "37",
+          "38",
+          "42"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:26:18.914Z"
+      },
+      {
+        "id": "51",
+        "title": "ProjectCard pixel-perfect grid view styling",
+        "description": "Update ProjectCard grid view to match Figma specs: 463×418px with precise padding, gaps, and button styling",
+        "details": "Update apps/site/src/features/home/ProjectsSection/ProjectCard.tsx per FIGMA_SPECS.md §ProjectCard (grid view):\n\nCard:\n- 463×418px, bg-surface, rounded-xl\n\nImage area:\n- h-[244px], padding: 12px 12px 0 12px\n- Image: rounded-lg object-cover\n\nContent area:\n- padding: 16px 24px 24px 24px, gap-5 (20px), HORIZONTAL layout\n- Text block: gap-4 (16px), VERTICAL\n  - Title: 24px/700/text-content-primary (text-2xl font-bold)\n  - Description: 16px/400/text-content-secondary, line-clamp-2\n  - Badges: gap-3 (12px)\n- Button (self-end): 54×54px, bg-brand-primary, rounded-xl\n  - Icon: UI/arrow_forward (white, 24×24)\n\nIntegrate Button.Clipboard on card hover (existing @repo/ui component).\n\nGrid layout (ProjectsSection): gap-6 (24px) between cards.",
+        "testStrategy": "1. Measure card: 463×418px\n2. Verify image area height: 244px with 12px padding\n3. Verify content padding: 16/24/24/24\n4. Verify button: 54×54px at bottom-right\n5. Test Button.Clipboard appears on hover\n6. Visual comparison with Figma",
+        "priority": "high",
+        "dependencies": [
+          "37",
+          "38",
+          "43"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T00:39:51.894Z"
+      },
+      {
+        "id": "52",
+        "title": "ProjectCard pixel-perfect row view styling",
+        "description": "Update ProjectCard row view to match Figma specs: 950×339px horizontal layout for projects page",
+        "details": "Update apps/site/src/features/projects/ProjectsSection/index.tsx (or create row variant in ProjectCard) per FIGMA_SPECS.md §ProjectCard (row view):\n\nCard:\n- 950×339px, bg-surface, rounded-xl, HORIZONTAL layout\n\nImage (left):\n- 465×339px, padding: 12px\n- Image inside: 441×315px, rounded-lg\n\nContent (right):\n- 485×339px, padding: 24px, gap-5 (20px), HORIZONTAL\n- Text block (363px): gap-4 (16px), VERTICAL\n  - Title, description, badges (same as grid view)\n- Button column (54px): SPACE_BETWEEN, VERTICAL\n  - UI/share icon (24×24) at top\n  - Arrow button 54×54px bg-brand-primary rounded-xl at bottom\n\nList layout: VERTICAL, gap-6 (24px).",
+        "testStrategy": "1. Measure card: 950×339px\n2. Verify image area: 465×339px with 12px padding\n3. Verify content area: 485×339px with 24px padding\n4. Verify share icon at top-right\n5. Verify arrow button at bottom-right\n6. Test on projects page",
+        "priority": "high",
+        "dependencies": [
+          "37",
+          "38",
+          "43"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T23:01:01.834Z"
+      },
+      {
+        "id": "53",
+        "title": "ExperienceCard pixel-perfect styling and duration calculation",
+        "description": "Update ExperienceCard to match Figma specs with calculated duration, correct typography, and separators",
+        "details": "Update apps/site/src/features/about/ExperiencesSection/ExperienceCard.tsx per FIGMA_SPECS.md §ExperienceCard:\n\nTypography:\n- Cargo (H2): 24px/700/text-content-primary\n- Empresa: 20px/700/text-content-primary (uppercase)\n- Período + duração: 16px/400 inline\n- Localização: 16px/400/text-content-disabled (#A4A4A4)\n- \"Ver mais\": 14px/400/text-content-disabled (not brand-primary)\n\nFunctionality:\n1. calculateDuration(start, end) → \"Xa Xm\" format (end=null means today)\n2. Implement toggle \"Ver mais\" with state: line-clamp-1 default, expanded on click\n3. Render max 3 badges + \"+N\" badge if more\n4. Separators: border-b border-border-default between cards\n\nLayout:\n- Gap between cards: gap-10 (40px)\n- Badges: bg-surface-interactive rounded-[15px] h-7 px-3 py-1\n\nExperiencesSection list: VERTICAL layout with separators.",
+        "testStrategy": "1. Test duration calculation: mock experiences with different date ranges\n2. Test \"Ver mais\" toggle expands/collapses description\n3. Verify only 3 badges shown, +N badge appears if > 3\n4. Verify separators between cards\n5. Verify empresa is 20px/700 (not 16px)\n6. Visual comparison with Figma",
+        "priority": "high",
+        "dependencies": [
+          "37",
+          "38",
+          "44"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T00:22:16.087Z"
+      },
+      {
+        "id": "54",
+        "title": "ProfessionalValue pixel-perfect styling and rich text",
+        "description": "Update ProfessionalValue card to match Figma specs: 225×199px with rich text support for highlighted keywords",
+        "details": "Update apps/site/src/features/about/ValuesSection/ProfessionalValue.tsx per FIGMA_SPECS.md §ProfessionalValueCard:\n\nCard:\n- 225×199px, bg-surface, rounded-xl\n- padding: 24px (top/bottom) 16px (left/right)\n- gap-2.5 (10px), VERTICAL layout\n\nContent:\n- Icon: 48×48px, Iconify, fill=brand-accent\n- Text: 16px/400/text-content-primary, w-[194px]\n- Rich text: <strong className=\"text-brand-accent font-bold\">keyword</strong>\n\nValuesSection:\n- Grid: grid grid-cols-4 gap-4 items-stretch\n- Title: text-4xl font-bold text-content-primary text-left (32px, left-aligned, not centered)\n\nEnsure TextRich component (already exists in @repo/ui) supports strong tags with custom classes.",
+        "testStrategy": "1. Measure card: 225×199px\n2. Verify icon is 48×48px with brand-accent color\n3. Test rich text: highlighted keywords should be brand-accent and bold\n4. Verify 4-column grid with equal heights (items-stretch)\n5. Verify title is left-aligned, not centered\n6. Visual comparison with Figma",
+        "priority": "high",
+        "dependencies": [
+          "37",
+          "38",
+          "45"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T00:28:54.478Z"
+      },
+      {
+        "id": "55",
+        "title": "Input and Label pixel-perfect state styling",
+        "description": "Update Input and Label components to match Figma specs for all states (default, focused, success, error) in dark and light modes",
+        "details": "Update packages/ui/src/Control/Input/index.tsx and Label/index.tsx per FIGMA_SPECS.md §Input:\n\nInput:\n- h-11 px-2 py-3 rounded-xl border\n- Placeholder: 14px/400/text-content-secondary\n\nStates (dark):\n- default: border-content-disabled (#555555)\n- focused: border-content-secondary (#BABABA)\n- success: border-success (#71D875) + UI/check_circle icon\n- error: border-error (#FF5274) + UI/cancel icon\n\nStates (light):\n- default: border-content-secondary (#BABABA)\n- hovered: border-content-muted (#555555)\n- success: border-success (#52CE7A) + check icon\n- error: border-error (#F43564) + cancel icon\n\nLabel:\n- Dark: 16px/700/text-content-primary\n- Light: 16px/700/text-content-secondary\n\nError message:\n- text-xs text-error (below input)\n- 12px/400, color from error token\n\nWrapper: VERTICAL gap-1 (4px between label, input, error).",
+        "testStrategy": "1. Test all input states in dark mode\n2. Test all input states in light mode\n3. Verify icon appearance (check/cancel) on success/error\n4. Verify error message styling\n5. Test in ContactForm integration\n6. Measure border colors with dev tools color picker",
+        "priority": "high",
+        "dependencies": [
+          "37",
+          "38",
+          "48"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T01:33:07.431Z"
+      },
+      {
+        "id": "56",
+        "title": "Breadcrumb pixel-perfect styling",
+        "description": "Update Breadcrumb component to match Figma specs with active state styling and arrow separators",
+        "details": "Update apps/site/src/features/shared/Breadcrumb/index.tsx per FIGMA_SPECS.md §Breadcrumb:\n\nBreadcrumb row: flex items-center gap-1\n\nItem default:\n- px-3 py-1.5, 14px/400/text-content-secondary\n- hover: underline\n\nItem active (last/current):\n- px-3 py-1.5, rounded-lg\n- Dark: bg-surface text-content-primary\n- Light: bg-border-subtle text-content-secondary\n\nSeparator:\n- UI/arrow_forward_ios icon (20×20)\n- Dark: text-content-disabled\n- Light: text-content-muted (#8D8D8D)\n\nNavigation bar (on ProjectDetail page):\n- flex justify-between items-center h-12\n- Left: \"← Voltar\" with UI/arrow_back (24×24) + text 16px/400/text-content-primary\n- Right: Breadcrumb component",
+        "testStrategy": "1. Test Breadcrumb on ProjectDetail page\n2. Verify active item has background (dark: surface, light: border-subtle)\n3. Verify separator icons are 20×20\n4. Test hover states\n5. Test \"← Voltar\" link functionality\n6. Visual comparison with Figma",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T02:27:30.295Z"
+      },
+      {
+        "id": "57",
+        "title": "ContactSection pixel-perfect layout and form styling",
+        "description": "Update ContactSection to match Figma specs: 1272px container with two-column layout, form validation, and ghost links",
+        "details": "Update apps/site/src/features/contact/ContactSection/index.tsx per FIGMA_SPECS.md §Contact Section:\n\nContainer:\n- 1272px wide, bg-surface-overlay\n- padding: py-10 px-[161px]\n\nLayout: 950px inner, gap-16 (64px), HORIZONTAL\n\nColumn 1 (form, 560px):\n- Title: 20px/700/text-content-primary\n- Fields: gap-6 (24px), VERTICAL\n  - Row 1: Nome* (268px) + Sobrenome (268px) — 2 columns\n  - Row 2: E-mail* (560px full width)\n  - Row 3: Mensagem* (textarea h-[124px], 560px)\n- Button: w-[216px] h-[46px] bg-brand-primary rounded-xl\n- Use react-hook-form + zod (already installed)\n\nColumn 2 (info, 326px):\n- Title: 24px/700/text-content-primary\n- Email + WhatsApp with UI/content_copy icon (24×24, text-content-secondary)\n- Separador: border-b-2 border-border-default\n- Text: 16px/400/text-content-primary\n- Ghost links: LinkedIn + GitHub (w-[157px])\n  - Ghost link styling per FIGMA_SPECS.md §Button (Ghost Link)\n\nResponsive: See §Contact Section por breakpoint for mobile layout (VERTICAL stacking).",
+        "testStrategy": "1. Measure container: 1272px wide\n2. Verify inner layout: 950px with 64px gap\n3. Test form validation with react-hook-form\n4. Test copy icons for email/WhatsApp\n5. Test ghost links hover states\n6. Test responsive behavior at 640px and 375px\n7. Verify bg-surface-overlay (#262626 dark, #FFFFFF light)",
+        "priority": "high",
+        "dependencies": [
+          "37",
+          "38",
+          "46",
+          "55"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T01:41:20.712Z"
+      },
+      {
+        "id": "58",
+        "title": "Create Modal component in @repo/ui",
+        "description": "Implement reusable Modal component in packages/ui/src/Control/Modal with overlay, portal, focus trap, and ESC/click-outside close",
+        "details": "Create packages/ui/src/Control/Modal/index.tsx per FIGMA_SPECS.md §Modal de Tecnologias:\n\nProps:\n- open: boolean\n- onClose: () => void\n- title?: string\n- children: ReactNode\n\nImplementation:\n- Overlay: bg-black/60, fixed inset-0 z-50, flex items-center justify-center\n- Container: bg-surface rounded-xl p-6 w-[690px] max-h-[80vh] overflow-y-auto\n- Close button: UI/close icon (24×24) at top-right\n- Close on: ESC key, click overlay, close button click\n- Focus trap: prevent tab outside modal when open\n- Use createPortal to render at body level\n- Prevent body scroll when modal is open\n\nAccessibility:\n- role=\"dialog\"\n- aria-modal=\"true\"\n- aria-labelledby for title\n- Focus management on open/close\n\nExport as Modal namespace or named export.",
+        "testStrategy": "1. Create Storybook story for Modal\n2. Test open/close via button\n3. Test ESC key closes modal\n4. Test clicking overlay closes modal\n5. Test focus trap (tab stays inside modal)\n6. Test body scroll lock\n7. Test in both dark and light modes\n8. Test with long content (scroll within modal)",
+        "priority": "high",
+        "dependencies": [
+          "37",
+          "38"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T22:44:11.966Z"
+      },
+      {
+        "id": "59",
+        "title": "Create TechnologiesModal component in features/about",
+        "description": "Implement TechnologiesModal with Basic and Detailed states, using Modal from @repo/ui and Accordion",
+        "details": "Create apps/site/src/features/about/TechnologiesModal/index.tsx per FIGMA_SPECS.md §Modal de Tecnologias:\n\nProps:\n- open: boolean\n- onClose: () => void\n- company: string\n- position: string\n- technologies: { name: string; icon: string; description?: string }[]\n\nState: 'basic' | 'detailed' (toggle button or auto-expand if descriptions exist)\n\nBasic state:\n- Header: Title \"Tecnologias utilizadas\" (24px/700), company/position line (20px/700 + 16px/400)\n- Close button: UI/close (24×24)\n- Badges: bg-surface-interactive rounded-[44px] px-3 py-2 h-[38px]\n  - Icon 20×20 + text 16px/400/text-content-primary, gap-2.5 (10px)\n\nDetailed state:\n- Title shrinks to 20px/700\n- Company/position: text-content-secondary\n- Separator: border-b border-border-muted after header\n- Accordion items (use @repo/ui/Control/Accordion):\n  - Trigger: icon 24×24 + label 16px/700/text-content-primary + chevron\n  - Body: 14px/400/text-content-secondary\n  - Separator: border-b border-border-default between items\n\nUse Modal component from task 58.",
+        "testStrategy": "1. Test modal opens from ExperienceCard \"+N\" badge\n2. Test Basic state renders all technology badges\n3. Test toggle to Detailed state\n4. Test Accordion expand/collapse\n5. Test close via X button, ESC, overlay click\n6. Test in dark and light modes\n7. Visual comparison with Figma",
+        "priority": "high",
+        "dependencies": [
+          "58"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-05-28T22:53:08.543Z"
+      },
+      {
+        "id": "60",
+        "title": "Integrate TechnologiesModal into ExperienceCard",
+        "description": "Update ExperienceCard to open TechnologiesModal when \"+N\" badge is clicked",
+        "details": "Update apps/site/src/features/about/ExperiencesSection/ExperienceCard.tsx:\n\n1. Add state for modal: const [modalOpen, setModalOpen] = useState(false)\n2. Render TechnologiesModal component with props:\n   - open={modalOpen}\n   - onClose={() => setModalOpen(false)}\n   - company={company}\n   - position={position}\n   - technologies={skills}\n\n3. Update \"+N\" badge to be clickable:\n   - Add onClick={() => setModalOpen(true)}\n   - Add cursor-pointer class\n   - Add hover state styling\n\n4. Ensure max 3 badges are shown + \"+N\" badge (as per task 53)\n\nImport TechnologiesModal from features/about/TechnologiesModal.",
+        "testStrategy": "1. Test clicking \"+N\" badge opens modal\n2. Verify modal receives correct props (company, position, technologies)\n3. Test closing modal returns focus to badge\n4. Test with experiences that have > 3 technologies\n5. Verify badge count is correct (+1, +2, etc.)",
+        "priority": "medium",
+        "dependencies": [
+          "53",
+          "59"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T02:28:53.713Z"
+      },
+      {
+        "id": "61",
+        "title": "Create CurriculumCTA component in features/about",
+        "description": "Implement CurriculumCTA component with illustration and external link button",
+        "details": "Create apps/site/src/features/about/CurriculumCTA/index.tsx per FIGMA_SPECS.md §CurriculumCTA:\n\nContainer:\n- 951×381px, bg-surface, rounded-xl\n- padding: 32px, gap-14 (56px), HORIZONTAL\n\nColumn 1 (left, 320×317px):\n- Static illustration image (decorative developer/code illustration)\n- Use Next.js Image component\n\nColumn 2 (right, 511×250px):\n- gap-8 (32px), VERTICAL\n- Text: 24px/400/text-content-primary, w-[511px]\n  - \"Acesse meu currículo para descobrir detalhes exclusivos sobre meus projetos, conquistas e habilidades técnicas.\"\n- Button: 292×48px, bg-brand-primary, rounded-xl, gap-2 (8px)\n  - Label: \"Acessar currículo\" 16px/700/text-white\n  - Icon: UI/open_in_new (24×24)\n  - URL: prop or environment variable (NEXT_PUBLIC_RESUME_URL)\n\nProps:\n- resumeUrl?: string (optional, fallback to env var)\n- className?: string",
+        "testStrategy": "1. Measure container: 951×381px\n2. Verify illustration is 320×317px\n3. Verify button is 292×48px\n4. Test button link opens in new tab (_blank)\n5. Test in dark and light modes\n6. Visual comparison with Figma",
+        "priority": "medium",
+        "dependencies": [
+          "37",
+          "38"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T02:41:39.969Z"
+      },
+      {
+        "id": "62",
+        "title": "Verify and update ProjectDetail page implementation",
+        "description": "Ensure ProjectDetail page matches Figma specs with all sections: navigation, hero, info grid, content blocks, and related projects",
+        "details": "Review apps/site/src/features/projects/ProjectDetail/ProjectDetail.tsx per FIGMA_SPECS.md §ProjectDetail:\n\nVerify/implement these sections:\n\n1. Navigation bar (Frame 4685):\n   - \"← Voltar\" link + Breadcrumb component (task 56)\n   - flex justify-between items-center h-12\n\n2. Hero (Frame 4705):\n   - Image: 951×485px rounded-lg\n   - Title H1: 40px/700/text-content-primary\n   - Description: 20px/400/text-content-primary\n   - Badges row: gap-3 (12px)\n\n3. Info Grid (ProjectMetaGrid):\n   - Two cards: Resumo + Objetivos (463×150px each, gap-6)\n   - Meta info row: Função | Habilidades | Equipe | Data (gap-10)\n\n4. Content blocks:\n   - Full-width image: 951×404px\n   - Full text block: overline 16px/700 + H2 32px/700 + body 20px/400\n   - Split block: image 549×404px + text 368px\n\n5. Related projects:\n   - Title: 32px/700/text-content-primary\n   - 2 × ProjectCard (grid view), gap-6\n\nEnsure all spacing (gap-10, gap-6, gap-4) matches Figma.",
+        "testStrategy": "1. Navigate to a project detail page\n2. Verify all sections are present and correctly ordered\n3. Measure section dimensions and gaps\n4. Test \"← Voltar\" navigation\n5. Test breadcrumb links\n6. Visual comparison with Figma layout\n7. Test responsive behavior",
+        "priority": "medium",
+        "dependencies": [
+          "51",
+          "56"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T02:46:26.512Z"
+      },
+      {
+        "id": "63",
+        "title": "Integrate CurriculumCTA into About page",
+        "description": "Add CurriculumCTA component to the About page after ExperiencesSection",
+        "details": "Update apps/site/src/app/[locale]/about/page.tsx:\n\n1. Import CurriculumCTA from ~features/about/CurriculumCTA\n2. Add <CurriculumCTA /> after <ExperiencesSection />\n3. Ensure proper spacing (gap-20 or gap-10 based on design system)\n4. Pass resumeUrl prop if needed (or rely on env var)\n\nLayout order:\n- HeroSection\n- ValuesSection\n- ExperiencesSection\n- CurriculumCTA ← new\n- (ContactSection is in AppLayout footer, not page-specific)",
+        "testStrategy": "1. Navigate to /about page\n2. Verify CurriculumCTA appears after experiences\n3. Test button link works\n4. Verify spacing between sections\n5. Test in dark and light modes\n6. Test responsive layout",
+        "priority": "low",
+        "dependencies": [
+          "61"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T03:01:51.977Z"
+      },
+      {
+        "id": "64",
+        "title": "Verify ContactSection is in AppLayout footer",
+        "description": "Ensure ContactSection is rendered in AppLayout footer on all pages, not duplicated in individual page components",
+        "details": "Review apps/site/src/components/Layout/AppLayout/index.tsx:\n\n1. Verify <ContactSection /> is rendered below <main>{children}</main>\n2. Ensure it's not imported/rendered in individual page files (home, about, projects)\n3. Verify layout structure:\n   - Header\n   - SideNavigation\n   - main (page content)\n   - ContactSection (footer)\n4. Ensure proper spacing above ContactSection\n\nIf ContactSection is missing from AppLayout, add it. If it's duplicated in pages, remove from pages.",
+        "testStrategy": "1. Navigate to all pages (home, about, projects, project detail)\n2. Verify ContactSection appears on every page\n3. Verify it appears only once per page\n4. Verify consistent positioning at bottom\n5. Test in dark and light modes",
+        "priority": "medium",
+        "dependencies": [
+          "57"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T02:07:05.773Z"
+      },
+      {
+        "id": "65",
+        "title": "Verify tsconfig path aliases include ~features",
+        "description": "Ensure apps/site/tsconfig.json has all required path aliases for clean imports",
+        "details": "Review apps/site/tsconfig.json and verify \"paths\" includes:\n\n```json\n\"paths\": {\n  \"~components\": [\"./src/components/index.ts\"],\n  \"~features/*\": [\"./src/features/*\"],\n  \"~hooks\": [\"./src/hooks/index.ts\"],\n  \"~assets/*\": [\"./src/assets/*\"],\n  \"~i18n/*\": [\"./src/i18n/*\"]\n}\n```\n\nIf missing, add them. Ensure no conflicts with existing aliases.\n\nVerify that all import statements in the codebase use these aliases (e.g., ~features/shared/HeroBanner, not relative ../../features/shared/HeroBanner).",
+        "testStrategy": "1. Check tsconfig.json has all aliases\n2. Run pnpm typecheck in apps/site\n3. Search for relative imports that should use aliases\n4. Verify IDE autocomplete works with aliases\n5. Run pnpm build to ensure no resolution errors",
+        "priority": "low",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T03:00:54.761Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-06-02T03:01:51.977Z",
+      "taskCount": 30,
+      "completedCount": 30,
+      "tags": [
+        "figma-pixel-perfect"
       ]
     }
   }

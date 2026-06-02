@@ -60,7 +60,7 @@ export const Radio: FC<IRadioProps> = ({
         ) : null}
       </div>
       {icon != null ? <Icon icon={icon} className={iconClassName} /> : null}
-      <span className="text-body-xs !text-white text-start">
+      <span className="text-body-xs text-content-primary text-start">
         {children instanceof Function ? children({ checked }) : children}
       </span>
     </label>

@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+
 import type { Metadata } from 'next';
 
 import { applyDevSimulations } from '~/dev/simulate';
@@ -10,6 +11,7 @@ import {
 } from '~features/about/ExperiencesSection';
 import { HeroSection } from '~features/about/HeroSection';
 import { ValuesSection, ValuesSkeleton } from '~features/about/ValuesSection';
+import { CurriculumCTA } from '~features/about/CurriculumCTA';
 import { HeroBannerSkeleton } from '~features/shared/HeroBanner/HeroBannerSkeleton';
 
 interface AboutPageProps {
@@ -61,7 +63,7 @@ export default async function About({ searchParams }: AboutPageProps) {
   await applyDevSimulations(await searchParams);
 
   return (
-    <>
+    <div className="flex flex-col gap-y-20 pb-20">
       <Suspense fallback={<HeroBannerSkeleton />}>
         <HeroSection />
       </Suspense>
@@ -71,6 +73,7 @@ export default async function About({ searchParams }: AboutPageProps) {
       <Suspense fallback={<ExperiencesSkeleton />}>
         <ExperiencesSection />
       </Suspense>
-    </>
+      <CurriculumCTA />
+    </div>
   );
 }

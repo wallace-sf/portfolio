@@ -21,6 +21,6 @@ export async function ProjectsSection() {
   }
 
   return (
-    <ProjectList projects={projects} view="grid" className="py-8 xl:py-20" />
+    <ProjectList projects={projects} view="row" className="py-8 xl:py-20" />
   );
 }

@@ -27,23 +27,48 @@ export const ProjectMetaGrid: FC<IProjectMetaGridProps> = ({
   period,
   labels,
 }) => {
-  const items = [
-    summary ? { label: labels.summary, value: summary } : null,
-    objectives ? { label: labels.objectives, value: objectives } : null,
+  const metaItems = [
     role ? { label: labels.role, value: role } : null,
     { label: labels.period, value: formatPeriod(period) },
   ].filter((item): item is { label: string; value: string } => item !== null);
 
+  const hasCards = summary || objectives;
+
   return (
-    <dl className="grid grid-cols-1 xl:grid-cols-2 gap-4 bg-surface rounded-xl p-4">
-      {items.map(({ label, value }) => (
-        <div key={label} className="flex flex-col gap-y-1">
-          <dt className="text-body-xs !text-content-muted uppercase tracking-wide">
-            {label}
-          </dt>
-          <dd className="text-body-sm !text-content-primary">{value}</dd>
+    <div className="flex flex-col gap-y-6">
+      {hasCards && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {summary && (
+            <div className="bg-surface rounded-xl p-6 flex flex-col gap-y-2 xl:h-[150px]">
+              <dt className="text-xl font-bold text-content-muted">
+                {labels.summary}
+              </dt>
+              <dd className="text-base text-content-primary">{summary}</dd>
+            </div>
+          )}
+          {objectives && (
+            <div className="bg-surface rounded-xl p-6 flex flex-col gap-y-2 xl:h-[150px]">
+              <dt className="text-xl font-bold text-content-muted">
+                {labels.objectives}
+              </dt>
+              <dd className="text-base text-content-primary">{objectives}</dd>
+            </div>
+          )}
         </div>
-      ))}
-    </dl>
+      )}
+
+      {metaItems.length > 0 && (
+        <dl className="flex flex-row flex-wrap gap-x-10 gap-y-4">
+          {metaItems.map(({ label, value }) => (
+            <div key={label} className="flex flex-col gap-y-1">
+              <dt className="text-base font-bold text-content-primary">
+                {label}
+              </dt>
+              <dd className="text-base text-content-primary">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </div>
   );
 };

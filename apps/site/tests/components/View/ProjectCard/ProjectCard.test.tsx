@@ -38,8 +38,28 @@ vi.mock('@repo/ui/Imagery', () => ({
   ),
 }));
 
+vi.mock('@repo/ui/Control', () => ({
+  Button: {
+    Clipboard: ({
+      children,
+      className,
+    }: {
+      children: ((copied: boolean) => React.ReactNode) | React.ReactNode;
+      className?: string;
+    }) => (
+      <button className={className}>
+        {children instanceof Function ? children(false) : children}
+      </button>
+    ),
+  },
+}));
+
 vi.mock('~/features/shared/SkillGroup', () => ({
   SkillGroup: () => <div data-testid="skill-group" />,
+}));
+
+vi.mock('~features/about/TechnologiesModal', () => ({
+  TechnologiesModal: () => null,
 }));
 
 import { ProjectCard } from '~/features/home/ProjectsSection';
@@ -50,13 +70,18 @@ const defaultProps = {
   title: 'My Project',
   caption: 'A great project',
   coverImage: { url: 'https://example.com/image.jpg', alt: 'My project cover' },
-  skills: [{ name: 'React', icon: '' }, { name: 'TypeScript', icon: '' }],
+  skills: [
+    { name: 'React', icon: '' },
+    { name: 'TypeScript', icon: '' },
+  ],
 };
 
 describe('ProjectCard', () => {
   it('should render a link to the project detail page', () => {
     render(<ProjectCard {...defaultProps} />);
-    const link = screen.getByRole('link', { name: /ProjectCard\.view_project/i });
+    const link = screen.getByRole('link', {
+      name: /ProjectCard\.view_project/i,
+    });
     expect(link).toHaveAttribute('href', '/projects/my-project');
   });
 

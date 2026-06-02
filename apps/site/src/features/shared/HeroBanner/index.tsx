@@ -11,8 +11,11 @@ export interface IHeroBannerProps {
   caption: string;
   content: string;
   alt: string;
+  titleSize?: 'lg' | 'xl';
+  titleAs?: 'h1' | 'h2';
   className?: string;
   imageClassName?: string;
+  textColumnClassName?: string;
 }
 
 export const HeroBanner: FC<IHeroBannerProps> = ({
@@ -21,13 +24,16 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
   caption,
   content,
   alt,
+  titleSize = 'lg',
+  titleAs: TitleTag = 'h2',
   className = '',
   imageClassName = '',
+  textColumnClassName = '',
 }) => {
   return (
     <section
       className={classNames(
-        'flex flex-col bg-surface gap-y-6 xl:gap-x-8 xl:flex xl:flex-row xl:rounded-xl xl:h-106',
+        'flex flex-col bg-surface gap-y-6 xl:gap-x-8 xl:flex xl:flex-row xl:rounded-xl xl:h-106 xl:-mx-[97px]',
         className,
       )}
     >
@@ -42,12 +48,27 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
           sizes="(max-width: 1280px) 100vw, 50vw"
         />
       </section>
-      <section className="flex flex-col px-6 pb-6 xl:order-0 xl:py-20 xl:pl-20 xl:w-1/2">
-        <h1 className="text-body-xl !text-content-secondary pb-2">{title}</h1>
-        <h2 className="text-body-xl !text-content-primary !font-bold pb-8">
+      <section
+        className={classNames(
+          'flex flex-col px-6 pb-6 xl:order-0 xl:py-20 xl:pl-20',
+          textColumnClassName,
+        )}
+      >
+        <p className="text-body-xl text-content-secondary pb-2">{title}</p>
+        <TitleTag
+          className={classNames(
+            'text-content-primary font-bold mb-8 line-clamp-2',
+            {
+              'text-[40px] leading-[56px]': titleSize === 'lg',
+              'text-5xl leading-[67.2px]': titleSize === 'xl',
+            },
+          )}
+        >
           {caption}
-        </h2>
-        <p className="text-body-sm !text-content-primary">{content}</p>
+        </TitleTag>
+        <p className="text-body-sm text-content-primary line-clamp-3">
+          {content}
+        </p>
       </section>
     </section>
   );

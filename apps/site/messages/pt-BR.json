@@ -9,6 +9,7 @@
     "success": "Seu cliente de e-mail foi aberto. Por favor, envie a mensagem pré-preenchida."
   },
   "ContactInfo": {
+    "title": "Entre em contato",
     "email": "E-mail",
     "paragraph1": "Não gosta de preencher formulário? Sem problemas!",
     "paragraph2": "Sinta-se à vontade para me enviar uma mensagem no WhatsApp ou me enviar um e-mail."
@@ -25,6 +26,7 @@
   },
   "ProjectCard": {
     "view_project": "Ver projeto",
+    "share_tooltip": "Copiar link",
     "image_alt": "Imagem do projeto"
   },
   "SideNavigation": {
@@ -76,8 +78,16 @@
     "hero_image_alt": "Wallace Ferreira — Engenheiro Front-end",
     "values_title": "Meus valores profissionais"
   },
+  "CurriculumCTA": {
+    "description": "Acesse meu currículo para descobrir detalhes exclusivos sobre meus projetos, conquistas e habilidades técnicas.",
+    "button": "Acessar currículo",
+    "illustration_alt": "Ilustração decorativa de desenvolvedor"
+  },
   "ExperienceCard": {
-    "skills_label": "Habilidades"
+    "skills_label": "Habilidades",
+    "see_more": "Ver mais",
+    "see_less": "Ver menos",
+    "present": "Presente"
   },
   "Common": {
     "loading": "Carregando"
@@ -88,6 +98,7 @@
   "ProjectDetail": {
     "breadcrumb_home": "Início",
     "breadcrumb_projects": "Projetos",
+    "back": "Voltar",
     "related_title": "Outros projetos",
     "summary_label": "Resumo",
     "objectives_label": "Objetivos",
