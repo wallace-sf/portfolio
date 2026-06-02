@@ -5,8 +5,8 @@ import { getInternalBaseUrl } from '~/lib/api/internal';
 
 import {
   IProfessionalValueCardProps,
-  ProfessionalValue,
-} from './ProfessionalValue';
+  ProfessionalValueCard,
+} from './ProfessionalValueCard';
 
 export async function ValuesSection() {
   const [t, locale, baseUrl] = await Promise.all([
@@ -34,7 +34,7 @@ export async function ValuesSection() {
       <ul className="grid grid-cols-4 gap-4 items-stretch">
         {professionalValues.map((professionalValue) => (
           <li key={professionalValue.id}>
-            <ProfessionalValue {...professionalValue} />
+            <ProfessionalValueCard {...professionalValue} />
           </li>
         ))}
       </ul>

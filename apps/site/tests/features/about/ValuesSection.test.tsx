@@ -14,8 +14,8 @@ vi.mock('~/lib/api/internal', () => ({
   getInternalBaseUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
 }));
 
-vi.mock('~features/about/ValuesSection/ProfessionalValue', () => ({
-  ProfessionalValue: ({ content }: { content: string }) => (
+vi.mock('~features/about/ValuesSection/ProfessionalValueCard', () => ({
+  ProfessionalValueCard: ({ content }: { content: string }) => (
     <div data-testid="professional-value">{content}</div>
   ),
 }));

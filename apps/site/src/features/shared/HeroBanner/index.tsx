@@ -33,7 +33,7 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
   return (
     <section
       className={classNames(
-        'flex flex-col bg-surface gap-y-6 xl:gap-x-8 xl:flex xl:flex-row xl:rounded-xl xl:h-106',
+        'flex flex-col bg-surface gap-y-6 xl:gap-x-8 xl:flex xl:flex-row xl:rounded-xl xl:h-106 xl:-mx-[97px]',
         className,
       )}
     >

@@ -25,8 +25,8 @@ describe('Text.Base', () => {
     expect(input.className).toContain('border-error');
   });
 
-  it('should apply success border when error is null and touched', () => {
-    render(<Text.Base {...defaultProps} error={null as unknown as boolean} touched />);
+  it('should apply success border when no error and touched', () => {
+    render(<Text.Base {...defaultProps} error={false} touched />);
     const input = screen.getByPlaceholderText('Enter text');
     expect(input.className).toContain('border-success');
   });
@@ -38,7 +38,7 @@ describe('Text.Base', () => {
 
   it('should show icon indicator on success state', () => {
     const { container } = render(
-      <Text.Base {...defaultProps} error={null as unknown as boolean} touched />,
+      <Text.Base {...defaultProps} error={false} touched />,
     );
     expect(container.querySelector('.pointer-events-none')).toBeInTheDocument();
   });

@@ -11,12 +11,12 @@ export interface IProfessionalValueCardProps {
   content: string;
 }
 
-export const ProfessionalValue: FC<IProfessionalValueCardProps> = ({
+export const ProfessionalValueCard: FC<IProfessionalValueCardProps> = ({
   icon,
   content,
 }) => {
   return (
-    <article className="w-[225px] h-[199px] bg-surface rounded-xl px-4 py-6 flex flex-col gap-y-4">
+    <article className="w-[225px] h-[199px] bg-surface border border-border-subtle rounded-xl px-4 py-6 flex flex-col gap-y-4">
       <Icon
         icon={icon}
         className="!text-[48px] text-brand-accent flex-shrink-0"

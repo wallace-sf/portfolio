@@ -16,7 +16,7 @@ vi.mock('@repo/ui/View', () => ({
   }) => <p className={className}>{content}</p>,
 }));
 
-import { ProfessionalValue } from '~features/about/ValuesSection/ProfessionalValue';
+import { ProfessionalValueCard } from '~features/about/ValuesSection/ProfessionalValueCard';
 
 const defaultProps = {
   id: '1',
@@ -24,35 +24,35 @@ const defaultProps = {
   content: 'High quality <strong>delivery</strong>',
 };
 
-describe('ProfessionalValue', () => {
+describe('ProfessionalValueCard', () => {
   it('should render the icon with brand-accent color', () => {
-    render(<ProfessionalValue {...defaultProps} />);
+    render(<ProfessionalValueCard {...defaultProps} />);
     const icon = screen.getByTestId('icon');
     expect(icon).toHaveAttribute('data-icon', 'material-symbols:diamond');
     expect(icon.className).toContain('text-brand-accent');
   });
 
   it('should render the icon at 48px size', () => {
-    render(<ProfessionalValue {...defaultProps} />);
+    render(<ProfessionalValueCard {...defaultProps} />);
     expect(screen.getByTestId('icon').className).toContain('text-[48px]');
   });
 
   it('should render the content text', () => {
-    render(<ProfessionalValue {...defaultProps} />);
+    render(<ProfessionalValueCard {...defaultProps} />);
     expect(
       screen.getByText('High quality <strong>delivery</strong>'),
     ).toBeInTheDocument();
   });
 
   it('should apply text-content-primary to the text', () => {
-    render(<ProfessionalValue {...defaultProps} />);
+    render(<ProfessionalValueCard {...defaultProps} />);
     expect(
       screen.getByText('High quality <strong>delivery</strong>').className,
     ).toContain('text-content-primary');
   });
 
   it('should render as article element', () => {
-    const { container } = render(<ProfessionalValue {...defaultProps} />);
+    const { container } = render(<ProfessionalValueCard {...defaultProps} />);
     expect(container.querySelector('article')).toBeInTheDocument();
   });
 });

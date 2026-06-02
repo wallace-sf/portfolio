@@ -29,7 +29,7 @@ const Component: ForwardRefRenderFunction<
   ref,
 ) => {
   const hasError = error && errorBorder && touched && !unstyled;
-  const hasSuccess = error == null && errorBorder && touched && !unstyled;
+  const hasSuccess = !error && errorBorder && touched && !unstyled;
   const showIcon = (hasError || hasSuccess) && !unstyled;
 
   return (
