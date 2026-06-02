@@ -36,7 +36,7 @@ export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
     <>
       <SideNavigation open={value} toggle={handleToggle} />
       <div className="flex h-full flex-col ml-0 xl:ml-60 mt-header-mobile xl:mt-20">
-        <main className="w-full max-w-237.5 2xl:max-w-278.5 mx-auto h-full flex flex-col flex-1">
+        <main className="w-full max-w-237.5 mx-auto h-full flex flex-col flex-1">
           {children}
         </main>
       </div>
