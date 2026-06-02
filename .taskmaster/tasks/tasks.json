@@ -5785,8 +5785,9 @@
           "53",
           "59"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-02T02:28:53.713Z"
       },
       {
         "id": "61",
@@ -5857,9 +5858,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-06-02T02:27:30.295Z",
+      "lastModified": "2026-06-02T02:28:53.713Z",
       "taskCount": 30,
-      "completedCount": 25,
+      "completedCount": 26,
       "tags": [
         "figma-pixel-perfect"
       ]
