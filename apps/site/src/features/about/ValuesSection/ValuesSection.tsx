@@ -28,7 +28,7 @@ export async function ValuesSection() {
 
   return (
     <>
-      <h2 className="text-[32px] font-bold text-content-primary text-left mt-10 mb-6">
+      <h2 className="text-[32px] font-bold text-content-primary text-left mb-6">
         {t('values_title')}
       </h2>
       <ul className="grid grid-cols-4 gap-4 items-stretch">

@@ -63,7 +63,7 @@ export default async function About({ searchParams }: AboutPageProps) {
   await applyDevSimulations(await searchParams);
 
   return (
-    <>
+    <div className="flex flex-col gap-y-20 pb-20">
       <Suspense fallback={<HeroBannerSkeleton />}>
         <HeroSection />
       </Suspense>
@@ -74,6 +74,6 @@ export default async function About({ searchParams }: AboutPageProps) {
         <ExperiencesSection />
       </Suspense>
       <CurriculumCTA />
-    </>
+    </div>
   );
 }
