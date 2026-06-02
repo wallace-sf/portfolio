@@ -2,6 +2,7 @@
 
 import { FC } from 'react';
 
+import classNames from 'classnames';
 import Markdown from 'react-markdown';
 
 import { REHYPE_PLUGINS, REMARK_PLUGINS } from './constants';
@@ -13,12 +14,10 @@ export interface ITextRichProps {
 
 export const TextRich: FC<ITextRichProps> = ({ content, className }) => {
   return (
-    <Markdown
-      className={className}
-      rehypePlugins={REHYPE_PLUGINS}
-      remarkPlugins={REMARK_PLUGINS}
-    >
-      {content}
-    </Markdown>
+    <div className={classNames('markdown-body', className)}>
+      <Markdown rehypePlugins={REHYPE_PLUGINS} remarkPlugins={REMARK_PLUGINS}>
+        {content}
+      </Markdown>
+    </div>
   );
 };

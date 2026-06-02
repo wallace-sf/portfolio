@@ -448,6 +448,9 @@ importers:
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
+      github-markdown-css:
+        specifier: ^5.9.0
+        version: 5.9.0
       react:
         specifier: ^18
         version: 18.3.1
@@ -5882,6 +5885,11 @@ packages:
       meow: 12.1.1
       split2: 4.2.0
     dev: true
+
+  /github-markdown-css@5.9.0:
+    resolution: {integrity: sha512-tmT5sY+zvg2302XLYEfH2mtkViIM1SWf2nvYoF5N1ZsO0V6B2qZTiw3GOzw4vpjLygK/KG35qRlPFweHqfzz5w==}
+    engines: {node: '>=10'}
+    dev: false
 
   /glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}

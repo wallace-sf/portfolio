@@ -116,12 +116,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
           labels={metaLabels}
         />
 
-        {content && (
-          <TextRich
-            content={content}
-            className="text-content-primary prose prose-invert max-w-none"
-          />
-        )}
+        {content && <TextRich content={content} />}
 
         {relatedProjects.length > 0 && (
           <section className="flex flex-col gap-y-6">

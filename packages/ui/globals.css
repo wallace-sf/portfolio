@@ -1,0 +1,9 @@
+@import 'github-markdown-css/github-markdown-dark.css';
+
+/* Override github-markdown colors to use the design system tokens */
+.markdown-body {
+  color: rgb(var(--tw-content-primary));
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+}
