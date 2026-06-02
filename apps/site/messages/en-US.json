@@ -78,6 +78,11 @@
     "hero_image_alt": "Wallace Ferreira — Frontend Engineer",
     "values_title": "My professional values"
   },
+  "CurriculumCTA": {
+    "description": "Access my resume to discover exclusive details about my projects, achievements and technical skills.",
+    "button": "Access resume",
+    "illustration_alt": "Decorative developer illustration"
+  },
   "ExperienceCard": {
     "skills_label": "Skills",
     "see_more": "See more",

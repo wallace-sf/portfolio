@@ -27,6 +27,10 @@ vi.mock('~features/shared/HeroBanner/HeroBannerSkeleton', () => ({
   HeroBannerSkeleton: () => null,
 }));
 
+vi.mock('~features/about/CurriculumCTA', () => ({
+  CurriculumCTA: () => <div data-testid="curriculum-cta" />,
+}));
+
 describe('About page', () => {
   it('should render all feature sections', async () => {
     const { default: About } = await import('~/app/[locale]/about/page');
@@ -35,5 +39,6 @@ describe('About page', () => {
     expect(screen.getByTestId('hero-section')).toBeInTheDocument();
     expect(screen.getByTestId('values-section')).toBeInTheDocument();
     expect(screen.getByTestId('experiences-section')).toBeInTheDocument();
+    expect(screen.getByTestId('curriculum-cta')).toBeInTheDocument();
   });
 });

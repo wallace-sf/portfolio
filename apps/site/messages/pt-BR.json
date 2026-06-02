@@ -78,6 +78,11 @@
     "hero_image_alt": "Wallace Ferreira — Engenheiro Front-end",
     "values_title": "Meus valores profissionais"
   },
+  "CurriculumCTA": {
+    "description": "Acesse meu currículo para descobrir detalhes exclusivos sobre meus projetos, conquistas e habilidades técnicas.",
+    "button": "Acessar currículo",
+    "illustration_alt": "Ilustração decorativa de desenvolvedor"
+  },
   "ExperienceCard": {
     "skills_label": "Habilidades",
     "see_more": "Ver mais",
