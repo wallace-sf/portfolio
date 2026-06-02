@@ -1,4 +1,3 @@
-import { Divider } from '@repo/ui/View';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import { ApiResponse } from '~/lib/api/envelope';
@@ -29,17 +28,16 @@ export async function ValuesSection() {
 
   return (
     <>
-      <h4 className="text-white mx-4 my-6 !text-xl xl:block xl:mx-auto xl:my-8 xl:w-full xl:!text-[32px] xl:max-w-237.5">
+      <h2 className="text-4xl font-bold text-content-primary text-left mb-6">
         {t('values_title')}
-      </h4>
-      <ul className="flex flex-row gap-x-4">
+      </h2>
+      <ul className="grid grid-cols-4 gap-4 items-stretch">
         {professionalValues.map((professionalValue) => (
           <li key={professionalValue.id}>
             <ProfessionalValue {...professionalValue} />
           </li>
         ))}
       </ul>
-      <Divider className="mx-4" />
     </>
   );
 }

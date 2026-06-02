@@ -16,12 +16,10 @@ export const ProfessionalValue: FC<IProfessionalValueCardProps> = ({
   content,
 }) => {
   return (
-    <article className="w-full h-full max-w-56 border border-subtle px-4 py-6 rounded-xl bg-surface/20 flex flex-col gap-y-3">
-      <header>
-        <Icon icon={icon} className="text-5xl text-accent min-w-fit" />
-      </header>
+    <article className="w-[225px] h-[199px] bg-surface rounded-xl px-4 py-6 flex flex-col gap-y-2.5">
+      <Icon icon={icon} className="text-[48px] text-brand-accent min-w-fit" />
       <TextRich
-        className="text-content-primary line-clamp-4"
+        className="text-base text-content-primary w-[194px]"
         content={content}
       />
     </article>

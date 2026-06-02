@@ -14,10 +14,6 @@ vi.mock('~/lib/api/internal', () => ({
   getInternalBaseUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
 }));
 
-vi.mock('@repo/ui/View', () => ({
-  Divider: () => <hr />,
-}));
-
 vi.mock('~features/about/ValuesSection/ProfessionalValue', () => ({
   ProfessionalValue: ({ content }: { content: string }) => (
     <div data-testid="professional-value">{content}</div>
