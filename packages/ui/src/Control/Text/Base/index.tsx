@@ -5,6 +5,7 @@ import { forwardRef, ForwardRefRenderFunction } from 'react';
 import { isIn } from '@repo/utils';
 import classNames from 'classnames';
 
+import { Icon } from '~/Imagery/Icon';
 import { Input, InputProps } from '~/Control/Input';
 import { IFieldProps } from '~types';
 
@@ -27,22 +28,43 @@ const Component: ForwardRefRenderFunction<
   },
   ref,
 ) => {
+  const hasError = error && errorBorder && touched && !unstyled;
+  const hasSuccess = error == null && errorBorder && touched && !unstyled;
+  const showIcon = (hasError || hasSuccess) && !unstyled;
+
   return (
-    <Input
-      {...props}
-      type={isIn(type, ['text', 'email', 'password']) ? type : 'text'}
-      className={classNames(
-        {
-          '!border-error': error && errorBorder && touched && !unstyled,
-          '!border-accent':
-            error == null && errorBorder && touched && !unstyled,
-          'border-2 border-border-default bg-surface h-12 rounded-xl p-3 w-full text-sm font-medium text-content-primary placeholder:font-normal focus:!border-primary active:!border-primary placeholder:text-content-muted disabled:opacity-50 disabled:cursor-default !outline-0':
-            !unstyled,
-        },
-        className,
+    <div className={classNames('relative w-full', { 'w-full': !unstyled })}>
+      <Input
+        {...props}
+        type={isIn(type, ['text', 'email', 'password']) ? type : 'text'}
+        className={classNames(
+          {
+            'h-11 px-2 py-3 rounded-xl border border-content-disabled bg-transparent w-full text-sm text-content-primary placeholder:text-content-secondary focus:outline-none focus:border-content-secondary disabled:opacity-50 disabled:cursor-default':
+              !unstyled,
+            '!border-error': hasError,
+            '!border-success': hasSuccess,
+            'pr-8': showIcon && !unstyled,
+          },
+          className,
+        )}
+        ref={ref}
+      />
+      {showIcon && (
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+          {hasError ? (
+            <Icon
+              icon="material-symbols:cancel"
+              className="text-error text-base"
+            />
+          ) : (
+            <Icon
+              icon="material-symbols:check-circle"
+              className="text-success text-base"
+            />
+          )}
+        </span>
       )}
-      ref={ref}
-    />
+    </div>
   );
 };
 
