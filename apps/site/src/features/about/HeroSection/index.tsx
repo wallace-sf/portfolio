@@ -1,33 +1,23 @@
+import { GetProfile } from '@repo/application/portfolio';
+import { type Locale } from '@repo/core/shared';
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import { ApiResponse } from '~/lib/api/envelope';
-import { getInternalBaseUrl } from '~/lib/api/internal';
+import { getServerContainer } from '~/lib/server/container';
 import HeroAbout from '~assets/images/hero-about.png';
 import { HeroBanner } from '~features/shared/HeroBanner';
 
-interface ProfileHero {
-  name: string;
-  headline: string;
-  bio: string;
-  photo: { url: string; alt: string };
-}
-
 export async function HeroSection() {
-  const [t, locale, baseUrl] = await Promise.all([
+  const [t, locale] = await Promise.all([
     getTranslations('About'),
     getLocale(),
-    getInternalBaseUrl(),
   ]);
 
-  const profileRes = await fetch(`${baseUrl}/api/v1/profile?locale=${locale}`, {
-    cache: 'no-store',
-  }).catch(() => null);
+  const { profileRepository } = getServerContainer();
+  const profileResult = await new GetProfile(profileRepository).execute({
+    locale: locale as Locale,
+  });
 
-  let profile: ProfileHero | null = null;
-  if (profileRes?.ok) {
-    const body: ApiResponse<ProfileHero> = await profileRes.json();
-    if (!body.error) profile = body.data;
-  }
+  const profile = profileResult.isRight() ? profileResult.value : null;
 
   return (
     <HeroBanner

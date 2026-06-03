@@ -1,7 +1,8 @@
+import { GetProfessionalValues } from '@repo/application/portfolio';
+import { type Locale } from '@repo/core/shared';
 import { getLocale, getTranslations } from 'next-intl/server';
 
-import { ApiResponse } from '~/lib/api/envelope';
-import { getInternalBaseUrl } from '~/lib/api/internal';
+import { getServerContainer } from '~/lib/server/container';
 
 import {
   IProfessionalValueCardProps,
@@ -9,22 +10,18 @@ import {
 } from './ProfessionalValueCard';
 
 export async function ValuesSection() {
-  const [t, locale, baseUrl] = await Promise.all([
+  const [t, locale] = await Promise.all([
     getTranslations('About'),
     getLocale(),
-    getInternalBaseUrl(),
   ]);
 
-  const res = await fetch(
-    `${baseUrl}/api/v1/professional-values?locale=${locale}`,
-    { cache: 'no-store' },
-  ).catch(() => null);
+  const { professionalValueRepository } = getServerContainer();
+  const valuesResult = await new GetProfessionalValues(
+    professionalValueRepository,
+  ).execute({ locale: locale as Locale });
 
-  let professionalValues: IProfessionalValueCardProps[] = [];
-  if (res?.ok) {
-    const body: ApiResponse<IProfessionalValueCardProps[]> = await res.json();
-    if (!body.error) professionalValues = body.data;
-  }
+  const professionalValues: IProfessionalValueCardProps[] =
+    valuesResult.isRight() ? valuesResult.value : [];
 
   return (
     <>

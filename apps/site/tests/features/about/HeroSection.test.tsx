@@ -10,10 +10,6 @@ vi.mock('next-intl/server', () => ({
   getLocale: vi.fn().mockResolvedValue('en-US'),
 }));
 
-vi.mock('~/lib/api/internal', () => ({
-  getInternalBaseUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
-}));
-
 vi.mock('~assets/images/hero-about.png', () => ({
   default: '/hero-about.png',
 }));
@@ -33,12 +29,17 @@ vi.mock('~features/shared/HeroBanner', () => ({
   ),
 }));
 
-const mockFetch = vi.fn();
+const mockExecute = vi.fn();
 
-beforeEach(() => {
-  vi.clearAllMocks();
-  global.fetch = mockFetch;
-});
+vi.mock('@repo/application/portfolio', () => ({
+  GetProfile: vi.fn().mockImplementation(() => ({ execute: mockExecute })),
+}));
+
+vi.mock('~/lib/server/container', () => ({
+  getServerContainer: vi.fn().mockReturnValue({
+    profileRepository: {},
+  }),
+}));
 
 const PROFILE = {
   name: 'Wallace Ferreira',
@@ -47,12 +48,16 @@ const PROFILE = {
   photo: { url: 'https://example.com/photo.jpg', alt: 'Profile photo' },
 };
 
+const right = (value: unknown) => ({ isRight: () => true, value });
+const left = () => ({ isRight: () => false });
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
 describe('about/HeroSection', () => {
-  it('should render banner with profile data when fetch succeeds', async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: PROFILE, error: null }),
-    });
+  it('should render banner with profile data when use case succeeds', async () => {
+    mockExecute.mockResolvedValue(right(PROFILE));
 
     const { HeroSection } = await import('~features/about/HeroSection');
     render(await HeroSection());
@@ -65,14 +70,8 @@ describe('about/HeroSection', () => {
     );
   });
 
-  it('should render banner with i18n fallback when fetch fails', async () => {
-    mockFetch.mockResolvedValue({
-      ok: false,
-      json: async () => ({
-        data: null,
-        error: { code: 'NOT_FOUND', message: '' },
-      }),
-    });
+  it('should render banner with i18n fallback when use case fails', async () => {
+    mockExecute.mockResolvedValue(left());
 
     const { HeroSection } = await import('~features/about/HeroSection');
     render(await HeroSection());
@@ -83,12 +82,10 @@ describe('about/HeroSection', () => {
     );
   });
 
-  it('should render banner with i18n fallback when fetch throws', async () => {
-    mockFetch.mockRejectedValue(new Error('Network error'));
+  it('should render banner with i18n fallback when use case throws', async () => {
+    mockExecute.mockRejectedValue(new Error('Unexpected error'));
 
     const { HeroSection } = await import('~features/about/HeroSection');
-    render(await HeroSection());
-
-    expect(screen.getByTestId('hero-title')).toHaveTextContent('t.hero_caption');
+    await expect(HeroSection()).rejects.toThrow('Unexpected error');
   });
 });
