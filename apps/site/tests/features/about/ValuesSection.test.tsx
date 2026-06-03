@@ -7,7 +7,6 @@ import { render, screen } from '@testing-library/react';
 
 vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => `t.${key}`),
-  getLocale: vi.fn().mockResolvedValue('en-US'),
 }));
 
 vi.mock('~features/about/ValuesSection/ProfessionalValueCard', () => ({
@@ -47,7 +46,7 @@ describe('about/ValuesSection', () => {
     mockExecute.mockResolvedValue(right([]));
 
     const { ValuesSection } = await import('~features/about/ValuesSection');
-    render(await ValuesSection());
+    render(await ValuesSection({ locale: 'en-US' }));
 
     expect(screen.getByText('t.values_title')).toBeInTheDocument();
   });
@@ -56,7 +55,7 @@ describe('about/ValuesSection', () => {
     mockExecute.mockResolvedValue(right(PROFESSIONAL_VALUES));
 
     const { ValuesSection } = await import('~features/about/ValuesSection');
-    render(await ValuesSection());
+    render(await ValuesSection({ locale: 'en-US' }));
 
     expect(
       screen.getAllByTestId('professional-value').length,
@@ -68,7 +67,7 @@ describe('about/ValuesSection', () => {
     mockExecute.mockResolvedValue(right([]));
 
     const { ValuesSection } = await import('~features/about/ValuesSection');
-    render(await ValuesSection());
+    render(await ValuesSection({ locale: 'en-US' }));
 
     expect(
       screen.queryByTestId('professional-value'),
@@ -79,7 +78,7 @@ describe('about/ValuesSection', () => {
     mockExecute.mockResolvedValue(left());
 
     const { ValuesSection } = await import('~features/about/ValuesSection');
-    render(await ValuesSection());
+    render(await ValuesSection({ locale: 'en-US' }));
 
     expect(
       screen.queryByTestId('professional-value'),

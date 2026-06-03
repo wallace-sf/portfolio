@@ -7,7 +7,6 @@ import { render, screen } from '@testing-library/react';
 
 vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => `t.${key}`),
-  getLocale: vi.fn().mockResolvedValue('en-US'),
 }));
 
 vi.mock('~assets/images/hero-about.png', () => ({
@@ -60,7 +59,7 @@ describe('about/HeroSection', () => {
     mockExecute.mockResolvedValue(right(PROFILE));
 
     const { HeroSection } = await import('~features/about/HeroSection');
-    render(await HeroSection());
+    render(await HeroSection({ locale: 'en-US' }));
 
     expect(screen.getByTestId('hero-title')).toHaveTextContent(
       'Frontend Engineer',
@@ -74,7 +73,7 @@ describe('about/HeroSection', () => {
     mockExecute.mockResolvedValue(left());
 
     const { HeroSection } = await import('~features/about/HeroSection');
-    render(await HeroSection());
+    render(await HeroSection({ locale: 'en-US' }));
 
     expect(screen.getByTestId('hero-title')).toHaveTextContent('t.hero_caption');
     expect(screen.getByTestId('hero-caption')).toHaveTextContent(
@@ -86,6 +85,6 @@ describe('about/HeroSection', () => {
     mockExecute.mockRejectedValue(new Error('Unexpected error'));
 
     const { HeroSection } = await import('~features/about/HeroSection');
-    await expect(HeroSection()).rejects.toThrow('Unexpected error');
+    await expect(HeroSection({ locale: 'en-US' })).rejects.toThrow('Unexpected error');
   });
 });

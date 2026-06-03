@@ -2,24 +2,18 @@ import { render, screen, fireEvent } from '@testing-library/react';
 
 import { LanguageSelector } from '~/components/Layout/SideNavigation/LanguageSelector';
 
-// ---------------------------------------------------------------------------
-// Mocks
-// ---------------------------------------------------------------------------
-
 const mockReplace = vi.fn();
-let mockPathname = '/about';
+let mockPathname = '/en-US/about';
+let mockLocale = 'en-US';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ replace: mockReplace }),
-}));
-
-vi.mock('~i18n/routing', () => ({
   usePathname: () => mockPathname,
+  useParams: () => ({ locale: mockLocale }),
 }));
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
-  useLocale: () => 'en-US',
 }));
 
 vi.mock('~/components/Layout/SideNavigation/MenuItem', () => ({
@@ -78,13 +72,10 @@ vi.mock('@repo/ui/Control', () => ({
   ),
 }));
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 beforeEach(() => {
   vi.clearAllMocks();
-  mockPathname = '/about';
+  mockPathname = '/en-US/about';
+  mockLocale = 'en-US';
 });
 
 describe('LanguageSelector', () => {
@@ -110,14 +101,14 @@ describe('LanguageSelector', () => {
     expect(mockReplace).toHaveBeenCalledWith('/pt-BR/about');
   });
 
-  it('should navigate to <locale> when a language is selected on the root path', () => {
-    mockPathname = '/';
+  it('should navigate to /<locale> when a language is selected on the root path', () => {
+    mockPathname = '/en-US';
 
     render(<LanguageSelector />);
 
     fireEvent.click(screen.getByTestId('radio-es'));
 
-    expect(mockReplace).toHaveBeenCalledWith('es');
+    expect(mockReplace).toHaveBeenCalledWith('/es');
   });
 
   it('should call replace with "/en-US/<pathname>" when en-US radio is selected', () => {

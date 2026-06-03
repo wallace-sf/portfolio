@@ -5,9 +5,6 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 
-vi.mock('next-intl/server', () => ({
-  getLocale: vi.fn().mockResolvedValue('en-US'),
-}));
 
 vi.mock('@repo/ui/View', () => ({
   Divider: () => <hr />,
@@ -78,7 +75,7 @@ describe('about/ExperiencesSection', () => {
     const { ExperiencesSection } = await import(
       '~features/about/ExperiencesSection'
     );
-    render(await ExperiencesSection());
+    render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.getByText('Senior Developer')).toBeInTheDocument();
     expect(screen.getByText('Tech Lead')).toBeInTheDocument();
@@ -90,7 +87,7 @@ describe('about/ExperiencesSection', () => {
     const { ExperiencesSection } = await import(
       '~features/about/ExperiencesSection'
     );
-    render(await ExperiencesSection());
+    render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.queryByTestId('experience-card')).not.toBeInTheDocument();
   });
@@ -101,7 +98,7 @@ describe('about/ExperiencesSection', () => {
     const { ExperiencesSection } = await import(
       '~features/about/ExperiencesSection'
     );
-    render(await ExperiencesSection());
+    render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.queryByTestId('experience-card')).not.toBeInTheDocument();
   });

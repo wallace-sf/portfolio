@@ -4,8 +4,8 @@ import { FC } from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
-
-import { Link } from '~i18n/routing';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 import { Text } from '../Text';
 import { IGhostLinkProps } from '../types';
@@ -18,9 +18,13 @@ export const Item1: FC<IGhostLinkProps> = ({
   iconClassName,
   newTab = false,
 }) => {
+  const params = useParams();
+  const locale = (params?.locale as string) ?? 'en-US';
+  const localizedHref = href === '/' ? `/${locale}` : `/${locale}${href}`;
+
   return (
     <Link
-      href={href}
+      href={localizedHref}
       className={classNames(
         'flex flex-row items-center hover:bg-surface active:bg-surface-sunken transition-all px-4 py-3 gap-4 rounded-lg [&>span]:hover:font-bold [&>span]:active:font-bold [&>*]:active:!text-content-primary',
         className,
