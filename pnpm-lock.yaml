@@ -8,6 +8,11 @@ overrides:
   lodash: ^4.17.21
   '@types/lodash': ^4.17.9
 
+patchedDependencies:
+  next-intl@4.11.0:
+    hash: 6vphakk76a4zgu5p7uec5rhnk4
+    path: patches/next-intl@4.11.0.patch
+
 importers:
 
   .:
@@ -66,7 +71,7 @@ importers:
         version: 16.2.6(@babel/core@7.29.0)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: ^4.11.0
-        version: 4.11.0(next@16.2.6)(react@18.3.1)(typescript@5.4.5)
+        version: 4.11.0(patch_hash=6vphakk76a4zgu5p7uec5rhnk4)(next@16.2.6)(react@18.3.1)(typescript@5.4.5)
       react:
         specifier: ^18
         version: 18.3.1
@@ -169,7 +174,7 @@ importers:
         version: 16.2.6(@babel/core@7.29.0)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: ^4.11.0
-        version: 4.11.0(next@16.2.6)(react@18.3.1)(typescript@5.4.5)
+        version: 4.11.0(patch_hash=6vphakk76a4zgu5p7uec5rhnk4)(next@16.2.6)(react@18.3.1)(typescript@5.4.5)
       react:
         specifier: ^18
         version: 18.3.1
@@ -7545,7 +7550,7 @@ packages:
     resolution: {integrity: sha512-WUGBSxGNd8eQ0rAsJHFmRw2H7+SZAXQIY/HAnYM57JaUsj5D2vx4KOz4zFtXlyKDtsw9awHfgWVvBae2/RDF9A==}
     dev: false
 
-  /next-intl@4.11.0(next@16.2.6)(react@18.3.1)(typescript@5.4.5):
+  /next-intl@4.11.0(patch_hash=6vphakk76a4zgu5p7uec5rhnk4)(next@16.2.6)(react@18.3.1)(typescript@5.4.5):
     resolution: {integrity: sha512-Chp8rgEVUYOX/bCtYy+PXH6lDX3X+GPT9sR9HScHroL283em/4urP9btfdHEMEHJJXdq2W/5wDaDDtWONPdNSA==}
     peerDependencies:
       next: ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
@@ -7569,6 +7574,7 @@ packages:
     transitivePeerDependencies:
       - '@swc/helpers'
     dev: false
+    patched: true
 
   /next@16.2.6(@babel/core@7.29.0)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-qOVgKJg1+At15NpeUP+eJgCHvTCgXsogweq87Ri/Ix7PkqQHg4sdaXmSFqKlgaIXE4kW0g25LE68W87UANlHtw==}
