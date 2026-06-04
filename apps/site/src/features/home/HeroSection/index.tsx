@@ -1,41 +1,18 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import { type Locale } from '@repo/core/shared';
+import { type ProfileDTO } from '@repo/application/portfolio';
+import { getTranslations } from 'next-intl/server';
 
-import { ApiResponse } from '~/lib/api/envelope';
-import { getInternalBaseUrl } from '~/lib/api/internal';
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
 import { HeroBanner } from '~features/shared/HeroBanner';
 import { StatCard } from '~features/shared/StatCard';
 
-interface ProfileStat {
-  label: string;
-  value: string;
-  icon: string;
+interface HeroSectionProps {
+  locale: Locale;
+  profile: ProfileDTO | null;
 }
 
-interface ProfileHero {
-  name: string;
-  headline: string;
-  bio: string;
-  photo: { url: string; alt: string };
-  stats: ProfileStat[];
-}
-
-export async function HeroSection() {
-  const [t, locale, baseUrl] = await Promise.all([
-    getTranslations('Home'),
-    getLocale(),
-    getInternalBaseUrl(),
-  ]);
-
-  const profileRes = await fetch(`${baseUrl}/api/v1/profile?locale=${locale}`, {
-    cache: 'no-store',
-  }).catch(() => null);
-
-  let profile: ProfileHero | null = null;
-  if (profileRes?.ok) {
-    const body: ApiResponse<ProfileHero> = await profileRes.json();
-    if (!body.error) profile = body.data;
-  }
+export async function HeroSection({ locale, profile }: HeroSectionProps) {
+  const t = await getTranslations({ locale, namespace: 'Home' });
 
   return (
     <>

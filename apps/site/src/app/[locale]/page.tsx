@@ -1,45 +1,35 @@
-import { Suspense } from 'react';
-
+import { GetFeaturedProjects, GetProfile } from '@repo/application/portfolio';
+import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
-import { applyDevSimulations } from '~/dev/simulate';
-import { ApiResponse } from '~/lib/api/envelope';
-import { getInternalBaseUrl } from '~/lib/api/internal';
+import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/home/HeroSection';
-import {
-  ProjectsSection,
-  ProjectsSkeleton,
-} from '~features/home/ProjectsSection';
-import { HeroBannerSkeleton } from '~features/shared/HeroBanner/HeroBannerSkeleton';
+import { ProjectsSection } from '~features/home/ProjectsSection';
+
+export const revalidate = 86400;
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
 
 interface HomePageProps {
   params?: Promise<{ locale: string }>;
-  searchParams?: Promise<{ loading?: string; error?: string }>;
-}
-
-interface ProfileMeta {
-  name: string;
-  headline: string;
-  bio: string;
-  photo: { url: string; alt: string };
 }
 
 export async function generateMetadata({
   params,
 }: HomePageProps): Promise<Metadata> {
-  const locale = (await params)?.locale ?? 'en-US';
-  const baseUrl = await getInternalBaseUrl();
+  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  setRequestLocale(locale);
 
-  const res = await fetch(`${baseUrl}/api/v1/profile?locale=${locale}`, {
-    cache: 'no-store',
-  }).catch(() => null);
+  const profileResult = await new GetProfile(
+    getServerContainer().profileRepository,
+  ).execute({ locale });
 
-  if (!res?.ok) return {};
+  if (profileResult.isLeft()) return {};
 
-  const body: ApiResponse<ProfileMeta> = await res.json();
-  if (body.error) return {};
-
-  const { name, headline, photo } = body.data;
+  const { name, headline, photo } = profileResult.value;
 
   return {
     title: name,
@@ -52,17 +42,27 @@ export async function generateMetadata({
   };
 }
 
-export default async function Home({ searchParams }: HomePageProps) {
-  await applyDevSimulations(await searchParams);
+export default async function Home({ params }: HomePageProps) {
+  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  setRequestLocale(locale);
+
+  const { profileRepository, projectRepository, skillRepository } =
+    getServerContainer();
+
+  const [profileResult, projectsResult] = await Promise.all([
+    new GetProfile(profileRepository).execute({ locale }),
+    new GetFeaturedProjects(projectRepository, skillRepository).execute({
+      locale,
+    }),
+  ]);
+
+  const profile = profileResult.isRight() ? profileResult.value : null;
+  const projects = projectsResult.isRight() ? projectsResult.value : [];
 
   return (
     <>
-      <Suspense fallback={<HeroBannerSkeleton />}>
-        <HeroSection />
-      </Suspense>
-      <Suspense fallback={<ProjectsSkeleton />}>
-        <ProjectsSection />
-      </Suspense>
+      <HeroSection locale={locale} profile={profile} />
+      <ProjectsSection locale={locale} projects={projects} />
     </>
   );
 }
