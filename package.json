@@ -41,6 +41,9 @@
     "overrides": {
       "lodash": "$lodash",
       "@types/lodash": "$@types/lodash"
+    },
+    "patchedDependencies": {
+      "next-intl@4.11.0": "patches/next-intl@4.11.0.patch"
     }
   }
 }

@@ -5,8 +5,8 @@ import { forwardRef, ForwardRefRenderFunction } from 'react';
 import { isIn } from '@repo/utils';
 import classNames from 'classnames';
 
-import { Icon } from '~/Imagery/Icon';
 import { Input, InputProps } from '~/Control/Input';
+import { Icon } from '~/Imagery/Icon';
 import { IFieldProps } from '~types';
 
 export interface ITextProps extends Omit<InputProps, 'type'>, IFieldProps {

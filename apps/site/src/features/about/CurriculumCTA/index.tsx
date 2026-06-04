@@ -1,21 +1,23 @@
+import { type Locale } from '@repo/core/shared';
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 
 import illustrationSrc from '~assets/images/curriculum-cta-illustration.png';
-import { Link } from '~i18n/routing';
 
 interface ICurriculumCTAProps {
+  locale: Locale;
   resumeUrl?: string;
   className?: string;
 }
 
 export async function CurriculumCTA({
+  locale,
   resumeUrl,
   className,
 }: ICurriculumCTAProps) {
-  const t = await getTranslations('CurriculumCTA');
+  const t = await getTranslations({ locale, namespace: 'CurriculumCTA' });
   const url = resumeUrl ?? process.env.NEXT_PUBLIC_RESUME_URL ?? '#';
 
   return (
@@ -38,7 +40,7 @@ export async function CurriculumCTA({
         <p className="text-2xl font-normal text-content-primary">
           {t('description')}
         </p>
-        <Link
+        <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
@@ -46,7 +48,7 @@ export async function CurriculumCTA({
         >
           {t('button')}
           <Icon icon="material-symbols:open-in-new" className="text-2xl" />
-        </Link>
+        </a>
       </div>
     </section>
   );

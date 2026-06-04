@@ -19,22 +19,6 @@ vi.mock('@repo/ui/Imagery', () => ({
   Icon: ({ icon }: { icon: string }) => <span data-icon={icon} />,
 }));
 
-vi.mock('~i18n/routing', () => ({
-  Link: ({
-    children,
-    href,
-    target,
-  }: {
-    children: React.ReactNode;
-    href: string;
-    target?: string;
-  }) => (
-    <a href={href} target={target}>
-      {children}
-    </a>
-  ),
-}));
-
 vi.mock('~assets/images/curriculum-cta-illustration.png', () => ({
   default: '/curriculum-cta-illustration.png',
 }));
@@ -43,12 +27,12 @@ import { CurriculumCTA } from '~features/about/CurriculumCTA';
 
 describe('CurriculumCTA', () => {
   it('should render the description text', async () => {
-    render(await CurriculumCTA({}));
+    render(await CurriculumCTA({ locale: 'en-US' }));
     expect(screen.getByText('cta.description')).toBeInTheDocument();
   });
 
   it('should render the button with label and open_in_new icon', async () => {
-    render(await CurriculumCTA({}));
+    render(await CurriculumCTA({ locale: 'en-US' }));
     expect(screen.getByText('cta.button')).toBeInTheDocument();
     expect(
       document.querySelector('[data-icon="material-symbols:open-in-new"]'),
@@ -56,14 +40,16 @@ describe('CurriculumCTA', () => {
   });
 
   it('should render a link that opens in new tab', async () => {
-    render(await CurriculumCTA({ resumeUrl: 'https://example.com/cv' }));
+    render(
+      await CurriculumCTA({ locale: 'en-US', resumeUrl: 'https://example.com/cv' }),
+    );
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href', 'https://example.com/cv');
     expect(link).toHaveAttribute('target', '_blank');
   });
 
   it('should render the illustration image', async () => {
-    render(await CurriculumCTA({}));
+    render(await CurriculumCTA({ locale: 'en-US' }));
     expect(screen.getByAltText('cta.illustration_alt')).toBeInTheDocument();
   });
 });
