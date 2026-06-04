@@ -10,8 +10,6 @@ import { notFound } from 'next/navigation';
 import { getServerContainer } from '~/lib/server/container';
 import { ProjectDetail } from '~features/projects/ProjectDetail';
 
-export const revalidate = 86400;
-
 export async function generateStaticParams() {
   const { projectRepository, skillRepository } = getServerContainer();
   const result = await new GetPublishedProjects(

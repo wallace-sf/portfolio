@@ -19,39 +19,17 @@ describe('middleware', () => {
     vi.resetModules();
   });
 
-  it('should redirect to locale login when accessing admin without auth cookie', async () => {
+  it('should delegate to next-intl middleware for any path', async () => {
     const { default: middleware } = await import('~/proxy');
-    const request = new NextRequest('http://localhost:3000/en-US/admin');
-    const response = middleware(request);
-
-    expect(response.status).toBe(307);
-    expect(response.headers.get('location')).toContain('/en-US/login');
-  });
-
-  it('should redirect to correct locale when accessing pt-BR admin without cookie', async () => {
-    const { default: middleware } = await import('~/proxy');
-    const request = new NextRequest(
-      'http://localhost:3000/pt-BR/admin/dashboard',
-    );
-    const response = middleware(request);
-
-    expect(response.status).toBe(307);
-    expect(response.headers.get('location')).toContain('/pt-BR/login');
-  });
-
-  it('should allow access to admin when sb-access-token cookie is present', async () => {
-    const { default: middleware } = await import('~/proxy');
-    const request = new NextRequest('http://localhost:3000/en-US/admin', {
-      headers: { cookie: 'sb-access-token=test-token' },
-    });
+    const request = new NextRequest('http://localhost:3000/en-US');
     const response = middleware(request);
 
     expect(response.status).not.toBe(307);
   });
 
-  it('should not redirect for non-admin paths without cookie', async () => {
+  it('should delegate to next-intl middleware for admin paths', async () => {
     const { default: middleware } = await import('~/proxy');
-    const request = new NextRequest('http://localhost:3000/en-US');
+    const request = new NextRequest('http://localhost:3000/en-US/admin');
     const response = middleware(request);
 
     expect(response.status).not.toBe(307);
