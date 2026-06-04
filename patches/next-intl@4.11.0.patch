@@ -1,0 +1,51 @@
+diff --git a/dist/esm/development/server/react-server/RequestLocale.js b/dist/esm/development/server/react-server/RequestLocale.js
+index 8860210b5b44bf2e89eb789406bc863f522884f3..4dc1edb60a1689b540c2fbc9e4a1e9cfd84d9dcd 100644
+--- a/dist/esm/development/server/react-server/RequestLocale.js
++++ b/dist/esm/development/server/react-server/RequestLocale.js
+@@ -1,36 +1,10 @@
+-import { headers } from 'next/headers';
+ import { cache } from 'react';
+-import { HEADER_LOCALE_NAME } from '../../shared/constants.js';
+-import { isPromise } from '../../shared/utils.js';
+ import { getCachedRequestLocale } from './RequestLocaleCache.js';
+ 
+-async function getHeadersImpl() {
+-  const promiseOrValue = headers();
+-
+-  // Compatibility with Next.js <15
+-  return isPromise(promiseOrValue) ? await promiseOrValue : promiseOrValue;
+-}
+-const getHeaders = cache(getHeadersImpl);
+-async function getLocaleFromHeaderImpl() {
+-  let locale;
+-  try {
+-    locale = (await getHeaders()).get(HEADER_LOCALE_NAME) || undefined;
+-  } catch (error) {
+-    if (error instanceof Error && error.digest === 'DYNAMIC_SERVER_USAGE') {
+-      const wrappedError = new Error('Usage of next-intl APIs in Server Components currently opts into dynamic rendering. This limitation will eventually be lifted, but as a stopgap solution, you can use the `setRequestLocale` API to enable static rendering, see https://next-intl.dev/docs/routing/setup#static-rendering', {
+-        cause: error
+-      });
+-      wrappedError.digest = error.digest;
+-      throw wrappedError;
+-    } else {
+-      throw error;
+-    }
+-  }
+-  return locale;
+-}
+-const getLocaleFromHeader = cache(getLocaleFromHeaderImpl);
++// Static-rendering mode: locale is always provided via setRequestLocale.
++// Removed headers() import to enable Turbopack static analysis compatibility.
+ async function getRequestLocale() {
+-  return getCachedRequestLocale() || (await getLocaleFromHeader());
++  return getCachedRequestLocale();
+ }
+ 
+ export { getRequestLocale };
+diff --git a/dist/esm/production/server/react-server/RequestLocale.js b/dist/esm/production/server/react-server/RequestLocale.js
+index aec20562991ba437e5d81ccaa09c3616c0ebf11a..c4bc59c146694b716b8258621f1f747ff4c2d32e 100644
+--- a/dist/esm/production/server/react-server/RequestLocale.js
++++ b/dist/esm/production/server/react-server/RequestLocale.js
+@@ -1 +1 @@
+-import{headers as t}from"next/headers";import{cache as e}from"react";import{HEADER_LOCALE_NAME as n}from"../../shared/constants.js";import{isPromise as r}from"../../shared/utils.js";import{getCachedRequestLocale as o}from"./RequestLocaleCache.js";const s=e((async function(){const e=t();return r(e)?await e:e}));const i=e((async function(){let t;try{t=(await s()).get(n)||void 0}catch(t){if(t instanceof Error&&"DYNAMIC_SERVER_USAGE"===t.digest){const e=new Error("Usage of next-intl APIs in Server Components currently opts into dynamic rendering. This limitation will eventually be lifted, but as a stopgap solution, you can use the `setRequestLocale` API to enable static rendering, see https://next-intl.dev/docs/routing/setup#static-rendering",{cause:t});throw e.digest=t.digest,e}throw t}return t}));async function a(){return o()||await i()}export{a as getRequestLocale};
++import{cache as e}from"react";import{getCachedRequestLocale as o}from"./RequestLocaleCache.js";async function a(){return o()}export{a as getRequestLocale};

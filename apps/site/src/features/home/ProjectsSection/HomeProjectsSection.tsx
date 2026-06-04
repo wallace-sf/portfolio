@@ -1,27 +1,18 @@
-import { getLocale, getTranslations } from 'next-intl/server';
-
-import { ApiResponse } from '~/lib/api/envelope';
-import { getInternalBaseUrl } from '~/lib/api/internal';
+import { type Locale } from '@repo/core/shared';
+import { getTranslations } from 'next-intl/server';
 
 import { ProjectList, ProjectSummary } from './ProjectList';
 
-export async function ProjectsSection() {
-  const [t, locale, baseUrl] = await Promise.all([
-    getTranslations('Home'),
-    getLocale(),
-    getInternalBaseUrl(),
-  ]);
+interface ProjectsSectionProps {
+  locale: Locale;
+  projects: ProjectSummary[];
+}
 
-  const projectsRes = await fetch(
-    `${baseUrl}/api/v1/projects/featured?locale=${locale}`,
-    { cache: 'no-store' },
-  ).catch(() => null);
-
-  let projects: ProjectSummary[] = [];
-  if (projectsRes?.ok) {
-    const body: ApiResponse<ProjectSummary[]> = await projectsRes.json();
-    if (!body.error) projects = body.data;
-  }
+export async function ProjectsSection({
+  locale,
+  projects,
+}: ProjectsSectionProps) {
+  const t = await getTranslations({ locale, namespace: 'Home' });
 
   return (
     <>

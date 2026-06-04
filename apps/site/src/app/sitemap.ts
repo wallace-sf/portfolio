@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next';
 
+import { LOCALES } from '@repo/core/shared';
+
 import { ApiResponse } from '~/lib/api/envelope';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-const LOCALES = ['en-US', 'pt-BR', 'es'] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = ['', '/about', '/projects'];

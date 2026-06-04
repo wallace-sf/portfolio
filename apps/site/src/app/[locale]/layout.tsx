@@ -1,8 +1,10 @@
 import classNames from 'classnames';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
+
+import { LOCALES } from '@repo/core/shared';
 
 import { AppLayout } from '~components';
 
@@ -41,6 +43,10 @@ export const metadata: Metadata = {
   },
 };
 
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
+
 export default async function RootLayout({
   children,
   params,
@@ -49,6 +55,7 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const messages = await getMessages();
 
   return (
@@ -59,7 +66,7 @@ export default async function RootLayout({
           inter.className,
         )}
       >
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <AppLayout>{children}</AppLayout>
         </NextIntlClientProvider>
       </body>

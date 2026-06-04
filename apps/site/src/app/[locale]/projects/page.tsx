@@ -1,22 +1,28 @@
-import { Suspense } from 'react';
-
+import { GetPublishedProjects } from '@repo/application/portfolio';
+import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
-import { applyDevSimulations } from '~/dev/simulate';
-import { ProjectsSkeleton } from '~features/home/ProjectsSection';
+import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/projects/HeroSection';
 import { ProjectsSection } from '~features/projects/ProjectsSection';
-import { HeroBannerSkeleton } from '~features/shared/HeroBanner/HeroBannerSkeleton';
+
+export const revalidate = 86400;
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
 
 interface ProjectsPageProps {
   params?: Promise<{ locale: string }>;
-  searchParams?: Promise<{ loading?: string; error?: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: ProjectsPageProps): Promise<Metadata> {
-  const locale = (await params)?.locale ?? 'en-US';
+  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  setRequestLocale(locale);
+
   const title = locale.startsWith('pt')
     ? 'Projetos'
     : locale.startsWith('es')
@@ -31,17 +37,22 @@ export async function generateMetadata({
   return { title, description, openGraph: { title, description } };
 }
 
-export default async function Projects({ searchParams }: ProjectsPageProps) {
-  await applyDevSimulations(await searchParams);
+export default async function Projects({ params }: ProjectsPageProps) {
+  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  setRequestLocale(locale);
+
+  const { projectRepository, skillRepository } = getServerContainer();
+  const result = await new GetPublishedProjects(
+    projectRepository,
+    skillRepository,
+  ).execute({ locale });
+
+  const projects = result.isRight() ? result.value : [];
 
   return (
     <>
-      <Suspense fallback={<HeroBannerSkeleton />}>
-        <HeroSection />
-      </Suspense>
-      <Suspense fallback={<ProjectsSkeleton />}>
-        <ProjectsSection />
-      </Suspense>
+      <HeroSection locale={locale} />
+      <ProjectsSection projects={projects} />
     </>
   );
 }

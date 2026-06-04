@@ -1,17 +1,27 @@
+import {
+  GetProjectBySlug,
+  GetPublishedProjects,
+} from '@repo/application/portfolio';
+import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
-import { getLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-import { ApiResponse } from '~/lib/api/envelope';
-import { getInternalBaseUrl } from '~/lib/api/internal';
-import {
-  ProjectDetail,
-  IProjectDetailProps,
-} from '~features/projects/ProjectDetail';
+import { getServerContainer } from '~/lib/server/container';
+import { ProjectDetail } from '~features/projects/ProjectDetail';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400;
 
-type ProjectDetailData = IProjectDetailProps & { id: string };
+export async function generateStaticParams() {
+  const { projectRepository, skillRepository } = getServerContainer();
+  const result = await new GetPublishedProjects(
+    projectRepository,
+    skillRepository,
+  ).execute({ locale: 'en-US' });
+
+  const slugs = result.isRight() ? result.value.map((p) => p.slug) : [];
+  return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
+}
 
 interface ProjectDetailPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -21,25 +31,17 @@ export async function generateMetadata({
   params,
 }: ProjectDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const baseUrl = await getInternalBaseUrl();
+  setRequestLocale(locale);
 
-  const res = await fetch(
-    `${baseUrl}/api/v1/projects/${slug}?locale=${locale}`,
-    {
-      cache: 'no-store',
-    },
-  ).catch(() => null);
+  const { projectRepository, skillRepository } = getServerContainer();
+  const result = await new GetProjectBySlug(
+    projectRepository,
+    skillRepository,
+  ).execute({ locale: locale as Locale, slug });
 
-  if (!res?.ok) return {};
+  if (result.isLeft()) return {};
 
-  const body: ApiResponse<{
-    title: string;
-    caption: string;
-    coverImage: { url: string; alt: string };
-  }> = await res.json();
-  if (body.error) return {};
-
-  const { title, caption, coverImage } = body.data;
+  const { title, caption, coverImage } = result.value;
 
   return {
     title,
@@ -55,23 +57,16 @@ export async function generateMetadata({
 export default async function ProjectDetailPage({
   params,
 }: ProjectDetailPageProps) {
-  const { slug } = await params;
-  const [locale, baseUrl] = await Promise.all([
-    getLocale(),
-    getInternalBaseUrl(),
-  ]);
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
 
-  const res = await fetch(
-    `${baseUrl}/api/v1/projects/${slug}?locale=${locale}`,
-    { cache: 'no-store' },
-  ).catch(() => null);
+  const { projectRepository, skillRepository } = getServerContainer();
+  const result = await new GetProjectBySlug(
+    projectRepository,
+    skillRepository,
+  ).execute({ locale: locale as Locale, slug });
 
-  if (!res || res.status === 404 || !res.ok) notFound();
+  if (result.isLeft()) notFound();
 
-  const body: ApiResponse<ProjectDetailData> = await res.json();
-  if (body.error) notFound();
-
-  const project = body.data;
-
-  return <ProjectDetail {...project} />;
+  return <ProjectDetail {...result.value} />;
 }

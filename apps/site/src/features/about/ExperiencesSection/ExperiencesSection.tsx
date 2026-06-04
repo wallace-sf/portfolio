@@ -1,25 +1,20 @@
-import { getLocale } from 'next-intl/server';
+import { GetExperiences } from '@repo/application/portfolio';
+import { type Locale } from '@repo/core/shared';
 
-import { ApiResponse } from '~/lib/api/envelope';
-import { getInternalBaseUrl } from '~/lib/api/internal';
+import { getServerContainer } from '~/lib/server/container';
 
 import { ExperienceCard, IExperienceCardProps } from './ExperienceCard';
 
-export async function ExperiencesSection() {
-  const [locale, baseUrl] = await Promise.all([
-    getLocale(),
-    getInternalBaseUrl(),
-  ]);
+export async function ExperiencesSection({ locale }: { locale: Locale }) {
+  const { experienceRepository, skillRepository } = getServerContainer();
+  const experiencesResult = await new GetExperiences(
+    experienceRepository,
+    skillRepository,
+  ).execute({ locale });
 
-  const res = await fetch(`${baseUrl}/api/v1/experiences?locale=${locale}`, {
-    cache: 'no-store',
-  }).catch(() => null);
-
-  let experiences: IExperienceCardProps[] = [];
-  if (res?.ok) {
-    const body: ApiResponse<IExperienceCardProps[]> = await res.json();
-    if (!body.error) experiences = body.data;
-  }
+  const experiences: IExperienceCardProps[] = experiencesResult.isRight()
+    ? experiencesResult.value
+    : [];
 
   return (
     <ul className="flex flex-col">

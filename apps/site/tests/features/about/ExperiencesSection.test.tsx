@@ -5,13 +5,6 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 
-vi.mock('next-intl/server', () => ({
-  getLocale: vi.fn().mockResolvedValue('en-US'),
-}));
-
-vi.mock('~/lib/api/internal', () => ({
-  getInternalBaseUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
-}));
 
 vi.mock('@repo/ui/View', () => ({
   Divider: () => <hr />,
@@ -32,12 +25,18 @@ vi.mock('~features/about/ExperiencesSection/ExperienceCard', () => ({
   ),
 }));
 
-const mockFetch = vi.fn();
+const mockExecute = vi.fn();
 
-beforeEach(() => {
-  vi.clearAllMocks();
-  global.fetch = mockFetch;
-});
+vi.mock('@repo/application/portfolio', () => ({
+  GetExperiences: vi.fn().mockImplementation(() => ({ execute: mockExecute })),
+}));
+
+vi.mock('~/lib/server/container', () => ({
+  getServerContainer: vi.fn().mockReturnValue({
+    experienceRepository: {},
+    skillRepository: {},
+  }),
+}));
 
 const EXPERIENCES = [
   {
@@ -62,60 +61,44 @@ const EXPERIENCES = [
   },
 ];
 
+const right = (value: unknown) => ({ isRight: () => true, value });
+const left = () => ({ isRight: () => false });
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
 describe('about/ExperiencesSection', () => {
-  it('should render experience cards from API response', async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: EXPERIENCES, error: null }),
-    });
+  it('should render experience cards from use case response', async () => {
+    mockExecute.mockResolvedValue(right(EXPERIENCES));
 
     const { ExperiencesSection } = await import(
       '~features/about/ExperiencesSection'
     );
-    render(await ExperiencesSection());
+    render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.getByText('Senior Developer')).toBeInTheDocument();
     expect(screen.getByText('Tech Lead')).toBeInTheDocument();
   });
 
-  it('should render no cards when API returns empty', async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: [], error: null }),
-    });
+  it('should render no cards when use case returns empty', async () => {
+    mockExecute.mockResolvedValue(right([]));
 
     const { ExperiencesSection } = await import(
       '~features/about/ExperiencesSection'
     );
-    render(await ExperiencesSection());
+    render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.queryByTestId('experience-card')).not.toBeInTheDocument();
   });
 
-  it('should render no cards when fetch fails', async () => {
-    mockFetch.mockResolvedValue({
-      ok: false,
-      json: async () => ({
-        data: null,
-        error: { code: 'INTERNAL_ERROR', message: '' },
-      }),
-    });
+  it('should render no cards when use case fails', async () => {
+    mockExecute.mockResolvedValue(left());
 
     const { ExperiencesSection } = await import(
       '~features/about/ExperiencesSection'
     );
-    render(await ExperiencesSection());
-
-    expect(screen.queryByTestId('experience-card')).not.toBeInTheDocument();
-  });
-
-  it('should render no cards when fetch throws', async () => {
-    mockFetch.mockRejectedValue(new Error('Network error'));
-
-    const { ExperiencesSection } = await import(
-      '~features/about/ExperiencesSection'
-    );
-    render(await ExperiencesSection());
+    render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.queryByTestId('experience-card')).not.toBeInTheDocument();
   });

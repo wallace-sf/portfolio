@@ -7,14 +7,13 @@ import { TextRich } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
-import { Link } from '~i18n/routing';
-
 import {
   ProjectList,
   ProjectSummary,
 } from '~features/home/ProjectsSection/ProjectList';
 import { Breadcrumb } from '~features/shared/Breadcrumb';
 import { SkillGroup } from '~features/shared/SkillGroup';
+import { Link } from '~i18n/routing';
 
 import { ProjectMetaGrid } from './ProjectMetaGrid';
 
