@@ -7,8 +7,6 @@ import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/home/HeroSection';
 import { ProjectsSection } from '~features/home/ProjectsSection';
 
-export const revalidate = 86400;
-
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
