@@ -55,7 +55,7 @@ core ← application ← infra ← site / admin
 - **`packages/core`**: zero framework dependencies (no React, Next.js, Prisma, Axios)
 - **`packages/application`**: depends only on `core`; defines port interfaces
 - **`packages/infra`**: implements ports; knows `core` and `application`
-- **`apps/site` / `apps/admin`**: **HTTP route handlers** compose infra + application (use cases). **`'use client'` components never import `@repo/application`** — they consume the REST API. **Server Components (no `'use client'`)** may import `@repo/application` and call use cases directly when rendering statically (SSG/ISR); the code never reaches the browser. See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) and [05-API-CONTRACTS](./docs/05-API-CONTRACTS.md).
+- **`apps/site` / `apps/admin`**: **Server Components** import `@repo/application` and call use cases directly at build time (SSG); the code never reaches the browser. **`'use client'` components** must never import `@repo/application` — they receive data as props from Server Components. See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md).
 
 See [02-ARCHITECTURE](./docs/02-ARCHITECTURE.md) for full layer rules and ESLint enforcement.
 
@@ -211,7 +211,7 @@ interface IProjectRepository {
 
 - Business logic in React components, controllers, or repositories
 - Importing Prisma / ORM inside `core` or `application`
-- `useEffect` for data fetching — use TanStack Query (client) or call use cases directly in Server Components (SSG/ISR); never fetch `/api/v1/...` from a Server Component when static rendering is possible
+- `useEffect` for data fetching — call use cases directly in Server Components (SSG); pass data down as props to client components
 - Importing `@repo/application` inside a `'use client'` component — those ship to the browser; only Server Components may call use cases directly
 - `throw` for domain business-rule errors — use Either pattern
 - Public setters on entities — use business-semantic methods
@@ -219,8 +219,8 @@ interface IProjectRepository {
 - `<img>` or `<a>` for internal Next.js navigation
 - Tests that verify implementation instead of behavior
 - Direct imports between bounded contexts — use only the Shared Kernel
-- Importing `@repo/application` from `'use client'` components — use HTTP to `/api/v1/...` instead (client code ships to the browser)
-- Importing `@supabase/*` or other IdP SDKs from `apps/site` UI or `middleware.ts` — auth belongs behind `IAuthenticationGateway` in `@repo/infra` and REST routes; see [11-IDENTITY](./docs/11-IDENTITY.md)
+- Importing `@repo/application` from `'use client'` components — client code ships to the browser; pass data as props from Server Components instead
+- Importing `@supabase/*` or other IdP SDKs from `apps/site` UI or `middleware.ts` — auth belongs behind `IAuthenticationGateway` in `@repo/infra`; see [11-IDENTITY](./docs/11-IDENTITY.md)
 
 ---
 

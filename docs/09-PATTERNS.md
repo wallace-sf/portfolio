@@ -200,17 +200,17 @@ Apply only when solving a real problem. Comment with `// Pattern: <Name>`.
 
 ---
 
-## `apps/web` Patterns
+## `apps/site` Patterns
 
 ```typescript
-// ✅ Server Component — data via REST (use cases run inside Route Handlers only)
-export default async function ProjectsPage() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/projects?locale=pt-BR`, {
-    cache: 'no-store',
-  });
-  const body = await res.json();
-  if (!res.ok || body.error) notFound();
-  return <ProjectList projects={body.data} />;
+// ✅ Server Component — call use case directly at build time (SSG)
+export default async function ProjectsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const { projectRepository, skillRepository } = getServerContainer();
+  const result = await new GetPublishedProjects(projectRepository, skillRepository).execute({ locale: locale as Locale });
+  if (result.isLeft()) notFound();
+  return <ProjectList projects={result.value} />;
 }
 ```
 

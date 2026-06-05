@@ -4,11 +4,11 @@
 
 ---
 
-## REST as the only presentation boundary
+## Presentation boundary
 
-- **`apps/site` must not** import `@repo/application` or call use cases from pages, layouts, or client components.
-- **Route handlers** (Next.js Route Handlers under `apps/site/app/api/...`, or a future `apps/api` app) are the **composition root**: they wire `@repo/infra`, invoke use cases, and return JSON.
-- This keeps a single HTTP contract for browsers, SSR, and external clients.
+- **Server Components** in `apps/site` may import `@repo/application` and call use cases directly at build time (SSG). The code never reaches the browser.
+- **`'use client'` components** must **not** import `@repo/application` — client code ships to the browser. They receive data as props from Server Components.
+- **Future backend:** when a dedicated REST API is extracted, `apps/site` client components will fetch from it and Server Components will continue calling use cases directly (or switch to `fetch` if the build-time data source changes).
 
 See [02-ARCHITECTURE](./02-ARCHITECTURE.md) and [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md).
 
@@ -130,9 +130,9 @@ Session details: [11-IDENTITY](./11-IDENTITY.md).
 
 ---
 
-## REST surface (`/api/v1`)
+## REST surface (`/api/v1`) _(planned — future backend)_
 
-Paths below are the **contract**. Handlers may be implemented incrementally; behavior must match use cases in [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md).
+Paths below are the **planned contract** for a future dedicated backend. Behavior must match use cases in [04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md).
 
 ### Portfolio (read, public)
 
@@ -192,7 +192,7 @@ Public reads under `/api/v1/projects`, `/api/v1/profile`, etc. stay **public** a
 - Use `next/navigation`; never `next/router`
 - Always use `next/image`; never `<img>`
 - Always use `next/link`; never `<a>` for internal navigation
-- Create `loading.tsx` and `error.tsx` per route segment
+- Create `error.tsx` per route segment for client-side error boundaries
 
 ---
 

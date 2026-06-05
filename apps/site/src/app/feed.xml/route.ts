@@ -1,12 +1,10 @@
-import { ApiResponse } from '~/lib/api/envelope';
+import { GetPublishedProjects } from '@repo/application/portfolio';
+
+import { getServerContainer } from '~/lib/server/container';
+
+export const dynamic = 'force-static';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-
-interface ProjectItem {
-  slug: string;
-  title: string;
-  caption: string;
-}
 
 function escapeXml(value: string): string {
   return value
@@ -18,25 +16,22 @@ function escapeXml(value: string): string {
 }
 
 export async function GET(): Promise<Response> {
-  const res = await fetch(`${SITE_URL}/api/v1/projects`, {
-    cache: 'no-store',
-  }).catch(() => null);
+  const { projectRepository, skillRepository } = getServerContainer();
+  const result = await new GetPublishedProjects(
+    projectRepository,
+    skillRepository,
+  ).execute({ locale: 'en-US' });
 
-  const projects: ProjectItem[] = [];
-
-  if (res?.ok) {
-    const body: ApiResponse<ProjectItem[]> = await res.json();
-    if (!body.error) projects.push(...body.data);
-  }
+  const projects = result.isRight() ? result.value : [];
 
   const items = projects
     .map(
       (p) => `
     <item>
       <title>${escapeXml(p.title)}</title>
-      <link>${SITE_URL}/projects/${escapeXml(p.slug)}</link>
+      <link>${SITE_URL}/en-US/projects/${escapeXml(p.slug)}</link>
       <description>${escapeXml(p.caption)}</description>
-      <guid isPermaLink="true">${SITE_URL}/projects/${escapeXml(p.slug)}</guid>
+      <guid isPermaLink="true">${SITE_URL}/en-US/projects/${escapeXml(p.slug)}</guid>
     </item>`,
     )
     .join('');
@@ -57,7 +52,6 @@ export async function GET(): Promise<Response> {
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
     },
   });
 }
