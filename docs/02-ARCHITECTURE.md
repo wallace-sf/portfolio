@@ -44,7 +44,7 @@ core ← application ← infra ← site / admin
 | **Domain** | `@repo/core` | Entities, Value Objects, invariants, repository interfaces. Zero framework dependencies. |
 | **Application** | `@repo/application` | Use cases, ports (interfaces), DTOs/view models. Orchestrates the domain. |
 | **Infrastructure** | `@repo/infra` | Repository implementations (Prisma + Supabase), external service adapters. |
-| **Interface** | `apps/site`, `apps/admin` | HTTP route handlers (REST) compose use cases; React renders data obtained via **HTTP** from the app. |
+| **Interface** | `apps/site`, `apps/admin` | Server Components call use cases directly (SSG/ISR); `'use client'` components receive data as props. |
 
 ---
 
@@ -75,9 +75,9 @@ Allowed: plain TypeScript, `@repo/utils`, `uuid`.
 
 ### `apps/site` and `apps/admin`
 
-- **REST is mandatory for presentation:** pages, layouts, and client components fetch the **HTTP API** (`/api/v1/...`). They must **not** import or call `@repo/application` use cases directly.
-- **No auth vendor in the UI:** `apps/site` must **not** import `@supabase/*`, `next-auth/*`, or other IdP SDKs from pages, layouts, client components, hooks, or `middleware.ts`. Authentication is **pluggable** behind `IAuthenticationGateway` (see [11-IDENTITY](./11-IDENTITY.md)); the browser uses only your REST routes (e.g. `POST /api/v1/auth/sign-in`).
-- **Composition root:** only **HTTP route handlers** (e.g. `apps/site/app/api/**` or `apps/api`) wire `@repo/infra` with `@repo/application` and invoke use cases. Handlers obtain the auth gateway from the container — never embed Supabase in a `page.tsx`.
+- **Server Components** may import `@repo/application` and call use cases directly (SSG/ISR). The code runs only at build time and never reaches the browser.
+- **`'use client'` components** must **not** import `@repo/application` or `@repo/infra` — client code ships to the browser. They receive data as props from Server Components.
+- **No auth vendor in the UI:** `apps/site` must **not** import `@supabase/*`, `next-auth/*`, or other IdP SDKs from pages, layouts, client components, or `middleware.ts`. Authentication is **pluggable** behind `IAuthenticationGateway` (see [11-IDENTITY](./11-IDENTITY.md)).
 - Never import concrete repositories from presentation code.
 - React components must contain no business logic.
 
@@ -103,8 +103,8 @@ Allowed: plain TypeScript, `@repo/utils`, `uuid`.
 ## Current State vs Target Architecture
 
 - **`packages/core`**, **`packages/application`**, and **`packages/infra`** are in place (Portfolio + Identity domain, Prisma repositories, use cases, DTOs).
-- **REST boundary**: new presentation code must go through the documented API ([05-API-CONTRACTS](./05-API-CONTRACTS.md)); route handlers are added or extended as needed. Legacy static data in `apps/site` should be migrated behind the same HTTP surface.
-- **Rule**: do not bypass the API from the front-end — even on the server, use `fetch` to the app’s own API (or a shared route-handler module called only from `app/api`, not from `page.tsx`).
+- **`apps/site`** is a fully static site (SSG via `next start`). Server Components call use cases directly through `getServerContainer()`. No API routes exist in this app.
+- **Future:** a dedicated backend will expose the REST surface defined in [05-API-CONTRACTS](./05-API-CONTRACTS.md). When that happens, `apps/site` client components will consume it via `fetch`.
 
 ---
 
