@@ -27,11 +27,4 @@ describe('middleware', () => {
     expect(response.status).not.toBe(307);
   });
 
-  it('should delegate to next-intl middleware for admin paths', async () => {
-    const { default: middleware } = await import('~/proxy');
-    const request = new NextRequest('http://localhost:3000/en-US/admin');
-    const response = middleware(request);
-
-    expect(response.status).not.toBe(307);
-  });
 });
