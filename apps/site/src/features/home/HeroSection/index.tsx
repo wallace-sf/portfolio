@@ -1,5 +1,5 @@
-import { type Locale } from '@repo/core/shared';
 import { type ProfileDTO } from '@repo/application/portfolio';
+import { type Locale } from '@repo/core/shared';
 import { getTranslations } from 'next-intl/server';
 
 import HeroLandingPage from '~assets/images/hero-landing-page.png';
@@ -24,7 +24,7 @@ export async function HeroSection({ locale, profile }: HeroSectionProps) {
         alt={profile?.photo.alt ?? t('hero_image_alt')}
         titleSize="lg"
         titleAs="h2"
-        textColumnClassName="xl:w-[474px]"
+        textColumnClassName="xl:w-1/2"
         imageClassName="object-contain 2xl:object-cover"
       />
       {profile?.stats && profile.stats.length > 0 && (
