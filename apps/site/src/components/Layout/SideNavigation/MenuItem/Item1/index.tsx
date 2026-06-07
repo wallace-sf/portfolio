@@ -21,10 +21,11 @@ export const Item1: FC<IGhostLinkProps> = ({
   const params = useParams();
   const locale = (params?.locale as string) ?? 'en-US';
   const localizedHref = href === '/' ? `/${locale}` : `/${locale}${href}`;
+  const newHref = newTab ? href : localizedHref;
 
   return (
     <Link
-      href={localizedHref}
+      href={newHref}
       className={classNames(
         'flex flex-row items-center hover:bg-surface active:bg-surface-sunken transition-all px-4 py-3 gap-4 rounded-lg [&>span]:hover:font-bold [&>span]:active:font-bold [&>*]:active:!text-content-primary',
         className,

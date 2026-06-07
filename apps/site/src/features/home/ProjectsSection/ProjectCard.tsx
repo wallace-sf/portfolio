@@ -1,13 +1,14 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
-import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
+import { useBoolean } from 'usehooks-ts';
 
 import { TechnologiesModal } from '~features/about/TechnologiesModal';
+import { ShareButton } from '~features/shared/ShareButton';
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { useBreakpoint } from '~hooks';
 import { Link } from '~i18n/routing';
@@ -35,12 +36,17 @@ export const ProjectCard: FC<IProjectCardProps> = ({
 }) => {
   const t = useTranslations('ProjectCard');
   const isXL = useBreakpoint('xl');
-  const [modalOpen, setModalOpen] = useState(false);
+  const locale = useLocale();
+  const {
+    value: modalOpen,
+    setTrue: openModal,
+    setFalse: closeModal,
+  } = useBoolean(false);
 
   if (view === 'row') {
     return (
       <article className="relative flex flex-row bg-surface rounded-xl w-full h-[339px] overflow-hidden">
-        <div className="relative w-[380px] shrink-0">
+        <div className="relative w-[380px] shrink-0 m-3 rounded-lg overflow-hidden">
           <Image
             src={coverImage.url}
             fill
@@ -70,10 +76,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
               max={3}
               initializeWithMax={3}
               total={skills.length}
-              onShowAll={() => {
-                // close?.();
-                setModalOpen(true);
-              }}
+              onShowAll={openModal}
             />
             <Link
               href={`/projects/${slug}`}
@@ -85,23 +88,11 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           </div>
         </div>
 
-        <Button.Clipboard
-          unstyled
-          text={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects/${slug}`}
-          tooltip={t('share_tooltip')}
-          className="absolute top-3 right-3 z-10 flex items-center justify-center w-9 h-9 rounded-lg bg-surface-raised hover:bg-surface-interactive transition-colors"
-        >
-          {(copied) => (
-            <Icon
-              icon={copied ? 'ic:round-check' : 'ic:round-share'}
-              className="text-xl text-content-secondary"
-            />
-          )}
-        </Button.Clipboard>
+        <ShareButton slug={slug} className="absolute top-3 right-3 z-10" />
 
         <TechnologiesModal
           open={modalOpen}
-          onClose={() => setModalOpen(false)}
+          onClose={closeModal}
           technologies={skills}
         />
       </article>
@@ -119,19 +110,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           sizes="463px"
           priority
         />
-        <Button.Clipboard
-          unstyled
-          text={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects/${slug}`}
-          tooltip={t('share_tooltip')}
-          className="absolute top-2 right-2 z-10 flex items-center justify-center w-9 h-9 rounded-lg bg-surface-raised hover:bg-surface-interactive transition-colors"
-        >
-          {(copied) => (
-            <Icon
-              icon={copied ? 'ic:round-check' : 'ic:round-share'}
-              className="text-xl text-content-secondary"
-            />
-          )}
-        </Button.Clipboard>
+        <ShareButton slug={slug} className="absolute top-2 right-2 z-10" />
       </div>
 
       <div className="flex flex-col p-4 gap-4">
@@ -149,13 +128,11 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           max={isXL ? 3 : 2}
           initializeWithMax={2}
           total={skills.length}
-          onShowAll={() => {
-            close?.();
-            setModalOpen(true);
-          }}
+          onShowAll={openModal}
         />
         <Link
           href={`/projects/${slug}`}
+          locale={locale}
           className="flex flex-row justify-center items-center gap-2 bg-brand-primary text-body-sm text-content-primary font-bold rounded-xl hover:bg-brand-primary-hover transition-colors duration-300 py-3 px-6"
         >
           {t('view_project')}
@@ -165,7 +142,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
 
       <TechnologiesModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={closeModal}
         technologies={skills}
       />
     </article>
