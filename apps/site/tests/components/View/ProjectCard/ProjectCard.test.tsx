@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 
 vi.mock('next-intl', () => ({
   useTranslations: (ns: string) => (key: string) => `${ns}.${key}`,
+  useLocale: () => 'en-US',
 }));
 
 vi.mock('~hooks', () => ({
