@@ -5,7 +5,7 @@ import { FC } from 'react';
 import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface IShareButtonProps {
   slug: string;
@@ -13,8 +13,9 @@ interface IShareButtonProps {
 }
 
 export const ShareButton: FC<IShareButtonProps> = ({ slug, className }) => {
+  const locale = useLocale();
   const t = useTranslations('ProjectCard');
-  const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/projects/${slug}`;
+  const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/${locale}/projects/${slug}`;
 
   return (
     <Button.Clipboard

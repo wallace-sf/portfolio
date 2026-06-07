@@ -1,10 +1,11 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
+import { useBoolean } from 'usehooks-ts';
 
 import { TechnologiesModal } from '~features/about/TechnologiesModal';
 import { ShareButton } from '~features/shared/ShareButton';
@@ -35,7 +36,12 @@ export const ProjectCard: FC<IProjectCardProps> = ({
 }) => {
   const t = useTranslations('ProjectCard');
   const isXL = useBreakpoint('xl');
-  const [modalOpen, setModalOpen] = useState(false);
+  const locale = useLocale();
+  const {
+    value: modalOpen,
+    setTrue: openModal,
+    setFalse: closeModal,
+  } = useBoolean(false);
 
   if (view === 'row') {
     return (
@@ -70,10 +76,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
               max={3}
               initializeWithMax={3}
               total={skills.length}
-              onShowAll={() => {
-                // close?.();
-                setModalOpen(true);
-              }}
+              onShowAll={openModal}
             />
             <Link
               href={`/projects/${slug}`}
@@ -89,7 +92,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
 
         <TechnologiesModal
           open={modalOpen}
-          onClose={() => setModalOpen(false)}
+          onClose={closeModal}
           technologies={skills}
         />
       </article>
@@ -125,13 +128,11 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           max={isXL ? 3 : 2}
           initializeWithMax={2}
           total={skills.length}
-          onShowAll={() => {
-            close?.();
-            setModalOpen(true);
-          }}
+          onShowAll={openModal}
         />
         <Link
           href={`/projects/${slug}`}
+          locale={locale}
           className="flex flex-row justify-center items-center gap-2 bg-brand-primary text-body-sm text-content-primary font-bold rounded-xl hover:bg-brand-primary-hover transition-colors duration-300 py-3 px-6"
         >
           {t('view_project')}
@@ -141,7 +142,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
 
       <TechnologiesModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={closeModal}
         technologies={skills}
       />
     </article>
