@@ -22,7 +22,7 @@ export const ProfessionalValueCard: FC<IProfessionalValueCardProps> = ({
         className="!text-[48px] text-brand-accent flex-shrink-0"
       />
       <TextRich
-        className="text-base leading-[1.4] text-content-primary flex-1 overflow-hidden [&_p]:m-0 [&_strong]:text-brand-accent [&_strong]:font-bold"
+        className="text-base text-content-primary flex-1 [&_p]:text-base [&_p]:leading-[1.4] [&_p]:text-content-primary [&_p]:m-0 [&_strong]:text-brand-accent [&_strong]:font-bold [&_p]:line-clamp-4"
         content={content}
       />
     </article>
