@@ -79,22 +79,24 @@ export const ContactInfo: FC = () => {
       <p className="text-base text-content-primary">{t('paragraph1')}</p>
       <p className="text-base text-content-primary">{t('paragraph2')}</p>
 
-      <nav className="flex flex-col gap-y-3">
-        <MenuItem.Item2.Link
+      <nav className="flex gap-x-3">
+        <MenuItem.Item2.ShortLink
           href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
           icon="devicon:linkedin"
           newTab
-        >
-          Linkedin
-        </MenuItem.Item2.Link>
-        <MenuItem.Item2.Link
+        />
+        <MenuItem.Item2.ShortLink
           href={process.env.NEXT_PUBLIC_GITHUB_URL}
           icon="mdi:github"
           iconClassName="text-white"
           newTab
-        >
-          GitHub
-        </MenuItem.Item2.Link>
+        />
+        <MenuItem.Item2.ShortLink
+          href="/feed.xml"
+          icon="mdi:rss"
+          iconClassName="text-white"
+          newTab
+        />
       </nav>
     </section>
   );
