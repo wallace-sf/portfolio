@@ -20,9 +20,15 @@ export const ContactInfo: FC = () => {
 
       <address className="flex flex-col gap-y-6 not-italic">
         <div className="flex flex-col gap-y-1">
-          <strong className="text-base font-bold text-content-primary">
-            {t('email')}
-          </strong>
+          <div className="flex items-center gap-x-2">
+            <Icon
+              icon="ic:baseline-email"
+              className="text-content-secondary text-2xl"
+            />
+            <strong className="text-base font-bold text-content-primary">
+              {t('email')}
+            </strong>
+          </div>
           <div className="flex items-center gap-x-2">
             <span className="text-base text-content-secondary">
               {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
@@ -41,9 +47,15 @@ export const ContactInfo: FC = () => {
         </div>
 
         <div className="flex flex-col gap-y-1">
-          <strong className="text-base font-bold text-content-primary">
-            WhatsApp
-          </strong>
+          <div className="flex items-center gap-x-2">
+            <Icon
+              icon="ic:baseline-whatsapp"
+              className="text-content-secondary text-2xl"
+            />
+            <strong className="text-base font-bold text-content-primary">
+              WhatsApp
+            </strong>
+          </div>
           <div className="flex items-center gap-x-2">
             <span className="text-base text-content-secondary">
               {formatCellphone(process.env.NEXT_PUBLIC_CONTACT_NUMBER)}
