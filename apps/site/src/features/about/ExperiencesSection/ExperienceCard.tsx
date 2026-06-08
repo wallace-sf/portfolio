@@ -1,11 +1,14 @@
 'use client';
 
-import { FC, useCallback } from 'react';
+import { FC } from 'react';
 
 import { TextRich } from '@repo/ui/View';
 import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
-import { useBoolean, useScrollLock } from 'usehooks-ts';
+import { useBoolean } from 'usehooks-ts';
+
+import { SkillGroup } from '~features/shared/SkillGroup';
+import { useBreakpoint } from '~hooks';
 
 import { TechnologiesModal } from '../TechnologiesModal';
 
@@ -53,8 +56,6 @@ function formatDate(dateStr: string, locale: string): string {
   }).format(new Date(dateStr));
 }
 
-const MAX_VISIBLE_SKILLS = 3;
-
 export const ExperienceCard: FC<IExperienceCardProps> = ({
   company,
   position,
@@ -68,31 +69,19 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
 }) => {
   const t = useTranslations('ExperienceCard');
   const locale = useLocale();
-  const { lock, unlock } = useScrollLock({ autoLock: false });
   const {
     value: modalOpen,
     setTrue: openModal,
     setFalse: closeModal,
   } = useBoolean(false);
   const { value: expanded, toggle: toggleDescription } = useBoolean(false);
-
-  const handleOpenModal = useCallback(() => {
-    openModal();
-    lock();
-  }, [openModal, lock]);
-
-  const handleCloseModal = useCallback(() => {
-    closeModal();
-    unlock();
-  }, [closeModal, unlock]);
+  const isXL = useBreakpoint('xl');
 
   const period = `${formatDate(startAt, locale)} - ${endAt ? formatDate(endAt, locale) : t('present')}`;
   const duration = calculateDuration(startAt, endAt);
   const locationLine = [location, employmentType, locationType]
     .filter(Boolean)
     .join(' • ');
-  const visibleSkills = skills.slice(0, MAX_VISIBLE_SKILLS);
-  const extraCount = skills.length - MAX_VISIBLE_SKILLS;
 
   return (
     <>
@@ -128,33 +117,18 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
           </div>
         )}
 
-        {skills.length > 0 && (
-          <ul className="flex flex-row flex-wrap gap-3">
-            {visibleSkills.map((skill) => (
-              <li key={skill.name}>
-                <span className="inline-flex items-center bg-surface-interactive rounded-[15px] h-7 px-3 py-1 text-sm text-content-primary">
-                  {skill.name}
-                </span>
-              </li>
-            ))}
-            {extraCount > 0 && (
-              <li>
-                <button
-                  type="button"
-                  className="inline-flex items-center bg-surface-interactive rounded-[15px] h-7 px-3 py-1 text-sm text-content-primary"
-                  onClick={handleOpenModal}
-                >
-                  +{extraCount}
-                </button>
-              </li>
-            )}
-          </ul>
-        )}
+        <SkillGroup
+          skills={skills}
+          max={isXL ? 3 : 2}
+          initializeWithMax={2}
+          total={skills.length}
+          onShowAll={openModal}
+        />
       </article>
 
       <TechnologiesModal
         open={modalOpen}
-        onClose={handleCloseModal}
+        onClose={closeModal}
         company={company}
         position={position}
         technologies={skills}
