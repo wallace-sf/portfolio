@@ -5,28 +5,31 @@ import { FC } from 'react';
 import { Divider } from '@repo/ui/View';
 import classNames from 'classnames';
 import { useTranslations } from 'next-intl';
+import { useBoolean, useScrollLock } from 'usehooks-ts';
+
+import { useBreakpoint } from '~hooks';
 
 import { Header } from '../Header';
 import { LanguageSelector } from './LanguageSelector';
 import { MenuItem } from './MenuItem';
 import { ThemeToggle } from './ThemeToggle';
 
-interface SideNavigationProps {
-  open: boolean;
-  toggle: () => void;
-}
-
-export const SideNavigation: FC<SideNavigationProps> = ({ open, toggle }) => {
+export const SideNavigation: FC = () => {
   const t = useTranslations('SideNavigation');
+  const isDesktop = useBreakpoint('xl');
+  const { value: open, toggle } = useBoolean(false);
+  const isOpen = !isDesktop && open;
+
+  useScrollLock({ autoLock: isOpen });
 
   return (
     <section className="fixed top-0 left-0 shadow-1 w-full xl:w-auto z-50">
-      <Header open={open} toggle={toggle} />
+      <Header open={isOpen} toggle={toggle} />
       <nav
         id="side-navigation"
         className={classNames(
           'h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 bg-surface-sunken flex flex-col border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
-          open ? 'translate-x-0' : '-translate-x-full',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         <ul className="flex flex-col gap-y-3 px-6 pt-10 xl:pt-15 xl:px-0">

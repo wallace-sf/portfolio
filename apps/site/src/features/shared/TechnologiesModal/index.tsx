@@ -4,6 +4,7 @@ import { FC, useState } from 'react';
 
 import { Accordion, Modal } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
+import { useScrollLock } from 'usehooks-ts';
 
 export interface ITechnology {
   name: string;
@@ -28,8 +29,9 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
 }) => {
   const hasDescriptions = technologies.some((t) => t.description);
   const [view, setView] = useState<'basic' | 'detailed'>('basic');
-
   const isDetailed = view === 'detailed';
+
+  useScrollLock({ autoLock: open });
 
   return (
     <Modal open={open} onClose={onClose} title="Tecnologias utilizadas">
