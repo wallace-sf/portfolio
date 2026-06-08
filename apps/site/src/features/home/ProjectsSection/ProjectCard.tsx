@@ -5,9 +5,7 @@ import { FC } from 'react';
 import { Icon } from '@repo/ui/Imagery';
 import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
-import { useBoolean } from 'usehooks-ts';
 
-import { TechnologiesModal } from '~features/about/TechnologiesModal';
 import { ShareButton } from '~features/shared/ShareButton';
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { useBreakpoint } from '~hooks';
@@ -37,11 +35,6 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   const t = useTranslations('ProjectCard');
   const isXL = useBreakpoint('xl');
   const locale = useLocale();
-  const {
-    value: modalOpen,
-    setTrue: openModal,
-    setFalse: closeModal,
-  } = useBoolean(false);
 
   if (view === 'row') {
     return (
@@ -76,7 +69,6 @@ export const ProjectCard: FC<IProjectCardProps> = ({
               max={3}
               initializeWithMax={3}
               total={skills.length}
-              onShowAll={openModal}
             />
             <Link
               href={`/projects/${slug}`}
@@ -89,12 +81,6 @@ export const ProjectCard: FC<IProjectCardProps> = ({
         </div>
 
         <ShareButton slug={slug} className="absolute top-3 right-3 z-10" />
-
-        <TechnologiesModal
-          open={modalOpen}
-          onClose={closeModal}
-          technologies={skills}
-        />
       </article>
     );
   }
@@ -128,7 +114,6 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           max={isXL ? 3 : 2}
           initializeWithMax={2}
           total={skills.length}
-          onShowAll={openModal}
         />
         <Link
           href={`/projects/${slug}`}
@@ -139,12 +124,6 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           <Icon icon="ic:round-arrow-forward" className="text-xl" />
         </Link>
       </div>
-
-      <TechnologiesModal
-        open={modalOpen}
-        onClose={closeModal}
-        technologies={skills}
-      />
     </article>
   );
 };

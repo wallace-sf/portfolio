@@ -3,7 +3,9 @@
 import { FC, useMemo, useState } from 'react';
 
 import { Badge } from '@repo/ui/View';
-import { useIsomorphicLayoutEffect } from 'usehooks-ts';
+import { useIsomorphicLayoutEffect, useBoolean } from 'usehooks-ts';
+
+import { TechnologiesModal } from '~/features/shared/TechnologiesModal';
 
 export type SkillSummary = { name: string; icon: string };
 
@@ -12,7 +14,6 @@ interface ISkillGroupProps {
   total: number;
   skills: SkillSummary[];
   initializeWithMax: number;
-  onShowAll?: () => void;
 }
 
 export const SkillGroup: FC<ISkillGroupProps> = ({
@@ -20,9 +21,13 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
   skills,
   total,
   initializeWithMax,
-  onShowAll,
 }) => {
   const [storedMax, setStoredMax] = useState<number>(initializeWithMax);
+  const {
+    value: modalOpen,
+    setTrue: openModal,
+    setFalse: closeModal,
+  } = useBoolean(false);
 
   const renderedSkills = useMemo(
     () =>
@@ -45,23 +50,30 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
   }, [max]);
 
   return (
-    <ul className="flex flex-row gap-2 flex-wrap">
-      {renderedSkills}
-      {skills.length > storedMax ? (
-        <li>
-          {onShowAll ? (
-            <button
-              type="button"
-              onClick={onShowAll}
-              className="hover:opacity-80 transition-opacity"
-            >
+    <>
+      <ul className="flex flex-row gap-2 flex-wrap">
+        {renderedSkills}
+        {skills.length > storedMax ? (
+          <li>
+            {modalOpen ? (
               <Badge.Count count={total - storedMax} />
-            </button>
-          ) : (
-            <Badge.Count count={total - storedMax} />
-          )}
-        </li>
-      ) : null}
-    </ul>
+            ) : (
+              <button
+                type="button"
+                className="hover:opacity-80 transition-opacity"
+                onClick={openModal}
+              >
+                <Badge.Count count={total - storedMax} />
+              </button>
+            )}
+          </li>
+        ) : null}
+      </ul>
+      <TechnologiesModal
+        open={modalOpen}
+        onClose={closeModal}
+        technologies={skills}
+      />
+    </>
   );
 };

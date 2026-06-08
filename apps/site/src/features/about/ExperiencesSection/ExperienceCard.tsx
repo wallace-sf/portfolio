@@ -10,8 +10,6 @@ import { useBoolean } from 'usehooks-ts';
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { useBreakpoint } from '~hooks';
 
-import { TechnologiesModal } from '../TechnologiesModal';
-
 export interface IExperienceCardSkill {
   name: string;
   icon: string;
@@ -69,11 +67,6 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
 }) => {
   const t = useTranslations('ExperienceCard');
   const locale = useLocale();
-  const {
-    value: modalOpen,
-    setTrue: openModal,
-    setFalse: closeModal,
-  } = useBoolean(false);
   const { value: expanded, toggle: toggleDescription } = useBoolean(false);
   const isXL = useBreakpoint('xl');
 
@@ -84,55 +77,44 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
     .join(' • ');
 
   return (
-    <>
-      <article className="flex flex-col gap-y-2 py-6">
-        <h2 className="text-2xl font-bold text-content-primary">{position}</h2>
+    <article className="flex flex-col gap-y-2 py-6">
+      <h2 className="text-2xl font-bold text-content-primary">{position}</h2>
 
-        <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className="text-xl font-bold uppercase text-content-primary">
-            {company}
-          </span>
-          <span className="text-base text-content-disabled">
-            {period} ({duration})
-          </span>
+      <div className="flex flex-wrap items-baseline gap-x-2">
+        <span className="text-xl font-bold uppercase text-content-primary">
+          {company}
+        </span>
+        <span className="text-base text-content-disabled">
+          {period} ({duration})
+        </span>
+      </div>
+
+      <span className="text-base text-content-disabled">{locationLine}</span>
+
+      {description && (
+        <div className="flex flex-col gap-y-1">
+          <TextRich
+            content={description}
+            className={classNames('text-base text-content-disabled', {
+              'line-clamp-1': !expanded,
+            })}
+          />
+          <button
+            type="button"
+            className="self-start text-sm text-content-disabled underline"
+            onClick={toggleDescription}
+          >
+            {expanded ? t('see_less') : t('see_more')}
+          </button>
         </div>
+      )}
 
-        <span className="text-base text-content-disabled">{locationLine}</span>
-
-        {description && (
-          <div className="flex flex-col gap-y-1">
-            <TextRich
-              content={description}
-              className={classNames('text-base text-content-disabled', {
-                'line-clamp-1': !expanded,
-              })}
-            />
-            <button
-              type="button"
-              className="self-start text-sm text-content-disabled underline"
-              onClick={toggleDescription}
-            >
-              {expanded ? t('see_less') : t('see_more')}
-            </button>
-          </div>
-        )}
-
-        <SkillGroup
-          skills={skills}
-          max={isXL ? 3 : 2}
-          initializeWithMax={2}
-          total={skills.length}
-          onShowAll={openModal}
-        />
-      </article>
-
-      <TechnologiesModal
-        open={modalOpen}
-        onClose={closeModal}
-        company={company}
-        position={position}
-        technologies={skills}
+      <SkillGroup
+        skills={skills}
+        max={isXL ? 3 : 2}
+        initializeWithMax={2}
+        total={skills.length}
       />
-    </>
+    </article>
   );
 };
