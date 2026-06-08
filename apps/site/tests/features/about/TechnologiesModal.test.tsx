@@ -15,7 +15,11 @@ const mockLock = vi.fn();
 const mockUnlock = vi.fn();
 
 vi.mock('usehooks-ts', () => ({
-  useScrollLock: () => ({ lock: mockLock, unlock: mockUnlock, isLocked: false }),
+  useScrollLock: () => ({
+    lock: mockLock,
+    unlock: mockUnlock,
+    isLocked: false,
+  }),
   useOnClickOutside: vi.fn(),
   useEventListener: vi.fn(),
   useToggle: (initial = false) => {
@@ -26,13 +30,14 @@ vi.mock('usehooks-ts', () => ({
 }));
 
 vi.mock('@repo/ui/Control', async () => {
-  const actual = await vi.importActual<typeof import('@repo/ui/Control')>(
-    '@repo/ui/Control',
-  );
+  const actual =
+    await vi.importActual<typeof import('@repo/ui/Control')>(
+      '@repo/ui/Control',
+    );
   return actual;
 });
 
-import { TechnologiesModal } from '~features/about/TechnologiesModal';
+import { TechnologiesModal } from '~/features/shared/TechnologiesModal';
 
 const TECHS_WITHOUT_DESCRIPTIONS = [
   { name: 'React', icon: 'logos:react' },
@@ -41,7 +46,11 @@ const TECHS_WITHOUT_DESCRIPTIONS = [
 
 const TECHS_WITH_DESCRIPTIONS = [
   { name: 'React', icon: 'logos:react', description: 'UI library' },
-  { name: 'TypeScript', icon: 'logos:typescript-icon', description: 'Typed JS' },
+  {
+    name: 'TypeScript',
+    icon: 'logos:typescript-icon',
+    description: 'Typed JS',
+  },
 ];
 
 beforeEach(() => {
@@ -60,7 +69,9 @@ describe('TechnologiesModal', () => {
       />,
     );
 
-    expect(screen.queryByText('Tecnologias utilizadas')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Tecnologias utilizadas'),
+    ).not.toBeInTheDocument();
   });
 
   it('should render title, company and position when open', () => {
