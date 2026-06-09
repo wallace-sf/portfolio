@@ -3,8 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "main": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./screens": "./screens.ts",
+    "./tailwind.css": "./tailwind.css"
+  },
   "files": [
     "index.ts",
+    "screens.ts",
     "tailwind.css"
   ],
   "scripts": {

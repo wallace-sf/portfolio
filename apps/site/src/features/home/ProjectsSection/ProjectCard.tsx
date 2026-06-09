@@ -6,13 +6,12 @@ import { Icon } from '@repo/ui/Imagery';
 import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
 
+import { useBreakpoint } from '~/hooks';
 import { ShareButton } from '~features/shared/ShareButton';
 import { SkillGroup } from '~features/shared/SkillGroup';
-import { useBreakpoint } from '~hooks';
 import { Link } from '~i18n/routing';
 
 export interface IProjectCardProps {
-  view: 'grid' | 'row';
   slug: string;
   title: string;
   caption: string;
@@ -23,7 +22,6 @@ export interface IProjectCardProps {
 }
 
 export const ProjectCard: FC<IProjectCardProps> = ({
-  view,
   slug,
   title,
   caption,
@@ -33,96 +31,59 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   skills,
 }) => {
   const t = useTranslations('ProjectCard');
-  const isXL = useBreakpoint('xl');
   const locale = useLocale();
-
-  if (view === 'row') {
-    return (
-      <article className="relative flex flex-row bg-surface rounded-xl w-full h-[339px] overflow-hidden">
-        <div className="relative w-[380px] shrink-0 m-3 rounded-lg overflow-hidden">
-          <Image
-            src={coverImage.url}
-            fill
-            alt={coverImage.alt}
-            className="object-cover"
-            sizes="380px"
-            priority
-          />
-        </div>
-
-        <div className="flex flex-col flex-1 p-6 gap-5">
-          <div className="flex flex-col gap-4 flex-1">
-            {theme && (
-              <span className="text-sm font-bold text-content-muted uppercase tracking-wide">
-                {theme}
-              </span>
-            )}
-            <h3 className="text-2xl font-bold text-content-primary">{title}</h3>
-            <p className="text-base font-normal text-content-secondary line-clamp-3">
-              {caption}
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <SkillGroup
-              skills={skills}
-              max={3}
-              initializeWithMax={3}
-              total={skills.length}
-            />
-            <Link
-              href={`/projects/${slug}`}
-              className="flex flex-row justify-center items-center gap-2 bg-brand-primary text-body-sm text-content-primary font-bold rounded-xl hover:bg-brand-primary-hover transition-colors duration-300 py-3 px-6"
-            >
-              {t('view_project')}
-              <Icon icon="ic:round-arrow-forward" className="text-xl" />
-            </Link>
-          </div>
-        </div>
-
-        <ShareButton slug={slug} className="absolute top-3 right-3 z-10" />
-      </article>
-    );
-  }
+  const isXL = useBreakpoint('xl');
 
   return (
-    <article className="relative bg-surface rounded-xl overflow-hidden">
-      <div className="relative h-[244px] mx-3 mt-3 rounded-lg overflow-hidden">
+    <article className="relative flex flex-col bg-surface rounded-xl overflow-hidden xl:flex-row xl:w-full xl:h-[339px]">
+      <div className="relative h-[244px] mx-3 mt-3 rounded-lg overflow-hidden xl:w-[380px] xl:h-auto xl:shrink-0 xl:m-3">
         <Image
           src={coverImage.url}
           fill
           alt={coverImage.alt}
           className="object-cover"
-          sizes="463px"
+          sizes="(min-width: 1280px) 380px, 463px"
           priority
         />
-        <ShareButton slug={slug} className="absolute top-2 right-2 z-10" />
       </div>
 
-      <div className="flex flex-col p-4 gap-4">
-        {theme && (
-          <span className="text-xs font-bold text-content-muted uppercase tracking-wide">
-            {theme}
-          </span>
-        )}
-        <h3 className="text-2xl font-bold text-content-primary">{title}</h3>
-        <p className="text-base font-normal text-content-secondary line-clamp-2">
-          {caption}
-        </p>
-        <SkillGroup
-          skills={skills}
-          max={isXL ? 3 : 2}
-          initializeWithMax={2}
-          total={skills.length}
-        />
-        <Link
-          href={`/projects/${slug}`}
-          locale={locale}
-          className="flex flex-row justify-center items-center gap-2 bg-brand-primary text-body-sm text-content-primary font-bold rounded-xl hover:bg-brand-primary-hover transition-colors duration-300 py-3 px-6"
-        >
-          {t('view_project')}
-          <Icon icon="ic:round-arrow-forward" className="text-xl" />
-        </Link>
+      <ShareButton
+        slug={slug}
+        className="absolute top-5 right-5 z-10 xl:top-3 xl:right-3"
+      />
+
+      <div className="flex flex-col flex-1 p-4 gap-4 xl:p-6 xl:gap-5">
+        <div className="flex flex-col gap-4 flex-1">
+          {theme && (
+            <span className="text-xs font-bold text-content-muted uppercase tracking-wide xl:text-sm">
+              {theme}
+            </span>
+          )}
+
+          <h3 className="text-2xl font-bold text-content-primary">{title}</h3>
+
+          <p className="text-base font-normal text-content-secondary line-clamp-2 xl:line-clamp-3">
+            {caption}
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <SkillGroup
+            skills={skills}
+            max={isXL ? 3 : 2}
+            initializeWithMax={2}
+            total={skills.length}
+          />
+
+          <Link
+            href={`/projects/${slug}`}
+            locale={locale}
+            className="flex flex-row justify-center items-center gap-2 bg-brand-primary text-body-sm text-content-primary font-bold rounded-xl hover:bg-brand-primary-hover transition-colors duration-300 py-3 px-6"
+          >
+            {t('view_project')}
+            <Icon icon="ic:round-arrow-forward" className="text-xl" />
+          </Link>
+        </div>
       </div>
     </article>
   );
