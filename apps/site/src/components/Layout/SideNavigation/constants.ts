@@ -1,6 +1,8 @@
+import { DEFAULT_LOCALE } from '@repo/core/shared';
+
 export const LANGUAGES_OPTIONS = [
   {
-    option: 'en-US',
+    option: DEFAULT_LOCALE,
     labelKey: 'enUS' as const,
     icon: 'twemoji:flag-united-states',
   },

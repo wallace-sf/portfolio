@@ -19,14 +19,12 @@ export interface ProjectSummary {
 interface IProjectListProps {
   projects: ProjectSummary[];
   compact?: IProjectCardProps['compact'];
-  view: IProjectCardProps['view'];
   className?: string;
 }
 
 export const ProjectList: FC<IProjectListProps> = ({
   projects,
   compact,
-  view,
   className,
 }) => {
   const renderedProjects = useMemo(() => {
@@ -40,20 +38,15 @@ export const ProjectList: FC<IProjectListProps> = ({
           theme={project.theme}
           skills={project.skills}
           compact={compact}
-          view={view}
         />
       </li>
     ));
-  }, [projects, compact, view]);
+  }, [projects, compact]);
 
   return (
     <ul
       className={classNames(
-        'mx-4 xl:mx-auto grid max-w-237.5',
-        {
-          'grid-cols-1 gap-6': view === 'row',
-          'gap-4 md:grid-cols-2 xl:gap-6': view === 'grid',
-        },
+        'grid gap-4 md:grid-cols-2 xl:grid-cols-1 xl:gap-6 mx-4 xl:mx-auto max-w-237.5',
         className,
       )}
     >

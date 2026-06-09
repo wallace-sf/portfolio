@@ -10,10 +10,13 @@ vi.mock('next-intl/server', () => ({
 }));
 
 vi.mock('@repo/core/shared', () => ({
+  DEFAULT_LOCALE: 'en-US',
   LOCALES: ['en-US', 'pt-BR', 'es'],
 }));
 
 vi.mock('next/navigation', () => ({
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
   notFound: vi.fn(() => {
     throw new Error('NEXT_NOT_FOUND');
   }),

@@ -8,8 +8,8 @@ import {
   RadioGroupChildrenFn,
   RadioGroupProps,
 } from '@repo/ui/Control';
-import { useTranslations } from 'next-intl';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { LANGUAGES_OPTIONS } from './constants';
 import { MenuItem } from './MenuItem';
@@ -17,8 +17,7 @@ import { MenuItem } from './MenuItem';
 export const LanguageSelector: FC = () => {
   const t = useTranslations('SideNavigation');
   const tLang = useTranslations('Language');
-  const params = useParams();
-  const locale = (params?.locale as string) ?? 'en-US';
+  const locale = useLocale();
   const { replace } = useRouter();
   const pathname = usePathname();
 

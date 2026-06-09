@@ -5,7 +5,5 @@ interface ProjectsSectionProps {
 }
 
 export function ProjectsSection({ projects }: ProjectsSectionProps) {
-  return (
-    <ProjectList projects={projects} view="row" className="py-8 xl:py-20" />
-  );
+  return <ProjectList projects={projects} className="py-8 xl:py-20" />;
 }

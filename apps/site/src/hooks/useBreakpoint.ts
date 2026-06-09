@@ -1,13 +1,24 @@
-import resolveConfig from 'tailwindcss/resolveConfig';
+import { screens as breakpoints } from '@repo/tailwind-config/screens';
 import { useMediaQuery } from 'usehooks-ts';
 
-import twConfig from '../../tailwind.config';
+export interface IUseBreakpointProps {
+  breakpoint: keyof typeof breakpoints;
+  defaultValue?: boolean;
+}
 
-const resolvedConfig = resolveConfig(twConfig);
-const breakpoints = resolvedConfig.theme.screens;
+export interface IUseBreakpointOptions {
+  initializeWithValue?: boolean;
+  defaultValue?: boolean;
+}
 
-export const useBreakpoint = (breakpoint: keyof typeof breakpoints) => {
+export const useBreakpoint = (
+  breakpoint: keyof typeof breakpoints,
+  options: IUseBreakpointOptions = {},
+) => {
+  const { defaultValue = false, initializeWithValue = true } = options;
+
   return useMediaQuery(`(min-width: ${breakpoints[breakpoint]})`, {
-    defaultValue: false,
+    defaultValue,
+    initializeWithValue: initializeWithValue,
   });
 };

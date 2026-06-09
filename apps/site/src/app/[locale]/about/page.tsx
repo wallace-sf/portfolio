@@ -3,6 +3,7 @@ import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 
+import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
 import { CurriculumCTA } from '~features/about/CurriculumCTA';
 import { ExperiencesSection } from '~features/about/ExperiencesSection';
@@ -20,7 +21,7 @@ interface AboutPageProps {
 export async function generateMetadata({
   params,
 }: AboutPageProps): Promise<Metadata> {
-  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
 
   const title =
@@ -46,7 +47,7 @@ export async function generateMetadata({
 }
 
 export default async function About({ params }: AboutPageProps) {
-  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
 
   return (

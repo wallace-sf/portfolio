@@ -1,12 +1,12 @@
+import { DEFAULT_LOCALE, LOCALES } from '@repo/core/shared';
 import { createNavigation } from 'next-intl/navigation';
 import { defineRouting } from 'next-intl/routing';
 
-export const routing = defineRouting({
-  // A list of all locales that are supported
-  locales: ['en-US', 'es', 'pt-BR'],
+export { DEFAULT_LOCALE } from '@repo/core/shared';
 
-  // Used when no locale matches
-  defaultLocale: 'en-US',
+export const routing = defineRouting({
+  locales: LOCALES,
+  defaultLocale: DEFAULT_LOCALE,
 });
 
 // Lightweight wrappers around Next.js' navigation APIs
