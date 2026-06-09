@@ -15,6 +15,7 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
       message: 'Text does not meet the required length constraints.',
     },
     INVALID_EMAIL: { message: 'Invalid email address format.' },
+    INVALID_MESSAGE: { message: 'Message must not be empty.' },
     INVALID_URL: { message: 'Invalid URL format.' },
     INVALID_ID: { message: 'Id must be a valid UUID.' },
     INVALID_DATE_RANGE: {
@@ -71,6 +72,7 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
       message: 'O texto não atende às restrições de tamanho exigidas.',
     },
     INVALID_EMAIL: { message: 'Formato de e-mail inválido.' },
+    INVALID_MESSAGE: { message: 'A mensagem não pode estar vazia.' },
     INVALID_URL: { message: 'Formato de URL inválido.' },
     INVALID_ID: { message: 'O id deve ser um UUID válido.' },
     INVALID_DATE_RANGE: {
@@ -135,6 +137,7 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
         'El texto no cumple con las restricciones de longitud requeridas.',
     },
     INVALID_EMAIL: { message: 'Formato de correo electrónico inválido.' },
+    INVALID_MESSAGE: { message: 'El mensaje no puede estar vacío.' },
     INVALID_URL: { message: 'Formato de URL inválido.' },
     INVALID_ID: { message: 'El id debe ser un UUID válido.' },
     INVALID_DATE_RANGE: {
