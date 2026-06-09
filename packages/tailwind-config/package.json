@@ -5,7 +5,8 @@
   "main": "index.ts",
   "exports": {
     ".": "./index.ts",
-    "./screens": "./screens.ts"
+    "./screens": "./screens.ts",
+    "./tailwind.css": "./tailwind.css"
   },
   "files": [
     "index.ts",
