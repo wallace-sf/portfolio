@@ -7,6 +7,8 @@ let mockPathname = '/en-US/about';
 let mockLocale = 'en-US';
 
 vi.mock('next/navigation', () => ({
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
   useRouter: () => ({ replace: mockReplace }),
   usePathname: () => mockPathname,
   useParams: () => ({ locale: mockLocale }),
@@ -14,6 +16,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => mockLocale,
 }));
 
 vi.mock('~/components/Layout/SideNavigation/MenuItem', () => ({

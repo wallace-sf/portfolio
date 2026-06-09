@@ -3,6 +3,7 @@ import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 
+import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/projects/HeroSection';
 import { ProjectsSection } from '~features/projects/ProjectsSection';
@@ -18,7 +19,7 @@ interface ProjectsPageProps {
 export async function generateMetadata({
   params,
 }: ProjectsPageProps): Promise<Metadata> {
-  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
 
   const title = locale.startsWith('pt')
@@ -36,7 +37,7 @@ export async function generateMetadata({
 }
 
 export default async function Projects({ params }: ProjectsPageProps) {
-  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
 
   const { projectRepository, skillRepository } = getServerContainer();

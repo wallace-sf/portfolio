@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
+import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
 import { ProjectDetail } from '~features/projects/ProjectDetail';
 
@@ -15,7 +16,7 @@ export async function generateStaticParams() {
   const result = await new GetPublishedProjects(
     projectRepository,
     skillRepository,
-  ).execute({ locale: 'en-US' });
+  ).execute({ locale: DEFAULT_LOCALE });
 
   const slugs = result.isRight() ? result.value.map((p) => p.slug) : [];
   return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));

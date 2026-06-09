@@ -2,6 +2,7 @@ import { GetPublishedProjects } from '@repo/application/portfolio';
 import { LOCALES } from '@repo/core/shared';
 import type { MetadataRoute } from 'next';
 
+import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
 
 export const dynamic = 'force-static';
@@ -27,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const result = await new GetPublishedProjects(
       projectRepository,
       skillRepository,
-    ).execute({ locale: 'en-US' });
+    ).execute({ locale: DEFAULT_LOCALE });
 
     const projects = result.isRight() ? result.value : [];
 
