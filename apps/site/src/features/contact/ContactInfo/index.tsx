@@ -13,6 +13,7 @@ import { MenuItem } from '~/components/Layout/SideNavigation/MenuItem';
 export const ContactInfo: FC = () => {
   const t = useTranslations('ContactInfo');
   const tClip = useTranslations('Clipboard');
+  const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_NUMBER}?text=${encodeURIComponent(t('whatsappMessage'))}`;
 
   return (
     <section className="flex flex-col gap-y-6 xl:w-[326px]">
@@ -80,6 +81,11 @@ export const ContactInfo: FC = () => {
       <p className="text-base text-content-primary">{t('paragraph2')}</p>
 
       <nav className="flex gap-x-3">
+        <MenuItem.Item2.ShortLink
+          href={whatsappUrl}
+          icon="logos:whatsapp-icon"
+          newTab
+        />
         <MenuItem.Item2.ShortLink
           href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
           icon="devicon:linkedin"

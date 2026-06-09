@@ -12,7 +12,8 @@
     "title": "Ponte en contacto",
     "email": "Correo electrónico",
     "paragraph1": "¿No te gusta llenar formularios? ¡No hay problema!",
-    "paragraph2": "No dudes en enviarme un mensaje por WhatsApp o enviarme un correo electrónico."
+    "paragraph2": "No dudes en enviarme un mensaje por WhatsApp o enviarme un correo electrónico.",
+    "whatsappMessage": "¡Hola! Me gustaría contratar tus servicios."
   },
   "Clipboard": {
     "copy": "Copiar al portapapeles"
