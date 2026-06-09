@@ -1,10 +1,5 @@
-import resolveConfig from 'tailwindcss/resolveConfig';
+import { screens as breakpoints } from '@repo/tailwind-config/screens';
 import { useMediaQuery } from 'usehooks-ts';
-
-import twConfig from '../../tailwind.config';
-
-const resolvedConfig = resolveConfig(twConfig);
-const breakpoints = resolvedConfig.theme.screens;
 
 export interface IUseBreakpointProps {
   breakpoint: keyof typeof breakpoints;
