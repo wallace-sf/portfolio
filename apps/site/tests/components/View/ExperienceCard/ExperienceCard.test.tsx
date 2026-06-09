@@ -1,5 +1,21 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+beforeAll(() => {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+});
+
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
   useLocale: () => 'pt-BR',
@@ -13,9 +29,16 @@ vi.mock('@repo/ui/View', () => ({
     content: string;
     className?: string;
   }) => <p className={className}>{content}</p>,
+  Badge: {
+    WithIcon: ({ label }: { label: string; icon: string }) => (
+      <span>{label}</span>
+    ),
+    Text: ({ label }: { label: string }) => <span>{label}</span>,
+    Count: ({ count }: { count: number }) => <span>+{count}</span>,
+  },
 }));
 
-vi.mock('~features/about/TechnologiesModal', () => ({
+vi.mock('~/features/shared/TechnologiesModal', () => ({
   TechnologiesModal: ({
     open,
     company,
@@ -24,10 +47,7 @@ vi.mock('~features/about/TechnologiesModal', () => ({
     company?: string;
     onClose: () => void;
     technologies: unknown[];
-  }) =>
-    open ? (
-      <div data-testid="technologies-modal">{company}</div>
-    ) : null,
+  }) => (open ? <div data-testid="technologies-modal">{company}</div> : null),
 }));
 
 import {
@@ -146,7 +166,7 @@ describe('ExperienceCard', () => {
     );
   });
 
-  it('should render up to 3 skill badges', () => {
+  it('should render up to 2 skill badges on mobile', () => {
     const fiveSkills = [
       { name: 'React', icon: '' },
       { name: 'TypeScript', icon: '' },
@@ -157,21 +177,21 @@ describe('ExperienceCard', () => {
     render(<ExperienceCard {...defaultProps} skills={fiveSkills} />);
     expect(screen.getByText('React')).toBeInTheDocument();
     expect(screen.getByText('TypeScript')).toBeInTheDocument();
-    expect(screen.getByText('Node.js')).toBeInTheDocument();
+    expect(screen.queryByText('Node.js')).not.toBeInTheDocument();
     expect(screen.queryByText('PostgreSQL')).not.toBeInTheDocument();
     expect(screen.queryByText('Docker')).not.toBeInTheDocument();
   });
 
-  it('should show +N badge when skills exceed 3', () => {
+  it('should show +N badge when skills exceed the visible max', () => {
     const fiveSkills = Array.from({ length: 5 }, (_, i) => ({
       name: `Skill${i}`,
       icon: '',
     }));
     render(<ExperienceCard {...defaultProps} skills={fiveSkills} />);
-    expect(screen.getByRole('button', { name: '+2' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '+3' })).toBeInTheDocument();
   });
 
-  it('should not show +N badge when skills are 3 or fewer', () => {
+  it('should not show +N badge when skills are 2 or fewer', () => {
     render(<ExperienceCard {...defaultProps} />);
     expect(
       screen.queryByRole('button', { name: /^\+\d/ }),
@@ -184,7 +204,7 @@ describe('ExperienceCard', () => {
       icon: '',
     }));
     render(<ExperienceCard {...defaultProps} skills={fiveSkills} />);
-    fireEvent.click(screen.getByRole('button', { name: '+2' }));
+    fireEvent.click(screen.getByRole('button', { name: '+3' }));
     expect(screen.getByTestId('technologies-modal')).toBeInTheDocument();
   });
 
