@@ -1,5 +1,6 @@
 import { Translator } from '../../src/i18n';
 
+Translator.setDefaultLocale('en-US');
 Translator.setLocales(['pt-BR', 'es', 'fr']);
 
 describe('Translator', () => {

@@ -3,6 +3,7 @@ import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 
+import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/home/HeroSection';
 import { ProjectsSection } from '~features/home/ProjectsSection';
@@ -18,7 +19,7 @@ interface HomePageProps {
 export async function generateMetadata({
   params,
 }: HomePageProps): Promise<Metadata> {
-  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
 
   const profileResult = await new GetProfile(
@@ -41,7 +42,7 @@ export async function generateMetadata({
 }
 
 export default async function Home({ params }: HomePageProps) {
-  const locale = ((await params)?.locale ?? 'en-US') as Locale;
+  const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
 
   const { profileRepository, projectRepository, skillRepository } =

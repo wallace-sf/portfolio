@@ -1,5 +1,6 @@
 import { GetPublishedProjects } from '@repo/application/portfolio';
 
+import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
 
 export const dynamic = 'force-static';
@@ -20,7 +21,7 @@ export async function GET(): Promise<Response> {
   const result = await new GetPublishedProjects(
     projectRepository,
     skillRepository,
-  ).execute({ locale: 'en-US' });
+  ).execute({ locale: DEFAULT_LOCALE });
 
   const projects = result.isRight() ? result.value : [];
 
@@ -29,9 +30,9 @@ export async function GET(): Promise<Response> {
       (p) => `
     <item>
       <title>${escapeXml(p.title)}</title>
-      <link>${SITE_URL}/en-US/projects/${escapeXml(p.slug)}</link>
+      <link>${SITE_URL}/${DEFAULT_LOCALE}/projects/${escapeXml(p.slug)}</link>
       <description>${escapeXml(p.caption)}</description>
-      <guid isPermaLink="true">${SITE_URL}/en-US/projects/${escapeXml(p.slug)}</guid>
+      <guid isPermaLink="true">${SITE_URL}/${DEFAULT_LOCALE}/projects/${escapeXml(p.slug)}</guid>
     </item>`,
     )
     .join('');

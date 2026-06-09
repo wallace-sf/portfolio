@@ -4,8 +4,8 @@ import { FC } from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
+import { useLocale } from 'next-intl';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 
 import { Text } from '../Text';
 import { IGhostLinkProps } from '../types';
@@ -18,8 +18,7 @@ export const Item1: FC<IGhostLinkProps> = ({
   iconClassName,
   newTab = false,
 }) => {
-  const params = useParams();
-  const locale = (params?.locale as string) ?? 'en-US';
+  const locale = useLocale();
   const localizedHref = href === '/' ? `/${locale}` : `/${locale}${href}`;
   const newHref = newTab ? href : localizedHref;
 
