@@ -6001,42 +6001,44 @@
   "mvp-round-3": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Centralize DEFAULT_LOCALE constant and replace all hardcoded 'en-US' strings",
         "description": "Export DEFAULT_LOCALE from i18n/routing.ts and replace all hardcoded 'en-US' fallbacks across 7+ files",
         "details": "1. Export DEFAULT_LOCALE constant from apps/site/src/i18n/routing.ts\n2. Import DEFAULT_LOCALE in affected files:\n   - apps/site/src/app/[locale]/page.tsx (lines 21, 44)\n   - apps/site/src/app/[locale]/about/page.tsx (lines 23, 49)\n   - apps/site/src/app/[locale]/projects/page.tsx (lines 21, 39)\n   - apps/site/src/components/Layout/SideNavigation/LanguageSelector.tsx:21\n   - apps/site/src/components/Layout/SideNavigation/MenuItem/Item1/index.tsx:22\n   - apps/site/src/app/feed.xml/route.ts:23\n   - apps/site/src/app/sitemap.ts:30\n3. Replace all `?? 'en-US'` fallbacks and hardcoded `'en-US'` arguments with `DEFAULT_LOCALE`\n4. Verify no 'en-US' string literals remain outside routing.ts config declaration using grep",
         "testStrategy": "- Use grep to verify no hardcoded 'en-US' strings exist outside routing.ts\n- Run existing i18n tests to ensure locale fallback still works\n- Manual testing: verify pages render correctly with all three locales (en-US, pt-BR, es)",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-10T15:18:36.736Z"
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Add i18n translation keys for page metadata and remove locale.startsWith() calls",
         "description": "Replace locale.startsWith() string comparisons with i18n translation keys for SEO metadata in About and Projects pages",
         "details": "1. Add 'Metadata' namespace to all three locale message files (en-US.json, pt-BR.json, es.json) with keys:\n   - AboutPage: { title: '...', description: '...' }\n   - ProjectsPage: { title: '...', description: '...' }\n2. Update apps/site/src/app/[locale]/about/page.tsx:\n   - Import getTranslations from next-intl/server\n   - Call getTranslations('Metadata') in generateMetadata()\n   - Replace locale.startsWith('pt')/locale.startsWith('es') with t('AboutPage.title') and t('AboutPage.description')\n3. Update apps/site/src/app/[locale]/projects/page.tsx:\n   - Same approach for ProjectsPage metadata\n4. Verify no locale.startsWith() calls remain in page files for UI copy",
         "testStrategy": "- Grep for locale.startsWith() in page files to ensure all removed\n- Verify metadata renders correctly for all three locales (check <title> and meta description in browser)\n- Test SEO metadata generation in Next.js dev and build modes",
         "priority": "high",
         "dependencies": [
-          1
+          "1"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Add INVALID_MESSAGE error code to ERROR_MESSAGE.ts",
         "description": "Fix missing INVALID_MESSAGE error code in ERROR_MESSAGE mapping used by SendContactMessage use case",
         "details": "1. Add INVALID_MESSAGE entry to packages/core/src/shared/i18n/ERROR_MESSAGE.ts for all three locales:\n   - 'en-US': { message: 'Message must not be empty.' }\n   - 'pt-BR': { message: 'A mensagem não pode estar vazia.' }\n   - 'es': { message: 'El mensaje no puede estar vacío.' }\n2. Follow the existing pattern for INVALID_NAME and INVALID_EMAIL\n3. Ensure the message is clear and consistent with existing error messages\n4. Verify the error code matches what SendContactMessage.ts returns (line 41)",
         "testStrategy": "- Add unit test in packages/core/test/shared/i18n/ERROR_MESSAGE.test.ts verifying INVALID_MESSAGE exists for all locales\n- Update/add tests in SendContactMessage use case test file to cover INVALID_MESSAGE error path\n- Test the contact form with empty message field to ensure error displays correctly in all three languages",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-10T21:27:30.487Z"
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Extract hardcoded Portuguese strings from TechnologiesModal to i18n",
         "description": "Move three hardcoded Portuguese UI strings in TechnologiesModal to translation keys",
         "details": "1. Add translation keys to all three locale message files under 'TechnologiesModal' namespace:\n   - title: 'Technologies used' (EN), 'Tecnologias utilizadas' (PT), 'Tecnologías utilizadas' (ES)\n   - compactView: 'Compact view' (EN), 'Visão compacta' (PT), 'Vista compacta' (ES)\n   - viewDetails: 'View details' (EN), 'Ver detalhes' (PT), 'Ver detalles' (ES)\n2. Update apps/site/src/features/about/TechnologiesModal/index.tsx:\n   - Import useTranslations from next-intl\n   - Call useTranslations('TechnologiesModal')\n   - Replace line 35: title={t('title')}\n   - Replace line 54: {isDetailed ? t('compactView') : t('viewDetails')}\n3. Verify no Portuguese string literals remain in component",
@@ -6047,40 +6049,43 @@
         "subtasks": []
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Add closeLabel prop to Modal component and remove hardcoded Portuguese aria-label",
         "description": "Make Modal close button accessible by accepting translated closeLabel prop instead of hardcoded Portuguese string",
         "details": "1. Update packages/ui/src/Control/Modal/index.tsx:\n   - Add closeLabel prop to IModalProps interface (required string)\n   - Replace hardcoded aria-label='Fechar modal' on line 99 with aria-label={closeLabel}\n2. Update all Modal call sites to pass translated closeLabel:\n   - TechnologiesModal: pass closeLabel={t('close')} or similar\n   - Any other Modal usages in the codebase\n3. Add 'close' translation key to all locale message files if not already present\n4. Verify no Portuguese literals remain in @repo/ui components using grep",
         "testStrategy": "- Grep @repo/ui for Portuguese strings to ensure none remain\n- Test Modal close button with screen reader in all three locales\n- Verify aria-label announces correct translated text\n- Run existing Modal component tests and update snapshots if needed",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-10T21:27:33.328Z"
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "Add translated aria-label to ShareButton icon-only button",
         "description": "Add accessible aria-label to ShareButton to satisfy WCAG 2.1 SC 4.1.2 (icon-only button requirement)",
         "details": "1. Update apps/site/src/features/shared/ShareButton/index.tsx:\n   - Add aria-label={t('share_button_label')} to Button.Clipboard on line 21\n   - Consider updating aria-label or using aria-live when copied state changes\n2. Add translation key 'share_button_label' to ProjectCard namespace in all three locale files:\n   - 'en-US': 'Share project link'\n   - 'pt-BR': 'Compartilhar link do projeto'\n   - 'es': 'Compartir enlace del proyecto'\n3. Optional: add aria-live='polite' region to announce 'Link copied' state change",
         "testStrategy": "- Test with screen reader (NVDA/JAWS) to verify button announces purpose\n- Verify aria-label changes or announcement occurs when button is clicked and copied state changes\n- Manual accessibility audit with axe DevTools or similar\n- Ensure button is keyboard accessible (Tab navigation + Enter/Space activation)",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-10T21:27:36.473Z"
       },
       {
-        "id": 7,
+        "id": "7",
         "title": "Add accessible aria-label to mobile menu toggle in Header",
         "description": "Add aria-label or aria-expanded + aria-controls to Header mobile menu toggle button for screen reader users",
         "details": "1. Read apps/site/src/components/Layout/Header/index.tsx to identify toggle button\n2. Add aria-label that reflects current state (e.g., 'Open menu' / 'Close menu')\n3. Alternatively, use aria-expanded={isOpen} and aria-controls='menu-id' pattern\n4. Add translation keys to SideNavigation namespace:\n   - openMenu: 'Open menu' (EN), 'Abrir menu' (PT), 'Abrir menú' (ES)\n   - closeMenu: 'Close menu' (EN), 'Fechar menu' (PT), 'Cerrar menú' (ES)\n5. Update aria-label dynamically based on menu open/close state",
         "testStrategy": "- Test with screen reader to verify toggle announces current state\n- Verify aria-expanded reflects actual menu state (true/false)\n- Test keyboard navigation: button focusable and activatable with Enter/Space\n- Verify mobile viewport behavior in Chrome DevTools",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-06-10T21:27:39.506Z"
       },
       {
-        "id": 8,
+        "id": "8",
         "title": "Add accessible aria-label to +N skills overflow button in SkillGroup",
         "description": "Add descriptive aria-label to SkillGroup overflow button that shows additional skills",
         "details": "1. Read apps/site/src/features/shared/SkillGroup/index.tsx to locate overflow button ('+N' button)\n2. Add aria-label={t('show_all_skills', { count: remainingCount })} to button\n3. Add translation key to appropriate namespace (likely 'SkillGroup' or similar):\n   - 'en-US': 'Show all {count} skills'\n   - 'pt-BR': 'Mostrar todas as {count} habilidades'\n   - 'es': 'Mostrar todas las {count} habilidades'\n4. Use next-intl's interpolation feature for count parameter",
@@ -6091,7 +6096,7 @@
         "subtasks": []
       },
       {
-        "id": 9,
+        "id": "9",
         "title": "Add visible labels to ContactForm input fields",
         "description": "Add visible <label> elements to all ContactForm fields to satisfy WCAG 2.1 SC 1.3.1 (no placeholder-only forms)",
         "details": "1. Update apps/site/src/features/contact/ContactForm/index.tsx:\n   - Add <label htmlFor='name'>{t('nameLabel')}</label> before name input (currently line 53)\n   - Add <label htmlFor='email'>{t('emailLabel')}</label> before email input (line 71)\n   - Add <label htmlFor='message'>{t('messageLabel')}</label> before message textarea (line 89)\n2. Add required indicator (e.g., asterisk or '(required)' text) to labels\n3. Add translation keys to ContactForm namespace:\n   - nameLabel, emailLabel, messageLabel, required indicator\n4. Preserve existing aria-invalid and aria-describedby behavior\n5. Style labels consistently with design system (consider Text component or custom CSS)",
@@ -6102,7 +6107,7 @@
         "subtasks": []
       },
       {
-        "id": 10,
+        "id": "10",
         "title": "Add visible focus indicators to Button.Base component",
         "description": "Add focus-visible ring styles to all Button.Base appearance variants to satisfy WCAG 2.1 SC 2.4.7",
         "details": "1. Update packages/ui/src/Control/Button/Base/index.tsx:\n   - Add focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary to base styles (line 31)\n   - Ensure focus styles work for all three appearance variants (filled, outline, ghost)\n   - Use focus-visible (not focus) to avoid showing ring on mouse click\n   - Verify focus ring is visible in both light and dark themes\n2. Test ring color contrast meets WCAG 2.1 AA requirements (3:1 minimum)\n3. Consider using focus-visible:outline-offset if ring-offset doesn't work as expected",
@@ -6113,7 +6118,7 @@
         "subtasks": []
       },
       {
-        "id": 11,
+        "id": "11",
         "title": "Add visible focus indicators to Text.Base and TextArea.Base inputs",
         "description": "Replace focus:outline-none with visible focus-visible ring in Text and TextArea components",
         "details": "1. Update packages/ui/src/Control/Text/Base/index.tsx:\n   - Replace focus:outline-none on line 42 with focus-visible:ring-2 focus-visible:ring-brand-primary\n   - Ensure error and success states preserve the focus ring (don't override it)\n2. Update packages/ui/src/Control/TextArea/Base/index.tsx:\n   - Apply same focus-visible ring styles\n   - Ensure consistency between Text and TextArea focus styles\n3. Verify focus ring is visible in both light and dark themes\n4. Test that error borders and focus rings work together (both visible simultaneously)",
@@ -6124,7 +6129,7 @@
         "subtasks": []
       },
       {
-        "id": 12,
+        "id": "12",
         "title": "Add visible focus indicator to Radio component",
         "description": "Replace focus:outline-none focus:ring-offset-0 with visible focus-visible ring in Radio input",
         "details": "1. Update packages/ui/src/Control/Radio/index.tsx:\n   - Replace focus:outline-none focus:ring-offset-0 on line 55 with focus-visible:ring-2 focus-visible:ring-brand-primary\n   - Ensure disabled state continues to suppress focus ring (peer-disabled styles)\n   - Test focus ring visibility against different backgrounds (Radio can appear in various contexts)\n2. Verify focus ring is visible in both light and dark themes",
@@ -6135,7 +6140,7 @@
         "subtasks": []
       },
       {
-        "id": 13,
+        "id": "13",
         "title": "Fix heading hierarchy in HomeProjectsSection (h4 → h3)",
         "description": "Correct skipped heading level in HomeProjectsSection to maintain proper document outline for screen readers",
         "details": "1. Update apps/site/src/features/home/ProjectsSection/HomeProjectsSection.tsx:\n   - Change <h4> on line 19 to <h3> (or <h2> if this is the first section heading after page h1)\n   - Verify full heading hierarchy on home page: check HeroBanner heading level and ensure no skipped levels\n2. Replace hardcoded text-[32px] with Tailwind scale value (e.g., text-3xl or text-4xl)\n3. Document the heading hierarchy for the home page in comments or architectural docs",
@@ -6146,23 +6151,28 @@
         "subtasks": []
       },
       {
-        "id": 14,
+        "id": "14",
         "title": "Add scroll lock to Modal component when open",
         "description": "Implement body scroll lock in Modal component to prevent background scrolling on mobile",
         "details": "1. Update packages/ui/src/Control/Modal/index.tsx:\n   - Add useEffect hook that sets document.body.style.overflow = 'hidden' when open is true\n   - Restore scroll (document.body.style.overflow = '') on close and on unmount\n   - Handle cleanup properly to avoid leaving body in locked state if component unmounts while open\n2. Update apps/site/src/features/about/ExperienceCard (or similar):\n   - Remove manual scroll-lock calls once Modal handles it natively\n3. Test edge cases: rapid open/close, multiple modals, modal unmount while open",
         "testStrategy": "- Open modal on mobile viewport and verify page doesn't scroll behind modal\n- Test with ProjectCard modal (currently has bug per PRD)\n- Test with TechnologiesModal (ExperienceCard - should still work after removing manual lock)\n- Test rapid open/close to ensure scroll isn't stuck\n- Test on real mobile device (iOS Safari, Android Chrome)\n- Verify scroll restores correctly after modal closes\n- Test modal unmount while open (should restore scroll)",
         "priority": "high",
         "dependencies": [
-          5
+          "5"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-10T15:28:39.765Z"
       }
     ],
     "metadata": {
-      "created": "2026-06-07T19:56:43.963Z",
-      "updated": "2026-06-07T19:56:43.963Z",
-      "description": "Tasks for mvp-round-3 context"
+      "version": "1.0.0",
+      "lastModified": "2026-06-10T21:27:39.506Z",
+      "taskCount": 14,
+      "completedCount": 5,
+      "tags": [
+        "mvp-round-3"
+      ]
     }
   }
 }

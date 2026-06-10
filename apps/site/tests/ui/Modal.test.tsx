@@ -31,7 +31,7 @@ describe('Modal', () => {
   it('should render children and title when open', async () => {
     const Modal = await importModal();
     render(
-      <Modal open onClose={vi.fn()} title="Test Title">
+      <Modal open onClose={vi.fn()} closeLabel="Close modal" title="Test Title">
         <p>Modal content</p>
       </Modal>,
     );
@@ -43,7 +43,12 @@ describe('Modal', () => {
   it('should not render when open is false', async () => {
     const Modal = await importModal();
     render(
-      <Modal open={false} onClose={vi.fn()} title="Test Title">
+      <Modal
+        open={false}
+        onClose={vi.fn()}
+        closeLabel="Close modal"
+        title="Test Title"
+      >
         <p>Modal content</p>
       </Modal>,
     );
@@ -56,12 +61,12 @@ describe('Modal', () => {
     const onClose = vi.fn();
     const Modal = await importModal();
     render(
-      <Modal open onClose={onClose} title="Test Title">
+      <Modal open onClose={onClose} closeLabel="Close modal" title="Test Title">
         <p>content</p>
       </Modal>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /fechar modal/i }));
+    fireEvent.click(screen.getByRole('button', { name: /close modal/i }));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -69,7 +74,7 @@ describe('Modal', () => {
   it('should render with role dialog and aria-modal when open', async () => {
     const Modal = await importModal();
     render(
-      <Modal open onClose={vi.fn()} title="Test Title">
+      <Modal open onClose={vi.fn()} closeLabel="Close modal" title="Test Title">
         <p>content</p>
       </Modal>,
     );
@@ -82,7 +87,12 @@ describe('Modal', () => {
   it('should render title with aria-labelledby linked to dialog', async () => {
     const Modal = await importModal();
     render(
-      <Modal open onClose={vi.fn()} title="Accessible Title">
+      <Modal
+        open
+        onClose={vi.fn()}
+        closeLabel="Close modal"
+        title="Accessible Title"
+      >
         <p>content</p>
       </Modal>,
     );
@@ -97,7 +107,7 @@ describe('Modal', () => {
   it('should omit aria-labelledby when no title is provided', async () => {
     const Modal = await importModal();
     render(
-      <Modal open onClose={vi.fn()}>
+      <Modal open onClose={vi.fn()} closeLabel="Close modal">
         <p>content</p>
       </Modal>,
     );
@@ -109,7 +119,7 @@ describe('Modal', () => {
   it('should render overlay with fixed positioning when open', async () => {
     const Modal = await importModal();
     render(
-      <Modal open onClose={vi.fn()}>
+      <Modal open onClose={vi.fn()} closeLabel="Close modal">
         <p>content</p>
       </Modal>,
     );

@@ -1,7 +1,7 @@
 import { GetProfile } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
@@ -23,9 +23,9 @@ export async function generateMetadata({
 }: AboutPageProps): Promise<Metadata> {
   const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'Metadata' });
 
-  const title =
-    locale.startsWith('pt') || locale.startsWith('es') ? 'Sobre' : 'About';
+  const title = t('AboutPage.title');
 
   const profileResult = await new GetProfile(
     getServerContainer().profileRepository,

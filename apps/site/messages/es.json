@@ -28,6 +28,7 @@
   "ProjectCard": {
     "view_project": "Ver proyecto",
     "share_tooltip": "Copiar enlace",
+    "share_button_label": "Compartir enlace del proyecto",
     "image_alt": "Imagen del proyecto"
   },
   "SideNavigation": {
@@ -91,10 +92,13 @@
     "present": "Presente"
   },
   "Common": {
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "close": "Cerrar modal"
   },
   "Header": {
-    "logo_alt": "Logo"
+    "logo_alt": "Logo",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
   },
   "ProjectDetail": {
     "breadcrumb_home": "Inicio",
@@ -105,6 +109,15 @@
     "objectives_label": "Objetivos",
     "role_label": "Rol",
     "period_label": "Período"
+  },
+  "Metadata": {
+    "AboutPage": {
+      "title": "Sobre"
+    },
+    "ProjectsPage": {
+      "title": "Proyectos",
+      "description": "Proyectos de software desarrollados por Wallace Ferreira — aplicaciones web escalables con React, Next.js y TypeScript."
+    }
   },
   "LoginForm": {
     "title": "Iniciar sesión",
