@@ -28,6 +28,7 @@
   "ProjectCard": {
     "view_project": "View Project",
     "share_tooltip": "Copy link",
+    "share_button_label": "Share project link",
     "image_alt": "Project image"
   },
   "SideNavigation": {
