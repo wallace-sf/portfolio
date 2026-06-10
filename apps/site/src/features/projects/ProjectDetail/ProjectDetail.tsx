@@ -66,17 +66,20 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
   );
 
   return (
-    <article className="flex flex-col gap-y-10 pb-12">
+    <article className="flex flex-col gap-y-10 pb-12 mt-6 xl:mt-0">
       <div className="mx-4 xl:mx-auto xl:w-full xl:max-w-237.5 flex flex-col gap-y-10">
-        <div className="flex items-center justify-between h-12">
+        <div className="flex flex-col justify-center items-start gap-y-1 xl:flex-row xl:items-center xl:justify-between">
+          <Breadcrumb
+            items={breadcrumbItems}
+            className="flex items-center min-h-12 xl:order-2"
+          />
           <Link
             href="/projects"
-            className="flex items-center gap-x-2 text-base text-content-primary"
+            className="flex items-center gap-x-2 text-base text-content-primary xl:order-1 xl:min-h-12"
           >
             <Icon icon="material-symbols:arrow-back" className="text-2xl" />
             {t('back')}
           </Link>
-          <Breadcrumb items={breadcrumbItems} />
         </div>
 
         <div className="flex flex-col gap-y-6">
