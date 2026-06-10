@@ -107,6 +107,15 @@
     "role_label": "Função",
     "period_label": "Período"
   },
+  "Metadata": {
+    "AboutPage": {
+      "title": "Sobre"
+    },
+    "ProjectsPage": {
+      "title": "Projetos",
+      "description": "Projetos de software desenvolvidos por Wallace Ferreira — aplicações web escaláveis com React, Next.js e TypeScript."
+    }
+  },
   "LoginForm": {
     "title": "Entrar",
     "emailPlaceholder": "Endereço de e-mail",

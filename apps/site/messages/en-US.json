@@ -107,6 +107,15 @@
     "role_label": "Role",
     "period_label": "Period"
   },
+  "Metadata": {
+    "AboutPage": {
+      "title": "About"
+    },
+    "ProjectsPage": {
+      "title": "Projects",
+      "description": "Software projects developed by Wallace Ferreira — scalable web applications built with React, Next.js, and TypeScript."
+    }
+  },
   "LoginForm": {
     "title": "Sign in",
     "emailPlaceholder": "Email address",
