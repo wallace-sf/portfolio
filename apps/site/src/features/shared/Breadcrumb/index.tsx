@@ -3,7 +3,6 @@
 import { FC } from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
-import classNames from 'classnames';
 
 import { Link } from '~i18n/routing';
 
@@ -14,10 +13,11 @@ export interface BreadcrumbItem {
 
 interface IBreadcrumbProps {
   items: BreadcrumbItem[];
+  className?: string;
 }
 
-export const Breadcrumb: FC<IBreadcrumbProps> = ({ items }) => (
-  <nav aria-label="breadcrumb">
+export const Breadcrumb: FC<IBreadcrumbProps> = ({ items, className }) => (
+  <nav aria-label="breadcrumb" className={className}>
     <ol className="flex flex-row flex-wrap items-center gap-x-1">
       {items.map((item, i) => {
         const isLast = i === items.length - 1;
