@@ -96,7 +96,9 @@
     "close": "Cerrar modal"
   },
   "Header": {
-    "logo_alt": "Logo"
+    "logo_alt": "Logo",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
   },
   "ProjectDetail": {
     "breadcrumb_home": "Inicio",
