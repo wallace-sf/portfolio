@@ -22,6 +22,7 @@ export const ShareButton: FC<IShareButtonProps> = ({ slug, className }) => {
       unstyled
       text={url}
       tooltip={t('share_tooltip')}
+      aria-label={t('share_button_label')}
       className={classNames(
         'flex items-center justify-center w-9 h-9 rounded-lg',
         'bg-surface-raised hover:bg-surface-interactive transition-colors',
