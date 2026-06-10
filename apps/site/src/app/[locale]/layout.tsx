@@ -1,10 +1,9 @@
+import { LOCALES } from '@repo/core/shared';
 import classNames from 'classnames';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
-
-import { LOCALES } from '@repo/core/shared';
 
 import { AppLayout } from '~components';
 
@@ -59,7 +58,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html dir="ltr" lang={locale}>
       <body
         className={classNames(
           'flex flex-col h-screen antialiased dark:bg-dark',
