@@ -1,7 +1,7 @@
 import { GetPublishedProjects } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
@@ -21,17 +21,10 @@ export async function generateMetadata({
 }: ProjectsPageProps): Promise<Metadata> {
   const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'Metadata' });
 
-  const title = locale.startsWith('pt')
-    ? 'Projetos'
-    : locale.startsWith('es')
-      ? 'Proyectos'
-      : 'Projects';
-  const description = locale.startsWith('pt')
-    ? 'Projetos de software desenvolvidos por Wallace Ferreira — aplicações web escaláveis com React, Next.js e TypeScript.'
-    : locale.startsWith('es')
-      ? 'Proyectos de software desarrollados por Wallace Ferreira — aplicaciones web escalables con React, Next.js y TypeScript.'
-      : 'Software projects developed by Wallace Ferreira — scalable web applications built with React, Next.js, and TypeScript.';
+  const title = t('ProjectsPage.title');
+  const description = t('ProjectsPage.description');
 
   return { title, description, openGraph: { title, description } };
 }
