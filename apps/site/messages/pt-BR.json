@@ -91,7 +91,8 @@
     "present": "Presente"
   },
   "Common": {
-    "loading": "Carregando"
+    "loading": "Carregando",
+    "close": "Fechar modal"
   },
   "Header": {
     "logo_alt": "Logo"

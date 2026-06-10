@@ -91,7 +91,8 @@
     "present": "Present"
   },
   "Common": {
-    "loading": "Loading"
+    "loading": "Loading",
+    "close": "Close modal"
   },
   "Header": {
     "logo_alt": "Logo"

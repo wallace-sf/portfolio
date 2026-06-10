@@ -9,6 +9,7 @@ import { useEventListener, useOnClickOutside } from 'usehooks-ts';
 export interface IModalProps {
   open: boolean;
   onClose: () => void;
+  closeLabel: string;
   title?: string;
   children: ReactNode;
 }
@@ -16,7 +17,13 @@ export interface IModalProps {
 const FOCUSABLE_SELECTORS =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
-export const Modal: FC<IModalProps> = ({ open, onClose, title, children }) => {
+export const Modal: FC<IModalProps> = ({
+  open,
+  onClose,
+  closeLabel,
+  title,
+  children,
+}) => {
   const titleId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -96,7 +103,7 @@ export const Modal: FC<IModalProps> = ({ open, onClose, title, children }) => {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fechar modal"
+            aria-label={closeLabel}
             className="ml-auto text-content-primary hover:opacity-70 transition-opacity"
           >
             <Icon icon="material-symbols:close" className="text-2xl" />
