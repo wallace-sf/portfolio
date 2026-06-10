@@ -6022,9 +6022,8 @@
         "dependencies": [
           "1"
         ],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-06-10T16:03:21.045Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "3",
@@ -6036,7 +6035,7 @@
         "dependencies": [],
         "status": "done",
         "subtasks": [],
-        "updatedAt": "2026-06-10T15:51:57.307Z"
+        "updatedAt": "2026-06-10T21:27:30.487Z"
       },
       {
         "id": "4",
@@ -6059,7 +6058,7 @@
         "dependencies": [],
         "status": "done",
         "subtasks": [],
-        "updatedAt": "2026-06-10T20:51:28.742Z"
+        "updatedAt": "2026-06-10T21:27:33.328Z"
       },
       {
         "id": "6",
@@ -6069,9 +6068,9 @@
         "testStrategy": "- Test with screen reader (NVDA/JAWS) to verify button announces purpose\n- Verify aria-label changes or announcement occurs when button is clicked and copied state changes\n- Manual accessibility audit with axe DevTools or similar\n- Ensure button is keyboard accessible (Tab navigation + Enter/Space activation)",
         "priority": "high",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [],
-        "updatedAt": "2026-06-10T20:52:41.314Z"
+        "updatedAt": "2026-06-10T21:27:36.473Z"
       },
       {
         "id": "7",
@@ -6081,8 +6080,9 @@
         "testStrategy": "- Test with screen reader to verify toggle announces current state\n- Verify aria-expanded reflects actual menu state (true/false)\n- Test keyboard navigation: button focusable and activatable with Enter/Space\n- Verify mobile viewport behavior in Chrome DevTools",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-06-10T21:27:39.506Z"
       },
       {
         "id": "8",
@@ -6167,7 +6167,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-06-10T20:52:41.315Z",
+      "lastModified": "2026-06-10T21:27:39.506Z",
       "taskCount": 14,
       "completedCount": 5,
       "tags": [

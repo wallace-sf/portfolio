@@ -41,6 +41,8 @@ export const Header: FC<HeaderProps> = ({ open, toggle }) => {
       <Button.Base
         className="flex items-center justify-center h-10 w-10 !bg-surface-raised hover:!bg-surface !rounded !p-0 xl:hidden"
         onClick={toggle}
+        aria-label={open ? t('closeMenu') : t('openMenu')}
+        aria-expanded={open}
       >
         {open ? (
           <Icon icon="ic:round-close" className="!text-content-secondary" />
