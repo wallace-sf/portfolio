@@ -4,6 +4,7 @@ import { FC, useState } from 'react';
 
 import { Accordion, Modal } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
+import { useTranslations } from 'next-intl';
 import { useScrollLock } from 'usehooks-ts';
 
 export interface ITechnology {
@@ -27,14 +28,20 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
   position,
   technologies,
 }) => {
-  const hasDescriptions = technologies.some((t) => t.description);
+  const t = useTranslations('Common');
+  const hasDescriptions = technologies.some((tech) => tech.description);
   const [view, setView] = useState<'basic' | 'detailed'>('basic');
   const isDetailed = view === 'detailed';
 
   useScrollLock({ autoLock: open });
 
   return (
-    <Modal open={open} onClose={onClose} title="Tecnologias utilizadas">
+    <Modal
+      open={open}
+      onClose={onClose}
+      closeLabel={t('close')}
+      title="Tecnologias utilizadas"
+    >
       {(company || position || hasDescriptions) && (
         <div className="flex items-center gap-3 mb-6">
           {company && (

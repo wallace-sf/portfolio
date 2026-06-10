@@ -5,6 +5,10 @@ import React from 'react';
 
 import { fireEvent, render, screen } from '@testing-library/react';
 
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => key,
+}));
+
 vi.mock('@iconify/react', () => ({
   Icon: ({ icon }: { icon: string }) => (
     <span data-testid="icon" data-icon={icon} />
@@ -161,7 +165,7 @@ describe('TechnologiesModal', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /fechar modal/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^close$/i }));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
