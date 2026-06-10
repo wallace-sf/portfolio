@@ -28,7 +28,7 @@ export const SideNavigation: FC = () => {
       <nav
         id="side-navigation"
         className={classNames(
-          'h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 bg-surface-sunken flex flex-col border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
+          'h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 bg-surface-sunken flex flex-col overflow-y-auto overscroll-y-contain border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
           isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
@@ -54,7 +54,7 @@ export const SideNavigation: FC = () => {
           </MenuItem.Item1>
         </ul>
         <Divider className="mx-6 xl:mx-0" />
-        <ul className="flex flex-col gap-y-3 px-6 xl:pb-8 xl:px-0 xl:justify-end">
+        <ul className="flex flex-col gap-y-3 px-6 pb-8 xl:px-0 xl:justify-end">
           <MenuItem.Item2.Link
             href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
             icon="devicon:linkedin"
