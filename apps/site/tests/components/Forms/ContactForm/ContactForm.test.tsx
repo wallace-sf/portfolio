@@ -14,6 +14,9 @@ vi.mock('next-intl', () => ({
 }));
 
 vi.mock('@repo/ui/Control', () => ({
+  Label: ({ children, htmlFor }: React.LabelHTMLAttributes<HTMLLabelElement>) => (
+    <label htmlFor={htmlFor}>{children}</label>
+  ),
   Button: {
     Base: ({
       children,

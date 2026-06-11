@@ -2,6 +2,9 @@
   "ContactForm": {
     "title": "Contáctenos",
     "submit": "Enviar",
+    "nameLabel": "Nombre",
+    "emailLabel": "Correo electrónico",
+    "messageLabel": "Mensaje",
     "namePlaceholder": "Su nombre",
     "emailPlaceholder": "Su correo electrónico",
     "messagePlaceholder": "Su mensaje aquí...",
