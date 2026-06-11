@@ -88,6 +88,9 @@
     "button": "Acessar currículo",
     "illustration_alt": "Ilustração decorativa de desenvolvedor"
   },
+  "SkillGroup": {
+    "show_more": "Mostrar mais {count} habilidades"
+  },
   "ExperienceCard": {
     "skills_label": "Habilidades",
     "see_more": "Ver mais",
