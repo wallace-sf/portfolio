@@ -4,7 +4,11 @@ import { FC, ReactNode, useCallback, useEffect, useId, useRef } from 'react';
 
 import { Icon } from '@iconify/react';
 import { createPortal } from 'react-dom';
-import { useEventListener, useOnClickOutside } from 'usehooks-ts';
+import {
+  useEventListener,
+  useOnClickOutside,
+  useScrollLock,
+} from 'usehooks-ts';
 
 export interface IModalProps {
   open: boolean;
@@ -28,6 +32,7 @@ export const Modal: FC<IModalProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
+  useScrollLock({ autoLock: open });
   useOnClickOutside(containerRef, onClose);
 
   const handleKeyDown = useCallback(

@@ -12,6 +12,9 @@ vi.mock('@iconify/react', () => ({
 }));
 
 vi.mock('usehooks-ts', () => ({
+  useScrollLock: ({ autoLock }: { autoLock: boolean }) => {
+    document.body.style.overflow = autoLock ? 'hidden' : '';
+  },
   useOnClickOutside: vi.fn(),
   useEventListener: vi.fn(),
 }));
@@ -126,5 +129,27 @@ describe('Modal', () => {
 
     const overlay = screen.getByRole('dialog').parentElement;
     expect(overlay).toHaveClass('fixed');
+  });
+
+  it('should lock body scroll when open', async () => {
+    const Modal = await importModal();
+    render(
+      <Modal open onClose={vi.fn()} closeLabel="Close modal">
+        <p>content</p>
+      </Modal>,
+    );
+
+    expect(document.body.style.overflow).toBe('hidden');
+  });
+
+  it('should not lock body scroll when closed', async () => {
+    const Modal = await importModal();
+    render(
+      <Modal open={false} onClose={vi.fn()} closeLabel="Close modal">
+        <p>content</p>
+      </Modal>,
+    );
+
+    expect(document.body.style.overflow).toBe('');
   });
 });
