@@ -1,7 +1,9 @@
 {
   "name": "@repo/ui",
   "version": "0.0.0",
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "private": true,
   "exports": {
     "./globals.css": "./globals.css",
@@ -38,12 +40,14 @@
     "build:types": "tsc --build tsconfig.build.json",
     "types": "tsc --build tsconfig.build.json"
   },
+  "peerDependencies": {
+    "react": "^18",
+    "react-dom": "^18"
+  },
   "dependencies": {
     "@iconify/react": "^5.0.2",
     "@repo/utils": "workspace:*",
     "classnames": "^2.5.1",
-    "react": "^18",
-    "react-dom": "^18",
     "github-markdown-css": "^5.9.0",
     "react-markdown": "^9.0.1",
     "react-tooltip": "^5.28.0",
@@ -62,6 +66,8 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
     "postcss": "^8",
+    "react": "^18",
+    "react-dom": "^18",
     "tailwindcss": "^3.4.1",
     "tsup": "^8.3.5"
   }
