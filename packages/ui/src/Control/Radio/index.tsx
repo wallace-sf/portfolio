@@ -5,11 +5,10 @@ import { FC, MouseEventHandler, useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 
 import { Icon, IconProps } from '~imagery/Icon';
-export interface IRadioProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    'type' | 'className' | 'children'
-  > {
+export interface IRadioProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'className' | 'children'
+> {
   icon?: IconProps['icon'];
   iconClassName?: string;
   option: string;

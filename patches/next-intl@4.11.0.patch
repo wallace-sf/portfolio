@@ -1,3 +1,7 @@
+// This application always initializes the locale through setRequestLocale.
+// Avoid importing next/headers so Turbopack can classify localized routes
+// as statically renderable.
+
 diff --git a/dist/esm/development/server/react-server/RequestLocale.js b/dist/esm/development/server/react-server/RequestLocale.js
 index 8860210b5b44bf2e89eb789406bc863f522884f3..4dc1edb60a1689b540c2fbc9e4a1e9cfd84d9dcd 100644
 --- a/dist/esm/development/server/react-server/RequestLocale.js
@@ -8,7 +12,7 @@ index 8860210b5b44bf2e89eb789406bc863f522884f3..4dc1edb60a1689b540c2fbc9e4a1e9cf
 -import { HEADER_LOCALE_NAME } from '../../shared/constants.js';
 -import { isPromise } from '../../shared/utils.js';
  import { getCachedRequestLocale } from './RequestLocaleCache.js';
- 
+
 -async function getHeadersImpl() {
 -  const promiseOrValue = headers();
 -
@@ -40,7 +44,7 @@ index 8860210b5b44bf2e89eb789406bc863f522884f3..4dc1edb60a1689b540c2fbc9e4a1e9cf
 -  return getCachedRequestLocale() || (await getLocaleFromHeader());
 +  return getCachedRequestLocale();
  }
- 
+
  export { getRequestLocale };
 diff --git a/dist/esm/production/server/react-server/RequestLocale.js b/dist/esm/production/server/react-server/RequestLocale.js
 index aec20562991ba437e5d81ccaa09c3616c0ebf11a..c4bc59c146694b716b8258621f1f747ff4c2d32e 100644
