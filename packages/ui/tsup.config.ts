@@ -10,6 +10,6 @@ export default defineConfig({
   format: ['cjs', 'esm'], // Formatos de saída (opcional, pode ser ajustado)
   sourcemap: true, // Inclui mapas de origem (opcional)
   clean: true, // Limpa a pasta de destino antes de gerar os arquivos
-  external: ['react', 'react-dom'],
+  external: ['react', 'react-dom', 'usehooks-ts'],
   tsconfig: 'tsconfig.json',
 });
