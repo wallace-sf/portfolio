@@ -3,6 +3,7 @@
 import { FC, useMemo, useState } from 'react';
 
 import { Badge } from '@repo/ui/View';
+import { useTranslations } from 'next-intl';
 import { useIsomorphicLayoutEffect, useBoolean } from 'usehooks-ts';
 
 import { TechnologiesModal } from '~/features/shared/TechnologiesModal';
@@ -22,6 +23,7 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
   total,
   initializeWithMax,
 }) => {
+  const t = useTranslations('SkillGroup');
   const [storedMax, setStoredMax] = useState<number>(initializeWithMax);
   const {
     value: modalOpen,
@@ -60,6 +62,7 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
             ) : (
               <button
                 type="button"
+                aria-label={t('show_more', { count: total - storedMax })}
                 className="hover:opacity-80 transition-opacity"
                 onClick={openModal}
               >

@@ -88,6 +88,9 @@
     "button": "Access resume",
     "illustration_alt": "Decorative developer illustration"
   },
+  "SkillGroup": {
+    "show_more": "Show {count} more skills"
+  },
   "ExperienceCard": {
     "skills_label": "Skills",
     "see_more": "See more",
