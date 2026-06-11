@@ -2,6 +2,9 @@
   "ContactForm": {
     "title": "Contact us",
     "submit": "Send",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "messageLabel": "Message",
     "namePlaceholder": "Your name",
     "emailPlaceholder": "Your e-mail",
     "messagePlaceholder": "Your message here...",
@@ -84,6 +87,9 @@
     "description": "Access my resume to discover exclusive details about my projects, achievements and technical skills.",
     "button": "Access resume",
     "illustration_alt": "Decorative developer illustration"
+  },
+  "SkillGroup": {
+    "show_more": "Show {count} more skills"
   },
   "ExperienceCard": {
     "skills_label": "Skills",

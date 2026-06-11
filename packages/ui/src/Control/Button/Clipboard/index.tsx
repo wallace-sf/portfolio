@@ -10,8 +10,10 @@ import { ButtonBase, IButtonBaseProps } from '../Base';
 
 export type ClipboardChildrenFn = (copied: boolean) => ReactNode;
 
-export interface IButtonClipboardProps
-  extends Omit<IButtonBaseProps, 'children' | 'onClick' | 'data-tooltip-id'> {
+export interface IButtonClipboardProps extends Omit<
+  IButtonBaseProps,
+  'children' | 'onClick' | 'data-tooltip-id'
+> {
   text: string;
   tooltip: string;
   children: ClipboardChildrenFn | ReactNode;

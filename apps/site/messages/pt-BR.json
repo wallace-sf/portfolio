@@ -2,6 +2,9 @@
   "ContactForm": {
     "title": "Entre em contato",
     "submit": "Enviar",
+    "nameLabel": "Nome",
+    "emailLabel": "E-mail",
+    "messageLabel": "Mensagem",
     "namePlaceholder": "Seu nome",
     "emailPlaceholder": "Seu e-mail",
     "messagePlaceholder": "Sua mensagem aqui...",
@@ -84,6 +87,9 @@
     "description": "Acesse meu currículo para descobrir detalhes exclusivos sobre meus projetos, conquistas e habilidades técnicas.",
     "button": "Acessar currículo",
     "illustration_alt": "Ilustração decorativa de desenvolvedor"
+  },
+  "SkillGroup": {
+    "show_more": "Mostrar mais {count} habilidades"
   },
   "ExperienceCard": {
     "skills_label": "Habilidades",

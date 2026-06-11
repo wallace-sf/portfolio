@@ -3,8 +3,10 @@ import { FC, useCallback } from 'react';
 import { ButtonBase, IButtonBaseProps } from '../Base';
 import { useToggleGroup } from '../ToggleGroup';
 
-export interface IToggleProps
-  extends Omit<IButtonBaseProps, 'onClick' | 'value'> {
+export interface IToggleProps extends Omit<
+  IButtonBaseProps,
+  'onClick' | 'value'
+> {
   value: string;
 }
 

@@ -3,7 +3,7 @@
 import { FC, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Text, TextArea } from '@repo/ui/Control';
+import { Button, Label, Text, TextArea } from '@repo/ui/Control';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
@@ -50,6 +50,7 @@ export const ContactForm: FC = () => {
 
       <div className="flex flex-col gap-y-6">
         <div className="flex flex-col gap-y-1">
+          <Label htmlFor="name">{tForm('nameLabel')}</Label>
           <Text.Base
             type="text"
             id="name"
@@ -68,6 +69,7 @@ export const ContactForm: FC = () => {
         </div>
 
         <div className="flex flex-col gap-y-1">
+          <Label htmlFor="email">{tForm('emailLabel')}</Label>
           <Text.Base
             type="email"
             id="email"
@@ -86,6 +88,7 @@ export const ContactForm: FC = () => {
         </div>
 
         <div className="flex flex-col gap-y-1">
+          <Label htmlFor="message">{tForm('messageLabel')}</Label>
           <TextArea.Base
             id="message"
             maxLength={2000}

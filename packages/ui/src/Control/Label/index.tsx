@@ -4,8 +4,10 @@ import { FC, LabelHTMLAttributes } from 'react';
 
 import classNames from 'classnames';
 
-export interface ILabelProps
-  extends Omit<LabelHTMLAttributes<HTMLLabelElement>, 'id'> {}
+export interface ILabelProps extends Omit<
+  LabelHTMLAttributes<HTMLLabelElement>,
+  'id'
+> {}
 
 export const Label: FC<ILabelProps> = ({
   children,

@@ -11,8 +11,7 @@ import classNames from 'classnames';
 import { IFieldProps } from '~types';
 
 export interface ITextAreaProps
-  extends TextareaHTMLAttributes<HTMLTextAreaElement>,
-    IFieldProps {}
+  extends TextareaHTMLAttributes<HTMLTextAreaElement>, IFieldProps {}
 
 const Component: ForwardRefRenderFunction<
   HTMLTextAreaElement | null,

@@ -8,9 +8,8 @@ import { Id } from '@repo/core/shared';
 import { InfrastructureError } from '../../errors/InfrastructureError';
 import { ProfessionalValueMapper } from './ProfessionalValueMapper';
 
-export class PrismaProfessionalValueRepository
-  implements IProfessionalValueRepository
-{
+// eslint-disable-next-line max-len
+export class PrismaProfessionalValueRepository implements IProfessionalValueRepository {
   constructor(private readonly db: PrismaClient) {}
 
   async findAll(): Promise<ProfessionalValue[]> {

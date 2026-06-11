@@ -7,8 +7,7 @@ import classNames from 'classnames';
 type Size = 'large' | 'small';
 type Appearance = 'filled' | 'outline' | 'ghost';
 
-export interface IButtonBaseProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IButtonBaseProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
   appearance?: Appearance;
   unstyled?: boolean;

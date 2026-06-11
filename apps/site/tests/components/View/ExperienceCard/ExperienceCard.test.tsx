@@ -188,7 +188,7 @@ describe('ExperienceCard', () => {
       icon: '',
     }));
     render(<ExperienceCard {...defaultProps} skills={fiveSkills} />);
-    expect(screen.getByRole('button', { name: '+3' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'show_more' })).toBeInTheDocument();
   });
 
   it('should not show +N badge when skills are 2 or fewer', () => {
@@ -204,7 +204,7 @@ describe('ExperienceCard', () => {
       icon: '',
     }));
     render(<ExperienceCard {...defaultProps} skills={fiveSkills} />);
-    fireEvent.click(screen.getByRole('button', { name: '+3' }));
+    fireEvent.click(screen.getByRole('button', { name: 'show_more' }));
     expect(screen.getByTestId('technologies-modal')).toBeInTheDocument();
   });
 
