@@ -6045,8 +6045,9 @@
         "testStrategy": "- Grep for Portuguese strings ('Tecnologias', 'Visão', 'Ver detalhes') in TechnologiesModal\n- Manual test: open TechnologiesModal in all three languages and verify all text renders correctly\n- Test both compact and detailed view toggles in all locales",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-12T01:26:01.427Z"
       },
       {
         "id": "5",
@@ -6167,9 +6168,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-06-10T21:27:39.506Z",
+      "lastModified": "2026-06-12T01:26:01.427Z",
       "taskCount": 14,
-      "completedCount": 5,
+      "completedCount": 6,
       "tags": [
         "mvp-round-3"
       ]
