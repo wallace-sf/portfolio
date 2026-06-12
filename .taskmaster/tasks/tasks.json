@@ -6045,9 +6045,8 @@
         "testStrategy": "- Grep for Portuguese strings ('Tecnologias', 'Visão', 'Ver detalhes') in TechnologiesModal\n- Manual test: open TechnologiesModal in all three languages and verify all text renders correctly\n- Test both compact and detailed view toggles in all locales",
         "priority": "medium",
         "dependencies": [],
-        "status": "done",
-        "subtasks": [],
-        "updatedAt": "2026-06-12T01:26:01.427Z"
+        "status": "pending",
+        "subtasks": []
       },
       {
         "id": "5",
@@ -6115,8 +6114,9 @@
         "testStrategy": "- Tab through buttons with keyboard and verify visible focus ring appears\n- Click buttons with mouse and verify focus ring does NOT appear (focus-visible behavior)\n- Test in light and dark themes to ensure ring is visible in both\n- Test all three appearance variants (filled, outline, ghost)\n- Run axe DevTools to verify WCAG 2.1 SC 2.4.7 passes\n- Visual regression test for focus states",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-12T01:38:23.311Z"
       },
       {
         "id": "11",
@@ -6168,7 +6168,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-06-12T01:26:01.427Z",
+      "lastModified": "2026-06-12T01:38:23.311Z",
       "taskCount": 14,
       "completedCount": 6,
       "tags": [
