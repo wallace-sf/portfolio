@@ -32,7 +32,7 @@ vi.mock('@repo/ui/Control', () => {
         ...props,
         className: classNames(
           {
-            'text-body-sm !font-bold rounded-xl transition-all duration-300':
+            'text-body-sm !font-bold rounded-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary':
               !unstyled,
             'py-3 px-6': !unstyled && size === 'large',
             'py-2 px-6': !unstyled && size === 'small',
@@ -90,5 +90,17 @@ describe('Button.Base', () => {
   it('should forward extra props', () => {
     render(<Button.Base disabled>Disabled</Button.Base>);
     expect(screen.getByRole('button')).toBeDisabled();
+  });
+
+  it('should apply focus-visible ring classes for keyboard accessibility', () => {
+    render(<Button.Base>Focus me</Button.Base>);
+    const btn = screen.getByRole('button');
+    expect(btn).toHaveClass('focus-visible:ring-2');
+    expect(btn).toHaveClass('focus-visible:ring-brand-primary');
+  });
+
+  it('should not apply focus-visible ring when unstyled', () => {
+    render(<Button.Base unstyled>Raw</Button.Base>);
+    expect(screen.getByRole('button')).not.toHaveClass('focus-visible:ring-2');
   });
 });
