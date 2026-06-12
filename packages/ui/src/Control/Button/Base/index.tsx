@@ -27,7 +27,7 @@ export const ButtonBase: FC<IButtonBaseProps> = ({
       {...props}
       className={classNames(
         {
-          'text-body-sm !font-bold rounded-xl transition-all duration-300':
+          'text-body-sm !font-bold rounded-xl transition-all duration-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary':
             !unstyled,
           'py-3 px-6': !unstyled && size === 'large',
           'py-2 px-6': !unstyled && size === 'small',
