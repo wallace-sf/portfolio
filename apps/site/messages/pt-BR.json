@@ -101,6 +101,11 @@
     "loading": "Carregando",
     "close": "Fechar modal"
   },
+  "TechnologiesModal": {
+    "title": "Tecnologias utilizadas",
+    "compactView": "Visão compacta",
+    "viewDetails": "Ver detalhes"
+  },
   "Header": {
     "logo_alt": "Logo",
     "openMenu": "Abrir menu",

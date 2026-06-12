@@ -73,9 +73,7 @@ describe('TechnologiesModal', () => {
       />,
     );
 
-    expect(
-      screen.queryByText('Tecnologias utilizadas'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('title')).not.toBeInTheDocument();
   });
 
   it('should render title, company and position when open', () => {
@@ -89,7 +87,7 @@ describe('TechnologiesModal', () => {
       />,
     );
 
-    expect(screen.getByText('Tecnologias utilizadas')).toBeInTheDocument();
+    expect(screen.getByText('title')).toBeInTheDocument();
     expect(screen.getByText('Acme Corp')).toBeInTheDocument();
     expect(screen.getByText('Frontend Dev')).toBeInTheDocument();
   });
@@ -120,7 +118,7 @@ describe('TechnologiesModal', () => {
       />,
     );
 
-    expect(screen.queryByText('Ver detalhes')).not.toBeInTheDocument();
+    expect(screen.queryByText('viewDetails')).not.toBeInTheDocument();
   });
 
   it('should show toggle button when technologies have descriptions', () => {
@@ -134,7 +132,7 @@ describe('TechnologiesModal', () => {
       />,
     );
 
-    expect(screen.getByText('Ver detalhes')).toBeInTheDocument();
+    expect(screen.getByText('viewDetails')).toBeInTheDocument();
   });
 
   it('should switch to detailed state showing accordion items', () => {
@@ -148,9 +146,9 @@ describe('TechnologiesModal', () => {
       />,
     );
 
-    fireEvent.click(screen.getByText('Ver detalhes'));
+    fireEvent.click(screen.getByText('viewDetails'));
 
-    expect(screen.getByText('Visão compacta')).toBeInTheDocument();
+    expect(screen.getByText('compactView')).toBeInTheDocument();
   });
 
   it('should call onClose when close button is clicked', () => {

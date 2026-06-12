@@ -27,7 +27,8 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
   position,
   technologies,
 }) => {
-  const t = useTranslations('Common');
+  const tCommon = useTranslations('Common');
+  const t = useTranslations('TechnologiesModal');
   const hasDescriptions = technologies.some((tech) => tech.description);
   const [view, setView] = useState<'basic' | 'detailed'>('basic');
   const isDetailed = view === 'detailed';
@@ -36,8 +37,8 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
     <Modal
       open={open}
       onClose={onClose}
-      closeLabel={t('close')}
-      title="Tecnologias utilizadas"
+      closeLabel={tCommon('close')}
+      title={t('title')}
     >
       {(company || position || hasDescriptions) && (
         <div className="flex items-center gap-3 mb-6">
@@ -57,7 +58,7 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
               onClick={() => setView(isDetailed ? 'basic' : 'detailed')}
               className="ml-auto text-body-xs text-brand-primary hover:opacity-80 transition-opacity"
             >
-              {isDetailed ? 'Visão compacta' : 'Ver detalhes'}
+              {isDetailed ? t('compactView') : t('viewDetails')}
             </button>
           )}
         </div>
