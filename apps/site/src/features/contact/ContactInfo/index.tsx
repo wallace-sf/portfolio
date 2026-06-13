@@ -37,6 +37,7 @@ export const ContactInfo: FC = () => {
             <Button.Clipboard
               text={process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? ''}
               tooltip={tClip('copy')}
+              aria-label={tClip('copy')}
               unstyled
             >
               <Icon
@@ -64,6 +65,7 @@ export const ContactInfo: FC = () => {
             <Button.Clipboard
               text={process.env.NEXT_PUBLIC_CONTACT_NUMBER ?? ''}
               tooltip={tClip('copy')}
+              aria-label={tClip('copy')}
               unstyled
             >
               <Icon
