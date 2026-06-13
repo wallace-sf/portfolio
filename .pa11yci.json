@@ -1,6 +1,7 @@
 {
   "defaults": {
     "standard": "WCAG2AA",
+    "runners": ["axe"],
     "reporters": ["cli"],
     "timeout": 30000,
     "wait": 1000,
@@ -10,11 +11,23 @@
     "http://localhost:3000/en-US",
     "http://localhost:3000/en-US/about",
     "http://localhost:3000/en-US/projects",
+    "http://localhost:3000/en-US/projects/personal-portfolio",
+    "http://localhost:3000/en-US/projects/b2b-ecommerce-platform",
+    "http://localhost:3000/en-US/projects/game-intelligence-platform",
+    "http://localhost:3000/en-US/projects/react-mqtt-websocket",
     "http://localhost:3000/pt-BR",
     "http://localhost:3000/pt-BR/about",
     "http://localhost:3000/pt-BR/projects",
+    "http://localhost:3000/pt-BR/projects/personal-portfolio",
+    "http://localhost:3000/pt-BR/projects/b2b-ecommerce-platform",
+    "http://localhost:3000/pt-BR/projects/game-intelligence-platform",
+    "http://localhost:3000/pt-BR/projects/react-mqtt-websocket",
     "http://localhost:3000/es",
     "http://localhost:3000/es/about",
-    "http://localhost:3000/es/projects"
+    "http://localhost:3000/es/projects",
+    "http://localhost:3000/es/projects/personal-portfolio",
+    "http://localhost:3000/es/projects/b2b-ecommerce-platform",
+    "http://localhost:3000/es/projects/game-intelligence-platform",
+    "http://localhost:3000/es/projects/react-mqtt-websocket"
   ]
 }

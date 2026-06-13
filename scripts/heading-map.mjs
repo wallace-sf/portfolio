@@ -18,16 +18,29 @@ const { JSDOM } = require('jsdom');
 
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
 
+const SLUGS = [
+  'personal-portfolio',
+  'b2b-ecommerce-platform',
+  'game-intelligence-platform',
+  'react-mqtt-websocket',
+];
+
+const LOCALES = ['en-US', 'pt-BR', 'es'];
+const STATIC_PATHS = ['', '/about', '/projects'];
+
 const PAGES = [
-  { label: 'Home (en-US)',       path: '/en-US' },
-  { label: 'About (en-US)',      path: '/en-US/about' },
-  { label: 'Projects (en-US)',   path: '/en-US/projects' },
-  { label: 'Home (pt-BR)',       path: '/pt-BR' },
-  { label: 'About (pt-BR)',      path: '/pt-BR/about' },
-  { label: 'Projects (pt-BR)',   path: '/pt-BR/projects' },
-  { label: 'Home (es)',          path: '/es' },
-  { label: 'About (es)',         path: '/es/about' },
-  { label: 'Projects (es)',      path: '/es/projects' },
+  ...LOCALES.flatMap((locale) =>
+    STATIC_PATHS.map((path) => ({
+      label: `${path || '/'} (${locale})`,
+      path: `/${locale}${path}`,
+    })),
+  ),
+  ...LOCALES.flatMap((locale) =>
+    SLUGS.map((slug) => ({
+      label: `/projects/${slug} (${locale})`,
+      path: `/${locale}/projects/${slug}`,
+    })),
+  ),
 ];
 
 const INDENT = { h1: 0, h2: 1, h3: 2, h4: 3, h5: 4, h6: 5 };
