@@ -6001,7 +6001,7 @@
   "mvp-round-3": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Centralize DEFAULT_LOCALE constant and replace all hardcoded 'en-US' strings",
         "description": "Export DEFAULT_LOCALE from i18n/routing.ts and replace all hardcoded 'en-US' fallbacks across 7+ files",
         "details": "1. Export DEFAULT_LOCALE constant from apps/site/src/i18n/routing.ts\n2. Import DEFAULT_LOCALE in affected files:\n   - apps/site/src/app/[locale]/page.tsx (lines 21, 44)\n   - apps/site/src/app/[locale]/about/page.tsx (lines 23, 49)\n   - apps/site/src/app/[locale]/projects/page.tsx (lines 21, 39)\n   - apps/site/src/components/Layout/SideNavigation/LanguageSelector.tsx:21\n   - apps/site/src/components/Layout/SideNavigation/MenuItem/Item1/index.tsx:22\n   - apps/site/src/app/feed.xml/route.ts:23\n   - apps/site/src/app/sitemap.ts:30\n3. Replace all `?? 'en-US'` fallbacks and hardcoded `'en-US'` arguments with `DEFAULT_LOCALE`\n4. Verify no 'en-US' string literals remain outside routing.ts config declaration using grep",
@@ -6013,7 +6013,7 @@
         "updatedAt": "2026-06-10T15:18:36.736Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Add i18n translation keys for page metadata and remove locale.startsWith() calls",
         "description": "Replace locale.startsWith() string comparisons with i18n translation keys for SEO metadata in About and Projects pages",
         "details": "1. Add 'Metadata' namespace to all three locale message files (en-US.json, pt-BR.json, es.json) with keys:\n   - AboutPage: { title: '...', description: '...' }\n   - ProjectsPage: { title: '...', description: '...' }\n2. Update apps/site/src/app/[locale]/about/page.tsx:\n   - Import getTranslations from next-intl/server\n   - Call getTranslations('Metadata') in generateMetadata()\n   - Replace locale.startsWith('pt')/locale.startsWith('es') with t('AboutPage.title') and t('AboutPage.description')\n3. Update apps/site/src/app/[locale]/projects/page.tsx:\n   - Same approach for ProjectsPage metadata\n4. Verify no locale.startsWith() calls remain in page files for UI copy",
@@ -6027,7 +6027,7 @@
         "updatedAt": "2026-06-13T01:15:41.528Z"
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Add INVALID_MESSAGE error code to ERROR_MESSAGE.ts",
         "description": "Fix missing INVALID_MESSAGE error code in ERROR_MESSAGE mapping used by SendContactMessage use case",
         "details": "1. Add INVALID_MESSAGE entry to packages/core/src/shared/i18n/ERROR_MESSAGE.ts for all three locales:\n   - 'en-US': { message: 'Message must not be empty.' }\n   - 'pt-BR': { message: 'A mensagem não pode estar vazia.' }\n   - 'es': { message: 'El mensaje no puede estar vacío.' }\n2. Follow the existing pattern for INVALID_NAME and INVALID_EMAIL\n3. Ensure the message is clear and consistent with existing error messages\n4. Verify the error code matches what SendContactMessage.ts returns (line 41)",
@@ -6039,7 +6039,7 @@
         "updatedAt": "2026-06-10T21:27:30.487Z"
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Extract hardcoded Portuguese strings from TechnologiesModal to i18n",
         "description": "Move three hardcoded Portuguese UI strings in TechnologiesModal to translation keys",
         "details": "1. Add translation keys to all three locale message files under 'TechnologiesModal' namespace:\n   - title: 'Technologies used' (EN), 'Tecnologias utilizadas' (PT), 'Tecnologías utilizadas' (ES)\n   - compactView: 'Compact view' (EN), 'Visão compacta' (PT), 'Vista compacta' (ES)\n   - viewDetails: 'View details' (EN), 'Ver detalhes' (PT), 'Ver detalles' (ES)\n2. Update apps/site/src/features/about/TechnologiesModal/index.tsx:\n   - Import useTranslations from next-intl\n   - Call useTranslations('TechnologiesModal')\n   - Replace line 35: title={t('title')}\n   - Replace line 54: {isDetailed ? t('compactView') : t('viewDetails')}\n3. Verify no Portuguese string literals remain in component",
@@ -6051,7 +6051,7 @@
         "updatedAt": "2026-06-13T01:18:05.730Z"
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Add closeLabel prop to Modal component and remove hardcoded Portuguese aria-label",
         "description": "Make Modal close button accessible by accepting translated closeLabel prop instead of hardcoded Portuguese string",
         "details": "1. Update packages/ui/src/Control/Modal/index.tsx:\n   - Add closeLabel prop to IModalProps interface (required string)\n   - Replace hardcoded aria-label='Fechar modal' on line 99 with aria-label={closeLabel}\n2. Update all Modal call sites to pass translated closeLabel:\n   - TechnologiesModal: pass closeLabel={t('close')} or similar\n   - Any other Modal usages in the codebase\n3. Add 'close' translation key to all locale message files if not already present\n4. Verify no Portuguese literals remain in @repo/ui components using grep",
@@ -6063,7 +6063,7 @@
         "updatedAt": "2026-06-10T21:27:33.328Z"
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Add translated aria-label to ShareButton icon-only button",
         "description": "Add accessible aria-label to ShareButton to satisfy WCAG 2.1 SC 4.1.2 (icon-only button requirement)",
         "details": "1. Update apps/site/src/features/shared/ShareButton/index.tsx:\n   - Add aria-label={t('share_button_label')} to Button.Clipboard on line 21\n   - Consider updating aria-label or using aria-live when copied state changes\n2. Add translation key 'share_button_label' to ProjectCard namespace in all three locale files:\n   - 'en-US': 'Share project link'\n   - 'pt-BR': 'Compartilhar link do projeto'\n   - 'es': 'Compartir enlace del proyecto'\n3. Optional: add aria-live='polite' region to announce 'Link copied' state change",
@@ -6075,7 +6075,7 @@
         "updatedAt": "2026-06-10T21:27:36.473Z"
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "Add accessible aria-label to mobile menu toggle in Header",
         "description": "Add aria-label or aria-expanded + aria-controls to Header mobile menu toggle button for screen reader users",
         "details": "1. Read apps/site/src/components/Layout/Header/index.tsx to identify toggle button\n2. Add aria-label that reflects current state (e.g., 'Open menu' / 'Close menu')\n3. Alternatively, use aria-expanded={isOpen} and aria-controls='menu-id' pattern\n4. Add translation keys to SideNavigation namespace:\n   - openMenu: 'Open menu' (EN), 'Abrir menu' (PT), 'Abrir menú' (ES)\n   - closeMenu: 'Close menu' (EN), 'Fechar menu' (PT), 'Cerrar menú' (ES)\n5. Update aria-label dynamically based on menu open/close state",
@@ -6087,7 +6087,7 @@
         "updatedAt": "2026-06-13T00:32:33.909Z"
       },
       {
-        "id": "8",
+        "id": 8,
         "title": "Add accessible aria-label to +N skills overflow button in SkillGroup",
         "description": "Add descriptive aria-label to SkillGroup overflow button that shows additional skills",
         "details": "1. Read apps/site/src/features/shared/SkillGroup/index.tsx to locate overflow button ('+N' button)\n2. Add aria-label={t('show_all_skills', { count: remainingCount })} to button\n3. Add translation key to appropriate namespace (likely 'SkillGroup' or similar):\n   - 'en-US': 'Show all {count} skills'\n   - 'pt-BR': 'Mostrar todas as {count} habilidades'\n   - 'es': 'Mostrar todas las {count} habilidades'\n4. Use next-intl's interpolation feature for count parameter",
@@ -6099,7 +6099,7 @@
         "updatedAt": "2026-06-13T01:20:37.784Z"
       },
       {
-        "id": "9",
+        "id": 9,
         "title": "Add visible labels to ContactForm input fields",
         "description": "Add visible <label> elements to all ContactForm fields to satisfy WCAG 2.1 SC 1.3.1 (no placeholder-only forms)",
         "details": "1. Update apps/site/src/features/contact/ContactForm/index.tsx:\n   - Add <label htmlFor='name'>{t('nameLabel')}</label> before name input (currently line 53)\n   - Add <label htmlFor='email'>{t('emailLabel')}</label> before email input (line 71)\n   - Add <label htmlFor='message'>{t('messageLabel')}</label> before message textarea (line 89)\n2. Add required indicator (e.g., asterisk or '(required)' text) to labels\n3. Add translation keys to ContactForm namespace:\n   - nameLabel, emailLabel, messageLabel, required indicator\n4. Preserve existing aria-invalid and aria-describedby behavior\n5. Style labels consistently with design system (consider Text component or custom CSS)",
@@ -6111,7 +6111,7 @@
         "updatedAt": "2026-06-13T00:35:23.556Z"
       },
       {
-        "id": "10",
+        "id": 10,
         "title": "Add visible focus indicators to Button.Base component",
         "description": "Add focus-visible ring styles to all Button.Base appearance variants to satisfy WCAG 2.1 SC 2.4.7",
         "details": "1. Update packages/ui/src/Control/Button/Base/index.tsx:\n   - Add focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary to base styles (line 31)\n   - Ensure focus styles work for all three appearance variants (filled, outline, ghost)\n   - Use focus-visible (not focus) to avoid showing ring on mouse click\n   - Verify focus ring is visible in both light and dark themes\n2. Test ring color contrast meets WCAG 2.1 AA requirements (3:1 minimum)\n3. Consider using focus-visible:outline-offset if ring-offset doesn't work as expected",
@@ -6123,7 +6123,7 @@
         "updatedAt": "2026-06-12T01:38:23.311Z"
       },
       {
-        "id": "11",
+        "id": 11,
         "title": "Add visible focus indicators to Text.Base and TextArea.Base inputs",
         "description": "Replace focus:outline-none with visible focus-visible ring in Text and TextArea components",
         "details": "1. Update packages/ui/src/Control/Text/Base/index.tsx:\n   - Replace focus:outline-none on line 42 with focus-visible:ring-2 focus-visible:ring-brand-primary\n   - Ensure error and success states preserve the focus ring (don't override it)\n2. Update packages/ui/src/Control/TextArea/Base/index.tsx:\n   - Apply same focus-visible ring styles\n   - Ensure consistency between Text and TextArea focus styles\n3. Verify focus ring is visible in both light and dark themes\n4. Test that error borders and focus rings work together (both visible simultaneously)",
@@ -6135,7 +6135,7 @@
         "updatedAt": "2026-06-13T00:41:15.385Z"
       },
       {
-        "id": "12",
+        "id": 12,
         "title": "Add visible focus indicator to Radio component",
         "description": "Replace focus:outline-none focus:ring-offset-0 with visible focus-visible ring in Radio input",
         "details": "1. Update packages/ui/src/Control/Radio/index.tsx:\n   - Replace focus:outline-none focus:ring-offset-0 on line 55 with focus-visible:ring-2 focus-visible:ring-brand-primary\n   - Ensure disabled state continues to suppress focus ring (peer-disabled styles)\n   - Test focus ring visibility against different backgrounds (Radio can appear in various contexts)\n2. Verify focus ring is visible in both light and dark themes",
@@ -6147,7 +6147,7 @@
         "updatedAt": "2026-06-13T01:24:54.144Z"
       },
       {
-        "id": "13",
+        "id": 13,
         "title": "Fix heading hierarchy in HomeProjectsSection (h4 → h3)",
         "description": "Correct skipped heading level in HomeProjectsSection to maintain proper document outline for screen readers",
         "details": "1. Update apps/site/src/features/home/ProjectsSection/HomeProjectsSection.tsx:\n   - Change <h4> on line 19 to <h3> (or <h2> if this is the first section heading after page h1)\n   - Verify full heading hierarchy on home page: check HeroBanner heading level and ensure no skipped levels\n2. Replace hardcoded text-[32px] with Tailwind scale value (e.g., text-3xl or text-4xl)\n3. Document the heading hierarchy for the home page in comments or architectural docs",
@@ -6159,7 +6159,7 @@
         "updatedAt": "2026-06-13T01:34:23.665Z"
       },
       {
-        "id": "14",
+        "id": 14,
         "title": "Add scroll lock to Modal component when open",
         "description": "Implement body scroll lock in Modal component to prevent background scrolling on mobile",
         "details": "1. Update packages/ui/src/Control/Modal/index.tsx:\n   - Add useEffect hook that sets document.body.style.overflow = 'hidden' when open is true\n   - Restore scroll (document.body.style.overflow = '') on close and on unmount\n   - Handle cleanup properly to avoid leaving body in locked state if component unmounts while open\n2. Update apps/site/src/features/about/ExperienceCard (or similar):\n   - Remove manual scroll-lock calls once Modal handles it natively\n3. Test edge cases: rapid open/close, multiple modals, modal unmount while open",
@@ -6180,7 +6180,64 @@
       "completedCount": 14,
       "tags": [
         "mvp-round-3"
-      ]
+      ],
+      "created": "2026-06-13T01:59:36.046Z",
+      "description": "Tasks for mvp-round-3 context"
+    }
+  },
+  "a11y-audit": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Add aria-label to clipboard buttons in ContactInfo component",
+        "description": "Fix accessibility violation by adding aria-label attribute to the two Button.Clipboard instances in the ContactInfo component footer. Pa11y reports these buttons lack accessible names because they contain only SVG icons without text labels.",
+        "details": "**Current Issue:**\nPa11y accessibility audits report 18 violations across 9 pages (3 locales × 3 pages each): 2 clipboard buttons per page lack accessible names. The buttons are in `apps/site/src/features/contact/ContactInfo/index.tsx` at lines 37-46 (email copy button) and lines 64-73 (WhatsApp number copy button).\n\n**Root Cause:**\nThe `Button.Clipboard` component (`packages/ui/src/Control/Button/Clipboard/index.tsx`) renders a `ButtonBase` that accepts standard button HTML attributes via props spreading (line 54: `{...props}`). However, the ContactInfo component only passes `text`, `tooltip`, `unstyled`, and `children` props — no `aria-label` is provided. Since the children are Icon components with no visible text, screen readers cannot announce button purpose.\n\n**Solution:**\nAdd `aria-label={tClip('copy')}` prop to both `Button.Clipboard` instances:\n\n1. **Email clipboard button** (lines 37-46):\n```tsx\n<Button.Clipboard\n  text={process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? ''}\n  tooltip={tClip('copy')}\n  aria-label={tClip('copy')}  // Add this line\n  unstyled\n>\n  <Icon\n    icon=\"material-symbols:content-copy\"\n    className=\"text-content-secondary text-2xl\"\n  />\n</Button.Clipboard>\n```\n\n2. **WhatsApp clipboard button** (lines 64-73):\n```tsx\n<Button.Clipboard\n  text={process.env.NEXT_PUBLIC_CONTACT_NUMBER ?? ''}\n  tooltip={tClip('copy')}\n  aria-label={tClip('copy')}  // Add this line\n  unstyled\n>\n  <Icon\n    icon=\"material-symbols:content-copy\"\n    className=\"text-content-secondary text-2xl\"\n  />\n</Button.Clipboard>\n```\n\n**Translation Reference:**\nThe `Clipboard` namespace already contains the `copy` key in all three locales:\n- `apps/site/messages/en-US.json` line 22: `\"copy\": \"Copy to clipboard\"`\n- `apps/site/messages/pt-BR.json`: `\"copy\": \"Copiar para área de transferência\"`\n- `apps/site/messages/es.json`: `\"copy\": \"Copiar al portapapeles\"`\n\nThe component already imports the translation hook: `const tClip = useTranslations('Clipboard');` (line 15).\n\n**Why this works:**\n- `IButtonClipboardProps` extends `Omit<IButtonBaseProps, ...>` which includes all native button HTML attributes\n- `ButtonBase` spreads `{...props}` onto the underlying `<button>` element (line 27 in Base/index.tsx)\n- Adding `aria-label` will flow through the props chain: ContactInfo → Clipboard → ButtonBase → native button element\n- Screen readers will announce \"Copy to clipboard\" (or localized equivalent) when focusing these buttons\n\n**Files to modify:**\n- `apps/site/src/features/contact/ContactInfo/index.tsx` (2 changes, lines 37-46 and 64-73)",
+        "testStrategy": "**Automated Testing:**\n1. Run Pa11y accessibility audit: `pnpm run pa11y` (or equivalent script if configured)\n2. Verify 0 violations for \"button has no accessible name\" across all 9 URLs in `.pa11yci.json`\n3. Expected result: 18 violations (2 per page × 9 pages) should be eliminated\n\n**Manual Testing (all 3 locales):**\n1. Start dev server: `pnpm dev` in `apps/site`\n2. Navigate to pages with ContactInfo footer:\n   - `http://localhost:3000/en-US` (Home)\n   - `http://localhost:3000/en-US/about`\n   - `http://localhost:3000/en-US/projects`\n   - Repeat for `/pt-BR` and `/es` locales\n\n**Screen Reader Testing:**\n1. Enable screen reader (macOS VoiceOver: Cmd+F5, Windows NVDA/JAWS, or browser DevTools accessibility tree)\n2. Navigate to contact footer section on any page\n3. Tab to first clipboard button (next to email address)\n4. **Expected:** Screen reader announces \"Copy to clipboard\" (English) / \"Copiar para área de transferência\" (Portuguese) / \"Copiar al portapapeles\" (Spanish)\n5. Tab to second clipboard button (next to WhatsApp number)\n6. **Expected:** Same announcement as step 4\n7. Verify visual tooltip still appears on hover (unchanged behavior)\n8. Verify click action still copies text to clipboard (unchanged behavior)\n\n**Browser DevTools Verification:**\n1. Open browser DevTools → Accessibility panel\n2. Inspect each clipboard button element\n3. Verify \"Computed Properties\" section shows:\n   - `Name: \"Copy to clipboard\"` (or localized text)\n   - `Role: button`\n4. Check \"Accessibility Tree\" shows button with visible name\n\n**Regression Check:**\n1. Verify no other buttons in the app are affected (clipboard functionality is isolated to ContactInfo)\n2. Test tooltip behavior remains unchanged (should still show on hover)\n3. Verify copy-to-clipboard functionality works for both email and phone number\n\n**Acceptance Criteria:**\n✅ Pa11y reports 0 \"button has no accessible name\" violations\n✅ Screen readers announce button purpose in all 3 languages\n✅ Buttons remain visually unchanged\n✅ Tooltip and clipboard copy functionality unchanged",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Add aria-label to footer social media links in ContactInfo component",
+        "description": "Fix accessibility violation by adding aria-label attributes to the 4 social media anchor links (WhatsApp, LinkedIn, GitHub, RSS feed) in the ContactInfo footer navigation. Pa11y reports these links lack accessible names because they contain only icon elements without detectable text content.",
+        "details": "**Current Issue:**\nPa11y accessibility audits report 36 violations across 9 pages (3 locales × 3 pages each): 4 anchor links per page lack accessible names. The links are in `apps/site/src/features/contact/ContactInfo/index.tsx` at lines 84-106, rendered via `MenuItem.Item2.ShortLink` components.\n\n**Root Cause:**\nThe `MenuItem.Item2.ShortLink` component (`apps/site/src/components/Layout/SideNavigation/MenuItem/Item2/ShortLink/index.tsx`) renders a `NextLink` (lines 21-30) that wraps only an Icon component inside a Container div. While the icon has visual meaning, screen readers cannot derive an accessible name from the icon alone. The component does not expose or use an `aria-label` prop.\n\n**Affected Links (lines 84-106 in ContactInfo/index.tsx):**\n1. WhatsApp link (line 84-88) - uses `logos:whatsapp-icon`\n2. LinkedIn link (line 89-93) - uses `devicon:linkedin`\n3. GitHub link (line 94-99) - uses `mdi:github`\n4. RSS Feed link (line 100-105) - uses `mdi:rss`\n\n**Existing i18n Keys (apps/site/messages/en-US.json, lines 44-46):**\nThe `SideNavigation` namespace already defines the required accessible labels:\n- `linkedin`: \"LinkedIn\"\n- `github`: \"GitHub\"\n- `rss`: \"RSS Feed\"\n\nHowever, there is **no `whatsapp` key** in the `SideNavigation` namespace currently. You will need to add it to all 3 locale files.\n\n**Implementation Steps:**\n\n1. **Update ShortLink component interface** (`apps/site/src/components/Layout/SideNavigation/MenuItem/Item2/ShortLink/index.tsx`):\n   - Add optional `ariaLabel?: string` to `IGhostLinkProps` interface (check the interface definition file, likely in `../../types`)\n   - Pass `aria-label={ariaLabel}` to the `NextLink` component at line 21\n\n2. **Add missing i18n key** for WhatsApp in all locale files:\n   - `apps/site/messages/en-US.json` - Add `\"whatsapp\": \"WhatsApp\"` to `SideNavigation` namespace\n   - `apps/site/messages/pt-BR.json` - Add `\"whatsapp\": \"WhatsApp\"` to `SideNavigation` namespace\n   - `apps/site/messages/es.json` - Add `\"whatsapp\": \"WhatsApp\"` to `SideNavigation` namespace\n\n3. **Update ContactInfo component** (`apps/site/src/features/contact/ContactInfo/index.tsx`):\n   - Add `const tNav = useTranslations('SideNavigation');` at line 15 (after existing `useTranslations` calls)\n   - Add `ariaLabel={tNav('whatsapp')}` to WhatsApp ShortLink (line 84-88)\n   - Add `ariaLabel={tNav('linkedin')}` to LinkedIn ShortLink (line 89-93)\n   - Add `ariaLabel={tNav('github')}` to GitHub ShortLink (line 94-99)\n   - Add `ariaLabel={tNav('rss')}` to RSS Feed ShortLink (line 100-105)\n\n**Code Example for ShortLink Update:**\n```tsx\n// In IGhostLinkProps interface\nexport interface IGhostLinkProps {\n  href: string;\n  icon: string;\n  className?: string;\n  iconClassName?: string;\n  newTab?: boolean;\n  ariaLabel?: string; // NEW\n}\n\n// In ShortLink component\nexport const ShortLink: FC<IGhostLinkProps> = ({\n  href,\n  icon,\n  className,\n  iconClassName,\n  newTab,\n  ariaLabel, // NEW\n}) => {\n  return (\n    <NextLink\n      href={href}\n      className={classNames(ROOT_STYLE, className)}\n      target={newTab ? '_blank' : '_self'}\n      rel={newTab ? 'noopener noreferrer' : undefined}\n      aria-label={ariaLabel} // NEW\n    >\n      {/* ... */}\n    </NextLink>\n  );\n};\n```\n\n**Code Example for ContactInfo Update:**\n```tsx\nconst tNav = useTranslations('SideNavigation'); // NEW at line 15\n\n// Update nav section (lines 83-106)\n<nav className=\"flex gap-x-3\">\n  <MenuItem.Item2.ShortLink\n    href={whatsappUrl}\n    icon=\"logos:whatsapp-icon\"\n    newTab\n    ariaLabel={tNav('whatsapp')}\n  />\n  <MenuItem.Item2.ShortLink\n    href={process.env.NEXT_PUBLIC_LINKEDIN_URL}\n    icon=\"devicon:linkedin\"\n    newTab\n    ariaLabel={tNav('linkedin')}\n  />\n  <MenuItem.Item2.ShortLink\n    href={process.env.NEXT_PUBLIC_GITHUB_URL}\n    icon=\"mdi:github\"\n    iconClassName=\"text-white\"\n    newTab\n    ariaLabel={tNav('github')}\n  />\n  <MenuItem.Item2.ShortLink\n    href=\"/feed.xml\"\n    icon=\"mdi:rss\"\n    iconClassName=\"text-white\"\n    newTab\n    ariaLabel={tNav('rss')}\n  />\n</nav>\n```\n\n**Files to Modify:**\n1. `apps/site/src/components/Layout/SideNavigation/MenuItem/types.ts` (or wherever `IGhostLinkProps` is defined)\n2. `apps/site/src/components/Layout/SideNavigation/MenuItem/Item2/ShortLink/index.tsx`\n3. `apps/site/messages/en-US.json`\n4. `apps/site/messages/pt-BR.json`\n5. `apps/site/messages/es.json`\n6. `apps/site/src/features/contact/ContactInfo/index.tsx`",
+        "testStrategy": "**Automated Testing:**\n1. Run Pa11y accessibility audit: `pnpm run pa11y` (or the configured accessibility test script)\n2. Verify 0 violations for \"anchor has no accessible name\" or similar across all 9 URLs in `.pa11yci.json` (3 locales × 3 pages)\n3. Expected result: 36 violations (4 per page × 9 pages) should be eliminated\n\n**Manual Testing with Screen Reader:**\n1. Start local development server: `pnpm dev` (or equivalent)\n2. Open each test URL from `.pa11yci.json` in a browser with screen reader enabled (NVDA on Windows, VoiceOver on macOS, or JAWS)\n3. Navigate to the ContactInfo footer section on each page\n4. Tab through the 4 social media links and verify the screen reader announces:\n   - \"WhatsApp\" (or localized equivalent)\n   - \"LinkedIn\" (or localized equivalent)\n   - \"GitHub\" (or localized equivalent)\n   - \"RSS Feed\" (or localized equivalent)\n5. Test all 3 locales (en-US, pt-BR, es) to ensure i18n keys are correctly applied\n\n**Browser DevTools Inspection:**\n1. Open browser DevTools → Elements/Inspector\n2. Locate the 4 `<a>` elements in the ContactInfo footer nav\n3. Verify each anchor has an `aria-label` attribute with the correct translated text:\n   - WhatsApp link: `aria-label=\"WhatsApp\"` (en-US)\n   - LinkedIn link: `aria-label=\"LinkedIn\"` (en-US)\n   - GitHub link: `aria-label=\"GitHub\"` (en-US)\n   - RSS Feed link: `aria-label=\"RSS Feed\"` (en-US)\n4. Repeat for pt-BR and es locales to verify translations are loaded\n\n**Regression Testing:**\n1. Verify all 4 links still navigate correctly (WhatsApp opens chat, LinkedIn/GitHub open profiles, RSS opens feed)\n2. Verify icons still render correctly with no visual regressions\n3. Verify `newTab` behavior still works (opens in new tab with `rel=\"noopener noreferrer\"`)\n4. Run existing unit/integration tests for the ContactInfo component (if any exist)\n\n**Accessibility Audit Checklist:**\n- [ ] Pa11y reports 0 violations for missing anchor accessible names\n- [ ] Screen reader announces meaningful labels for all 4 links\n- [ ] All 3 locale versions (en-US, pt-BR, es) pass accessibility tests\n- [ ] No new accessibility violations introduced\n- [ ] Links still function correctly (navigation, new tab behavior)",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Remove role='presentation' from Radio component label element",
+        "description": "Fix WCAG accessibility violation by removing the role='presentation' attribute from the label element in the Radio component (packages/ui/src/Control/Radio/index.tsx:46). The role suppresses label semantics while wrapping semantic children (input, span), but the htmlFor attribute already provides correct label association.",
+        "details": "**Current Issue:**\nPa11y accessibility audits report violations across all 9 pages (3 locales × 3 pages each) in `.pa11yci.json`. The `<label role='presentation'>` at line 46 in `packages/ui/src/Control/Radio/index.tsx` wraps semantic children (input at line 49-55, span at line 61-63), violating WCAG principles. The `role='presentation'` suppresses the label's implicit semantics, but the native `<input type=\"radio\">` still requires proper label association.\n\n**Root Cause:**\nThe Radio component (lines 36-64) correctly uses `htmlFor={props.id}` (line 40) to associate the label with the input, making `role='presentation'` both unnecessary and harmful. The role attribute conflicts with the semantic structure where:\n- The label contains a functional radio input (lines 49-55)\n- The label contains text content via a span (lines 61-63)\n- The label already provides correct association via htmlFor\n\n**Affected Components:**\n1. **ThemeToggle** (`apps/site/src/components/Layout/SideNavigation/ThemeToggle.tsx`):\n   - Lines 33-47: Renders 3 Radio instances per page (light, dark, system themes)\n   - Used in expandable menu item (lines 52-68)\n   - Generates 3 violations × 9 pages = 27 violations\n\n2. **LanguageSelector** (`apps/site/src/components/Layout/SideNavigation/LanguageSelector.tsx`):\n   - Lines 34-47: Renders 3 Radio instances per page (en-US, pt-BR, es locales)\n   - Used in expandable menu item (lines 52-68)\n   - Generates 3 violations × 9 pages = 27 violations\n\n**Total Impact:** 54 violations (6-7 per page as reported, across all 9 URLs)\n\n**Implementation:**\n1. Open `packages/ui/src/Control/Radio/index.tsx`\n2. Locate line 46: `role=\"presentation\"`\n3. Remove the entire `role=\"presentation\"` attribute from the label element\n4. Keep all other label attributes intact:\n   - `{...labelProps}` spread (line 38)\n   - `id={`${props.id ?? ''}-label`}` (line 39)\n   - `htmlFor={props.id}` (line 40)\n   - `className` (lines 41-44)\n   - `onClick={onClick}` (line 45)\n\n**Before (lines 37-47):**\n```tsx\n<label\n  {...labelProps}\n  id={`${props.id ?? ''}-label`}\n  htmlFor={props.id}\n  className={classNames(\n    'flex items-center gap-x-2 cursor-pointer',\n    labelProps?.className,\n  )}\n  onClick={onClick}\n  role=\"presentation\"\n>\n```\n\n**After:**\n```tsx\n<label\n  {...labelProps}\n  id={`${props.id ?? ''}-label`}\n  htmlFor={props.id}\n  className={classNames(\n    'flex items-center gap-x-2 cursor-pointer',\n    labelProps?.className,\n  )}\n  onClick={onClick}\n>\n```\n\n**Testing Scope:**\nSince Radio is a shared UI component in the `packages/ui` package, verify no other components depend on the `role='presentation'` behavior. Based on codebase analysis, only ThemeToggle and LanguageSelector use Radio components, and both will benefit from the fix.",
+        "testStrategy": "**Automated Testing:**\n\n1. **Pa11y Accessibility Audit:**\n   - Ensure the dev server is running: `pnpm dev` (port 3000)\n   - Run Pa11y CI against all 9 URLs in `.pa11yci.json`: `pa11y-ci` (or equivalent script if configured)\n   - **Expected result:** 0 violations related to \"label with role='presentation' contains semantic children\" or similar WCAG errors\n   - **Impact:** Should eliminate 54 total violations (6-7 per page × 9 pages)\n\n2. **Component Unit Tests:**\n   - Run existing Radio component tests (if any): `pnpm --filter @repo/ui test`\n   - Run ThemeToggle tests: `pnpm --filter site test ThemeToggle.test.tsx`\n   - Run LanguageSelector tests (if exist): `pnpm --filter site test LanguageSelector.test.tsx`\n   - **Expected result:** All tests pass; no behavioral regressions\n\n3. **Build Verification:**\n   - Run type check: `pnpm types`\n   - Run linter: `pnpm lint:check`\n   - Build all packages: `pnpm build`\n   - **Expected result:** No TypeScript errors, no lint errors, successful build\n\n**Manual Testing:**\n\n1. **Visual & Functional Testing:**\n   - Navigate to all 9 URLs in `.pa11yci.json` in a browser\n   - For each page, test both ThemeToggle and LanguageSelector:\n     a. Click on each radio option (3 themes, 3 languages)\n     b. Verify radio selection state updates correctly\n     c. Verify theme changes apply (for ThemeToggle)\n     d. Verify locale changes navigate correctly (for LanguageSelector)\n   - **Expected result:** No visual or functional changes; radios work identically\n\n2. **Keyboard Navigation:**\n   - Use Tab to navigate to ThemeToggle and LanguageSelector\n   - Use Arrow keys to navigate between radio options\n   - Use Space/Enter to select options\n   - **Expected result:** Full keyboard accessibility maintained\n\n3. **Screen Reader Testing (Recommended):**\n   - Test with NVDA (Windows) or VoiceOver (macOS)\n   - Navigate to radio groups in ThemeToggle and LanguageSelector\n   - Verify screen reader announces:\n     - \"Radio button, [option name], [checked/not checked]\"\n     - Proper grouping (\"Theme\" and \"Language\" group labels)\n   - **Expected result:** Improved semantic announcements without role='presentation' interference\n\n**Regression Safety:**\n- The `htmlFor={props.id}` association (line 40) already provides correct label-input binding\n- Removing `role='presentation'` restores native HTML semantics without changing visual layout or behavior\n- No CSS or JavaScript logic depends on the role attribute",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Add h1 to home page HeroSection",
+        "description": "Fix WCAG accessibility best practice violation by changing the home page HeroSection to render an h1 instead of h2 as the primary heading. Update titleAs prop from 'h2' to 'h1' in apps/site/src/features/home/HeroSection/index.tsx:26.",
+        "details": "**Current Issue:**\nThe heading map audit script (`scripts/heading-map.mjs`) reveals that the home page (all 3 locales: `/en-US`, `/pt-BR`, `/es`) has no h1 element. The `HeroSection` component in `apps/site/src/features/home/HeroSection/index.tsx` currently passes `titleAs=\"h2\"` to the `HeroBanner` component at line 26, making the caption (profile headline or fallback text) render as an h2 instead of h1.\n\n**WCAG Best Practice:**\nWCAG recommends that every page should have exactly one h1 element to establish the primary topic and support screen reader navigation. While not a strict violation, lacking an h1 creates a suboptimal experience for assistive technology users.\n\n**Comparison with Other Pages:**\n- About page (`apps/site/src/features/about/HeroSection/index.tsx:25`): correctly uses `titleAs=\"h1\"`\n- Projects page (`apps/site/src/features/projects/HeroSection/index.tsx`): defaults to h1 (HeroBanner's default is h2, but it should be explicitly set to h1)\n\n**Implementation:**\nThe `HeroBanner` component (`apps/site/src/features/shared/HeroBanner/index.tsx`) already supports the `titleAs` prop (line 15) with a union type of `'h1' | 'h2'` and uses it as the heading tag via the `TitleTag` variable (line 28). The fix requires only a single-line prop change.\n\n**File to modify:**\n`apps/site/src/features/home/HeroSection/index.tsx`\n\n**Change required:**\nLine 26: Change `titleAs=\"h2\"` to `titleAs=\"h1\"`\n\n**Before:**\n```tsx\n<HeroBanner\n  src={profile?.photo.url ?? HeroLandingPage}\n  title={profile?.name ?? t('hero_title')}\n  caption={profile?.headline ?? t('hero_caption')}\n  content={profile?.bio ?? t('hero_content')}\n  alt={profile?.photo.alt ?? t('hero_image_alt')}\n  titleSize=\"lg\"\n  titleAs=\"h2\"  // ← current\n  textColumnClassName=\"xl:w-1/2\"\n  imageClassName=\"object-contain 2xl:object-cover\"\n/>\n```\n\n**After:**\n```tsx\n<HeroBanner\n  src={profile?.photo.url ?? HeroLandingPage}\n  title={profile?.name ?? t('hero_title')}\n  caption={profile?.headline ?? t('hero_caption')}\n  content={profile?.bio ?? t('hero_content')}\n  alt={profile?.photo.alt ?? t('hero_image_alt')}\n  titleSize=\"lg\"\n  titleAs=\"h1\"  // ← fixed\n  textColumnClassName=\"xl:w-1/2\"\n  imageClassName=\"object-contain 2xl:object-cover\"\n/>\n```\n\n**Note on Projects page:**\nWhile reviewing, verify if the Projects page HeroSection also needs an explicit `titleAs=\"h1\"` prop (currently relies on HeroBanner's default of h2, which should be h1 for WCAG best practice). This task focuses solely on the home page as specified.",
+        "testStrategy": "**Automated Testing:**\n\n1. **Heading Map Audit:**\n   - Ensure the dev server is running: `pnpm dev` (defaults to port 3000)\n   - Run the heading map script: `node scripts/heading-map.mjs`\n   - **Expected result for home pages:**\n     - `/en-US`, `/pt-BR`, `/es` should each show `<h1>` as the first/primary heading\n     - The h1 should contain the profile headline or the fallback `hero_caption` translation\n     - ✅ icon should appear if heading hierarchy is correct (h1 → h2 → h3, no skipped levels)\n\n2. **Pa11y Accessibility Audit:**\n   - Run Pa11y CI: `pa11y-ci` (or `pnpm run pa11y` if configured)\n   - **Expected result:** No new violations introduced; home pages should maintain WCAG2AA compliance\n\n**Manual Testing:**\n\n1. **Visual Inspection:**\n   - Navigate to `http://localhost:3000/en-US`, `/pt-BR`, and `/es`\n   - Verify the main hero caption text (e.g., profile headline) is still visually prominent\n   - Confirm no visual regression (font size, spacing, or layout should remain identical)\n\n2. **Screen Reader Testing:**\n   - Open the home page with a screen reader (NVDA, JAWS, or VoiceOver)\n   - Navigate by headings (H key in NVDA/JAWS, VO+Command+H in VoiceOver)\n   - **Expected result:** The hero caption should be announced as \"Heading level 1\" and should be the first heading encountered\n\n3. **Browser DevTools Inspection:**\n   - Right-click the hero caption text and select \"Inspect\"\n   - Verify the DOM shows `<h1 class=\"...\">` wrapping the caption text (not `<h2>`)\n\n**Regression Check:**\n- Run the full test suite: `pnpm test` (if unit/integration tests exist)\n- Verify no component tests broke due to the semantic change from h2 to h1\n\n**Cross-page Consistency Check (optional):**\n- Optionally verify the Projects page also uses h1 (may need a separate task if currently missing)",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-06-13T01:59:36.051Z",
+      "updated": "2026-06-13T02:05:01.041Z",
+      "description": "Accessibility audit findings from pa11y-ci and heading map — WCAG 2.1 AA violations across all pages"
     }
   }
 }
