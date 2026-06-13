@@ -6154,8 +6154,9 @@
         "testStrategy": "- Use browser DevTools or HeadingsMap extension to verify heading hierarchy on home page\n- Verify no heading levels are skipped (e.g., h1 → h2 → h3, NOT h1 → h2 → h4)\n- Test with screen reader's heading navigation (H key in NVDA/JAWS)\n- Run axe DevTools to verify WCAG 2.1 SC 1.3.1 passes (heading hierarchy)\n- Visual regression test to ensure text size change doesn't break layout",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-13T01:34:23.665Z"
       },
       {
         "id": "14",
@@ -6174,9 +6175,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-06-13T01:24:54.144Z",
+      "lastModified": "2026-06-13T01:34:23.666Z",
       "taskCount": 14,
-      "completedCount": 13,
+      "completedCount": 14,
       "tags": [
         "mvp-round-3"
       ]
