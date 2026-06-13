@@ -1,0 +1,20 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "reporters": ["cli"],
+    "timeout": 30000,
+    "wait": 1000,
+    "ignore": []
+  },
+  "urls": [
+    "http://localhost:3000/en-US",
+    "http://localhost:3000/en-US/about",
+    "http://localhost:3000/en-US/projects",
+    "http://localhost:3000/pt-BR",
+    "http://localhost:3000/pt-BR/about",
+    "http://localhost:3000/pt-BR/projects",
+    "http://localhost:3000/es",
+    "http://localhost:3000/es/about",
+    "http://localhost:3000/es/projects"
+  ]
+}
