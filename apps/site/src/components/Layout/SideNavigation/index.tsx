@@ -33,53 +33,71 @@ export const SideNavigation: FC = () => {
         )}
       >
         <ul className="flex flex-col gap-y-3 px-6 pt-10 xl:pt-15 xl:px-0">
-          <MenuItem.Item1 href="/" icon="material-symbols:home">
-            {t('home')}
-          </MenuItem.Item1>
-          <MenuItem.Item1
-            href="/projects"
-            icon="material-symbols:deployed-code"
-          >
-            {t('projects')}
-          </MenuItem.Item1>
-          <MenuItem.Item1 href="/about" icon="material-symbols:person">
-            {t('about')}
-          </MenuItem.Item1>
-          <MenuItem.Item1
-            href={process.env.NEXT_PUBLIC_RESUME_URL}
-            icon="material-symbols:description"
-            newTab
-          >
-            {t('resume')}
-          </MenuItem.Item1>
+          <li>
+            <MenuItem.Item1 href="/" icon="material-symbols:home">
+              {t('home')}
+            </MenuItem.Item1>
+          </li>
+          <li>
+            <MenuItem.Item1
+              href="/projects"
+              icon="material-symbols:deployed-code"
+            >
+              {t('projects')}
+            </MenuItem.Item1>
+          </li>
+          <li>
+            <MenuItem.Item1 href="/about" icon="material-symbols:person">
+              {t('about')}
+            </MenuItem.Item1>
+          </li>
+          <li>
+            <MenuItem.Item1
+              href={process.env.NEXT_PUBLIC_RESUME_URL}
+              icon="material-symbols:description"
+              newTab
+            >
+              {t('resume')}
+            </MenuItem.Item1>
+          </li>
         </ul>
         <Divider className="mx-6 xl:mx-0" />
         <ul className="flex flex-col gap-y-3 px-6 pb-8 xl:px-0 xl:justify-end">
-          <MenuItem.Item2.Link
-            href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
-            icon="devicon:linkedin"
-            newTab
-          >
-            {t('linkedin')}
-          </MenuItem.Item2.Link>
-          <MenuItem.Item2.Link
-            href={process.env.NEXT_PUBLIC_GITHUB_URL}
-            icon="mdi:github"
-            iconClassName="text-white"
-            newTab
-          >
-            {t('github')}
-          </MenuItem.Item2.Link>
-          <MenuItem.Item2.Link
-            href="/feed.xml"
-            icon="mdi:rss"
-            iconClassName="text-white"
-            newTab
-          >
-            {t('rss')}
-          </MenuItem.Item2.Link>
-          <ThemeToggle />
-          <LanguageSelector />
+          <li>
+            <MenuItem.Item2.Link
+              href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
+              icon="devicon:linkedin"
+              newTab
+            >
+              {t('linkedin')}
+            </MenuItem.Item2.Link>
+          </li>
+          <li>
+            <MenuItem.Item2.Link
+              href={process.env.NEXT_PUBLIC_GITHUB_URL}
+              icon="mdi:github"
+              iconClassName="text-white"
+              newTab
+            >
+              {t('github')}
+            </MenuItem.Item2.Link>
+          </li>
+          <li>
+            <MenuItem.Item2.Link
+              href="/feed.xml"
+              icon="mdi:rss"
+              iconClassName="text-white"
+              newTab
+            >
+              {t('rss')}
+            </MenuItem.Item2.Link>
+          </li>
+          <li>
+            <ThemeToggle />
+          </li>
+          <li>
+            <LanguageSelector />
+          </li>
         </ul>
       </nav>
     </section>
