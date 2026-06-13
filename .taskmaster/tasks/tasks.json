@@ -6142,8 +6142,9 @@
         "testStrategy": "- Tab through radio buttons with keyboard and verify visible focus ring\n- Test disabled radio buttons have no focus ring\n- Test in contexts where Radio is used (theme selector, language selector, etc.)\n- Verify focus ring is visible in light and dark themes\n- Run axe DevTools to verify WCAG 2.1 SC 2.4.7 passes",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-06-13T01:24:54.144Z"
       },
       {
         "id": "13",
@@ -6173,9 +6174,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-06-13T01:20:37.784Z",
+      "lastModified": "2026-06-13T01:24:54.144Z",
       "taskCount": 14,
-      "completedCount": 12,
+      "completedCount": 13,
       "tags": [
         "mvp-round-3"
       ]
