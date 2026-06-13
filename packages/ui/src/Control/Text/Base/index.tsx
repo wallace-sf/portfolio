@@ -39,7 +39,7 @@ const Component: ForwardRefRenderFunction<
         type={isIn(type, ['text', 'email', 'password']) ? type : 'text'}
         className={classNames(
           {
-            'h-11 px-2 py-3 rounded-xl border border-content-disabled bg-transparent w-full text-sm text-content-primary placeholder:text-content-secondary focus:outline-none focus:border-content-secondary disabled:opacity-50 disabled:cursor-default':
+            'h-11 px-2 py-3 rounded-xl border border-content-disabled bg-transparent w-full text-sm text-content-primary placeholder:text-content-secondary focus:border-content-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary disabled:opacity-50 disabled:cursor-default':
               !unstyled,
             '!border-error': hasError,
             '!border-success': hasSuccess,
