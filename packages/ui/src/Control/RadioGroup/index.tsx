@@ -21,15 +21,16 @@ export const RadioGroup: FC<RadioGroupProps> = ({
 
   return createElement(
     containerElementType,
-    {
-      className,
-      ...(!isFieldset && {
-        role: 'radiogroup',
-        'aria-label': typeof legend === 'string' ? legend : undefined,
-      }),
-    },
+    { className },
     isFieldset
-      ? [createElement('legend', { key: 'legend' }, legend), content]
+      ? [
+          createElement(
+            'legend',
+            { key: 'legend', className: 'sr-only' },
+            legend,
+          ),
+          content,
+        ]
       : content,
   );
 };
