@@ -8,6 +8,7 @@ export type RadioGroupChildrenFn = (props: {
 
 export interface RadioGroupProps {
   containerElementType?: keyof ReactHTML;
+  legend: string | ReactNode;
   children: RadioGroupChildrenFn | null;
   name: string;
   value: string;

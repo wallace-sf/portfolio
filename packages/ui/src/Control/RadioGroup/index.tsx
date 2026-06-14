@@ -8,16 +8,29 @@ export const RadioGroup: FC<RadioGroupProps> = ({
   className,
   name,
   value,
-  containerElementType = 'div',
+  containerElementType = 'fieldset',
+  legend,
   onChange,
   children,
 }) => {
-  return createElement(
-    containerElementType,
-    { className },
+  const isFieldset = containerElementType === 'fieldset';
+  const content =
     children instanceof Function
       ? children({ name, value, onChange })
-      : children,
+      : children;
+
+  return createElement(
+    containerElementType,
+    {
+      className,
+      ...(!isFieldset && {
+        role: 'radiogroup',
+        'aria-label': typeof legend === 'string' ? legend : undefined,
+      }),
+    },
+    isFieldset
+      ? [createElement('legend', { key: 'legend' }, legend), content]
+      : content,
   );
 };
 
