@@ -86,23 +86,27 @@ export const ContactInfo: FC = () => {
         <MenuItem.Item2.ShortLink
           href={whatsappUrl}
           icon="logos:whatsapp-icon"
+          aria-label={t('whatsapp')}
           newTab
         />
         <MenuItem.Item2.ShortLink
           href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
           icon="devicon:linkedin"
+          aria-label={t('linkedin')}
           newTab
         />
         <MenuItem.Item2.ShortLink
           href={process.env.NEXT_PUBLIC_GITHUB_URL}
           icon="mdi:github"
           iconClassName="text-white"
+          aria-label={t('github')}
           newTab
         />
         <MenuItem.Item2.ShortLink
           href="/feed.xml"
           icon="mdi:rss"
           iconClassName="text-white"
+          aria-label={t('rss')}
           newTab
         />
       </nav>
