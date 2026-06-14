@@ -8,17 +8,27 @@ export const RadioGroup: FC<RadioGroupProps> = ({
   className,
   name,
   value,
-  containerElementType = 'div',
+  containerElementType = 'fieldset',
+  legend,
   onChange,
   children,
 }) => {
-  return createElement(
-    containerElementType,
-    { className },
+  const isFieldset = containerElementType === 'fieldset';
+  const content =
     children instanceof Function
       ? children({ name, value, onChange })
-      : children,
-  );
+      : children;
+
+  if (isFieldset) {
+    return createElement(
+      containerElementType,
+      { className },
+      createElement('legend', { className: 'sr-only' }, legend),
+      content,
+    );
+  }
+
+  return createElement(containerElementType, { className }, content);
 };
 
 export type {

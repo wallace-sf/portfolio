@@ -35,6 +35,7 @@ vi.mock('@repo/ui/Control', () => ({
     name,
     value,
     onChange,
+    legend,
   }: {
     children: (args: {
       name: string;
@@ -44,9 +45,15 @@ vi.mock('@repo/ui/Control', () => ({
     name: string;
     value: string;
     onChange: React.ChangeEventHandler<HTMLInputElement>;
+    legend: string | React.ReactNode;
     containerElementType?: string;
     className?: string;
-  }) => <ul>{children({ name, value, onChange })}</ul>,
+  }) => (
+    <fieldset>
+      <legend className="sr-only">{legend}</legend>
+      {children({ name, value, onChange })}
+    </fieldset>
+  ),
   Radio: ({
     children,
     option,

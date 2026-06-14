@@ -12,4 +12,5 @@ export interface IMenuItemProps {
 export interface IGhostLinkProps extends IMenuItemProps {
   href: string;
   newTab?: boolean;
+  'aria-label'?: string;
 }

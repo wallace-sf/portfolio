@@ -16,7 +16,11 @@
     "email": "Correo electrónico",
     "paragraph1": "¿No te gusta llenar formularios? ¡No hay problema!",
     "paragraph2": "No dudes en enviarme un mensaje por WhatsApp o enviarme un correo electrónico.",
-    "whatsappMessage": "¡Hola, Wallace! Vi tu portafolio y me gustaría agendar una reunión para hablar sobre un proyecto."
+    "whatsappMessage": "¡Hola, Wallace! Vi tu portafolio y me gustaría agendar una reunión para hablar sobre un proyecto.",
+    "whatsapp": "WhatsApp",
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "rss": "Canal RSS"
   },
   "Clipboard": {
     "copy": "Copiar al portapapeles"
@@ -100,6 +104,11 @@
   "Common": {
     "loading": "Cargando",
     "close": "Cerrar modal"
+  },
+  "TechnologiesModal": {
+    "title": "Tecnologías utilizadas",
+    "compactView": "Vista compacta",
+    "viewDetails": "Ver detalles"
   },
   "Header": {
     "logo_alt": "Logo",

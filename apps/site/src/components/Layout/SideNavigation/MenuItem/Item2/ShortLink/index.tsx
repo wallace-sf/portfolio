@@ -16,10 +16,12 @@ export const ShortLink: FC<IGhostLinkProps> = ({
   className,
   iconClassName,
   newTab,
+  'aria-label': ariaLabel,
 }) => {
   return (
     <NextLink
       href={href}
+      aria-label={ariaLabel}
       className={classNames(ROOT_STYLE, className)}
       target={newTab ? '_blank' : '_self'}
       rel={newTab ? 'noopener noreferrer' : undefined}
