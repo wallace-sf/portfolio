@@ -43,7 +43,6 @@ export const Radio: FC<IRadioProps> = ({
         labelProps?.className,
       )}
       onClick={onClick}
-      role="presentation"
     >
       <div className="grid place-items-center">
         <input
