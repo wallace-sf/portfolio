@@ -29,8 +29,6 @@ const Component: ForwardRefRenderFunction<
 ) => {
   return (
     <textarea
-      aria-disabled={props.disabled}
-      aria-placeholder={props.placeholder}
       {...props}
       ref={ref}
       onChange={props.disabled ? undefined : props.onChange}
