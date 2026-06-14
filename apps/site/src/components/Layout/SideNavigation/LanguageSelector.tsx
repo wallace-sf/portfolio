@@ -31,20 +31,24 @@ export const LanguageSelector: FC = () => {
 
   const renderLanguages = useCallback<RadioGroupChildrenFn>(
     ({ name, value, onChange }) => {
-      return LANGUAGES_OPTIONS.map(({ labelKey, icon, option }) => (
-        <li key={option} className="flex flex-row gap-x-3">
-          <Radio
-            id={option}
-            name={name}
-            value={value}
-            onChange={onChange}
-            option={option}
-            icon={icon}
-          >
-            {tLang(labelKey)}
-          </Radio>
-        </li>
-      ));
+      return (
+        <ul className="flex flex-col gap-y-2">
+          {LANGUAGES_OPTIONS.map(({ labelKey, icon, option }) => (
+            <li key={option} className="flex flex-row gap-x-3">
+              <Radio
+                id={option}
+                name={name}
+                value={value}
+                onChange={onChange}
+                option={option}
+                icon={icon}
+              >
+                {tLang(labelKey)}
+              </Radio>
+            </li>
+          ))}
+        </ul>
+      );
     },
     [tLang],
   );
@@ -59,9 +63,7 @@ export const LanguageSelector: FC = () => {
         name="language"
         value={locale}
         onChange={onChangeLanguage}
-        containerElementType="ul"
         legend={t('language')}
-        className="flex flex-col gap-y-2"
       >
         {renderLanguages}
       </RadioGroup>

@@ -10,7 +10,7 @@ import {
 } from '@repo/ui/Control';
 import { useTranslations } from 'next-intl';
 
-import { Theme, useDarkMode, useTheme } from '~hooks';
+import { Theme, useTheme } from '~hooks';
 
 import { THEME_OPTIONS } from './constants';
 import { MenuItem } from './MenuItem';
@@ -19,7 +19,6 @@ export const ThemeToggle: FC = () => {
   const t = useTranslations('SideNavigation');
   const tTheme = useTranslations('Theme');
   const { theme, setTheme } = useTheme();
-  const isDarkMode = useDarkMode();
 
   const onChangeTheme = useCallback<RadioGroupProps['onChange']>(
     (event) => {
@@ -30,23 +29,27 @@ export const ThemeToggle: FC = () => {
 
   const renderThemes = useCallback<RadioGroupChildrenFn>(
     ({ name, value, onChange }) => {
-      return THEME_OPTIONS.map(({ option, icon }) => (
-        <li key={option} className="flex flex-row gap-x-3">
-          <Radio
-            id={option}
-            name={name}
-            value={value}
-            onChange={onChange}
-            option={option}
-            icon={icon}
-            iconClassName={isDarkMode ? 'text-white' : 'text-black'}
-          >
-            {tTheme(option)}
-          </Radio>
-        </li>
-      ));
+      return (
+        <ul className="flex flex-col gap-y-2">
+          {THEME_OPTIONS.map(({ option, icon }) => (
+            <li key={option} className="flex flex-row gap-x-3">
+              <Radio
+                id={option}
+                name={name}
+                value={value}
+                onChange={onChange}
+                option={option}
+                icon={icon}
+                iconClassName="text-black dark:text-white"
+              >
+                {tTheme(option)}
+              </Radio>
+            </li>
+          ))}
+        </ul>
+      );
     },
-    [isDarkMode, tTheme],
+    [tTheme],
   );
 
   return (
@@ -59,9 +62,7 @@ export const ThemeToggle: FC = () => {
         name="theme"
         value={theme}
         onChange={onChangeTheme}
-        containerElementType="ul"
         legend={t('theme')}
-        className="flex flex-col gap-y-2"
       >
         {renderThemes}
       </RadioGroup>

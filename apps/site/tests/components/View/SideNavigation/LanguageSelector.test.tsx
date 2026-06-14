@@ -48,7 +48,12 @@ vi.mock('@repo/ui/Control', () => ({
     legend: string | React.ReactNode;
     containerElementType?: string;
     className?: string;
-  }) => <ul aria-label={typeof legend === 'string' ? legend : undefined}>{children({ name, value, onChange })}</ul>,
+  }) => (
+    <fieldset>
+      <legend className="sr-only">{legend}</legend>
+      {children({ name, value, onChange })}
+    </fieldset>
+  ),
   Radio: ({
     children,
     option,
