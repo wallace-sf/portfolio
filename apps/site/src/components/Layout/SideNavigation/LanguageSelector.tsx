@@ -60,6 +60,7 @@ export const LanguageSelector: FC = () => {
         value={locale}
         onChange={onChangeLanguage}
         containerElementType="ul"
+        legend={t('language')}
         className="flex flex-col gap-y-2"
       >
         {renderLanguages}

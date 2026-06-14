@@ -60,6 +60,7 @@ export const ThemeToggle: FC = () => {
         value={theme}
         onChange={onChangeTheme}
         containerElementType="ul"
+        legend={t('theme')}
         className="flex flex-col gap-y-2"
       >
         {renderThemes}
