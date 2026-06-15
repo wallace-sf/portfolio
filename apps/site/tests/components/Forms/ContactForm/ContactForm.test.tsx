@@ -75,12 +75,16 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('ContactForm', () => {
-  it('should render a fieldset with a legend as the first child', () => {
+  it('should render title as h2 heading', () => {
     render(<ContactForm />);
-    const fieldset = screen.getByRole('group');
+    const heading = screen.getByRole('heading', { level: 2, name: 'ContactForm.title' });
+    expect(heading).toBeInTheDocument();
+  });
+
+  it('should render fieldset labeled by the h2 heading', () => {
+    render(<ContactForm />);
+    const fieldset = screen.getByRole('group', { name: 'ContactForm.title' });
     expect(fieldset).toBeInTheDocument();
-    expect(fieldset.firstElementChild?.tagName).toBe('LEGEND');
-    expect(fieldset.firstElementChild?.textContent).toBe('ContactForm.title');
   });
 
   it('should render name, email and message fields', () => {
