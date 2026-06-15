@@ -23,7 +23,7 @@ export async function HeroSection({ locale, profile }: HeroSectionProps) {
         content={profile?.bio ?? t('hero_content')}
         alt={profile?.photo.alt ?? t('hero_image_alt')}
         titleSize="lg"
-        titleAs="h2"
+        titleAs="h1"
         textColumnClassName="xl:w-1/2"
         imageClassName="object-contain 2xl:object-cover"
       />
