@@ -4,6 +4,12 @@ commit-msg:
     commitlint:
       run: npx commitlint --edit
 
+pre-push:
+  parallel: false
+  commands:
+    build:
+      run: CI=1 pnpm build
+
 pre-commit:
   parallel: false
   commands:
