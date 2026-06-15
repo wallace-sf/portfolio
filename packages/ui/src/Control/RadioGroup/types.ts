@@ -1,4 +1,4 @@
-import { type ReactHTML, type ReactNode } from 'react';
+import { type JSX, type ReactNode } from 'react';
 
 export type RadioGroupChildrenFn = (props: {
   name: RadioGroupProps['name'];
@@ -7,7 +7,7 @@ export type RadioGroupChildrenFn = (props: {
 }) => ReactNode;
 
 export interface RadioGroupProps {
-  containerElementType?: keyof ReactHTML;
+  containerElementType?: Extract<keyof JSX.IntrinsicElements, string>;
   legend: string | ReactNode;
   children: RadioGroupChildrenFn | null;
   name: string;

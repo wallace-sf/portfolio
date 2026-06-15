@@ -1,6 +1,14 @@
 'use client';
 
-import { FC, ReactNode, useCallback, useEffect, useId, useRef } from 'react';
+import {
+  FC,
+  ReactNode,
+  RefObject,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+} from 'react';
 
 import { Icon } from '@iconify/react';
 import { createPortal } from 'react-dom';
@@ -33,7 +41,7 @@ export const Modal: FC<IModalProps> = ({
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useScrollLock({ autoLock: open });
-  useOnClickOutside(containerRef, onClose);
+  useOnClickOutside(containerRef as RefObject<HTMLElement>, onClose);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
