@@ -37,7 +37,7 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
         className,
       )}
     >
-      <section className="relative h-64 flex flex-row justify-center xl:order-1 xl:h-full xl:w-1/2">
+      <div className="relative h-64 flex flex-row justify-center xl:order-1 xl:h-full xl:w-1/2">
         <Image
           src={src}
           alt={alt}
@@ -47,8 +47,8 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
           className={imageClassName}
           sizes="(max-width: 1280px) 100vw, 50vw"
         />
-      </section>
-      <section
+      </div>
+      <div
         className={classNames(
           'flex flex-col px-6 pb-6 xl:order-0 xl:py-20 xl:pl-20',
           textColumnClassName,
@@ -69,7 +69,7 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
         <p className="text-body-sm text-content-primary line-clamp-3">
           {content}
         </p>
-      </section>
+      </div>
     </section>
   );
 };
