@@ -47,7 +47,8 @@
     "theme": "Theme",
     "linkedin": "LinkedIn",
     "github": "GitHub",
-    "rss": "RSS Feed"
+    "rss": "RSS Feed",
+    "mainNav": "Main navigation"
   },
   "Theme": {
     "light": "Light",
