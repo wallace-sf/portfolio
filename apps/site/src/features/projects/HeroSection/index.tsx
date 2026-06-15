@@ -14,6 +14,7 @@ export async function HeroSection({ locale }: { locale: Locale }) {
       caption={t('hero_caption')}
       content={t('hero_content')}
       alt={t('hero_image_alt')}
+      titleAs="h1"
       imageClassName="object-contain p-6 xl:py-8"
     />
   );
