@@ -1,4 +1,3 @@
-/// <reference path="../global.d.ts" />
 export * from './Accordion';
 export * from './Button';
 export * from './Input';

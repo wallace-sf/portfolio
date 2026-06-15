@@ -25,7 +25,7 @@ export const Body: FC<IBodyProps> = ({ children, className }) => {
     <div
       id={panelId}
       ref={ref}
-      inert={!expanded ? '' : undefined}
+      inert={!expanded}
       style={style}
       className={classNames(
         'overflow-hidden transition-all duration-300 ease-in-out',

@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, ReactNode, useId, useMemo } from 'react';
+import { type JSX, FC, ReactNode, useId, useMemo } from 'react';
 
 import { useToggle } from 'usehooks-ts';
 
