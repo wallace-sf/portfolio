@@ -29,7 +29,7 @@ export const SideNavigation: FC = () => {
         id="side-navigation"
         aria-label={t('mainNav')}
         className={classNames(
-          'h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 bg-surface-sunken flex flex-col overflow-y-auto overscroll-y-contain border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
+          'absolute top-full xl:relative xl:top-auto h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 bg-surface-sunken flex flex-col overflow-y-auto overscroll-y-contain border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
           isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
