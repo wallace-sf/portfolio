@@ -50,6 +50,21 @@ describe('Accordion', () => {
     expect(id1).not.toBe(id2);
   });
 
+  it('should have inert on the panel when collapsed and remove it when expanded', async () => {
+    renderAccordion();
+
+    const button = screen.getByRole('button', { name: 'Toggle' });
+    const panel = document.getElementById(button.getAttribute('aria-controls')!)!;
+
+    expect(panel).toHaveAttribute('inert');
+
+    await userEvent.click(button);
+    expect(panel).not.toHaveAttribute('inert');
+
+    await userEvent.click(button);
+    expect(panel).toHaveAttribute('inert');
+  });
+
   it('should toggle aria-expanded when button is clicked', async () => {
     renderAccordion();
 
