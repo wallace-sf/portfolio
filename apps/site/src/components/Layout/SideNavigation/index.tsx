@@ -23,10 +23,11 @@ export const SideNavigation: FC = () => {
   useScrollLock({ autoLock: isOpen });
 
   return (
-    <section className="fixed top-0 left-0 shadow-1 w-full xl:w-auto z-50">
+    <div className="fixed top-0 left-0 shadow-1 w-full xl:w-auto z-50">
       <Header open={isOpen} toggle={toggle} />
       <nav
         id="side-navigation"
+        aria-label={t('mainNav')}
         className={classNames(
           'h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 bg-surface-sunken flex flex-col overflow-y-auto overscroll-y-contain border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -100,6 +101,6 @@ export const SideNavigation: FC = () => {
           </li>
         </ul>
       </nav>
-    </section>
+    </div>
   );
 };
