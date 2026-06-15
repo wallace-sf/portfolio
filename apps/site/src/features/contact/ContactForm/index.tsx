@@ -34,97 +34,109 @@ export const ContactForm: FC = () => {
   if (submitted) {
     return (
       <div className="w-full">
-        <p className="text-xl font-bold text-content-primary mb-6">
+        <h2 className="text-xl font-bold text-content-primary mb-6">
           {tForm('title')}
-        </p>
+        </h2>
         <p className="text-accent">{tForm('success')}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
-      <fieldset className="border-0 p-0 m-0 min-w-0">
-        <legend className="text-xl font-bold text-content-primary mb-6">
-          {tForm('title')}
-        </legend>
-
-        <div className="flex flex-col gap-y-6">
-          <div className="flex flex-col gap-y-1">
-            <Label htmlFor="name">{tForm('nameLabel')}</Label>
-            <Text.Base
-              type="text"
-              id="name"
-              placeholder={tForm('namePlaceholder')}
-              error={!!errors.name}
-              touched={!!touchedFields.name}
-              aria-invalid={!!errors.name}
-              aria-describedby={errors.name ? 'name-error' : undefined}
-              {...register('name')}
-            />
-            {errors.name && (
-              <span id="name-error" role="alert" className="text-error text-xs">
-                {tV(errors.name.message as Parameters<typeof tV>[0])}
-              </span>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-y-1">
-            <Label htmlFor="email">{tForm('emailLabel')}</Label>
-            <Text.Base
-              type="email"
-              id="email"
-              placeholder={tForm('emailPlaceholder')}
-              error={!!errors.email}
-              touched={!!touchedFields.email}
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? 'email-error' : undefined}
-              {...register('email')}
-            />
-            {errors.email && (
-              <span
-                id="email-error"
-                role="alert"
-                className="text-error text-xs"
-              >
-                {tV(errors.email.message as Parameters<typeof tV>[0])}
-              </span>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-y-1">
-            <Label htmlFor="message">{tForm('messageLabel')}</Label>
-            <TextArea.Base
-              id="message"
-              maxLength={2000}
-              className="h-[124px]"
-              placeholder={tForm('messagePlaceholder')}
-              error={!!errors.message}
-              touched={!!touchedFields.message}
-              aria-invalid={!!errors.message}
-              aria-describedby={errors.message ? 'message-error' : undefined}
-              {...register('message')}
-            />
-            {errors.message && (
-              <span
-                id="message-error"
-                role="alert"
-                className="text-error text-xs"
-              >
-                {tV(errors.message.message as Parameters<typeof tV>[0])}
-              </span>
-            )}
-          </div>
-        </div>
-      </fieldset>
-
-      <Button.Base
-        type="submit"
-        className="w-full xl:w-[216px] h-[46px] mt-6"
-        disabled={isSubmitting}
+    <>
+      <h2
+        id="contact-form-title"
+        className="text-xl font-bold text-content-primary mb-6"
       >
-        {tForm('submit')}
-      </Button.Base>
-    </form>
+        {tForm('title')}
+      </h2>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
+        <fieldset
+          aria-labelledby="contact-form-title"
+          className="border-0 p-0 m-0 min-w-0"
+        >
+          <div className="flex flex-col gap-y-6">
+            <div className="flex flex-col gap-y-1">
+              <Label htmlFor="name">{tForm('nameLabel')}</Label>
+              <Text.Base
+                type="text"
+                id="name"
+                placeholder={tForm('namePlaceholder')}
+                error={!!errors.name}
+                touched={!!touchedFields.name}
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'name-error' : undefined}
+                {...register('name')}
+              />
+              {errors.name && (
+                <span
+                  id="name-error"
+                  role="alert"
+                  className="text-error text-xs"
+                >
+                  {tV(errors.name.message as Parameters<typeof tV>[0])}
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-y-1">
+              <Label htmlFor="email">{tForm('emailLabel')}</Label>
+              <Text.Base
+                type="email"
+                id="email"
+                placeholder={tForm('emailPlaceholder')}
+                error={!!errors.email}
+                touched={!!touchedFields.email}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
+                {...register('email')}
+              />
+              {errors.email && (
+                <span
+                  id="email-error"
+                  role="alert"
+                  className="text-error text-xs"
+                >
+                  {tV(errors.email.message as Parameters<typeof tV>[0])}
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-y-1">
+              <Label htmlFor="message">{tForm('messageLabel')}</Label>
+              <TextArea.Base
+                id="message"
+                maxLength={2000}
+                className="h-[124px]"
+                placeholder={tForm('messagePlaceholder')}
+                error={!!errors.message}
+                touched={!!touchedFields.message}
+                aria-invalid={!!errors.message}
+                aria-describedby={errors.message ? 'message-error' : undefined}
+                {...register('message')}
+              />
+              {errors.message && (
+                <span
+                  id="message-error"
+                  role="alert"
+                  className="text-error text-xs"
+                >
+                  {tV(errors.message.message as Parameters<typeof tV>[0])}
+                </span>
+              )}
+            </div>
+          </div>
+        </fieldset>
+
+        <Button.Base
+          type="submit"
+          className="w-full xl:w-[216px] h-[46px] mt-6"
+          disabled={isSubmitting}
+        >
+          {tForm('submit')}
+        </Button.Base>
+      </form>
+    </>
   );
 };
