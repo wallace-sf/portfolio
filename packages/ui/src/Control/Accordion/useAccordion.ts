@@ -11,10 +11,11 @@ export const useAccordion = () => {
 
   invariant(context, 'useAccordion must be used within an AccordionProvider.');
 
-  const { expanded, toggle } = context;
+  const { expanded, toggle, panelId } = context;
 
   return {
     expanded,
+    panelId,
     toggle: useCallback(() => {
       if (toggle != null) toggle();
     }, [toggle]),
