@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, ReactNode, useMemo } from 'react';
+import { FC, ReactNode, useId, useMemo } from 'react';
 
 import { useToggle } from 'usehooks-ts';
 
@@ -14,8 +14,12 @@ export interface IAccordionRootProps {
 
 export const Root: FC<IAccordionRootProps> = ({ children }) => {
   const [expanded, toggle] = useToggle(false);
+  const panelId = useId();
 
-  const value = useMemo(() => ({ expanded, toggle }), [expanded, toggle]);
+  const value = useMemo(
+    () => ({ expanded, toggle, panelId }),
+    [expanded, toggle, panelId],
+  );
 
   return (
     <AccordionProvider value={value}>
