@@ -16,7 +16,7 @@ export const ContactInfo: FC = () => {
   const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_NUMBER}?text=${encodeURIComponent(t('whatsappMessage'))}`;
 
   return (
-    <section className="flex flex-col gap-y-6 xl:w-[326px]">
+    <section className="flex flex-col gap-y-6 lg:w-[326px]">
       <h2 className="text-2xl font-bold text-content-primary">{t('title')}</h2>
 
       <address className="flex flex-col gap-y-6 not-italic">
