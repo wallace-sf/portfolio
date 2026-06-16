@@ -24,7 +24,7 @@ export async function HeroSection({ locale, profile }: HeroSectionProps) {
         alt={profile?.photo.alt ?? t('hero_image_alt')}
         titleSize="lg"
         titleAs="h1"
-        textColumnClassName="xl:w-1/2"
+        textColumnClassName="lg:w-1/2"
         imageClassName="object-contain 2xl:object-cover"
       />
       {profile?.stats && profile.stats.length > 0 && (
