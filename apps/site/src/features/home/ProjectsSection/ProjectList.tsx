@@ -46,7 +46,8 @@ export const ProjectList: FC<IProjectListProps> = ({
   return (
     <ul
       className={classNames(
-        'grid gap-4 md:grid-cols-2 xl:grid-cols-1 xl:gap-6 mx-4 xl:mx-auto max-w-237.5',
+        'grid grid-cols-1 gap-4 lg:gap-6 mx-4 lg:mx-auto max-w-237.5',
+        compact && 'lg:grid-cols-2',
         className,
       )}
     >
