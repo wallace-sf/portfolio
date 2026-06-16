@@ -131,7 +131,7 @@ export const ContactForm: FC = () => {
 
         <Button.Base
           type="submit"
-          className="w-full xl:w-[216px] h-[46px] mt-6"
+          className="w-full lg:w-[216px] h-[46px] mt-6"
           disabled={isSubmitting}
         >
           {tForm('submit')}
