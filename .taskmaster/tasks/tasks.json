@@ -5925,7 +5925,7 @@
         ],
         "priority": "high",
         "subtasks": [],
-        "updatedAt": "2026-06-03T20:29:18.284Z"
+        "updatedAt": "2026-06-16T03:25:33.626Z"
       },
       {
         "id": "3",
@@ -5939,7 +5939,7 @@
         ],
         "priority": "high",
         "subtasks": [],
-        "updatedAt": "2026-06-04T00:03:01.806Z"
+        "updatedAt": "2026-06-16T03:37:56.375Z"
       },
       {
         "id": "4",
@@ -5953,7 +5953,7 @@
         ],
         "priority": "high",
         "subtasks": [],
-        "updatedAt": "2026-06-04T00:14:28.093Z"
+        "updatedAt": "2026-06-16T04:04:24.723Z"
       },
       {
         "id": "5",
@@ -5967,7 +5967,7 @@
         ],
         "priority": "high",
         "subtasks": [],
-        "updatedAt": "2026-06-04T00:29:26.893Z"
+        "updatedAt": "2026-06-16T04:29:47.995Z"
       },
       {
         "id": "6",
@@ -5987,7 +5987,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-06-13T03:25:51.032Z",
+      "lastModified": "2026-06-16T04:29:47.995Z",
       "taskCount": 6,
       "completedCount": 6,
       "tags": [
@@ -6386,6 +6386,143 @@
       "tags": [
         "a11y-audit"
       ]
+    }
+  },
+  "responsive": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Fix AppLayout, Header, and SideNavigation breakpoint from xl to lg",
+        "description": "Update the main layout components to use lg (1024px) breakpoint instead of xl (1280px) for the desktop layout transition",
+        "details": "Files to modify:\n- apps/site/src/components/Layout/AppLayout/index.tsx (line 13)\n- apps/site/src/components/Layout/Header/index.tsx (line 23)\n- apps/site/src/components/Layout/SideNavigation/index.tsx (lines 26, 32)\n\nChanges needed:\n1. AppLayout (line 13): Keep existing `ml-0 lg:ml-60 mt-header-mobile lg:mt-0` - already correct\n2. Header (line 23): Change all `lg:` classes to maintain current behavior at lg breakpoint\n3. SideNavigation (line 32): Already uses `lg:` for most classes - verify overlay behavior\n\nExpected behavior:\n- < lg (1024px): Header fixed with hamburger menu; SideNavigation as overlay/drawer\n  - 375px (mobile): Hamburger → full-screen overlay (z-index high, covers everything)\n  - sm 640px (tablet): Hamburger → drawer slides from right (~375px width per line 32), page visible on left\n- ≥ lg (1024px): Header hidden or minimal; SideNavigation persistent on left (w-60)\n\nImplementation approach:\n- Search for all instances of xl: in these three files\n- Replace with lg: where the breakpoint controls layout shift\n- Test at 1023px (mobile) and 1024px (desktop) to verify transition\n- Ensure SideNavigation overlay width is correct: w-full sm:w-[375px] lg:w-60 (already correct on line 32)",
+        "testStrategy": "Manual visual testing:\n1. Test at 375px width - verify hamburger menu opens full-screen overlay\n2. Test at 640px width - verify hamburger menu opens drawer from right (~375px width)\n3. Test at 1023px width - verify hamburger menu still present\n4. Test at 1024px width - verify persistent sidebar appears, header adapts\n5. Test at 1280px+ width - verify no layout changes from 1024px\n6. Verify scroll lock works when overlay is open on mobile\n7. Check z-index stacking (SideNavigation should be z-50 per line 26)",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Fix HeroBanner component responsive layout from xl to lg",
+        "description": "Update HeroBanner to use lg breakpoint for 2-column layout instead of xl, with stacked mobile layout",
+        "details": "File to modify:\n- apps/site/src/features/shared/HeroBanner/index.tsx\n\nCurrent issues (lines 36, 40, 53):\n- Uses xl:flex-row, xl:gap-x-8, xl:rounded-xl, xl:-mx-[97px] (line 36)\n- Uses xl:order-1, xl:h-full, xl:w-1/2 (line 40)\n- Uses xl:order-0, xl:py-20, xl:pl-20 (line 53)\n\nChanges needed:\n1. Line 36: Replace xl: with lg: for flex-row, gap-x-8, rounded-xl, -mx-[97px]\n2. Line 40: Replace xl: with lg: for order-1, h-full, w-1/2\n3. Line 53: Replace xl: with lg: for order-0, py-20, pl-20\n4. Keep mobile default as flex-col with gap-y-6\n\nExpected behavior:\n- < lg: flex-col - image on top (full-width, h-64), text below with px-6 pb-6\n- ≥ lg: flex-row - text column left (~50% via lg:w-1/2 on line 54), image column right (~50% via lg:w-1/2 on line 40)\n- Padding, rounded-xl, and negative horizontal margins only apply at lg+\n\nImplementation:\n- Replace all xl: prefixes with lg: in className strings\n- Verify image sizes prop (line 48): update to '(max-width: 1024px) 100vw, 50vw'\n- Ensure textColumnClassName prop usage in HeroSection (apps/site/src/features/home/HeroSection/index.tsx line 27) changes from xl:w-1/2 to lg:w-1/2",
+        "testStrategy": "Manual visual testing:\n1. Test at 375px - verify stacked layout (image top, text below, no rounded corners, no negative margins)\n2. Test at 640px - verify still stacked\n3. Test at 1023px - verify still stacked\n4. Test at 1024px - verify 2-column layout (text left, image right, rounded corners, negative margins)\n5. Test at 1280px+ - verify no changes from 1024px\n6. Verify image aspect ratio maintains at all breakpoints\n7. Check text content doesn't overflow in either layout\n8. Verify line-clamp behavior (line-clamp-2 on caption, line-clamp-3 on content)",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Fix StatCards horizontal scroll on mobile in HeroSection",
+        "description": "Implement horizontal scroll for StatCards on mobile (375px) and 2-column grid on tablet (640px+)",
+        "details": "File to modify:\n- apps/site/src/features/home/HeroSection/index.tsx (line 31)\n\nCurrent issue:\n- Line 31 uses grid grid-cols-2 at all breakpoints, causing cards to be compressed at 375px width\n- Uses xl:grid-cols-4 which should be lg:grid-cols-4\n\nChanges needed:\n1. Implement horizontal scroll container for mobile (< sm)\n2. Use 2-column grid for sm+\n3. Change xl:grid-cols-4 to sm:grid-cols-2 lg:grid-cols-4\n\nImplementation approach:\n- Create container with overflow-x-auto for mobile\n- StatCard should have min-width to prevent compression\n- Use flex flex-row gap-3 for mobile, grid for sm+\n\nProposed solution for line 31:\n```tsx\n<section className=\"mx-4 my-6 overflow-x-auto sm:overflow-x-visible xl:mx-auto xl:my-8 xl:w-full xl:max-w-237.5\">\n  <div className=\"flex flex-row gap-3 min-w-min sm:grid sm:grid-cols-2 lg:grid-cols-4\">\n    {profile.stats.map((stat) => (\n      <div key={stat.label} className=\"min-w-[160px] sm:min-w-0\">\n        <StatCard {...stat} />\n      </div>\n    ))}\n  </div>\n</section>\n```\n\nAlternatively, update StatCard component itself to handle min-width:\n- Add min-w-[160px] sm:min-w-0 to StatCard root element",
+        "testStrategy": "Manual visual testing:\n1. Test at 375px - verify horizontal scroll works, cards maintain readable size (min 160px width)\n2. Test at 639px - verify still horizontal scroll\n3. Test at 640px - verify switches to 2-column grid, no scroll\n4. Test at 1023px - verify still 2 columns\n5. Test at 1024px - verify switches to 4-column grid\n6. Verify scroll indicators (if applicable) show on mobile\n7. Test touch scrolling on mobile devices\n8. Verify cards are not compressed and text is fully readable at all breakpoints",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Fix ProjectCard grid and row view responsive breakpoints",
+        "description": "Update ProjectList and ProjectCard to use lg breakpoint for layout changes, implementing correct grid and row view behavior",
+        "details": "Files to modify:\n- apps/site/src/features/home/ProjectsSection/ProjectList.tsx (line 49)\n- apps/site/src/features/home/ProjectsSection/ProjectCard.tsx (line 38)\n\nCurrent issues:\n1. ProjectList (line 49): Uses md:grid-cols-2 (768px) and xl:grid-cols-1 which creates confusing logic\n2. ProjectCard (line 38): Uses xl:flex-row (1280px) for row layout instead of lg\n\nExpected behavior:\n- Home page (grid view): \n  - < lg: 1 column, card stacked (image top, content below)\n  - ≥ lg: 2 columns (grid 2×N)\n- Projects page (row view per compact prop):\n  - < lg: 1 column, card stacked (same as grid)\n  - ≥ lg: horizontal layout (image left ~49%, content right ~51%)\n\nChanges needed:\n1. ProjectList line 49:\n   - Replace: 'grid gap-4 md:grid-cols-2 xl:grid-cols-1 xl:gap-6 mx-4 xl:mx-auto max-w-237.5'\n   - With: 'grid gap-4 lg:grid-cols-2 lg:gap-6 mx-4 lg:mx-auto max-w-237.5'\n   - Remove xl:grid-cols-1 (confusing override)\n\n2. ProjectCard line 38:\n   - Replace: 'relative flex flex-col bg-surface rounded-xl overflow-hidden xl:flex-row xl:w-full xl:h-[339px]'\n   - With: 'relative flex flex-col bg-surface rounded-xl overflow-hidden lg:flex-row lg:w-full lg:h-[339px]'\n\n3. ProjectCard other xl: instances (lines 39, 52, 55, 58, 63, 65):\n   - Line 39: xl:w-[380px] xl:h-auto xl:shrink-0 xl:m-3 → lg:w-[380px] lg:h-auto lg:shrink-0 lg:m-3\n   - Line 52: xl:top-3 xl:right-3 → lg:top-3 lg:right-3\n   - Line 55: xl:p-6 xl:gap-5 → lg:p-6 lg:gap-5\n   - Line 58: xl:text-sm → lg:text-sm\n   - Line 65: xl:line-clamp-3 → lg:line-clamp-3\n\n4. Update useBreakpoint call (line 35) from 'xl' to 'lg'",
+        "testStrategy": "Manual visual testing:\n1. Home page tests:\n   - Test at 375px - verify 1 column, stacked cards\n   - Test at 1023px - verify 1 column\n   - Test at 1024px - verify 2 columns grid\n   - Test at 1280px+ - verify still 2 columns\n2. Projects page tests (with compact prop):\n   - Test at 375px - verify stacked card layout\n   - Test at 1023px - verify stacked\n   - Test at 1024px - verify horizontal row layout (image left, content right)\n3. Verify image sizing in both layouts\n4. Verify SkillGroup max count changes correctly (2 for < lg, 3 for ≥ lg)\n5. Check ShareButton positioning at all breakpoints\n6. Verify line-clamp changes (line-clamp-2 mobile, line-clamp-3 desktop)",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Fix ProfessionalValueCard grid responsive columns",
+        "description": "Implement responsive grid for ProfessionalValueCard: 2 cols mobile, 3 cols tablet, 4 cols desktop",
+        "details": "File to modify:\n- apps/site/src/features/about/ValuesSection/ValuesSection.tsx (line 28)\n\nCurrent issue:\n- Line 28: 'grid grid-cols-4 gap-4 items-stretch' - hardcoded 4 columns at all breakpoints\n- At 375px width, 4 columns cause cards to be extremely compressed\n\nExpected behavior:\n- default (375px): 2 columns\n- sm (640px): 3 columns\n- ≥ lg (1024px): 4 columns\n\nChanges needed:\n- Line 28: Replace 'grid grid-cols-4 gap-4 items-stretch'\n- With: 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch'\n\nImplementation approach:\nSimple className update - no component structure changes needed. The ul already iterates over professionalValues array, so grid will automatically flow items into responsive columns.",
+        "testStrategy": "Manual visual testing:\n1. Test at 375px - verify 2 columns, cards readable and not compressed\n2. Test at 639px - verify 2 columns\n3. Test at 640px - verify 3 columns\n4. Test at 1023px - verify 3 columns\n5. Test at 1024px - verify 4 columns\n6. Test at 1280px+ - verify 4 columns maintained\n7. Verify gap spacing (gap-4) maintained at all breakpoints\n8. Verify items-stretch works correctly - all cards in a row have equal height\n9. Test with varying content lengths to ensure grid handles different card heights",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Fix CurriculumCTA responsive layout",
+        "description": "Update CurriculumCTA to use responsive flex layout: stacked on mobile, horizontal on desktop",
+        "details": "File to modify:\n- apps/site/src/features/about/CurriculumCTA/index.tsx (lines 25-41)\n\nCurrent issue:\n- Line 26: Uses fixed flex-row layout with gap-14\n- Line 30: Image has fixed width w-[320px]\n- Line 39: Text content has fixed width w-[511px]\n- Line 47: Button has fixed width w-[292px]\n- No responsive classes - layout breaks on mobile\n\nExpected behavior:\n- < lg: flex-col - illustration on top (full-width or centered), text and button below (full-width)\n- ≥ lg: flex-row - illustration left column (~320px), text+button right column\n\nChanges needed:\n1. Line 26: Replace 'flex flex-row items-center gap-14 bg-surface rounded-xl p-8'\n   With: 'flex flex-col lg:flex-row items-center gap-6 lg:gap-14 bg-surface rounded-xl p-6 lg:p-8'\n\n2. Line 30: Replace 'relative w-[320px] h-[317px] shrink-0'\n   With: 'relative w-full max-w-[320px] h-[317px] lg:shrink-0'\n\n3. Line 39: Replace 'flex flex-col gap-y-8 w-[511px]'\n   With: 'flex flex-col gap-y-6 lg:gap-y-8 w-full lg:w-[511px]'\n\n4. Line 47: Replace 'inline-flex items-center gap-x-2 w-[292px] h-12...'\n   With: 'inline-flex items-center gap-x-2 w-full lg:w-[292px] h-12...'\n\nImplementation approach:\n- Make all fixed widths responsive with w-full on mobile, fixed width on lg+\n- Adjust gap spacing for mobile (smaller gaps)\n- Adjust padding for mobile (p-6 instead of p-8)\n- Keep shrink-0 on image only for desktop to prevent squishing",
+        "testStrategy": "Manual visual testing:\n1. Test at 375px - verify stacked layout (illustration top, text below, button full-width)\n2. Test at 640px - verify still stacked\n3. Test at 1023px - verify still stacked\n4. Test at 1024px - verify horizontal layout (illustration left ~320px, content right)\n5. Test at 1280px+ - verify same as 1024px\n6. Verify illustration doesn't distort at any breakpoint\n7. Verify text readability at all sizes\n8. Check button is fully clickable and not cut off\n9. Verify gap spacing looks balanced at all breakpoints\n10. Test with longer/shorter text content to ensure layout holds",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Fix ContactSection and ContactForm responsive layout",
+        "description": "Update ContactSection to use lg breakpoint for flex-row layout, and add inline fields for Name/Surname at xl+",
+        "details": "Files to modify:\n- apps/site/src/features/contact/ContactSection/index.tsx (lines 8-9)\n- apps/site/src/features/contact/ContactForm/index.tsx (lines 59-80, 132-138)\n\nCurrent issues:\n1. ContactSection (line 9): Uses xl:flex-row and xl:gap-x-16 instead of lg:\n2. ContactSection (line 10): Uses xl:w-[560px] instead of lg:\n3. ContactForm: No inline field layout for Name/Surname at xl\n\nExpected behavior:\n- < lg: flex-col, all fields full-width, button full-width\n- ≥ lg: flex-row - form left (~560px), ContactInfo right (~326px)\n- ≥ xl: Name + Surname (Email split) fields inline (2 columns within form)\n\nChanges needed:\n1. ContactSection line 9:\n   - Replace: 'mx-4 xl:mx-auto flex flex-col gap-y-6 xl:flex-row xl:gap-x-16'\n   - With: 'mx-4 lg:mx-auto flex flex-col gap-y-6 lg:flex-row lg:gap-x-16'\n\n2. ContactSection line 10:\n   - Replace: 'xl:w-[560px] shrink-0'\n   - With: 'lg:w-[560px] shrink-0'\n\n3. ContactForm - Add inline fields at xl (lines 59-80):\n   Current structure has three separate divs for name, email, message\n   For xl+, wrap name and email in a parent flex container:\n   \n```tsx\n<div className=\"flex flex-col gap-y-6\">\n  {/* Name + Email row for xl+ */}\n  <div className=\"flex flex-col xl:flex-row gap-y-6 xl:gap-x-4\">\n    <div className=\"flex flex-col gap-y-1 xl:flex-1\">\n      <Label htmlFor=\"name\">{tForm('nameLabel')}</Label>\n      {/* name field */}\n    </div>\n    <div className=\"flex flex-col gap-y-1 xl:flex-1\">\n      <Label htmlFor=\"email\">{tForm('emailLabel')}</Label>\n      {/* email field */}\n    </div>\n  </div>\n  \n  {/* Message field */}\n  <div className=\"flex flex-col gap-y-1\">\n    <Label htmlFor=\"message\">{tForm('messageLabel')}</Label>\n    {/* message field */}\n  </div>\n</div>\n```\n\n4. ContactForm line 134:\n   - Button already has: 'w-full xl:w-[216px]' - change to 'w-full lg:w-[216px]' to match lg breakpoint",
+        "testStrategy": "Manual visual testing:\n1. Test at 375px - verify stacked layout, all fields full-width, button full-width\n2. Test at 640px - verify still stacked\n3. Test at 1023px - verify still stacked\n4. Test at 1024px - verify form left + info right, single-column fields, button constrained width\n5. Test at 1279px - verify same as 1024px\n6. Test at 1280px - verify Name and Email appear side-by-side (2 columns), button constrained\n7. Test at 1536px+ - verify same as 1280px\n8. Verify form validation errors display correctly at all breakpoints\n9. Test form submission flow\n10. Verify gap spacing looks balanced\n11. Check ContactInfo component aligns properly with form",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Fix ProjectDetail responsive layout and breakpoints",
+        "description": "Update ProjectDetail and ProjectMetaGrid to use correct responsive breakpoints across all sections",
+        "details": "Files to modify:\n- apps/site/src/features/projects/ProjectDetail/ProjectDetail.tsx (lines 69-131)\n- apps/site/src/features/projects/ProjectDetail/ProjectMetaGrid.tsx (line 40)\n\nCurrent issues:\n1. ProjectDetail uses xl: throughout instead of lg:\n2. ProjectMetaGrid (line 40) uses xl:grid-cols-2 instead of sm:grid-cols-2\n\nExpected behavior:\n- < sm (375px): All content single column\n- ≥ sm (640px): InfoGrid (Summary + Objectives) in 2 columns\n- ≥ lg (1024px): \n  - Hero image full-width h-[485px]\n  - Meta info (Role/Skills/Team/Date) in horizontal row\n  - Content split layouts (if applicable)\n  - Related projects in 2 columns\n\nChanges needed:\n1. ProjectDetail line 70:\n   - Replace: 'mx-4 xl:mx-auto xl:w-full xl:max-w-237.5 flex flex-col gap-y-10'\n   - With: 'mx-4 lg:mx-auto lg:w-full lg:max-w-237.5 flex flex-col gap-y-10'\n\n2. ProjectDetail line 71:\n   - Replace: 'xl:flex-row xl:items-center xl:justify-between'\n   - With: 'lg:flex-row lg:items-center lg:justify-between'\n\n3. ProjectDetail line 74:\n   - Replace: 'min-h-12 xl:order-2'\n   - With: 'min-h-12 lg:order-2'\n\n4. ProjectDetail line 78:\n   - Replace: 'xl:order-1 xl:min-h-12'\n   - With: 'lg:order-1 lg:min-h-12'\n\n5. ProjectDetail line 86:\n   - Replace: 'xl:h-[485px]'\n   - With: 'lg:h-[485px]'\n\n6. ProjectMetaGrid line 40:\n   - Replace: 'grid grid-cols-1 xl:grid-cols-2 gap-6'\n   - With: 'grid grid-cols-1 sm:grid-cols-2 gap-6'\n\n7. ProjectMetaGrid lines 42, 50:\n   - Replace: 'xl:h-[150px]' on both summary and objectives cards\n   - With: 'sm:h-[150px]' to match sm:grid-cols-2\n\n8. Check if there are related xl: classes in TextRich or other subcomponents used in ProjectDetail\n\nNote: ProjectList is already used in relatedProjects section (line 128), and we're fixing it in task 4, so it will automatically inherit correct breakpoints.",
+        "testStrategy": "Manual visual testing:\n1. Test at 375px - verify single column layout throughout\n2. Test at 639px - verify single column\n3. Test at 640px - verify Summary + Objectives in 2 columns, hero image still h-60\n4. Test at 1023px - verify still 2-col for info grid\n5. Test at 1024px - verify:\n   - Hero image full-width h-[485px]\n   - Breadcrumb and back button flex-row\n   - Meta info cards 2 columns\n   - Related projects 2 columns (from task 4)\n6. Test at 1280px+ - verify same as 1024px\n7. Verify SkillGroup displays correctly at all sizes\n8. Check TextRich content doesn't overflow\n9. Verify back button and breadcrumb navigation work\n10. Test with and without optional fields (summary, objectives, role)",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Fix Modal component responsive width",
+        "description": "Update Modal component to use responsive width: near full-width on mobile, fixed width on desktop",
+        "details": "File to modify:\n- packages/ui/src/Control/Modal/index.tsx (line 105)\n\nCurrent issue:\n- Line 105: Fixed width 'w-[690px]' at all breakpoints\n- On mobile (375px), modal would overflow or be cut off\n- Should be nearly full-width on mobile with proper breathing room\n\nExpected behavior:\n- < lg: Width with small margins (e.g., w-[calc(100%-32px)] or w-[calc(100vw-2rem)])\n- ≥ lg: Fixed width w-[642px] or w-[690px] as per PRD (note: PRD mentions 642px)\n\nChanges needed:\n1. Line 105:\n   - Replace: 'bg-surface rounded-xl p-6 w-[690px] max-h-[80vh] overflow-y-auto'\n   - With: 'bg-surface rounded-xl p-6 w-[calc(100vw-2rem)] lg:w-[642px] max-h-[80vh] overflow-y-auto'\n\nAlternative approach using max-w:\n- 'bg-surface rounded-xl p-6 w-full max-w-[calc(100vw-2rem)] lg:max-w-[642px] mx-4 lg:mx-0 max-h-[80vh] overflow-y-auto'\n\nImplementation note:\n- calc(100vw-2rem) gives 16px (1rem) margin on each side on mobile\n- Using w-[calc(100%-32px)] would require parent to define width context\n- Fixed width at lg+ ensures modal doesn't grow too large on desktop\n\nPRD specifies w-[642px] for lg+, but current code uses w-[690px]. Confirm which is correct:\n- If PRD is authoritative: use lg:w-[642px]\n- If design is different: keep lg:w-[690px]\n- Recommend: lg:w-[642px] per PRD specification",
+        "testStrategy": "Manual visual testing:\n1. Test TechnologiesModal at 375px:\n   - Verify modal doesn't overflow viewport\n   - Verify ~16px margin on each side\n   - Verify close button accessible\n   - Verify content scrollable if tall\n2. Test at 640px - verify responsive width with margins\n3. Test at 1023px - verify responsive width\n4. Test at 1024px - verify fixed width (642px or 690px), centered in viewport\n5. Test at 1280px+ - verify same as 1024px\n6. Verify modal backdrop (bg-black/60) covers full screen\n7. Test with short content - verify modal doesn't look too small\n8. Test with tall content - verify max-h-[80vh] and overflow-y-auto work\n9. Test focus trap works at all breakpoints\n10. Test click outside to close works at all breakpoints\n11. Verify keyboard accessibility (Esc, Tab trapping)",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Create comprehensive responsive layout test suite and documentation",
+        "description": "Create testing documentation, update any remaining references, and verify all responsive changes work together",
+        "details": "Tasks:\n1. Create comprehensive test checklist document\n2. Search for any remaining xl: references that should be lg:\n3. Test all pages together for layout consistency\n4. Document breakpoint decisions in project docs\n5. Update any Figma references or design docs\n6. Create visual regression test baseline screenshots (optional)\n\nImplementation approach:\n1. Run global search for xl: in apps/site/src:\n   - `grep -r \"xl:\" apps/site/src --include=\"*.tsx\" --include=\"*.ts\"`\n   - Review each result to determine if it should be lg:\n   - Some xl: usage may be intentional for fine-tuning at 1280px+\n\n2. Create test documentation:\n   - List all affected components\n   - Document expected behavior at each breakpoint\n   - Include screenshots or descriptions\n   - Add to project docs/ folder\n\n3. Test all pages:\n   - Home page: HeroBanner, StatCards, ProjectsSection\n   - Projects page: ProjectList, ProjectCard (row view)\n   - Project detail page: ProjectDetail, ProjectMetaGrid\n   - About page: ValuesSection, CurriculumCTA, ExperiencesSection\n   - Contact section (footer): ContactSection, ContactForm\n   - Layout: AppLayout, Header, SideNavigation, Modal\n\n4. Verify breakpoint consistency:\n   - All layout shifts happen at lg (1024px)\n   - Mobile-first approach maintained\n   - No xl: used where lg: should be\n   - xl: only used for fine-tuning if needed\n\n5. Check for edge cases:\n   - Test at exactly 1024px (breakpoint boundary)\n   - Test at 1023px (just before breakpoint)\n   - Test viewport resize behavior\n   - Test with browser zoom at different levels\n\n6. Update useBreakpoint hook usage:\n   - Verify all useBreakpoint('xl') calls that should be useBreakpoint('lg')\n   - Found in ProjectCard.tsx line 35 - already flagged in task 4\n\n7. Performance check:\n   - Ensure responsive images use correct sizes attribute\n   - Verify no layout shifts (CLS) during breakpoint changes\n   - Check Lighthouse scores for mobile and desktop",
+        "testStrategy": "Comprehensive integration testing:\n1. Automated search validation:\n   - Run grep for xl: and manually verify each instance\n   - Create list of intentional xl: vs incorrect usage\n2. Cross-browser testing:\n   - Chrome DevTools responsive mode\n   - Firefox responsive design mode\n   - Safari (if available)\n3. Device testing:\n   - iPhone SE (375px)\n   - iPad (768px)\n   - iPad Pro (1024px)\n   - Desktop (1280px, 1536px)\n4. Accessibility testing:\n   - Keyboard navigation at all breakpoints\n   - Screen reader testing (focus order)\n   - Touch target sizes on mobile\n5. Visual regression:\n   - Compare before/after screenshots\n   - Verify no unintended layout changes\n6. Performance testing:\n   - PageSpeed Insights mobile score\n   - Check for layout shift during resize\n7. User acceptance:\n   - Have stakeholders review responsive behavior\n   - Verify against Figma designs\n8. Documentation review:\n   - Ensure docs/breakpoints.md (or similar) is updated\n   - Update README if needed\n   - Add inline comments for complex responsive logic",
+        "priority": "low",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-06-16T03:17:07.934Z",
+      "updated": "2026-06-16T03:17:07.935Z",
+      "description": "Tasks for responsive context"
     }
   }
 }
