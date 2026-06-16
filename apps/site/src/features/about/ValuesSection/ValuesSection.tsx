@@ -22,10 +22,10 @@ export async function ValuesSection({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <h2 className="text-[32px] font-bold text-content-primary text-left mb-6">
+      <h2 className="text-[32px] font-bold text-content-primary text-left mb-6 mx-4 lg:mx-0">
         {t('values_title')}
       </h2>
-      <ul className="grid grid-cols-4 gap-4 items-stretch">
+      <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch mx-4 lg:mx-0">
         {professionalValues.map((professionalValue) => (
           <li key={professionalValue.id}>
             <ProfessionalValueCard {...professionalValue} />
