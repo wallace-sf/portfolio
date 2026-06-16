@@ -16,24 +16,24 @@ import { ThemeToggle } from './ThemeToggle';
 
 export const SideNavigation: FC = () => {
   const t = useTranslations('SideNavigation');
-  const isDesktop = useBreakpoint('xl');
+  const isDesktop = useBreakpoint('lg');
   const { value: open, toggle } = useBoolean(false);
   const isOpen = !isDesktop && open;
 
   useScrollLock({ autoLock: isOpen });
 
   return (
-    <div className="fixed top-0 left-0 shadow-1 w-full xl:w-auto z-50">
+    <div className="fixed top-0 left-0 shadow-1 w-full lg:w-auto z-50">
       <Header open={isOpen} toggle={toggle} />
       <nav
         id="side-navigation"
         aria-label={t('mainNav')}
         className={classNames(
-          'absolute top-full xl:relative xl:top-auto h-sidenav-mobile xl:h-sidenav-desktop left-0 w-full xl:w-60 xl:px-4 bg-surface-sunken flex flex-col overflow-y-auto overscroll-y-contain border-0 duration-300 ease-linear xl:!translate-x-0 z-9999',
-          isOpen ? 'translate-x-0' : '-translate-x-full',
+          'absolute top-full lg:relative lg:top-auto h-sidenav-mobile lg:h-sidenav-desktop right-0 w-full sm:w-[375px] lg:w-60 lg:px-4 bg-surface-sunken flex flex-col overflow-y-auto overscroll-y-contain border-0 duration-300 ease-linear lg:!translate-x-0 z-9999',
+          isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <ul className="flex flex-col gap-y-3 px-6 pt-10 xl:pt-15 xl:px-0">
+        <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:pt-15 lg:px-0">
           <li>
             <MenuItem.Item1 href="/" icon="material-symbols:home">
               {t('home')}
@@ -62,8 +62,8 @@ export const SideNavigation: FC = () => {
             </MenuItem.Item1>
           </li>
         </ul>
-        <Divider className="mx-6 xl:mx-0" />
-        <ul className="flex flex-col gap-y-3 px-6 pb-8 xl:px-0 xl:justify-end">
+        <Divider className="mx-6 lg:mx-0" />
+        <ul className="flex flex-col gap-y-3 px-6 pb-8 lg:px-0 lg:justify-end">
           <li>
             <MenuItem.Item2.Link
               href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
