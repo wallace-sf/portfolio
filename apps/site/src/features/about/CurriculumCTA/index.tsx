@@ -23,11 +23,11 @@ export async function CurriculumCTA({
   return (
     <section
       className={classNames(
-        'flex flex-row items-center gap-14 bg-surface rounded-xl p-8',
+        'flex flex-col sm:flex-row items-center gap-6 sm:gap-14 bg-surface rounded-xl p-6 sm:p-8 mx-4 lg:mx-0',
         className,
       )}
     >
-      <div className="relative w-[320px] h-[317px] shrink-0">
+      <div className="relative w-full h-[220px] sm:w-[320px] sm:h-[317px] shrink-0">
         <Image
           src={illustrationSrc}
           alt={t('illustration_alt')}
@@ -36,7 +36,7 @@ export async function CurriculumCTA({
         />
       </div>
 
-      <div className="flex flex-col gap-y-8 w-[511px]">
+      <div className="flex flex-col gap-y-8 w-full sm:w-auto">
         <p className="text-2xl font-normal text-content-primary">
           {t('description')}
         </p>
@@ -44,7 +44,7 @@ export async function CurriculumCTA({
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-x-2 w-[292px] h-12 justify-center bg-brand-primary rounded-xl px-6 text-base font-bold text-white"
+          className="inline-flex items-center gap-x-2 w-full sm:w-[292px] h-12 justify-center bg-brand-primary rounded-xl px-6 text-base font-bold text-white"
         >
           {t('button')}
           <Icon icon="material-symbols:open-in-new" className="text-2xl" />
