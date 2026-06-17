@@ -61,7 +61,7 @@ export default async function RootLayout({
     <html dir="ltr" lang={locale}>
       <body
         className={classNames(
-          'flex flex-col h-screen antialiased dark:bg-dark overflow-x-clip',
+          'flex flex-col h-screen antialiased bg-surface-base overflow-x-clip',
           inter.className,
         )}
       >

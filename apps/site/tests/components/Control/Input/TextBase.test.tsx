@@ -16,7 +16,7 @@ describe('Text.Base', () => {
   it('should apply default border styling', () => {
     render(<Text.Base {...defaultProps} />);
     const input = screen.getByPlaceholderText('Enter text');
-    expect(input.className).toContain('border-content-disabled');
+    expect(input.className).toContain('border-border-default');
   });
 
   it('should apply error border when error and touched', () => {
@@ -51,6 +51,6 @@ describe('Text.Base', () => {
   it('should render without styling when unstyled', () => {
     render(<Text.Base {...defaultProps} unstyled />);
     const input = screen.getByPlaceholderText('Enter text');
-    expect(input.className).not.toContain('border-content-disabled');
+    expect(input.className).not.toContain('border-border-default');
   });
 });
