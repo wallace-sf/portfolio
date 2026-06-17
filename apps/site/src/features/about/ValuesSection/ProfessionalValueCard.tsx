@@ -16,7 +16,7 @@ export const ProfessionalValueCard: FC<IProfessionalValueCardProps> = ({
   content,
 }) => {
   return (
-    <article className="w-full h-full border border-border-subtle bg-surface/20 rounded-xl px-4 py-6 flex flex-col gap-y-4">
+    <article className="w-full h-full border border-border-subtle bg-surface/20 rounded-xl px-4 py-6 flex flex-col gap-y-4 shadow-drop-sm">
       <Icon
         icon={icon}
         className="!text-[48px] text-brand-accent flex-shrink-0"

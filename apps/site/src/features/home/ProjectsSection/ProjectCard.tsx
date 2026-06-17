@@ -40,7 +40,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   return (
     <article
       className={classNames(
-        'relative flex flex-col bg-surface rounded-xl overflow-hidden',
+        'relative flex flex-col bg-surface rounded-xl overflow-hidden shadow-drop-sm',
         !compact && 'lg:flex-row lg:w-full lg:h-[339px]',
       )}
     >

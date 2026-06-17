@@ -20,7 +20,7 @@ export const Header: FC<HeaderProps> = ({ open, toggle }) => {
   const t = useTranslations('Header');
 
   return (
-    <header className="w-full lg:w-60 flex items-center lg:items-end justify-between lg:justify-center bg-surface lg:bg-surface-sunken px-4 py-3 lg:px-0 lg:py-0 transition-all duration-300 ease-linear h-header-mobile lg:h-header-desktop">
+    <header className="w-full lg:w-60 flex items-center lg:items-end justify-between lg:justify-center bg-surface lg:bg-surface-sunken px-4 py-3 lg:px-0 lg:py-0 transition-all duration-300 ease-linear h-header-mobile lg:h-header-desktop shadow-drop-md lg:shadow-none">
       <NextLink href="/" aria-label={t('logo_alt')}>
         <picture>
           <source
