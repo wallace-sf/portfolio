@@ -27,11 +27,11 @@ export const Breadcrumb: FC<IBreadcrumbProps> = ({ items, className }) => (
             {i > 0 && (
               <Icon
                 icon="material-symbols:arrow-forward-ios"
-                className="!text-[20px] text-content-secondary [.light_&]:text-content-muted"
+                className="!text-[20px] text-content-muted"
               />
             )}
             {isLast ? (
-              <span className="px-3 py-1.5 rounded-lg text-sm text-content-primary bg-surface [.light_&]:bg-[#DADADA] [.light_&]:!text-content-secondary">
+              <span className="px-3 py-1.5 rounded-lg text-sm text-content-primary bg-surface-selected [.light_&]:!text-content-secondary">
                 {item.label}
               </span>
             ) : (

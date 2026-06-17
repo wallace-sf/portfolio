@@ -56,7 +56,7 @@ export const ThemeToggle: FC = () => {
     <MenuItem.Item2.Expandable
       title={t('theme')}
       icon="material-symbols:contrast"
-      iconClassName="text-white"
+      iconClassName="text-content-primary"
     >
       <RadioGroup
         name="theme"

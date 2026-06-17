@@ -29,11 +29,11 @@ export const Expandable: FC<IExpandableProps> = ({
           <Accordion.Header className="w-full cursor-pointer !px-4 !py-3">
             <Container>
               <Icon icon={icon} className={iconClassName} />
-              <Text className="!text-white">{title}</Text>
+              <Text className="!text-content-primary">{title}</Text>
             </Container>
             <Icon
               icon="material-symbols:arrow-drop-down"
-              className={classNames('text-dark-1000 transition-all', {
+              className={classNames('text-content-disabled transition-all', {
                 'rotate-180': expanded,
               })}
             />
