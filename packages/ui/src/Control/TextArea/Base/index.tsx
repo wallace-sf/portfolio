@@ -37,7 +37,7 @@ const Component: ForwardRefRenderFunction<
         {
           '!border-error': error && errorBorder && touched && !unstyled,
           '!border-accent': !error && errorBorder && touched && !unstyled,
-          'border border-border-default bg-surface h-12 rounded-xl p-3 w-full text-sm font-medium text-content-primary placeholder:font-normal placeholder:text-content-muted disabled:opacity-50 disabled:cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary':
+          'border border-content-disabled bg-surface h-12 rounded-xl p-3 w-full text-sm font-medium text-content-primary placeholder:font-normal placeholder:text-content-muted disabled:opacity-50 disabled:cursor-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary':
             !unstyled,
         },
         className,
