@@ -23,7 +23,7 @@ export async function HeroSection({ locale }: { locale: Locale }) {
       alt={t('hero_image_alt')}
       titleSize="xl"
       titleAs="h1"
-      textColumnClassName="xl:w-[382px]"
+      textColumnClassName="lg:w-[382px]"
       imageClassName="object-contain"
     />
   );

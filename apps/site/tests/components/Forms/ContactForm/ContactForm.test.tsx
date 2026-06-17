@@ -75,6 +75,18 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('ContactForm', () => {
+  it('should render title as h2 heading', () => {
+    render(<ContactForm />);
+    const heading = screen.getByRole('heading', { level: 2, name: 'ContactForm.title' });
+    expect(heading).toBeInTheDocument();
+  });
+
+  it('should render fieldset labeled by the h2 heading', () => {
+    render(<ContactForm />);
+    const fieldset = screen.getByRole('group', { name: 'ContactForm.title' });
+    expect(fieldset).toBeInTheDocument();
+  });
+
   it('should render name, email and message fields', () => {
     render(<ContactForm />);
 
@@ -98,7 +110,7 @@ describe('ContactForm', () => {
 
     await userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), 'Alice');
     await userEvent.type(screen.getByPlaceholderText('ContactForm.emailPlaceholder'), 'not-an-email');
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hello');
+    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hello world!');
     await userEvent.click(screen.getByRole('button', { name: 'ContactForm.submit' }));
 
     await waitFor(() => {
@@ -111,7 +123,7 @@ describe('ContactForm', () => {
 
     await userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), 'Alice');
     await userEvent.type(screen.getByPlaceholderText('ContactForm.emailPlaceholder'), 'alice@example.com');
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hello');
+    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hello world!');
     await userEvent.click(screen.getByRole('button', { name: 'ContactForm.submit' }));
 
     await waitFor(() => {
@@ -124,11 +136,43 @@ describe('ContactForm', () => {
 
     await userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), 'Alice');
     await userEvent.type(screen.getByPlaceholderText('ContactForm.emailPlaceholder'), 'alice@example.com');
-    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hello');
+    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hello world!');
     await userEvent.click(screen.getByRole('button', { name: 'ContactForm.submit' }));
 
     await waitFor(() => {
       expect(screen.getByText('ContactForm.success')).toBeInTheDocument();
+    });
+  });
+
+  it('should show min error when name has fewer than 3 characters', async () => {
+    render(<ContactForm />);
+
+    await userEvent.type(screen.getByPlaceholderText('ContactForm.namePlaceholder'), 'Al');
+
+    await waitFor(() => {
+      expect(screen.getByText('Validations.min')).toBeInTheDocument();
+    });
+  });
+
+  it('should show min_message error when message has fewer than 10 characters', async () => {
+    render(<ContactForm />);
+
+    await userEvent.type(screen.getByPlaceholderText('ContactForm.messagePlaceholder'), 'Hi');
+
+    await waitFor(() => {
+      expect(screen.getByText('Validations.min_message')).toBeInTheDocument();
+    });
+  });
+
+  it('should show required error when name is cleared after typing', async () => {
+    render(<ContactForm />);
+    const nameInput = screen.getByPlaceholderText('ContactForm.namePlaceholder');
+
+    await userEvent.type(nameInput, 'Alice');
+    await userEvent.clear(nameInput);
+
+    await waitFor(() => {
+      expect(screen.getByText('Validations.required')).toBeInTheDocument();
     });
   });
 });

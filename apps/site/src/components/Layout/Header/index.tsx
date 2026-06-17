@@ -20,11 +20,11 @@ export const Header: FC<HeaderProps> = ({ open, toggle }) => {
   const t = useTranslations('Header');
 
   return (
-    <header className="w-full xl:w-60 flex items-center xl:items-end justify-between xl:justify-center bg-surface xl:bg-surface-sunken px-4 py-3 xl:px-0 xl:py-0 transition-all duration-300 ease-linear h-header-mobile xl:h-header-desktop">
+    <header className="w-full lg:w-60 flex items-center lg:items-end justify-between lg:justify-center bg-surface lg:bg-surface-sunken px-4 py-3 lg:px-0 lg:py-0 transition-all duration-300 ease-linear h-header-mobile lg:h-header-desktop">
       <NextLink href="/" aria-label={t('logo_alt')}>
         <picture>
           <source
-            media={`(min-width: ${screens.xl})`}
+            media={`(min-width: ${screens.lg})`}
             srcSet={logoDesktop.src}
             width={179}
             height={66}
@@ -39,7 +39,7 @@ export const Header: FC<HeaderProps> = ({ open, toggle }) => {
         </picture>
       </NextLink>
       <Button.Base
-        className="flex items-center justify-center h-10 w-10 !bg-surface-raised hover:!bg-surface !rounded !p-0 xl:hidden"
+        className="flex items-center justify-center h-10 w-10 !bg-surface-raised hover:!bg-surface !rounded !p-0 lg:hidden"
         onClick={toggle}
         aria-label={open ? t('closeMenu') : t('openMenu')}
         aria-expanded={open}

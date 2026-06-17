@@ -2,6 +2,7 @@
 
 import { FC } from 'react';
 
+import { Icon } from '@repo/ui/Imagery';
 import { TextRich } from '@repo/ui/View';
 import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
@@ -9,6 +10,11 @@ import { useBoolean } from 'usehooks-ts';
 
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { useBreakpoint } from '~hooks';
+import {
+  EMPLOYMENT_TYPE_ICONS,
+  LOCATION_ICON,
+  LOCATION_TYPE_ICONS,
+} from './experienceIcons';
 
 export interface IExperienceCardSkill {
   name: string;
@@ -72,9 +78,12 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
 
   const period = `${formatDate(startAt, locale)} - ${endAt ? formatDate(endAt, locale) : t('present')}`;
   const duration = calculateDuration(startAt, endAt);
-  const locationLine = [location, employmentType, locationType]
-    .filter(Boolean)
-    .join(' • ');
+  const employmentLabel = t(`employment_type.${employmentType}`);
+  const locationLabel = t(`location_type.${locationType}`);
+  const employmentIcon =
+    EMPLOYMENT_TYPE_ICONS[employmentType] ?? 'mdi:briefcase-outline';
+  const locationTypeIcon =
+    LOCATION_TYPE_ICONS[locationType] ?? 'mdi:map-marker-outline';
 
   return (
     <article className="flex flex-col gap-y-2 py-6">
@@ -89,7 +98,20 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
         </span>
       </div>
 
-      <span className="text-base text-content-disabled">{locationLine}</span>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-base text-content-disabled">
+        <span className="flex items-center gap-x-1">
+          <Icon icon={LOCATION_ICON} className="text-base shrink-0" />
+          {location}
+        </span>
+        <span className="flex items-center gap-x-1">
+          <Icon icon={employmentIcon} className="text-base shrink-0" />
+          {employmentLabel}
+        </span>
+        <span className="flex items-center gap-x-1">
+          <Icon icon={locationTypeIcon} className="text-base shrink-0" />
+          {locationLabel}
+        </span>
+      </div>
 
       {description && (
         <div className="flex flex-col gap-y-1">

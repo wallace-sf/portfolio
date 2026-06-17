@@ -1,5 +1,6 @@
 import { type Locale } from '@repo/core/shared';
 import { getTranslations } from 'next-intl/server';
+import { Link } from '~/i18n/routing';
 
 import { ProjectList, ProjectSummary } from './ProjectList';
 
@@ -16,10 +17,18 @@ export async function ProjectsSection({
 
   return (
     <>
-      <h2 className="text-white mx-4 my-6 !text-xl xl:block xl:mx-auto xl:my-8 xl:w-full xl:!text-[32px] xl:max-w-237.5">
+      <h2 className="text-white my-6 !text-xl lg:block lg:mx-auto lg:my-8 lg:w-full lg:!text-[32px] lg:max-w-237.5">
         {t('projects_title')}
       </h2>
-      <ProjectList projects={projects} className="pb-8 xl:pb-20" />
+      <ProjectList projects={projects} compact className="pb-6" />
+      <div className="flex justify-center pb-8 lg:pb-20">
+        <Link
+          href="/projects"
+          className="text-sm text-content-disabled underline"
+        >
+          {t('view_all_projects')}
+        </Link>
+      </div>
     </>
   );
 }

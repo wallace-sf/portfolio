@@ -27,6 +27,7 @@
   },
   "Home": {
     "projects_title": "Proyectos",
+    "view_all_projects": "Ver todos los proyectos",
     "hero_title": "Wallace Ferreira",
     "hero_caption": "Ingeniero de Software",
     "hero_content": "Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla.",
@@ -47,7 +48,8 @@
     "theme": "Tema",
     "linkedin": "LinkedIn",
     "github": "GitHub",
-    "rss": "RSS Feed"
+    "rss": "RSS Feed",
+    "mainNav": "Navegación principal"
   },
   "Theme": {
     "light": "Claro",
@@ -72,6 +74,7 @@
   "Validations": {
     "required": "Campo obligatorio.",
     "min": "Mínimo de 3 caracteres.",
+    "min_message": "Mínimo de 10 caracteres.",
     "email": "Introduce un correo electrónico válido."
   },
   "Projects": {
@@ -99,7 +102,22 @@
     "skills_label": "Habilidades",
     "see_more": "Ver más",
     "see_less": "Ver menos",
-    "present": "Presente"
+    "present": "Presente",
+    "employment_type": {
+      "FULL_TIME": "Tiempo completo",
+      "PART_TIME": "Medio tiempo",
+      "SELF_EMPLOYED": "Autónomo",
+      "FREELANCE": "Freelance",
+      "TEMPORARY": "Temporal",
+      "INTERNSHIP": "Prácticas",
+      "APPRENTICE": "Aprendiz",
+      "TRAINEE": "Trainee"
+    },
+    "location_type": {
+      "ON-SITE": "Presencial",
+      "HYBRID": "Híbrido",
+      "REMOTE": "Remoto"
+    }
   },
   "Common": {
     "loading": "Cargando",

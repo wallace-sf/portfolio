@@ -33,11 +33,11 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
   return (
     <section
       className={classNames(
-        'flex flex-col bg-surface gap-y-6 xl:gap-x-8 xl:flex xl:flex-row xl:rounded-xl xl:h-106 xl:-mx-[97px]',
+        'flex flex-col bg-surface gap-y-6 lg:flex-row lg:gap-x-8 lg:rounded-xl lg:h-106 xl:-mx-[97px]',
         className,
       )}
     >
-      <section className="relative h-64 flex flex-row justify-center xl:order-1 xl:h-full xl:w-1/2">
+      <div className="relative h-64 flex flex-row justify-center lg:order-1 lg:h-full lg:w-1/2">
         <Image
           src={src}
           alt={alt}
@@ -47,10 +47,10 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
           className={imageClassName}
           sizes="(max-width: 1280px) 100vw, 50vw"
         />
-      </section>
-      <section
+      </div>
+      <div
         className={classNames(
-          'flex flex-col px-6 pb-6 xl:order-0 xl:py-20 xl:pl-20',
+          'flex flex-col px-6 pb-6 lg:order-0 lg:py-20 lg:pl-20',
           textColumnClassName,
         )}
       >
@@ -69,7 +69,7 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
         <p className="text-body-sm text-content-primary line-clamp-3">
           {content}
         </p>
-      </section>
+      </div>
     </section>
   );
 };

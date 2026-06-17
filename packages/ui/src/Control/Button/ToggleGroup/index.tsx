@@ -1,15 +1,9 @@
-import {
-  FC,
-  type ReactNode,
-  type ReactHTML,
-  createElement,
-  useMemo,
-} from 'react';
+import { type JSX, FC, type ReactNode, createElement, useMemo } from 'react';
 
 import { ToggleGroupProvider } from './context';
 
 export interface IToggleGroupProps {
-  as?: keyof ReactHTML;
+  as?: Extract<keyof JSX.IntrinsicElements, string>;
   children: ReactNode;
   className?: string;
   disabled?: boolean;

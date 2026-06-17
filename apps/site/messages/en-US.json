@@ -27,6 +27,7 @@
   },
   "Home": {
     "projects_title": "Projects",
+    "view_all_projects": "View all projects",
     "hero_title": "Wallace Ferreira",
     "hero_caption": "Software Engineer",
     "hero_content": "Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla.",
@@ -47,7 +48,8 @@
     "theme": "Theme",
     "linkedin": "LinkedIn",
     "github": "GitHub",
-    "rss": "RSS Feed"
+    "rss": "RSS Feed",
+    "mainNav": "Main navigation"
   },
   "Theme": {
     "light": "Light",
@@ -72,6 +74,7 @@
   "Validations": {
     "required": "Required field.",
     "min": "Minimum of 3 characters.",
+    "min_message": "Minimum of 10 characters.",
     "email": "Enter a valid e-mail address."
   },
   "Projects": {
@@ -99,7 +102,22 @@
     "skills_label": "Skills",
     "see_more": "See more",
     "see_less": "See less",
-    "present": "Present"
+    "present": "Present",
+    "employment_type": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "SELF_EMPLOYED": "Self-employed",
+      "FREELANCE": "Freelance",
+      "TEMPORARY": "Temporary",
+      "INTERNSHIP": "Internship",
+      "APPRENTICE": "Apprentice",
+      "TRAINEE": "Trainee"
+    },
+    "location_type": {
+      "ON-SITE": "On-site",
+      "HYBRID": "Hybrid",
+      "REMOTE": "Remote"
+    }
   },
   "Common": {
     "loading": "Loading",

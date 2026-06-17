@@ -66,16 +66,16 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
   );
 
   return (
-    <article className="flex flex-col gap-y-10 pb-12 mt-6 xl:mt-0">
-      <div className="mx-4 xl:mx-auto xl:w-full xl:max-w-237.5 flex flex-col gap-y-10">
-        <div className="flex flex-col justify-center items-start gap-y-1 xl:flex-row xl:items-center xl:justify-between">
+    <article className="flex flex-col gap-y-10 pb-12 mt-6 lg:mt-0">
+      <div className="lg:mx-auto lg:w-full lg:max-w-237.5 flex flex-col gap-y-10">
+        <div className="flex flex-col justify-center items-start gap-y-1 lg:flex-row lg:items-center lg:justify-between">
           <Breadcrumb
             items={breadcrumbItems}
-            className="flex items-center min-h-12 xl:order-2"
+            className="flex items-center min-h-12 lg:order-2"
           />
           <Link
             href="/projects"
-            className="flex items-center gap-x-2 text-base text-content-primary xl:order-1 xl:min-h-12"
+            className="flex items-center gap-x-2 text-base text-content-primary lg:order-1 lg:min-h-12"
           >
             <Icon icon="material-symbols:arrow-back" className="text-2xl" />
             {t('back')}
@@ -83,7 +83,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
         </div>
 
         <div className="flex flex-col gap-y-6">
-          <div className="relative w-full xl:h-[485px] h-60 rounded-lg overflow-hidden">
+          <div className="relative w-full lg:h-[485px] h-60 rounded-lg overflow-hidden">
             <Image
               src={coverImage.url}
               fill

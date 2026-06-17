@@ -12,7 +12,7 @@ export interface IBodyProps extends PropsWithChildren {
 
 export const Body: FC<IBodyProps> = ({ children, className }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { expanded } = useAccordion();
+  const { expanded, panelId } = useAccordion();
 
   const style = useMemo(
     () => ({
@@ -23,7 +23,9 @@ export const Body: FC<IBodyProps> = ({ children, className }) => {
 
   return (
     <div
+      id={panelId}
       ref={ref}
+      inert={!expanded}
       style={style}
       className={classNames(
         'overflow-hidden transition-all duration-300 ease-in-out',

@@ -17,11 +17,13 @@ vi.mock('~features/shared/HeroBanner', () => ({
   HeroBanner: ({
     title,
     caption,
+    titleAs,
   }: {
     title: string;
     caption: string;
+    titleAs?: string;
   }) => (
-    <div data-testid="hero-banner">
+    <div data-testid="hero-banner" data-title-as={titleAs}>
       <span data-testid="hero-title">{title}</span>
       <span data-testid="hero-caption">{caption}</span>
     </div>
@@ -85,5 +87,12 @@ describe('home/HeroSection', () => {
     render(await HeroSection({ locale: 'en-US', profile: null }));
 
     expect(screen.queryByTestId('stat-card')).not.toBeInTheDocument();
+  });
+
+  it('should render HeroBanner with titleAs h1', async () => {
+    const { HeroSection } = await import('~features/home/HeroSection');
+    render(await HeroSection({ locale: 'en-US', profile: PROFILE }));
+
+    expect(screen.getByTestId('hero-banner')).toHaveAttribute('data-title-as', 'h1');
   });
 });

@@ -37,9 +37,9 @@ export const ProjectMetaGrid: FC<IProjectMetaGridProps> = ({
   return (
     <div className="flex flex-col gap-y-6">
       {hasCards && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {summary && (
-            <div className="bg-surface rounded-xl p-6 flex flex-col gap-y-2 xl:h-[150px]">
+            <div className="bg-surface rounded-xl p-6 flex flex-col gap-y-2 sm:h-[150px]">
               <dt className="text-xl font-bold text-content-muted">
                 {labels.summary}
               </dt>
@@ -47,7 +47,7 @@ export const ProjectMetaGrid: FC<IProjectMetaGridProps> = ({
             </div>
           )}
           {objectives && (
-            <div className="bg-surface rounded-xl p-6 flex flex-col gap-y-2 xl:h-[150px]">
+            <div className="bg-surface rounded-xl p-6 flex flex-col gap-y-2 sm:h-[150px]">
               <dt className="text-xl font-bold text-content-muted">
                 {labels.objectives}
               </dt>

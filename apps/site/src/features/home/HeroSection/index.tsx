@@ -23,12 +23,12 @@ export async function HeroSection({ locale, profile }: HeroSectionProps) {
         content={profile?.bio ?? t('hero_content')}
         alt={profile?.photo.alt ?? t('hero_image_alt')}
         titleSize="lg"
-        titleAs="h2"
-        textColumnClassName="xl:w-1/2"
+        titleAs="h1"
+        textColumnClassName="lg:w-1/2"
         imageClassName="object-contain 2xl:object-cover"
       />
       {profile?.stats && profile.stats.length > 0 && (
-        <section className="mx-4 my-6 grid grid-cols-2 gap-3 xl:mx-auto xl:my-8 xl:w-full xl:max-w-237.5 xl:grid-cols-4">
+        <section className="my-6 grid grid-cols-2 gap-3 lg:mx-auto lg:my-8 lg:w-full lg:max-w-237.5 lg:grid-cols-4">
           {profile.stats.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}

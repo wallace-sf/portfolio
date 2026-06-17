@@ -11,12 +11,13 @@ export interface IHeaderProps extends PropsWithChildren {
 }
 
 export const Header: FC<IHeaderProps> = ({ children, className }) => {
-  const { expanded, toggle } = useAccordion();
+  const { expanded, toggle, panelId } = useAccordion();
 
   return (
     <button
       type="button"
       aria-expanded={expanded}
+      aria-controls={panelId}
       className={classNames(
         'flex flex-row justify-between items-center w-full',
         className,

@@ -51,7 +51,7 @@ export default async function About({ params }: AboutPageProps) {
   setRequestLocale(locale);
 
   return (
-    <div className="flex flex-col gap-y-20 pb-20">
+    <div className="flex flex-col gap-y-10 lg:gap-y-20 pb-10 lg:pb-20">
       <HeroSection locale={locale} />
       <ValuesSection locale={locale} />
       <ExperiencesSection locale={locale} />

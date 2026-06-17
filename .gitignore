@@ -64,5 +64,8 @@ node_modules/
 # Local scratch / study files
 tmp/
 
+# Database backups (local only — never commit backup files)
+packages/infra/backups/*.json
+
 # TypeScript incremental build
 *.tsbuildinfo
