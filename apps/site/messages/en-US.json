@@ -74,6 +74,7 @@
   "Validations": {
     "required": "Required field.",
     "min": "Minimum of 3 characters.",
+    "min_message": "Minimum of 10 characters.",
     "email": "Enter a valid e-mail address."
   },
   "Projects": {
