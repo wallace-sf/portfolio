@@ -74,6 +74,7 @@
   "Validations": {
     "required": "Campo obrigatório.",
     "min": "Mínimo de 3 caracteres.",
+    "min_message": "Mínimo de 10 caracteres.",
     "email": "Informe um e-mail válido."
   },
   "Projects": {
