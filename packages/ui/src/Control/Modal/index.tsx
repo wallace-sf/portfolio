@@ -102,7 +102,7 @@ export const Modal: FC<IModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
-        className="bg-surface rounded-xl p-6 w-[690px] max-h-[80vh] overflow-y-auto"
+        className="bg-surface rounded-xl p-6 w-[calc(100vw-2rem)] lg:w-[642px] max-h-[80vh] overflow-y-auto"
       >
         <div className="flex items-center justify-between gap-2 mb-6">
           {title && (
