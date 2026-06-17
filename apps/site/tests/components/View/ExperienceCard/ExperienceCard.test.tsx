@@ -21,6 +21,10 @@ vi.mock('next-intl', () => ({
   useLocale: () => 'pt-BR',
 }));
 
+vi.mock('@repo/ui/Imagery', () => ({
+  Icon: ({ icon }: { icon: string }) => <span data-testid="icon">{icon}</span>,
+}));
+
 vi.mock('@repo/ui/View', () => ({
   TextRich: ({
     content,
@@ -116,13 +120,19 @@ describe('ExperienceCard', () => {
     expect(screen.getByText('Acme Corp')).toHaveClass('uppercase');
   });
 
-  it('should render location, employmentType and locationType joined using translated labels', () => {
+  it('should render location, employmentType and locationType as separate labelled items', () => {
     render(<ExperienceCard {...defaultProps} />);
-    expect(
-      screen.getByText(
-        'São Paulo, Brazil • employment_type.FULL_TIME • location_type.REMOTE',
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText('São Paulo, Brazil')).toBeInTheDocument();
+    expect(screen.getByText('employment_type.FULL_TIME')).toBeInTheDocument();
+    expect(screen.getByText('location_type.REMOTE')).toBeInTheDocument();
+  });
+
+  it('should render icons for location, employmentType and locationType', () => {
+    render(<ExperienceCard {...defaultProps} />);
+    const icons = screen.getAllByTestId('icon');
+    expect(icons[0]).toHaveTextContent('mdi:map-marker-outline');
+    expect(icons[1]).toHaveTextContent('mdi:briefcase-outline');
+    expect(icons[2]).toHaveTextContent('mdi:home-outline');
   });
 
   it('should render description when provided', () => {
