@@ -1,8 +1,8 @@
 export function ExperiencesSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="h-px bg-gray-700 mx-4 my-6 xl:mx-auto xl:max-w-237.5" />
-      <ul className="flex flex-col mx-4 gap-y-3 xl:mx-auto xl:max-w-237.5">
+      <div className="h-px bg-gray-700 my-6" />
+      <ul className="flex flex-col gap-y-3">
         {(['exp-1', 'exp-2', 'exp-3'] as const).map((key) => (
           <li
             key={key}
