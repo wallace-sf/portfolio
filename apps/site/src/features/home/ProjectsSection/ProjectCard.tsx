@@ -2,6 +2,8 @@
 
 import { FC } from 'react';
 
+import { buttonVariants } from '@repo/ui/Control';
+import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import { screens } from '@repo/tailwind-config/screens';
 import classNames from 'classnames';
@@ -11,7 +13,6 @@ import Image from 'next/image';
 import { useBreakpoint } from '~/hooks';
 import { ShareButton } from '~features/shared/ShareButton';
 import { SkillGroup } from '~features/shared/SkillGroup';
-import { Link } from '~i18n/routing';
 
 export interface IProjectCardProps {
   slug: string;
@@ -105,14 +106,13 @@ export const ProjectCard: FC<IProjectCardProps> = ({
             total={skills.length}
           />
 
-          <Link
-            href={`/projects/${slug}`}
-            locale={locale}
-            className="flex flex-row justify-center items-center gap-2 bg-brand-primary text-body-sm text-content-primary font-bold rounded-xl hover:bg-brand-primary-hover transition-colors duration-300 py-3 px-6"
+          <Button.Link
+            href={`/${locale}/projects/${slug}`}
+            className="flex flex-row justify-center items-center gap-2"
           >
             {t('view_project')}
             <Icon icon="ic:round-arrow-forward" className="text-xl" />
-          </Link>
+          </Button.Link>
         </div>
       </div>
     </article>
