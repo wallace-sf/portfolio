@@ -100,7 +100,22 @@
     "skills_label": "Skills",
     "see_more": "See more",
     "see_less": "See less",
-    "present": "Present"
+    "present": "Present",
+    "employment_type": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "SELF_EMPLOYED": "Self-employed",
+      "FREELANCE": "Freelance",
+      "TEMPORARY": "Temporary",
+      "INTERNSHIP": "Internship",
+      "APPRENTICE": "Apprentice",
+      "TRAINEE": "Trainee"
+    },
+    "location_type": {
+      "ON-SITE": "On-site",
+      "HYBRID": "Hybrid",
+      "REMOTE": "Remote"
+    }
   },
   "Common": {
     "loading": "Loading",
