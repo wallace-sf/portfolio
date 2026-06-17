@@ -67,7 +67,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
 
   return (
     <article className="flex flex-col gap-y-10 pb-12 mt-6 lg:mt-0">
-      <div className="mx-4 lg:mx-auto lg:w-full lg:max-w-237.5 flex flex-col gap-y-10">
+      <div className="lg:mx-auto lg:w-full lg:max-w-237.5 flex flex-col gap-y-10">
         <div className="flex flex-col justify-center items-start gap-y-1 lg:flex-row lg:items-center lg:justify-between">
           <Breadcrumb
             items={breadcrumbItems}

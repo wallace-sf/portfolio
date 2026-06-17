@@ -28,7 +28,7 @@ export async function HeroSection({ locale, profile }: HeroSectionProps) {
         imageClassName="object-contain 2xl:object-cover"
       />
       {profile?.stats && profile.stats.length > 0 && (
-        <section className="mx-4 my-6 grid grid-cols-2 gap-3 lg:mx-auto lg:my-8 lg:w-full lg:max-w-237.5 lg:grid-cols-4">
+        <section className="my-6 grid grid-cols-2 gap-3 lg:mx-auto lg:my-8 lg:w-full lg:max-w-237.5 lg:grid-cols-4">
           {profile.stats.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
