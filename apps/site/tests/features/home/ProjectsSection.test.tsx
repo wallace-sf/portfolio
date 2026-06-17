@@ -9,6 +9,22 @@ vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => `t.${key}`),
 }));
 
+vi.mock('~/i18n/routing', () => ({
+  Link: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  ),
+}));
+
 vi.mock('~features/home/ProjectsSection/ProjectList', () => ({
   ProjectList: ({
     projects,
@@ -69,5 +85,14 @@ describe('home/ProjectsSection', () => {
     render(await ProjectsSection({ locale: 'en-US', projects: [] }));
 
     expect(screen.getByText('t.projects_title')).toBeInTheDocument();
+  });
+
+  it('should render a "view all projects" link pointing to /projects', async () => {
+    const { ProjectsSection } = await import('~features/home/ProjectsSection');
+    render(await ProjectsSection({ locale: 'en-US', projects: PROJECTS }));
+
+    const link = screen.getByRole('link', { name: 't.view_all_projects' });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', '/projects');
   });
 });
