@@ -100,7 +100,22 @@
     "skills_label": "Habilidades",
     "see_more": "Ver más",
     "see_less": "Ver menos",
-    "present": "Presente"
+    "present": "Presente",
+    "employment_type": {
+      "FULL_TIME": "Tiempo completo",
+      "PART_TIME": "Medio tiempo",
+      "SELF_EMPLOYED": "Autónomo",
+      "FREELANCE": "Freelance",
+      "TEMPORARY": "Temporal",
+      "INTERNSHIP": "Prácticas",
+      "APPRENTICE": "Aprendiz",
+      "TRAINEE": "Trainee"
+    },
+    "location_type": {
+      "ON-SITE": "Presencial",
+      "HYBRID": "Híbrido",
+      "REMOTE": "Remoto"
+    }
   },
   "Common": {
     "loading": "Cargando",

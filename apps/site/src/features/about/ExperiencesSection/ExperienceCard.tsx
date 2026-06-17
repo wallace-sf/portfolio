@@ -72,7 +72,9 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
 
   const period = `${formatDate(startAt, locale)} - ${endAt ? formatDate(endAt, locale) : t('present')}`;
   const duration = calculateDuration(startAt, endAt);
-  const locationLine = [location, employmentType, locationType]
+  const employmentLabel = t(`employment_type.${employmentType}`);
+  const locationLabel = t(`location_type.${locationType}`);
+  const locationLine = [location, employmentLabel, locationLabel]
     .filter(Boolean)
     .join(' • ');
 

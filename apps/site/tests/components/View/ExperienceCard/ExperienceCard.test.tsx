@@ -93,8 +93,8 @@ const defaultProps = {
   location: 'São Paulo, Brazil',
   description: 'Full-stack development.',
   logo: { url: 'https://example.com/logo.png', alt: 'Acme logo' },
-  employmentType: 'Full-time',
-  locationType: 'Remote',
+  employmentType: 'FULL_TIME',
+  locationType: 'REMOTE',
   startAt: '2023-01-01T00:00:00.000Z',
   endAt: '2024-01-01T00:00:00.000Z',
   skills: [
@@ -116,10 +116,12 @@ describe('ExperienceCard', () => {
     expect(screen.getByText('Acme Corp')).toHaveClass('uppercase');
   });
 
-  it('should render location, employmentType and locationType joined', () => {
+  it('should render location, employmentType and locationType joined using translated labels', () => {
     render(<ExperienceCard {...defaultProps} />);
     expect(
-      screen.getByText('São Paulo, Brazil • Full-time • Remote'),
+      screen.getByText(
+        'São Paulo, Brazil • employment_type.FULL_TIME • location_type.REMOTE',
+      ),
     ).toBeInTheDocument();
   });
 
