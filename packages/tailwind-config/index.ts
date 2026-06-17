@@ -40,6 +40,7 @@ export default plugin(() => {}, {
           raised: 'rgb(var(--tw-surface-raised) / <alpha-value>)',
           overlay: 'rgb(var(--tw-surface-overlay) / <alpha-value>)',
           interactive: 'rgb(var(--tw-surface-interactive) / <alpha-value>)',
+          selected: 'rgb(var(--tw-surface-selected) / <alpha-value>)',
         },
         content: {
           primary: 'rgb(var(--tw-content-primary) / <alpha-value>)',
