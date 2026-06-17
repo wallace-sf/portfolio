@@ -57,50 +57,52 @@ export const ContactForm: FC = () => {
           className="border-0 p-0 m-0 min-w-0"
         >
           <div className="flex flex-col gap-y-6">
-            <div className="flex flex-col gap-y-1">
-              <Label htmlFor="name">{tForm('nameLabel')}</Label>
-              <Text.Base
-                type="text"
-                id="name"
-                placeholder={tForm('namePlaceholder')}
-                error={!!errors.name}
-                touched={!!touchedFields.name}
-                aria-invalid={!!errors.name}
-                aria-describedby={errors.name ? 'name-error' : undefined}
-                {...register('name')}
-              />
-              {errors.name && (
-                <span
-                  id="name-error"
-                  role="alert"
-                  className="text-error text-xs"
-                >
-                  {tV(errors.name.message as Parameters<typeof tV>[0])}
-                </span>
-              )}
-            </div>
+            <div className="flex flex-col xl:flex-row gap-y-6 xl:gap-x-4">
+              <div className="flex flex-col gap-y-1 xl:flex-1">
+                <Label htmlFor="name">{tForm('nameLabel')}</Label>
+                <Text.Base
+                  type="text"
+                  id="name"
+                  placeholder={tForm('namePlaceholder')}
+                  error={!!errors.name}
+                  touched={!!touchedFields.name}
+                  aria-invalid={!!errors.name}
+                  aria-describedby={errors.name ? 'name-error' : undefined}
+                  {...register('name')}
+                />
+                {errors.name && (
+                  <span
+                    id="name-error"
+                    role="alert"
+                    className="text-error text-xs"
+                  >
+                    {tV(errors.name.message as Parameters<typeof tV>[0])}
+                  </span>
+                )}
+              </div>
 
-            <div className="flex flex-col gap-y-1">
-              <Label htmlFor="email">{tForm('emailLabel')}</Label>
-              <Text.Base
-                type="email"
-                id="email"
-                placeholder={tForm('emailPlaceholder')}
-                error={!!errors.email}
-                touched={!!touchedFields.email}
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? 'email-error' : undefined}
-                {...register('email')}
-              />
-              {errors.email && (
-                <span
-                  id="email-error"
-                  role="alert"
-                  className="text-error text-xs"
-                >
-                  {tV(errors.email.message as Parameters<typeof tV>[0])}
-                </span>
-              )}
+              <div className="flex flex-col gap-y-1 xl:flex-1">
+                <Label htmlFor="email">{tForm('emailLabel')}</Label>
+                <Text.Base
+                  type="email"
+                  id="email"
+                  placeholder={tForm('emailPlaceholder')}
+                  error={!!errors.email}
+                  touched={!!touchedFields.email}
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? 'email-error' : undefined}
+                  {...register('email')}
+                />
+                {errors.email && (
+                  <span
+                    id="email-error"
+                    role="alert"
+                    className="text-error text-xs"
+                  >
+                    {tV(errors.email.message as Parameters<typeof tV>[0])}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col gap-y-1">
