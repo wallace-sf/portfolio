@@ -39,7 +39,7 @@ export const Item1: FC<IGhostLinkProps> = ({
         'flex flex-row items-center justify-between transition-all px-4 py-3 rounded-lg',
         isActive
           ? 'bg-brand-primary [&_span]:font-bold [&_*]:!text-white'
-          : 'hover:bg-surface active:bg-surface-sunken [&_span]:hover:font-bold [&_span]:active:font-bold [&_*]:active:!text-content-primary',
+          : 'hover:bg-surface [.light_&]:hover:bg-brand-primary-active active:bg-surface-sunken [&_span]:hover:font-bold [&_span]:active:font-bold [&_*]:active:!text-content-primary',
         className,
       )}
       target={newTab ? '_blank' : '_self'}
