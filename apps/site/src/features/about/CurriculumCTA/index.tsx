@@ -1,5 +1,5 @@
 import { type Locale } from '@repo/core/shared';
-import { Button } from '@repo/ui/Control';
+import { ButtonLink } from '@repo/ui/Control/Button/Link';
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { getTranslations } from 'next-intl/server';
@@ -41,7 +41,7 @@ export async function CurriculumCTA({
         <p className="text-2xl font-normal text-content-primary">
           {t('description')}
         </p>
-        <Button.Link
+        <ButtonLink
           href={url}
           target="_blank"
           rel="noopener noreferrer"
@@ -49,7 +49,7 @@ export async function CurriculumCTA({
         >
           {t('button')}
           <Icon icon="material-symbols:open-in-new" className="text-2xl" />
-        </Button.Link>
+        </ButtonLink>
       </div>
     </section>
   );
