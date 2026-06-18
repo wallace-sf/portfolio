@@ -26,6 +26,7 @@ export async function HeroSection({ locale, profile }: HeroSectionProps) {
         titleAs="h1"
         textColumnClassName="lg:w-1/2"
         imageClassName="object-contain 2xl:object-cover"
+        className="shadow-drop-md"
       />
       {profile?.stats && profile.stats.length > 0 && (
         <section className="my-6 grid grid-cols-2 gap-3 lg:mx-auto lg:my-8 lg:w-full lg:max-w-237.5 lg:grid-cols-4">
