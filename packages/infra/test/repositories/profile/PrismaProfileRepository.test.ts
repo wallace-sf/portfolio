@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { afterAll, afterEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { seedProfile } from '../../../prisma/seeders';
 import { ProfileMapper } from '../../../src/repositories/profile/ProfileMapper';
@@ -11,6 +11,10 @@ const db = new PrismaClient({
   datasourceUrl: process.env.DIRECT_URL,
 });
 const repo = new PrismaProfileRepository(db);
+
+beforeAll(async () => {
+  await db.profile.deleteMany({});
+});
 
 afterEach(async () => {
   await db.profile.deleteMany({});

@@ -46,6 +46,7 @@ async function seedExperience(
 
 beforeAll(async () => {
   await db.$connect();
+  await db.experience.deleteMany({});
 });
 
 afterAll(async () => {
