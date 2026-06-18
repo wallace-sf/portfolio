@@ -1,7 +1,13 @@
 'use client';
 
-import { ContactForm } from '~features/contact/ContactForm';
+import dynamic from 'next/dynamic';
+
 import { ContactInfo } from '~features/contact/ContactInfo';
+
+const ContactForm = dynamic(
+  () => import('~features/contact/ContactForm').then((m) => m.ContactForm),
+  { ssr: false },
+);
 
 export function ContactSection() {
   return (
