@@ -2,12 +2,14 @@ import { type ProfileDTO } from '@repo/application/portfolio';
 import { type Locale } from '@repo/core/shared';
 import { getTranslations } from 'next-intl/server';
 
+import { screens } from '@repo/tailwind-config/screens';
+
 import HeroLandingPage from '~assets/images/hero-landing-page.webp';
 import { HeroBanner } from '~features/shared/HeroBanner';
 import { StatCard } from '~features/shared/StatCard';
 
 const HERO_WIDTHS = [384, 640, 750, 828, 1080, 1200, 1920, 2048];
-const HERO_SIZES = '(max-width: 1280px) 100vw, 50vw';
+const HERO_SIZES = `(max-width: ${screens.xl}) 100vw, 50vw`;
 
 interface HeroSectionProps {
   locale: Locale;
