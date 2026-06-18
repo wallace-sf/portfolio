@@ -20,7 +20,7 @@ export const ContactForm: FC = () => {
     formState: { errors, isSubmitting, touchedFields },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
-    mode: 'onChange',
+    mode: 'all',
   });
 
   const onSubmit = (data: ContactFormValues) => {

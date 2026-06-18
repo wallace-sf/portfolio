@@ -14,7 +14,7 @@ export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
         <main className="w-full max-w-237.5 mx-auto h-auto flex flex-col flex-1 pt-6 lg:pt-16 xl:pt-20 px-4 xl:px-0">
           {children}
         </main>
-        <footer className="w-full max-w-237.5 mx-auto">
+        <footer className="w-full max-w-237.5 mx-auto shadow-drop-up">
           <ContactSection />
         </footer>
       </div>

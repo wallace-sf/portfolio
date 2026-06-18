@@ -12,6 +12,11 @@
       "import": "./dist/Control/index.mjs",
       "require": "./dist/Control/index.js"
     },
+    "./Control/Button/Link": {
+      "types": "./dist/Control/Button/Link/index.d.ts",
+      "import": "./dist/Control/Button/Link/index.mjs",
+      "require": "./dist/Control/Button/Link/index.js"
+    },
     "./Imagery": {
       "types": "./dist/types/Imagery/index.d.ts",
       "import": "./dist/Imagery/index.mjs",

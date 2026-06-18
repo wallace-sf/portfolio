@@ -10,22 +10,6 @@ vi.mock('~hooks', () => ({
   useBreakpoint: () => false,
 }));
 
-vi.mock('~i18n/routing', () => ({
-  Link: ({
-    children,
-    href,
-    className,
-  }: {
-    children: React.ReactNode;
-    href: string;
-    className?: string;
-  }) => (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  ),
-}));
-
 vi.mock('next/image', () => ({
   default: ({ alt, src }: { alt: string; src: string }) => (
     // eslint-disable-next-line @next/next/no-img-element
@@ -51,6 +35,19 @@ vi.mock('@repo/ui/Control', () => ({
       <button className={className}>
         {children instanceof Function ? children(false) : children}
       </button>
+    ),
+    Link: ({
+      children,
+      href,
+      className,
+    }: {
+      children: React.ReactNode;
+      href: string;
+      className?: string;
+    }) => (
+      <a href={href} className={className}>
+        {children}
+      </a>
     ),
   },
 }));
@@ -83,7 +80,7 @@ describe('ProjectCard', () => {
     const link = screen.getByRole('link', {
       name: /ProjectCard\.view_project/i,
     });
-    expect(link).toHaveAttribute('href', '/projects/my-project');
+    expect(link).toHaveAttribute('href', '/en-US/projects/my-project');
   });
 
   it('should render the cover image with the provided alt text', () => {

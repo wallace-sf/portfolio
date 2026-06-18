@@ -98,14 +98,14 @@ export const ContactInfo: FC = () => {
         <MenuItem.Item2.ShortLink
           href={process.env.NEXT_PUBLIC_GITHUB_URL}
           icon="mdi:github"
-          iconClassName="text-white"
+          iconClassName="text-content-primary"
           aria-label={t('github')}
           newTab
         />
         <MenuItem.Item2.ShortLink
           href="/feed.xml"
           icon="mdi:rss"
-          iconClassName="text-white"
+          iconClassName="text-content-primary"
           aria-label={t('rss')}
           newTab
         />

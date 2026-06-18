@@ -77,7 +77,7 @@ export const SideNavigation: FC = () => {
             <MenuItem.Item2.Link
               href={process.env.NEXT_PUBLIC_GITHUB_URL}
               icon="mdi:github"
-              iconClassName="text-white"
+              iconClassName="text-content-primary"
               newTab
             >
               {t('github')}
@@ -87,7 +87,7 @@ export const SideNavigation: FC = () => {
             <MenuItem.Item2.Link
               href="/feed.xml"
               icon="mdi:rss"
-              iconClassName="text-white"
+              iconClassName="text-content-primary"
               newTab
             >
               {t('rss')}

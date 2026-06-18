@@ -17,7 +17,7 @@ export async function ProjectsSection({
 
   return (
     <>
-      <h2 className="text-white my-6 !text-xl lg:block lg:mx-auto lg:my-8 lg:w-full lg:!text-[32px] lg:max-w-237.5">
+      <h2 className="text-content-primary my-6 !text-xl lg:block lg:mx-auto lg:my-8 lg:w-full lg:!text-[32px] lg:max-w-237.5">
         {t('projects_title')}
       </h2>
       <ProjectList projects={projects} compact className="pb-6" />

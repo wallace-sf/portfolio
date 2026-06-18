@@ -83,7 +83,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
         </div>
 
         <div className="flex flex-col gap-y-6">
-          <div className="relative w-full lg:h-[485px] h-60 rounded-lg overflow-hidden">
+          <div className="relative w-full lg:h-[485px] h-60 rounded-lg overflow-hidden shadow-drop-sm">
             <Image
               src={coverImage.url}
               fill

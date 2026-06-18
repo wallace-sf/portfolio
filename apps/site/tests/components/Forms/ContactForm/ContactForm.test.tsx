@@ -175,4 +175,16 @@ describe('ContactForm', () => {
       expect(screen.getByText('Validations.required')).toBeInTheDocument();
     });
   });
+
+  it('should show required error when focusing and blurring a field without typing', async () => {
+    render(<ContactForm />);
+    const nameInput = screen.getByPlaceholderText('ContactForm.namePlaceholder');
+
+    await userEvent.click(nameInput);
+    await userEvent.tab();
+
+    await waitFor(() => {
+      expect(screen.getByText('Validations.required')).toBeInTheDocument();
+    });
+  });
 });

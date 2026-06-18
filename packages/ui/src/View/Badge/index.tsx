@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { Icon } from '../../Imagery/Icon';
 
 const BASE =
-  'inline-flex flex-row items-center bg-surface-raised py-1 px-3 rounded-badge text-body-xs !text-content-primary';
+  'inline-flex flex-row items-center bg-surface-raised [.light_&]:bg-surface [.light_&]:border [.light_&]:border-surface-selected py-1 px-3 rounded-badge text-body-xs !text-content-primary';
 
 interface IBadgeTextProps {
   label: string;

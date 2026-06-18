@@ -57,7 +57,7 @@ export const LanguageSelector: FC = () => {
     <MenuItem.Item2.Expandable
       title={t('language')}
       icon="material-symbols:language"
-      iconClassName="text-white"
+      iconClassName="text-content-primary"
     >
       <RadioGroup
         name="language"

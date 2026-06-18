@@ -28,9 +28,12 @@ export const Link: FC<IGhostLinkProps> = ({
     >
       <Container>
         <Icon className={iconClassName} icon={icon} />
-        <Text className="!text-white">{children}</Text>
+        <Text className="!text-content-primary">{children}</Text>
       </Container>
-      <Icon icon="material-symbols:open-in-new" className="text-dark-1000" />
+      <Icon
+        icon="material-symbols:open-in-new"
+        className="text-content-disabled"
+      />
     </NextLink>
   );
 };

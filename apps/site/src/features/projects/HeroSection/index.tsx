@@ -16,6 +16,7 @@ export async function HeroSection({ locale }: { locale: Locale }) {
       alt={t('hero_image_alt')}
       titleAs="h1"
       imageClassName="object-contain p-6 lg:py-8"
+      className="shadow-drop-sm"
     />
   );
 }

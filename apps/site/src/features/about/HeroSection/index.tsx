@@ -25,6 +25,7 @@ export async function HeroSection({ locale }: { locale: Locale }) {
       titleAs="h1"
       textColumnClassName="lg:w-[382px]"
       imageClassName="object-contain"
+      className="shadow-drop-md"
     />
   );
 }

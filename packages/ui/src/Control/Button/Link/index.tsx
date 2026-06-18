@@ -1,16 +1,16 @@
 'use client';
 
-import { ButtonHTMLAttributes, FC } from 'react';
+import { AnchorHTMLAttributes, FC } from 'react';
 
 import { buttonVariants, ButtonAppearance, ButtonSize } from '../variants';
 
-export interface IButtonBaseProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IButtonLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   size?: ButtonSize;
   appearance?: ButtonAppearance;
   unstyled?: boolean;
 }
 
-export const ButtonBase: FC<IButtonBaseProps> = ({
+export const ButtonLink: FC<IButtonLinkProps> = ({
   children,
   className,
   size = 'large',
@@ -19,12 +19,11 @@ export const ButtonBase: FC<IButtonBaseProps> = ({
   ...props
 }) => {
   return (
-    <button
-      type="button"
+    <a
       {...props}
       className={buttonVariants({ size, appearance, unstyled, className })}
     >
       {children}
-    </button>
+    </a>
   );
 };
