@@ -2,7 +2,7 @@ import { type ProfileDTO } from '@repo/application/portfolio';
 import { type Locale } from '@repo/core/shared';
 import { getTranslations } from 'next-intl/server';
 
-import HeroLandingPage from '~assets/images/hero-landing-page.png';
+import HeroLandingPage from '~assets/images/hero-landing-page.webp';
 import { HeroBanner } from '~features/shared/HeroBanner';
 import { StatCard } from '~features/shared/StatCard';
 
