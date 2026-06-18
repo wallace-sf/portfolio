@@ -6541,135 +6541,148 @@
   "light-theme": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Corrigir tokens semânticos do tema light em tailwind.css",
         "description": "Os tokens CSS do bloco .light em packages/tailwind-config/tailwind.css estão com valores incorretos conforme FIGMA_SPECS.md. surface e surface-sunken estão trocados; content-primary, border-default e border-subtle com hex errado. Adicionar token surface-selected faltante.",
         "details": "Arquivo: packages/tailwind-config/tailwind.css\n\nCorreções no bloco .light:\n- --tw-surface: 245 246 250 → 255 255 255 (#FFFFFF — cards, hero, modais)\n- --tw-surface-sunken: 255 255 255 → 245 246 250 (#F5F6FA — sidebar e page bg)\n- --tw-surface-base: 240 242 248 → 245 246 250 (#F5F6FA — body background)\n- --tw-content-primary: 28 28 28 → 62 62 62 (#3E3E3E)\n- --tw-border-default: 209 213 219 → 186 186 186 (#BABABA)\n- --tw-border-subtle: 229 231 235 → 186 186 186 (#BABABA)\n\nNovo token — adicionar em :root (dark):\n  --tw-surface-selected: 50 50 50; /* #323232 — breadcrumb ativo dark */\n\nAdicionar em .light:\n  --tw-surface-selected: 218 218 218; /* #DADADA — breadcrumb ativo, menu selected */\n\nReferência: FIGMA_SPECS.md tmp/FIGMA_SPECS.md seção Mapeamento e Cores Light.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T21:33:41.913Z"
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Adicionar surface-selected ao sistema de cores do Tailwind (index.ts)",
         "description": "Registrar o novo token surface-selected no mapa de cores do packages/tailwind-config/index.ts para que a classe bg-surface-selected fique disponível nos componentes.",
         "details": "Arquivo: packages/tailwind-config/index.ts, seção colors.surface\n\nAdicionar:\n  selected: 'rgb(var(--tw-surface-selected) / <alpha-value>)',\n\nResultado: classe Tailwind bg-surface-selected disponível para substituir [.light_&]:bg-[#DADADA] no Breadcrumb e qualquer outro uso futuro de surface selecionado.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1
+          "1"
         ],
         "priority": "high",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T21:33:42.421Z"
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Corrigir background do body no layout raiz para suportar light mode",
         "description": "O body em apps/site/src/app/[locale]/layout.tsx usa dark:bg-dark que só aplica background em dark mode. Em light mode o body fica sem cor de fundo, mostrando o branco padrão do browser em vez de #F5F6FA.",
         "details": "Arquivo: apps/site/src/app/[locale]/layout.tsx, linha 64\n\nMudança:\n  ANTES: 'flex flex-col h-screen antialiased dark:bg-dark overflow-x-clip'\n  DEPOIS: 'flex flex-col h-screen antialiased bg-surface-base overflow-x-clip'\n\nbg-surface-base usa a CSS variable --tw-surface-base:\n  - dark: 28 28 28 = #1C1C1C (igual ao dark atual)\n  - light (após tarefa 1): 245 246 250 = #F5F6FA (fundo correto do Figma)",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1
+          "1"
         ],
         "priority": "high",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T22:07:43.546Z"
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Corrigir cores hardcoded dos ghost links na SideNavigation",
         "description": "Os componentes MenuItem Item2 (ghost links: LinkedIn, GitHub, RSS, Idioma, Tema) usam cores hardcoded do palette dark que não mudam no tema light. O ROOT_STYLE usa border-dark-400 e hover:bg-dark-300 diretamente.",
         "details": "Arquivos e correções:\n\n1. apps/site/src/components/Layout/SideNavigation/MenuItem/constants.ts\n   ANTES: 'border border-dark-400 rounded-xl transition-all hover:bg-dark-300'\n   DEPOIS: 'border border-border-default rounded-xl transition-all hover:bg-surface-interactive'\n   (border-dark-400=#3E3E3E→border-default light=#BABABA; hover:bg-dark-300=#323232→hover light=#EBEBEB)\n\n2. apps/site/src/components/Layout/SideNavigation/MenuItem/Item2/Link/index.tsx\n   - '!text-white' → '!text-content-primary'\n   - 'text-dark-1000' (open_in_new icon) → 'text-content-disabled'\n\n3. apps/site/src/components/Layout/SideNavigation/MenuItem/Item2/Expandable/index.tsx\n   - '!text-white' → '!text-content-primary'\n   - 'text-dark-1000' (chevron icon) → 'text-content-disabled'\n\n4. apps/site/src/components/Layout/SideNavigation/index.tsx (L80, L90)\n   - iconClassName='text-white' (GitHub, RSS) → 'text-content-primary'\n\n5. apps/site/src/components/Layout/SideNavigation/LanguageSelector.tsx (L60)\n   - iconClassName='text-white' → 'text-content-primary'\n\n6. apps/site/src/components/Layout/SideNavigation/ThemeToggle.tsx (L59)\n   - iconClassName='text-white' → 'text-content-primary'\n\nReferência Figma: Ghost Link light — default: border=#BABABA, hover fill=#EBEBEB, texto=#555555, ícone open_in_new=#A4A4A4",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1,
-          2
+          "1",
+          "2"
         ],
         "priority": "high",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T22:07:17.127Z"
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Implementar estado ativo/selecionado nos itens de nav da Sidebar (MenuItem Item1)",
         "description": "O MenuItem Item1 (itens de navegação: Home, Portfólio, Experiências, Currículo) não implementa o estado selecionado (página atual). O hover também usa bg-surface que em light mode resulta em branco (#FFFFFF) em vez do azul claro (#C0C5FF) especificado no Figma.",
         "details": "Arquivo: apps/site/src/components/Layout/SideNavigation/MenuItem/Item1/index.tsx\n\nMudanças:\n1. Adicionar usePathname do next/navigation para detectar rota ativa\n2. Calcular isActive comparando pathname com localizedHref\n3. Aplicar classes condicionais:\n   - Selecionado (dark): bg-brand-primary text-content-primary → já correto pois brand-primary dark=#4452FF, light=#5865FF\n   - Selecionado (ambos): bg-brand-primary (azul brand) + texto branco\n   - Hover dark: bg-surface (#323232) — atual, mas precisa trocar para variante de hover\n   - Hover light: [.light_&]:hover:bg-brand-primary-active (#C0C5FF)\n\nClasses finais sugeridas:\n  isActive:    'bg-brand-primary [&_span]:font-bold [&_*]:!text-content-primary'\n  not active:  'hover:bg-surface [.light_&]:hover:bg-brand-primary-active [&_span]:hover:font-bold'\n\nReferência Figma Components.png:\n  MenuItem default light: transparent, texto #555555\n  MenuItem hover light: fill=#C0C5FF, texto bold #3E3E3E\n  MenuItem selected light: fill=#5865FF (brand-primary), texto #FFFFFF",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1,
-          2
+          "1",
+          "2"
         ],
         "priority": "high",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T22:07:20.340Z"
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "Corrigir Breadcrumb para usar token surface-selected em vez de cor hardcoded",
         "description": "O Breadcrumb usa [.light_&]:bg-[#DADADA] hardcoded para o item ativo em light mode. Após a criação do token surface-selected, substituir pela classe semântica.",
         "details": "Arquivo: apps/site/src/features/shared/Breadcrumb/index.tsx\n\nLinha atual (L34):\n  className='px-3 py-1.5 rounded-lg text-sm text-content-primary bg-surface [.light_&]:bg-[#DADADA] [.light_&]:!text-content-secondary'\n\nSubstituir por:\n  className='px-3 py-1.5 rounded-lg text-sm text-content-primary bg-surface-selected [.light_&]:!text-content-secondary'\n\nObs: bg-surface-selected usa o novo token:\n  - dark: #323232 (mesmo valor de bg-surface no dark — visualmente idêntico)\n  - light: #DADADA (pill cinza do Figma para item ativo)\n\nVerificar também o separador (L30):\n  className no ícone arrow usa text-content-secondary — em light mode esse token é #555555.\n  Figma especifica separador light = #8D8D8D (content-muted). Ajustar para text-content-muted.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1,
-          2
+          "1",
+          "2"
         ],
         "priority": "medium",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T22:07:23.617Z"
       },
       {
-        "id": 7,
+        "id": "7",
         "title": "Corrigir borda hover do Input (Text.Base) no tema light",
         "description": "O componente Text.Base (apps/site) não implementa o estado hover da borda. No Figma light mode, o input hovered tem border de #555555 (content-secondary), mais escuro que o default #BABABA. No dark mode a lógica é oposta (border fica mais clara no hover/focus).",
         "details": "Arquivo: packages/ui/src/Control/Text/Base/index.tsx\n\nEstado atual: focus usa focus:border-content-secondary mas hover não tem borda diferente.\n\nAdicionar no className do Input:\n  '[.light_&]:hover:border-content-secondary'\n\nIsso aplica #555555 no hover apenas em light mode.\nO dark mode já usa focus:border-content-secondary (#BABABA mais claro) que é o comportamento correto.\n\nIgualmente verificar TextArea.Base (packages/ui/src/Control/TextArea/Base/index.tsx) se precisa do mesmo ajuste.\n\nReferência Figma: Input estados light — hovered: 1px solid #555555",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1
+          "1"
         ],
         "priority": "medium",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T21:49:08.182Z"
       },
       {
-        "id": 8,
+        "id": "8",
         "title": "Corrigir skeletons com cores hardcoded do palette dark",
         "description": "Os componentes skeleton (loading states) usam bg-gray-700 que é uma cor hardcoded do Tailwind sem relação com o sistema semântico. Em light mode ficam visualmente errados (cinza escuro sobre fundo claro).",
         "details": "Arquivos afetados:\n- apps/site/src/features/about/ExperiencesSection/ExperiencesSkeleton.tsx\n  'bg-gray-700' (4 ocorrências) → 'bg-surface-raised' ou 'bg-border-default'\n  'bg-surface-sunken' na linha 9 já usa token semântico (OK)\n  'h-px bg-gray-700' (separador) → 'bg-border-default'\n\n- apps/site/src/features/home/ProjectsSection/ProjectsSkeleton.tsx (verificar)\n- apps/site/src/features/about/ValuesSection/ValuesSkeleton.tsx (verificar)\n\nSubstituição: bg-gray-700 → bg-surface-raised (surface-raised light = #E5E7EB, dark = #494949)\nPara separadores: bg-gray-700 → bg-border-default",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1
+          "1"
         ],
         "priority": "low",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T21:49:11.457Z"
       },
       {
-        "id": 9,
+        "id": "9",
         "title": "Verificação visual do tema light em todas as páginas (1512px)",
         "description": "Após implementar todas as correções de tokens e componentes, realizar verificação visual completa do tema light comparando com as imagens exportadas do Figma em Desktop 1512px.",
         "details": "Páginas a verificar contra imagens em /home/wallace/Imagens/Portfolio Figma/Light/:\n\n1. Home (Desktop 1512px - Home.png):\n   - Sidebar: bg branco/F5F6FA, item ativo azul (#5865FF), ícones visíveis\n   - HeroBanner: card branco (#FFFFFF) sobre fundo #F5F6FA\n   - StatCards: fundo branco, ícone verde, textos #3E3E3E\n   - ProjectCards: fundo branco, título/desc com cores corretas\n   - Contact Section: fundo branco (#FFFFFF)\n\n2. Experiências (Desktop 1512px - Experiences.png):\n   - HeroBanner: card branco\n   - ProfessionalValueCards: cards brancos, ícones verdes\n   - ExperienceCards: itens flat sobre #F5F6FA com separadores #BABABA\n   - CurriculumCTA: card branco, botão azul\n   - Contact Section: branco\n\n3. Portfólio (Desktop 1512px - Projects.png):\n   - ProjectCards row view: imagens escuras mas bg do card branco\n\n4. Project Detail (Desktop 1512px - Project.png):\n   - Breadcrumb: item ativo com pill #DADADA\n   - Cards de info: brancos sobre #F5F6FA\n\nComponentes via Components.png:\n   - MenuItem: 3 estados (default/hover/selected)\n   - Ghost links: borda #BABABA, hover fill #EBEBEB\n   - Inputs: estados default/hover/success/error\n   - Accordion: collapsed/expanded",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
         ],
         "priority": "medium",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-06-17T22:16:16.250Z"
       }
     ],
     "metadata": {
-      "created": "2026-06-17T21:13:59.624Z",
-      "updated": "2026-06-17T21:16:32.703Z",
-      "description": "Implementação completa do tema light no portfolio"
+      "version": "1.0.0",
+      "lastModified": "2026-06-17T22:16:16.250Z",
+      "taskCount": 9,
+      "completedCount": 9,
+      "tags": [
+        "light-theme"
+      ]
     }
   }
 }
