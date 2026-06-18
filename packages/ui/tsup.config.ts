@@ -3,6 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: {
     'Control/index': 'src/Control/index.ts',
+    'Control/Button/Link/index': 'src/Control/Button/Link/index.tsx',
     'Imagery/index': 'src/Imagery/index.ts',
     'View/index': 'src/View/index.ts',
   }, // Arquivo de entrada

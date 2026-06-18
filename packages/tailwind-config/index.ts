@@ -71,6 +71,9 @@ export default plugin(() => {}, {
         4: '0px 10px 30px 0px rgba(85, 106, 235, 0.12), 0px 4px 10px 0px rgba(85, 106, 235, 0.04), 0px -18px 38px 0px rgba(85, 106, 235, 0.04)',
         5: '0px 13px 40px 0px rgba(13, 10, 44, 0.12), 0px -8px 18px 0px rgba(13, 10, 44, 0.04)',
         6: '0px 12px 34px 0px rgba(13, 10, 44, 0.08), 0px 34px 26px 0px rgba(13, 10, 44, 0.05)',
+        'drop-sm': 'var(--tw-shadow-drop-sm)',
+        'drop-md': 'var(--tw-shadow-drop-md)',
+        'drop-up': 'var(--tw-shadow-drop-up)',
       },
       borderRadius: {
         3.75: '0.9375rem',

@@ -50,10 +50,10 @@ export const Radio: FC<IRadioProps> = ({
           value={option}
           type="radio"
           checked={checked}
-          className="peer col-start-1 row-start-1 appearance-none shrink-0 w-4 h-4 border-2 border-white rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary disabled:border-gray-400 disabled:focus-visible:ring-0 cursor-pointer"
+          className="peer col-start-1 row-start-1 appearance-none shrink-0 w-4 h-4 border-2 border-white [.light_&]:border-content-primary rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary disabled:border-gray-400 disabled:focus-visible:ring-0 cursor-pointer"
         />
         {checked ? (
-          <span className="pointer-events-none col-start-1 row-start-1 w-2 h-2 rounded-full peer-checked:bg-white peer-checked:peer-disabled:bg-gray-400" />
+          <span className="pointer-events-none col-start-1 row-start-1 w-2 h-2 rounded-full peer-checked:bg-white [.light_&]:peer-checked:bg-content-primary peer-checked:peer-disabled:bg-gray-400" />
         ) : null}
       </div>
       {icon != null ? <Icon icon={icon} className={iconClassName} /> : null}

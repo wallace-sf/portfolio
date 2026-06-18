@@ -24,6 +24,9 @@
   --tw-brand-primary-active: 161 168 255; /* #A1A8FF */
   --tw-error: 255 82 116; /* #FF5274 */
   --tw-success: 113 216 117; /* #71D875 */
+  --tw-shadow-drop-sm: none;
+  --tw-shadow-drop-md: none;
+  --tw-shadow-drop-up: none;
 }
 
 .light {
@@ -47,6 +50,9 @@
   --tw-brand-primary-active: 192 197 255; /* #C0C5FF */
   --tw-error: 244 53 100; /* #F43564 */
   --tw-success: 82 206 122; /* #52CE7A */
+  --tw-shadow-drop-sm: 0px 3px 12px 2px #00000014;
+  --tw-shadow-drop-md: 0px 4px 20px 4px #00000014;
+  --tw-shadow-drop-up: 0px -4px 15px 0px #0000001A;
 }
 
 @layer base {
