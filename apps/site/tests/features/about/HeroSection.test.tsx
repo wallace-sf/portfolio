@@ -62,10 +62,10 @@ describe('about/HeroSection', () => {
     render(await HeroSection({ locale: 'en-US' }));
 
     expect(screen.getByTestId('hero-title')).toHaveTextContent(
-      'Frontend Engineer',
+      'Wallace Ferreira',
     );
     expect(screen.getByTestId('hero-caption')).toHaveTextContent(
-      'Wallace Ferreira',
+      'Frontend Engineer',
     );
   });
 
@@ -75,9 +75,9 @@ describe('about/HeroSection', () => {
     const { HeroSection } = await import('~features/about/HeroSection');
     render(await HeroSection({ locale: 'en-US' }));
 
-    expect(screen.getByTestId('hero-title')).toHaveTextContent('t.hero_caption');
+    expect(screen.getByTestId('hero-title')).toHaveTextContent('t.hero_title');
     expect(screen.getByTestId('hero-caption')).toHaveTextContent(
-      't.hero_title',
+      't.hero_caption',
     );
   });
 

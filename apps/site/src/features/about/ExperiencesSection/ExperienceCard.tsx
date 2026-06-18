@@ -10,6 +10,7 @@ import { useBoolean } from 'usehooks-ts';
 
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { useBreakpoint } from '~hooks';
+
 import {
   EMPLOYMENT_TYPE_ICONS,
   LOCATION_ICON,
@@ -86,7 +87,7 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
     LOCATION_TYPE_ICONS[locationType] ?? 'mdi:map-marker-outline';
 
   return (
-    <article className="flex flex-col gap-y-2 py-6">
+    <article className="flex flex-col gap-y-2">
       <h2 className="text-2xl font-bold text-content-primary">{position}</h2>
 
       <div className="flex flex-wrap items-baseline gap-x-2">

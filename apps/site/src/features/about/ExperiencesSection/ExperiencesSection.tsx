@@ -1,5 +1,6 @@
 import { GetExperiences } from '@repo/application/portfolio';
 import { type Locale } from '@repo/core/shared';
+import classNames from 'classnames';
 
 import { getServerContainer } from '~/lib/server/container';
 
@@ -18,10 +19,16 @@ export async function ExperiencesSection({ locale }: { locale: Locale }) {
 
   return (
     <ul className="flex flex-col">
-      {experiences.map((experience) => (
+      {experiences.map((experience, i) => (
         <li
           key={experience.id}
-          className="border-b border-border-default last:border-b-0"
+          className={classNames(
+            'border-b border-border-default last:border-b-0 py-6',
+            {
+              'pt-0': i === 0,
+              'pb-0': i === experiences.length - 1,
+            },
+          )}
         >
           <ExperienceCard {...experience} />
         </li>

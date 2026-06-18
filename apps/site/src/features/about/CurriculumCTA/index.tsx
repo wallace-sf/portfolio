@@ -24,7 +24,7 @@ export async function CurriculumCTA({
   return (
     <section
       className={classNames(
-        'flex flex-col lg:flex-row items-center gap-6 lg:gap-14 bg-surface rounded-xl p-6 lg:p-8 shadow-drop-sm',
+        'flex flex-col lg:flex-row items-center gap-6 lg:gap-14 bg-surface rounded-xl mt-8 lg:mt-10 xl:mt-16 2xl:mt-20 p-6 lg:p-8 shadow-drop-sm',
         className,
       )}
     >
