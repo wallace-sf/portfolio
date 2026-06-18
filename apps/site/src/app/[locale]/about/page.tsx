@@ -1,5 +1,6 @@
 import { GetProfile } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
+import { Divider } from '@repo/ui/View';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
@@ -51,9 +52,10 @@ export default async function About({ params }: AboutPageProps) {
   setRequestLocale(locale);
 
   return (
-    <div className="flex flex-col pb-10 lg:pb-20">
+    <div className="flex flex-col pb-10 xl:pb-16 2xl:pb-20">
       <HeroSection locale={locale} />
       <ValuesSection locale={locale} />
+      <Divider />
       <ExperiencesSection locale={locale} />
       <CurriculumCTA locale={locale} />
     </div>
