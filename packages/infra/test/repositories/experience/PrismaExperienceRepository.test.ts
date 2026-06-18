@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
+import { seedExperiences } from '../../../prisma/seeders';
+
 import { LocationType } from '@repo/core/portfolio';
 import { Id } from '@repo/core/shared';
 
@@ -44,9 +46,11 @@ async function seedExperience(
 
 beforeAll(async () => {
   await db.$connect();
+  await db.experience.deleteMany({});
 });
 
 afterAll(async () => {
+  await seedExperiences(db);
   await db.$disconnect();
 });
 
