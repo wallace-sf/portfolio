@@ -1,7 +1,7 @@
 import { type Locale } from '@repo/core/shared';
 import { getTranslations } from 'next-intl/server';
 
-import HeroProjects from '~assets/images/hero-projects.png';
+import HeroProjects from '~assets/images/hero-projects.webp';
 import { HeroBanner } from '~features/shared/HeroBanner';
 
 export async function HeroSection({ locale }: { locale: Locale }) {

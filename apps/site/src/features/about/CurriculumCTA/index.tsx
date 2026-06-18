@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 
-import illustrationSrc from '~assets/images/curriculum-cta-illustration.png';
+import illustrationSrc from '~assets/images/curriculum-cta-illustration.webp';
 
 interface ICurriculumCTAProps {
   locale: Locale;
