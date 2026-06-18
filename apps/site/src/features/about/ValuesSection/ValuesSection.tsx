@@ -21,7 +21,7 @@ export async function ValuesSection({ locale }: { locale: Locale }) {
     valuesResult.isRight() ? valuesResult.value : [];
 
   return (
-    <section className="flex flex-col gap-y-6">
+    <section className="flex flex-col gap-y-4 mt-10 xl:mt-16 2xl:mt-20">
       <h2 className="text-[32px] font-bold text-content-primary text-left">
         {t('values_title')}
       </h2>

@@ -30,7 +30,6 @@
     "view_all_projects": "Ver todos os projetos",
     "hero_title": "Wallace Ferreira",
     "hero_caption": "Engenheiro de Software",
-    "hero_content": "Lorem ipsum odor amet, consectetuer adipiscing elit. Nisl ad dictumst donec consequat sollicitudin mauris. Id inceptos nibh varius; maecenas congue ullamcorper. Senectus massa tellus metus, nullam diam amet fringilla.",
     "hero_image_alt": "Foto profissional 1 de Wallace Ferreira"
   },
   "ProjectCard": {
@@ -80,13 +79,11 @@
   "Projects": {
     "hero_title": "Portfólio",
     "hero_caption": "Conheça alguns dos meus projetos",
-    "hero_content": "Uma seleção de projetos em que trabalhei — de funcionalidades de produto a aplicações full-stack.",
     "hero_image_alt": "Foto profissional 1 de Wallace Ferreira"
   },
   "About": {
     "hero_title": "Wallace Ferreira",
     "hero_caption": "Engenheiro Front-end · React · Next.js · TypeScript",
-    "hero_content": "Engenheiro front-end com mais de 6 anos de experiência construindo aplicações web escaláveis. Apaixonado por arquitetura limpa, performance e acessibilidade.",
     "hero_image_alt": "Wallace Ferreira — Engenheiro Front-end",
     "values_title": "Meus valores profissionais"
   },

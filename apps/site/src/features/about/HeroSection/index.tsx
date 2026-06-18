@@ -17,13 +17,12 @@ export async function HeroSection({ locale }: { locale: Locale }) {
   return (
     <HeroBanner
       src={HeroAbout}
-      title={profile?.headline ?? t('hero_caption')}
-      caption={profile?.name ?? t('hero_title')}
-      content={profile?.bio ?? t('hero_content')}
+      title={profile?.name ?? t('hero_title')}
+      caption={profile?.headline ?? t('hero_caption')}
       alt={t('hero_image_alt')}
       titleSize="xl"
       titleAs="h1"
-      textColumnClassName="lg:w-[382px]"
+      textColumnClassName="lg:w-1/2"
       imageClassName="object-contain"
       className="shadow-drop-md"
     />
