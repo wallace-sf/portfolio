@@ -256,7 +256,8 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
         "I'm a Frontend Engineer with over 6 years of experience specialized in building scalable, performant, and accessible web products with React, Next.js, and TypeScript. My experience includes leading frontend design, development and now working for AI-assisted customer platforms and global commerce solutions, serving over 800 clients worldwide. Passionate about product-oriented environments, I focus on architecture, UX, and quality to deliver impactful results.",
         'Sou um Engenheiro Frontend com mais de 6 anos de experiência especializado em construir produtos web escaláveis, performáticos e acessíveis com React, Next.js e TypeScript. Minha experiência inclui liderança de design e desenvolvimento frontend, atuando em plataformas de atendimento ao cliente com IA e soluções de comércio global, atendendo mais de 800 clientes no mundo. Apaixonado por ambientes orientados a produto, foco em arquitetura, UX e qualidade para entregar resultados de impacto.',
       ),
-      photoUrl: 'https://github.com/wallace-sf.png',
+      photoUrl:
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/profile/images/hero-landing-page.webp',
       photoAlt: loc('Wallace Ferreira', 'Wallace Ferreira'),
       featuredProjectSlugs: ['personal-portfolio', 'b2b-ecommerce-platform'],
       stats: {
