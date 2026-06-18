@@ -4,6 +4,7 @@ import { FC, useState } from 'react';
 
 import { Accordion, Modal } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
+import { Badge } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 
 export interface ITechnology {
@@ -108,14 +109,11 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
         <ul className="flex flex-row gap-3 flex-wrap">
           {technologies.map((tech) => (
             <li key={tech.name}>
-              <span className="inline-flex items-center gap-2.5 bg-surface-interactive rounded-[44px] px-3 py-2 h-[38px]">
-                {tech.icon && (
-                  <Icon icon={tech.icon} className="text-xl min-w-fit" />
-                )}
-                <span className="text-base font-normal text-content-primary">
-                  {tech.name}
-                </span>
-              </span>
+              {tech.icon ? (
+                <Badge.WithIcon label={tech.name} icon={tech.icon} />
+              ) : (
+                <Badge.Text label={tech.name} />
+              )}
             </li>
           ))}
         </ul>
