@@ -6,6 +6,9 @@ import HeroLandingPage from '~assets/images/hero-landing-page.webp';
 import { HeroBanner } from '~features/shared/HeroBanner';
 import { StatCard } from '~features/shared/StatCard';
 
+const HERO_WIDTHS = [384, 640, 750, 828, 1080, 1200, 1920, 2048];
+const HERO_SIZES = '(max-width: 1280px) 100vw, 50vw';
+
 interface HeroSectionProps {
   locale: Locale;
   profile: ProfileDTO | null;
@@ -14,8 +17,25 @@ interface HeroSectionProps {
 export async function HeroSection({ locale, profile }: HeroSectionProps) {
   const t = await getTranslations({ locale, namespace: 'Home' });
 
+  const photoUrl = profile?.photo.url;
+  const preloadSrcSet = photoUrl
+    ? HERO_WIDTHS.map(
+        (w) =>
+          `/_next/image?url=${encodeURIComponent(photoUrl)}&w=${w}&q=100 ${w}w`,
+      ).join(', ')
+    : undefined;
+
   return (
     <>
+      {preloadSrcSet && (
+        <link
+          rel="preload"
+          as="image"
+          fetchPriority="high"
+          imageSrcSet={preloadSrcSet}
+          imageSizes={HERO_SIZES}
+        />
+      )}
       <HeroBanner
         src={profile?.photo.url ?? HeroLandingPage}
         title={profile?.name ?? t('hero_title')}
