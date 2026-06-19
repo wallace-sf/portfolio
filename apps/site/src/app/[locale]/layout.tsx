@@ -9,6 +9,7 @@ import {
 } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 
+import { SITE_URL } from '~/lib/og';
 import { AppLayout } from '~components';
 
 import '@repo/tailwind-config/tailwind.css';
@@ -16,8 +17,6 @@ import '@repo/ui/globals.css';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 export async function generateMetadata({
   params,

@@ -24,7 +24,7 @@ export const SideNavigation: FC = () => {
   useScrollLock({ autoLock: isOpen });
 
   return (
-    <div className="fixed top-0 left-0 shadow-1 w-full lg:w-auto z-50">
+    <div className="fixed left-0 top-0 z-50 w-full shadow-1 lg:w-auto">
       <Header open={isOpen} toggle={toggle} />
       <nav
         id="side-navigation"
@@ -34,7 +34,7 @@ export const SideNavigation: FC = () => {
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:pt-15 lg:px-0">
+        <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:px-0 lg:pt-15">
           <li>
             <MenuItem.Item1 href="/" icon="material-symbols:home">
               {t('home')}
@@ -64,7 +64,7 @@ export const SideNavigation: FC = () => {
           </li>
         </ul>
         <Divider className="mx-6 lg:mx-0" />
-        <ul className="flex flex-col gap-y-3 px-6 pb-8 lg:px-0 lg:justify-end">
+        <ul className="flex flex-col gap-y-3 px-6 pb-8 lg:justify-end lg:px-0">
           <li>
             <MenuItem.Item2.Link
               href={process.env.NEXT_PUBLIC_LINKEDIN_URL}

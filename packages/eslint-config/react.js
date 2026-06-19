@@ -17,6 +17,7 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "plugin:react-perf/recommended",
     "plugin:jsx-a11y/recommended",
+    "plugin:tailwindcss/recommended",
   ],
   globals: {
     React: true,
@@ -36,6 +37,7 @@ module.exports = {
     "react-hooks",
     "react-perf",
     "jsx-a11y",
+    "tailwindcss",
   ],
   rules: {
     "prettier/prettier": ["error"],
@@ -135,6 +137,9 @@ module.exports = {
     },
     react: {
       version: "detect",
+    },
+    tailwindcss: {
+      classAttributes: ["class", "className", "tw"],
     },
   },
   ignorePatterns: [

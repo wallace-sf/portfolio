@@ -2,10 +2,9 @@
 
 import { FC } from 'react';
 
-import { buttonVariants } from '@repo/ui/Control';
-import { Button } from '@repo/ui/Control';
-import { Icon } from '@repo/ui/Imagery';
 import { screens } from '@repo/tailwind-config/screens';
+import { buttonVariants, Button } from '@repo/ui/Control';
+import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
@@ -74,7 +73,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           !compact && 'lg:p-6 lg:gap-5',
         )}
       >
-        <div className="flex flex-col gap-4 flex-1">
+        <div className="flex flex-1 flex-col gap-4">
           {theme && (
             <span
               className={classNames(
@@ -108,7 +107,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
 
           <Button.Link
             href={`/${locale}/projects/${slug}`}
-            className="flex flex-row justify-center items-center gap-2"
+            className="flex flex-row items-center justify-center gap-2"
           >
             {t('view_project')}
             <Icon icon="ic:round-arrow-forward" className="text-xl" />

@@ -1,188 +1,75 @@
+import { DEFAULT_LOCALE } from '@repo/core';
 import { ImageResponse } from 'next/og';
 import { type NextRequest } from 'next/server';
 
+import { SITE_URL } from '~/lib/og';
+
 export const runtime = 'edge';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+const SIZE = { width: 1200, height: 630 };
+const siteHost = new URL(SITE_URL).host;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const title = searchParams.get('title') ?? 'Wallace Ferreira';
-  const description = searchParams.get('description') ?? '';
-  const imageUrl = searchParams.get('image') ?? '';
+  const subtitle = searchParams.get('subtitle') ?? '';
+  const locale = searchParams.get('locale') ?? DEFAULT_LOCALE;
+  const page = searchParams.get('page') ?? '';
 
   return new ImageResponse(
     <div
+      tw="flex flex-col justify-between w-full h-full relative p-[72px] text-[#F8FAFC] font-[Arial]"
       style={{
-        display: 'flex',
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#1C1C1C',
-        fontFamily: 'Inter, sans-serif',
-        position: 'relative',
-        overflow: 'hidden',
+        background:
+          'linear-gradient(135deg, #070B12 0%, #0E1622 60%, #10251C 100%)',
       }}
     >
-      {/* Accent stripe */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: 8,
-          height: '100%',
-          backgroundColor: '#8efb9d',
-        }}
-      />
+      {/* Watermark W */}
+      <div tw="absolute flex -right-[60px] top-[80px] text-[420px] font-extrabold leading-none text-[#5CD66E]/10">
+        W
+      </div>
 
-      {/* Decorative circle — top-right (only when no image) */}
-      {!imageUrl && (
-        <div
-          style={{
-            position: 'absolute',
-            top: -120,
-            right: -120,
-            width: 420,
-            height: 420,
-            borderRadius: '50%',
-            backgroundColor: '#4452ff',
-            opacity: 0.12,
-          }}
-        />
-      )}
-
-      {/* Profile image — right side */}
-      {imageUrl && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: 420,
-            height: '100%',
-            display: 'flex',
-          }}
-        >
-          {/* Gradient overlay so text stays readable */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: 160,
-              height: '100%',
-              background:
-                'linear-gradient(to right, #1C1C1C 0%, transparent 100%)',
-              zIndex: 1,
-            }}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageUrl}
-            alt=""
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center top',
-            }}
-          />
-        </div>
-      )}
-
-      {/* Content */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '64px 80px',
-          width: imageUrl ? 780 : '100%',
-          height: '100%',
-        }}
-      >
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: '50%',
-              backgroundColor: '#8efb9d',
-            }}
-          />
-          <span
-            style={{
-              color: '#8efb9d',
-              fontSize: 18,
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Wallace Ferreira
-          </span>
-        </div>
-
-        {/* Main content */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div
-            style={{
-              color: '#d9d9d9',
-              fontSize: title.length > 40 ? 52 : 64,
-              fontWeight: 700,
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              maxWidth: imageUrl ? 680 : 900,
-            }}
-          >
-            {title}
-          </div>
-          {description && (
-            <div
-              style={{
-                color: '#8d8d8d',
-                fontSize: 26,
-                fontWeight: 400,
-                lineHeight: 1.5,
-                maxWidth: imageUrl ? 640 : 820,
-              }}
-            >
-              {description}
+      {/* Header */}
+      <div tw="flex items-center justify-between">
+        <div tw="flex items-center gap-6">
+          <div tw="flex text-[54px] font-extrabold text-[#5CD66E]">W</div>
+          <div tw="flex flex-col">
+            <div tw="flex text-[28px] font-semibold">Wallace Ferreira</div>
+            <div tw="flex text-[22px] text-[#94A3B8]">
+              Front-end Software Engineer
             </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <span style={{ color: '#494949', fontSize: 18 }}>
-            {SITE_URL.replace(/^https?:\/\//, '')}
-          </span>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: '#282828',
-              borderRadius: 12,
-              padding: '10px 20px',
-            }}
-          >
-            <span style={{ color: '#a4a4a4', fontSize: 16 }}>
-              Software Engineer
-            </span>
           </div>
         </div>
+        {locale && (
+          <div tw="flex rounded-full px-[22px] py-[10px] text-[22px] font-extrabold bg-[#5CD66E] text-[#070B12]">
+            {locale}
+          </div>
+        )}
+      </div>
+
+      {/* Main content */}
+      <div tw="flex flex-col">
+        <div tw="flex text-[64px] font-extrabold max-w-[760px] leading-[1.05] tracking-[-0.04em]">
+          {title}
+        </div>
+        <div tw="flex w-[150px] h-[6px] bg-[#5CD66E] rounded-full mt-6 mb-8" />
+        {subtitle && (
+          <div tw="flex text-[30px] text-[#CBD5E1] max-w-[760px] leading-[1.3]">
+            {subtitle}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div tw="flex items-center justify-between">
+        <div tw="flex text-[18px] text-[#475569]">{siteHost}</div>
+        {page && (
+          <div tw="flex text-[28px] font-extrabold tracking-[0.1em] text-[#5CD66E]/50">
+            {page}
+          </div>
+        )}
       </div>
     </div>,
-    {
-      width: 1200,
-      height: 630,
-    },
+    SIZE,
   );
 }

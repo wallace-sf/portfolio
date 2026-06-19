@@ -34,7 +34,7 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
         className,
       )}
     >
-      <div className="relative h-64 flex flex-row justify-center lg:order-1 lg:h-full lg:w-1/2">
+      <div className="relative flex h-64 flex-row justify-center lg:order-1 lg:h-full lg:w-1/2">
         <Image
           src={src}
           alt={alt}
@@ -64,7 +64,7 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
         >
           {title}
         </TitleTag>
-        <p className="text-sm md:text-base lg:text-lg 2xl:text-2xl 2xl:leading-[33.6px] text-content-secondary">
+        <p className="text-sm text-content-secondary md:text-base lg:text-lg 2xl:text-2xl 2xl:leading-[33.6px]">
           {caption}
         </p>
       </div>

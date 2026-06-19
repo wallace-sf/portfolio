@@ -26,11 +26,11 @@ export const SkillAccordion: FC<ISkillAccordionProps> = ({ skills }) => {
             </span>
             <Icon
               icon="ic:round-keyboard-arrow-down"
-              className={`text-content-muted text-xl transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+              className={`text-xl text-content-muted transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
             />
           </Accordion.Header>
           <Accordion.Body>
-            <ul className="flex flex-row gap-2 flex-wrap pt-2">
+            <ul className="flex flex-row flex-wrap gap-2 pt-2">
               {skills.map((skill) => (
                 <li key={skill.name}>
                   {skill.icon ? (
