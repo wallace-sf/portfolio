@@ -1,7 +1,7 @@
 import { GetFeaturedProjects, GetProfile } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
@@ -22,16 +22,18 @@ export async function generateMetadata({
   const locale = ((await params)?.locale ?? DEFAULT_LOCALE) as Locale;
   setRequestLocale(locale);
 
+  const t = await getTranslations({ locale, namespace: 'Metadata' });
+
   const profileResult = await new GetProfile(
     getServerContainer().profileRepository,
   ).execute({ locale });
 
-  if (profileResult.isLeft()) return {};
+  if (profileResult.isLeft()) return { title: t('HomePage.title') };
 
   const { name, headline, photo } = profileResult.value;
 
   return {
-    title: name,
+    title: t('HomePage.title'),
     description: headline,
     openGraph: {
       title: name,
