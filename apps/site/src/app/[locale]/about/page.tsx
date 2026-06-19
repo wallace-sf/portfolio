@@ -5,13 +5,12 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
+import { buildOgImageUrl } from '~/lib/og';
 import { getServerContainer } from '~/lib/server/container';
 import { CurriculumCTA } from '~features/about/CurriculumCTA';
 import { ExperiencesSection } from '~features/about/ExperiencesSection';
 import { HeroSection } from '~features/about/HeroSection';
 import { ValuesSection } from '~features/about/ValuesSection';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -36,12 +35,7 @@ export async function generateMetadata({
 
   if (profileResult.isLeft()) return { title };
 
-  const { bio, photo } = profileResult.value;
-
-  const ogUrl = new URL('/og', SITE_URL);
-  ogUrl.searchParams.set('title', title);
-  if (bio) ogUrl.searchParams.set('description', bio);
-  if (photo?.url) ogUrl.searchParams.set('image', photo.url);
+  const { bio } = profileResult.value;
 
   return {
     title,
@@ -49,7 +43,19 @@ export async function generateMetadata({
     openGraph: {
       title,
       description: bio,
-      images: [{ url: ogUrl.toString(), width: 1200, height: 630, alt: title }],
+      images: [
+        {
+          url: buildOgImageUrl({
+            title,
+            subtitle: bio,
+            locale,
+            page: 'ABOUT',
+          }),
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
   };
 }

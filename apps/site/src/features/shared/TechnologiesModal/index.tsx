@@ -42,7 +42,7 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
       title={t('title')}
     >
       {(company || position || hasDescriptions) && (
-        <div className="flex items-center gap-3 mb-6">
+        <div className="mb-6 flex items-center gap-3">
           {company && (
             <span className="text-xl font-bold text-content-primary">
               {company}
@@ -57,7 +57,7 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
             <button
               type="button"
               onClick={() => setView(isDetailed ? 'basic' : 'detailed')}
-              className="ml-auto text-body-xs text-brand-primary hover:opacity-80 transition-opacity"
+              className="text-body-xs ml-auto text-brand-primary transition-opacity hover:opacity-80"
             >
               {isDetailed ? t('compactView') : t('viewDetails')}
             </button>
@@ -65,7 +65,7 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
         </div>
       )}
 
-      {isDetailed && <hr className="border-t border-border-muted mb-6" />}
+      {isDetailed && <hr className="mb-6 border-t border-border-muted" />}
 
       {isDetailed ? (
         <ul className="flex flex-col gap-3">
@@ -79,7 +79,7 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
                         {tech.icon && (
                           <Icon
                             icon={tech.icon}
-                            className="text-2xl min-w-fit"
+                            className="min-w-fit text-2xl"
                           />
                         )}
                         <span className="text-base font-bold text-content-primary">
@@ -88,11 +88,11 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
                       </div>
                       <Icon
                         icon="ic:round-keyboard-arrow-down"
-                        className={`text-content-muted text-xl transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+                        className={`text-xl text-content-muted transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
                       />
                     </Accordion.Header>
                     <Accordion.Body>
-                      <p className="text-sm font-normal text-content-secondary leading-[1.4] pb-3">
+                      <p className="pb-3 text-sm font-normal leading-[1.4] text-content-secondary">
                         {tech.description}
                       </p>
                     </Accordion.Body>
@@ -106,7 +106,7 @@ export const TechnologiesModal: FC<ITechnologiesModalProps> = ({
           ))}
         </ul>
       ) : (
-        <ul className="flex flex-row gap-3 flex-wrap">
+        <ul className="flex flex-row flex-wrap gap-3">
           {technologies.map((tech) => (
             <li key={tech.name}>
               {tech.icon ? (

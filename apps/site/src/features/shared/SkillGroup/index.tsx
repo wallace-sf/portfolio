@@ -53,7 +53,7 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
 
   return (
     <>
-      <ul className="flex flex-row gap-2 flex-wrap">
+      <ul className="flex flex-row flex-wrap gap-2">
         {renderedSkills}
         {skills.length > storedMax ? (
           <li>
@@ -63,7 +63,7 @@ export const SkillGroup: FC<ISkillGroupProps> = ({
               <button
                 type="button"
                 aria-label={t('show_more', { count: total - storedMax })}
-                className="hover:opacity-80 transition-opacity"
+                className="transition-opacity hover:opacity-80"
                 onClick={openModal}
               >
                 <Badge.Count count={total - storedMax} />

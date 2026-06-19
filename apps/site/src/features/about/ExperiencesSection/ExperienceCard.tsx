@@ -101,15 +101,15 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-base text-content-disabled">
         <span className="flex items-center gap-x-1">
-          <Icon icon={LOCATION_ICON} className="text-base shrink-0" />
+          <Icon icon={LOCATION_ICON} className="shrink-0 text-base" />
           {location}
         </span>
         <span className="flex items-center gap-x-1">
-          <Icon icon={employmentIcon} className="text-base shrink-0" />
+          <Icon icon={employmentIcon} className="shrink-0 text-base" />
           {employmentLabel}
         </span>
         <span className="flex items-center gap-x-1">
-          <Icon icon={locationTypeIcon} className="text-base shrink-0" />
+          <Icon icon={locationTypeIcon} className="shrink-0 text-base" />
           {locationLabel}
         </span>
       </div>

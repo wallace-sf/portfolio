@@ -8,10 +8,10 @@ import { Icon } from '@repo/ui/Imagery';
 export const Skill: FC<ISkillProps> = ({ icon, description }) => {
   return (
     <li
-      className="flex flex-row items-center bg-surface-raised py-1 px-3 gap-x-2 rounded-3.75"
+      className="flex flex-row items-center gap-x-2 rounded-3.75 bg-surface-raised px-3 py-1"
       title={description}
     >
-      <Icon icon={icon} className="text-xl min-w-fit" />
+      <Icon icon={icon} className="min-w-fit text-xl" />
       <span className="text-body-xs !text-content-primary">{description}</span>
     </li>
   );

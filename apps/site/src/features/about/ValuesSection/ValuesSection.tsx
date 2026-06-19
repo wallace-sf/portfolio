@@ -21,11 +21,11 @@ export async function ValuesSection({ locale }: { locale: Locale }) {
     valuesResult.isRight() ? valuesResult.value : [];
 
   return (
-    <section className="flex flex-col gap-y-4 mt-10 xl:mt-16 2xl:mt-20">
-      <h2 className="text-[32px] font-bold text-content-primary text-left">
+    <section className="mt-10 flex flex-col gap-y-4 xl:mt-16 2xl:mt-20">
+      <h2 className="text-left text-[32px] font-bold text-content-primary">
         {t('values_title')}
       </h2>
-      <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
+      <ul className="grid grid-cols-2 items-stretch gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {professionalValues.map((professionalValue) => (
           <li key={professionalValue.id}>
             <ProfessionalValueCard {...professionalValue} />

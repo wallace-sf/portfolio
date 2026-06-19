@@ -8,11 +8,11 @@ export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <SideNavigation />
-      <div className="flex h-full flex-col ml-0 lg:ml-60 mt-header-mobile lg:mt-0">
-        <main className="w-full max-w-237.5 mx-auto h-auto flex flex-col flex-1 pt-6 lg:pt-16 xl:pt-20 px-4 xl:px-0">
+      <div className="ml-0 mt-header-mobile flex h-full flex-col lg:ml-60 lg:mt-0">
+        <main className="mx-auto flex h-auto w-full max-w-237.5 flex-1 flex-col px-4 pt-6 lg:pt-16 xl:px-0 xl:pt-20">
           {children}
         </main>
-        <footer className="w-full max-w-237.5 mx-auto shadow-drop-up">
+        <footer className="mx-auto w-full max-w-237.5 shadow-drop-up">
           <ContactSection />
         </footer>
       </div>
