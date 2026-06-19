@@ -15,32 +15,42 @@ const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: 'Wallace Ferreira',
-    template: '%s | Wallace Ferreira',
-  },
-  description:
-    'Frontend Software Engineer with 6+ years of experience building scalable, performant, and accessible web products with React, Next.js, and TypeScript.',
-  openGraph: {
-    type: 'website',
-    siteName: 'Wallace Ferreira',
-    images: [
-      { url: 'https://github.com/wallace-sf.png', alt: 'Wallace Ferreira' },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-  },
-  alternates: {
-    types: {
-      'application/rss+xml': [
-        { url: `${SITE_URL}/feed.xml`, title: 'Wallace Ferreira' },
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: 'Wallace Ferreira',
+      template: '%s | Wallace Ferreira',
+    },
+    description:
+      'Frontend Software Engineer with 6+ years of experience building scalable, performant, and accessible web products with React, Next.js, and TypeScript.',
+    openGraph: {
+      type: 'website',
+      siteName: 'Wallace Ferreira',
+      images: [
+        { url: 'https://github.com/wallace-sf.png', alt: 'Wallace Ferreira' },
       ],
     },
-  },
-};
+    twitter: {
+      card: 'summary_large_image',
+    },
+    alternates: {
+      types: {
+        'application/rss+xml': [
+          {
+            url: `${SITE_URL}/${locale}/feed.xml`,
+            title: 'Wallace Ferreira',
+          },
+        ],
+      },
+    },
+  };
+}
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
