@@ -44,9 +44,10 @@ export async function generateMetadata({
         {
           url: buildOgImageUrl({
             title: name,
-            subtitle: t('Layout.description'),
+            subtitle: t('HomePage.ogSubtitle'),
             locale,
-            page: 'HOME',
+            page: t('HomePage.ogPage'),
+            jobTitle: t('OgCard.jobTitle'),
           }),
           width: 1200,
           height: 630,
