@@ -17,143 +17,59 @@ export async function GET(req: NextRequest) {
 
   return new ImageResponse(
     <div
+      tw="flex flex-col justify-between w-full h-full relative p-[72px] text-[#F8FAFC]"
       style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        background:
-          'linear-gradient(135deg, #070B12 0%, #0E1622 60%, #10251C 100%)',
-        color: '#F8FAFC',
-        padding: 72,
+        background: 'linear-gradient(135deg, #070B12 0%, #0E1622 60%, #10251C 100%)',
         fontFamily: 'Arial',
-        position: 'relative',
       }}
     >
       {/* Watermark W */}
       <div
-        style={{
-          position: 'absolute',
-          right: -60,
-          top: 80,
-          fontSize: 420,
-          fontWeight: 800,
-          color: 'rgba(92, 214, 110, 0.10)',
-          lineHeight: 1,
-          display: 'flex',
-        }}
+        tw="absolute flex text-[420px] font-extrabold leading-none text-[rgba(92,214,110,0.10)]"
+        style={{ right: -60, top: 80 }}
       >
         W
       </div>
 
       {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <div
-            style={{
-              fontSize: 54,
-              fontWeight: 800,
-              color: '#5CD66E',
-              display: 'flex',
-            }}
-          >
-            W
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: 28, fontWeight: 600, display: 'flex' }}>
-              Wallace Ferreira
-            </div>
-            <div style={{ fontSize: 22, color: '#94A3B8', display: 'flex' }}>
-              Front-end Software Engineer
-            </div>
+      <div tw="flex items-center justify-between">
+        <div tw="flex items-center gap-6">
+          <div tw="flex text-[54px] font-extrabold text-[#5CD66E]">W</div>
+          <div tw="flex flex-col">
+            <div tw="flex text-[28px] font-semibold">Wallace Ferreira</div>
+            <div tw="flex text-[22px] text-[#94A3B8]">Front-end Software Engineer</div>
           </div>
         </div>
         {locale && (
-          <div
-            style={{
-              background: '#5CD66E',
-              color: '#070B12',
-              borderRadius: 999,
-              padding: '10px 22px',
-              fontSize: 22,
-              fontWeight: 800,
-              display: 'flex',
-            }}
-          >
+          <div tw="flex rounded-full px-[22px] py-[10px] text-[22px] font-extrabold bg-[#5CD66E] text-[#070B12]">
             {locale}
           </div>
         )}
       </div>
 
       {/* Main content */}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div tw="flex flex-col">
         <div
-          style={{
-            fontSize: title.length > 20 ? 64 : 76,
-            fontWeight: 800,
-            letterSpacing: '-0.04em',
-            maxWidth: 760,
-            lineHeight: 1.05,
-            display: 'flex',
-          }}
+          tw="flex font-extrabold max-w-[760px] leading-[1.05] tracking-[-0.04em]"
+          style={{ fontSize: title.length > 20 ? 64 : 76 }}
         >
           {title}
         </div>
-        <div
-          style={{
-            width: 150,
-            height: 6,
-            background: '#5CD66E',
-            borderRadius: 999,
-            marginTop: 24,
-            marginBottom: 32,
-            display: 'flex',
-          }}
-        />
+        <div tw="flex w-[150px] h-[6px] bg-[#5CD66E] rounded-full mt-6 mb-8" />
         {subtitle && (
-          <div
-            style={{
-              fontSize: 30,
-              color: '#CBD5E1',
-              maxWidth: 760,
-              lineHeight: 1.3,
-              display: 'flex',
-            }}
-          >
+          <div tw="flex text-[30px] text-[#CBD5E1] max-w-[760px] leading-[1.3]">
             {subtitle}
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ fontSize: 18, color: '#475569', display: 'flex' }}>
-            {siteHost}
-          </div>
-        </div>
+      <div tw="flex items-center justify-between">
+        <div tw="flex text-[18px] text-[#475569]">{siteHost}</div>
         {page && (
           <div
-            style={{
-              fontSize: 28,
-              fontWeight: 800,
-              color: 'rgba(92, 214, 110, 0.5)',
-              letterSpacing: '0.1em',
-              display: 'flex',
-            }}
+            tw="flex text-[28px] font-extrabold tracking-[0.1em]"
+            style={{ color: 'rgba(92, 214, 110, 0.5)' }}
           >
             {page}
           </div>
