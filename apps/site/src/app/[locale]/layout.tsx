@@ -2,7 +2,7 @@ import { LOCALES } from '@repo/core/shared';
 import classNames from 'classnames';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 
 import { AppLayout } from '~components';
@@ -21,14 +21,14 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Metadata' });
   return {
     metadataBase: new URL(SITE_URL),
     title: {
       default: 'Wallace Ferreira',
       template: '%s | Wallace Ferreira',
     },
-    description:
-      'Frontend Software Engineer with 6+ years of experience building scalable, performant, and accessible web products with React, Next.js, and TypeScript.',
+    description: t('Layout.description'),
     openGraph: {
       type: 'website',
       siteName: 'Wallace Ferreira',
