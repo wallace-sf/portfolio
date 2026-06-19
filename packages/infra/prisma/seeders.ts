@@ -60,8 +60,8 @@ export const ID = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-export function loc(enUS: string, ptBR: string) {
-  return { 'en-US': enUS, 'pt-BR': ptBR };
+export function loc(enUS: string, ptBR: string, es?: string) {
+  return { 'en-US': enUS, 'pt-BR': ptBR, ...(es !== undefined && { es }) };
 }
 
 // ---------------------------------------------------------------------------
@@ -323,11 +323,13 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
       coverImageAlt: loc(
         'Personal Portfolio repository on GitHub',
         'Repositório do Portfólio Pessoal no GitHub',
+        'Repositorio del Portafolio Personal en GitHub',
       ),
-      title: loc('Personal Portfolio', 'Portfólio Pessoal'),
+      title: loc('Personal Portfolio', 'Portfólio Pessoal', 'Portafolio Personal'),
       caption: loc(
         'A full-stack portfolio built with Next.js, DDD, and Clean Architecture in a Turborepo monorepo.',
         'Portfólio full-stack construído com Next.js, DDD e Arquitetura Limpa em um monorepo Turborepo.',
+        'Portafolio full-stack construido con Next.js, DDD y Arquitectura Limpia en un monorepo Turborepo.',
       ),
       content: `A production-grade monorepo portfolio built with **Next.js 16**, **TypeScript**, and **Prisma** following Domain-Driven Design and Clean Architecture principles.
 
@@ -362,11 +364,13 @@ The project is split across four layers — \`core\`, \`application\`, \`infra\`
       coverImageAlt: loc(
         'B2B e-commerce platform for construction materials',
         'Plataforma B2B de e-commerce para materiais de construção',
+        'Plataforma B2B de e-commerce para materiales de construcción',
       ),
-      title: loc('B2B E-Commerce Platform', 'Plataforma B2B de E-Commerce'),
+      title: loc('B2B E-Commerce Platform', 'Plataforma B2B de E-Commerce', 'Plataforma B2B de E-Commerce'),
       caption: loc(
         'Full-stack B2B platform for construction materials built with DDD, Clean Architecture, NestJS, and React.',
         'Plataforma B2B full-stack para materiais de construção construída com DDD, Arquitetura Limpa, NestJS e React.',
+        'Plataforma B2B full-stack para materiales de construcción construida con DDD, Arquitectura Limpia, NestJS y React.',
       ),
       content: `End-to-end engineering of a **B2B e-commerce platform** for construction materials, from system design to production delivery.
 
@@ -401,14 +405,17 @@ Designed scalable RESTful APIs following **Domain-Driven Design** and **Clean Ar
       coverImageAlt: loc(
         'Game research and data intelligence platform',
         'Plataforma de pesquisa de games e inteligência de dados',
+        'Plataforma de investigación de videojuegos e inteligencia de datos',
       ),
       title: loc(
         'Game Intelligence Platform',
         'Plataforma de Inteligência de Games',
+        'Plataforma de Inteligencia de Videojuegos',
       ),
       caption: loc(
         'A data intelligence platform for the games industry, delivering insights 200% faster than traditional research institutes.',
         'Plataforma de inteligência de dados para a indústria de games, entregando insights 200% mais rápido que institutos de pesquisa tradicionais.',
+        'Plataforma de inteligencia de datos para la industria de los videojuegos, entregando insights 200% más rápido que los institutos de investigación tradicionales.',
       ),
       content: `A **game research and data intelligence platform** that aggregates market data and delivers actionable insights to studios and publishers significantly faster than traditional research methods.
 
@@ -434,11 +441,13 @@ Built the entire frontend with **React.js**, **Material UI**, and **GraphQL**, i
       coverImageAlt: loc(
         'Open-source MQTT client library for React',
         'Biblioteca open-source de cliente MQTT para React',
+        'Biblioteca open-source de cliente MQTT para React',
       ),
-      title: loc('React MQTT WebSocket', 'React MQTT WebSocket'),
+      title: loc('React MQTT WebSocket', 'React MQTT WebSocket', 'React MQTT WebSocket'),
       caption: loc(
         'An open-source MQTT client library for React with hooks-based API and real-time topic subscriptions.',
         'Biblioteca open-source de cliente MQTT para React com API baseada em hooks e subscrições de tópicos em tempo real.',
+        'Biblioteca open-source de cliente MQTT para React con API basada en hooks y suscripciones de tópicos en tiempo real.',
       ),
       content: `An **open-source MQTT client library** for React applications, created to simplify integration with MQTT brokers over WebSocket in real-time web platforms.
 
