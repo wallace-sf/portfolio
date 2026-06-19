@@ -4,11 +4,10 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
+import { buildOgImageUrl } from '~/lib/og';
 import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/home/HeroSection';
 import { ProjectsSection } from '~features/home/ProjectsSection';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -35,18 +34,24 @@ export async function generateMetadata({
 
   const { name, headline, photo } = profileResult.value;
 
-  const ogUrl = new URL('/og', SITE_URL);
-  ogUrl.searchParams.set('title', name);
-  if (headline) ogUrl.searchParams.set('description', headline);
-  if (photo?.url) ogUrl.searchParams.set('image', photo.url);
-
   return {
     title: { absolute: `${t('HomePage.title')} | Wallace Ferreira` },
     description: headline,
     openGraph: {
       title: name,
       description: headline,
-      images: [{ url: ogUrl.toString(), width: 1200, height: 630, alt: name }],
+      images: [
+        {
+          url: buildOgImageUrl({
+            title: name,
+            description: headline,
+            image: photo?.url,
+          }),
+          width: 1200,
+          height: 630,
+          alt: name,
+        },
+      ],
     },
   };
 }
