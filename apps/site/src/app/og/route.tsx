@@ -5,11 +5,25 @@ export const runtime = 'edge';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
+async function fetchImageAsPngDataUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const buffer = await res.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    return `data:image/png;base64,${base64}`;
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const title = searchParams.get('title') ?? 'Wallace Ferreira';
   const description = searchParams.get('description') ?? '';
   const imageUrl = searchParams.get('image') ?? '';
+
+  const imageSrc = imageUrl ? await fetchImageAsPngDataUrl(imageUrl) : null;
 
   return new ImageResponse(
     <div
@@ -36,7 +50,7 @@ export async function GET(req: NextRequest) {
       />
 
       {/* Decorative circle — top-right (only when no image) */}
-      {!imageUrl && (
+      {!imageSrc && (
         <div
           style={{
             position: 'absolute',
@@ -52,7 +66,7 @@ export async function GET(req: NextRequest) {
       )}
 
       {/* Profile image — right side */}
-      {imageUrl && (
+      {imageSrc && (
         <div
           style={{
             position: 'absolute',
@@ -78,7 +92,7 @@ export async function GET(req: NextRequest) {
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={imageUrl}
+            src={imageSrc}
             alt=""
             style={{
               width: '100%',
@@ -97,7 +111,7 @@ export async function GET(req: NextRequest) {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '64px 80px',
-          width: imageUrl ? 780 : '100%',
+          width: imageSrc ? 780 : '100%',
           height: '100%',
         }}
       >
@@ -133,7 +147,7 @@ export async function GET(req: NextRequest) {
               fontWeight: 700,
               lineHeight: 1.1,
               letterSpacing: '-0.02em',
-              maxWidth: imageUrl ? 680 : 900,
+              maxWidth: imageSrc ? 680 : 900,
             }}
           >
             {title}
@@ -145,7 +159,7 @@ export async function GET(req: NextRequest) {
                 fontSize: 26,
                 fontWeight: 400,
                 lineHeight: 1.5,
-                maxWidth: imageUrl ? 640 : 820,
+                maxWidth: imageSrc ? 640 : 820,
               }}
             >
               {description}
