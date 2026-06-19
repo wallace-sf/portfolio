@@ -25,7 +25,7 @@ export const ContactInfo: FC = () => {
           <div className="flex items-center gap-x-2">
             <Icon
               icon="ic:baseline-email"
-              className="text-content-secondary text-2xl"
+              className="text-2xl text-content-secondary"
             />
             <strong className="text-base font-bold text-content-primary">
               {t('email')}
@@ -43,7 +43,7 @@ export const ContactInfo: FC = () => {
             >
               <Icon
                 icon="material-symbols:content-copy"
-                className="text-content-secondary text-2xl"
+                className="text-2xl text-content-secondary"
               />
             </Button.Clipboard>
           </div>
@@ -53,7 +53,7 @@ export const ContactInfo: FC = () => {
           <div className="flex items-center gap-x-2">
             <Icon
               icon="ic:baseline-whatsapp"
-              className="text-content-secondary text-2xl"
+              className="text-2xl text-content-secondary"
             />
             <strong className="text-base font-bold text-content-primary">
               WhatsApp
@@ -71,7 +71,7 @@ export const ContactInfo: FC = () => {
             >
               <Icon
                 icon="material-symbols:content-copy"
-                className="text-content-secondary text-2xl"
+                className="text-2xl text-content-secondary"
               />
             </Button.Clipboard>
           </div>

@@ -2,12 +2,12 @@
 
 import { FC } from 'react';
 
+import { screens } from '@repo/tailwind-config/screens';
 import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 
-import { screens } from '@repo/tailwind-config/screens';
 import logo from '~assets/images/logo.svg';
 
 interface HeaderProps {
@@ -19,7 +19,7 @@ export const Header: FC<HeaderProps> = ({ open, toggle }) => {
   const t = useTranslations('Header');
 
   return (
-    <header className="w-full lg:w-60 flex items-center lg:items-end justify-between lg:justify-center bg-surface lg:bg-surface-sunken px-4 py-3 lg:px-0 lg:py-0 transition-all duration-300 ease-linear h-header-mobile lg:h-header-desktop shadow-drop-md lg:shadow-none">
+    <header className="flex h-header-mobile w-full items-center justify-between bg-surface px-4 py-3 shadow-drop-md transition-all duration-300 ease-linear lg:h-header-desktop lg:w-60 lg:items-end lg:justify-center lg:bg-surface-sunken lg:p-0 lg:shadow-none">
       <NextLink href="/" aria-label={t('logo_alt')}>
         <picture>
           <source
@@ -38,7 +38,7 @@ export const Header: FC<HeaderProps> = ({ open, toggle }) => {
         </picture>
       </NextLink>
       <Button.Base
-        className="flex items-center justify-center h-10 w-10 !bg-surface-raised hover:!bg-surface !rounded !p-0 lg:hidden"
+        className="flex size-10 items-center justify-center !rounded !bg-surface-raised !p-0 hover:!bg-surface lg:hidden"
         onClick={toggle}
         aria-label={open ? t('closeMenu') : t('openMenu')}
         aria-expanded={open}

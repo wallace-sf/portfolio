@@ -9,8 +9,8 @@ import {
 } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 
-import { AppLayout } from '~components';
 import { SITE_URL } from '~/lib/og';
+import { AppLayout } from '~components';
 
 import '@repo/tailwind-config/tailwind.css';
 import '@repo/ui/globals.css';

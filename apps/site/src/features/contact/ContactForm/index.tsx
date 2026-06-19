@@ -35,7 +35,7 @@ export const ContactForm: FC = () => {
   if (submitted) {
     return (
       <div className="w-full">
-        <h2 className="text-2xl font-bold text-content-primary mb-6">
+        <h2 className="mb-6 text-2xl font-bold text-content-primary">
           {tForm('title')}
         </h2>
         <p className="text-accent">{tForm('success')}</p>
@@ -47,7 +47,7 @@ export const ContactForm: FC = () => {
     <>
       <h2
         id="contact-form-title"
-        className="text-2xl font-bold text-content-primary mb-6"
+        className="mb-6 text-2xl font-bold text-content-primary"
       >
         {tForm('title')}
       </h2>
@@ -55,10 +55,10 @@ export const ContactForm: FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
         <fieldset
           aria-labelledby="contact-form-title"
-          className="border-0 p-0 m-0 min-w-0"
+          className="m-0 min-w-0 border-0 p-0"
         >
           <div className="flex flex-col gap-y-6">
-            <div className="flex flex-col xl:flex-row gap-y-6 xl:gap-x-4">
+            <div className="flex flex-col gap-y-6 xl:flex-row xl:gap-x-4">
               <div className="flex flex-col gap-y-1 xl:flex-1">
                 <Label htmlFor="name">{tForm('nameLabel')}</Label>
                 <Text.Base
@@ -75,7 +75,7 @@ export const ContactForm: FC = () => {
                   <span
                     id="name-error"
                     role="alert"
-                    className="text-error text-xs"
+                    className="text-xs text-error"
                   >
                     {tV(errors.name.message as Parameters<typeof tV>[0])}
                   </span>
@@ -98,7 +98,7 @@ export const ContactForm: FC = () => {
                   <span
                     id="email-error"
                     role="alert"
-                    className="text-error text-xs"
+                    className="text-xs text-error"
                   >
                     {tV(errors.email.message as Parameters<typeof tV>[0])}
                   </span>
@@ -123,7 +123,7 @@ export const ContactForm: FC = () => {
                 <span
                   id="message-error"
                   role="alert"
-                  className="text-error text-xs"
+                  className="text-xs text-error"
                 >
                   {tV(errors.message.message as Parameters<typeof tV>[0])}
                 </span>
@@ -134,7 +134,7 @@ export const ContactForm: FC = () => {
 
         <Button.Base
           type="submit"
-          className="w-full xl:w-[216px] h-[46px] mt-6"
+          className="mt-6 h-[46px] w-full xl:w-[216px]"
           disabled={isSubmitting}
         >
           {tForm('submit')}

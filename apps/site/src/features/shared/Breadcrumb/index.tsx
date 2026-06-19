@@ -31,7 +31,7 @@ export const Breadcrumb: FC<IBreadcrumbProps> = ({ items, className }) => (
               />
             )}
             {isLast ? (
-              <span className="px-3 py-1.5 rounded-lg text-sm text-content-primary bg-surface-selected [.light_&]:!text-content-secondary">
+              <span className="rounded-lg bg-surface-selected px-3 py-1.5 text-sm text-content-primary [.light_&]:!text-content-secondary">
                 {item.label}
               </span>
             ) : (
