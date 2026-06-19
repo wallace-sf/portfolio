@@ -37,7 +37,12 @@ export async function generateMetadata({
       type: 'website',
       siteName: 'Wallace Ferreira',
       images: [
-        { url: 'https://github.com/wallace-sf.png', alt: 'Wallace Ferreira' },
+        {
+          url: '/og',
+          width: 1200,
+          height: 630,
+          alt: 'Wallace Ferreira',
+        },
       ],
     },
     twitter: {
