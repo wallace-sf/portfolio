@@ -49,10 +49,7 @@ export async function GET(req: NextRequest) {
 
       {/* Main content */}
       <div tw="flex flex-col">
-        <div
-          tw="flex font-extrabold max-w-[760px] leading-[1.05] tracking-[-0.04em]"
-          style={{ fontSize: title.length > 20 ? 64 : 76 }}
-        >
+        <div tw="flex text-[64px] font-extrabold max-w-[760px] leading-[1.05] tracking-[-0.04em]">
           {title}
         </div>
         <div tw="flex w-[150px] h-[6px] bg-[#5CD66E] rounded-full mt-6 mb-8" />
