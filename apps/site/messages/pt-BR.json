@@ -144,6 +144,9 @@
     "Layout": {
       "description": "Engenheiro de Software Frontend com mais de 6 anos de experiência construindo produtos web escaláveis, performáticos e acessíveis com React, Next.js e TypeScript."
     },
+    "HomePage": {
+      "title": "Início"
+    },
     "AboutPage": {
       "title": "Sobre"
     },

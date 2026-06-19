@@ -2,7 +2,11 @@ import { LOCALES } from '@repo/core/shared';
 import classNames from 'classnames';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from 'next-intl/server';
 import { Inter } from 'next/font/google';
 
 import { AppLayout } from '~components';
