@@ -38,7 +38,6 @@ export async function generateMetadata({
           url: buildOgImageUrl({
             title,
             subtitle: description,
-            tag: 'Portfolio Projects',
             locale,
             page: 'PROJECTS',
           }),
