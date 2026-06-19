@@ -4,7 +4,7 @@ import { FC } from 'react';
 
 import { Divider } from '@repo/ui/View';
 import classNames from 'classnames';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useBoolean, useScrollLock } from 'usehooks-ts';
 
 import { useBreakpoint } from '~hooks';
@@ -16,6 +16,7 @@ import { ThemeToggle } from './ThemeToggle';
 
 export const SideNavigation: FC = () => {
   const t = useTranslations('SideNavigation');
+  const locale = useLocale();
   const isDesktop = useBreakpoint('lg');
   const { value: open, toggle } = useBoolean(false);
   const isOpen = !isDesktop && open;
@@ -85,7 +86,7 @@ export const SideNavigation: FC = () => {
           </li>
           <li>
             <MenuItem.Item2.Link
-              href="/feed.xml"
+              href={`/${locale}/feed.xml`}
               icon="mdi:rss"
               iconClassName="text-content-primary"
               newTab

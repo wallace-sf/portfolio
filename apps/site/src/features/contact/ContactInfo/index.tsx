@@ -6,13 +6,14 @@ import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import { Divider } from '@repo/ui/View';
 import { formatCellphone } from '@repo/utils';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { MenuItem } from '~/components/Layout/SideNavigation/MenuItem';
 
 export const ContactInfo: FC = () => {
   const t = useTranslations('ContactInfo');
   const tClip = useTranslations('Clipboard');
+  const locale = useLocale();
   const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_NUMBER}?text=${encodeURIComponent(t('whatsappMessage'))}`;
 
   return (
@@ -103,7 +104,7 @@ export const ContactInfo: FC = () => {
           newTab
         />
         <MenuItem.Item2.ShortLink
-          href="/feed.xml"
+          href={`/${locale}/feed.xml`}
           icon="mdi:rss"
           iconClassName="text-content-primary"
           aria-label={t('rss')}
