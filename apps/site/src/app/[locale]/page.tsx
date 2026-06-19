@@ -28,12 +28,13 @@ export async function generateMetadata({
     getServerContainer().profileRepository,
   ).execute({ locale });
 
-  if (profileResult.isLeft()) return { title: t('HomePage.title') };
+  if (profileResult.isLeft())
+    return { title: { absolute: `${t('HomePage.title')} | Wallace Ferreira` } };
 
   const { name, headline, photo } = profileResult.value;
 
   return {
-    title: t('HomePage.title'),
+    title: { absolute: `${t('HomePage.title')} | Wallace Ferreira` },
     description: headline,
     openGraph: {
       title: name,
