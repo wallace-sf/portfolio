@@ -17,17 +17,11 @@ export async function GET(req: NextRequest) {
 
   return new ImageResponse(
     <div
-      tw="flex flex-col justify-between w-full h-full relative p-[72px] text-[#F8FAFC]"
-      style={{
-        background: 'linear-gradient(135deg, #070B12 0%, #0E1622 60%, #10251C 100%)',
-        fontFamily: 'Arial',
-      }}
+      tw="flex flex-col justify-between w-full h-full relative p-[72px] text-[#F8FAFC] font-[Arial]"
+      style={{ background: 'linear-gradient(135deg, #070B12 0%, #0E1622 60%, #10251C 100%)' }}
     >
       {/* Watermark W */}
-      <div
-        tw="absolute flex text-[420px] font-extrabold leading-none text-[rgba(92,214,110,0.10)]"
-        style={{ right: -60, top: 80 }}
-      >
+      <div tw="absolute flex -right-[60px] top-[80px] text-[420px] font-extrabold leading-none text-[#5CD66E]/10">
         W
       </div>
 
@@ -67,10 +61,7 @@ export async function GET(req: NextRequest) {
       <div tw="flex items-center justify-between">
         <div tw="flex text-[18px] text-[#475569]">{siteHost}</div>
         {page && (
-          <div
-            tw="flex text-[28px] font-extrabold tracking-[0.1em]"
-            style={{ color: 'rgba(92, 214, 110, 0.5)' }}
-          >
+          <div tw="flex text-[28px] font-extrabold tracking-[0.1em] text-[#5CD66E]/50">
             {page}
           </div>
         )}
