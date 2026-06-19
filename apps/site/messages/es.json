@@ -144,15 +144,24 @@
     "Layout": {
       "description": "Ingeniero de Software Frontend con más de 6 años de experiencia construyendo productos web escalables, eficientes y accesibles con React, Next.js y TypeScript."
     },
+    "OgCard": {
+      "jobTitle": "Ingeniero de Software Frontend"
+    },
     "HomePage": {
-      "title": "Inicio"
+      "title": "Inicio",
+      "ogSubtitle": "Ingeniero Frontend creando experiencias web escalables, eficientes y accesibles.",
+      "ogPage": "INICIO"
     },
     "AboutPage": {
-      "title": "Sobre"
+      "title": "Sobre",
+      "ogSubtitle": "Más de 6 años construyendo productos web modernos con React, Next.js y TypeScript.",
+      "ogPage": "SOBRE"
     },
     "ProjectsPage": {
       "title": "Proyectos",
-      "description": "Proyectos de software desarrollados por Wallace Ferreira — aplicaciones web escalables con React, Next.js y TypeScript."
+      "description": "Proyectos de software desarrollados por Wallace Ferreira — aplicaciones web escalables con React, Next.js y TypeScript.",
+      "ogSubtitle": "Aplicaciones web escalables construidas con tecnologías frontend modernas.",
+      "ogPage": "PROYECTOS"
     }
   },
   "Feed": {

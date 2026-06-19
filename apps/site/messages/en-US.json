@@ -144,15 +144,24 @@
     "Layout": {
       "description": "Frontend Software Engineer with 6+ years of experience building scalable, performant, and accessible web products with React, Next.js, and TypeScript."
     },
+    "OgCard": {
+      "jobTitle": "Front-end Software Engineer"
+    },
     "HomePage": {
-      "title": "Home"
+      "title": "Home",
+      "ogSubtitle": "Frontend Engineer building scalable, performant, and accessible web experiences.",
+      "ogPage": "HOME"
     },
     "AboutPage": {
-      "title": "About"
+      "title": "About",
+      "ogSubtitle": "6+ years building modern web products with React, Next.js, and TypeScript.",
+      "ogPage": "ABOUT"
     },
     "ProjectsPage": {
       "title": "Projects",
-      "description": "Software projects developed by Wallace Ferreira — scalable web applications built with React, Next.js, and TypeScript."
+      "description": "Software projects developed by Wallace Ferreira — scalable web applications built with React, Next.js, and TypeScript.",
+      "ogSubtitle": "Scalable web applications built with modern frontend technologies.",
+      "ogPage": "PROJECTS"
     }
   },
   "Feed": {

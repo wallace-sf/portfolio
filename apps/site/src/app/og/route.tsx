@@ -15,6 +15,8 @@ export async function GET(req: NextRequest) {
   const subtitle = searchParams.get('subtitle') ?? '';
   const locale = searchParams.get('locale') ?? DEFAULT_LOCALE;
   const page = searchParams.get('page') ?? '';
+  const jobTitle =
+    searchParams.get('jobTitle') ?? 'Front-end Software Engineer';
 
   return new ImageResponse(
     <div
@@ -35,9 +37,7 @@ export async function GET(req: NextRequest) {
           <div tw="flex text-[54px] font-extrabold text-[#5CD66E]">W</div>
           <div tw="flex flex-col">
             <div tw="flex text-[28px] font-semibold">Wallace Ferreira</div>
-            <div tw="flex text-[22px] text-[#94A3B8]">
-              Front-end Software Engineer
-            </div>
+            <div tw="flex text-[22px] text-[#94A3B8]">{jobTitle}</div>
           </div>
         </div>
         {locale && (
