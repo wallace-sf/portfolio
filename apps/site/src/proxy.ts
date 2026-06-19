@@ -12,7 +12,7 @@ export default function middleware(request: NextRequest): NextResponse {
 export const config = {
   matcher: [
     '/',
-    '/((?!api|_next|_vercel|.*\\..*).*)',
+    '/((?!api|og|_next|_vercel|.*\\..*).*)',
     '/(en-US|es|pt-BR)/:path*',
   ],
 };
