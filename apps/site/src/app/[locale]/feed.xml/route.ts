@@ -1,20 +1,13 @@
 import { GetPublishedProjects } from '@repo/application/portfolio';
 import { LOCALES } from '@repo/core/shared';
 import type { Locale } from '@repo/core/shared';
+import { getTranslations } from 'next-intl/server';
 
 import { getServerContainer } from '~/lib/server/container';
 
 export const dynamic = 'force-static';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-
-const CHANNEL_DESCRIPTION: Record<string, string> = {
-  'en-US':
-    'Frontend Software Engineer — scalable web applications built with React, Next.js, and TypeScript.',
-  'pt-BR':
-    'Engenheiro de Software Frontend — aplicações web escaláveis com React, Next.js e TypeScript.',
-  es: 'Ingeniero de Software Frontend — aplicaciones web escalables con React, Next.js y TypeScript.',
-};
 
 function escapeXml(value: string): string {
   return value
@@ -34,6 +27,7 @@ export async function GET(
   { params }: { params: Promise<{ locale: string }> },
 ): Promise<Response> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Feed' });
   const { projectRepository, skillRepository } = getServerContainer();
 
   const result = await new GetPublishedProjects(
@@ -43,8 +37,7 @@ export async function GET(
 
   const projects = result.isRight() ? result.value : [];
 
-  const description =
-    CHANNEL_DESCRIPTION[locale] ?? CHANNEL_DESCRIPTION['en-US'] ?? '';
+  const description = t('description');
 
   const items = projects
     .map(
