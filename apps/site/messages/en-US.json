@@ -141,6 +141,9 @@
     "period_label": "Period"
   },
   "Metadata": {
+    "Layout": {
+      "description": "Frontend Software Engineer with 6+ years of experience building scalable, performant, and accessible web products with React, Next.js, and TypeScript."
+    },
     "AboutPage": {
       "title": "About"
     },

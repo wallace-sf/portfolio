@@ -141,6 +141,9 @@
     "period_label": "Período"
   },
   "Metadata": {
+    "Layout": {
+      "description": "Ingeniero de Software Frontend con más de 6 años de experiencia construyendo productos web escalables, eficientes y accesibles con React, Next.js y TypeScript."
+    },
     "AboutPage": {
       "title": "Sobre"
     },
