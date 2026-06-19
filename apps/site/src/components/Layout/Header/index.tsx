@@ -8,8 +8,7 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 
 import { screens } from '@repo/tailwind-config/screens';
-import logoDesktop from '~assets/images/logo-desktop.svg';
-import logoMobile from '~assets/images/logo-mobile.svg';
+import logo from '~assets/images/logo.svg';
 
 interface HeaderProps {
   open: boolean;
@@ -25,13 +24,13 @@ export const Header: FC<HeaderProps> = ({ open, toggle }) => {
         <picture>
           <source
             media={`(min-width: ${screens.lg})`}
-            srcSet={logoDesktop.src}
-            width={179}
+            srcSet={logo.src}
+            width={99}
             height={66}
           />
           <img
-            src={logoMobile.src}
-            width={120}
+            src={logo.src}
+            width={66}
             height={44}
             alt={t('logo_alt')}
             fetchPriority="high"
