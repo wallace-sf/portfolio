@@ -149,6 +149,9 @@
       "description": "Software projects developed by Wallace Ferreira — scalable web applications built with React, Next.js, and TypeScript."
     }
   },
+  "Feed": {
+    "description": "Frontend Software Engineer — scalable web applications built with React, Next.js, and TypeScript."
+  },
   "LoginForm": {
     "title": "Sign in",
     "emailPlaceholder": "Email address",
