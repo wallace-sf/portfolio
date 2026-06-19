@@ -3,200 +3,174 @@ import { type NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
-
-async function fetchImageAsPngDataUrl(url: string): Promise<string | null> {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const buffer = await res.arrayBuffer();
-    const base64 = Buffer.from(buffer).toString('base64');
-    return `data:image/png;base64,${base64}`;
-  } catch {
-    return null;
-  }
-}
+const SIZE = { width: 1200, height: 630 };
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const title = searchParams.get('title') ?? 'Wallace Ferreira';
-  const description = searchParams.get('description') ?? '';
-  const imageUrl = searchParams.get('image') ?? '';
-
-  const imageSrc = imageUrl ? await fetchImageAsPngDataUrl(imageUrl) : null;
+  const subtitle = searchParams.get('subtitle') ?? '';
+  const tag = searchParams.get('tag') ?? 'React • Next.js • TypeScript';
+  const locale = searchParams.get('locale') ?? 'en-US';
+  const page = searchParams.get('page') ?? '';
 
   return new ImageResponse(
     <div
       style={{
-        display: 'flex',
         width: '100%',
         height: '100%',
-        backgroundColor: '#1C1C1C',
-        fontFamily: 'Inter, sans-serif',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        background:
+          'linear-gradient(135deg, #070B12 0%, #0E1622 60%, #10251C 100%)',
+        color: '#F8FAFC',
+        padding: 72,
+        fontFamily: 'Arial',
         position: 'relative',
-        overflow: 'hidden',
       }}
     >
-      {/* Accent stripe */}
+      {/* Watermark W */}
       <div
         style={{
           position: 'absolute',
-          top: 0,
-          left: 0,
-          width: 8,
-          height: '100%',
-          backgroundColor: '#8efb9d',
+          right: -60,
+          top: 80,
+          fontSize: 420,
+          fontWeight: 800,
+          color: 'rgba(92, 214, 110, 0.10)',
+          lineHeight: 1,
+          display: 'flex',
         }}
-      />
+      >
+        W
+      </div>
 
-      {/* Decorative circle — top-right (only when no image) */}
-      {!imageSrc && (
-        <div
-          style={{
-            position: 'absolute',
-            top: -120,
-            right: -120,
-            width: 420,
-            height: 420,
-            borderRadius: '50%',
-            backgroundColor: '#4452ff',
-            opacity: 0.12,
-          }}
-        />
-      )}
-
-      {/* Profile image — right side */}
-      {imageSrc && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: 420,
-            height: '100%',
-            display: 'flex',
-          }}
-        >
-          {/* Gradient overlay so text stays readable */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: 160,
-              height: '100%',
-              background:
-                'linear-gradient(to right, #1C1C1C 0%, transparent 100%)',
-              zIndex: 1,
-            }}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageSrc}
-            alt=""
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center top',
-            }}
-          />
-        </div>
-      )}
-
-      {/* Content */}
+      {/* Header */}
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
+          alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '64px 80px',
-          width: imageSrc ? 780 : '100%',
-          height: '100%',
         }}
       >
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <div
             style={{
-              width: 10,
-              height: 10,
-              borderRadius: '50%',
-              backgroundColor: '#8efb9d',
-            }}
-          />
-          <span
-            style={{
-              color: '#8efb9d',
-              fontSize: 18,
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
+              fontSize: 54,
+              fontWeight: 800,
+              color: '#5CD66E',
+              display: 'flex',
             }}
           >
-            Wallace Ferreira
-          </span>
-        </div>
-
-        {/* Main content */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div
-            style={{
-              color: '#d9d9d9',
-              fontSize: title.length > 40 ? 52 : 64,
-              fontWeight: 700,
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              maxWidth: imageSrc ? 680 : 900,
-            }}
-          >
-            {title}
+            W
           </div>
-          {description && (
-            <div
-              style={{
-                color: '#8d8d8d',
-                fontSize: 26,
-                fontWeight: 400,
-                lineHeight: 1.5,
-                maxWidth: imageSrc ? 640 : 820,
-              }}
-            >
-              {description}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ fontSize: 28, fontWeight: 600, display: 'flex' }}>
+              Wallace Ferreira
             </div>
-          )}
+            <div style={{ fontSize: 22, color: '#94A3B8', display: 'flex' }}>
+              Front-end Software Engineer
+            </div>
+          </div>
         </div>
+        {locale && (
+          <div
+            style={{
+              background: '#5CD66E',
+              color: '#070B12',
+              borderRadius: 999,
+              padding: '10px 22px',
+              fontSize: 22,
+              fontWeight: 800,
+              display: 'flex',
+            }}
+          >
+            {locale}
+          </div>
+        )}
+      </div>
 
-        {/* Footer */}
+      {/* Main content */}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div
           style={{
+            fontSize: title.length > 20 ? 64 : 76,
+            fontWeight: 800,
+            letterSpacing: '-0.04em',
+            maxWidth: 760,
+            lineHeight: 1.05,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
           }}
         >
-          <span style={{ color: '#494949', fontSize: 18 }}>
-            {SITE_URL.replace(/^https?:\/\//, '')}
-          </span>
+          {title}
+        </div>
+        <div
+          style={{
+            width: 150,
+            height: 6,
+            background: '#5CD66E',
+            borderRadius: 999,
+            marginTop: 24,
+            marginBottom: 32,
+            display: 'flex',
+          }}
+        />
+        {subtitle && (
           <div
             style={{
+              fontSize: 30,
+              color: '#CBD5E1',
+              maxWidth: 760,
+              lineHeight: 1.3,
               display: 'flex',
-              alignItems: 'center',
-              backgroundColor: '#282828',
-              borderRadius: 12,
-              padding: '10px 20px',
             }}
           >
-            <span style={{ color: '#a4a4a4', fontSize: 16 }}>
-              Software Engineer
-            </span>
+            {subtitle}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div
+            style={{
+              border: '1px solid rgba(92, 214, 110, 0.7)',
+              color: '#5CD66E',
+              borderRadius: 999,
+              padding: '12px 24px',
+              fontSize: 24,
+              fontWeight: 700,
+              display: 'flex',
+            }}
+          >
+            {tag}
+          </div>
+          <div style={{ fontSize: 18, color: '#475569', display: 'flex' }}>
+            portfolio-web-kohl-two.vercel.app
           </div>
         </div>
+        {page && (
+          <div
+            style={{
+              fontSize: 28,
+              fontWeight: 800,
+              color: 'rgba(92, 214, 110, 0.5)',
+              letterSpacing: '0.1em',
+              display: 'flex',
+            }}
+          >
+            {page}
+          </div>
+        )}
       </div>
     </div>,
-    {
-      width: 1200,
-      height: 630,
-    },
+    SIZE,
   );
 }

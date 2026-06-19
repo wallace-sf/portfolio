@@ -32,7 +32,7 @@ export async function generateMetadata({
   if (profileResult.isLeft())
     return { title: { absolute: `${t('HomePage.title')} | Wallace Ferreira` } };
 
-  const { name, headline, photo } = profileResult.value;
+  const { name, headline } = profileResult.value;
 
   return {
     title: { absolute: `${t('HomePage.title')} | Wallace Ferreira` },
@@ -44,8 +44,9 @@ export async function generateMetadata({
         {
           url: buildOgImageUrl({
             title: name,
-            description: headline,
-            image: photo?.url,
+            subtitle: t('Layout.description'),
+            locale,
+            page: 'HOME',
           }),
           width: 1200,
           height: 630,

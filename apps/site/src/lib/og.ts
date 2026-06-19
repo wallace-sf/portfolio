@@ -2,19 +2,25 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 interface OgImageParams {
   title: string;
-  description?: string;
-  image?: string;
+  subtitle?: string;
+  tag?: string;
+  locale?: string;
+  page?: string;
 }
 
 export function buildOgImageUrl({
   title,
-  description,
-  image,
+  subtitle,
+  tag,
+  locale,
+  page,
 }: OgImageParams): string {
   const url = new URL('/og', SITE_URL);
   url.searchParams.set('title', title);
-  if (description) url.searchParams.set('description', description);
-  if (image) url.searchParams.set('image', image);
+  if (subtitle) url.searchParams.set('subtitle', subtitle);
+  if (tag) url.searchParams.set('tag', tag);
+  if (locale) url.searchParams.set('locale', locale);
+  if (page) url.searchParams.set('page', page);
   return url.toString();
 }
 

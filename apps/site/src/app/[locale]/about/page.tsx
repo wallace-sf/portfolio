@@ -35,7 +35,7 @@ export async function generateMetadata({
 
   if (profileResult.isLeft()) return { title };
 
-  const { bio, photo } = profileResult.value;
+  const { bio } = profileResult.value;
 
   return {
     title,
@@ -45,7 +45,12 @@ export async function generateMetadata({
       description: bio,
       images: [
         {
-          url: buildOgImageUrl({ title, description: bio, image: photo?.url }),
+          url: buildOgImageUrl({
+            title,
+            subtitle: bio,
+            locale,
+            page: 'ABOUT',
+          }),
           width: 1200,
           height: 630,
           alt: title,

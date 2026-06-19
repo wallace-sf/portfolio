@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
+import { buildOgImageUrl } from '~/lib/og';
 import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/projects/HeroSection';
 import { ProjectsSection } from '~features/projects/ProjectsSection';
@@ -26,7 +27,28 @@ export async function generateMetadata({
   const title = t('ProjectsPage.title');
   const description = t('ProjectsPage.description');
 
-  return { title, description, openGraph: { title, description } };
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: buildOgImageUrl({
+            title,
+            subtitle: description,
+            tag: 'Portfolio Projects',
+            locale,
+            page: 'PROJECTS',
+          }),
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+  };
 }
 
 export default async function Projects({ params }: ProjectsPageProps) {
