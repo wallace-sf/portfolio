@@ -1,9 +1,12 @@
 import { ImageResponse } from 'next/og';
 import { type NextRequest } from 'next/server';
 
+import { SITE_URL } from '~/lib/og';
+
 export const runtime = 'edge';
 
 const SIZE = { width: 1200, height: 630 };
+const siteHost = new URL(SITE_URL).host;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -139,7 +142,7 @@ export async function GET(req: NextRequest) {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ fontSize: 18, color: '#475569', display: 'flex' }}>
-            portfolio-web-kohl-two.vercel.app
+            {siteHost}
           </div>
         </div>
         {page && (
