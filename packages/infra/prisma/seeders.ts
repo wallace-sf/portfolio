@@ -335,6 +335,24 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
 
 The project is split across four layers — \`core\`, \`application\`, \`infra\`, and \`site\` — each with strict dependency rules enforced by ESLint. Authentication is handled via Supabase with JWT tokens and httpOnly cookies.
 
+**Architecture**
+
+\`\`\`mermaid
+flowchart TD
+  site["apps/site (Next.js)"]
+  admin["apps/admin (Next.js)"]
+  app["packages/application"]
+  core["packages/core"]
+  infra["packages/infra"]
+  db[(Supabase / PostgreSQL)]
+
+  site --> app
+  admin --> app
+  app --> core
+  infra --> app
+  infra --> db
+\`\`\`
+
 **Highlights**
 - Turborepo monorepo with shared packages (\`ui\`, \`utils\`, \`core\`, \`application\`, \`infra\`)
 - Either pattern for error handling — no exceptions thrown for domain errors
