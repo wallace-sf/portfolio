@@ -1,20 +1,27 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, lazy, Suspense } from 'react';
 
 import classNames from 'classnames';
 import Markdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 
-import { MermaidBlock } from './components/MermaidBlock';
 import { REHYPE_PLUGINS, REMARK_PLUGINS } from './constants';
+
+const MermaidBlock = lazy(() =>
+  import('./components/MermaidBlock').then((m) => ({ default: m.MermaidBlock })),
+);
 
 const MARKDOWN_COMPONENTS: Components = {
   code({ className, children }) {
     const language = /language-(\w+)/.exec(className ?? '')?.[1];
 
     if (language === 'mermaid' && typeof children === 'string') {
-      return <MermaidBlock chart={children} />;
+      return (
+        <Suspense fallback={<code>{children}</code>}>
+          <MermaidBlock chart={children} />
+        </Suspense>
+      );
     }
 
     return <code className={className}>{children}</code>;
