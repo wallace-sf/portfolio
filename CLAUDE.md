@@ -252,6 +252,7 @@ Choose which skill to follow based on the user's intent. Then read the correspon
 | Plan refactor, refactoring RFC, tiny commits refactor, safe incremental refactor | **request-refactor-plan** | Follow [.claude/skills/request-refactor-plan/SKILL.md](.claude/skills/request-refactor-plan/SKILL.md); file as GitHub issue |
 | Git guardrails, block dangerous git, block push/reset/clean, git safety hooks | **git-guardrails-claude-code** | Follow [.claude/skills/git-guardrails-claude-code/SKILL.md](.claude/skills/git-guardrails-claude-code/SKILL.md); PreToolUse hook |
 | Ubiquitous language, domain glossary, DDD terms, domain model terminology | **ubiquitous-language** | Follow [.claude/skills/ubiquitous-language/SKILL.md](.claude/skills/ubiquitous-language/SKILL.md); output UBIQUITOUS_LANGUAGE.md |
+| Project content, write project, project narrative, escrever projeto, conteúdo do projeto, Technologies section, project description | **project-content** | Follow [.claude/skills/project-content/SKILL.md](.claude/skills/project-content/SKILL.md); use project_content.instructions.md |
 | Implementation, DDD, Clean Architecture, Either, Validator, Entity, VO, use case, repository, or no other skill matches | **engineering-standards** | Follow [.claude/skills/engineering-standards/SKILL.md](.claude/skills/engineering-standards/SKILL.md); use CLAUDE.md (this file), docs/INDEX.md, 02/06/08/09-*.md |
 
 Default to **engineering-standards** when the request is about writing or refactoring code and no other skill context is clear.
