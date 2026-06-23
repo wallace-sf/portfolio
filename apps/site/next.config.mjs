@@ -22,6 +22,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'github.com' },
       { protocol: 'https', hostname: 'opengraph.githubassets.com' },
       { protocol: 'https', hostname: '*.supabase.co' },
+      { protocol: 'https', hostname: 'cdn.shopify.com' },
     ],
   },
 };
