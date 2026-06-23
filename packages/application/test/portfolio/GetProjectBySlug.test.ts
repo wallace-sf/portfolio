@@ -24,7 +24,7 @@ const BASE_PROPS: IProjectProps = {
   },
   title: { 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' },
   caption: { 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' },
-  content: 'Conteúdo detalhado do projeto aqui.',
+  content: { 'en-US': 'Detailed project content here.', 'pt-BR': 'Conteúdo detalhado do projeto aqui.' },
   skills: [],
   period: { start: '2023-01-01T00:00:00.000Z' },
   featured: false,
@@ -102,7 +102,7 @@ describe('GetProjectBySlug', () => {
       expect(dto.caption).toBe('Legenda do projeto');
       expect(dto.coverImage.url).toBe('https://example.com/cover.jpg');
       expect(dto.coverImage.alt).toBe('Capa do projeto');
-      expect(dto.content).toBe('Conteúdo detalhado do projeto aqui.');
+      expect(dto.content).toBe('Conteúdo detalhado do projeto aqui.'); // locale pt-BR
       expect(dto.summary).toBe('Resumo PT');
       expect(dto.objectives).toBe('Objetivos PT');
       expect(dto.role).toBe('Papel PT');

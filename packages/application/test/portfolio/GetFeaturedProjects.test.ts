@@ -24,7 +24,7 @@ const BASE_PROPS: IProjectProps = {
   },
   title: { 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' },
   caption: { 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' },
-  content: 'Conteúdo detalhado do projeto aqui.',
+  content: { 'en-US': 'Detailed project content here.', 'pt-BR': 'Conteúdo detalhado do projeto aqui.' },
   skills: [],
   period: { start: '2023-01-01T00:00:00.000Z' },
   featured: true,

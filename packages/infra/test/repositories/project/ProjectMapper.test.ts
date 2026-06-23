@@ -20,7 +20,7 @@ describe('ProjectMapper', () => {
       expect(project.coverImage.url.value).toBe(raw.coverImageUrl);
       expect(project.title.value).toEqual(raw.title);
       expect(project.caption.value).toEqual(raw.caption);
-      expect(project.content.value).toBe(raw.content);
+      expect(project.content.value).toEqual(raw.content);
       expect(project.featured).toBe(raw.featured);
       expect(project.status).toBe(ProjectStatus.DRAFT);
       expect(project.relatedProjects).toHaveLength(0);

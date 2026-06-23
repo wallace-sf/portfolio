@@ -100,7 +100,7 @@ export class GetProjectBySlug extends UseCase<
         (id) => skillNames.get(id.value) ?? { name: id.value, icon: '' },
       ),
       publishedAt: project.period.startAt.value,
-      content: project.content.value,
+      content: project.content.get(locale),
       summary: project.summary?.get(locale),
       objectives: project.objectives?.get(locale),
       role: project.role?.get(locale),

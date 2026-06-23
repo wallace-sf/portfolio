@@ -31,7 +31,7 @@ const VALID_PROJECT_PROPS: IProjectProps = {
   },
   title: { 'en-US': 'My Project', 'pt-BR': 'Meu Projeto' },
   caption: { 'en-US': 'A caption.', 'pt-BR': 'Uma legenda.' },
-  content: 'Lorem ipsum dolor sit amet.',
+  content: { 'en-US': 'Lorem ipsum dolor sit amet.', 'pt-BR': 'Lorem ipsum dolor sit amet.' },
   skills: ['a0000000-0000-4000-8000-000000000001'],
   period: { start: '2024-01-01' },
   featured: false,
