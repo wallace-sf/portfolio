@@ -54,6 +54,7 @@
     "@repo/utils": "workspace:*",
     "classnames": "^2.5.1",
     "github-markdown-css": "^5.9.0",
+    "mermaid": "^11.15.0",
     "react-markdown": "^9.0.1",
     "react-tooltip": "^5.28.0",
     "rehype-raw": "^7.0.0",

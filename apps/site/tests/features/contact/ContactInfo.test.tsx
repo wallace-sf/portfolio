@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 
 vi.mock('next-intl', () => ({
   useTranslations: (namespace: string) => (key: string) => `${namespace}.${key}`,
+  useLocale: () => 'en',
 }));
 
 vi.mock('@repo/ui/Control', () => ({
