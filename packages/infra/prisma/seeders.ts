@@ -524,6 +524,18 @@ On the merchant side, I built three screens using **Shopify Polaris**:
 
 *Custom pricing models — merchants define thresholds and discount rules per product.*
 
+## Technologies
+
+- [React](https://react.dev) — storefront widget and merchant admin UI
+- [Framer Motion](https://www.framer.com/motion/) — animation system for the offer lifecycle states
+- [Vite](https://vite.dev) — storefront app bundler
+- [Tailwind CSS](https://tailwindcss.com) — utility-first styling for the storefront widget
+- [Shopify Polaris](https://polaris.shopify.com) — design system for the merchant admin screens
+- [Shopify App Bridge](https://shopify.dev/docs/api/app-bridge) — SDK for embedding the app inside the Shopify admin
+- [Theme App Extensions](https://shopify.dev/docs/apps/build/online-store/theme-app-extensions) — mechanism for injecting the storefront widget into merchant themes
+- [Storefront API](https://shopify.dev/docs/api/storefront) — Shopify GraphQL API used on the buyer-facing side
+- [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM) — CSS isolation layer between the widget and the host storefront theme
+
 ## Technical Highlights
 
 - **Monorepo with npm workspaces** — storefront (Vite + Tailwind) and merchant admin (Shopify Polaris) as fully separate apps
