@@ -21,6 +21,7 @@
 | Looking for code templates (Either, VO, Entity)? | [09-PATTERNS](./09-PATTERNS.md) |
 | Looking for a domain term? | [10-GLOSSARY](./10-GLOSSARY.md) |
 | Identity (auth, admin, REST)? | [11-IDENTITY](./11-IDENTITY.md) |
+| Working on UI components or design system? | [12-DESIGN-SYSTEM](./12-DESIGN-SYSTEM.md) |
 
 ---
 
@@ -31,7 +32,7 @@
 - **[00-INTRODUCTION](./00-INTRODUCTION.md)** — Project vision, goals, tech stack summary
 - **[01-GETTING-STARTED](./01-GETTING-STARTED.md)** — Installation, monorepo setup, dev workflow
 - **[02-ARCHITECTURE](./02-ARCHITECTURE.md)** — Clean Architecture, dependency rule, layer responsibilities, ESLint enforcement
-- **[03-BOUNDED-CONTEXTS](./03-BOUNDED-CONTEXTS.md)** — DDD contexts (Portfolio, Blog, Contact), aggregates, Shared Kernel, `packages/core` structure
+- **[03-BOUNDED-CONTEXTS](./03-BOUNDED-CONTEXTS.md)** — DDD contexts (Portfolio, Identity, Contact, Blog), aggregates, Shared Kernel, `packages/core` structure
 
 ### Application & Interface (04–07)
 
@@ -46,9 +47,13 @@
 - **[09-PATTERNS](./09-PATTERNS.md)** — DDD patterns (Either, VO, Entity, Repository templates), GoF patterns
 - **[10-GLOSSARY](./10-GLOSSARY.md)** — Ubiquitous language: domain terms, architectural terms, process terms
 
-### Planned Features
+### Identity & Security
 
 - **[11-IDENTITY](./11-IDENTITY.md)** — Identity bounded context (auth, roles, admin, API contract)
+
+### Design System
+
+- **[12-DESIGN-SYSTEM](./12-DESIGN-SYSTEM.md)** — `@repo/ui` components, TextRich/Mermaid, usage patterns
 
 ---
 

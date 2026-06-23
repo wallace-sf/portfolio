@@ -9,7 +9,9 @@ import type { Components } from 'react-markdown';
 import { REHYPE_PLUGINS, REMARK_PLUGINS } from './constants';
 
 const MermaidBlock = lazy(() =>
-  import('./components/MermaidBlock').then((m) => ({ default: m.MermaidBlock })),
+  import('./components/MermaidBlock').then((m) => ({
+    default: m.MermaidBlock,
+  })),
 );
 
 const MARKDOWN_COMPONENTS: Components = {

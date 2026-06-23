@@ -9,7 +9,7 @@
 The application layer:
 - **Orchestrates** the domain: use cases call repository ports and return data ready for the interface layer
 - **Keeps Core pure**: Application depends on Core and uses port interfaces; Infrastructure implements them
-- **Is not called by the front-end directly**: `apps/web` consumes **REST** only; route handlers invoke use cases (see [02-ARCHITECTURE](./02-ARCHITECTURE.md), [05-API-CONTRACTS](./05-API-CONTRACTS.md))
+- **Server Components** in `apps/site` import `@repo/application` and call use cases directly at build time (SSG). The code never reaches the browser. **`'use client'` components** must never import `@repo/application` — they receive data as props. See [02-ARCHITECTURE](./02-ARCHITECTURE.md) and [05-API-CONTRACTS](./05-API-CONTRACTS.md)
 
 ---
 
@@ -180,25 +180,34 @@ packages/application/src/
   index.ts
 ```
 
-**Dependencies**: `@repo/core` only (plus `@repo/utils` where needed for validation helpers in contact). Must **not** depend on `@repo/infra`, `apps/web`, or `apps/api`.
+**Dependencies**: `@repo/core` only (plus `@repo/utils` where needed for validation helpers in contact). Must **not** depend on `@repo/infra`, `apps/site`, or `apps/admin`.
 
 ---
 
-## Read / write flow (HTTP boundary)
+## Data flow
 
-**List published projects (correct pattern):**
+**Current: SSG — Server Components call use cases at build time:**
 
-1. Browser or Server Component calls `GET /api/v1/projects?locale=...` (or the client uses TanStack Query with that URL).
-2. **Route handler** resolves locale, builds `GetPublishedProjects` with `IProjectRepository` from infra, calls `execute()`.
-3. Use case calls `IProjectRepository.findPublished()`, maps to `ProjectSummaryDTO[]`, returns `Either`.
-4. Handler maps `Either` to the [envelope](./05-API-CONTRACTS.md) and HTTP status.
+1. Server Component resolves locale and imports repository from `@repo/infra` via the container.
+2. Calls `execute({ locale })` directly — no HTTP round-trip; runs at build time.
+3. Use case returns `Either<DomainError, DTO[]>`; Server Component passes data as props to `'use client'` children.
 
-**Admin-only action (example):**
+```typescript
+// ✅ Server Component — SSG pattern
+const { projectRepository } = getServerContainer();
+const result = await new GetPublishedProjects(projectRepository).execute({ locale });
+if (result.isLeft()) notFound();
+return <ProjectList projects={result.value} />;
+```
 
-1. Handler reads **authenticated user id** from the session (middleware / Supabase / cookie — infrastructure detail at the edge).
-2. Handler calls `EnsureAdmin.execute({ userId })`; on `right`, proceeds to call other use cases or mutations; on `UnauthorizedError`, responds with **401**.
+**Future (planned):** when a dedicated REST backend is extracted, client components will fetch from `/api/v1/*` (TanStack Query); Server Components will continue calling use cases directly or switch to `fetch`.
 
-Pages and React components **do not** import `GetPublishedProjects` or `EnsureAdmin` directly.
+**Authorization (admin):**
+
+1. Handler reads **authenticated user id** from the session (middleware / cookie — infrastructure detail at the edge).
+2. Handler calls `EnsureAdmin.execute({ userId })`; on `right`, proceeds; on `UnauthorizedError`, responds with **401**.
+
+**`'use client'` components must never import `@repo/application`** — they receive data as props from Server Components.
 
 ---
 

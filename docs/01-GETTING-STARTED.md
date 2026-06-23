@@ -103,14 +103,16 @@ Follow this sequence for every piece of work, without exception:
 2. **Verify the work hasn't already been done** — check the issue state, merged PRs, and existing branches before writing any code.
 3. **Set Task Master status to In Progress**: `task-master set-status --id=<id> --status=in-progress`
 4. **Move the GitHub issue to "In Progress"** in all linked Project boards.
-5. **Create the branch from the issue**: `gh issue develop <issue-number> --checkout`
+5. **Create the branch from the issue**: `gh issue develop <issue-number> --checkout` — **immediately rebase onto develop**: `git rebase origin/develop` (`gh issue develop` uses the repo default branch, not `develop`)
 6. **Implement** — code, tests, commits.
 7. **Open PR against `develop`**: `gh pr create --base develop`
 8. **Set Task Master status to Done**: `task-master set-status --id=<id> --status=done`
+9. **Commit Task Master status to git**: create branch `chore/update-task-<N>-status-done` from `develop`, commit `.taskmaster/tasks/tasks.json`, open PR against `develop`
 
 **Rules:**
 - PRs always target `develop`, never `master` or `staging`
 - Task Master + GitHub Projects statuses must always reflect reality
+- Step 9 is mandatory — `set-status` only updates the local `tasks.json`; without committing it, the change is lost on branch switches or rebases
 - Lock-file rebase conflicts: `git checkout --theirs pnpm-lock.yaml && pnpm install`
 
 ---

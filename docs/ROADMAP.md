@@ -52,11 +52,13 @@ Evolution view for the portfolio, aligned with Clean Architecture, DDD, i18n, an
 - [x] Locale middleware (next-intl)
 - [x] Contact form with validation (React Hook Form + Zod)
 
-### Design System — `@repo/ui` (Sprint 6)
+### Design System — `@repo/ui` (Sprint 6+)
 
 - [x] `Badge` component with variants
 - [x] `Button` with appearance variants
 - [x] `SectionHeader`
+- [x] `TextRich` with Markdown + Mermaid diagram support (React.lazy, client-side rendering)
+- [x] OG image generation (`/og` route with `@vercel/og`)
 
 ---
 
@@ -65,8 +67,8 @@ Evolution view for the portfolio, aligned with Clean Architecture, DDD, i18n, an
 Items required before MVP launch, using [Paul Scanlon's portfolio](https://www.paulie.dev/) as a reference.
 
 - [ ] **Styling review** — Figma round to identify what needs to be finished and changed in components
-- [ ] **Realistic data** — replace seeds with content closer to the real portfolio data
-- [ ] **i18n in core** — implement `LocalizedText` and i18n in the domain (`@repo/core`)
+- [x] **Realistic data** — seeds updated with production-representative content
+- [x] **i18n in core** — `LocalizedText` VO implemented in `@repo/core`; use cases resolve locale via `.get(locale)`
 - [ ] **Remove hardcoded texts** — fixed strings in `@repo/core` should use localizable messages
 - [ ] **Move admin to a dedicated app** — extract `/{locale}/login` and `/{locale}/admin` to `apps/admin`
 - [ ] **General code review** — quality pass before launch

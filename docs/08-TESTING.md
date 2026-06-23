@@ -10,7 +10,7 @@
 |-------|--------|-------|
 | `packages/core` | **Vitest** | Fast, deterministic domain tests |
 | `packages/utils` | **Vitest** | `node` / `browser` split via `environmentMatchGlobs` |
-| `apps/web` | **Vitest + Testing Library + jsdom** | UI components, rendering, interaction |
+| `apps/site` | **Vitest + Testing Library + jsdom** | UI components, rendering, interaction |
 | E2E | **Playwright** | Main user flows (when surface area justifies) |
 
 ---
@@ -29,7 +29,7 @@ Write a failing test first, make it pass with the minimum code, then refactor.
 |-------|-------|-------|
 | `packages/core` | Invariants, VO creation/rejection, entity composition, error propagation, factories | Tests that only check `instanceof` or echo props without protecting a rule |
 | `packages/application` | Use cases with mocked repositories; orchestration logic | Duplicating domain invariant tests |
-| `apps/web` | Critical components, rendering, interaction, important visual contracts | Low-value smoke tests, tests tightly coupled to internals |
+| `apps/site` | Critical components, rendering, interaction, important visual contracts | Low-value smoke tests, tests tightly coupled to internals |
 | `packages/utils` | Pure functions, edge cases, environment compatibility | Duplicating third-party library coverage |
 
 ---
@@ -40,7 +40,7 @@ Write a failing test first, make it pass with the minimum code, then refactor.
 packages/core/test/             → Domain unit tests
 packages/utils/test/node/       → Node-environment utils
 packages/utils/test/browser/    → Browser-environment utils
-apps/web/tests/                 → Web application tests
+apps/site/tests/                → Site application tests
 ```
 
 File naming: `*.test.ts` or `*.test.tsx`

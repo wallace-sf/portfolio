@@ -244,7 +244,7 @@ Proficiency level for a spoken/written language.
 
 ### Bounded Context
 
-A clearly defined boundary within which a particular domain model applies. This project has three: **Portfolio**, **Blog**, and **Contact**. Models from different contexts do not mix; only the Shared Kernel is shared.
+A clearly defined boundary within which a particular domain model applies. This project has four active bounded contexts: **Portfolio**, **Identity**, **Contact**, and **Blog** (stub, future). Models from different contexts do not mix; only the Shared Kernel is shared.
 
 ### Shared Kernel
 
