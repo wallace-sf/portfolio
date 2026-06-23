@@ -1,5 +1,9 @@
 # Wallace Ferreira — Portfolio
 
+<p align="center">
+  <img src="apps/site/src/assets/images/logo.svg" alt="Portfolio logo" width="200" />
+</p>
+
 Personal portfolio built to present my experience, selected projects, technical background and career direction as a Front-end Software Engineer.
 
 🌐 **Live:** [portfolio-web-kohl-two.vercel.app](https://portfolio-web-kohl-two.vercel.app)
@@ -46,7 +50,7 @@ The project is designed for an international audience and aims to communicate th
 | Email | Resend |
 | i18n | next-intl |
 | Forms | React Hook Form, Zod |
-| Data fetching | TanStack Query |
+| Data fetching | SSG (Server Components) + TanStack Query |
 | Testing | Vitest, Testing Library, Playwright |
 | CI/CD | GitHub Actions, Vercel |
 
@@ -56,8 +60,9 @@ The project is designed for an international audience and aims to communicate th
 
 ```txt
 apps/
-  web/          Public portfolio application
-  blog/         Blog application planned after MVP
+  site/         Public portfolio application (Next.js 16+ App Router)
+  admin/        Admin app — future, post-MVP
+  blog/         Blog application — future, post-MVP
 
 packages/
   core/         Domain layer: entities, value objects, repository interfaces
@@ -66,14 +71,13 @@ packages/
   ui/           Shared React component library
   utils/        Shared utilities
   eslint-config/
-  tailwind-config/
   typescript-config/
 ```
 
 The dependency rule points inward:
 
 ```txt
-core ← application ← infra ← web / api
+core ← application ← infra ← site / admin
 ```
 
 For a deeper explanation of layers, dependency rules and boundaries, see [docs/02-ARCHITECTURE.md](./docs/02-ARCHITECTURE.md).
@@ -125,7 +129,7 @@ pnpm dev
 
 | Script | Description |
 |---|---|
-| `pnpm dev` | Start development mode for the monorepo, excluding Storybook |
+| `pnpm dev` | Start development mode for the monorepo |
 | `pnpm build` | Build all apps and packages through Turborepo |
 | `pnpm lint` | Run lint tasks |
 | `pnpm lint:check` | Check lint rules without applying fixes |
@@ -136,7 +140,7 @@ pnpm dev
 | `pnpm test:ci` | Run CI test command |
 | `pnpm test:core` | Run core package tests |
 | `pnpm test:utils` | Run utils package tests |
-| `pnpm test:web` | Run web app tests |
+| `pnpm test:site` | Run site app tests |
 | `pnpm seed` | Seed data through `@repo/infra` |
 
 ---
