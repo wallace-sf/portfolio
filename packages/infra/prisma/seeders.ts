@@ -37,6 +37,8 @@ export const ID = {
     shopify: '20000000-0000-4000-8000-000000000018',
     framerMotion: '20000000-0000-4000-8000-000000000019',
     vite: '20000000-0000-4000-8000-000000000020',
+    prisma: '20000000-0000-4000-8000-000000000021',
+    supabase: '20000000-0000-4000-8000-000000000022',
   },
   projects: {
     portfolio: '30000000-0000-4000-8000-000000000001',
@@ -180,6 +182,18 @@ export async function seedSkills(db: PrismaClient): Promise<void> {
       icon: 'logos:vitejs',
       type: 'TECHNOLOGY' as const,
       description: loc('Vite', 'Vite'),
+    },
+    {
+      id: ID.skills.prisma,
+      icon: 'simple-icons:prisma',
+      type: 'TECHNOLOGY' as const,
+      description: loc('Prisma', 'Prisma'),
+    },
+    {
+      id: ID.skills.supabase,
+      icon: 'simple-icons:supabase',
+      type: 'TECHNOLOGY' as const,
+      description: loc('Supabase', 'Supabase'),
     },
     {
       id: ID.skills.communication,
@@ -750,6 +764,8 @@ Este portafolio es la primera presencia técnica pública que construí y poseo 
         ID.skills.postgresql,
         ID.skills.tailwindcss,
         ID.skills.cicd,
+        ID.skills.prisma,
+        ID.skills.supabase,
       ],
       relatedProjectSlugs: ['b2b-ecommerce-platform'],
     },
