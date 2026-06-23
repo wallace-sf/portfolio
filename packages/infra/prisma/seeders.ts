@@ -41,6 +41,7 @@ export const ID = {
     b2bEcommerce: '30000000-0000-4000-8000-000000000002',
     gamePlatform: '30000000-0000-4000-8000-000000000003',
     mqttClient: '30000000-0000-4000-8000-000000000004',
+    buyrShopifyApp: '30000000-0000-4000-8000-000000000005',
   },
   experiences: {
     fdte_current: '40000000-0000-4000-8000-000000000001',
@@ -449,6 +450,97 @@ Built the entire frontend with **React.js**, **Material UI**, and **GraphQL**, i
       periodStart: new Date('2023-10-01'),
       periodEnd: new Date('2023-12-31'),
       skillIds: [ID.skills.typescript, ID.skills.react, ID.skills.graphql],
+      relatedProjectSlugs: [],
+    },
+    {
+      id: ID.projects.buyrShopifyApp,
+      slug: 'buyr-shopify-app',
+      coverImageUrl:
+        'https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/promotional_image/CMfgkeeMwI4DEAE=.png',
+      coverImageAlt: loc(
+        'Buyr Shopify app — interactive pricing and AI offer negotiation',
+        'App Buyr para Shopify — precificação interativa e negociação de ofertas por IA',
+        'App Buyr para Shopify — precios interactivos y negociación de ofertas por IA',
+      ),
+      title: loc('Buyr — Shopify App', 'Buyr — App para Shopify', 'Buyr — App para Shopify'),
+      caption: loc(
+        'A public Shopify app with AI-powered offer negotiation — built across storefront and merchant admin with a focus on performance, isolation, and polish.',
+        'App público da Shopify com negociação de ofertas por IA — construído no storefront e no admin do merchant com foco em performance, isolamento e polimento.',
+        'App público de Shopify con negociación de ofertas por IA — construido en el storefront y el admin del merchant con foco en performance, aislamiento y polish.',
+      ),
+      content: `[Buyr](https://apps.shopify.com/buyr) is a public Shopify app that lets shoppers set their own price or negotiate with an AI agent — ==capturing orders that would otherwise be lost at full price==. Merchants configure profitability thresholds; Buyr handles the negotiation automatically.
+
+I was brought in to solve an animation problem no one on the team had tackled before, and ended up contributing across both sides of the product: the storefront experience buyers see and the merchant admin dashboard. Working with a distributed team across Brazil and the United States, we delivered the MVP against a fixed deadline, followed by a post-MVP improvement phase.
+
+## The Constraints
+
+The app runs embedded inside any Shopify storefront theme — with no control over the host's CSS, JavaScript environment, or component structure. A merchant running a minimalist theme and another running a custom brand theme would silently break the same widget in different ways.
+
+On top of that, ==Shopify's own acceptance criteria imposed strict performance thresholds the app had to meet to stay listed in the App Store==. Performance wasn't optional — it was a gate.
+
+![Interactive price input and AI negotiation chat interface](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+
+*The storefront widget — interactive price input with AI negotiation chat.*
+
+## Storefront
+
+### Rebuilding the animation system
+
+The storefront widget had an animation system — but only as compiled vanilla JavaScript with no readable source. ==I reverse-engineered the behavior visually and rebuilt it from scratch using **Framer Motion**==, making it a proper state-driven system connected to the offer lifecycle:
+
+- **Idle** — ambient animated circles while the shopper browses
+- **In progress** — active animation while the offer is being created
+- **Success** — confetti burst with a yellow checkmark circle
+- **Existing offer** — distinct animation state for returning shoppers
+
+State was managed via React Context API, flowing through the entire storefront component tree.
+
+### Solving CSS isolation with Shadow DOM
+
+While testing across different Shopify themes, I found that merchant CSS would leak into the widget and break the layout in unpredictable ways. ==I investigated the root cause, identified Shadow DOM as the right boundary, and implemented it to fully isolate the app's styles== from whatever the host storefront was doing. This wasn't a requirement — it was a decision I made after diagnosing the problem.
+
+### Performance improvements
+
+Meeting Shopify's App Store performance requirements meant treating performance as a deliverable, not an afterthought. I studied comparable apps in the store, tracked metrics in a spreadsheet, and drove the following improvements:
+
+- **On-demand rendering** — only mount the widget when it's actually needed
+- **Dead code removal** — stripped unused dependencies and unreachable branches
+- **Offer flow simplification** — reduced steps and component depth in the critical path
+- **Refactoring** — replaced inefficient loops, over-engineered hooks, and global state misuse
+
+## Merchant Admin
+
+![Real-time offer management dashboard for merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+
+*Real-time offer management — merchants see and act on incoming offers as they arrive.*
+
+On the merchant side, I built three screens using **Shopify Polaris**:
+
+- **Offer acceptance flow** — pixel-perfect implementation of how merchants review and accept incoming offers
+- **Analytics screen** — dashboard giving merchants visibility into received vs. accepted offers over time
+- **Onboarding / welcome screen** — guided setup experience for merchants installing the app for the first time
+
+![Custom pricing models configuration screen](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+
+*Custom pricing models — merchants define thresholds and discount rules per product.*
+
+## Technical Highlights
+
+- **Monorepo with npm workspaces** — storefront (Vite + Tailwind) and merchant admin (Shopify Polaris) as fully separate apps
+- **Framer Motion** — multi-state, choreographed animation system driven by React Context API
+- **Shadow DOM** — CSS isolation across unpredictable storefront host environments
+- **Shopify App Bridge**, **Theme App Extensions**, and **Storefront API** — learned and applied in full across both contexts
+- **Fixed deadline** delivery with a structured post-MVP improvement phase`,
+      featured: false,
+      status: 'PUBLISHED' as const,
+      periodStart: new Date('2024-10-01'),
+      periodEnd: new Date('2025-02-28'),
+      skillIds: [
+        ID.skills.typescript,
+        ID.skills.react,
+        ID.skills.tailwindcss,
+        ID.skills.shopify,
+      ],
       relatedProjectSlugs: [],
     },
     {

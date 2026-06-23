@@ -7,3 +7,125 @@
   font-family: inherit;
   font-size: inherit;
 }
+
+.markdown-body ul {
+  list-style-type: disc;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+}
+
+.markdown-body h2 {
+  color: rgb(var(--tw-brand-accent));
+}
+
+.markdown-body h3 {
+  color: rgb(var(--tw-brand-primary));
+}
+
+.markdown-body a {
+  color: rgb(var(--tw-brand-accent));
+  text-decoration: underline;
+  text-decoration-color: rgb(var(--tw-brand-accent) / 0.4);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
+}
+
+.markdown-body a:hover {
+  text-decoration-color: rgb(var(--tw-brand-accent));
+}
+
+.markdown-body strong {
+  color: rgb(var(--tw-content-primary));
+  font-weight: 700;
+}
+
+/* Light mode overrides */
+.light .markdown-body h2 {
+  color: rgb(var(--tw-brand-primary));
+}
+
+.light .markdown-body h3 {
+  color: rgb(var(--tw-brand-primary));
+}
+
+.light .markdown-body a {
+  color: rgb(var(--tw-brand-primary));
+  text-decoration-color: rgb(var(--tw-brand-primary) / 0.4);
+}
+
+.light .markdown-body a:hover {
+  text-decoration-color: rgb(var(--tw-brand-primary));
+}
+
+/* Lede — first paragraph reads like a newspaper lead */
+.markdown-body > p:first-of-type {
+  font-size: 1.125rem;
+  color: rgb(var(--tw-content-secondary));
+  line-height: 1.8;
+}
+
+/* Drop cap — first letter floats large, editorial feel */
+.markdown-body > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.75rem;
+  font-weight: 700;
+  line-height: 0.82;
+  margin-right: 0.08em;
+  margin-top: 0.06em;
+  color: rgb(var(--tw-brand-accent));
+}
+
+/* Blockquote as pull quote */
+.markdown-body blockquote {
+  border-left: 3px solid rgb(var(--tw-brand-accent));
+  background: transparent;
+  padding: 0.5rem 1.25rem;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: rgb(var(--tw-content-secondary));
+}
+
+.markdown-body blockquote p {
+  margin: 0;
+}
+
+/* hr as editorial gradient separator */
+.markdown-body hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgb(var(--tw-brand-accent) / 0.5), transparent);
+  margin: 2rem 0;
+}
+
+/* Bullet labels — first bold in each list item gets accent color */
+.markdown-body li > strong:first-child,
+.markdown-body li > p > strong:first-child {
+  color: rgb(var(--tw-brand-accent));
+}
+
+.light .markdown-body li > strong:first-child,
+.light .markdown-body li > p > strong:first-child {
+  color: rgb(var(--tw-brand-primary));
+}
+
+/* Highlight — marca-texto para partes-chave */
+.markdown-body mark {
+  background-color: rgba(251, 191, 36, 0.18);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0.05em 0.25em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Image caption — em as only child of p that follows an img-containing p */
+.markdown-body p:has(img) + p > em:only-child {
+  display: block;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: rgb(var(--tw-content-muted));
+  margin-top: -0.75rem;
+  font-style: italic;
+}
