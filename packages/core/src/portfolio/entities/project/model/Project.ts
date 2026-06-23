@@ -11,7 +11,6 @@ import {
   Image,
   LocalizedText,
   Slug,
-  Text,
   ValidationError,
   left,
   right,
@@ -34,7 +33,7 @@ export interface IProjectProps extends IEntityProps {
   coverImage: IProjectCoverImage;
   title: ILocalizedTextInput;
   caption: ILocalizedTextInput;
-  content: string;
+  content: ILocalizedTextInput;
   skills: string[];
   theme?: ILocalizedTextInput;
   summary?: ILocalizedTextInput;
@@ -53,7 +52,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   public readonly coverImage: Image;
   public readonly title: LocalizedText;
   public readonly caption: LocalizedText;
-  public readonly content: Text;
+  public readonly content: LocalizedText;
   public readonly skills: Id[];
   public readonly theme: LocalizedText | undefined;
   public readonly summary: LocalizedText | undefined;
@@ -71,7 +70,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     coverImage: Image,
     title: LocalizedText,
     caption: LocalizedText,
-    content: Text,
+    content: LocalizedText,
     skills: Id[],
     theme: LocalizedText | undefined,
     summary: LocalizedText | undefined,
@@ -116,7 +115,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       Image.create(props.coverImage?.url, props.coverImage?.alt),
       LocalizedText.create(props.title ?? { 'pt-BR': '' }),
       LocalizedText.create(props.caption ?? { 'pt-BR': '' }),
-      Text.create(props.content, { min: 3, max: 500000 }),
+      LocalizedText.create(props.content ?? { 'en-US': '' }),
       DateRange.create(props.period?.start, props.period?.end),
       props.theme
         ? LocalizedText.create(props.theme)

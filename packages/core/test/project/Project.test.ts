@@ -1,5 +1,6 @@
 import {
   Id,
+  ILocalizedTextInput,
   LocalizedText,
   Project,
   ProjectStatus,
@@ -24,8 +25,10 @@ describe('Project', () => {
         'en-US': 'A caption for the project.',
         'pt-BR': 'Uma legenda para o projeto.',
       };
-      const content =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+      const content: ILocalizedTextInput = {
+        'en-US': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        'pt-BR': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      };
       const skills = [
         'a0000000-0000-4000-8000-000000000001',
         'a0000000-0000-4000-8000-000000000002',
@@ -45,7 +48,7 @@ describe('Project', () => {
       expect(result.value.title.get('pt-BR')).toBe(title['pt-BR']);
       expect(result.value.title.get('en-US')).toBe(title['en-US']);
       expect(result.value.caption.get('pt-BR')).toBe(caption['pt-BR']);
-      expect(result.value.content.value).toBe(content);
+      expect(result.value.content.get('en-US')).toBe(content['en-US']);
       expect(result.value.skills).toHaveLength(2);
       expect(result.value.skills[0]).toBeInstanceOf(Id);
     });
@@ -207,7 +210,7 @@ describe('Project', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe('INVALID_TEXT');
+      expect((result.value as ValidationError).code).toBe(LocalizedText.ERROR_CODE);
     });
 
     it('should return Left when period is missing', () => {

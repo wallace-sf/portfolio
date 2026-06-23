@@ -332,7 +332,8 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
         'Portfólio full-stack construído com Next.js, DDD e Arquitetura Limpa em um monorepo Turborepo.',
         'Portafolio full-stack construido con Next.js, DDD y Arquitectura Limpia en un monorepo Turborepo.',
       ),
-      content: `A production-grade monorepo portfolio built with **Next.js 16**, **TypeScript**, and **Prisma** following Domain-Driven Design and Clean Architecture principles.
+      content: loc(
+        `A production-grade monorepo portfolio built with **Next.js 16**, **TypeScript**, and **Prisma** following Domain-Driven Design and Clean Architecture principles.
 
 The project is split across four layers — \`core\`, \`application\`, \`infra\`, and \`site\` — each with strict dependency rules enforced by ESLint. Authentication is handled via Supabase with JWT tokens and httpOnly cookies.
 
@@ -360,6 +361,63 @@ flowchart TD
 - Vitest test suite with fake gateways and in-memory repositories
 - Admin app built as a dedicated Next.js app with a proxy auth layer
 - next-intl for English/Portuguese internationalization`,
+        `Portfólio monorepo de nível de produção construído com **Next.js 16**, **TypeScript** e **Prisma** seguindo princípios de Domain-Driven Design e Arquitetura Limpa.
+
+O projeto é dividido em quatro camadas — \`core\`, \`application\`, \`infra\` e \`site\` — cada uma com regras rígidas de dependência aplicadas pelo ESLint. A autenticação é feita via Supabase com tokens JWT e cookies httpOnly.
+
+**Arquitetura**
+
+\`\`\`mermaid
+flowchart TD
+  site["apps/site (Next.js)"]
+  admin["apps/admin (Next.js)"]
+  app["packages/application"]
+  core["packages/core"]
+  infra["packages/infra"]
+  db[(Supabase / PostgreSQL)]
+
+  site --> app
+  admin --> app
+  app --> core
+  infra --> app
+  infra --> db
+\`\`\`
+
+**Destaques**
+- Monorepo Turborepo com pacotes compartilhados (\`ui\`, \`utils\`, \`core\`, \`application\`, \`infra\`)
+- Padrão Either para tratamento de erros — nenhuma exceção lançada para erros de domínio
+- Suite de testes Vitest com gateways falsos e repositórios em memória
+- App admin construído como um app Next.js dedicado com camada de autenticação via proxy
+- next-intl para internacionalização em Inglês/Português`,
+        `Portafolio monorepo de nivel de producción construido con **Next.js 16**, **TypeScript** y **Prisma** siguiendo principios de Domain-Driven Design y Arquitectura Limpia.
+
+El proyecto está dividido en cuatro capas — \`core\`, \`application\`, \`infra\` y \`site\` — cada una con reglas estrictas de dependencia aplicadas por ESLint. La autenticación se realiza mediante Supabase con tokens JWT y cookies httpOnly.
+
+**Arquitectura**
+
+\`\`\`mermaid
+flowchart TD
+  site["apps/site (Next.js)"]
+  admin["apps/admin (Next.js)"]
+  app["packages/application"]
+  core["packages/core"]
+  infra["packages/infra"]
+  db[(Supabase / PostgreSQL)]
+
+  site --> app
+  admin --> app
+  app --> core
+  infra --> app
+  infra --> db
+\`\`\`
+
+**Aspectos Destacados**
+- Monorepo Turborepo con paquetes compartidos (\`ui\`, \`utils\`, \`core\`, \`application\`, \`infra\`)
+- Patrón Either para el manejo de errores — sin excepciones lanzadas para errores de dominio
+- Suite de pruebas Vitest con gateways falsos y repositorios en memoria
+- App admin construida como una app Next.js dedicada con capa de autenticación vía proxy
+- next-intl para internacionalización en Inglés/Portugués`,
+      ),
       featured: true,
       status: 'PUBLISHED' as const,
       periodStart: new Date('2024-01-01'),
@@ -391,7 +449,8 @@ flowchart TD
         'Plataforma B2B full-stack para materiais de construção construída com DDD, Arquitetura Limpa, NestJS e React.',
         'Plataforma B2B full-stack para materiales de construcción construida con DDD, Arquitectura Limpia, NestJS y React.',
       ),
-      content: `End-to-end engineering of a **B2B e-commerce platform** for construction materials, from system design to production delivery.
+      content: loc(
+        `End-to-end engineering of a **B2B e-commerce platform** for construction materials, from system design to production delivery.
 
 Designed scalable RESTful APIs following **Domain-Driven Design** and **Clean Architecture**, separating business rules from infrastructure concerns. The frontend was built with **React.js** and **Vite**, consuming the API via React Query with optimistic updates.
 
@@ -401,6 +460,27 @@ Designed scalable RESTful APIs following **Domain-Driven Design** and **Clean Ar
 - PostgreSQL with Prisma ORM; migrations managed per environment
 - AWS infrastructure (S3, EC2, RDS)
 - Tailwind CSS design system shared between customer and backoffice portals`,
+        `Engenharia completa de uma **plataforma B2B de e-commerce** para materiais de construção, desde o design do sistema até a entrega em produção.
+
+Projetei APIs RESTful escaláveis seguindo **Domain-Driven Design** e **Arquitetura Limpa**, separando as regras de negócio das preocupações de infraestrutura. O frontend foi construído com **React.js** e **Vite**, consumindo a API via React Query com atualizações otimistas.
+
+**Destaques**
+- Agregados DDD, repositórios e eventos de domínio em contextos delimitados
+- Módulos NestJS com injeção de dependência e autorização baseada em guards
+- PostgreSQL com Prisma ORM; migrations gerenciadas por ambiente
+- Infraestrutura AWS (S3, EC2, RDS)
+- Design system Tailwind CSS compartilhado entre os portais de clientes e backoffice`,
+        `Ingeniería completa de una **plataforma B2B de e-commerce** para materiales de construcción, desde el diseño del sistema hasta la entrega en producción.
+
+Diseñé APIs RESTful escalables siguiendo **Domain-Driven Design** y **Arquitectura Limpia**, separando las reglas de negocio de las preocupaciones de infraestructura. El frontend fue construido con **React.js** y **Vite**, consumiendo la API mediante React Query con actualizaciones optimistas.
+
+**Aspectos Destacados**
+- Agregados DDD, repositorios y eventos de dominio en contextos delimitados
+- Módulos NestJS con inyección de dependencias y autorización basada en guards
+- PostgreSQL con Prisma ORM; migraciones gestionadas por entorno
+- Infraestructura AWS (S3, EC2, RDS)
+- Sistema de diseño Tailwind CSS compartido entre los portales de clientes y backoffice`,
+      ),
       featured: true,
       status: 'PUBLISHED' as const,
       periodStart: new Date('2023-05-01'),
@@ -436,7 +516,8 @@ Designed scalable RESTful APIs following **Domain-Driven Design** and **Clean Ar
         'Plataforma de inteligência de dados para a indústria de games, entregando insights 200% mais rápido que institutos de pesquisa tradicionais.',
         'Plataforma de inteligencia de datos para la industria de los videojuegos, entregando insights 200% más rápido que los institutos de investigación tradicionales.',
       ),
-      content: `A **game research and data intelligence platform** that aggregates market data and delivers actionable insights to studios and publishers significantly faster than traditional research methods.
+      content: loc(
+        `A **game research and data intelligence platform** that aggregates market data and delivers actionable insights to studios and publishers significantly faster than traditional research methods.
 
 Built the entire frontend with **React.js**, **Material UI**, and **GraphQL**, including data visualization dashboards and complex filter/search workflows.
 
@@ -445,6 +526,25 @@ Built the entire frontend with **React.js**, **Material UI**, and **GraphQL**, i
 - GraphQL queries and mutations with Apollo Client; real-time data subscriptions
 - Custom charting components built on top of Material UI and Recharts
 - Delivered 200% faster applicable intelligence than research institutes`,
+        `Uma **plataforma de pesquisa de games e inteligência de dados** que agrega dados de mercado e entrega insights acionáveis a estúdios e publishers significativamente mais rápido do que os métodos de pesquisa tradicionais.
+
+Construí todo o frontend com **React.js**, **Material UI** e **GraphQL**, incluindo dashboards de visualização de dados e fluxos complexos de filtro/busca.
+
+**Destaques**
+- Adaptação mobile completa de uma plataforma desktop-first — responsiva em todos os breakpoints
+- Queries e mutations GraphQL com Apollo Client; subscrições de dados em tempo real
+- Componentes de gráficos personalizados construídos sobre Material UI e Recharts
+- Entregou inteligência aplicável 200% mais rápido do que institutos de pesquisa`,
+        `Una **plataforma de investigación de videojuegos e inteligencia de datos** que agrega datos de mercado y entrega insights accionables a estudios y publishers significativamente más rápido que los métodos de investigación tradicionales.
+
+Construí todo el frontend con **React.js**, **Material UI** y **GraphQL**, incluyendo dashboards de visualización de datos y flujos complejos de filtrado/búsqueda.
+
+**Aspectos Destacados**
+- Adaptación móvil completa de una plataforma desktop-first — responsiva en todos los breakpoints
+- Consultas y mutaciones GraphQL con Apollo Client; suscripciones de datos en tiempo real
+- Componentes de gráficos personalizados construidos sobre Material UI y Recharts
+- Entregó inteligencia aplicable un 200% más rápido que los institutos de investigación`,
+      ),
       featured: false,
       status: 'PUBLISHED' as const,
       periodStart: new Date('2023-10-01'),
@@ -468,7 +568,8 @@ Built the entire frontend with **React.js**, **Material UI**, and **GraphQL**, i
         'App público da Shopify com negociação de ofertas por IA — construído no storefront e no admin do merchant com foco em performance, isolamento e polimento.',
         'App público de Shopify con negociación de ofertas por IA — construido en el storefront y el admin del merchant con foco en performance, aislamiento y polish.',
       ),
-      content: `[Buyr](https://apps.shopify.com/buyr) is a public Shopify app that lets shoppers set their own price or negotiate with an AI agent — ==capturing orders that would otherwise be lost at full price==. Merchants configure profitability thresholds; Buyr handles the negotiation automatically.
+      content: loc(
+        `[Buyr](https://apps.shopify.com/buyr) is a public Shopify app that lets shoppers set their own price or negotiate with an AI agent — ==capturing orders that would otherwise be lost at full price==. Merchants configure profitability thresholds; Buyr handles the negotiation automatically.
 
 I was brought in to solve an animation problem no one on the team had tackled before, and ended up contributing across both sides of the product: the storefront experience buyers see and the merchant admin dashboard. Working with a distributed team across Brazil and the United States, we delivered the MVP against a fixed deadline, followed by a post-MVP improvement phase.
 
@@ -531,6 +632,133 @@ On the merchant side, I built three screens using **Shopify Polaris**:
 - **Shadow DOM** — CSS isolation across unpredictable storefront host environments
 - **Shopify App Bridge**, **Theme App Extensions**, and **Storefront API** — learned and applied in full across both contexts
 - **Fixed deadline** delivery with a structured post-MVP improvement phase`,
+        `[Buyr](https://apps.shopify.com/buyr) é um app público da Shopify que permite compradores definir seu próprio preço ou negociar com um agente de IA — ==capturando pedidos que de outra forma seriam perdidos ao preço cheio==. Merchants configuram limites de lucratividade; o Buyr cuida da negociação automaticamente.
+
+Fui convidado para resolver um problema de animação que ninguém no time havia enfrentado antes, e acabei contribuindo nos dois lados do produto: a experiência do storefront vista pelos compradores e o painel de administração dos merchants. Trabalhando com um time distribuído entre Brasil e Estados Unidos, entregamos o MVP dentro de um prazo fixo, seguido por uma fase de melhorias pós-MVP.
+
+## As Restrições
+
+O app roda incorporado dentro de qualquer tema de storefront da Shopify — sem controle sobre o CSS, o ambiente JavaScript ou a estrutura de componentes do host. Um merchant usando um tema minimalista e outro com um tema de marca customizado poderiam quebrar o mesmo widget de formas silenciosas e diferentes.
+
+Além disso, ==os próprios critérios de aceitação da Shopify impõem limites rígidos de performance que o app precisava atingir para permanecer listado na App Store==. Performance não era opcional — era um requisito de aprovação.
+
+![Interface de entrada de preço interativa e chat de negociação por IA](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+
+*O widget do storefront — entrada de preço interativa com chat de negociação por IA.*
+
+## Storefront
+
+### Reconstruindo o sistema de animações
+
+O widget do storefront tinha um sistema de animações — mas apenas como JavaScript vanilla compilado, sem código-fonte legível. ==Fiz engenharia reversa do comportamento visualmente e o reconstruí do zero usando **Framer Motion**==, transformando-o em um sistema orientado a estado conectado ao ciclo de vida das ofertas:
+
+- **Idle** — círculos animados em segundo plano enquanto o comprador navega
+- **Em andamento** — animação ativa enquanto a oferta é criada
+- **Sucesso** — explosão de confetes com um círculo de marcação amarela
+- **Oferta existente** — estado de animação distinto para compradores que retornam
+
+O estado era gerenciado via React Context API, fluindo por toda a árvore de componentes do storefront.
+
+### Resolvendo o isolamento de CSS com Shadow DOM
+
+Ao testar em diferentes temas da Shopify, descobri que o CSS dos merchants vazava para dentro do widget e quebrava o layout de formas imprevisíveis. ==Investiguei a causa raiz, identifiquei o Shadow DOM como o limite correto e o implementei para isolar completamente os estilos do app== de qualquer coisa que o storefront host estivesse fazendo. Isso não era um requisito — foi uma decisão que tomei após diagnosticar o problema.
+
+### Melhorias de performance
+
+Atender aos requisitos de performance da App Store da Shopify significou tratar performance como um entregável, não como um detalhe. Estudei apps comparáveis na loja, rastreei métricas em uma planilha e conduzi as seguintes melhorias:
+
+- **Renderização sob demanda** — montar o widget apenas quando realmente necessário
+- **Remoção de código morto** — eliminação de dependências não utilizadas e ramificações inacessíveis
+- **Simplificação do fluxo de oferta** — redução de etapas e profundidade de componentes no caminho crítico
+- **Refatoração** — substituição de loops ineficientes, hooks super-engenheirados e uso indevido de estado global
+
+## Administração dos Merchants
+
+![Painel de gerenciamento de ofertas em tempo real para merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+
+*Gerenciamento de ofertas em tempo real — merchants veem e agem sobre as ofertas recebidas conforme chegam.*
+
+No lado dos merchants, construí três telas usando **Shopify Polaris**:
+
+- **Fluxo de aceitação de ofertas** — implementação pixel-perfect de como merchants revisam e aceitam ofertas recebidas
+- **Tela de analytics** — painel que dá aos merchants visibilidade sobre ofertas recebidas vs. aceitas ao longo do tempo
+- **Tela de onboarding / boas-vindas** — experiência guiada de configuração para merchants instalando o app pela primeira vez
+
+![Tela de configuração de modelos de precificação personalizados](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+
+*Modelos de precificação personalizados — merchants definem limites e regras de desconto por produto.*
+
+## Destaques Técnicos
+
+- **Monorepo com npm workspaces** — storefront (Vite + Tailwind) e admin dos merchants (Shopify Polaris) como apps completamente separados
+- **Framer Motion** — sistema de animação com múltiplos estados e coreografia, orientado por React Context API
+- **Shadow DOM** — isolamento de CSS em ambientes de storefront imprevisíveis
+- **Shopify App Bridge**, **Theme App Extensions** e **Storefront API** — aprendidos e aplicados integralmente em ambos os contextos
+- **Entrega dentro do prazo fixo** com uma fase estruturada de melhorias pós-MVP`,
+        `[Buyr](https://apps.shopify.com/buyr) es una app pública de Shopify que permite a los compradores fijar su propio precio o negociar con un agente de IA — ==capturando pedidos que de otro modo se perderían al precio completo==. Los merchants configuran umbrales de rentabilidad; Buyr gestiona la negociación automáticamente.
+
+Fui convocado para resolver un problema de animación que nadie en el equipo había abordado antes, y terminé contribuyendo en ambos lados del producto: la experiencia del storefront que ven los compradores y el panel de administración de merchants. Trabajando con un equipo distribuido entre Brasil y Estados Unidos, entregamos el MVP en un plazo fijo, seguido de una fase de mejoras post-MVP.
+
+## Las Restricciones
+
+La app se ejecuta integrada dentro de cualquier tema de storefront de Shopify — sin control sobre el CSS, el entorno JavaScript o la estructura de componentes del host. Un merchant con un tema minimalista y otro con un tema de marca personalizado podrían romper el mismo widget de formas silenciosas y distintas.
+
+Además, ==los propios criterios de aceptación de Shopify imponen umbrales de rendimiento estrictos que la app debía cumplir para mantenerse en la App Store==. El rendimiento no era opcional — era un requisito de aprobación.
+
+![Interfaz de entrada de precio interactiva y chat de negociación con IA](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+
+*El widget del storefront — entrada de precio interactiva con chat de negociación por IA.*
+
+## Storefront
+
+### Reconstruyendo el sistema de animaciones
+
+El widget del storefront tenía un sistema de animaciones — pero solo como JavaScript vanilla compilado, sin código fuente legible. ==Realicé ingeniería inversa del comportamiento visualmente y lo reconstruí desde cero usando **Framer Motion**==, convirtiéndolo en un sistema orientado a estados conectado al ciclo de vida de las ofertas:
+
+- **Idle** — círculos animados en segundo plano mientras el comprador navega
+- **En progreso** — animación activa mientras se crea la oferta
+- **Éxito** — explosión de confeti con un círculo de verificación amarillo
+- **Oferta existente** — estado de animación distinto para compradores que regresan
+
+El estado se gestionó mediante React Context API, fluyendo por todo el árbol de componentes del storefront.
+
+### Resolviendo el aislamiento de CSS con Shadow DOM
+
+Al probar en distintos temas de Shopify, descubrí que el CSS de los merchants se filtraba al widget y rompía el diseño de formas impredecibles. ==Investigué la causa raíz, identifiqué Shadow DOM como el límite correcto y lo implementé para aislar completamente los estilos de la app== de lo que hiciera el storefront anfitrión. Esto no era un requisito — fue una decisión que tomé tras diagnosticar el problema.
+
+### Mejoras de rendimiento
+
+Cumplir los requisitos de rendimiento de la App Store de Shopify significó tratar el rendimiento como un entregable, no como un detalle. Estudié apps comparables en la tienda, rastreé métricas en una hoja de cálculo e impulsé las siguientes mejoras:
+
+- **Renderizado bajo demanda** — montar el widget solo cuando realmente se necesita
+- **Eliminación de código muerto** — eliminación de dependencias no utilizadas y ramas inalcanzables
+- **Simplificación del flujo de oferta** — reducción de pasos y profundidad de componentes en el camino crítico
+- **Refactorización** — reemplazo de bucles ineficientes, hooks sobre-diseñados y mal uso del estado global
+
+## Administración de Merchants
+
+![Panel de gestión de ofertas en tiempo real para merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+
+*Gestión de ofertas en tiempo real — los merchants ven y actúan sobre las ofertas entrantes a medida que llegan.*
+
+En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**:
+
+- **Flujo de aceptación de ofertas** — implementación pixel-perfect de cómo los merchants revisan y aceptan las ofertas entrantes
+- **Pantalla de analytics** — panel que da a los merchants visibilidad sobre las ofertas recibidas vs. aceptadas a lo largo del tiempo
+- **Pantalla de onboarding / bienvenida** — experiencia guiada de configuración para merchants que instalan la app por primera vez
+
+![Pantalla de configuración de modelos de precios personalizados](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+
+*Modelos de precios personalizados — los merchants definen umbrales y reglas de descuento por producto.*
+
+## Aspectos Técnicos Destacados
+
+- **Monorepo con npm workspaces** — storefront (Vite + Tailwind) y admin de merchants (Shopify Polaris) como apps completamente separadas
+- **Framer Motion** — sistema de animación con múltiples estados y coreografía, impulsado por React Context API
+- **Shadow DOM** — aislamiento de CSS en entornos de storefront impredecibles
+- **Shopify App Bridge**, **Theme App Extensions** y **Storefront API** — aprendidos y aplicados íntegramente en ambos contextos
+- **Entrega en plazo fijo** con una fase estructurada de mejoras post-MVP`,
+      ),
       featured: false,
       status: 'PUBLISHED' as const,
       periodStart: new Date('2024-10-01'),
@@ -559,7 +787,8 @@ On the merchant side, I built three screens using **Shopify Polaris**:
         'Biblioteca open-source de cliente MQTT para React com API baseada em hooks e subscrições de tópicos em tempo real.',
         'Biblioteca open-source de cliente MQTT para React con API basada en hooks y suscripciones de tópicos en tiempo real.',
       ),
-      content: `An **open-source MQTT client library** for React applications, created to simplify integration with MQTT brokers over WebSocket in real-time web platforms.
+      content: loc(
+        `An **open-source MQTT client library** for React applications, created to simplify integration with MQTT brokers over WebSocket in real-time web platforms.
 
 Developed while working at FDTE on industrial and public-sector platforms that required live data from IoT devices and event-driven systems.
 
@@ -568,6 +797,25 @@ Developed while working at FDTE on industrial and public-sector platforms that r
 - Automatic reconnection with exponential backoff
 - TypeScript-first with full type inference for message payloads
 - Zero dependencies beyond the standard MQTT.js client`,
+        `Uma **biblioteca open-source de cliente MQTT** para aplicações React, criada para simplificar a integração com brokers MQTT via WebSocket em plataformas web em tempo real.
+
+Desenvolvida enquanto trabalhava na FDTE em plataformas industriais e do setor público que exigiam dados ao vivo de dispositivos IoT e sistemas orientados a eventos.
+
+**Destaques**
+- API baseada em hooks (\`useMqtt\`, \`useSubscription\`) seguindo os idiomas do React
+- Reconexão automática com backoff exponencial
+- TypeScript-first com inferência de tipos completa para payloads de mensagens
+- Zero dependências além do cliente padrão MQTT.js`,
+        `Una **biblioteca open-source de cliente MQTT** para aplicaciones React, creada para simplificar la integración con brokers MQTT vía WebSocket en plataformas web en tiempo real.
+
+Desarrollada mientras trabajaba en FDTE en plataformas industriales y del sector público que requerían datos en vivo de dispositivos IoT y sistemas orientados a eventos.
+
+**Aspectos Destacados**
+- API basada en hooks (\`useMqtt\`, \`useSubscription\`) siguiendo los idiomas de React
+- Reconexión automática con backoff exponencial
+- TypeScript-first con inferencia de tipos completa para payloads de mensajes
+- Sin dependencias más allá del cliente estándar MQTT.js`,
+      ),
       featured: false,
       status: 'PUBLISHED' as const,
       periodStart: new Date('2022-01-01'),

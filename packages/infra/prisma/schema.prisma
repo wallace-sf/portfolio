@@ -77,7 +77,7 @@ model Project {
   coverImageAlt       Json
   title               Json
   caption             Json
-  content             String        @db.Text
+  content             Json
   theme               Json?
   summary             Json?
   objectives          Json?

@@ -21,7 +21,7 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
       coverImage: { url: Data.image.url(), alt: Data.image.alt() },
       title: { 'en-US': Data.text.title(), 'pt-BR': Data.text.title() },
       caption: { 'en-US': Data.text.caption(), 'pt-BR': Data.text.caption() },
-      content: Data.text.text(),
+      content: { 'en-US': Data.text.text(), 'pt-BR': Data.text.text() },
       skills: [
         'a0000000-0000-4000-8000-000000000001',
         'a0000000-0000-4000-8000-000000000002',
@@ -63,7 +63,7 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return this;
   }
 
-  public withContent(content: string): ProjectBuilder {
+  public withContent(content: ILocalizedTextInput): ProjectBuilder {
     this._props.content = content;
     return this;
   }

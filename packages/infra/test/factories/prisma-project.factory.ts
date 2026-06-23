@@ -7,7 +7,7 @@ export type PrismaProject = {
   coverImageAlt: Prisma.JsonValue;
   title: Prisma.JsonValue;
   caption: Prisma.JsonValue;
-  content: string;
+  content: Prisma.JsonValue;
   theme: Prisma.JsonValue | null;
   summary: Prisma.JsonValue | null;
   objectives: Prisma.JsonValue | null;
@@ -33,7 +33,7 @@ export function buildPrismaProject(overrides?: Partial<PrismaProject>): PrismaPr
     coverImageAlt: { 'en-US': 'Project cover', 'pt-BR': 'Capa do projeto' },
     title: { 'en-US': 'My Project', 'pt-BR': 'Meu Projeto' },
     caption: { 'en-US': 'A brief description', 'pt-BR': 'Uma breve descrição' },
-    content: 'Conteúdo detalhado do projeto.',
+    content: { 'en-US': 'Detailed project content.', 'pt-BR': 'Conteúdo detalhado do projeto.' },
     theme: null,
     summary: null,
     objectives: null,
