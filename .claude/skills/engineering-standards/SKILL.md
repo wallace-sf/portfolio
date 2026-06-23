@@ -34,3 +34,17 @@ Do not duplicate long content here; use the references above for full templates 
 A PR that adds production code without tests is **not done**. Do not open the PR, do not mark the task as done, do not move on to the next task until tests exist and pass.
 
 > Rationale: `SupabaseAuthenticationGateway` was shipped in one commit without tests, requiring a second commit to add them. This rule prevents that pattern.
+
+## Turborepo cache — never trust cached type results
+
+When diagnosing type errors (e.g. pre-commit hook failing, investigating `tsc` errors), **always bypass the cache**:
+
+```bash
+pnpm turbo types --force
+```
+
+**Why:** Turborepo caches the result of `types` tasks. If a previous run passed, subsequent runs return `cache hit` even when a dependency changed (e.g. a new package was added to `package.json`). This hides real errors and creates false confidence.
+
+- Use `pnpm turbo types` (no flag) only when you know the cache is valid.
+- Use `pnpm turbo types --force` whenever you are diagnosing failures or verifying a fix.
+- The same applies to other tasks: `pnpm turbo lint:check --force`, `pnpm turbo build --force`.
