@@ -35,6 +35,10 @@ export const ID = {
     cicd: '20000000-0000-4000-8000-000000000016',
     designSystems: '20000000-0000-4000-8000-000000000017',
     shopify: '20000000-0000-4000-8000-000000000018',
+    framerMotion: '20000000-0000-4000-8000-000000000019',
+    vite: '20000000-0000-4000-8000-000000000020',
+    prisma: '20000000-0000-4000-8000-000000000021',
+    supabase: '20000000-0000-4000-8000-000000000022',
   },
   projects: {
     portfolio: '30000000-0000-4000-8000-000000000001',
@@ -166,6 +170,30 @@ export async function seedSkills(db: PrismaClient): Promise<void> {
       icon: 'logos:shopify',
       type: 'TECHNOLOGY' as const,
       description: loc('Shopify', 'Shopify'),
+    },
+    {
+      id: ID.skills.framerMotion,
+      icon: 'simple-icons:framer',
+      type: 'TECHNOLOGY' as const,
+      description: loc('Framer Motion', 'Framer Motion'),
+    },
+    {
+      id: ID.skills.vite,
+      icon: 'logos:vitejs',
+      type: 'TECHNOLOGY' as const,
+      description: loc('Vite', 'Vite'),
+    },
+    {
+      id: ID.skills.prisma,
+      icon: 'simple-icons:prisma',
+      type: 'TECHNOLOGY' as const,
+      description: loc('Prisma', 'Prisma'),
+    },
+    {
+      id: ID.skills.supabase,
+      icon: 'simple-icons:supabase',
+      type: 'TECHNOLOGY' as const,
+      description: loc('Supabase', 'Supabase'),
     },
     {
       id: ID.skills.communication,
@@ -333,90 +361,396 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
         'Portafolio full-stack construido con Next.js, DDD y Arquitectura Limpia en un monorepo Turborepo.',
       ),
       content: loc(
-        `A production-grade monorepo portfolio built with **Next.js 16**, **TypeScript**, and **Prisma** following Domain-Driven Design and Clean Architecture principles.
+        `After six years in software engineering, this portfolio was the first chance to own an entire product — from architecture to deployment. Built to go beyond LinkedIn for an international audience, to target opportunities abroad, and to demonstrate that ==Domain-Driven Design and Clean Architecture== hold up on a solo greenfield project — not just in teams where the process is enforced.
 
-The project is split across four layers — \`core\`, \`application\`, \`infra\`, and \`site\` — each with strict dependency rules enforced by ESLint. Authentication is handled via Supabase with JWT tokens and httpOnly cookies.
+## The Constraints
 
-**Architecture**
+The architecture was self-imposed. With no team, no deadline, and no external pressure, the constraint came from a deliberate decision: treat this as a real product with an MVP scope, a post-MVP roadmap, and no shortcuts in the domain layer.
+
+Three requirements shaped every technical decision:
+
+- **Performance** — the site had to score well on Lighthouse; a slow portfolio sends the wrong message
+- **Content without code changes** — updating project entries or experience data couldn't require a deploy; all content is ==driven by a seeded database and rendered as markdown==
+- **i18n at every layer** — supporting English, Portuguese, and Spanish meant solving internationalization at the domain level, not patching it into the UI
+
+The visual design was built entirely in Figma by [Milena Kawai](https://www.instagram.com/miilenamayuri/), a designer friend who delivered the full specification from scratch.
+
+## Engineering Process
+
+Managed the entire backlog with **Task Master**, divided into sprints tracked as GitHub milestones. GitHub Projects provided a Kanban board for issue tracking; each issue followed a structured template with context, acceptance criteria, relevant files, and dependencies. Custom labels organized work by sprint tag, priority, and type.
+
+The project shipped five numbered PRDs — one per architecture layer:
+
+- **Sprint 0** — domain foundation (\`core\`): Either pattern, Value Objects, entities, repository interfaces
+- **Sprint 1** — application layer: use cases, ports, DTOs
+- **Sprint 2** — infrastructure: Prisma repositories, Supabase gateway, DI container
+- **Sprint 3** — public site: Next.js App Router, SSG, i18n routing, UI components
+- **Sprint 4** — CI/CD: type checking, linting, and test suite on GitHub Actions
+
+A dedicated accessibility sprint resolved ==88 WCAG issues==, followed by a Lighthouse-driven performance pass that targeted the critical bundle, RSC preload hints, and LCP image loading.
+
+A \`docs/\` folder holds ==12 numbered architecture documents== — bounded contexts, validation strategy, i18n approach, testing strategy, code patterns, and a domain glossary — written as the system was built, not after.
+
+## Architecture
 
 \`\`\`mermaid
 flowchart TD
-  site["apps/site (Next.js)"]
-  admin["apps/admin (Next.js)"]
-  app["packages/application"]
-  core["packages/core"]
-  infra["packages/infra"]
+  site["apps/site\\n(Next.js 16 — SSG)"]
+  admin["apps/admin\\n(Next.js — post-MVP)"]
+  app["packages/application\\nuse cases · ports · DTOs"]
+  core["packages/core\\nentities · VOs · Either · interfaces"]
+  infra["packages/infra\\nPrisma · Supabase · Resend · DI"]
+  ui["packages/ui\\nView + Control components"]
+  utils["packages/utils\\nValidator · formatters · hooks"]
   db[(Supabase / PostgreSQL)]
 
   site --> app
   admin --> app
+  site --> ui
+  admin --> ui
   app --> core
   infra --> app
+  infra --> core
   infra --> db
+  site --> utils
+  app --> utils
+  core --> utils
 \`\`\`
 
-**Highlights**
-- Turborepo monorepo with shared packages (\`ui\`, \`utils\`, \`core\`, \`application\`, \`infra\`)
-- Either pattern for error handling — no exceptions thrown for domain errors
-- Vitest test suite with fake gateways and in-memory repositories
-- Admin app built as a dedicated Next.js app with a proxy auth layer
-- next-intl for English/Portuguese internationalization`,
-        `Portfólio monorepo de nível de produção construído com **Next.js 16**, **TypeScript** e **Prisma** seguindo princípios de Domain-Driven Design e Arquitetura Limpa.
+The domain is organized into three bounded contexts — **portfolio** (projects, experiences, skills, profile), **identity** (authentication and user), and **contact** (message sending) — each with its own entities, value objects, and repository interfaces, sharing only the Shared Kernel.
 
-O projeto é dividido em quatro camadas — \`core\`, \`application\`, \`infra\` e \`site\` — cada uma com regras rígidas de dependência aplicadas pelo ESLint. A autenticação é feita via Supabase com tokens JWT e cookies httpOnly.
+Each package has a single, enforced responsibility:
 
-**Arquitetura**
+- **\`core\`** — domain model; zero framework dependencies; entities, value objects, Either pattern, repository interfaces
+- **\`application\`** — use cases and ports; depends only on \`core\`; no Prisma, no HTTP
+- **\`infra\`** — concrete implementations; the only layer that imports Prisma and Supabase
+- **\`ui\`** — shared React components; split into \`View\` (display) and \`Control\` (interactive) categories
+- **\`utils\`** — pure TypeScript utilities: \`Validator\`, formatters, browser hooks; no React dependency
+
+## Portfolio Site
+
+==Server Components call use cases directly at build time== — no REST API layer exists between the domain and the generated HTML. For a content-driven static site, an HTTP boundary would be pure overhead.
+
+\`\`\`mermaid
+sequenceDiagram
+  participant Build as Next.js Build
+  participant SC as Server Component
+  participant UC as Use Case
+  participant Repo as Repository
+  participant DB as Supabase / PostgreSQL
+
+  Build->>SC: generateStaticParams()
+  SC->>UC: GetPublishedProjects.execute()
+  UC->>Repo: findAll()
+  Repo->>DB: query
+  DB-->>Repo: rows
+  Repo-->>UC: Project[]
+  UC-->>SC: Right(ProjectDTO[])
+  SC-->>Build: [{ locale, slug }]
+
+  Build->>SC: render page per route
+  SC->>UC: GetProjectBySlug.execute({ slug })
+  UC->>Repo: findBySlug(slug)
+  Repo->>DB: query
+  DB-->>Repo: row
+  Repo-->>UC: Project entity
+  UC-->>SC: Right(ProjectDTO)
+  SC-->>Build: static HTML
+\`\`\`
+
+Internationalization is a ==domain concern==: \`LocalizedText\` is a value object in \`core\`. The site renders in English, Portuguese, and Spanish — resolved at the domain layer before any React component touches the data.
+
+Every page has a \`generateMetadata\` export with localized \`title\`, \`description\`, and \`openGraph\` fields. Project pages derive their OG data directly from domain entities — title, caption, and cover image — so metadata is never out of sync with content. A custom ==OG image route== built with \`next/og\` on the Edge Runtime generates branded 1200×630 cards per page, locale, and project.
+
+Project detail routes are driven by \`Slug\` — a value object in \`core\` — with \`generateStaticParams\` resolving every published project slug across all three locales at build time. No slug, no route.
+
+The contact form runs against rate limiting via Upstash Redis and delivers email through Resend — both behind port interfaces, ==swappable and testable without touching infrastructure==.
+
+This portfolio is the first public technical presence I've built and owned entirely — from domain model to deployment pipeline. The admin app for content management and the blog are scoped as post-MVP, keeping the current site focused and shippable.
+
+## Technical Highlights
+
+- **No API layer** — Server Components consume use cases at build time; a static site has no need for an HTTP boundary between domain and HTML
+- **ESLint-enforced dependency direction** — layer violations are caught at lint time, not review time; the boundary is mechanical, not a convention
+- **Either pattern** — no exceptions thrown for domain errors; \`Left<ValidationError>\` propagates through use cases to the UI, making all error paths explicit and testable
+- **LocalizedText as a VO** — i18n is a domain concern; components receive resolved strings, not translation keys
+- **Accessibility as a sprint** — 88 WCAG findings tracked, scoped, and shipped as individual issues with acceptance criteria
+- **Lighthouse-driven performance** — critical bundle trimmed by lazy-loading Zod-heavy forms, removing unnecessary \`'use client'\`, and preloading the LCP image with \`fetchpriority=high\`
+- **SEO and Open Graph** — every page exports localized \`generateMetadata\`; an Edge Runtime \`/og\` route generates branded 1200×630 cards per page, locale, and project using \`next/og\`; OG data is sourced from domain entities, never from static strings
+
+## Technologies
+
+- [Next.js](https://nextjs.org) — App Router with SSG; \`generateStaticParams\` generates all localized routes at build time
+- [Turborepo](https://turbo.build) — monorepo orchestration with five shared packages and remote caching on Vercel
+- [TypeScript](https://www.typescriptlang.org) — strict mode across all packages; \`any\` is disallowed
+- [Prisma](https://www.prisma.io) — ORM and migration layer, isolated to \`packages/infra\`
+- [Supabase](https://supabase.com) — PostgreSQL database and JWT-based authentication
+- [Tailwind CSS](https://tailwindcss.com) — shared design tokens via \`packages/tailwind-config\`
+- [next-intl](https://next-intl.dev) — locale routing and message resolution for EN, PT-BR, and ES
+- [Vitest](https://vitest.dev) — unit and integration tests across all packages; ~100 test files
+- [Upstash Redis](https://upstash.com) — serverless rate limiting on the contact form
+- [Resend](https://resend.com) — transactional email for contact form submissions
+- [Vercel](https://vercel.com) — deployment with Turborepo remote cache`,
+        `Após seis anos em engenharia de software, este portfólio foi a primeira oportunidade de ser dono de um produto inteiro — da arquitetura ao deploy. Construído para ir além do LinkedIn e alcançar um público internacional, para buscar oportunidades no exterior e para demonstrar que ==Domain-Driven Design e Arquitetura Limpa== se sustentam em um projeto solo do zero — não apenas em times onde o processo é imposto.
+
+## As Restrições
+
+A arquitetura foi autoimposta. Sem equipe, sem prazo e sem pressão externa, a restrição veio de uma decisão deliberada: tratar o projeto como um produto real com escopo de MVP, um roadmap pós-MVP e nenhum atalho na camada de domínio.
+
+Três requisitos moldaram cada decisão técnica:
+
+- **Performance** — o site precisava pontuar bem no Lighthouse; um portfólio lento passa a mensagem errada
+- **Conteúdo sem alterar código** — atualizar entradas de projetos ou experiências não poderia exigir um deploy; todo o conteúdo é ==orientado por um banco de dados seedado e renderizado como markdown==
+- **i18n em todas as camadas** — suportar inglês, português e espanhol significava resolver internacionalização na camada de domínio, não apenas remendá-la na UI
+
+O design visual foi criado inteiramente no Figma por [Milena Kawai](https://www.instagram.com/miilenamayuri/), uma amiga designer que entregou a especificação completa do zero.
+
+## Processo de Engenharia
+
+O backlog foi gerenciado com **Task Master**, dividido em sprints rastreadas como milestones do GitHub. O GitHub Projects forneceu um quadro Kanban para acompanhamento; cada issue seguia um template estruturado com contexto, critérios de aceitação, arquivos relevantes e dependências. Labels customizadas organizaram o trabalho por sprint, prioridade e tipo.
+
+O projeto foi estruturado em cinco PRDs numerados — um por camada de arquitetura:
+
+- **Sprint 0** — fundação do domínio (\`core\`): padrão Either, Value Objects, entidades, interfaces de repositório
+- **Sprint 1** — camada de aplicação: use cases, ports, DTOs
+- **Sprint 2** — infraestrutura: repositórios Prisma, gateway Supabase, contêiner de DI
+- **Sprint 3** — site público: Next.js App Router, SSG, roteamento i18n, componentes de UI
+- **Sprint 4** — CI/CD: verificação de tipos, lint e suite de testes no GitHub Actions
+
+Uma sprint dedicada à acessibilidade resolveu ==88 problemas de WCAG==, seguida por uma passagem orientada pelo Lighthouse que focou no bundle crítico, hints de preload de RSC e carregamento da imagem LCP.
+
+A pasta \`docs/\` contém ==12 documentos de arquitetura numerados== — contextos delimitados, estratégia de validação, abordagem de i18n, estratégia de testes, padrões de código e glossário de domínio.
+
+## Arquitetura
 
 \`\`\`mermaid
 flowchart TD
-  site["apps/site (Next.js)"]
-  admin["apps/admin (Next.js)"]
-  app["packages/application"]
-  core["packages/core"]
-  infra["packages/infra"]
+  site["apps/site\\n(Next.js 16 — SSG)"]
+  admin["apps/admin\\n(Next.js — post-MVP)"]
+  app["packages/application\\nuse cases · ports · DTOs"]
+  core["packages/core\\nentities · VOs · Either · interfaces"]
+  infra["packages/infra\\nPrisma · Supabase · Resend · DI"]
+  ui["packages/ui\\nView + Control components"]
+  utils["packages/utils\\nValidator · formatters · hooks"]
   db[(Supabase / PostgreSQL)]
 
   site --> app
   admin --> app
+  site --> ui
+  admin --> ui
   app --> core
   infra --> app
+  infra --> core
   infra --> db
+  site --> utils
+  app --> utils
+  core --> utils
 \`\`\`
 
-**Destaques**
-- Monorepo Turborepo com pacotes compartilhados (\`ui\`, \`utils\`, \`core\`, \`application\`, \`infra\`)
-- Padrão Either para tratamento de erros — nenhuma exceção lançada para erros de domínio
-- Suite de testes Vitest com gateways falsos e repositórios em memória
-- App admin construído como um app Next.js dedicado com camada de autenticação via proxy
-- next-intl para internacionalização em Inglês/Português`,
-        `Portafolio monorepo de nivel de producción construido con **Next.js 16**, **TypeScript** y **Prisma** siguiendo principios de Domain-Driven Design y Arquitectura Limpia.
+O domínio é organizado em três contextos delimitados — **portfolio** (projetos, experiências, skills, perfil), **identity** (autenticação e usuário) e **contact** (envio de mensagens) — cada um com suas próprias entidades, value objects e interfaces de repositório, compartilhando apenas o Shared Kernel.
 
-El proyecto está dividido en cuatro capas — \`core\`, \`application\`, \`infra\` y \`site\` — cada una con reglas estrictas de dependencia aplicadas por ESLint. La autenticación se realiza mediante Supabase con tokens JWT y cookies httpOnly.
+Cada pacote tem uma única responsabilidade aplicada mecanicamente:
 
-**Arquitectura**
+- **\`core\`** — modelo de domínio; zero dependências de framework; entidades, value objects, padrão Either, interfaces de repositório
+- **\`application\`** — use cases e ports; depende apenas de \`core\`; sem Prisma, sem HTTP
+- **\`infra\`** — implementações concretas; única camada que importa Prisma e Supabase
+- **\`ui\`** — biblioteca de componentes React; dividida em \`View\` (exibição) e \`Control\` (interatividade)
+- **\`utils\`** — utilitários TypeScript puros: \`Validator\`, formatadores, hooks de browser; sem dependência de React
+
+## Site do Portfólio
+
+==Server Components chamam use cases diretamente no build time== — não existe nenhuma camada REST entre o domínio e o HTML gerado. Para um site estático orientado a conteúdo, uma fronteira HTTP seria overhead puro.
+
+\`\`\`mermaid
+sequenceDiagram
+  participant Build as Next.js Build
+  participant SC as Server Component
+  participant UC as Use Case
+  participant Repo as Repository
+  participant DB as Supabase / PostgreSQL
+
+  Build->>SC: generateStaticParams()
+  SC->>UC: GetPublishedProjects.execute()
+  UC->>Repo: findAll()
+  Repo->>DB: query
+  DB-->>Repo: rows
+  Repo-->>UC: Project[]
+  UC-->>SC: Right(ProjectDTO[])
+  SC-->>Build: [{ locale, slug }]
+
+  Build->>SC: render page per route
+  SC->>UC: GetProjectBySlug.execute({ slug })
+  UC->>Repo: findBySlug(slug)
+  Repo->>DB: query
+  DB-->>Repo: row
+  Repo-->>UC: Project entity
+  UC-->>SC: Right(ProjectDTO)
+  SC-->>Build: static HTML
+\`\`\`
+
+A internacionalização é uma ==preocupação de domínio==: \`LocalizedText\` é um value object em \`core\`. O site renderiza em inglês, português e espanhol — resolvido na camada de domínio antes que qualquer componente React toque os dados.
+
+Cada página exporta \`generateMetadata\` com \`title\`, \`description\` e campos \`openGraph\` localizados. Páginas de projetos derivam os dados de OG diretamente das entidades de domínio — título, caption e imagem de capa — garantindo que os metadados nunca fiquem fora de sincronia com o conteúdo. Uma ==rota de imagem OG== personalizada, construída com \`next/og\` no Edge Runtime, gera cards 1200×630 com identidade visual por página, locale e projeto.
+
+As rotas de detalhe de projeto são orientadas pelo \`Slug\` — um value object em \`core\` — com \`generateStaticParams\` resolvendo cada slug de projeto publicado nas três locales no build time. Sem slug, sem rota.
+
+O formulário de contato passa por rate limiting via Upstash Redis e entrega e-mail pelo Resend — ambos por trás de interfaces de porta, ==substituíveis e testáveis sem tocar a infraestrutura==.
+
+Este portfólio é a primeira presença técnica pública que construí e possuo por completo — do modelo de domínio ao pipeline de deploy. O app admin para gerenciamento de conteúdo e o blog estão escopados como pós-MVP, mantendo o site atual focado e publicável.
+
+## Destaques Técnicos
+
+- **Sem camada de API** — Server Components consomem use cases no build time; um site estático não precisa de uma fronteira HTTP entre domínio e HTML
+- **Direção de dependência aplicada pelo ESLint** — violações de camada são detectadas no lint time, não no code review; a fronteira é mecânica, não uma convenção
+- **Padrão Either** — nenhuma exceção lançada para erros de domínio; \`Left<ValidationError>\` propaga pelos use cases até a UI, tornando todos os caminhos de erro explícitos e testáveis
+- **LocalizedText como VO** — i18n é uma preocupação de domínio; componentes recebem strings já resolvidas, não chaves de tradução
+- **Acessibilidade como sprint** — 88 problemas de WCAG rastreados, escopados e entregues como issues individuais com critérios de aceitação
+- **Performance orientada pelo Lighthouse** — bundle crítico enxugado com lazy-loading de formulários pesados, remoção de \`'use client'\` desnecessários e preload da imagem LCP com \`fetchpriority=high\`
+- **SEO e Open Graph** — cada página exporta \`generateMetadata\` localizado; uma rota \`/og\` no Edge Runtime gera cards 1200×630 por página, locale e projeto usando \`next/og\`; os dados de OG são derivados das entidades de domínio, nunca de strings estáticas
+
+## Tecnologias
+
+- [Next.js](https://nextjs.org) — App Router com SSG; \`generateStaticParams\` gera todas as rotas localizadas no build time
+- [Turborepo](https://turbo.build) — orquestração de monorepo com cinco pacotes compartilhados e cache remoto no Vercel
+- [TypeScript](https://www.typescriptlang.org) — modo strict em todos os pacotes; \`any\` é proibido
+- [Prisma](https://www.prisma.io) — ORM e camada de migrations, isolado em \`packages/infra\`
+- [Supabase](https://supabase.com) — banco de dados PostgreSQL e autenticação baseada em JWT
+- [Tailwind CSS](https://tailwindcss.com) — tokens de design compartilhados via \`packages/tailwind-config\`
+- [next-intl](https://next-intl.dev) — roteamento de locale e resolução de mensagens para EN, PT-BR e ES
+- [Vitest](https://vitest.dev) — testes unitários e de integração em todos os pacotes; ~100 arquivos de teste
+- [Upstash Redis](https://upstash.com) — rate limiting serverless no formulário de contato
+- [Resend](https://resend.com) — e-mail transacional para envios do formulário de contato
+- [Vercel](https://vercel.com) — deployment com cache remoto do Turborepo`,
+        `Tras seis años en ingeniería de software, este portafolio fue la primera oportunidad de ser dueño de un producto completo — desde la arquitectura hasta el deploy. Construido para ir más allá de LinkedIn hacia una audiencia internacional, para buscar oportunidades en el exterior y para demostrar que ==Domain-Driven Design y Arquitectura Limpia== se sostienen en un proyecto solo desde cero — no solo en equipos donde el proceso es impuesto.
+
+## Las Restricciones
+
+La arquitectura fue autoimpuesta. Sin equipo, sin plazo y sin presión externa, la restricción vino de una decisión deliberada: tratar el proyecto como un producto real con un alcance de MVP, un roadmap post-MVP y sin atajos en la capa de dominio.
+
+Tres requisitos moldearon cada decisión técnica:
+
+- **Performance** — el sitio tenía que puntuar bien en Lighthouse; un portafolio lento envía el mensaje equivocado
+- **Contenido sin cambiar código** — actualizar entradas de proyectos o experiencias no podía requerir un deploy; todo el contenido está ==impulsado por una base de datos con seed y renderizado como markdown==
+- **i18n en todas las capas** — soportar inglés, portugués y español significaba resolver la internacionalización en la capa de dominio, no solo parchearlo en la UI
+
+El diseño visual fue creado íntegramente en Figma por [Milena Kawai](https://www.instagram.com/miilenamayuri/), una amiga diseñadora que entregó la especificación completa desde cero.
+
+## Proceso de Ingeniería
+
+El backlog fue gestionado con **Task Master**, dividido en sprints rastreados como milestones de GitHub. GitHub Projects proporcionó un tablero Kanban para el seguimiento; cada issue seguía un template estructurado con contexto, criterios de aceptación, archivos relevantes y dependencias. Labels personalizadas organizaron el trabajo por sprint, prioridad y tipo.
+
+El proyecto se estructuró en cinco PRDs numerados — uno por capa de arquitectura:
+
+- **Sprint 0** — fundación del dominio (\`core\`): patrón Either, Value Objects, entidades, interfaces de repositorio
+- **Sprint 1** — capa de aplicación: use cases, ports, DTOs
+- **Sprint 2** — infraestructura: repositorios Prisma, gateway Supabase, contenedor de DI
+- **Sprint 3** — sitio público: Next.js App Router, SSG, enrutamiento i18n, componentes de UI
+- **Sprint 4** — CI/CD: verificación de tipos, linting y suite de pruebas en GitHub Actions
+
+Un sprint dedicado a accesibilidad resolvió ==88 problemas de WCAG==, seguido de un paso orientado por Lighthouse que apuntó al bundle crítico, hints de preload de RSC y carga de la imagen LCP.
+
+La carpeta \`docs/\` contiene ==12 documentos de arquitectura numerados== — contextos delimitados, estrategia de validación, enfoque de i18n, estrategia de pruebas, patrones de código y glosario de dominio.
+
+## Arquitectura
 
 \`\`\`mermaid
 flowchart TD
-  site["apps/site (Next.js)"]
-  admin["apps/admin (Next.js)"]
-  app["packages/application"]
-  core["packages/core"]
-  infra["packages/infra"]
+  site["apps/site\\n(Next.js 16 — SSG)"]
+  admin["apps/admin\\n(Next.js — post-MVP)"]
+  app["packages/application\\nuse cases · ports · DTOs"]
+  core["packages/core\\nentities · VOs · Either · interfaces"]
+  infra["packages/infra\\nPrisma · Supabase · Resend · DI"]
+  ui["packages/ui\\nView + Control components"]
+  utils["packages/utils\\nValidator · formatters · hooks"]
   db[(Supabase / PostgreSQL)]
 
   site --> app
   admin --> app
+  site --> ui
+  admin --> ui
   app --> core
   infra --> app
+  infra --> core
   infra --> db
+  site --> utils
+  app --> utils
+  core --> utils
 \`\`\`
 
-**Aspectos Destacados**
-- Monorepo Turborepo con paquetes compartidos (\`ui\`, \`utils\`, \`core\`, \`application\`, \`infra\`)
-- Patrón Either para el manejo de errores — sin excepciones lanzadas para errores de dominio
-- Suite de pruebas Vitest con gateways falsos y repositorios en memoria
-- App admin construida como una app Next.js dedicada con capa de autenticación vía proxy
-- next-intl para internacionalización en Inglés/Portugués`,
+El dominio está organizado en tres contextos delimitados — **portfolio** (proyectos, experiencias, skills, perfil), **identity** (autenticación y usuario) y **contact** (envío de mensajes) — cada uno con sus propias entidades, value objects e interfaces de repositorio, compartiendo solo el Shared Kernel.
+
+Cada paquete tiene una única responsabilidad aplicada mecánicamente:
+
+- **\`core\`** — modelo de dominio; cero dependencias de framework; entidades, value objects, patrón Either, interfaces de repositorio
+- **\`application\`** — use cases y ports; depende solo de \`core\`; sin Prisma, sin HTTP
+- **\`infra\`** — implementaciones concretas; única capa que importa Prisma y Supabase
+- **\`ui\`** — biblioteca de componentes React; dividida en \`View\` (visualización) y \`Control\` (interactividad)
+- **\`utils\`** — utilidades TypeScript puras: \`Validator\`, formateadores, hooks de browser; sin dependencia de React
+
+## Sitio del Portafolio
+
+==Los Server Components llaman a use cases directamente en el build time== — no existe ninguna capa REST entre el dominio y el HTML generado. Para un sitio estático orientado a contenido, un límite HTTP sería overhead puro.
+
+\`\`\`mermaid
+sequenceDiagram
+  participant Build as Next.js Build
+  participant SC as Server Component
+  participant UC as Use Case
+  participant Repo as Repository
+  participant DB as Supabase / PostgreSQL
+
+  Build->>SC: generateStaticParams()
+  SC->>UC: GetPublishedProjects.execute()
+  UC->>Repo: findAll()
+  Repo->>DB: query
+  DB-->>Repo: rows
+  Repo-->>UC: Project[]
+  UC-->>SC: Right(ProjectDTO[])
+  SC-->>Build: [{ locale, slug }]
+
+  Build->>SC: render page per route
+  SC->>UC: GetProjectBySlug.execute({ slug })
+  UC->>Repo: findBySlug(slug)
+  Repo->>DB: query
+  DB-->>Repo: row
+  Repo-->>UC: Project entity
+  UC-->>SC: Right(ProjectDTO)
+  SC-->>Build: static HTML
+\`\`\`
+
+La internacionalización es una ==preocupación de dominio==: \`LocalizedText\` es un value object en \`core\`. El sitio renderiza en inglés, portugués y español — resuelto en la capa de dominio antes de que cualquier componente React toque los datos.
+
+Cada página exporta \`generateMetadata\` con campos \`title\`, \`description\` y \`openGraph\` localizados. Las páginas de proyectos derivan los datos de OG directamente de las entidades de dominio — título, caption e imagen de portada — asegurando que los metadatos nunca queden desincronizados con el contenido. Una ==ruta de imagen OG== personalizada, construida con \`next/og\` en el Edge Runtime, genera cards 1200×630 con identidad visual por página, locale y proyecto.
+
+Las rutas de detalle de proyecto están impulsadas por \`Slug\` — un value object en \`core\` — con \`generateStaticParams\` resolviendo cada slug de proyecto publicado en las tres locales en build time. Sin slug, sin ruta.
+
+El formulario de contacto pasa por rate limiting via Upstash Redis y entrega correo electrónico a través de Resend — ambos detrás de interfaces de puerto, ==intercambiables y testeables sin tocar la infraestructura==.
+
+Este portafolio es la primera presencia técnica pública que construí y poseo completamente — desde el modelo de dominio hasta el pipeline de deploy. La app admin para gestión de contenido y el blog están previstos como post-MVP, manteniendo el sitio actual enfocado y publicable.
+
+## Aspectos Destacados
+
+- **Sin capa de API** — los Server Components consumen use cases en build time; un sitio estático no necesita un límite HTTP entre dominio y HTML
+- **Dirección de dependencia aplicada por ESLint** — las violaciones de capa se detectan en lint time, no en code review; el límite es mecánico, no una convención
+- **Patrón Either** — no se lanzan excepciones para errores de dominio; \`Left<ValidationError>\` se propaga por los use cases hasta la UI, haciendo todos los caminos de error explícitos y testeables
+- **LocalizedText como VO** — i18n es una preocupación de dominio; los componentes reciben strings ya resueltos, no claves de traducción
+- **Accesibilidad como sprint** — 88 problemas de WCAG rastreados, acotados y entregados como issues individuales con criterios de aceptación
+- **Performance orientada por Lighthouse** — bundle crítico reducido con lazy-loading de formularios pesados, eliminación de \`'use client'\` innecesarios y preload de la imagen LCP con \`fetchpriority=high\`
+- **SEO y Open Graph** — cada página exporta \`generateMetadata\` localizado; una ruta \`/og\` en Edge Runtime genera cards 1200×630 por página, locale y proyecto usando \`next/og\`; los datos de OG se derivan de las entidades de dominio, nunca de strings estáticos
+
+## Tecnologías
+
+- [Next.js](https://nextjs.org) — App Router con SSG; \`generateStaticParams\` genera todas las rutas localizadas en build time
+- [Turborepo](https://turbo.build) — orquestación de monorepo con cinco paquetes compartidos y caché remoto en Vercel
+- [TypeScript](https://www.typescriptlang.org) — modo strict en todos los paquetes; \`any\` está prohibido
+- [Prisma](https://www.prisma.io) — ORM y capa de migraciones, aislado en \`packages/infra\`
+- [Supabase](https://supabase.com) — base de datos PostgreSQL y autenticación basada en JWT
+- [Tailwind CSS](https://tailwindcss.com) — tokens de diseño compartidos via \`packages/tailwind-config\`
+- [next-intl](https://next-intl.dev) — enrutamiento de locale y resolución de mensajes para EN, PT-BR y ES
+- [Vitest](https://vitest.dev) — pruebas unitarias e integración en todos los paquetes; ~100 archivos de prueba
+- [Upstash Redis](https://upstash.com) — rate limiting serverless en el formulario de contacto
+- [Resend](https://resend.com) — correo electrónico transaccional para envíos del formulario de contacto
+- [Vercel](https://vercel.com) — deployment con caché remoto de Turborepo`,
       ),
       featured: true,
       status: 'PUBLISHED' as const,
@@ -428,8 +762,10 @@ flowchart TD
         ID.skills.nextjs,
         ID.skills.nodejs,
         ID.skills.postgresql,
-        ID.skills.docker,
         ID.skills.tailwindcss,
+        ID.skills.cicd,
+        ID.skills.prisma,
+        ID.skills.supabase,
       ],
       relatedProjectSlugs: ['b2b-ecommerce-platform'],
     },
@@ -643,7 +979,20 @@ On the merchant side, I built three screens using **Shopify Polaris**:
 - **Framer Motion** — multi-state, choreographed animation system driven by React Context API
 - **Shadow DOM** — CSS isolation across unpredictable storefront host environments
 - **Shopify App Bridge**, **Theme App Extensions**, and **Storefront API** — learned and applied in full across both contexts
-- **Fixed deadline** delivery with a structured post-MVP improvement phase`,
+- **Fixed deadline** delivery with a structured post-MVP improvement phase
+
+## Technologies
+
+- [React](https://react.dev) — storefront widget and merchant admin UI; state managed via Context API across both apps
+- [Framer Motion](https://www.framer.com/motion/) — multi-state animation system for the offer lifecycle (idle, in progress, success, existing offer)
+- [Shopify Polaris](https://polaris.shopify.com) — component library for the three merchant admin screens
+- [Tailwind CSS](https://tailwindcss.com) — storefront widget styling, scoped inside Shadow DOM
+- [Vite](https://vitejs.dev) — storefront bundler; critical for the performance optimizations that met App Store requirements
+- [Shopify App Bridge](https://shopify.dev/docs/api/app-bridge) — session management and Shopify admin integration
+- [Theme App Extensions](https://shopify.dev/docs/apps/build/online-store/theme-app-extensions) — delivery mechanism for the storefront widget into merchant themes
+- [Storefront API](https://shopify.dev/docs/api/storefront) — Shopify product and cart data access
+- [TypeScript](https://www.typescriptlang.org) — type safety across both apps
+- [npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces) — monorepo keeping storefront and admin as separate packages`,
         `[Buyr](https://apps.shopify.com/buyr) é um app público da Shopify que permite compradores definir seu próprio preço ou negociar com um agente de IA — ==capturando pedidos que de outra forma seriam perdidos ao preço cheio==. Merchants configuram limites de lucratividade; o Buyr cuida da negociação automaticamente.
 
 Fui convidado para resolver um problema de animação que ninguém no time havia enfrentado antes, e acabei contribuindo nos dois lados do produto: a experiência do storefront vista pelos compradores e o painel de administração dos merchants. Trabalhando com um time distribuído entre Brasil e Estados Unidos, entregamos o MVP dentro de um prazo fixo, seguido por uma fase de melhorias pós-MVP.
@@ -706,7 +1055,20 @@ No lado dos merchants, construí três telas usando **Shopify Polaris**:
 - **Framer Motion** — sistema de animação com múltiplos estados e coreografia, orientado por React Context API
 - **Shadow DOM** — isolamento de CSS em ambientes de storefront imprevisíveis
 - **Shopify App Bridge**, **Theme App Extensions** e **Storefront API** — aprendidos e aplicados integralmente em ambos os contextos
-- **Entrega dentro do prazo fixo** com uma fase estruturada de melhorias pós-MVP`,
+- **Entrega dentro do prazo fixo** com uma fase estruturada de melhorias pós-MVP
+
+## Tecnologias
+
+- [React](https://react.dev) — widget do storefront e UI do admin dos merchants; estado gerenciado via Context API em ambos os apps
+- [Framer Motion](https://www.framer.com/motion/) — sistema de animação com múltiplos estados para o ciclo de vida das ofertas (idle, em andamento, sucesso, oferta existente)
+- [Shopify Polaris](https://polaris.shopify.com) — biblioteca de componentes para as três telas do admin dos merchants
+- [Tailwind CSS](https://tailwindcss.com) — estilização do widget do storefront, escopada dentro do Shadow DOM
+- [Vite](https://vitejs.dev) — bundler do storefront; decisivo para as otimizações de performance que atenderam os requisitos da App Store
+- [Shopify App Bridge](https://shopify.dev/docs/api/app-bridge) — gerenciamento de sessão e integração com o admin da Shopify
+- [Theme App Extensions](https://shopify.dev/docs/apps/build/online-store/theme-app-extensions) — mecanismo de entrega do widget do storefront nos temas dos merchants
+- [Storefront API](https://shopify.dev/docs/api/storefront) — acesso a dados de produtos e carrinho da Shopify
+- [TypeScript](https://www.typescriptlang.org) — tipagem estática em ambos os apps
+- [npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces) — monorepo mantendo storefront e admin como pacotes separados`,
         `[Buyr](https://apps.shopify.com/buyr) es una app pública de Shopify que permite a los compradores fijar su propio precio o negociar con un agente de IA — ==capturando pedidos que de otro modo se perderían al precio completo==. Los merchants configuran umbrales de rentabilidad; Buyr gestiona la negociación automáticamente.
 
 Fui convocado para resolver un problema de animación que nadie en el equipo había abordado antes, y terminé contribuyendo en ambos lados del producto: la experiencia del storefront que ven los compradores y el panel de administración de merchants. Trabajando con un equipo distribuido entre Brasil y Estados Unidos, entregamos el MVP en un plazo fijo, seguido de una fase de mejoras post-MVP.
@@ -769,7 +1131,20 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
 - **Framer Motion** — sistema de animación con múltiples estados y coreografía, impulsado por React Context API
 - **Shadow DOM** — aislamiento de CSS en entornos de storefront impredecibles
 - **Shopify App Bridge**, **Theme App Extensions** y **Storefront API** — aprendidos y aplicados íntegramente en ambos contextos
-- **Entrega en plazo fijo** con una fase estructurada de mejoras post-MVP`,
+- **Entrega en plazo fijo** con una fase estructurada de mejoras post-MVP
+
+## Tecnologías
+
+- [React](https://react.dev) — widget del storefront y UI del admin de merchants; estado gestionado via Context API en ambas apps
+- [Framer Motion](https://www.framer.com/motion/) — sistema de animación con múltiples estados para el ciclo de vida de las ofertas (idle, en progreso, éxito, oferta existente)
+- [Shopify Polaris](https://polaris.shopify.com) — biblioteca de componentes para las tres pantallas del admin de merchants
+- [Tailwind CSS](https://tailwindcss.com) — estilos del widget del storefront, encapsulados dentro del Shadow DOM
+- [Vite](https://vitejs.dev) — bundler del storefront; clave para las optimizaciones de performance que cumplieron los requisitos de la App Store
+- [Shopify App Bridge](https://shopify.dev/docs/api/app-bridge) — gestión de sesión e integración con el admin de Shopify
+- [Theme App Extensions](https://shopify.dev/docs/apps/build/online-store/theme-app-extensions) — mecanismo de entrega del widget del storefront en los temas de los merchants
+- [Storefront API](https://shopify.dev/docs/api/storefront) — acceso a datos de productos y carrito de Shopify
+- [TypeScript](https://www.typescriptlang.org) — tipado estático en ambas apps
+- [npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces) — monorepo manteniendo storefront y admin como paquetes separados`,
       ),
       featured: false,
       status: 'PUBLISHED' as const,
@@ -780,6 +1155,8 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
         ID.skills.react,
         ID.skills.tailwindcss,
         ID.skills.shopify,
+        ID.skills.framerMotion,
+        ID.skills.vite,
       ],
       relatedProjectSlugs: [],
     },
