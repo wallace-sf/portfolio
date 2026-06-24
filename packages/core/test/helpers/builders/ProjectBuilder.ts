@@ -114,6 +114,11 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return this;
   }
 
+  public withRepositoryUrl(repositoryUrl: string): ProjectBuilder {
+    this._props.repositoryUrl = repositoryUrl;
+    return this;
+  }
+
   public withRelatedProjects(relatedProjects: string[]): ProjectBuilder {
     this._props.relatedProjects = relatedProjects;
     return this;
