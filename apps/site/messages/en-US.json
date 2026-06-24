@@ -135,10 +135,8 @@
     "breadcrumb_projects": "Projects",
     "back": "Back",
     "related_title": "Other projects",
-    "summary_label": "Summary",
-    "objectives_label": "Objectives",
     "role_label": "Role",
-    "period_label": "Period"
+    "open_source_label": "Open Source"
   },
   "Metadata": {
     "Layout": {
