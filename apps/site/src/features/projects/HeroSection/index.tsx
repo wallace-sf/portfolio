@@ -16,6 +16,7 @@ export async function HeroSection({ locale }: { locale: Locale }) {
       titleAs="h1"
       imageClassName="object-contain p-6 lg:py-8"
       className="shadow-drop-sm"
+      textColumnClassName="md:w-1/2"
     />
   );
 }
