@@ -8,6 +8,6 @@
     "declarationDir": "dist/types"
   },
   "references": [{ "path": "../../packages/utils/tsconfig.build.json" }],
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "globals.d.ts"],
   "exclude": ["node_modules", "dist", "build"]
 }

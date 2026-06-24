@@ -17,7 +17,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "tailwind.config.ts",
-    "tsup.config.ts"
+    "tsup.config.ts",
+    "globals.d.ts"
   ],
   "exclude": ["dist", "build", "node_modules"]
 }
