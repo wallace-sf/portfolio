@@ -355,7 +355,7 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
         'Repositorio del Portafolio Personal en GitHub',
       ),
       thumbnailImageUrl:
-        'https://placehold.co/760x630/0f172a/34d399?text=Portfolio',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-thumbnail.webp',
       thumbnailImageAlt: loc(
         'Personal Portfolio thumbnail',
         'Thumbnail do Portfólio Pessoal',
@@ -920,7 +920,7 @@ Construí todo el frontend con **React.js**, **Material UI** y **GraphQL**, incl
         'App Buyr para Shopify — precios interactivos y negociación de ofertas por IA',
       ),
       thumbnailImageUrl:
-        'https://placehold.co/760x630/1a0f2e/c084fc?text=Buyr',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/buyr-thumbnail.webp',
       thumbnailImageAlt: loc(
         'Buyr Shopify app thumbnail',
         'Thumbnail do app Buyr para Shopify',
