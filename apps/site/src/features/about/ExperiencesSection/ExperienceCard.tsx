@@ -10,6 +10,7 @@ import { useBoolean } from 'usehooks-ts';
 
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { useBreakpoint } from '~hooks';
+import { formatDuration } from '~utils';
 
 import {
   EMPLOYMENT_TYPE_ICONS,
@@ -37,23 +38,6 @@ export interface IExperienceCardProps {
   skills: IExperienceCardSkill[];
 }
 
-export function calculateDuration(
-  startAt: string,
-  endAt?: string | null,
-): string {
-  const start = new Date(startAt);
-  const end = endAt ? new Date(endAt) : new Date();
-  const totalMonths =
-    (end.getFullYear() - start.getFullYear()) * 12 +
-    (end.getMonth() - start.getMonth());
-  const years = Math.floor(totalMonths / 12);
-  const months = totalMonths % 12;
-  const parts: string[] = [];
-  if (years > 0) parts.push(`${years}a`);
-  if (months > 0) parts.push(`${months}m`);
-  return parts.join(' ') || '1m';
-}
-
 function formatDate(dateStr: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, {
     month: 'short',
@@ -78,7 +62,7 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
   const isXL = useBreakpoint('xl');
 
   const period = `${formatDate(startAt, locale)} - ${endAt ? formatDate(endAt, locale) : t('present')}`;
-  const duration = calculateDuration(startAt, endAt);
+  const duration = formatDuration(startAt, locale, endAt);
   const employmentLabel = t(`employment_type.${employmentType}`);
   const locationLabel = t(`location_type.${locationType}`);
   const employmentIcon =

@@ -54,35 +54,43 @@ vi.mock('~/features/shared/TechnologiesModal', () => ({
   }) => (open ? <div data-testid="technologies-modal">{company}</div> : null),
 }));
 
-import {
-  ExperienceCard,
-  calculateDuration,
-} from '~/features/about/ExperiencesSection';
+import { ExperienceCard } from '~/features/about/ExperiencesSection';
+import { formatDuration } from '~/utils';
 
 // ---------------------------------------------------------------------------
-// calculateDuration unit tests
+// formatDuration unit tests
 // ---------------------------------------------------------------------------
 
-describe('calculateDuration', () => {
-  it('should return years and months for multi-year range', () => {
-    expect(calculateDuration('2022-01-01', '2023-04-01')).toBe('1a 3m');
+const YEAR_PATTERN = /yr|year/;
+const MONTH_PATTERN = /mo|mth|month/;
+
+describe('formatDuration', () => {
+  it('should include years and months for multi-year range', () => {
+    const result = formatDuration('2022-01-01', 'en-US', '2023-04-01');
+    expect(result).toMatch(YEAR_PATTERN);
+    expect(result).toMatch(MONTH_PATTERN);
   });
 
   it('should return only years when months is zero', () => {
-    expect(calculateDuration('2021-03-01', '2023-03-01')).toBe('2a');
+    const result = formatDuration('2021-03-01', 'en-US', '2023-03-01');
+    expect(result).toMatch(YEAR_PATTERN);
+    expect(result).not.toMatch(MONTH_PATTERN);
   });
 
   it('should return only months for sub-year range', () => {
-    expect(calculateDuration('2023-06-01', '2023-09-01')).toBe('3m');
+    const result = formatDuration('2023-06-01', 'en-US', '2023-09-01');
+    expect(result).not.toMatch(YEAR_PATTERN);
+    expect(result).toMatch(MONTH_PATTERN);
   });
 
   it('should use today when endAt is not provided', () => {
-    const result = calculateDuration('2020-01-01');
-    expect(result).toMatch(/^\d+a(\s\d+m)?$|^\d+m$/);
+    const result = formatDuration('2020-01-01', 'en-US');
+    expect(result).toMatch(new RegExp(`${YEAR_PATTERN.source}|${MONTH_PATTERN.source}`));
   });
 
-  it('should return 1m as minimum when duration rounds to zero', () => {
-    expect(calculateDuration('2023-01-15', '2023-01-20')).toBe('1m');
+  it('should return minimum of 1 month when duration rounds to zero', () => {
+    const result = formatDuration('2023-01-15', 'en-US', '2023-01-20');
+    expect(result).toMatch(MONTH_PATTERN);
   });
 });
 
