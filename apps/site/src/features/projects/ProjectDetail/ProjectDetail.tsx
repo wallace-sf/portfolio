@@ -16,7 +16,6 @@ import { SkillGroup } from '~features/shared/SkillGroup';
 import { Link } from '~i18n/routing';
 
 import styles from './ProjectDetail.module.css';
-import { ProjectMetaGrid } from './ProjectMetaGrid';
 
 export interface IProjectDetailProps {
   slug: string;
@@ -52,8 +51,6 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
     ],
     [t, title],
   );
-
-  const metaLabels = useMemo(() => ({ role: t('role_label') }), [t]);
 
   return (
     <article className="mt-6 flex flex-col gap-y-10 pb-12 lg:mt-0">
@@ -113,7 +110,16 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
           )}
         </div>
 
-        <ProjectMetaGrid role={role} labels={metaLabels} />
+        {role && (
+          <dl className="flex flex-row flex-wrap gap-x-10 gap-y-4">
+            <div className="flex flex-col gap-y-1">
+              <dt className="text-base font-bold text-content-primary">
+                {t('role_label')}
+              </dt>
+              <dd className="text-base text-content-primary">{role}</dd>
+            </div>
+          </dl>
+        )}
 
         {content && <TextRich content={content} className={styles.editorial} />}
 
