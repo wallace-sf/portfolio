@@ -17,7 +17,7 @@ export interface IProjectCardProps {
   slug: string;
   title: string;
   caption: string;
-  coverImage: { url: string; alt: string };
+  thumbnailImage: { url: string; alt: string };
   theme?: string;
   skills: { name: string; icon: string }[];
   compact?: boolean;
@@ -27,7 +27,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   slug,
   title,
   caption,
-  coverImage,
+  thumbnailImage,
   theme,
   compact = false,
   skills,
@@ -50,11 +50,11 @@ export const ProjectCard: FC<IProjectCardProps> = ({
         )}
       >
         <Image
-          src={coverImage.url}
+          src={thumbnailImage.url}
           fill
-          alt={coverImage.alt}
+          alt={thumbnailImage.alt}
           className="object-cover"
-          sizes={`(min-width: ${screens.lg}) 380px, 463px`}
+          sizes={`(min-width: ${screens.lg}) 380px, calc(100vw - 3rem)`}
           priority
         />
       </div>

@@ -5,6 +5,8 @@ export type PrismaProject = {
   slug: string;
   coverImageUrl: string;
   coverImageAlt: Prisma.JsonValue;
+  thumbnailImageUrl: string;
+  thumbnailImageAlt: Prisma.JsonValue;
   title: Prisma.JsonValue;
   caption: Prisma.JsonValue;
   content: Prisma.JsonValue;
@@ -31,6 +33,8 @@ export function buildPrismaProject(overrides?: Partial<PrismaProject>): PrismaPr
     slug: 'my-test-project',
     coverImageUrl: 'https://example.com/cover.jpg',
     coverImageAlt: { 'en-US': 'Project cover', 'pt-BR': 'Capa do projeto' },
+    thumbnailImageUrl: 'https://example.com/thumbnail.webp',
+    thumbnailImageAlt: { 'en-US': 'Project thumbnail', 'pt-BR': 'Thumbnail do projeto' },
     title: { 'en-US': 'My Project', 'pt-BR': 'Meu Projeto' },
     caption: { 'en-US': 'A brief description', 'pt-BR': 'Uma breve descrição' },
     content: { 'en-US': 'Detailed project content.', 'pt-BR': 'Conteúdo detalhado do projeto.' },

@@ -29,6 +29,10 @@ const VALID_PROJECT_PROPS: IProjectProps = {
     url: 'https://example.com/cover.png',
     alt: { 'en-US': 'Cover', 'pt-BR': 'Capa' },
   },
+  thumbnailImage: {
+    url: 'https://example.com/thumbnail.webp',
+    alt: { 'en-US': 'Thumbnail', 'pt-BR': 'Thumbnail' },
+  },
   title: { 'en-US': 'My Project', 'pt-BR': 'Meu Projeto' },
   caption: { 'en-US': 'A caption.', 'pt-BR': 'Uma legenda.' },
   content: { 'en-US': 'Lorem ipsum dolor sit amet.', 'pt-BR': 'Lorem ipsum dolor sit amet.' },

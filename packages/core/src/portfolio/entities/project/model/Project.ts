@@ -31,6 +31,7 @@ export interface IProjectPeriod {
 export interface IProjectProps extends IEntityProps {
   slug: string;
   coverImage: IProjectCoverImage;
+  thumbnailImage: IProjectCoverImage;
   title: ILocalizedTextInput;
   caption: ILocalizedTextInput;
   content: ILocalizedTextInput;
@@ -50,6 +51,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
 
   public readonly slug: Slug;
   public readonly coverImage: Image;
+  public readonly thumbnailImage: Image;
   public readonly title: LocalizedText;
   public readonly caption: LocalizedText;
   public readonly content: LocalizedText;
@@ -68,6 +70,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     status: ProjectStatus,
     slug: Slug,
     coverImage: Image,
+    thumbnailImage: Image,
     title: LocalizedText,
     caption: LocalizedText,
     content: LocalizedText,
@@ -83,6 +86,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     this.status = status;
     this.slug = slug;
     this.coverImage = coverImage;
+    this.thumbnailImage = thumbnailImage;
     this.title = title;
     this.caption = caption;
     this.content = content;
@@ -113,6 +117,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       ),
       Slug.create(props.slug),
       Image.create(props.coverImage?.url, props.coverImage?.alt),
+      Image.create(props.thumbnailImage?.url, props.thumbnailImage?.alt),
       LocalizedText.create(props.title ?? { 'pt-BR': '' }),
       LocalizedText.create(props.caption ?? { 'pt-BR': '' }),
       LocalizedText.create(props.content ?? { 'en-US': '' }),
@@ -136,6 +141,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       status,
       slug,
       coverImage,
+      thumbnailImage,
       title,
       caption,
       content,
@@ -179,6 +185,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
         status,
         slug,
         coverImage,
+        thumbnailImage,
         title,
         caption,
         content,

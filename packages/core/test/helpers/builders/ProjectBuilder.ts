@@ -19,6 +19,7 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return new ProjectBuilder({
       slug: Data.slug.valid(),
       coverImage: { url: Data.image.url(), alt: Data.image.alt() },
+      thumbnailImage: { url: Data.image.url(), alt: Data.image.alt() },
       title: { 'en-US': Data.text.title(), 'pt-BR': Data.text.title() },
       caption: { 'en-US': Data.text.caption(), 'pt-BR': Data.text.caption() },
       content: { 'en-US': Data.text.text(), 'pt-BR': Data.text.text() },
@@ -50,6 +51,11 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
 
   public withCoverImage(coverImage: IProjectCoverImage): ProjectBuilder {
     this._props.coverImage = coverImage;
+    return this;
+  }
+
+  public withThumbnailImage(thumbnailImage: IProjectCoverImage): ProjectBuilder {
+    this._props.thumbnailImage = thumbnailImage;
     return this;
   }
 
@@ -120,6 +126,11 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
 
   public withoutCoverImage(): ProjectBuilder {
     this._props.coverImage = undefined;
+    return this;
+  }
+
+  public withoutThumbnailImage(): ProjectBuilder {
+    this._props.thumbnailImage = undefined;
     return this;
   }
 

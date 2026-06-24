@@ -75,6 +75,8 @@ model Project {
   slug                String        @unique
   coverImageUrl       String
   coverImageAlt       Json
+  thumbnailImageUrl   String
+  thumbnailImageAlt   Json
   title               Json
   caption             Json
   content             Json
