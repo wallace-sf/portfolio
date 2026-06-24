@@ -5,6 +5,7 @@ import {
   Project,
   ProjectStatus,
   Slug,
+  Url,
   ValidationError,
 } from '~/index';
 
@@ -186,6 +187,22 @@ describe('Project', () => {
       expect(result.value.summary).toBeUndefined();
       expect(result.value.objectives).toBeUndefined();
       expect(result.value.role).toBeUndefined();
+      expect(result.value.repositoryUrl).toBeUndefined();
+    });
+
+    it('should create project with repositoryUrl as a Url VO when provided', () => {
+      const result = Project.create(
+        ProjectBuilder.build()
+          .withRepositoryUrl('https://github.com/wallace-sf/portfolio')
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.repositoryUrl).toBeInstanceOf(Url);
+      expect(result.value.repositoryUrl?.value).toBe(
+        'https://github.com/wallace-sf/portfolio',
+      );
     });
   });
 
@@ -300,6 +317,39 @@ describe('Project', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
+    });
+
+    it('should return Left when repositoryUrl is not a valid URL', () => {
+      const result = Project.create(
+        ProjectBuilder.build()
+          .withRepositoryUrl('not-a-valid-url')
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Url.ERROR_CODE);
+    });
+  });
+
+  describe('isPublic()', () => {
+    it('should return true when repositoryUrl is set', () => {
+      const result = Project.create(
+        ProjectBuilder.build()
+          .withRepositoryUrl('https://github.com/wallace-sf/portfolio')
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.isPublic()).toBe(true);
+    });
+
+    it('should return false when repositoryUrl is not set', () => {
+      const result = Project.create(ProjectBuilder.build().toProps());
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.isPublic()).toBe(false);
     });
   });
 

@@ -11,6 +11,7 @@ import {
   Image,
   LocalizedText,
   Slug,
+  Url,
   ValidationError,
   left,
   right,
@@ -43,6 +44,7 @@ export interface IProjectProps extends IEntityProps {
   period: IProjectPeriod;
   featured: boolean;
   status: ProjectStatus;
+  repositoryUrl?: string;
   relatedProjects?: string[];
 }
 
@@ -63,6 +65,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   public readonly period: DateRange;
   public readonly featured: boolean;
   public status: ProjectStatus;
+  public readonly repositoryUrl: Url | undefined;
   public readonly relatedProjects: Slug[];
 
   private constructor(
@@ -80,6 +83,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     objectives: LocalizedText | undefined,
     role: LocalizedText | undefined,
     period: DateRange,
+    repositoryUrl: Url | undefined,
     relatedProjects: Slug[],
   ) {
     super(props);
@@ -97,6 +101,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     this.role = role;
     this.period = period;
     this.featured = props.featured;
+    this.repositoryUrl = repositoryUrl;
     this.relatedProjects = relatedProjects;
   }
 
@@ -134,6 +139,9 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       props.role
         ? LocalizedText.create(props.role)
         : right<ValidationError, LocalizedText | undefined>(undefined),
+      props.repositoryUrl
+        ? Url.create(props.repositoryUrl)
+        : right<ValidationError, Url | undefined>(undefined),
     ]);
     if (fieldsResult.isLeft()) return left(fieldsResult.value);
 
@@ -150,6 +158,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       summary,
       objectives,
       role,
+      repositoryUrl,
     ] = fieldsResult.value;
 
     const skills: Id[] = [];
@@ -195,9 +204,14 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
         objectives as LocalizedText | undefined,
         role as LocalizedText | undefined,
         period,
+        repositoryUrl as Url | undefined,
         relatedSlugs,
       ),
     );
+  }
+
+  isPublic(): boolean {
+    return this.repositoryUrl != null;
   }
 
   publish(): Either<ValidationError, void> {
