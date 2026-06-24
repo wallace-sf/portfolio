@@ -77,8 +77,8 @@
     "email": "Enter a valid e-mail address."
   },
   "Projects": {
-    "hero_title": "Portfolio",
-    "hero_caption": "Discover some of my projects",
+    "hero_title": "Projects",
+    "hero_caption": "A selection of products I've designed, built, and shipped — from solo greenfield architecture to commercial apps delivered with distributed teams.",
     "hero_image_alt": "Professional Picture 1 of Wallace Ferreira"
   },
   "About": {
