@@ -236,6 +236,36 @@ describe('GetPublishedProjects', () => {
       expect((result.value as DomainError).code).toBe('FETCH_FAILED');
     });
 
+    it('should map repositoryUrl when project is public', async () => {
+      const project = makeProject({
+        repositoryUrl: 'https://github.com/user/repo',
+      });
+      const repo = makeRepository({
+        findPublished: vi.fn().mockResolvedValue([project]),
+      });
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
+
+      const result = await useCase.execute({ locale: 'en-US' });
+
+      expect(result.isRight()).toBe(true);
+      const dto = (result.value as ProjectSummaryDTO[])[0]!;
+      expect(dto.repositoryUrl).toBe('https://github.com/user/repo');
+    });
+
+    it('should omit repositoryUrl when project has no repository', async () => {
+      const project = makeProject();
+      const repo = makeRepository({
+        findPublished: vi.fn().mockResolvedValue([project]),
+      });
+      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
+
+      const result = await useCase.execute({ locale: 'en-US' });
+
+      expect(result.isRight()).toBe(true);
+      const dto = (result.value as ProjectSummaryDTO[])[0]!;
+      expect(dto.repositoryUrl).toBeUndefined();
+    });
+
     it('should call findPublished() on the repository', async () => {
       const findPublished = vi.fn().mockResolvedValue([]);
       const repo = makeRepository({ findPublished });

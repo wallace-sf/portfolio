@@ -32,6 +32,9 @@
     "hero_caption": "Engenheiro de Software",
     "hero_image_alt": "Foto profissional 1 de Wallace Ferreira"
   },
+  "Common": {
+    "open_source_label": "Open Source"
+  },
   "ProjectCard": {
     "view_project": "Ver projeto",
     "share_tooltip": "Copiar link",
@@ -135,8 +138,7 @@
     "breadcrumb_projects": "Projetos",
     "back": "Voltar",
     "related_title": "Outros projetos",
-    "role_label": "Função",
-    "open_source_label": "Open Source"
+    "role_label": "Função"
   },
   "Metadata": {
     "Layout": {

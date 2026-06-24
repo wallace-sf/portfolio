@@ -10,6 +10,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
 
 import { useBreakpoint } from '~/hooks';
+import { OpenSourceBadge } from '~features/shared/OpenSourceBadge';
 import { ShareButton } from '~features/shared/ShareButton';
 import { SkillGroup } from '~features/shared/SkillGroup';
 
@@ -20,6 +21,7 @@ export interface IProjectCardProps {
   thumbnailImage: { url: string; alt: string };
   theme?: string;
   skills: { name: string; icon: string }[];
+  repositoryUrl?: string;
   compact?: boolean;
 }
 
@@ -31,6 +33,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
   theme,
   compact = false,
   skills,
+  repositoryUrl,
 }) => {
   const t = useTranslations('ProjectCard');
   const locale = useLocale();
@@ -85,7 +88,10 @@ export const ProjectCard: FC<IProjectCardProps> = ({
             </span>
           )}
 
-          <h3 className="text-2xl font-bold text-content-primary">{title}</h3>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <h3 className="text-2xl font-bold text-content-primary">{title}</h3>
+            {repositoryUrl && <OpenSourceBadge repositoryUrl={repositoryUrl} />}
+          </div>
 
           <p
             className={classNames(

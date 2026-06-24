@@ -14,6 +14,7 @@ export interface ProjectSummary {
   thumbnailImage: { url: string; alt: string };
   theme?: string;
   skills: { name: string; icon: string }[];
+  repositoryUrl?: string;
 }
 
 interface IProjectListProps {
@@ -37,6 +38,7 @@ export const ProjectList: FC<IProjectListProps> = ({
           thumbnailImage={project.thumbnailImage}
           theme={project.theme}
           skills={project.skills}
+          repositoryUrl={project.repositoryUrl}
           compact={compact}
         />
       </li>

@@ -10,4 +10,5 @@ export type ProjectSummaryDTO = {
   theme?: string;
   skills: SkillSummary[];
   publishedAt: string;
+  repositoryUrl?: string;
 };
