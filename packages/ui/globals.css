@@ -59,24 +59,6 @@
   text-decoration-color: rgb(var(--tw-brand-primary));
 }
 
-/* Lede — first paragraph reads like a newspaper lead */
-.markdown-body > p:first-of-type {
-  font-size: 1.125rem;
-  color: rgb(var(--tw-content-secondary));
-  line-height: 1.8;
-}
-
-/* Drop cap — first letter floats large, editorial feel */
-.markdown-body > p:first-of-type::first-letter {
-  float: left;
-  font-size: 3.75rem;
-  font-weight: 700;
-  line-height: 0.82;
-  margin-right: 0.08em;
-  margin-top: 0.06em;
-  color: rgb(var(--tw-brand-accent));
-}
-
 /* Blockquote as pull quote */
 .markdown-body blockquote {
   border-left: 3px solid rgb(var(--tw-brand-accent));
@@ -91,7 +73,7 @@
   margin: 0;
 }
 
-/* hr as editorial gradient separator */
+/* hr as gradient separator */
 .markdown-body hr {
   border: none;
   height: 1px;

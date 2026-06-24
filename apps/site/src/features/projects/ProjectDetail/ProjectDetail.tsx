@@ -15,6 +15,7 @@ import { Breadcrumb } from '~features/shared/Breadcrumb';
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { Link } from '~i18n/routing';
 
+import styles from './ProjectDetail.module.css';
 import { ProjectMetaGrid } from './ProjectMetaGrid';
 
 export interface IProjectDetailProps {
@@ -118,7 +119,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
           labels={metaLabels}
         />
 
-        {content && <TextRich content={content} />}
+        {content && <TextRich content={content} className={styles.editorial} />}
 
         {relatedProjects.length > 0 && (
           <section className="flex flex-col gap-y-6">

@@ -77,8 +77,8 @@
     "email": "Informe um e-mail válido."
   },
   "Projects": {
-    "hero_title": "Portfólio",
-    "hero_caption": "Conheça alguns dos meus projetos",
+    "hero_title": "Projetos",
+    "hero_caption": "Uma seleção de produtos que projetei, construí e entreguei — de arquiteturas solo do zero a apps comerciais entregues com times distribuídos.",
     "hero_image_alt": "Foto profissional 1 de Wallace Ferreira"
   },
   "About": {
