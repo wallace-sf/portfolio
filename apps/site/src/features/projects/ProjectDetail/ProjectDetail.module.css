@@ -1,0 +1,15 @@
+.editorial:global(.markdown-body) > p:first-of-type {
+  font-size: 1.125rem;
+  color: rgb(var(--tw-content-secondary));
+  line-height: 1.8;
+}
+
+.editorial:global(.markdown-body) > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.75rem;
+  font-weight: 700;
+  line-height: 0.82;
+  margin-right: 0.08em;
+  margin-top: 0.06em;
+  color: rgb(var(--tw-brand-accent));
+}
