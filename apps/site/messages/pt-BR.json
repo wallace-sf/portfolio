@@ -135,10 +135,8 @@
     "breadcrumb_projects": "Projetos",
     "back": "Voltar",
     "related_title": "Outros projetos",
-    "summary_label": "Resumo",
-    "objectives_label": "Objetivos",
     "role_label": "Função",
-    "period_label": "Período"
+    "open_source_label": "Open Source"
   },
   "Metadata": {
     "Layout": {
