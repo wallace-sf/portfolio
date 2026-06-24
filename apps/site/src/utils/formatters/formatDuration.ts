@@ -15,7 +15,7 @@ export function formatDuration(
     new Intl.NumberFormat(locale, {
       style: 'unit',
       unit,
-      unitDisplay: 'short',
+      unitDisplay: 'long',
     }).format(value);
 
   const parts: string[] = [];

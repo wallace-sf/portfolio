@@ -61,8 +61,8 @@ import { formatDuration } from '~/utils';
 // formatDuration unit tests
 // ---------------------------------------------------------------------------
 
-const YEAR_PATTERN = /yr|year/;
-const MONTH_PATTERN = /mo|mth|month/;
+const YEAR_PATTERN = /years?/;
+const MONTH_PATTERN = /months?/;
 
 describe('formatDuration', () => {
   it('should include years and months for multi-year range', () => {
