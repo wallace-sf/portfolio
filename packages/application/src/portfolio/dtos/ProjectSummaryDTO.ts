@@ -6,6 +6,7 @@ export type ProjectSummaryDTO = {
   title: string;
   caption: string;
   coverImage: { url: string; alt: string };
+  thumbnailImage: { url: string; alt: string };
   theme?: string;
   skills: SkillSummary[];
   publishedAt: string;

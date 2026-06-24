@@ -25,7 +25,7 @@ const PROJECTS = [
     slug: 'proj-a',
     title: 'Project A',
     caption: 'Cap A',
-    coverImage: { url: '', alt: '' },
+    thumbnailImage: { url: '', alt: '' },
     skills: [],
   },
   {
@@ -33,7 +33,7 @@ const PROJECTS = [
     slug: 'proj-b',
     title: 'Project B',
     caption: 'Cap B',
-    coverImage: { url: '', alt: '' },
+    thumbnailImage: { url: '', alt: '' },
     skills: [],
   },
 ];

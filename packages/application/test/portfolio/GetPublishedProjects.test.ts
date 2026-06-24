@@ -22,6 +22,10 @@ const BASE_PROPS: IProjectProps = {
     url: 'https://example.com/cover.jpg',
     alt: { 'pt-BR': 'Capa do projeto', 'en-US': 'Project cover' },
   },
+  thumbnailImage: {
+    url: 'https://example.com/thumbnail.webp',
+    alt: { 'pt-BR': 'Thumbnail do projeto', 'en-US': 'Project thumbnail' },
+  },
   title: { 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' },
   caption: { 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' },
   content: { 'en-US': 'Detailed project content here.', 'pt-BR': 'Conteúdo detalhado do projeto aqui.' },
@@ -161,6 +165,8 @@ describe('GetPublishedProjects', () => {
       expect(dto.caption).toBe('Legenda do projeto');
       expect(dto.coverImage.url).toBe('https://example.com/cover.jpg');
       expect(dto.coverImage.alt).toBe('Capa do projeto');
+      expect(dto.thumbnailImage.url).toBe('https://example.com/thumbnail.webp');
+      expect(dto.thumbnailImage.alt).toBe('Thumbnail do projeto');
       expect(dto.theme).toBeUndefined();
       expect(dto.skills).toEqual([]);
       expect(dto.publishedAt).toBe('2023-01-01T00:00:00.000Z');

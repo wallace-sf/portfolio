@@ -22,6 +22,10 @@ const BASE_PROPS: IProjectProps = {
     url: 'https://example.com/cover.jpg',
     alt: { 'pt-BR': 'Capa do projeto', 'en-US': 'Project cover' },
   },
+  thumbnailImage: {
+    url: 'https://example.com/thumbnail.webp',
+    alt: { 'pt-BR': 'Thumbnail do projeto', 'en-US': 'Project thumbnail' },
+  },
   title: { 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' },
   caption: { 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' },
   content: { 'en-US': 'Detailed project content here.', 'pt-BR': 'Conteúdo detalhado do projeto aqui.' },

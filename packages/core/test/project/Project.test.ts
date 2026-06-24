@@ -73,6 +73,23 @@ describe('Project', () => {
       );
     });
 
+    it('should create project with thumbnailImage', () => {
+      const result = Project.create(
+        ProjectBuilder.build()
+          .withThumbnailImage({
+            url: 'https://example.com/thumbnail.webp',
+            alt: { 'en-US': 'Thumbnail', 'pt-BR': 'Thumbnail' },
+          })
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.thumbnailImage.url.value).toBe(
+        'https://example.com/thumbnail.webp',
+      );
+    });
+
     it('should create project with period and status', () => {
       const result = Project.create(
         ProjectBuilder.build()
@@ -264,6 +281,14 @@ describe('Project', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
+    });
+
+    it('should return Left when thumbnailImage is missing', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withoutThumbnailImage().toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
     });
 
     it('should return Left when status is invalid', () => {

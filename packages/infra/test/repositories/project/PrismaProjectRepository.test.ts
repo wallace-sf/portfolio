@@ -31,6 +31,8 @@ async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProj
       slug: raw.slug,
       coverImageUrl: raw.coverImageUrl,
       coverImageAlt: raw.coverImageAlt,
+      thumbnailImageUrl: raw.thumbnailImageUrl,
+      thumbnailImageAlt: raw.thumbnailImageAlt,
       title: raw.title,
       caption: raw.caption,
       content: raw.content,

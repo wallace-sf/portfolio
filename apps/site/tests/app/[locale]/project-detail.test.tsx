@@ -56,6 +56,7 @@ const PROJECT = {
   title: 'My Project',
   caption: 'A great project',
   coverImage: { url: 'https://example.com/img.jpg', alt: 'Cover' },
+  thumbnailImage: { url: 'https://example.com/thumbnail.webp', alt: 'Thumbnail' },
   skills: [{ name: 'React', icon: '' }],
   content: '# Hello',
   publishedAt: '2024-01-01',

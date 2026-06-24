@@ -95,6 +95,10 @@ export class GetProjectBySlug extends UseCase<
         url: project.coverImage.url.value,
         alt: project.coverImage.alt.get(locale),
       },
+      thumbnailImage: {
+        url: project.thumbnailImage.url.value,
+        alt: project.thumbnailImage.alt.get(locale),
+      },
       theme: project.theme?.get(locale),
       skills: project.skills.map(
         (id) => skillNames.get(id.value) ?? { name: id.value, icon: '' },
@@ -125,6 +129,10 @@ export class GetProjectBySlug extends UseCase<
       coverImage: {
         url: project.coverImage.url.value,
         alt: project.coverImage.alt.get(locale),
+      },
+      thumbnailImage: {
+        url: project.thumbnailImage.url.value,
+        alt: project.thumbnailImage.alt.get(locale),
       },
       theme: project.theme?.get(locale),
       skills: project.skills.map(

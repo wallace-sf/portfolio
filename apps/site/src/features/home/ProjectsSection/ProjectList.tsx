@@ -11,7 +11,7 @@ export interface ProjectSummary {
   slug: string;
   title: string;
   caption: string;
-  coverImage: { url: string; alt: string };
+  thumbnailImage: { url: string; alt: string };
   theme?: string;
   skills: { name: string; icon: string }[];
 }
@@ -34,7 +34,7 @@ export const ProjectList: FC<IProjectListProps> = ({
           slug={project.slug}
           title={project.title}
           caption={project.caption}
-          coverImage={project.coverImage}
+          thumbnailImage={project.thumbnailImage}
           theme={project.theme}
           skills={project.skills}
           compact={compact}

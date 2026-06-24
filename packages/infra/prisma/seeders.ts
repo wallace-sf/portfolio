@@ -354,6 +354,13 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
         'Repositório do Portfólio Pessoal no GitHub',
         'Repositorio del Portafolio Personal en GitHub',
       ),
+      thumbnailImageUrl:
+        'https://placehold.co/760x630/0f172a/34d399?text=Portfolio',
+      thumbnailImageAlt: loc(
+        'Personal Portfolio thumbnail',
+        'Thumbnail do Portfólio Pessoal',
+        'Thumbnail del Portafolio Personal',
+      ),
       title: loc('Personal Portfolio', 'Portfólio Pessoal', 'Portafolio Personal'),
       caption: loc(
         'A full-stack portfolio built with Next.js, DDD, and Clean Architecture in a Turborepo monorepo.',
@@ -779,6 +786,13 @@ Este portafolio es la primera presencia técnica pública que construí y poseo 
         'Plataforma B2B de e-commerce para materiais de construção',
         'Plataforma B2B de e-commerce para materiales de construcción',
       ),
+      thumbnailImageUrl:
+        'https://placehold.co/760x630/0f172a/34d399?text=B2B+E-Commerce',
+      thumbnailImageAlt: loc(
+        'B2B e-commerce platform thumbnail',
+        'Thumbnail da plataforma B2B de e-commerce',
+        'Thumbnail de la plataforma B2B de e-commerce',
+      ),
       title: loc('B2B E-Commerce Platform', 'Plataforma B2B de E-Commerce', 'Plataforma B2B de E-Commerce'),
       caption: loc(
         'Full-stack B2B platform for construction materials built with DDD, Clean Architecture, NestJS, and React.',
@@ -842,6 +856,13 @@ Diseñé APIs RESTful escalables siguiendo **Domain-Driven Design** y **Arquitec
         'Plataforma de pesquisa de games e inteligência de dados',
         'Plataforma de investigación de videojuegos e inteligencia de datos',
       ),
+      thumbnailImageUrl:
+        'https://placehold.co/760x630/0f0f1a/818cf8?text=Game+Intelligence',
+      thumbnailImageAlt: loc(
+        'Game intelligence platform thumbnail',
+        'Thumbnail da plataforma de inteligência de games',
+        'Thumbnail de la plataforma de inteligencia de videojuegos',
+      ),
       title: loc(
         'Game Intelligence Platform',
         'Plataforma de Inteligência de Games',
@@ -897,6 +918,13 @@ Construí todo el frontend con **React.js**, **Material UI** y **GraphQL**, incl
         'Buyr Shopify app — interactive pricing and AI offer negotiation',
         'App Buyr para Shopify — precificação interativa e negociação de ofertas por IA',
         'App Buyr para Shopify — precios interactivos y negociación de ofertas por IA',
+      ),
+      thumbnailImageUrl:
+        'https://placehold.co/760x630/1a0f2e/c084fc?text=Buyr',
+      thumbnailImageAlt: loc(
+        'Buyr Shopify app thumbnail',
+        'Thumbnail do app Buyr para Shopify',
+        'Thumbnail de la app Buyr para Shopify',
       ),
       title: loc('Buyr — Shopify App', 'Buyr — App para Shopify', 'Buyr — App para Shopify'),
       caption: loc(
@@ -1170,6 +1198,13 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
         'Biblioteca open-source de cliente MQTT para React',
         'Biblioteca open-source de cliente MQTT para React',
       ),
+      thumbnailImageUrl:
+        'https://placehold.co/760x630/0f172a/60a5fa?text=React+MQTT',
+      thumbnailImageAlt: loc(
+        'React MQTT WebSocket thumbnail',
+        'Thumbnail do React MQTT WebSocket',
+        'Thumbnail de React MQTT WebSocket',
+      ),
       title: loc('React MQTT WebSocket', 'React MQTT WebSocket', 'React MQTT WebSocket'),
       caption: loc(
         'An open-source MQTT client library for React with hooks-based API and real-time topic subscriptions.',
@@ -1224,6 +1259,8 @@ Desarrollada mientras trabajaba en FDTE en plataformas industriales y del sector
         content: project.content,
         coverImageUrl: project.coverImageUrl,
         coverImageAlt: project.coverImageAlt,
+        thumbnailImageUrl: project.thumbnailImageUrl,
+        thumbnailImageAlt: project.thumbnailImageAlt,
         featured: project.featured,
         status: project.status,
         periodStart: project.periodStart,

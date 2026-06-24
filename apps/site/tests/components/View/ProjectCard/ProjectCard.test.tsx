@@ -67,7 +67,7 @@ const defaultProps = {
   slug: 'my-project',
   title: 'My Project',
   caption: 'A great project',
-  coverImage: { url: 'https://example.com/image.jpg', alt: 'My project cover' },
+  thumbnailImage: { url: 'https://example.com/thumbnail.webp', alt: 'My project thumbnail' },
   skills: [
     { name: 'React', icon: '' },
     { name: 'TypeScript', icon: '' },
@@ -83,9 +83,9 @@ describe('ProjectCard', () => {
     expect(link).toHaveAttribute('href', '/en-US/projects/my-project');
   });
 
-  it('should render the cover image with the provided alt text', () => {
+  it('should render the thumbnail image with the provided alt text', () => {
     render(<ProjectCard {...defaultProps} />);
-    expect(screen.getByAltText('My project cover')).toBeInTheDocument();
+    expect(screen.getByAltText('My project thumbnail')).toBeInTheDocument();
   });
 
   it('should render title and caption', () => {
