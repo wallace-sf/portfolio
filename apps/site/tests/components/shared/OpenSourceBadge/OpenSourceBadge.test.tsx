@@ -2,11 +2,6 @@ import { render, screen } from '@testing-library/react';
 
 import { OpenSourceBadge } from '~/features/shared/OpenSourceBadge';
 
-vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) =>
-    key === 'open_source_label' ? 'Open Source' : key,
-}));
-
 describe('OpenSourceBadge', () => {
   it('should render a link pointing to the repository', () => {
     render(<OpenSourceBadge repositoryUrl="https://github.com/user/repo" />);

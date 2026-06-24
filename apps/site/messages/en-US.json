@@ -32,9 +32,6 @@
     "hero_caption": "Software Engineer",
     "hero_image_alt": "Professional Picture 1 of Wallace Ferreira"
   },
-  "Common": {
-    "open_source_label": "Open Source"
-  },
   "ProjectCard": {
     "view_project": "View Project",
     "share_tooltip": "Copy link",
