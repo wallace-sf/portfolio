@@ -159,7 +159,7 @@ describe('ExperienceCard', () => {
   it('should clamp description by default and show see_more button', () => {
     render(<ExperienceCard {...defaultProps} />);
     expect(screen.getByText('Full-stack development.')).toHaveClass(
-      'line-clamp-1',
+      'line-clamp-3',
     );
     expect(
       screen.getByRole('button', { name: 'see_more' }),
@@ -170,7 +170,7 @@ describe('ExperienceCard', () => {
     render(<ExperienceCard {...defaultProps} />);
     fireEvent.click(screen.getByRole('button', { name: 'see_more' }));
     expect(screen.getByText('Full-stack development.')).not.toHaveClass(
-      'line-clamp-1',
+      'line-clamp-3',
     );
     expect(
       screen.getByRole('button', { name: 'see_less' }),
@@ -182,7 +182,7 @@ describe('ExperienceCard', () => {
     fireEvent.click(screen.getByRole('button', { name: 'see_more' }));
     fireEvent.click(screen.getByRole('button', { name: 'see_less' }));
     expect(screen.getByText('Full-stack development.')).toHaveClass(
-      'line-clamp-1',
+      'line-clamp-3',
     );
   });
 
