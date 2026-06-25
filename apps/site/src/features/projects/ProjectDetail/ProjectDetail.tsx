@@ -3,7 +3,7 @@
 import { FC, useMemo } from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
-import { TextRich } from '@repo/ui/View';
+import { Divider, TextRich } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
@@ -113,6 +113,8 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
             </div>
           </dl>
         )}
+
+        <Divider />
 
         {content && <TextRich content={content} className={styles.editorial} />}
 
