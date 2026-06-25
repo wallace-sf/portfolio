@@ -103,7 +103,7 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
           <TextRich
             content={description}
             className={classNames('text-base text-content-disabled', {
-              'line-clamp-1': !expanded,
+              'line-clamp-3': !expanded,
             })}
           />
           <button

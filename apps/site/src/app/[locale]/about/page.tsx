@@ -7,6 +7,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildOgImageUrl } from '~/lib/og';
 import { getServerContainer } from '~/lib/server/container';
+import { BioSection } from '~features/about/BioSection';
 import { CurriculumCTA } from '~features/about/CurriculumCTA';
 import { ExperiencesSection } from '~features/about/ExperiencesSection';
 import { HeroSection } from '~features/about/HeroSection';
@@ -68,6 +69,7 @@ export default async function About({ params }: AboutPageProps) {
   return (
     <div className="flex flex-col pb-10 xl:pb-16 2xl:pb-20">
       <HeroSection locale={locale} />
+      <BioSection locale={locale} />
       <ValuesSection locale={locale} />
       <Divider />
       <ExperiencesSection locale={locale} />
