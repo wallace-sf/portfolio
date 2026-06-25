@@ -71,6 +71,7 @@ export class GetPublishedProjects extends UseCase<
         (id) => skillNames.get(id.value) ?? { name: id.value, icon: '' },
       ),
       publishedAt: project.period.startAt.value,
+      repositoryUrl: project.repositoryUrl?.value,
     };
   }
 }

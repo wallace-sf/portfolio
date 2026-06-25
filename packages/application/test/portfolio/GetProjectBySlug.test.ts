@@ -233,6 +233,25 @@ describe('GetProjectBySlug', () => {
       expect((result.value as DomainError).code).toBe('FETCH_FAILED');
     });
 
+    it('should map repositoryUrl in related projects when they are public', async () => {
+      const project = makeProject();
+      const related = makeProject({
+        slug: 'related-project',
+        repositoryUrl: 'https://github.com/user/related',
+      });
+      const repo = makeRepository({
+        findBySlug: vi.fn().mockResolvedValue(project),
+        findRelated: vi.fn().mockResolvedValue([related]),
+      });
+      const useCase = new GetProjectBySlug(repo, makeSkillRepository());
+
+      const result = await useCase.execute({ slug: 'my-project', locale: 'en-US' });
+
+      expect(result.isRight()).toBe(true);
+      const dto = result.value as ProjectDetailDTO;
+      expect(dto.relatedProjects[0]!.repositoryUrl).toBe('https://github.com/user/related');
+    });
+
     it('should return Right with empty relatedProjects when findRelated throws', async () => {
       const project = makeProject();
       const repo = makeRepository({

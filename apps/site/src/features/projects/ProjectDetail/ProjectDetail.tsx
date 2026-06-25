@@ -12,6 +12,7 @@ import {
   ProjectSummary,
 } from '~features/home/ProjectsSection/ProjectList';
 import { Breadcrumb } from '~features/shared/Breadcrumb';
+import { OpenSourceBadge } from '~features/shared/OpenSourceBadge';
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { Link } from '~i18n/routing';
 
@@ -86,15 +87,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
                 {title}
               </h1>
               {repositoryUrl && (
-                <a
-                  href={repositoryUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-x-1.5 rounded-full border border-content-muted/30 px-3 py-1 text-sm text-content-muted transition-colors hover:border-content-muted hover:text-content-primary"
-                >
-                  <Icon icon="mdi:github" className="text-base" />
-                  {t('open_source_label')}
-                </a>
+                <OpenSourceBadge repositoryUrl={repositoryUrl} />
               )}
             </div>
             <p className="text-xl text-content-primary">{caption}</p>
