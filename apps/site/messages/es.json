@@ -135,10 +135,7 @@
     "breadcrumb_projects": "Proyectos",
     "back": "Volver",
     "related_title": "Otros proyectos",
-    "summary_label": "Resumen",
-    "objectives_label": "Objetivos",
-    "role_label": "Rol",
-    "period_label": "Período"
+    "role_label": "Rol"
   },
   "Metadata": {
     "Layout": {

@@ -761,6 +761,7 @@ Este portafolio es la primera presencia técnica pública que construí y poseo 
       ),
       featured: true,
       status: 'PUBLISHED' as const,
+      repositoryUrl: 'https://github.com/wallace-sf/portfolio',
       periodStart: new Date('2024-01-01'),
       periodEnd: null,
       skillIds: [
@@ -1263,6 +1264,7 @@ Desarrollada mientras trabajaba en FDTE en plataformas industriales y del sector
         thumbnailImageAlt: project.thumbnailImageAlt,
         featured: project.featured,
         status: project.status,
+        repositoryUrl: project.repositoryUrl ?? null,
         periodStart: project.periodStart,
         periodEnd: project.periodEnd,
         skillIds: project.skillIds,

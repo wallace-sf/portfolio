@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef } from 'react';
 
+import { loadMermaid } from '../lib/loadMermaid';
+
 interface IMermaidBlockProps {
   chart: string;
 }
@@ -11,11 +13,11 @@ export const MermaidBlock = ({ chart }: IMermaidBlockProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !ref.current) return;
+    if (!ref.current) return;
 
     let cancelled = false;
 
-    import('mermaid').then(({ default: mermaid }) => {
+    loadMermaid().then((mermaid) => {
       if (cancelled) return;
       mermaid.initialize({ startOnLoad: false, theme: 'dark' });
       mermaid.render(`mermaid-${id}`, chart.trim()).then(({ svg }) => {

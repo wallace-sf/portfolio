@@ -88,6 +88,7 @@ model Project {
   periodEnd           DateTime?
   featured            Boolean       @default(false)
   status              ProjectStatus @default(DRAFT)
+  repositoryUrl       String?
   relatedProjectSlugs String[]
   skillIds            String[]  @db.Uuid
   createdAt           DateTime  @default(now())

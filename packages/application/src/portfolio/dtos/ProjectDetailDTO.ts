@@ -5,6 +5,7 @@ export type ProjectDetailDTO = ProjectSummaryDTO & {
   summary?: string;
   objectives?: string;
   role?: string;
+  repositoryUrl?: string;
   period: { startAt: string; endAt?: string };
   relatedProjects: ProjectSummaryDTO[];
 };

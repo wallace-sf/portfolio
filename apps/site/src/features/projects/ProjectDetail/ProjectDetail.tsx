@@ -12,11 +12,11 @@ import {
   ProjectSummary,
 } from '~features/home/ProjectsSection/ProjectList';
 import { Breadcrumb } from '~features/shared/Breadcrumb';
+import { OpenSourceBadge } from '~features/shared/OpenSourceBadge';
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { Link } from '~i18n/routing';
 
 import styles from './ProjectDetail.module.css';
-import { ProjectMetaGrid } from './ProjectMetaGrid';
 
 export interface IProjectDetailProps {
   slug: string;
@@ -25,10 +25,9 @@ export interface IProjectDetailProps {
   coverImage: { url: string; alt: string };
   theme?: string;
   skills: { name: string; icon: string }[];
-  summary?: string;
-  objectives?: string;
   role?: string;
   period: { startAt: string; endAt?: string };
+  repositoryUrl?: string;
   content: string;
   relatedProjects: ProjectSummary[];
 }
@@ -38,10 +37,8 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
   caption,
   coverImage,
   skills,
-  summary,
-  objectives,
   role,
-  period,
+  repositoryUrl,
   content,
   relatedProjects,
 }) => {
@@ -54,16 +51,6 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
       { label: title },
     ],
     [t, title],
-  );
-
-  const metaLabels = useMemo(
-    () => ({
-      summary: t('summary_label'),
-      objectives: t('objectives_label'),
-      role: t('role_label'),
-      period: t('period_label'),
-    }),
-    [t],
   );
 
   return (
@@ -95,9 +82,14 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
           </div>
 
           <header className="flex flex-col gap-y-3">
-            <h1 className="text-[40px] font-bold text-content-primary">
-              {title}
-            </h1>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <h1 className="text-[40px] font-bold text-content-primary">
+                {title}
+              </h1>
+              {repositoryUrl && (
+                <OpenSourceBadge repositoryUrl={repositoryUrl} />
+              )}
+            </div>
             <p className="text-xl text-content-primary">{caption}</p>
           </header>
 
@@ -111,13 +103,16 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
           )}
         </div>
 
-        <ProjectMetaGrid
-          summary={summary}
-          objectives={objectives}
-          role={role}
-          period={period}
-          labels={metaLabels}
-        />
+        {role && (
+          <dl className="flex flex-row flex-wrap gap-x-10 gap-y-4">
+            <div className="flex flex-col gap-y-1">
+              <dt className="text-base font-bold text-content-primary">
+                {t('role_label')}
+              </dt>
+              <dd className="text-base text-content-primary">{role}</dd>
+            </div>
+          </dl>
+        )}
 
         {content && <TextRich content={content} className={styles.editorial} />}
 

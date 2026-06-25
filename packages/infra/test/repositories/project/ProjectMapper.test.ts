@@ -85,6 +85,23 @@ describe('ProjectMapper', () => {
       expect(project.role).toBeUndefined();
     });
 
+    it('should set repositoryUrl to undefined when null in DB', () => {
+      const raw = buildPrismaProject({ repositoryUrl: null });
+
+      const project = ProjectMapper.toDomain(raw);
+
+      expect(project.repositoryUrl).toBeUndefined();
+    });
+
+    it('should map repositoryUrl to a Url VO when present in DB', () => {
+      const url = 'https://github.com/wallace-sf/portfolio';
+      const raw = buildPrismaProject({ repositoryUrl: url });
+
+      const project = ProjectMapper.toDomain(raw);
+
+      expect(project.repositoryUrl?.value).toBe(url);
+    });
+
     it('should throw InfrastructureError when raw data produces an invalid domain object', () => {
       const raw = buildPrismaProject({ slug: '' });
 
@@ -177,6 +194,25 @@ describe('ProjectMapper', () => {
       const data = ProjectMapper.toPrisma(project);
 
       expect(data.skillIds).toEqual([skillId1, skillId2]);
+    });
+
+    it('should set repositoryUrl to null when absent', () => {
+      const raw = buildPrismaProject({ repositoryUrl: null });
+      const project = ProjectMapper.toDomain(raw);
+
+      const data = ProjectMapper.toPrisma(project);
+
+      expect(data.repositoryUrl).toBeNull();
+    });
+
+    it('should map repositoryUrl string when present', () => {
+      const url = 'https://github.com/wallace-sf/portfolio';
+      const raw = buildPrismaProject({ repositoryUrl: url });
+      const project = ProjectMapper.toDomain(raw);
+
+      const data = ProjectMapper.toPrisma(project);
+
+      expect(data.repositoryUrl).toBe(url);
     });
   });
 });
