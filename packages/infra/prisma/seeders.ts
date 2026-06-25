@@ -349,14 +349,14 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
       id: ID.projects.portfolio,
       slug: 'personal-portfolio',
       coverImageUrl:
-        'https://opengraph.githubassets.com/1/wallace-sf/portfolio',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-cover.webp',
       coverImageAlt: loc(
         'Personal Portfolio repository on GitHub',
         'Repositório do Portfólio Pessoal no GitHub',
         'Repositorio del Portafolio Personal en GitHub',
       ),
       thumbnailImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-thumbnail.webp',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-thumbnail2.webp',
       thumbnailImageAlt: loc(
         'Personal Portfolio thumbnail',
         'Thumbnail do Portfólio Pessoal',
@@ -915,7 +915,7 @@ Construí todo el frontend con **React.js**, **Material UI** y **GraphQL**, incl
       id: ID.projects.buyrShopifyApp,
       slug: 'buyr-shopify-app',
       coverImageUrl:
-        'https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/promotional_image/CMfgkeeMwI4DEAE=.png',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/buyr-cover.webp',
       coverImageAlt: loc(
         'Buyr Shopify app — interactive pricing and AI offer negotiation',
         'App Buyr para Shopify — precificação interativa e negociação de ofertas por IA',
@@ -945,7 +945,7 @@ The app runs embedded inside any Shopify storefront theme — with no control ov
 
 On top of that, ==Shopify's own acceptance criteria imposed strict performance thresholds the app had to meet to stay listed in the App Store==. Performance wasn't optional — it was a gate.
 
-![Interactive price input and AI negotiation chat interface](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+![Interactive price input and AI negotiation chat interface](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
 
 *The storefront widget — interactive price input with AI negotiation chat.*
 
@@ -977,7 +977,7 @@ Meeting Shopify's App Store performance requirements meant treating performance 
 
 ## Merchant Admin
 
-![Real-time offer management dashboard for merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+![Real-time offer management dashboard for merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Real-time offer management — merchants see and act on incoming offers as they arrive.*
 
@@ -987,7 +987,7 @@ On the merchant side, I built three screens using **Shopify Polaris**:
 - **Analytics screen** — dashboard giving merchants visibility into received vs. accepted offers over time
 - **Onboarding / welcome screen** — guided setup experience for merchants installing the app for the first time
 
-![Custom pricing models configuration screen](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+![Custom pricing models configuration screen](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Custom pricing models — merchants define thresholds and discount rules per product.*
 
@@ -1033,7 +1033,7 @@ O app roda incorporado dentro de qualquer tema de storefront da Shopify — sem 
 
 Além disso, ==os próprios critérios de aceitação da Shopify impõem limites rígidos de performance que o app precisava atingir para permanecer listado na App Store==. Performance não era opcional — era um requisito de aprovação.
 
-![Interface de entrada de preço interativa e chat de negociação por IA](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+![Interface de entrada de preço interativa e chat de negociação por IA](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
 
 *O widget do storefront — entrada de preço interativa com chat de negociação por IA.*
 
@@ -1065,7 +1065,7 @@ Atender aos requisitos de performance da App Store da Shopify significou tratar 
 
 ## Administração dos Merchants
 
-![Painel de gerenciamento de ofertas em tempo real para merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+![Painel de gerenciamento de ofertas em tempo real para merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Gerenciamento de ofertas em tempo real — merchants veem e agem sobre as ofertas recebidas conforme chegam.*
 
@@ -1075,7 +1075,7 @@ No lado dos merchants, construí três telas usando **Shopify Polaris**:
 - **Tela de analytics** — painel que dá aos merchants visibilidade sobre ofertas recebidas vs. aceitas ao longo do tempo
 - **Tela de onboarding / boas-vindas** — experiência guiada de configuração para merchants instalando o app pela primeira vez
 
-![Tela de configuração de modelos de precificação personalizados](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+![Tela de configuração de modelos de precificação personalizados](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Modelos de precificação personalizados — merchants definem limites e regras de desconto por produto.*
 
@@ -1109,7 +1109,7 @@ La app se ejecuta integrada dentro de cualquier tema de storefront de Shopify �
 
 Además, ==los propios criterios de aceptación de Shopify imponen umbrales de rendimiento estrictos que la app debía cumplir para mantenerse en la App Store==. El rendimiento no era opcional — era un requisito de aprobación.
 
-![Interfaz de entrada de precio interactiva y chat de negociación con IA](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+![Interfaz de entrada de precio interactiva y chat de negociación con IA](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
 
 *El widget del storefront — entrada de precio interactiva con chat de negociación por IA.*
 
@@ -1141,7 +1141,7 @@ Cumplir los requisitos de rendimiento de la App Store de Shopify significó trat
 
 ## Administración de Merchants
 
-![Panel de gestión de ofertas en tiempo real para merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+![Panel de gestión de ofertas en tiempo real para merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Gestión de ofertas en tiempo real — los merchants ven y actúan sobre las ofertas entrantes a medida que llegan.*
 
@@ -1151,7 +1151,7 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
 - **Pantalla de analytics** — panel que da a los merchants visibilidad sobre las ofertas recibidas vs. aceptadas a lo largo del tiempo
 - **Pantalla de onboarding / bienvenida** — experiencia guiada de configuración para merchants que instalan la app por primera vez
 
-![Pantalla de configuración de modelos de precios personalizados](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+![Pantalla de configuración de modelos de precios personalizados](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Modelos de precios personalizados — los merchants definen umbrales y reglas de descuento por producto.*
 
