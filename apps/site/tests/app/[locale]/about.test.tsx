@@ -18,6 +18,10 @@ vi.mock('~features/about/HeroSection', () => ({
   HeroSection: () => <div data-testid="hero-section" />,
 }));
 
+vi.mock('~features/about/BioSection', () => ({
+  BioSection: () => <div data-testid="bio-section" />,
+}));
+
 vi.mock('~features/about/ValuesSection', () => ({
   ValuesSection: () => <div data-testid="values-section" />,
 }));
@@ -48,6 +52,7 @@ describe('About page', () => {
     );
 
     expect(screen.getByTestId('hero-section')).toBeInTheDocument();
+    expect(screen.getByTestId('bio-section')).toBeInTheDocument();
     expect(screen.getByTestId('values-section')).toBeInTheDocument();
     expect(screen.getByTestId('experiences-section')).toBeInTheDocument();
     expect(screen.getByTestId('curriculum-cta')).toBeInTheDocument();
