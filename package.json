@@ -16,7 +16,8 @@
     "test:utils": "pnpm -C packages/utils test",
     "test:site": "pnpm -C apps/site test",
     "seed": "pnpm --filter @repo/infra db:seed",
-    "dev:site": "pnpm --filter site dev"
+    "dev:site": "pnpm --filter site dev",
+    "dev:site:clean": "pnpm --filter site dev:clean"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",

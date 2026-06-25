@@ -46,6 +46,7 @@ export const ID = {
     gamePlatform: '30000000-0000-4000-8000-000000000003',
     mqttClient: '30000000-0000-4000-8000-000000000004',
     buyrShopifyApp: '30000000-0000-4000-8000-000000000005',
+    aiGolfAssistant: '30000000-0000-4000-8000-000000000006',
   },
   experiences: {
     fdte_current: '40000000-0000-4000-8000-000000000001',
@@ -348,14 +349,14 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
       id: ID.projects.portfolio,
       slug: 'personal-portfolio',
       coverImageUrl:
-        'https://opengraph.githubassets.com/1/wallace-sf/portfolio',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-cover.webp',
       coverImageAlt: loc(
         'Personal Portfolio repository on GitHub',
         'Repositório do Portfólio Pessoal no GitHub',
         'Repositorio del Portafolio Personal en GitHub',
       ),
       thumbnailImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-thumbnail.webp',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-thumbnail2.webp',
       thumbnailImageAlt: loc(
         'Personal Portfolio thumbnail',
         'Thumbnail do Portfólio Pessoal',
@@ -914,7 +915,7 @@ Construí todo el frontend con **React.js**, **Material UI** y **GraphQL**, incl
       id: ID.projects.buyrShopifyApp,
       slug: 'buyr-shopify-app',
       coverImageUrl:
-        'https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/promotional_image/CMfgkeeMwI4DEAE=.png',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/buyr-cover.webp',
       coverImageAlt: loc(
         'Buyr Shopify app — interactive pricing and AI offer negotiation',
         'App Buyr para Shopify — precificação interativa e negociação de ofertas por IA',
@@ -944,7 +945,7 @@ The app runs embedded inside any Shopify storefront theme — with no control ov
 
 On top of that, ==Shopify's own acceptance criteria imposed strict performance thresholds the app had to meet to stay listed in the App Store==. Performance wasn't optional — it was a gate.
 
-![Interactive price input and AI negotiation chat interface](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+![Interactive price input and AI negotiation chat interface](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
 
 *The storefront widget — interactive price input with AI negotiation chat.*
 
@@ -976,7 +977,7 @@ Meeting Shopify's App Store performance requirements meant treating performance 
 
 ## Merchant Admin
 
-![Real-time offer management dashboard for merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+![Real-time offer management dashboard for merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Real-time offer management — merchants see and act on incoming offers as they arrive.*
 
@@ -986,7 +987,7 @@ On the merchant side, I built three screens using **Shopify Polaris**:
 - **Analytics screen** — dashboard giving merchants visibility into received vs. accepted offers over time
 - **Onboarding / welcome screen** — guided setup experience for merchants installing the app for the first time
 
-![Custom pricing models configuration screen](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+![Custom pricing models configuration screen](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Custom pricing models — merchants define thresholds and discount rules per product.*
 
@@ -1032,7 +1033,7 @@ O app roda incorporado dentro de qualquer tema de storefront da Shopify — sem 
 
 Além disso, ==os próprios critérios de aceitação da Shopify impõem limites rígidos de performance que o app precisava atingir para permanecer listado na App Store==. Performance não era opcional — era um requisito de aprovação.
 
-![Interface de entrada de preço interativa e chat de negociação por IA](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+![Interface de entrada de preço interativa e chat de negociação por IA](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
 
 *O widget do storefront — entrada de preço interativa com chat de negociação por IA.*
 
@@ -1064,7 +1065,7 @@ Atender aos requisitos de performance da App Store da Shopify significou tratar 
 
 ## Administração dos Merchants
 
-![Painel de gerenciamento de ofertas em tempo real para merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+![Painel de gerenciamento de ofertas em tempo real para merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Gerenciamento de ofertas em tempo real — merchants veem e agem sobre as ofertas recebidas conforme chegam.*
 
@@ -1074,7 +1075,7 @@ No lado dos merchants, construí três telas usando **Shopify Polaris**:
 - **Tela de analytics** — painel que dá aos merchants visibilidade sobre ofertas recebidas vs. aceitas ao longo do tempo
 - **Tela de onboarding / boas-vindas** — experiência guiada de configuração para merchants instalando o app pela primeira vez
 
-![Tela de configuração de modelos de precificação personalizados](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+![Tela de configuração de modelos de precificação personalizados](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Modelos de precificação personalizados — merchants definem limites e regras de desconto por produto.*
 
@@ -1108,7 +1109,7 @@ La app se ejecuta integrada dentro de cualquier tema de storefront de Shopify �
 
 Además, ==los propios criterios de aceptación de Shopify imponen umbrales de rendimiento estrictos que la app debía cumplir para mantenerse en la App Store==. El rendimiento no era opcional — era un requisito de aprobación.
 
-![Interfaz de entrada de precio interactiva y chat de negociación con IA](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIX6nOeMwI4DEAE=.png)
+![Interfaz de entrada de precio interactiva y chat de negociación con IA](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
 
 *El widget del storefront — entrada de precio interactiva con chat de negociación por IA.*
 
@@ -1140,7 +1141,7 @@ Cumplir los requisitos de rendimiento de la App Store de Shopify significó trat
 
 ## Administración de Merchants
 
-![Panel de gestión de ofertas en tiempo real para merchants](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CIP0xLL234wDEAE=.png)
+![Panel de gestión de ofertas en tiempo real para merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Gestión de ofertas en tiempo real — los merchants ven y actúan sobre las ofertas entrantes a medida que llegan.*
 
@@ -1150,7 +1151,7 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
 - **Pantalla de analytics** — panel que da a los merchants visibilidad sobre las ofertas recibidas vs. aceptadas a lo largo del tiempo
 - **Pantalla de onboarding / bienvenida** — experiencia guiada de configuración para merchants que instalan la app por primera vez
 
-![Pantalla de configuración de modelos de precios personalizados](https://cdn.shopify.com/app-store/listing_images/6537909634eb9e249e1de55ca0ba2f65/desktop_screenshot/CK35r7L234wDEAE=.png)
+![Pantalla de configuración de modelos de precios personalizados](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Modelos de precios personalizados — los merchants definen umbrales y reglas de descuento por producto.*
 
@@ -1187,6 +1188,168 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
         ID.skills.framerMotion,
         ID.skills.vite,
       ],
+      relatedProjectSlugs: [],
+    },
+    {
+      id: ID.projects.aiGolfAssistant,
+      slug: 'ai-golf-assistant',
+      coverImageUrl:
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-golf-assistant-cover.webp',
+      coverImageAlt: loc(
+        'Noteefy platform — dashboard, mobile app, and AI Pro Shop Assistant',
+        'Plataforma Noteefy — dashboard, app mobile e AI Pro Shop Assistant',
+        'Plataforma Noteefy — dashboard, app móvil y AI Pro Shop Assistant',
+      ),
+      thumbnailImageUrl:
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/noteefy-thumbnail.webp',
+      thumbnailImageAlt: loc(
+        'Noteefy logo',
+        'Logo da Noteefy',
+        'Logo de Noteefy',
+      ),
+      title: loc(
+        'AI Pro Shop Assistant',
+        'AI Pro Shop Assistant',
+        'AI Pro Shop Assistant',
+      ),
+      caption: loc(
+        'An embeddable AI chatbot for golf courses — built with React and Vite and delivered as a script-tag widget live across 800+ Noteefy clients.',
+        'Um chatbot de IA incorporável para campos de golf — construído com React e Vite e entregue como widget via script tag, em produção para mais de 800 clientes da Noteefy.',
+        'Un chatbot de IA embebible para campos de golf — construido con React y Vite y entregado como widget via script tag, en producción para más de 800 clientes de Noteefy.',
+      ),
+      content: loc(
+        `[Noteefy](https://www.noteefy.com) is a revenue management platform serving ==800+ golf courses== worldwide — automating waitlists, reducing no-shows, and capturing booking demand. The [AI Pro Shop Assistant](https://www.noteefy.com/products/ai-pro-shop-assistant) is an embeddable chatbot that course operators add to their websites via a script tag, giving golfers 24/7 access to tee time bookings, waitlist enrollment, and course FAQs without involving pro shop staff.
+
+I joined with a fixed deadline already set, ==defined the frontend architecture and implementation plan== before writing a line of code, and then built the widget from scratch — UI, integration layer, and embed packaging — working in a sprint-based cycle with a distributed international team.
+
+![AI Pro Shop Assistant chat interface on a golf course website](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
+
+*The AI Pro Shop Assistant interface — golfers ask questions and book tee times directly in the chat.*
+
+## The Constraints
+
+The widget runs inside any golf course website with no control over the host's CSS or JavaScript environment. Hundreds of different sites, each with its own theme and stylesheet, could silently break the same widget in different ways.
+
+Delivery had a ==fixed deadline from day one==. Before implementation could start, the team required a frontend architecture proposal — covering component structure, styling strategy, embed mechanism, and integration approach — which I drafted and presented to align everyone on the plan.
+
+Integration against Noteefy's own backend — which manages the AI conversation engine and connects to tee sheet systems — added coordination overhead across time zones throughout the sprint.
+
+## AI Pro Shop Assistant
+
+Built the complete widget using **React** and **Vite**, with **Material UI** providing the component system for the chat interface and UI elements.
+
+- **CSS Modules scoped via Vite** — hash-based class names prevented style collisions between the widget and host sites, ensuring correct rendering regardless of the host theme
+- **Script-tag delivery** — the widget is packaged as a self-contained bundle, injected via a JavaScript snippet clients add to their site's \`<head>\`; no assumptions about the host's framework or toolchain
+- **Noteefy API integration** — the widget communicates with Noteefy's backend for AI-powered responses, live tee time availability, and waitlist enrollment
+
+The assistant is ==live in production== across Noteefy's client network of golf courses.
+
+![AI Pro Shop Assistant live on a client golf course website](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-live.webp)
+
+*The widget embedded and live on a Noteefy client's website.*
+
+## Technologies
+
+- [React](https://react.dev) — widget UI and component architecture
+- [Vite](https://vitejs.dev) — bundler; enabled CSS Modules scoping for style isolation across host environments
+- [Material UI](https://mui.com) — component library for the chat interface and UI elements
+- [CSS Modules](https://github.com/css-modules/css-modules) — scoped class names preventing style collisions with host site themes
+
+## Technical Highlights
+
+- **Script-tag delivery** — fully self-contained bundle with no dependency on the host site's framework, build tools, or CSS reset
+- **CSS Modules + Vite** — hash-based scoping isolated widget styles from any host theme without the overhead of Shadow DOM
+- **Fixed sprint delivery** with a distributed international team across time zones`,
+        `[Noteefy](https://www.noteefy.com) é uma plataforma de gestão de receita para ==mais de 800 campos de golf== ao redor do mundo — automatizando listas de espera, reduzindo no-shows e capturando demanda de reservas. O [AI Pro Shop Assistant](https://www.noteefy.com/products/ai-pro-shop-assistant) é um chatbot incorporável que os operadores de campos adicionam aos seus sites via script tag, oferecendo aos golfistas acesso 24/7 a reservas de horários, inscrição em lista de espera e perguntas frequentes — sem envolver a equipe da loja.
+
+Entrei no projeto com um prazo já definido, ==elaborei o plano de implementação e a arquitetura de frontend== antes de escrever uma linha de código, e então construí o widget do zero — UI, camada de integração e empacotamento para embed — trabalhando em ciclos de sprint com um time internacional distribuído.
+
+![Interface do AI Pro Shop Assistant em um site de campo de golf](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
+
+*A interface do AI Pro Shop Assistant — golfistas fazem perguntas e reservam horários diretamente no chat.*
+
+## As Restrições
+
+O widget roda dentro de qualquer site de campo de golf sem controle sobre o CSS ou o ambiente JavaScript do host. Centenas de sites diferentes, cada um com seu próprio tema e folha de estilos, podiam quebrar o mesmo widget de formas silenciosas e distintas.
+
+A entrega tinha ==prazo fixo desde o primeiro dia==. Antes de iniciar a implementação, o time exigiu uma proposta de arquitetura de frontend — cobrindo estrutura de componentes, estratégia de estilos, mecanismo de embed e abordagem de integração — que elaborei e apresentei para alinhar o time no plano.
+
+A integração com o backend próprio da Noteefy — que gerencia o motor de conversação com IA e conecta com os sistemas de tee sheet — adicionou overhead de coordenação entre fusos horários ao longo do sprint.
+
+## AI Pro Shop Assistant
+
+Construí o widget completo com **React** e **Vite**, usando **Material UI** como sistema de componentes para a interface de chat e os elementos de UI.
+
+- **CSS Modules com escopo via Vite** — nomes de classe com hash impediram colisões de estilo entre o widget e os sites host, garantindo renderização correta independentemente do tema
+- **Entrega por script tag** — o widget é empacotado como bundle autocontido, injetado via snippet JavaScript que os clientes adicionam ao \`<head>\` do site; sem suposições sobre o framework ou toolchain do host
+- **Integração com a API da Noteefy** — o widget se comunica com o backend da Noteefy para respostas com IA, disponibilidade de horários em tempo real e inscrição em lista de espera
+
+O assistente está ==em produção== na rede de campos de golf clientes da Noteefy.
+
+![AI Pro Shop Assistant em produção no site de um campo de golf cliente](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-live.webp)
+
+*O widget incorporado e em produção no site de um cliente da Noteefy.*
+
+## Tecnologias
+
+- [React](https://react.dev) — UI e arquitetura de componentes do widget
+- [Vite](https://vitejs.dev) — bundler; habilitou o escopo de CSS Modules para isolamento de estilos entre ambientes host
+- [Material UI](https://mui.com) — biblioteca de componentes para a interface de chat e elementos de UI
+- [CSS Modules](https://github.com/css-modules/css-modules) — nomes de classe com escopo impedindo colisões com os temas dos sites host
+
+## Destaques Técnicos
+
+- **Entrega por script tag** — bundle autocontido sem dependência do framework, toolchain ou reset CSS do site host
+- **CSS Modules + Vite** — escopo com hash isolou os estilos do widget de qualquer tema host sem o overhead do Shadow DOM
+- **Entrega em sprints fixos** com time internacional distribuído em diferentes fusos horários`,
+        `[Noteefy](https://www.noteefy.com) es una plataforma de gestión de ingresos para ==más de 800 campos de golf== en todo el mundo — automatizando listas de espera, reduciendo no-shows y capturando demanda de reservas. El [AI Pro Shop Assistant](https://www.noteefy.com/products/ai-pro-shop-assistant) es un chatbot embebible que los operadores de campos añaden a sus sitios web mediante una script tag, dando a los golfistas acceso 24/7 a reservas de horarios, inscripción en lista de espera y preguntas frecuentes — sin intervención del personal de la tienda.
+
+Me incorporé al proyecto con un plazo ya definido, ==elaboré el plan de implementación y la arquitectura de frontend== antes de escribir una línea de código, y luego construí el widget desde cero — UI, capa de integración y empaquetado para embed — trabajando en ciclos de sprint con un equipo internacional distribuido.
+
+![Interfaz del AI Pro Shop Assistant en un sitio web de campo de golf](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
+
+*La interfaz del AI Pro Shop Assistant — los golfistas hacen preguntas y reservan horarios directamente en el chat.*
+
+## Las Restricciones
+
+El widget se ejecuta dentro de cualquier sitio web de campo de golf sin control sobre el CSS o el entorno JavaScript del host. Cientos de sitios diferentes, cada uno con su propio tema y hoja de estilos, podían romper el mismo widget de formas silenciosas y distintas.
+
+La entrega tenía ==plazo fijo desde el primer día==. Antes de iniciar la implementación, el equipo requirió una propuesta de arquitectura de frontend — cubriendo estructura de componentes, estrategia de estilos, mecanismo de embed y enfoque de integración — que elaboré y presenté para alinear al equipo en el plan.
+
+La integración contra el backend propio de Noteefy — que gestiona el motor de conversación con IA y conecta con los sistemas de tee sheet — añadió overhead de coordinación entre zonas horarias a lo largo del sprint.
+
+## AI Pro Shop Assistant
+
+Construí el widget completo con **React** y **Vite**, usando **Material UI** como sistema de componentes para la interfaz de chat y los elementos de UI.
+
+- **CSS Modules con alcance via Vite** — nombres de clase con hash previnieron colisiones de estilos entre el widget y los sitios host, garantizando una renderización correcta independientemente del tema
+- **Entrega por script tag** — el widget se empaqueta como bundle autocontenido, inyectado via snippet JavaScript que los clientes añaden al \`<head>\` de su sitio; sin suposiciones sobre el framework o toolchain del host
+- **Integración con la API de Noteefy** — el widget se comunica con el backend de Noteefy para respuestas con IA, disponibilidad de horarios en tiempo real e inscripción en lista de espera
+
+El asistente está ==en producción== en la red de campos de golf clientes de Noteefy.
+
+![AI Pro Shop Assistant en producción en el sitio web de un campo de golf cliente](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-live.webp)
+
+*El widget embebido y en producción en el sitio web de un cliente de Noteefy.*
+
+## Tecnologías
+
+- [React](https://react.dev) — UI y arquitectura de componentes del widget
+- [Vite](https://vitejs.dev) — bundler; habilitó el alcance de CSS Modules para aislamiento de estilos entre entornos host
+- [Material UI](https://mui.com) — biblioteca de componentes para la interfaz de chat y elementos de UI
+- [CSS Modules](https://github.com/css-modules/css-modules) — nombres de clase con alcance previniendo colisiones con los temas de los sitios host
+
+## Aspectos Técnicos Destacados
+
+- **Entrega por script tag** — bundle autocontenido sin dependencia del framework, toolchain o reset CSS del sitio host
+- **CSS Modules + Vite** — alcance con hash aisló los estilos del widget de cualquier tema host sin el overhead de Shadow DOM
+- **Entrega en sprints fijos** con equipo internacional distribuido en diferentes zonas horarias`,
+      ),
+      featured: false,
+      status: 'PUBLISHED' as const,
+      periodStart: new Date('2025-01-01'),
+      periodEnd: new Date('2025-03-31'),
+      skillIds: [ID.skills.react, ID.skills.vite, ID.skills.typescript],
       relatedProjectSlugs: [],
     },
     {

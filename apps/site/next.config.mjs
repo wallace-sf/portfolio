@@ -17,12 +17,8 @@ const nextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
-      { protocol: 'https', hostname: 'cdn.pixabay.com' },
       { protocol: 'https', hostname: 'placehold.co' },
-      { protocol: 'https', hostname: 'github.com' },
-      { protocol: 'https', hostname: 'opengraph.githubassets.com' },
       { protocol: 'https', hostname: '*.supabase.co' },
-      { protocol: 'https', hostname: 'cdn.shopify.com' },
     ],
   },
 };
