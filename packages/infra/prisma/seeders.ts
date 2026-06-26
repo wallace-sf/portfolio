@@ -373,7 +373,7 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
         'Repositorio del Portafolio Personal en GitHub',
       ),
       thumbnailImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-thumbnail2.webp',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-w-symbol.svg',
       thumbnailImageAlt: loc(
         'Personal Portfolio thumbnail',
         'Thumbnail do Portfólio Pessoal',
