@@ -799,68 +799,162 @@ Este portafolio es la primera presencia técnica pública que construí y poseo 
       id: ID.projects.b2bEcommerce,
       slug: 'b2b-ecommerce-platform',
       coverImageUrl:
-        'https://placehold.co/1200x630/0f172a/34d399?text=B2B+E-Commerce',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-cover.webp',
       coverImageAlt: loc(
-        'B2B e-commerce platform for construction materials',
-        'Plataforma B2B de e-commerce para materiais de construção',
-        'Plataforma B2B de e-commerce para materiales de construcción',
+        'TC Representações home — public landing page and gated login portal',
+        'Home da TC Representações — landing page pública e portal de acesso restrito',
+        'Home de TC Representações — landing page pública y portal de acceso restringido',
       ),
       thumbnailImageUrl:
-        'https://placehold.co/760x630/0f172a/34d399?text=B2B+E-Commerce',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-thumbnail.webp',
       thumbnailImageAlt: loc(
-        'B2B e-commerce platform thumbnail',
-        'Thumbnail da plataforma B2B de e-commerce',
-        'Thumbnail de la plataforma B2B de e-commerce',
+        'TC Representações B2B platform — gated wholesale storefront for construction materials',
+        'Plataforma B2B TC Representações — loja atacadista restrita para materiais de construção',
+        'Plataforma B2B TC Representações — tienda mayorista restringida para materiales de construcción',
       ),
       title: loc('B2B E-Commerce Platform', 'Plataforma B2B de E-Commerce', 'Plataforma B2B de E-Commerce'),
       caption: loc(
-        'Full-stack B2B platform for construction materials built with DDD, Clean Architecture, NestJS, and React.',
-        'Plataforma B2B full-stack para materiais de construção construída com DDD, Arquitetura Limpa, NestJS e React.',
-        'Plataforma B2B full-stack para materiales de construcción construida con DDD, Arquitectura Limpia, NestJS y React.',
+        'Full-stack B2B platform for construction materials built with Clean Architecture, React, and Node.js — from greenfield to production.',
+        'Plataforma B2B full-stack para materiais de construção com Arquitetura Limpa, React e Node.js — do zero à produção.',
+        'Plataforma B2B full-stack para materiales de construcción con Arquitectura Limpia, React y Node.js — de cero a producción.',
       ),
       content: loc(
-        `End-to-end engineering of a **B2B e-commerce platform** for construction materials, from system design to production delivery.
+        `[TC Representações](https://tcrepresentacoes.com.br) is a B2B wholesale platform for construction materials, built for Thiago Carvalho, an independent commercial representative from Mococa, SP who manages partnerships with six brands — Avant, Colson, Irwin, Kalipso EPI, Marluvas, and Termolar. The platform is a deliberate hybrid: a public institutional site for any visitor, and a ==gated private storefront== where access to pricing requires owner approval.
 
-Designed scalable RESTful APIs following **Domain-Driven Design** and **Clean Architecture**, separating business rules from infrastructure concerns. The frontend was built with **React.js** and **Vite**, consuming the API via React Query with optimistic updates.
+## The Constraints
 
-**Highlights**
-- DDD aggregates, repositories, and domain events across bounded contexts
-- NestJS modules with dependency injection and guard-based authorization
-- PostgreSQL with Prisma ORM; migrations managed per environment
-- AWS infrastructure (S3, EC2, RDS)
-- Tailwind CSS design system shared between customer and backoffice portals`,
-        `Engenharia completa de uma **plataforma B2B de e-commerce** para materiais de construção, desde o design do sistema até a entrega em produção.
+- Solo greenfield project with no design system, no existing codebase, and a strict infrastructure budget
+- B2B pricing carries business rules more complex than a standard e-commerce model, requiring a purpose-built pricing engine
+- The catalog spans ~2,000 SKUs across multiple brands and must support large bulk updates
+- Retailer access is intentionally restricted — protecting negotiated prices from competitor visibility
 
-Projetei APIs RESTful escaláveis seguindo **Domain-Driven Design** e **Arquitetura Limpa**, separando as regras de negócio das preocupações de infraestrutura. O frontend foi construído com **React.js** e **Vite**, consumindo a API via React Query com atualizações otimistas.
+## Storefront
 
-**Destaques**
-- Agregados DDD, repositórios e eventos de domínio em contextos delimitados
-- Módulos NestJS com injeção de dependência e autorização baseada em guards
-- PostgreSQL com Prisma ORM; migrations gerenciadas por ambiente
-- Infraestrutura AWS (S3, EC2, RDS)
-- Design system Tailwind CSS compartilhado entre os portais de clientes e backoffice`,
-        `Ingeniería completa de una **plataforma B2B de e-commerce** para materiales de construcción, desde el diseño del sistema hasta la entrega en producción.
+Built the complete SPA with React 18 and Vite:
 
-Diseñé APIs RESTful escalables siguiendo **Domain-Driven Design** y **Arquitectura Limpia**, separando las reglas de negocio de las preocupaciones de infraestructura. El frontend fue construido con **React.js** y **Vite**, consumiendo la API mediante React Query con actualizaciones optimistas.
+- Public side: landing page, brand showcase, and contact form — visible to any visitor
+- Gated side: registration with email confirmation, manual owner activation, then access to the full catalog
+- Infinite-scroll product catalog segmented by brand
+- Cart → Quote → Order flow with per-brand separation and automatic quote expiration
 
-**Aspectos Destacados**
-- Agregados DDD, repositorios y eventos de dominio en contextos delimitados
-- Módulos NestJS con inyección de dependencias y autorización basada en guards
-- PostgreSQL con Prisma ORM; migraciones gestionadas por entorno
-- Infraestructura AWS (S3, EC2, RDS)
-- Sistema de diseño Tailwind CSS compartido entre los portales de clientes y backoffice`,
+![TC Representações home — public landing page and gated login portal](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-hero.webp)
+
+![Three-step retailer registration form requiring business credentials and owner approval](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
+
+![The six represented brands, each with a dedicated product catalog](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+## API & Backend
+
+Designed the REST API following ==Clean Architecture== with a DDD-inspired domain layer:
+
+- Custom pricing engine built to reflect the specific B2B rules of the business — prices are computed at quote time from per-customer configurations
+- Reliable bulk product import pipeline built to handle large catalog updates
+- Deployed on AWS with Docker, product images served through CloudFront CDN
+
+## Technologies
+
+- [React](https://react.dev) + [Vite](https://vitejs.dev) — SPA storefront and gated customer portal
+- [Redux Toolkit](https://redux-toolkit.js.org) + [React Query](https://tanstack.com/query/latest) — auth state and server-state management with caching
+- [Node.js](https://nodejs.org) + [Express](https://expressjs.com) — REST API with Clean Architecture layering
+- [TypeORM](https://typeorm.io) + [PostgreSQL](https://www.postgresql.org) — persistence with repository pattern
+- [AWS S3](https://aws.amazon.com/s3/) + [CloudFront](https://aws.amazon.com/cloudfront/) — product image storage and CDN delivery
+- [Docker](https://www.docker.com) — containerized deployment on EC2
+- [Sentry](https://sentry.io) — production error tracking`,
+        `[TC Representações](https://tcrepresentacoes.com.br) é uma plataforma B2B de materiais de construção para Thiago Carvalho, representante comercial independente de Mococa, SP, com parcerias em seis marcas — Avant, Colson, Irwin, Kalipso EPI, Marluvas e Termolar. A plataforma é um híbrido intencional: um site institucional público para qualquer visitante, e uma ==loja privada restrita== onde o acesso aos preços depende de aprovação do dono.
+
+## As Restrições
+
+- Projeto greenfield solo sem design system, sem base de código existente e com orçamento de infraestrutura restrito
+- A precificação B2B carrega regras de negócio mais complexas do que um e-commerce convencional, exigindo um motor de precificação sob medida
+- O catálogo abrange ~2.000 SKUs em múltiplas marcas e precisa suportar atualizações em massa de grande volume
+- O acesso de lojistas é intencionalmente restrito — protegendo os preços negociados da visibilidade de concorrentes
+
+## Vitrine
+
+Construí o SPA completo com React 18 e Vite:
+
+- Lado público: landing page, vitrine de marcas e formulário de contato — visível para qualquer visitante
+- Lado restrito: cadastro com confirmação por e-mail, ativação manual pelo dono e acesso ao catálogo completo
+- Catálogo com scroll infinito segmentado por marca
+- Fluxo Carrinho → Orçamento → Pedido com separação por marca e expiração automática do orçamento
+
+![Home da TC Representações — landing page pública e portal de acesso restrito](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-hero.webp)
+
+![Formulário de cadastro de lojista em três etapas com dados empresariais e aprovação manual](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
+
+![As seis marcas representadas, cada uma com catálogo de produtos dedicado](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+## API & Backend
+
+Projetei a API REST seguindo ==Arquitetura Limpa== com camada de domínio inspirada em DDD:
+
+- Motor de precificação sob medida que reflete as regras B2B do negócio — preços calculados no momento do orçamento a partir de configurações por cliente
+- Pipeline de importação em massa construído para suportar atualizações de catálogo de grande volume com confiabilidade
+- Implantado na AWS com Docker, imagens de produtos servidas via CloudFront CDN
+
+## Tecnologias
+
+- [React](https://react.dev) + [Vite](https://vitejs.dev) — vitrine SPA e portal restrito para clientes
+- [Redux Toolkit](https://redux-toolkit.js.org) + [React Query](https://tanstack.com/query/latest) — estado de autenticação e estado de servidor com cache
+- [Node.js](https://nodejs.org) + [Express](https://expressjs.com) — API REST com camadas de Arquitetura Limpa
+- [TypeORM](https://typeorm.io) + [PostgreSQL](https://www.postgresql.org) — persistência com padrão repository
+- [AWS S3](https://aws.amazon.com/s3/) + [CloudFront](https://aws.amazon.com/cloudfront/) — armazenamento de imagens e CDN
+- [Docker](https://www.docker.com) — implantação containerizada no EC2
+- [Sentry](https://sentry.io) — rastreamento de erros em produção`,
+        `[TC Representações](https://tcrepresentacoes.com.br) es una plataforma B2B de materiales de construcción para Thiago Carvalho, representante comercial independiente de Mococa, SP, con alianzas en seis marcas — Avant, Colson, Irwin, Kalipso EPI, Marluvas y Termolar. La plataforma es un híbrido intencional: un sitio institucional público para cualquier visitante, y una ==tienda privada restringida== donde el acceso a los precios requiere aprobación del dueño.
+
+## Las Restricciones
+
+- Proyecto greenfield en solitario sin design system, sin base de código existente y con un presupuesto de infraestructura ajustado
+- La tarificación B2B lleva reglas de negocio más complejas que un e-commerce convencional, requiriendo un motor de precios a medida
+- El catálogo abarca ~2.000 SKUs en múltiples marcas y debe soportar actualizaciones masivas de gran volumen
+- El acceso de minoristas es intencionalmente restringido — protegiendo los precios negociados de la visibilidad de la competencia
+
+## Vitrina
+
+Construí el SPA completo con React 18 y Vite:
+
+- Lado público: landing page, vitrina de marcas y formulario de contacto — visible para cualquier visitante
+- Lado restringido: registro con confirmación por correo, activación manual por el dueño y acceso al catálogo completo
+- Catálogo con scroll infinito segmentado por marca
+- Flujo Carrito → Presupuesto → Pedido con separación por marca y vencimiento automático del presupuesto
+
+![Home de TC Representações — landing page pública y portal de acceso restringido](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-hero.webp)
+
+![Formulario de registro de minoristas en tres pasos con datos empresariales y aprobación manual](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
+
+![Las seis marcas representadas, cada una con catálogo de productos dedicado](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+## API & Backend
+
+Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio inspirada en DDD:
+
+- Motor de precios a medida que refleja las reglas B2B del negocio — precios calculados al generar el presupuesto a partir de configuraciones por cliente
+- Pipeline de importación masiva construido para soportar actualizaciones de catálogo de gran volumen con confiabilidad
+- Desplegado en AWS con Docker, imágenes de productos servidas vía CloudFront CDN
+
+## Tecnologías
+
+- [React](https://react.dev) + [Vite](https://vitejs.dev) — SPA de vitrina y portal restringido para clientes
+- [Redux Toolkit](https://redux-toolkit.js.org) + [React Query](https://tanstack.com/query/latest) — estado de autenticación y estado de servidor con caché
+- [Node.js](https://nodejs.org) + [Express](https://expressjs.com) — API REST con capas de Arquitectura Limpia
+- [TypeORM](https://typeorm.io) + [PostgreSQL](https://www.postgresql.org) — persistencia con patrón repository
+- [AWS S3](https://aws.amazon.com/s3/) + [CloudFront](https://aws.amazon.com/cloudfront/) — almacenamiento de imágenes y CDN
+- [Docker](https://www.docker.com) — despliegue en contenedor en EC2
+- [Sentry](https://sentry.io) — seguimiento de errores en producción`,
       ),
       featured: true,
       status: 'PUBLISHED' as const,
-      periodStart: new Date('2023-05-01'),
-      periodEnd: new Date('2024-06-30'),
+      periodStart: new Date('2021-12-01'),
+      periodEnd: new Date('2024-08-31'),
       skillIds: [
         ID.skills.typescript,
         ID.skills.react,
+        ID.skills.vite,
         ID.skills.nodejs,
-        ID.skills.nestjs,
         ID.skills.postgresql,
         ID.skills.aws,
+        ID.skills.docker,
         ID.skills.tailwindcss,
       ],
       relatedProjectSlugs: ['personal-portfolio'],
