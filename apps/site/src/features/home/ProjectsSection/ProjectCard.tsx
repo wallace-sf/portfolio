@@ -3,7 +3,7 @@
 import { FC } from 'react';
 
 import { screens } from '@repo/tailwind-config/screens';
-import { buttonVariants, Button } from '@repo/ui/Control';
+import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { useTranslations, useLocale } from 'next-intl';
