@@ -1467,14 +1467,14 @@ El asistente está ==en producción== en la red de campos de golf clientes de No
       id: ID.projects.mqttClient,
       slug: 'react-mqtt-workflow-manager',
       coverImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/react-mqtt/mqtt-cover.svg',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/react-mqtt/mqtt-cover.svg',
       coverImageAlt: loc(
         'React logo and MQTT logo side by side — React MQTT Workflow Manager library',
         'Logo do React e logo do MQTT lado a lado — biblioteca React MQTT Workflow Manager',
         'Logo de React y logo de MQTT uno al lado del otro — biblioteca React MQTT Workflow Manager',
       ),
       thumbnailImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/react-mqtt/mqtt-thumbnail.svg',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/react-mqtt/mqtt-thumbnail.svg',
       thumbnailImageAlt: loc(
         'React MQTT Workflow Manager — open-source library for the Flow Build ecosystem',
         'React MQTT Workflow Manager — biblioteca open-source para o ecossistema Flow Build',
