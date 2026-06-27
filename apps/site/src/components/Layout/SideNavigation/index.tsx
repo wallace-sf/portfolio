@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
 import { useBoolean, useScrollLock } from 'usehooks-ts';
 
+import { getResumeUrl } from '~/lib/resume';
 import { useBreakpoint } from '~hooks';
 
 import { Header } from '../Header';
@@ -55,7 +56,7 @@ export const SideNavigation: FC = () => {
           </li>
           <li>
             <MenuItem.Item1
-              href={process.env.NEXT_PUBLIC_RESUME_URL}
+              href={getResumeUrl(locale as Parameters<typeof getResumeUrl>[0])}
               icon="material-symbols:description"
               newTab
             >
