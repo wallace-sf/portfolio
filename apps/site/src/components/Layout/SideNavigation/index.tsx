@@ -17,7 +17,7 @@ import { ThemeToggle } from './ThemeToggle';
 
 export const SideNavigation: FC = () => {
   const t = useTranslations('SideNavigation');
-  const locale = useLocale() as Parameters<typeof getResumeUrl>[0];
+  const locale = useLocale();
   const isDesktop = useBreakpoint('lg');
   const { value: open, toggle } = useBoolean(false);
   const isOpen = !isDesktop && open;
@@ -56,7 +56,7 @@ export const SideNavigation: FC = () => {
           </li>
           <li>
             <MenuItem.Item1
-              href={getResumeUrl(locale)}
+              href={getResumeUrl(locale as Parameters<typeof getResumeUrl>[0])}
               icon="material-symbols:description"
               newTab
             >
