@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
 import { useBoolean, useScrollLock } from 'usehooks-ts';
 
+import { getResumeUrl } from '~/lib/resume';
 import { useBreakpoint } from '~hooks';
 
 import { Header } from '../Header';
@@ -16,7 +17,7 @@ import { ThemeToggle } from './ThemeToggle';
 
 export const SideNavigation: FC = () => {
   const t = useTranslations('SideNavigation');
-  const locale = useLocale();
+  const locale = useLocale() as Parameters<typeof getResumeUrl>[0];
   const isDesktop = useBreakpoint('lg');
   const { value: open, toggle } = useBoolean(false);
   const isOpen = !isDesktop && open;
@@ -55,7 +56,7 @@ export const SideNavigation: FC = () => {
           </li>
           <li>
             <MenuItem.Item1
-              href={process.env.NEXT_PUBLIC_RESUME_URL}
+              href={getResumeUrl(locale)}
               icon="material-symbols:description"
               newTab
             >
