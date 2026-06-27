@@ -226,7 +226,7 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
     update: {
       name: 'Wallace Ferreira',
       photoUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/profile/images/hero-landing-page.webp',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/profile/images/hero-landing-page.webp',
       featuredProjectSlugs: ['personal-portfolio', 'b2b-ecommerce-platform'],
       headline: loc(
         'Frontend Engineer · React & Next.js · TypeScript',
@@ -304,7 +304,7 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
         'Soy Ingeniero Frontend con más de 6 años de experiencia especializado en crear productos web escalables, de alto rendimiento y accesibles con React, Next.js y TypeScript.\n\nMi experiencia incluye liderar el diseño y desarrollo frontend, y actualmente trabajo en plataformas de atención al cliente con IA y soluciones de comercio global, sirviendo a más de 800 clientes en todo el mundo.\n\nApasionado por los entornos orientados al producto, me enfoco en arquitectura, UX y calidad para entregar resultados de impacto.\n\nActualmente en búsqueda de oportunidades internacionales para contribuir a productos digitales de alta calidad y crecer como ingeniero.',
       ),
       photoUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/profile/images/hero-landing-page.webp',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/profile/images/hero-landing-page.webp',
       photoAlt: loc('Professional Picture 1 of Wallace Ferreira', 'Foto profissional 1 de Wallace Ferreira', 'Foto profesional 1 de Wallace Ferreira'),
       featuredProjectSlugs: ['personal-portfolio', 'b2b-ecommerce-platform'],
       stats: {
@@ -366,14 +366,14 @@ export async function seedProjects(db: PrismaClient): Promise<void> {
       id: ID.projects.portfolio,
       slug: 'personal-portfolio',
       coverImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-cover.webp',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/portfolio/portfolio-cover.webp',
       coverImageAlt: loc(
         'Personal Portfolio repository on GitHub',
         'Repositório do Portfólio Pessoal no GitHub',
         'Repositorio del Portafolio Personal en GitHub',
       ),
       thumbnailImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/portfolio/portfolio-w-symbol.svg',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/portfolio/portfolio-w-symbol.svg',
       thumbnailImageAlt: loc(
         'Personal Portfolio thumbnail',
         'Thumbnail do Portfólio Pessoal',
@@ -799,68 +799,162 @@ Este portafolio es la primera presencia técnica pública que construí y poseo 
       id: ID.projects.b2bEcommerce,
       slug: 'b2b-ecommerce-platform',
       coverImageUrl:
-        'https://placehold.co/1200x630/0f172a/34d399?text=B2B+E-Commerce',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-cover.webp',
       coverImageAlt: loc(
-        'B2B e-commerce platform for construction materials',
-        'Plataforma B2B de e-commerce para materiais de construção',
-        'Plataforma B2B de e-commerce para materiales de construcción',
+        'TC Representações home — public landing page and gated login portal',
+        'Home da TC Representações — landing page pública e portal de acesso restrito',
+        'Home de TC Representações — landing page pública y portal de acceso restringido',
       ),
       thumbnailImageUrl:
-        'https://placehold.co/760x630/0f172a/34d399?text=B2B+E-Commerce',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-thumbnail.webp',
       thumbnailImageAlt: loc(
-        'B2B e-commerce platform thumbnail',
-        'Thumbnail da plataforma B2B de e-commerce',
-        'Thumbnail de la plataforma B2B de e-commerce',
+        'TC Representações B2B platform — gated wholesale storefront for construction materials',
+        'Plataforma B2B TC Representações — loja atacadista restrita para materiais de construção',
+        'Plataforma B2B TC Representações — tienda mayorista restringida para materiales de construcción',
       ),
       title: loc('B2B E-Commerce Platform', 'Plataforma B2B de E-Commerce', 'Plataforma B2B de E-Commerce'),
       caption: loc(
-        'Full-stack B2B platform for construction materials built with DDD, Clean Architecture, NestJS, and React.',
-        'Plataforma B2B full-stack para materiais de construção construída com DDD, Arquitetura Limpa, NestJS e React.',
-        'Plataforma B2B full-stack para materiales de construcción construida con DDD, Arquitectura Limpia, NestJS y React.',
+        'Full-stack B2B platform for construction materials built with Clean Architecture, React, and Node.js — from greenfield to production.',
+        'Plataforma B2B full-stack para materiais de construção com Arquitetura Limpa, React e Node.js — do zero à produção.',
+        'Plataforma B2B full-stack para materiales de construcción con Arquitectura Limpia, React y Node.js — de cero a producción.',
       ),
       content: loc(
-        `End-to-end engineering of a **B2B e-commerce platform** for construction materials, from system design to production delivery.
+        `[TC Representações](https://tcrepresentacoes.com.br) is a B2B wholesale platform for construction materials, built for Thiago Carvalho, an independent commercial representative from Mococa, SP who manages partnerships with six brands — Avant, Colson, Irwin, Kalipso EPI, Marluvas, and Termolar. The platform is a deliberate hybrid: a public institutional site for any visitor, and a ==gated private storefront== where access to pricing requires owner approval.
 
-Designed scalable RESTful APIs following **Domain-Driven Design** and **Clean Architecture**, separating business rules from infrastructure concerns. The frontend was built with **React.js** and **Vite**, consuming the API via React Query with optimistic updates.
+## The Constraints
 
-**Highlights**
-- DDD aggregates, repositories, and domain events across bounded contexts
-- NestJS modules with dependency injection and guard-based authorization
-- PostgreSQL with Prisma ORM; migrations managed per environment
-- AWS infrastructure (S3, EC2, RDS)
-- Tailwind CSS design system shared between customer and backoffice portals`,
-        `Engenharia completa de uma **plataforma B2B de e-commerce** para materiais de construção, desde o design do sistema até a entrega em produção.
+- Solo greenfield project with no design system, no existing codebase, and a strict infrastructure budget
+- B2B pricing carries business rules more complex than a standard e-commerce model, requiring a purpose-built pricing engine
+- The catalog spans ~2,000 SKUs across multiple brands and must support large bulk updates
+- Retailer access is intentionally restricted — protecting negotiated prices from competitor visibility
 
-Projetei APIs RESTful escaláveis seguindo **Domain-Driven Design** e **Arquitetura Limpa**, separando as regras de negócio das preocupações de infraestrutura. O frontend foi construído com **React.js** e **Vite**, consumindo a API via React Query com atualizações otimistas.
+## Storefront
 
-**Destaques**
-- Agregados DDD, repositórios e eventos de domínio em contextos delimitados
-- Módulos NestJS com injeção de dependência e autorização baseada em guards
-- PostgreSQL com Prisma ORM; migrations gerenciadas por ambiente
-- Infraestrutura AWS (S3, EC2, RDS)
-- Design system Tailwind CSS compartilhado entre os portais de clientes e backoffice`,
-        `Ingeniería completa de una **plataforma B2B de e-commerce** para materiales de construcción, desde el diseño del sistema hasta la entrega en producción.
+Built the complete SPA with React 18 and Vite:
 
-Diseñé APIs RESTful escalables siguiendo **Domain-Driven Design** y **Arquitectura Limpia**, separando las reglas de negocio de las preocupaciones de infraestructura. El frontend fue construido con **React.js** y **Vite**, consumiendo la API mediante React Query con actualizaciones optimistas.
+- Public side: landing page, brand showcase, and contact form — visible to any visitor
+- Gated side: registration with email confirmation, manual owner activation, then access to the full catalog
+- Infinite-scroll product catalog segmented by brand
+- Cart → Quote → Order flow with per-brand separation and automatic quote expiration
 
-**Aspectos Destacados**
-- Agregados DDD, repositorios y eventos de dominio en contextos delimitados
-- Módulos NestJS con inyección de dependencias y autorización basada en guards
-- PostgreSQL con Prisma ORM; migraciones gestionadas por entorno
-- Infraestructura AWS (S3, EC2, RDS)
-- Sistema de diseño Tailwind CSS compartido entre los portales de clientes y backoffice`,
+![TC Representações home — public landing page and gated login portal](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-hero.webp)
+
+![Three-step retailer registration form requiring business credentials and owner approval](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
+
+![The six represented brands, each with a dedicated product catalog](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+## API & Backend
+
+Designed the REST API following ==Clean Architecture== with a DDD-inspired domain layer:
+
+- Custom pricing engine built to reflect the specific B2B rules of the business — prices are computed at quote time from per-customer configurations
+- Reliable bulk product import pipeline built to handle large catalog updates
+- Deployed on AWS with Docker, product images served through CloudFront CDN
+
+## Technologies
+
+- [React](https://react.dev) + [Vite](https://vitejs.dev) — SPA storefront and gated customer portal
+- [Redux Toolkit](https://redux-toolkit.js.org) + [React Query](https://tanstack.com/query/latest) — auth state and server-state management with caching
+- [Node.js](https://nodejs.org) + [Express](https://expressjs.com) — REST API with Clean Architecture layering
+- [TypeORM](https://typeorm.io) + [PostgreSQL](https://www.postgresql.org) — persistence with repository pattern
+- [AWS S3](https://aws.amazon.com/s3/) + [CloudFront](https://aws.amazon.com/cloudfront/) — product image storage and CDN delivery
+- [Docker](https://www.docker.com) — containerized deployment on EC2
+- [Sentry](https://sentry.io) — production error tracking`,
+        `[TC Representações](https://tcrepresentacoes.com.br) é uma plataforma B2B de materiais de construção para Thiago Carvalho, representante comercial independente de Mococa, SP, com parcerias em seis marcas — Avant, Colson, Irwin, Kalipso EPI, Marluvas e Termolar. A plataforma é um híbrido intencional: um site institucional público para qualquer visitante, e uma ==loja privada restrita== onde o acesso aos preços depende de aprovação do dono.
+
+## As Restrições
+
+- Projeto greenfield solo sem design system, sem base de código existente e com orçamento de infraestrutura restrito
+- A precificação B2B carrega regras de negócio mais complexas do que um e-commerce convencional, exigindo um motor de precificação sob medida
+- O catálogo abrange ~2.000 SKUs em múltiplas marcas e precisa suportar atualizações em massa de grande volume
+- O acesso de lojistas é intencionalmente restrito — protegendo os preços negociados da visibilidade de concorrentes
+
+## Vitrine
+
+Construí o SPA completo com React 18 e Vite:
+
+- Lado público: landing page, vitrine de marcas e formulário de contato — visível para qualquer visitante
+- Lado restrito: cadastro com confirmação por e-mail, ativação manual pelo dono e acesso ao catálogo completo
+- Catálogo com scroll infinito segmentado por marca
+- Fluxo Carrinho → Orçamento → Pedido com separação por marca e expiração automática do orçamento
+
+![Home da TC Representações — landing page pública e portal de acesso restrito](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-hero.webp)
+
+![Formulário de cadastro de lojista em três etapas com dados empresariais e aprovação manual](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
+
+![As seis marcas representadas, cada uma com catálogo de produtos dedicado](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+## API & Backend
+
+Projetei a API REST seguindo ==Arquitetura Limpa== com camada de domínio inspirada em DDD:
+
+- Motor de precificação sob medida que reflete as regras B2B do negócio — preços calculados no momento do orçamento a partir de configurações por cliente
+- Pipeline de importação em massa construído para suportar atualizações de catálogo de grande volume com confiabilidade
+- Implantado na AWS com Docker, imagens de produtos servidas via CloudFront CDN
+
+## Tecnologias
+
+- [React](https://react.dev) + [Vite](https://vitejs.dev) — vitrine SPA e portal restrito para clientes
+- [Redux Toolkit](https://redux-toolkit.js.org) + [React Query](https://tanstack.com/query/latest) — estado de autenticação e estado de servidor com cache
+- [Node.js](https://nodejs.org) + [Express](https://expressjs.com) — API REST com camadas de Arquitetura Limpa
+- [TypeORM](https://typeorm.io) + [PostgreSQL](https://www.postgresql.org) — persistência com padrão repository
+- [AWS S3](https://aws.amazon.com/s3/) + [CloudFront](https://aws.amazon.com/cloudfront/) — armazenamento de imagens e CDN
+- [Docker](https://www.docker.com) — implantação containerizada no EC2
+- [Sentry](https://sentry.io) — rastreamento de erros em produção`,
+        `[TC Representações](https://tcrepresentacoes.com.br) es una plataforma B2B de materiales de construcción para Thiago Carvalho, representante comercial independiente de Mococa, SP, con alianzas en seis marcas — Avant, Colson, Irwin, Kalipso EPI, Marluvas y Termolar. La plataforma es un híbrido intencional: un sitio institucional público para cualquier visitante, y una ==tienda privada restringida== donde el acceso a los precios requiere aprobación del dueño.
+
+## Las Restricciones
+
+- Proyecto greenfield en solitario sin design system, sin base de código existente y con un presupuesto de infraestructura ajustado
+- La tarificación B2B lleva reglas de negocio más complejas que un e-commerce convencional, requiriendo un motor de precios a medida
+- El catálogo abarca ~2.000 SKUs en múltiples marcas y debe soportar actualizaciones masivas de gran volumen
+- El acceso de minoristas es intencionalmente restringido — protegiendo los precios negociados de la visibilidad de la competencia
+
+## Vitrina
+
+Construí el SPA completo con React 18 y Vite:
+
+- Lado público: landing page, vitrina de marcas y formulario de contacto — visible para cualquier visitante
+- Lado restringido: registro con confirmación por correo, activación manual por el dueño y acceso al catálogo completo
+- Catálogo con scroll infinito segmentado por marca
+- Flujo Carrito → Presupuesto → Pedido con separación por marca y vencimiento automático del presupuesto
+
+![Home de TC Representações — landing page pública y portal de acceso restringido](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-hero.webp)
+
+![Formulario de registro de minoristas en tres pasos con datos empresariales y aprobación manual](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
+
+![Las seis marcas representadas, cada una con catálogo de productos dedicado](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+## API & Backend
+
+Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio inspirada en DDD:
+
+- Motor de precios a medida que refleja las reglas B2B del negocio — precios calculados al generar el presupuesto a partir de configuraciones por cliente
+- Pipeline de importación masiva construido para soportar actualizaciones de catálogo de gran volumen con confiabilidad
+- Desplegado en AWS con Docker, imágenes de productos servidas vía CloudFront CDN
+
+## Tecnologías
+
+- [React](https://react.dev) + [Vite](https://vitejs.dev) — SPA de vitrina y portal restringido para clientes
+- [Redux Toolkit](https://redux-toolkit.js.org) + [React Query](https://tanstack.com/query/latest) — estado de autenticación y estado de servidor con caché
+- [Node.js](https://nodejs.org) + [Express](https://expressjs.com) — API REST con capas de Arquitectura Limpia
+- [TypeORM](https://typeorm.io) + [PostgreSQL](https://www.postgresql.org) — persistencia con patrón repository
+- [AWS S3](https://aws.amazon.com/s3/) + [CloudFront](https://aws.amazon.com/cloudfront/) — almacenamiento de imágenes y CDN
+- [Docker](https://www.docker.com) — despliegue en contenedor en EC2
+- [Sentry](https://sentry.io) — seguimiento de errores en producción`,
       ),
       featured: true,
       status: 'PUBLISHED' as const,
-      periodStart: new Date('2023-05-01'),
-      periodEnd: new Date('2024-06-30'),
+      periodStart: new Date('2021-12-01'),
+      periodEnd: new Date('2024-08-31'),
       skillIds: [
         ID.skills.typescript,
         ID.skills.react,
+        ID.skills.vite,
         ID.skills.nodejs,
-        ID.skills.nestjs,
         ID.skills.postgresql,
         ID.skills.aws,
+        ID.skills.docker,
         ID.skills.tailwindcss,
       ],
       relatedProjectSlugs: ['personal-portfolio'],
@@ -932,14 +1026,14 @@ Construí todo el frontend con **React.js**, **Material UI** y **GraphQL**, incl
       id: ID.projects.buyrShopifyApp,
       slug: 'buyr-shopify-app',
       coverImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/buyr-cover.webp',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/buyr-cover.webp',
       coverImageAlt: loc(
         'Buyr Shopify app — interactive pricing and AI offer negotiation',
         'App Buyr para Shopify — precificação interativa e negociação de ofertas por IA',
         'App Buyr para Shopify — precios interactivos y negociación de ofertas por IA',
       ),
       thumbnailImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/buyr-thumbnail.webp',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/buyr-thumbnail.webp',
       thumbnailImageAlt: loc(
         'Buyr Shopify app thumbnail',
         'Thumbnail do app Buyr para Shopify',
@@ -962,7 +1056,7 @@ The app runs embedded inside any Shopify storefront theme — with no control ov
 
 On top of that, ==Shopify's own acceptance criteria imposed strict performance thresholds the app had to meet to stay listed in the App Store==. Performance wasn't optional — it was a gate.
 
-![Interactive price input and AI negotiation chat interface](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
+![Interactive price input and AI negotiation chat interface](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/storefront-widget.webp)
 
 *The storefront widget — interactive price input with AI negotiation chat.*
 
@@ -994,7 +1088,7 @@ Meeting Shopify's App Store performance requirements meant treating performance 
 
 ## Merchant Admin
 
-![Real-time offer management dashboard for merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
+![Real-time offer management dashboard for merchants](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Real-time offer management — merchants see and act on incoming offers as they arrive.*
 
@@ -1004,7 +1098,7 @@ On the merchant side, I built three screens using **Shopify Polaris**:
 - **Analytics screen** — dashboard giving merchants visibility into received vs. accepted offers over time
 - **Onboarding / welcome screen** — guided setup experience for merchants installing the app for the first time
 
-![Custom pricing models configuration screen](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
+![Custom pricing models configuration screen](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Custom pricing models — merchants define thresholds and discount rules per product.*
 
@@ -1050,7 +1144,7 @@ O app roda incorporado dentro de qualquer tema de storefront da Shopify — sem 
 
 Além disso, ==os próprios critérios de aceitação da Shopify impõem limites rígidos de performance que o app precisava atingir para permanecer listado na App Store==. Performance não era opcional — era um requisito de aprovação.
 
-![Interface de entrada de preço interativa e chat de negociação por IA](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
+![Interface de entrada de preço interativa e chat de negociação por IA](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/storefront-widget.webp)
 
 *O widget do storefront — entrada de preço interativa com chat de negociação por IA.*
 
@@ -1082,7 +1176,7 @@ Atender aos requisitos de performance da App Store da Shopify significou tratar 
 
 ## Administração dos Merchants
 
-![Painel de gerenciamento de ofertas em tempo real para merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
+![Painel de gerenciamento de ofertas em tempo real para merchants](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Gerenciamento de ofertas em tempo real — merchants veem e agem sobre as ofertas recebidas conforme chegam.*
 
@@ -1092,7 +1186,7 @@ No lado dos merchants, construí três telas usando **Shopify Polaris**:
 - **Tela de analytics** — painel que dá aos merchants visibilidade sobre ofertas recebidas vs. aceitas ao longo do tempo
 - **Tela de onboarding / boas-vindas** — experiência guiada de configuração para merchants instalando o app pela primeira vez
 
-![Tela de configuração de modelos de precificação personalizados](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
+![Tela de configuração de modelos de precificação personalizados](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Modelos de precificação personalizados — merchants definem limites e regras de desconto por produto.*
 
@@ -1126,7 +1220,7 @@ La app se ejecuta integrada dentro de cualquier tema de storefront de Shopify �
 
 Además, ==los propios criterios de aceptación de Shopify imponen umbrales de rendimiento estrictos que la app debía cumplir para mantenerse en la App Store==. El rendimiento no era opcional — era un requisito de aprobación.
 
-![Interfaz de entrada de precio interactiva y chat de negociación con IA](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/storefront-widget.webp)
+![Interfaz de entrada de precio interactiva y chat de negociación con IA](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/storefront-widget.webp)
 
 *El widget del storefront — entrada de precio interactiva con chat de negociación por IA.*
 
@@ -1158,7 +1252,7 @@ Cumplir los requisitos de rendimiento de la App Store de Shopify significó trat
 
 ## Administración de Merchants
 
-![Panel de gestión de ofertas en tiempo real para merchants](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/offer-management-dashboard.webp)
+![Panel de gestión de ofertas en tiempo real para merchants](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/offer-management-dashboard.webp)
 
 *Gestión de ofertas en tiempo real — los merchants ven y actúan sobre las ofertas entrantes a medida que llegan.*
 
@@ -1168,7 +1262,7 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
 - **Pantalla de analytics** — panel que da a los merchants visibilidad sobre las ofertas recibidas vs. aceptadas a lo largo del tiempo
 - **Pantalla de onboarding / bienvenida** — experiencia guiada de configuración para merchants que instalan la app por primera vez
 
-![Pantalla de configuración de modelos de precios personalizados](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/buyr/custom-pricing-models.webp)
+![Pantalla de configuración de modelos de precios personalizados](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/buyr/custom-pricing-models.webp)
 
 *Modelos de precios personalizados — los merchants definen umbrales y reglas de descuento por producto.*
 
@@ -1211,14 +1305,14 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
       id: ID.projects.aiGolfAssistant,
       slug: 'ai-golf-assistant',
       coverImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-golf-assistant-cover.webp',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/noteefy/ai-golf-assistant-cover.webp',
       coverImageAlt: loc(
         'Noteefy platform — dashboard, mobile app, and AI Pro Shop Assistant',
         'Plataforma Noteefy — dashboard, app mobile e AI Pro Shop Assistant',
         'Plataforma Noteefy — dashboard, app móvil y AI Pro Shop Assistant',
       ),
       thumbnailImageUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/noteefy-thumbnail.webp',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/noteefy/noteefy-thumbnail.webp',
       thumbnailImageAlt: loc(
         'Noteefy logo',
         'Logo da Noteefy',
@@ -1239,7 +1333,7 @@ En el lado de los merchants, construí tres pantallas usando **Shopify Polaris**
 
 I joined with a fixed deadline already set, ==defined the frontend architecture and implementation plan== before writing a line of code, and then built the widget from scratch — UI, integration layer, and embed packaging — working in a sprint-based cycle with a distributed international team.
 
-![AI Pro Shop Assistant chat interface on a golf course website](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
+![AI Pro Shop Assistant chat interface on a golf course website](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
 
 *The AI Pro Shop Assistant interface — golfers ask questions and book tee times directly in the chat.*
 
@@ -1261,7 +1355,7 @@ Built the complete widget using **React** and **Vite**, with **Material UI** pro
 
 The assistant is ==live in production== across Noteefy's client network of golf courses.
 
-![AI Pro Shop Assistant live on a client golf course website](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-live.webp)
+![AI Pro Shop Assistant live on a client golf course website](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/noteefy/ai-pro-assistant-live.webp)
 
 *The widget embedded and live on a Noteefy client's website.*
 
@@ -1281,7 +1375,7 @@ The assistant is ==live in production== across Noteefy's client network of golf 
 
 Entrei no projeto com um prazo já definido, ==elaborei o plano de implementação e a arquitetura de frontend== antes de escrever uma linha de código, e então construí o widget do zero — UI, camada de integração e empacotamento para embed — trabalhando em ciclos de sprint com um time internacional distribuído.
 
-![Interface do AI Pro Shop Assistant em um site de campo de golf](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
+![Interface do AI Pro Shop Assistant em um site de campo de golf](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
 
 *A interface do AI Pro Shop Assistant — golfistas fazem perguntas e reservam horários diretamente no chat.*
 
@@ -1303,7 +1397,7 @@ Construí o widget completo com **React** e **Vite**, usando **Material UI** com
 
 O assistente está ==em produção== na rede de campos de golf clientes da Noteefy.
 
-![AI Pro Shop Assistant em produção no site de um campo de golf cliente](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-live.webp)
+![AI Pro Shop Assistant em produção no site de um campo de golf cliente](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/noteefy/ai-pro-assistant-live.webp)
 
 *O widget incorporado e em produção no site de um cliente da Noteefy.*
 
@@ -1323,7 +1417,7 @@ O assistente está ==em produção== na rede de campos de golf clientes da Notee
 
 Me incorporé al proyecto con un plazo ya definido, ==elaboré el plan de implementación y la arquitectura de frontend== antes de escribir una línea de código, y luego construí el widget desde cero — UI, capa de integración y empaquetado para embed — trabajando en ciclos de sprint con un equipo internacional distribuido.
 
-![Interfaz del AI Pro Shop Assistant en un sitio web de campo de golf](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
+![Interfaz del AI Pro Shop Assistant en un sitio web de campo de golf](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/noteefy/ai-pro-assistant-widget.webp)
 
 *La interfaz del AI Pro Shop Assistant — los golfistas hacen preguntas y reservan horarios directamente en el chat.*
 
@@ -1345,7 +1439,7 @@ Construí el widget completo con **React** y **Vite**, usando **Material UI** co
 
 El asistente está ==en producción== en la red de campos de golf clientes de Noteefy.
 
-![AI Pro Shop Assistant en producción en el sitio web de un campo de golf cliente](https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/noteefy/ai-pro-assistant-live.webp)
+![AI Pro Shop Assistant en producción en el sitio web de un campo de golf cliente](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/noteefy/ai-pro-assistant-live.webp)
 
 *El widget embebido y en producción en el sitio web de un cliente de Noteefy.*
 
@@ -1371,61 +1465,104 @@ El asistente está ==en producción== en la red de campos de golf clientes de No
     },
     {
       id: ID.projects.mqttClient,
-      slug: 'react-mqtt-websocket',
+      slug: 'react-mqtt-workflow-manager',
       coverImageUrl:
-        'https://placehold.co/1200x630/0f172a/60a5fa?text=React+MQTT',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/react-mqtt/mqtt-cover.svg',
       coverImageAlt: loc(
-        'Open-source MQTT client library for React',
-        'Biblioteca open-source de cliente MQTT para React',
-        'Biblioteca open-source de cliente MQTT para React',
+        'React logo and MQTT logo side by side — React MQTT Workflow Manager library',
+        'Logo do React e logo do MQTT lado a lado — biblioteca React MQTT Workflow Manager',
+        'Logo de React y logo de MQTT uno al lado del otro — biblioteca React MQTT Workflow Manager',
       ),
       thumbnailImageUrl:
-        'https://placehold.co/760x630/0f172a/60a5fa?text=React+MQTT',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/react-mqtt/mqtt-thumbnail.svg',
       thumbnailImageAlt: loc(
-        'React MQTT WebSocket thumbnail',
-        'Thumbnail do React MQTT WebSocket',
-        'Thumbnail de React MQTT WebSocket',
+        'React MQTT Workflow Manager — open-source library for the Flow Build ecosystem',
+        'React MQTT Workflow Manager — biblioteca open-source para o ecossistema Flow Build',
+        'React MQTT Workflow Manager — biblioteca de código abierto para el ecosistema Flow Build',
       ),
-      title: loc('React MQTT WebSocket', 'React MQTT WebSocket', 'React MQTT WebSocket'),
+      title: loc('React MQTT Workflow Manager', 'React MQTT Workflow Manager', 'React MQTT Workflow Manager'),
       caption: loc(
-        'An open-source MQTT client library for React with hooks-based API and real-time topic subscriptions.',
-        'Biblioteca open-source de cliente MQTT para React com API baseada em hooks e subscrições de tópicos em tempo real.',
-        'Biblioteca open-source de cliente MQTT para React con API basada en hooks y suscripciones de tópicos en tiempo real.',
+        'Open-source React library built for the Flow Build ecosystem — wraps MQTT event subscriptions behind a hooks-based API and published to npm.',
+        'Biblioteca React open-source construída para o ecossistema Flow Build — encapsula assinaturas de eventos MQTT em uma API baseada em hooks publicada no npm.',
+        'Biblioteca React de código abierto construida para el ecosistema Flow Build — encapsula suscripciones de eventos MQTT en una API basada en hooks publicada en npm.',
       ),
       content: loc(
-        `An **open-source MQTT client library** for React applications, created to simplify integration with MQTT brokers over WebSocket in real-time web platforms.
+        `[Flow Build](https://github.com/flow-build) is an open-source JSON-based workflow engine created by [FDTE](https://www.fdte.org.br/) (Fundação para o Desenvolvimento Tecnológico da Engenharia), a São Paulo engineering foundation. React applications that participate in a Flow Build workflow — a multi-step form, an approval process, any event-driven sequence — must subscribe to events the engine publishes on an MQTT broker. \`@flowbuild/react-mqtt-workflow-manager\` packages all that integration logic into a ==single reusable library== so any client project in the ecosystem can connect without reimplementing it from scratch.
 
-Developed while working at FDTE on industrial and public-sector platforms that required live data from IoT devices and event-driven systems.
+## The Constraints
 
-**Highlights**
-- Hooks-based API (\`useMqtt\`, \`useSubscription\`) following React idioms
-- Automatic reconnection with exponential backoff
-- TypeScript-first with full type inference for message payloads
-- Zero dependencies beyond the standard MQTT.js client`,
-        `Uma **biblioteca open-source de cliente MQTT** para aplicações React, criada para simplificar a integração com brokers MQTT via WebSocket em plataformas web em tempo real.
+- MQTT connections are stateful and long-lived — fundamentally different from React's component lifecycle, which mounts and unmounts freely
+- Without a shared abstraction, every Flow Build client project would reimplement broker connection, subscription management, and Redux state wiring independently
+- Redux state had to be injectable before the React tree mounts, requiring a bridge between imperative configuration and declarative rendering
 
-Desenvolvida enquanto trabalhava na FDTE em plataformas industriais e do setor público que exigiam dados ao vivo de dispositivos IoT e sistemas orientados a eventos.
+## The Library
 
-**Destaques**
-- API baseada em hooks (\`useMqtt\`, \`useSubscription\`) seguindo os idiomas do React
-- Reconexão automática com backoff exponencial
-- TypeScript-first com inferência de tipos completa para payloads de mensagens
-- Zero dependências além do cliente padrão MQTT.js`,
-        `Una **biblioteca open-source de cliente MQTT** para aplicaciones React, creada para simplificar la integración con brokers MQTT vía WebSocket en plataformas web en tiempo real.
+Built and ==published to npm== as the single MQTT integration point for React frontends in the Flow Build ecosystem:
 
-Desarrollada mientras trabajaba en FDTE en plataformas industriales y del sector público que requerían datos en vivo de dispositivos IoT y sistemas orientados a eventos.
+- **\`WorkflowManager\`** — context provider that owns the broker connection lifecycle and wraps the application
+- **\`WorkflowManagerConfig\`** — static utility class for use outside component scope: \`setStore\`, \`subscribe\`, \`unsubscribe\`
+- **\`useMqtt()\`** — returns \`{ client, status, error }\` for connection awareness inside components
+- **\`useSubscribe()\` / \`useUnsubscribe()\`** — hooks that expose topic subscription management following React idioms
 
-**Aspectos Destacados**
-- API basada en hooks (\`useMqtt\`, \`useSubscription\`) siguiendo los idiomas de React
-- Reconexión automática con backoff exponencial
-- TypeScript-first con inferencia de tipos completa para payloads de mensajes
-- Sin dependencias más allá del cliente estándar MQTT.js`,
+## Technologies
+
+- [TypeScript](https://www.typescriptlang.org) — full type coverage including MQTT client options and hook return shapes
+- [React 18](https://react.dev) + Context API — provider pattern for connection lifecycle management
+- [MQTT.js](https://github.com/mqttjs/MQTT.js) — underlying WebSocket/WSS broker client
+- [Redux Toolkit](https://redux-toolkit.js.org) — \`workflowManagerReducer\` slice shared across the host application`,
+        `[Flow Build](https://github.com/flow-build) é um motor de workflows de código aberto baseado em JSON, criado pela [FDTE](https://www.fdte.org.br/) (Fundação para o Desenvolvimento Tecnológico da Engenharia), uma fundação de engenharia de São Paulo. Aplicações React que participam de um workflow do Flow Build — um formulário multi-step, um processo de aprovação, qualquer sequência orientada a eventos — precisam assinar eventos que o motor publica em um broker MQTT. O \`@flowbuild/react-mqtt-workflow-manager\` empacota toda essa lógica de integração em uma ==biblioteca reutilizável== para que qualquer projeto cliente do ecossistema possa se conectar sem reimplementá-la.
+
+## As Restrições
+
+- Conexões MQTT são stateful e de longa duração — fundamentalmente diferentes do ciclo de vida de componentes React, que montam e desmontam livremente
+- Sem uma abstração compartilhada, cada projeto cliente do Flow Build reimplementaria do zero a conexão ao broker, o gerenciamento de assinaturas e a integração com Redux
+- O estado do Redux precisava ser injetável antes da árvore React montar, exigindo uma ponte entre configuração imperativa e renderização declarativa
+
+## A Biblioteca
+
+Construída e ==publicada no npm== como o único ponto de integração MQTT para frontends React no ecossistema Flow Build:
+
+- **\`WorkflowManager\`** — provider de contexto que gerencia o ciclo de vida da conexão ao broker e envolve a aplicação
+- **\`WorkflowManagerConfig\`** — classe utilitária estática para uso fora do escopo de componentes: \`setStore\`, \`subscribe\`, \`unsubscribe\`
+- **\`useMqtt()\`** — retorna \`{ client, status, error }\` para visibilidade da conexão dentro de componentes
+- **\`useSubscribe()\` / \`useUnsubscribe()\`** — hooks que expõem o gerenciamento de assinaturas de tópicos seguindo os idiomas do React
+
+## Tecnologias
+
+- [TypeScript](https://www.typescriptlang.org) — cobertura completa de tipos, incluindo opções do cliente MQTT e formatos de retorno dos hooks
+- [React 18](https://react.dev) + Context API — padrão provider para gerenciamento do ciclo de vida da conexão
+- [MQTT.js](https://github.com/mqttjs/MQTT.js) — cliente de broker WebSocket/WSS subjacente
+- [Redux Toolkit](https://redux-toolkit.js.org) — slice \`workflowManagerReducer\` compartilhado em toda a aplicação hospedeira`,
+        `[Flow Build](https://github.com/flow-build) es un motor de flujos de trabajo de código abierto basado en JSON, creado por [FDTE](https://www.fdte.org.br/) (Fundação para o Desenvolvimento Tecnológico da Engenharia), una fundación de ingeniería de São Paulo. Las aplicaciones React que participan en un workflow de Flow Build — un formulario de múltiples pasos, un proceso de aprobación, cualquier secuencia orientada a eventos — deben suscribirse a los eventos que el motor publica en un broker MQTT. \`@flowbuild/react-mqtt-workflow-manager\` empaqueta toda esa lógica de integración en una ==biblioteca reutilizable== para que cualquier proyecto cliente del ecosistema pueda conectarse sin reimplementarla.
+
+## Las Restricciones
+
+- Las conexiones MQTT son stateful y de larga duración — fundamentalmente distintas del ciclo de vida de los componentes React, que montan y desmontan libremente
+- Sin una abstracción compartida, cada proyecto cliente de Flow Build reimplementaría desde cero la conexión al broker, la gestión de suscripciones y la integración con Redux
+- El estado de Redux debía ser inyectable antes de que el árbol React se monte, requiriendo un puente entre la configuración imperativa y el renderizado declarativo
+
+## La Biblioteca
+
+Construida y ==publicada en npm== como el único punto de integración MQTT para frontends React en el ecosistema Flow Build:
+
+- **\`WorkflowManager\`** — provider de contexto que gestiona el ciclo de vida de la conexión al broker y envuelve la aplicación
+- **\`WorkflowManagerConfig\`** — clase utilitaria estática para uso fuera del ámbito de los componentes: \`setStore\`, \`subscribe\`, \`unsubscribe\`
+- **\`useMqtt()\`** — devuelve \`{ client, status, error }\` para visibilidad de la conexión dentro de los componentes
+- **\`useSubscribe()\` / \`useUnsubscribe()\`** — hooks que exponen la gestión de suscripciones de tópicos siguiendo los idiomas de React
+
+## Tecnologías
+
+- [TypeScript](https://www.typescriptlang.org) — cobertura completa de tipos, incluyendo opciones del cliente MQTT y formas de retorno de los hooks
+- [React 18](https://react.dev) + Context API — patrón provider para la gestión del ciclo de vida de la conexión
+- [MQTT.js](https://github.com/mqttjs/MQTT.js) — cliente de broker WebSocket/WSS subyacente
+- [Redux Toolkit](https://redux-toolkit.js.org) — slice \`workflowManagerReducer\` compartido en toda la aplicación anfitriona`,
       ),
       featured: false,
       status: 'PUBLISHED' as const,
-      periodStart: new Date('2022-01-01'),
-      periodEnd: new Date('2022-06-01'),
-      skillIds: [ID.skills.typescript, ID.skills.react, ID.skills.nodejs],
+      repositoryUrl: 'https://github.com/flow-build/react-mqtt-workflow-manager',
+      periodStart: new Date('2023-02-01'),
+      periodEnd: new Date('2023-03-01'),
+      skillIds: [ID.skills.typescript, ID.skills.react],
       relatedProjectSlugs: [],
     },
   ];
