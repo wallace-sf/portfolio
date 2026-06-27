@@ -1465,61 +1465,104 @@ El asistente está ==en producción== en la red de campos de golf clientes de No
     },
     {
       id: ID.projects.mqttClient,
-      slug: 'react-mqtt-websocket',
+      slug: 'react-mqtt-workflow-manager',
       coverImageUrl:
-        'https://placehold.co/1200x630/0f172a/60a5fa?text=React+MQTT',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/react-mqtt/mqtt-cover.svg',
       coverImageAlt: loc(
-        'Open-source MQTT client library for React',
-        'Biblioteca open-source de cliente MQTT para React',
-        'Biblioteca open-source de cliente MQTT para React',
+        'React logo and MQTT logo side by side — React MQTT Workflow Manager library',
+        'Logo do React e logo do MQTT lado a lado — biblioteca React MQTT Workflow Manager',
+        'Logo de React y logo de MQTT uno al lado del otro — biblioteca React MQTT Workflow Manager',
       ),
       thumbnailImageUrl:
-        'https://placehold.co/760x630/0f172a/60a5fa?text=React+MQTT',
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/portfolio-dev-images/site/projects/react-mqtt/mqtt-thumbnail.svg',
       thumbnailImageAlt: loc(
-        'React MQTT WebSocket thumbnail',
-        'Thumbnail do React MQTT WebSocket',
-        'Thumbnail de React MQTT WebSocket',
+        'React MQTT Workflow Manager — open-source library for the Flow Build ecosystem',
+        'React MQTT Workflow Manager — biblioteca open-source para o ecossistema Flow Build',
+        'React MQTT Workflow Manager — biblioteca de código abierto para el ecosistema Flow Build',
       ),
-      title: loc('React MQTT WebSocket', 'React MQTT WebSocket', 'React MQTT WebSocket'),
+      title: loc('React MQTT Workflow Manager', 'React MQTT Workflow Manager', 'React MQTT Workflow Manager'),
       caption: loc(
-        'An open-source MQTT client library for React with hooks-based API and real-time topic subscriptions.',
-        'Biblioteca open-source de cliente MQTT para React com API baseada em hooks e subscrições de tópicos em tempo real.',
-        'Biblioteca open-source de cliente MQTT para React con API basada en hooks y suscripciones de tópicos en tiempo real.',
+        'Open-source React library built for the Flow Build ecosystem — wraps MQTT event subscriptions behind a hooks-based API and published to npm.',
+        'Biblioteca React open-source construída para o ecossistema Flow Build — encapsula assinaturas de eventos MQTT em uma API baseada em hooks publicada no npm.',
+        'Biblioteca React de código abierto construida para el ecosistema Flow Build — encapsula suscripciones de eventos MQTT en una API basada en hooks publicada en npm.',
       ),
       content: loc(
-        `An **open-source MQTT client library** for React applications, created to simplify integration with MQTT brokers over WebSocket in real-time web platforms.
+        `[Flow Build](https://github.com/flow-build) is an open-source JSON-based workflow engine created by [FDTE](https://www.fdte.org.br/) (Fundação para o Desenvolvimento Tecnológico da Engenharia), a São Paulo engineering foundation. React applications that participate in a Flow Build workflow — a multi-step form, an approval process, any event-driven sequence — must subscribe to events the engine publishes on an MQTT broker. \`@flowbuild/react-mqtt-workflow-manager\` packages all that integration logic into a ==single reusable library== so any client project in the ecosystem can connect without reimplementing it from scratch.
 
-Developed while working at FDTE on industrial and public-sector platforms that required live data from IoT devices and event-driven systems.
+## The Constraints
 
-**Highlights**
-- Hooks-based API (\`useMqtt\`, \`useSubscription\`) following React idioms
-- Automatic reconnection with exponential backoff
-- TypeScript-first with full type inference for message payloads
-- Zero dependencies beyond the standard MQTT.js client`,
-        `Uma **biblioteca open-source de cliente MQTT** para aplicações React, criada para simplificar a integração com brokers MQTT via WebSocket em plataformas web em tempo real.
+- MQTT connections are stateful and long-lived — fundamentally different from React's component lifecycle, which mounts and unmounts freely
+- Without a shared abstraction, every Flow Build client project would reimplement broker connection, subscription management, and Redux state wiring independently
+- Redux state had to be injectable before the React tree mounts, requiring a bridge between imperative configuration and declarative rendering
 
-Desenvolvida enquanto trabalhava na FDTE em plataformas industriais e do setor público que exigiam dados ao vivo de dispositivos IoT e sistemas orientados a eventos.
+## The Library
 
-**Destaques**
-- API baseada em hooks (\`useMqtt\`, \`useSubscription\`) seguindo os idiomas do React
-- Reconexão automática com backoff exponencial
-- TypeScript-first com inferência de tipos completa para payloads de mensagens
-- Zero dependências além do cliente padrão MQTT.js`,
-        `Una **biblioteca open-source de cliente MQTT** para aplicaciones React, creada para simplificar la integración con brokers MQTT vía WebSocket en plataformas web en tiempo real.
+Built and ==published to npm== as the single MQTT integration point for React frontends in the Flow Build ecosystem:
 
-Desarrollada mientras trabajaba en FDTE en plataformas industriales y del sector público que requerían datos en vivo de dispositivos IoT y sistemas orientados a eventos.
+- **\`WorkflowManager\`** — context provider that owns the broker connection lifecycle and wraps the application
+- **\`WorkflowManagerConfig\`** — static utility class for use outside component scope: \`setStore\`, \`subscribe\`, \`unsubscribe\`
+- **\`useMqtt()\`** — returns \`{ client, status, error }\` for connection awareness inside components
+- **\`useSubscribe()\` / \`useUnsubscribe()\`** — hooks that expose topic subscription management following React idioms
 
-**Aspectos Destacados**
-- API basada en hooks (\`useMqtt\`, \`useSubscription\`) siguiendo los idiomas de React
-- Reconexión automática con backoff exponencial
-- TypeScript-first con inferencia de tipos completa para payloads de mensajes
-- Sin dependencias más allá del cliente estándar MQTT.js`,
+## Technologies
+
+- [TypeScript](https://www.typescriptlang.org) — full type coverage including MQTT client options and hook return shapes
+- [React 18](https://react.dev) + Context API — provider pattern for connection lifecycle management
+- [MQTT.js](https://github.com/mqttjs/MQTT.js) — underlying WebSocket/WSS broker client
+- [Redux Toolkit](https://redux-toolkit.js.org) — \`workflowManagerReducer\` slice shared across the host application`,
+        `[Flow Build](https://github.com/flow-build) é um motor de workflows de código aberto baseado em JSON, criado pela [FDTE](https://www.fdte.org.br/) (Fundação para o Desenvolvimento Tecnológico da Engenharia), uma fundação de engenharia de São Paulo. Aplicações React que participam de um workflow do Flow Build — um formulário multi-step, um processo de aprovação, qualquer sequência orientada a eventos — precisam assinar eventos que o motor publica em um broker MQTT. O \`@flowbuild/react-mqtt-workflow-manager\` empacota toda essa lógica de integração em uma ==biblioteca reutilizável== para que qualquer projeto cliente do ecossistema possa se conectar sem reimplementá-la.
+
+## As Restrições
+
+- Conexões MQTT são stateful e de longa duração — fundamentalmente diferentes do ciclo de vida de componentes React, que montam e desmontam livremente
+- Sem uma abstração compartilhada, cada projeto cliente do Flow Build reimplementaria do zero a conexão ao broker, o gerenciamento de assinaturas e a integração com Redux
+- O estado do Redux precisava ser injetável antes da árvore React montar, exigindo uma ponte entre configuração imperativa e renderização declarativa
+
+## A Biblioteca
+
+Construída e ==publicada no npm== como o único ponto de integração MQTT para frontends React no ecossistema Flow Build:
+
+- **\`WorkflowManager\`** — provider de contexto que gerencia o ciclo de vida da conexão ao broker e envolve a aplicação
+- **\`WorkflowManagerConfig\`** — classe utilitária estática para uso fora do escopo de componentes: \`setStore\`, \`subscribe\`, \`unsubscribe\`
+- **\`useMqtt()\`** — retorna \`{ client, status, error }\` para visibilidade da conexão dentro de componentes
+- **\`useSubscribe()\` / \`useUnsubscribe()\`** — hooks que expõem o gerenciamento de assinaturas de tópicos seguindo os idiomas do React
+
+## Tecnologias
+
+- [TypeScript](https://www.typescriptlang.org) — cobertura completa de tipos, incluindo opções do cliente MQTT e formatos de retorno dos hooks
+- [React 18](https://react.dev) + Context API — padrão provider para gerenciamento do ciclo de vida da conexão
+- [MQTT.js](https://github.com/mqttjs/MQTT.js) — cliente de broker WebSocket/WSS subjacente
+- [Redux Toolkit](https://redux-toolkit.js.org) — slice \`workflowManagerReducer\` compartilhado em toda a aplicação hospedeira`,
+        `[Flow Build](https://github.com/flow-build) es un motor de flujos de trabajo de código abierto basado en JSON, creado por [FDTE](https://www.fdte.org.br/) (Fundação para o Desenvolvimento Tecnológico da Engenharia), una fundación de ingeniería de São Paulo. Las aplicaciones React que participan en un workflow de Flow Build — un formulario de múltiples pasos, un proceso de aprobación, cualquier secuencia orientada a eventos — deben suscribirse a los eventos que el motor publica en un broker MQTT. \`@flowbuild/react-mqtt-workflow-manager\` empaqueta toda esa lógica de integración en una ==biblioteca reutilizable== para que cualquier proyecto cliente del ecosistema pueda conectarse sin reimplementarla.
+
+## Las Restricciones
+
+- Las conexiones MQTT son stateful y de larga duración — fundamentalmente distintas del ciclo de vida de los componentes React, que montan y desmontan libremente
+- Sin una abstracción compartida, cada proyecto cliente de Flow Build reimplementaría desde cero la conexión al broker, la gestión de suscripciones y la integración con Redux
+- El estado de Redux debía ser inyectable antes de que el árbol React se monte, requiriendo un puente entre la configuración imperativa y el renderizado declarativo
+
+## La Biblioteca
+
+Construida y ==publicada en npm== como el único punto de integración MQTT para frontends React en el ecosistema Flow Build:
+
+- **\`WorkflowManager\`** — provider de contexto que gestiona el ciclo de vida de la conexión al broker y envuelve la aplicación
+- **\`WorkflowManagerConfig\`** — clase utilitaria estática para uso fuera del ámbito de los componentes: \`setStore\`, \`subscribe\`, \`unsubscribe\`
+- **\`useMqtt()\`** — devuelve \`{ client, status, error }\` para visibilidad de la conexión dentro de los componentes
+- **\`useSubscribe()\` / \`useUnsubscribe()\`** — hooks que exponen la gestión de suscripciones de tópicos siguiendo los idiomas de React
+
+## Tecnologías
+
+- [TypeScript](https://www.typescriptlang.org) — cobertura completa de tipos, incluyendo opciones del cliente MQTT y formas de retorno de los hooks
+- [React 18](https://react.dev) + Context API — patrón provider para la gestión del ciclo de vida de la conexión
+- [MQTT.js](https://github.com/mqttjs/MQTT.js) — cliente de broker WebSocket/WSS subyacente
+- [Redux Toolkit](https://redux-toolkit.js.org) — slice \`workflowManagerReducer\` compartido en toda la aplicación anfitriona`,
       ),
       featured: false,
       status: 'PUBLISHED' as const,
-      periodStart: new Date('2022-01-01'),
-      periodEnd: new Date('2022-06-01'),
-      skillIds: [ID.skills.typescript, ID.skills.react, ID.skills.nodejs],
+      repositoryUrl: 'https://github.com/flow-build/react-mqtt-workflow-manager',
+      periodStart: new Date('2023-02-01'),
+      periodEnd: new Date('2023-03-01'),
+      skillIds: [ID.skills.typescript, ID.skills.react],
       relatedProjectSlugs: [],
     },
   ];
