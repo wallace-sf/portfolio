@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 
+import { getResumeUrl } from '~/lib/resume';
 import illustrationSrc from '~assets/images/curriculum-cta-illustration.webp';
 
 interface ICurriculumCTAProps {
@@ -19,7 +20,7 @@ export async function CurriculumCTA({
   className,
 }: ICurriculumCTAProps) {
   const t = await getTranslations({ locale, namespace: 'CurriculumCTA' });
-  const url = resumeUrl ?? process.env.NEXT_PUBLIC_RESUME_URL ?? '#';
+  const url = resumeUrl ?? getResumeUrl(locale);
 
   return (
     <section

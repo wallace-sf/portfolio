@@ -23,6 +23,10 @@ vi.mock('~assets/images/curriculum-cta-illustration.png', () => ({
   default: '/curriculum-cta-illustration.png',
 }));
 
+vi.mock('~/lib/resume', () => ({
+  getResumeUrl: vi.fn((locale: string) => `https://resume.example.com/${locale}`),
+}));
+
 import { CurriculumCTA } from '~features/about/CurriculumCTA';
 
 describe('CurriculumCTA', () => {
@@ -51,5 +55,17 @@ describe('CurriculumCTA', () => {
   it('should render the illustration image', async () => {
     render(await CurriculumCTA({ locale: 'en-US' }));
     expect(screen.getByAltText('cta.illustration_alt')).toBeInTheDocument();
+  });
+
+  it('should use locale-specific resume URL when no resumeUrl prop is given', async () => {
+    render(await CurriculumCTA({ locale: 'pt-BR' }));
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute('href', 'https://resume.example.com/pt-BR');
+  });
+
+  it('should prefer explicit resumeUrl over locale-derived URL', async () => {
+    render(await CurriculumCTA({ locale: 'pt-BR', resumeUrl: 'https://custom.com/cv' }));
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute('href', 'https://custom.com/cv');
   });
 });
