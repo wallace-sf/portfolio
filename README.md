@@ -6,7 +6,7 @@
 
 Personal portfolio built to present my experience, selected projects, technical background and career direction as a Front-end Software Engineer.
 
-🌐 **Live:** [portfolio-web-kohl-two.vercel.app](https://portfolio-web-kohl-two.vercel.app)
+🌐 **Live:** [wallace-ferreira.dev](https://wallace-ferreira.dev/)
 
 > [!NOTE]
 > This project is under active development. The public website and the repository are evolving as I refine the portfolio, improve the architecture and document technical decisions.
