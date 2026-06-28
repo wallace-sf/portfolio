@@ -48,6 +48,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description: caption,
+      siteName: 'Wallace Ferreira',
       images: [{ url: coverImage.url, alt: coverImage.alt }],
     },
   };
