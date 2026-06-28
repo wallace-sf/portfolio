@@ -71,12 +71,12 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
         </div>
 
         <div className="flex flex-col gap-y-6">
-          <div className="relative h-60 w-full overflow-hidden rounded-lg shadow-drop-sm lg:h-[485px]">
+          <div className="relative h-60 w-full overflow-hidden rounded-lg bg-surface shadow-drop-sm lg:h-[485px]">
             <Image
               src={coverImage.url}
               fill
               alt={coverImage.alt}
-              className="object-cover"
+              className="object-contain"
               priority
             />
           </div>
