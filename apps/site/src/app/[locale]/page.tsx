@@ -40,6 +40,7 @@ export async function generateMetadata({
     openGraph: {
       title: name,
       description: headline,
+      siteName: 'Wallace Ferreira',
       images: [
         {
           url: buildOgImageUrl({
