@@ -961,25 +961,25 @@ Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio i
     },
     {
       id: ID.projects.gamePlatform,
-      slug: 'game-intelligence-platform',
+      slug: 'galaxies-survey-builder',
       coverImageUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-cover.svg',
       coverImageAlt: loc(
-        'Game Intelligence Platform — Galaxies backoffice survey builder, built with React, Material UI and GraphQL',
-        'Plataforma de Inteligência de Games — construtor de pesquisas no backoffice da Galaxies, com React, Material UI e GraphQL',
-        'Plataforma de Inteligencia de Videojuegos — constructor de encuestas en el backoffice de Galaxies, con React, Material UI y GraphQL',
+        'Galaxies Survey Builder — backoffice survey builder, built with React, Material UI and GraphQL',
+        'Galaxies Survey Builder — construtor de pesquisas no backoffice da Galaxies, com React, Material UI e GraphQL',
+        'Galaxies Survey Builder — constructor de encuestas en el backoffice de Galaxies, con React, Material UI y GraphQL',
       ),
       thumbnailImageUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-thumbnail.svg',
       thumbnailImageAlt: loc(
-        'Game Intelligence Platform thumbnail — Galaxies survey builder',
-        'Thumbnail da Plataforma de Inteligência de Games — construtor de pesquisas da Galaxies',
-        'Thumbnail de la Plataforma de Inteligencia de Videojuegos — constructor de encuestas de Galaxies',
+        'Galaxies Survey Builder thumbnail — backoffice survey builder rewrite',
+        'Thumbnail do Galaxies Survey Builder — reescrita do construtor de pesquisas',
+        'Thumbnail de Galaxies Survey Builder — reescritura del constructor de encuestas',
       ),
       title: loc(
-        'Game Intelligence Platform',
-        'Plataforma de Inteligência de Games',
-        'Plataforma de Inteligencia de Videojuegos',
+        'Galaxies Survey Builder',
+        'Galaxies Survey Builder',
+        'Galaxies Survey Builder',
       ),
       caption: loc(
         'A game research platform backoffice rebuilt from scratch in three weeks — full schema compatibility, surgical state management, and admins who no longer needed a developer to do their job.',
