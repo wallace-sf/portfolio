@@ -963,18 +963,18 @@ Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio i
       id: ID.projects.gamePlatform,
       slug: 'game-intelligence-platform',
       coverImageUrl:
-        'https://placehold.co/1200x630/0f0f1a/818cf8?text=Game+Intelligence',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-cover.svg',
       coverImageAlt: loc(
-        'Game research and data intelligence platform',
-        'Plataforma de pesquisa de games e inteligência de dados',
-        'Plataforma de investigación de videojuegos e inteligencia de datos',
+        'Game Intelligence Platform — Galaxies backoffice survey builder, built with React, Material UI and GraphQL',
+        'Plataforma de Inteligência de Games — construtor de pesquisas no backoffice da Galaxies, com React, Material UI e GraphQL',
+        'Plataforma de Inteligencia de Videojuegos — constructor de encuestas en el backoffice de Galaxies, con React, Material UI y GraphQL',
       ),
       thumbnailImageUrl:
-        'https://placehold.co/760x630/0f0f1a/818cf8?text=Game+Intelligence',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-thumbnail.svg',
       thumbnailImageAlt: loc(
-        'Game intelligence platform thumbnail',
-        'Thumbnail da plataforma de inteligência de games',
-        'Thumbnail de la plataforma de inteligencia de videojuegos',
+        'Game Intelligence Platform thumbnail — Galaxies survey builder',
+        'Thumbnail da Plataforma de Inteligência de Games — construtor de pesquisas da Galaxies',
+        'Thumbnail de la Plataforma de Inteligencia de Videojuegos — constructor de encuestas de Galaxies',
       ),
       title: loc(
         'Game Intelligence Platform',
