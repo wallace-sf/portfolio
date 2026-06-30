@@ -963,14 +963,14 @@ Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio i
       id: ID.projects.galaxiesSurveyBuilder,
       slug: 'galaxies-survey-builder',
       coverImageUrl:
-        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-cover.svg',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-cover.svg?v=2',
       coverImageAlt: loc(
         'Galaxies Survey Builder — backoffice survey builder, built with React, Material UI and GraphQL',
         'Galaxies Survey Builder — construtor de pesquisas no backoffice da Galaxies, com React, Material UI e GraphQL',
         'Galaxies Survey Builder — constructor de encuestas en el backoffice de Galaxies, con React, Material UI y GraphQL',
       ),
       thumbnailImageUrl:
-        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-thumbnail.svg',
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-thumbnail.svg?v=2',
       thumbnailImageAlt: loc(
         'Galaxies Survey Builder thumbnail — backoffice survey builder rewrite',
         'Thumbnail do Galaxies Survey Builder — reescrita do construtor de pesquisas',
