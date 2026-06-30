@@ -43,7 +43,7 @@ export const ID = {
   projects: {
     portfolio: '30000000-0000-4000-8000-000000000001',
     b2bEcommerce: '30000000-0000-4000-8000-000000000002',
-    gamePlatform: '30000000-0000-4000-8000-000000000003',
+    galaxiesSurveyBuilder: '30000000-0000-4000-8000-000000000003',
     mqttClient: '30000000-0000-4000-8000-000000000004',
     buyrShopifyApp: '30000000-0000-4000-8000-000000000005',
     aiGolfAssistant: '30000000-0000-4000-8000-000000000006',
@@ -960,7 +960,7 @@ Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio i
       relatedProjectSlugs: ['personal-portfolio'],
     },
     {
-      id: ID.projects.gamePlatform,
+      id: ID.projects.galaxiesSurveyBuilder,
       slug: 'galaxies-survey-builder',
       coverImageUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-cover.svg',
