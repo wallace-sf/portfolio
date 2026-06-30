@@ -982,38 +982,113 @@ Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio i
         'Plataforma de Inteligencia de Videojuegos',
       ),
       caption: loc(
-        'A data intelligence platform for the games industry, delivering insights 200% faster than traditional research institutes.',
-        'Plataforma de inteligência de dados para a indústria de games, entregando insights 200% mais rápido que institutos de pesquisa tradicionais.',
-        'Plataforma de inteligencia de datos para la industria de los videojuegos, entregando insights 200% más rápido que los institutos de investigación tradicionales.',
+        'A game research platform backoffice rebuilt from scratch in three weeks — full schema compatibility, surgical state management, and admins who no longer needed a developer to do their job.',
+        'Backoffice de uma plataforma de pesquisa de games reescrito do zero em três semanas — compatibilidade total de schema, gerenciamento de estado cirúrgico e administradores que pararam de depender do desenvolvedor.',
+        'Backoffice de una plataforma de investigación de videojuegos reescrito desde cero en tres semanas — compatibilidad total de esquema, gestión de estado quirúrgica y administradores que dejaron de depender del desarrollador.',
       ),
       content: loc(
-        `A **game research and data intelligence platform** that aggregates market data and delivers actionable insights to studios and publishers significantly faster than traditional research methods.
+        `Galaxies was building a research intelligence platform for the Brazilian gaming industry — aggregating survey responses from gamers and turning them into market insights for studios and publishers. The backoffice that powered that research depended on a survey builder that had grown fragile: administrators had to guess at the interface or loop in the original developer to understand how it worked.
 
-Built the entire frontend with **React.js**, **Material UI**, and **GraphQL**, including data visualization dashboards and complex filter/search workflows.
+I was brought in to own the full rewrite of that survey builder, from v1 to v2, against a ==three-week deadline== with a fully remote team of five.
 
-**Highlights**
-- Full mobile adaptation of a desktop-first platform — responsive across all breakpoints
-- GraphQL queries and mutations with Apollo Client; real-time data subscriptions
-- Custom charting components built on top of Material UI and Recharts
-- Delivered 200% faster applicable intelligence than research institutes`,
-        `Uma **plataforma de pesquisa de games e inteligência de dados** que agrega dados de mercado e entrega insights acionáveis a estúdios e publishers significativamente mais rápido do que os métodos de pesquisa tradicionais.
+## The Constraints
 
-Construí todo o frontend com **React.js**, **Material UI** e **GraphQL**, incluindo dashboards de visualização de dados e fluxos complexos de filtro/busca.
+The v1 builder had an established schema already in use across every existing survey. Any rewrite had to maintain ==full backward compatibility== — forms already saved in the database had to load correctly in the new UI, and anything new had to remain parseable by the same downstream form renderer. Changing the schema was off the table.
 
-**Destaques**
-- Adaptação mobile completa de uma plataforma desktop-first — responsiva em todos os breakpoints
-- Queries e mutations GraphQL com Apollo Client; subscrições de dados em tempo real
-- Componentes de gráficos personalizados construídos sobre Material UI e Recharts
-- Entregou inteligência aplicável 200% mais rápido do que institutos de pesquisa`,
-        `Una **plataforma de investigación de videojuegos e inteligencia de datos** que agrega datos de mercado y entrega insights accionables a estudios y publishers significativamente más rápido que los métodos de investigación tradicionales.
+The v1 implementation also loaded and tracked too much state in bulk, which caused performance issues as forms grew — a problem that had to be solved without breaking anything upstream or downstream.
 
-Construí todo el frontend con **React.js**, **Material UI** y **GraphQL**, incluyendo dashboards de visualización de datos y flujos complejos de filtrado/búsqueda.
+## Backoffice
 
-**Aspectos Destacados**
-- Adaptación móvil completa de una plataforma desktop-first — responsiva en todos los breakpoints
-- Consultas y mutaciones GraphQL con Apollo Client; suscripciones de datos en tiempo real
-- Componentes de gráficos personalizados construidos sobre Material UI y Recharts
-- Entregó inteligencia aplicable un 200% más rápido que los institutos de investigación`,
+### Rebuilding the survey builder
+
+Designed and built the v2 survey builder from scratch. The page let administrators configure every aspect of a research question dynamically: category, image, caption, question type (free text, multi-select, and others), accessibility metadata, and i18n strings — all in a single interface.
+
+==I redesigned the state model to be surgical==, tracking only what was actively being edited rather than holding the entire form in memory. The architecture drew from patterns built at FDTE for similar form-heavy interfaces — favoring simplicity and predictability over generality.
+
+The hardest constraint was schema compatibility: new output had to be parseable by the existing renderer, while every form already in the database loaded correctly without migration.
+
+The v2 shipped to production within the deadline. The most meaningful outcome was usability: ==administrators could configure surveys independently== without asking the developer who wrote v1 what the fields meant.
+
+## Technologies
+
+- [React](https://react.dev) — component tree for the dynamic survey builder
+- [Material UI](https://mui.com) — design system used throughout the backoffice UI
+- [GraphQL](https://graphql.org) — queries and mutations for loading and persisting survey configurations
+- [TypeScript](https://www.typescriptlang.org) — end-to-end type safety across the form schema
+
+## Technical Highlights
+
+- **Schema-compatible rewrite** — the new UI had to produce output parseable by the existing renderer and load all legacy forms without migration, making backward compatibility the main design driver
+- **Surgical state management** — v1 held the entire form in memory; the rewrite tracked only the active edit scope, eliminating the performance issues that made the old builder slow on complex surveys
+- **Architecture from prior patterns** — modeled after form systems built at FDTE, favoring a simple, predictable structure over a generic one`,
+        `A Galaxies construía uma plataforma de inteligência de dados para a indústria brasileira de games — agregando respostas de gamers e transformando-as em insights de mercado para estúdios e publishers. O backoffice que sustentava essa pesquisa dependia de um construtor de formulários que havia se tornado frágil: administradores precisavam adivinhar o comportamento da interface ou consultar o desenvolvedor original para entender como funcionava.
+
+Entrei no projeto para assumir a reescrita completa desse construtor, da v1 para a v2, com um ==prazo de três semanas== e um time completamente remoto de cinco pessoas.
+
+## Os Desafios
+
+O construtor v1 tinha um schema já em uso em todas as pesquisas existentes. Qualquer reescrita precisava manter ==compatibilidade total com versões anteriores== — formulários já salvos no banco deveriam carregar corretamente na nova UI, e tudo que fosse gerado precisava continuar sendo lido pelo mesmo renderizador de formulários. Alterar o schema estava fora de cogitação.
+
+A implementação v1 também carregava e rastreava estado em massa, o que causava problemas de performance conforme os formulários cresciam — um problema que precisava ser resolvido sem quebrar nada upstream ou downstream.
+
+## Backoffice
+
+### Reconstruindo o construtor de pesquisas
+
+Projetei e construí o construtor v2 do zero. A página permitia que administradores configurassem dinamicamente cada aspecto de uma pergunta de pesquisa: categoria, imagem, caption, tipo de pergunta (texto corrido, multi seleção e outros), metadados de acessibilidade e strings de i18n — tudo em uma única interface.
+
+==Redesenhei o modelo de estado para ser cirúrgico==, rastreando apenas o que estava sendo ativamente editado em vez de manter o formulário inteiro em memória. A arquitetura foi baseada em padrões construídos na FDTE para interfaces de formulários dinâmicos similares — priorizando simplicidade e previsibilidade.
+
+O desafio mais difícil foi a compatibilidade de schema: o output gerado pela nova UI precisava ser parseável pelo renderizador existente, enquanto todos os formulários já no banco carregavam corretamente sem migração.
+
+A v2 foi para produção dentro do prazo. O resultado mais significativo foi a usabilidade: ==administradores passaram a configurar pesquisas de forma independente==, sem precisar perguntar ao desenvolvedor que escreveu a v1 o que cada campo significava.
+
+## Tecnologias
+
+- [React](https://react.dev) — árvore de componentes do construtor de pesquisas dinâmico
+- [Material UI](https://mui.com) — sistema de design usado na UI do backoffice
+- [GraphQL](https://graphql.org) — queries e mutations para carregar e persistir configurações de pesquisa
+- [TypeScript](https://www.typescriptlang.org) — tipagem fim a fim em todo o schema de formulários
+
+## Destaques Técnicos
+
+- **Reescrita com compatibilidade de schema** — a nova UI precisava produzir output parseável pelo renderizador existente e carregar todos os formulários legados sem migração, tornando a compatibilidade retroativa o principal driver de design
+- **Gerenciamento de estado cirúrgico** — a v1 mantinha o formulário inteiro em memória; a reescrita rastreava apenas o escopo de edição ativo, eliminando os problemas de performance que tornavam o construtor antigo lento em pesquisas complexas
+- **Arquitetura baseada em padrões anteriores** — modelada a partir de sistemas de formulários construídos na FDTE, priorizando uma estrutura simples e previsível`,
+        `Galaxies construía una plataforma de inteligencia de datos para la industria brasileña de videojuegos — agregando respuestas de gamers y convirtiéndolas en insights de mercado para estudios y publishers. El backoffice que sustentaba esa investigación dependía de un constructor de formularios que se había vuelto frágil: los administradores tenían que adivinar el comportamiento de la interfaz o consultar al desarrollador original para entender cómo funcionaba.
+
+Me incorporé al proyecto para asumir la reescritura completa de ese constructor, de v1 a v2, con un ==plazo de tres semanas== y un equipo completamente remoto de cinco personas.
+
+## Las Restricciones
+
+El constructor v1 tenía un esquema ya en uso en todas las encuestas existentes. Cualquier reescritura debía mantener ==compatibilidad total con versiones anteriores== — los formularios ya guardados en la base de datos debían cargarse correctamente en la nueva UI, y todo lo generado debía seguir siendo legible por el mismo renderizador de formularios. Cambiar el esquema no era una opción.
+
+La implementación v1 también cargaba y rastreaba estado en masa, lo que causaba problemas de performance a medida que los formularios crecían — un problema que debía resolverse sin romper nada upstream ni downstream.
+
+## Backoffice
+
+### Reconstruyendo el constructor de encuestas
+
+Diseñé y construí el constructor v2 desde cero. La página permitía a los administradores configurar dinámicamente cada aspecto de una pregunta de investigación: categoría, imagen, caption, tipo de pregunta (texto libre, selección múltiple y otros), metadatos de accesibilidad y strings de i18n — todo en una sola interfaz.
+
+==Rediseñé el modelo de estado para ser quirúrgico==, rastreando solo lo que se estaba editando activamente en lugar de mantener el formulario entero en memoria. La arquitectura se basó en patrones construidos en FDTE para interfaces de formularios dinámicos similares — priorizando simplicidad y previsibilidad.
+
+El desafío más difícil fue la compatibilidad de esquema: el output generado por la nueva UI debía ser parseable por el renderizador existente, mientras que todos los formularios ya en la base de datos se cargaban correctamente sin migración.
+
+La v2 llegó a producción dentro del plazo. El resultado más significativo fue la usabilidad: ==los administradores podían configurar encuestas de forma independiente==, sin necesidad de preguntar al desarrollador que escribió la v1 qué significaba cada campo.
+
+## Tecnologías
+
+- [React](https://react.dev) — árbol de componentes para el constructor de encuestas dinámico
+- [Material UI](https://mui.com) — sistema de diseño usado en la UI del backoffice
+- [GraphQL](https://graphql.org) — queries y mutations para cargar y persistir configuraciones de encuestas
+- [TypeScript](https://www.typescriptlang.org) — tipado de extremo a extremo en todo el esquema de formularios
+
+## Aspectos Técnicos Destacados
+
+- **Reescritura con compatibilidad de esquema** — la nueva UI debía producir output parseable por el renderizador existente y cargar todos los formularios legados sin migración, convirtiendo la compatibilidad retroactiva en el principal driver de diseño
+- **Gestión de estado quirúrgica** — la v1 mantenía el formulario entero en memoria; la reescritura rastreaba solo el alcance de edición activo, eliminando los problemas de performance que hacían lento al constructor antiguo en encuestas complejas
+- **Arquitectura basada en patrones anteriores** — modelada a partir de sistemas de formularios construidos en FDTE, priorizando una estructura simple y predecible`,
       ),
       featured: false,
       status: 'PUBLISHED' as const,
