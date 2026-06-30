@@ -43,7 +43,7 @@ export const ID = {
   projects: {
     portfolio: '30000000-0000-4000-8000-000000000001',
     b2bEcommerce: '30000000-0000-4000-8000-000000000002',
-    gamePlatform: '30000000-0000-4000-8000-000000000003',
+    galaxiesSurveyBuilder: '30000000-0000-4000-8000-000000000003',
     mqttClient: '30000000-0000-4000-8000-000000000004',
     buyrShopifyApp: '30000000-0000-4000-8000-000000000005',
     aiGolfAssistant: '30000000-0000-4000-8000-000000000006',
@@ -960,26 +960,26 @@ Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio i
       relatedProjectSlugs: ['personal-portfolio'],
     },
     {
-      id: ID.projects.gamePlatform,
-      slug: 'game-intelligence-platform',
+      id: ID.projects.galaxiesSurveyBuilder,
+      slug: 'galaxies-survey-builder',
       coverImageUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-cover.svg',
       coverImageAlt: loc(
-        'Game Intelligence Platform — Galaxies backoffice survey builder, built with React, Material UI and GraphQL',
-        'Plataforma de Inteligência de Games — construtor de pesquisas no backoffice da Galaxies, com React, Material UI e GraphQL',
-        'Plataforma de Inteligencia de Videojuegos — constructor de encuestas en el backoffice de Galaxies, con React, Material UI y GraphQL',
+        'Galaxies Survey Builder — backoffice survey builder, built with React, Material UI and GraphQL',
+        'Galaxies Survey Builder — construtor de pesquisas no backoffice da Galaxies, com React, Material UI e GraphQL',
+        'Galaxies Survey Builder — constructor de encuestas en el backoffice de Galaxies, con React, Material UI y GraphQL',
       ),
       thumbnailImageUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/game-intelligence-platform/game-intelligence-platform-thumbnail.svg',
       thumbnailImageAlt: loc(
-        'Game Intelligence Platform thumbnail — Galaxies survey builder',
-        'Thumbnail da Plataforma de Inteligência de Games — construtor de pesquisas da Galaxies',
-        'Thumbnail de la Plataforma de Inteligencia de Videojuegos — constructor de encuestas de Galaxies',
+        'Galaxies Survey Builder thumbnail — backoffice survey builder rewrite',
+        'Thumbnail do Galaxies Survey Builder — reescrita do construtor de pesquisas',
+        'Thumbnail de Galaxies Survey Builder — reescritura del constructor de encuestas',
       ),
       title: loc(
-        'Game Intelligence Platform',
-        'Plataforma de Inteligência de Games',
-        'Plataforma de Inteligencia de Videojuegos',
+        'Galaxies Survey Builder',
+        'Galaxies Survey Builder',
+        'Galaxies Survey Builder',
       ),
       caption: loc(
         'A game research platform backoffice rebuilt from scratch in three weeks — full schema compatibility, surgical state management, and admins who no longer needed a developer to do their job.',
