@@ -2,12 +2,15 @@
  * Safety guard for destructive Prisma operations (migrate dev, db push).
  *
  * Reads DIRECT_URL from the local .env file and aborts if it points to a
- * non-local database, unless DB_ALLOW_DESTRUCTIVE=1 is explicitly set.
+ * database that is neither localhost nor DB_SAFE_REMOTE_REF (also read from
+ * .env — e.g. your dev project's ref), unless DB_ALLOW_DESTRUCTIVE=1 is
+ * explicitly set.
  *
  * Usage (called automatically by db:migrate and db:push scripts):
  *   node scripts/assert-safe-db.mjs
  *
- * To intentionally run a destructive operation against cloud:
+ * To intentionally run a destructive operation against another database
+ * (e.g. production):
  *   DB_ALLOW_DESTRUCTIVE=1 pnpm db:migrate
  */
 
@@ -37,13 +40,16 @@ function parseEnv(filePath) {
 const env = parseEnv(envPath);
 const directUrl = process.env.DIRECT_URL ?? env['DIRECT_URL'] ?? '';
 const allowDestructive = process.env.DB_ALLOW_DESTRUCTIVE === '1';
+const safeRemoteRef = process.env.DB_SAFE_REMOTE_REF ?? env['DB_SAFE_REMOTE_REF'] ?? '';
 
 const isLocal =
   directUrl.includes('localhost') ||
   directUrl.includes('127.0.0.1') ||
   directUrl.includes('0.0.0.0');
 
-if (!isLocal && !allowDestructive) {
+const isSafeRemote = safeRemoteRef !== '' && directUrl.includes(safeRemoteRef);
+
+if (!isLocal && !isSafeRemote && !allowDestructive) {
   console.error('');
   console.error('🚨  DESTRUCTIVE OPERATION BLOCKED');
   console.error('');
@@ -62,7 +68,13 @@ if (!isLocal && !allowDestructive) {
   process.exit(1);
 }
 
-if (!isLocal && allowDestructive) {
+if (!isLocal && isSafeRemote) {
+  console.log('');
+  console.log('ℹ️   DIRECT_URL matches DB_SAFE_REMOTE_REF — proceeding.');
+  console.log('');
+}
+
+if (!isLocal && !isSafeRemote && allowDestructive) {
   console.warn('');
   console.warn('⚠️   DB_ALLOW_DESTRUCTIVE=1 — proceeding against cloud database.');
   console.warn('    Make sure you have a recent backup (pnpm db:backup).');
