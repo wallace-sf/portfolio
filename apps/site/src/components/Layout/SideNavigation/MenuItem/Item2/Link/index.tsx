@@ -6,6 +6,7 @@ import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import NextLink from 'next/link';
 
+import { useSideNavigation } from '../../../context';
 import { Text } from '../../Text';
 import { IGhostLinkProps } from '../../types';
 import { ROOT_STYLE } from '../constants';
@@ -19,9 +20,12 @@ export const Link: FC<IGhostLinkProps> = ({
   iconClassName,
   newTab,
 }) => {
+  const { closeMenu } = useSideNavigation();
+
   return (
     <NextLink
       href={href}
+      onClick={closeMenu}
       className={classNames(ROOT_STYLE, className)}
       target={newTab ? '_blank' : '_self'}
       rel={newTab ? 'noopener noreferrer' : undefined}

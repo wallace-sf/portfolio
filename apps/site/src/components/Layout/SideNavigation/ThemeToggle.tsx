@@ -13,18 +13,21 @@ import { useTranslations } from 'next-intl';
 import { Theme, useTheme } from '~hooks';
 
 import { THEME_OPTIONS } from './constants';
+import { useSideNavigation } from './context';
 import { MenuItem } from './MenuItem';
 
 export const ThemeToggle: FC = () => {
   const t = useTranslations('SideNavigation');
   const tTheme = useTranslations('Theme');
   const { theme, setTheme } = useTheme();
+  const { closeMenu } = useSideNavigation();
 
   const onChangeTheme = useCallback<RadioGroupProps['onChange']>(
     (event) => {
       setTheme(event.target.value as Theme);
+      closeMenu();
     },
-    [setTheme],
+    [setTheme, closeMenu],
   );
 
   const renderThemes = useCallback<RadioGroupChildrenFn>(

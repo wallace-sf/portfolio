@@ -6775,9 +6775,9 @@
         "testStrategy": "Unit test for `useSideNavigation` hook:\n- Mock context provider with closeMenu function\n- Verify hook returns context when inside provider\n- Verify invariant throws when hook used outside provider (should throw error with message 'useSideNavigation must be used within a SideNavigationProvider.')\n\nCreate test file at `apps/site/tests/components/Layout/SideNavigation/useSideNavigation.test.tsx`",
         "priority": "high",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [],
-        "updatedAt": "2026-07-01T14:49:55.101Z"
+        "updatedAt": "2026-07-01T14:55:53.301Z"
       },
       {
         "id": 2,
@@ -6789,8 +6789,9 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T14:59:12.812Z"
       },
       {
         "id": 3,
@@ -6803,8 +6804,9 @@
           1,
           2
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:03:54.026Z"
       },
       {
         "id": 4,
@@ -6817,8 +6819,9 @@
           1,
           2
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:08:07.231Z"
       },
       {
         "id": 5,
@@ -6831,8 +6834,9 @@
           1,
           2
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:11:41.572Z"
       },
       {
         "id": 6,
@@ -6845,8 +6849,9 @@
           1,
           2
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:13:50.657Z"
       },
       {
         "id": 7,
@@ -6859,15 +6864,16 @@
           1,
           2
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:14:53.855Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-07-01T14:49:55.102Z",
+      "lastModified": "2026-07-01T15:14:53.856Z",
       "taskCount": 7,
-      "completedCount": 0,
+      "completedCount": 7,
       "tags": [
         "mobile-menu-close-on-item-click"
       ]
