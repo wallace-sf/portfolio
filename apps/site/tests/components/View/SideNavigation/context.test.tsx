@@ -31,9 +31,9 @@ describe('SideNavigationContext', () => {
     expect(mockCloseMenu).toHaveBeenCalledOnce();
   });
 
-  it('should throw when used outside a SideNavigationProvider', () => {
-    expect(() => renderHook(() => useSideNavigation())).toThrow(
-      'useSideNavigation must be used within a SideNavigationProvider.',
-    );
+  it('should default closeMenu to a no-op when there is no provider', () => {
+    const { result } = renderHook(() => useSideNavigation());
+
+    expect(() => result.current.closeMenu()).not.toThrow();
   });
 });

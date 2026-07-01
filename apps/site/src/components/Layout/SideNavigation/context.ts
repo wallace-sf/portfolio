@@ -1,25 +1,17 @@
 import { createContext, useContext } from 'react';
 
-import invariant from 'tiny-invariant';
-
 export interface ISideNavigationContext {
   closeMenu: () => void;
 }
 
-export const SideNavigationContext =
-  createContext<ISideNavigationContext | null>(null);
+const noop = () => {};
+
+export const SideNavigationContext = createContext<ISideNavigationContext>({
+  closeMenu: noop,
+});
 
 export const SideNavigationProvider = SideNavigationContext.Provider;
 
 SideNavigationContext.displayName = 'SideNavigationContext';
 
-export const useSideNavigation = () => {
-  const context = useContext(SideNavigationContext);
-
-  invariant(
-    context,
-    'useSideNavigation must be used within a SideNavigationProvider.',
-  );
-
-  return context;
-};
+export const useSideNavigation = () => useContext(SideNavigationContext);
