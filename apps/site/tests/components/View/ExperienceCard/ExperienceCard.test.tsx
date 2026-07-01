@@ -25,6 +25,13 @@ vi.mock('@repo/ui/Imagery', () => ({
   Icon: ({ icon }: { icon: string }) => <span data-testid="icon">{icon}</span>,
 }));
 
+vi.mock('next/image', () => ({
+  default: ({ alt, src }: { alt: string; src: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img alt={alt} src={src} />
+  ),
+}));
+
 vi.mock('@repo/ui/View', () => ({
   TextRich: ({
     content,
@@ -126,6 +133,19 @@ describe('ExperienceCard', () => {
   it('should render company in uppercase', () => {
     render(<ExperienceCard {...defaultProps} />);
     expect(screen.getByText('Acme Corp')).toHaveClass('uppercase');
+  });
+
+  it('should render the company logo when provided', () => {
+    render(<ExperienceCard {...defaultProps} />);
+    const logo = screen.getByAltText('Acme logo');
+    expect(logo).toBeInTheDocument();
+    expect(logo).toHaveAttribute('src', 'https://example.com/logo.png');
+  });
+
+  it('should not render a logo when not provided', () => {
+    const { logo: _, ...props } = defaultProps;
+    render(<ExperienceCard {...props} />);
+    expect(screen.queryByAltText('Acme logo')).not.toBeInTheDocument();
   });
 
   it('should render location, employmentType and locationType as separate labelled items', () => {
