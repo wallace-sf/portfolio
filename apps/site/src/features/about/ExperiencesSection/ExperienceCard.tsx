@@ -6,6 +6,7 @@ import { Icon } from '@repo/ui/Imagery';
 import { TextRich } from '@repo/ui/View';
 import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useBoolean } from 'usehooks-ts';
 
 import { SkillGroup } from '~features/shared/SkillGroup';
@@ -50,6 +51,7 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
   position,
   location,
   description,
+  logo,
   employmentType,
   locationType,
   skills,
@@ -75,6 +77,15 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
       <h2 className="text-2xl font-bold text-content-primary">{position}</h2>
 
       <div className="flex flex-wrap items-baseline gap-x-2">
+        {logo && (
+          <Image
+            src={logo.url}
+            alt={logo.alt}
+            width={32}
+            height={32}
+            className="inline-block size-8 shrink-0 self-center rounded-full object-cover"
+          />
+        )}
         <span className="text-xl font-bold uppercase text-content-primary">
           {company}
         </span>

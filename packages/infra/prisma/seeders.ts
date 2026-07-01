@@ -1656,7 +1656,8 @@ export async function seedExperiences(db: PrismaClient): Promise<void> {
         '- Desenvolveu e evoluiu soluções frontend para operações internas, experiências de cliente com IA e produtos baseados em Shopify.\n- Liderou a implementação frontend de uma plataforma interna de timesheet, contribuindo para decisões de arquitetura, escalabilidade e fundações de produto.\n- Desenvolveu um widget de assistente de IA incorporável para uma plataforma de gestão de receita de golf com mais de 800 campos, colaborando com um time internacional.\n- Trabalhou em ambientes de sprint e Kanban com foco em performance, acessibilidade, segurança e arquitetura frontend sustentável.',
         '- Desarrolló y evolucionó soluciones frontend para operaciones internas, experiencias de cliente con IA y productos basados en Shopify.\n- Lideró la implementación frontend de una plataforma interna de registro de horas, contribuyendo a decisiones de arquitectura, escalabilidad y fundamentos del producto.\n- Desarrolló un widget de asistente de IA embebible para una plataforma de gestión de ingresos de golf con más de 800 campos, colaborando con un equipo internacional.\n- Trabajó en entornos de sprint y Kanban con enfoque en rendimiento, accesibilidad, seguridad y arquitectura frontend sostenible.',
       ),
-      logoUrl: 'https://placehold.co/80x80/1e3a5f/60a5fa?text=FDTE',
+      logoUrl:
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/experiences/fdte_logo.webp',
       logoAlt: loc('FDTE logo', 'Logo da FDTE', 'Logo de FDTE'),
       employmentType: 'FULL_TIME' as const,
       locationType: 'REMOTE' as const,
@@ -1712,7 +1713,8 @@ export async function seedExperiences(db: PrismaClient): Promise<void> {
         '- Desenvolveu uma plataforma de pesquisa de games e inteligência de dados focada em tornar insights mais acessíveis e acionáveis.\n- Reconstruiu uma página de back-office do zero para suportar criação dinâmica de questões em fluxos de formulários de pesquisa sintética.\n- Adaptou o produto para dispositivos móveis, melhorando a usabilidade em diferentes tamanhos de tela.\n- Aprimorou a experiência do usuário com interfaces melhores e fluxos mais intuitivos.',
         '- Desarrolló una plataforma de investigación de videojuegos e inteligencia de datos orientada a hacer los insights más accesibles y accionables.\n- Reconstruyó una página de back-office desde cero para soportar la creación dinámica de preguntas en flujos de formularios de investigación sintética.\n- Adaptó el producto para dispositivos móviles, mejorando la usabilidad en diferentes tamaños de pantalla.\n- Mejoró la experiencia general del usuario con mejores interfaces y flujos más intuitivos.',
       ),
-      logoUrl: 'https://placehold.co/80x80/0f0f1a/818cf8?text=GAL',
+      logoUrl:
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/experiences/galaxy_logo.webp',
       logoAlt: loc('Galaxies logo', 'Logo da Galaxies', 'Logo de Galaxies'),
       employmentType: 'PART_TIME' as const,
       locationType: 'REMOTE' as const,
@@ -1733,7 +1735,8 @@ export async function seedExperiences(db: PrismaClient): Promise<void> {
         '- Contribuiu para plataformas web complexas envolvendo formulários customizados, gestão de workflows e sistemas operacionais.\n- Construiu soluções frontend para uma plataforma de avaliação de licitações públicas com formulários avançados e upload de arquivos.\n- Arquitetou a fundação frontend e o design system de uma plataforma de e-commerce, melhorando estrutura, consistência e manutenibilidade.\n- Fortaleceu a qualidade de engenharia com práticas de CI/CD e testes end-to-end.\n- Criou uma biblioteca open-source de MQTT/WebSocket e mentorou desenvolvedores juniores.',
         '- Contribuyó a plataformas web complejas con formularios personalizados, gestión de flujos de trabajo y sistemas operacionales.\n- Desarrolló soluciones frontend para una plataforma de evaluación de licitaciones públicas con formularios avanzados y carga de archivos.\n- Diseñó la base frontend y el design system de una plataforma de e-commerce, mejorando estructura, consistencia y mantenibilidad.\n- Fortaleció la calidad de ingeniería con prácticas de CI/CD, pruebas end-to-end y colaboración entre equipos.\n- Creó una biblioteca open-source de MQTT/WebSocket y mentorizó a desarrolladores junior.',
       ),
-      logoUrl: 'https://placehold.co/80x80/1e3a5f/60a5fa?text=FDTE',
+      logoUrl:
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/experiences/fdte_logo.webp',
       logoAlt: loc('FDTE logo', 'Logo da FDTE', 'Logo de FDTE'),
       employmentType: 'FULL_TIME' as const,
       locationType: 'HYBRID' as const,
