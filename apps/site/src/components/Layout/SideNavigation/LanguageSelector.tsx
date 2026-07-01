@@ -12,6 +12,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { LANGUAGES_OPTIONS } from './constants';
+import { useSideNavigation } from './context';
 import { MenuItem } from './MenuItem';
 
 export const LanguageSelector: FC = () => {
@@ -20,13 +21,15 @@ export const LanguageSelector: FC = () => {
   const locale = useLocale();
   const { replace } = useRouter();
   const pathname = usePathname();
+  const { closeMenu } = useSideNavigation();
 
   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
     (event) => {
       const { value } = event.target;
       replace(pathname.replace(`/${locale}`, `/${value}`));
+      closeMenu();
     },
-    [replace, pathname, locale],
+    [replace, pathname, locale, closeMenu],
   );
 
   const renderLanguages = useCallback<RadioGroupChildrenFn>(

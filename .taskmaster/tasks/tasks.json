@@ -6690,7 +6690,7 @@
   "lighthouse": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Fix LCP: remover 'use client' do HeroBanner e adicionar preload hint",
         "description": "HeroBanner tinha 'use client' desnecessário impedindo Next.js de gerar link rel=preload fetchpriority=high. Removido 'use client' (PR #790) e adicionado preload manual com fetchPriority=high no HeroSection (PR #794). LCP caiu de 4.8s para 1.2s.",
         "details": "",
@@ -6702,7 +6702,7 @@
         "updatedAt": "2026-06-18T05:14:14.823Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Otimizar imagens estáticas: converter PNG para WebP",
         "description": "Convertidos hero-landing-page, hero-about, hero-projects e curriculum-cta-illustration de PNG para WebP (qualidade 90). Imports atualizados nos HeroSections. Redução de até 91% no tamanho (803KB → 96KB no hero principal). PR #792.",
         "details": "",
@@ -6714,7 +6714,7 @@
         "updatedAt": "2026-06-18T05:14:17.893Z"
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Reduzir JS não utilizado: lazy load do ContactForm e remoção de use client",
         "description": "Causa raiz: AppLayout ('use client') importava ContactSection estaticamente, puxando ContactForm → Zod (73KB) para o bundle de todas as páginas. Corrigido com: remoção de 'use client' do AppLayout (PR #796) e next/dynamic com ssr:false no ContactForm dentro do ContactSection (PR #798). Unused JS caiu de 215KB para 193KB. Score Lighthouse: 80 → 98.",
         "details": "",
@@ -6733,6 +6733,149 @@
       "completedCount": 3,
       "tags": [
         "lighthouse"
+      ],
+      "created": "2026-07-01T14:21:47.330Z",
+      "description": "Tasks for lighthouse context"
+    }
+  },
+  "project-content": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Rewrite all 6 project content entries to reduce AI-sounding prose",
+        "description": "Comprehensive rewrite of all project narratives (EN/PT/ES) in seeders.ts to eliminate AI-writing tells: em-dash overuse, rule-of-three lists, \"not X, it's Y\" reframes, and listicle-only Technical Highlights sections",
+        "details": "## Implementation Context\n\nThis task involved rewriting the `content` field for all 6 projects in `packages/infra/prisma/seeders.ts`, across all 3 languages (EN/PT/ES = 18 total rewrites), to remove recognizable AI-writing patterns that made the portfolio sound generic and overly polished.\n\n## Changes Made\n\n### Content Rewrites (seeders.ts)\n- **Em-dash reduction**: Cut em-dash usage from 454 occurrences to 7 (only in code comments and mermaid diagrams, not in narrative prose)\n- **Bullet separator change**: Switched from `**Label** — description` to `**Label**: description` format throughout all projects. This was safe because the accent-color styling in `packages/ui/globals.css` (lines 85-93) targets `li > strong:first-child`, not the separator character itself\n- **Structural changes**:\n  - Replaced rule-of-three lists with naturally-varying list lengths (2, 4, 5 items instead of forcing 3)\n  - Removed \"not X, it's Y\" reframe patterns (e.g., \"This wasn't optional — it was required\")\n  - Mixed prose paragraphs into Technical Highlights sections instead of pure bullet lists\n  - Added concrete, project-specific details to replace generic statements\n  - Varied sentence rhythm and length within sections\n  - Eliminated banned LLM vocabulary (leverage, seamless, robust, delve, etc.)\n\n### Bug Fix\n- **Buyr project**: Removed a duplicated `## Technologies` section that appeared twice in the English version\n- **Buyr title**: Changed from `Buyr — Shopify App` to `Buyr: Shopify App` (consistent with colon separator)\n\n### Documentation Update\n- Added comprehensive \"Avoiding AI-sounding prose\" section to `.github/instructions/project_content.instructions.md` (lines 111-123) documenting all the patterns to avoid in future content writing\n\n## Files Modified\n\n1. `packages/infra/prisma/seeders.ts` (839 lines changed)\n   - All 6 projects rewritten: Buyr, Seidor, Galaxies, Stattus4, Portfolio, and one other\n   - Each project had EN/PT/ES versions rewritten (18 total content blocks)\n   \n2. `.github/instructions/project_content.instructions.md` (17 lines added)\n   - New section: \"Avoiding AI-sounding prose\"\n   - Lists 8 specific anti-patterns with guidance on each\n\n## Technical Approach\n\nThe rewrite followed the existing narrative structure (Constraints → Context → Contribution → Result) but improved the prose quality by:\n- Reading each section aloud to catch unnatural rhythm\n- Checking for \"could this apply to any similar project?\" and adding concrete details when yes\n- Mixing short, blunt sentences with longer ones\n- Using periods and commas instead of defaulting to em-dashes\n- Preserving technical accuracy while improving readability\n\n## Deployment\n\n- PR #883 merged to `develop` branch on 2026-07-01\n- Subsequently promoted to `master`/production\n- Seed applied to both dev (`portfolio-dev`) and production Supabase databases\n- All 18 project detail pages (6 projects × 3 languages) verified returning 200 with updated content",
+        "testStrategy": "## Verification Steps\n\n### Code Quality\n- [x] Run `tsc --noEmit` in `packages/infra` to verify TypeScript compilation\n- [x] Run `pnpm run seed` against dev database to verify seeders.ts executes without errors\n- [x] Verify no syntax errors in the seeders.ts file (all template literals properly closed)\n\n### Content Integrity\n- [x] Verify all 6 projects still have `content` fields in all 3 languages (EN/PT/ES)\n- [x] Check that no project content was accidentally deleted during rewrite\n- [x] Confirm Technologies sections are present and well-formed for all projects\n- [x] Verify no duplicated sections remain (especially in Buyr project)\n\n### Prose Quality Checks\n- [x] Run em-dash count: `grep -o \"—\" packages/infra/prisma/seeders.ts | wc -l` (should be ≤10, all in non-prose context)\n- [x] Spot-check 3-4 projects for absence of banned vocabulary (leverage, seamless, robust, delve)\n- [x] Verify bullet labels use colon format: `**Label**: description`\n- [x] Check Technical Highlights sections mix bullets with prose paragraphs\n\n### Visual/Functional Testing\n- [x] Start local dev server and visit all 6 project detail pages in English\n- [x] Switch locale and verify Portuguese versions render correctly\n- [x] Switch locale and verify Spanish versions render correctly\n- [x] Verify CSS styling for bullet labels works correctly (accent color on bold text)\n- [x] Check that no layout breaks occurred from content changes\n\n### Production Verification\n- [x] Verify seed was applied to production Supabase database\n- [x] Spot-check 2-3 project pages in production environment\n- [x] Confirm no 404s or missing content errors in production logs\n\n### Documentation\n- [x] Verify `.github/instructions/project_content.instructions.md` contains new \"Avoiding AI-sounding prose\" section\n- [x] Confirm the section lists all 8 anti-patterns with clear guidance",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T02:16:18.720Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-07-01T02:16:18.721Z",
+      "taskCount": 1,
+      "completedCount": 1,
+      "tags": [
+        "project-content"
+      ],
+      "created": "2026-07-01T14:21:47.330Z",
+      "description": "Tasks for project-content context"
+    }
+  },
+  "mobile-menu-close-on-item-click": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Create SideNavigation context and hook",
+        "description": "Create `SideNavigationContext` and `useSideNavigation` hook to expose closeMenu function",
+        "details": "Create `apps/site/src/components/Layout/SideNavigation/context.ts` with:\n\n1. Define `ISideNavigationContext` interface:\n   ```typescript\n   export interface ISideNavigationContext {\n     closeMenu: () => void;\n   }\n   ```\n\n2. Create context with `createContext<ISideNavigationContext | null>(null)`\n3. Export `SideNavigationProvider = SideNavigationContext.Provider`\n4. Set `displayName = 'SideNavigationContext'`\n5. Create `useSideNavigation` hook in same file:\n   - Use `useContext(SideNavigationContext)`\n   - Add invariant guard: `invariant(context, 'useSideNavigation must be used within a SideNavigationProvider.')`\n   - Return context\n\nFollow the exact pattern from `packages/ui/src/Control/Accordion/context.ts` and `packages/ui/src/Control/Accordion/useAccordion.ts`. Use `tiny-invariant` for the guard (already available as dependency in apps/site/package.json).",
+        "testStrategy": "Unit test for `useSideNavigation` hook:\n- Mock context provider with closeMenu function\n- Verify hook returns context when inside provider\n- Verify invariant throws when hook used outside provider (should throw error with message 'useSideNavigation must be used within a SideNavigationProvider.')\n\nCreate test file at `apps/site/tests/components/Layout/SideNavigation/useSideNavigation.test.tsx`",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T14:55:53.301Z"
+      },
+      {
+        "id": 2,
+        "title": "Update SideNavigation to provide context",
+        "description": "Modify SideNavigation component to extract setFalse from useBoolean and provide it via SideNavigationContext",
+        "details": "In `apps/site/src/components/Layout/SideNavigation/index.tsx`:\n\n1. Line 22: Update useBoolean destructure:\n   ```typescript\n   const { value: open, toggle, setFalse: closeMenu } = useBoolean(false);\n   ```\n\n2. Import SideNavigationProvider:\n   ```typescript\n   import { SideNavigationProvider } from './context';\n   ```\n\n3. Wrap the nav element (lines 30-105) with:\n   ```typescript\n   <SideNavigationProvider value={{ closeMenu }}>\n     <nav ... >\n       {/* existing nav content */}\n     </nav>\n   </SideNavigationProvider>\n   ```\n\nNo changes to open/toggle behavior or any other logic. Desktop behavior unchanged (isOpen still gated by !isDesktop && open).",
+        "testStrategy": "Integration test in existing `apps/site/tests/components/View/SideNavigation/SideNavigation.test.tsx`:\n- Render SideNavigation with mocked useBoolean returning open=true, toggle=mockToggle, setFalse=mockCloseMenu\n- Use Testing Library to find and click a MenuItem.Item1 link\n- Verify mockCloseMenu was called\n- Verify menu transitions from open to closed state\n\nBehavior-focused: test that clicking a link closes the menu, not implementation details of context.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T14:59:12.812Z"
+      },
+      {
+        "id": 3,
+        "title": "Add closeMenu to MenuItem.Item1 onClick",
+        "description": "Call closeMenu() when Item1 link is clicked (Home, Projects, About, Resume)",
+        "details": "In `apps/site/src/components/Layout/SideNavigation/MenuItem/Item1/index.tsx`:\n\n1. Import the hook:\n   ```typescript\n   import { useSideNavigation } from '../../context';\n   ```\n\n2. Inside the Item1 component (line 14), extract closeMenu:\n   ```typescript\n   const { closeMenu } = useSideNavigation();\n   ```\n\n3. On the Link element (line 35), add onClick:\n   ```typescript\n   <Link\n     href={newHref}\n     onClick={closeMenu}\n     aria-current={isActive ? 'page' : undefined}\n     // ... rest of props\n   ```\n\nNo other changes. The onClick fires before navigation, closing the menu declaratively.",
+        "testStrategy": "Unit test at `apps/site/tests/components/Layout/SideNavigation/MenuItem/Item1.test.tsx`:\n- Mock useSideNavigation to return mockCloseMenu\n- Render Item1 with test props (href, icon, children)\n- Use Testing Library to click the link\n- Verify mockCloseMenu was called once\n- Verify link renders with correct href and aria attributes\n\nBehavior: clicking Item1 calls closeMenu from context.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:03:54.026Z"
+      },
+      {
+        "id": 4,
+        "title": "Add closeMenu to MenuItem.Item2.Link onClick",
+        "description": "Call closeMenu() when Item2.Link is clicked (LinkedIn, GitHub, RSS)",
+        "details": "In `apps/site/src/components/Layout/SideNavigation/MenuItem/Item2/Link/index.tsx`:\n\n1. Import the hook:\n   ```typescript\n   import { useSideNavigation } from '../../../context';\n   ```\n\n2. Inside the Link component (line 14), extract closeMenu:\n   ```typescript\n   const { closeMenu } = useSideNavigation();\n   ```\n\n3. On the NextLink element (line 23), add onClick:\n   ```typescript\n   <NextLink\n     href={href}\n     onClick={closeMenu}\n     className={classNames(ROOT_STYLE, className)}\n     // ... rest of props\n   ```\n\nNo other changes.",
+        "testStrategy": "Unit test at `apps/site/tests/components/Layout/SideNavigation/MenuItem/Item2/Link.test.tsx`:\n- Mock useSideNavigation to return mockCloseMenu\n- Render Item2.Link with test props (href, icon, children, newTab)\n- Use Testing Library to click the link\n- Verify mockCloseMenu was called once\n- Verify link renders with correct target and rel attributes for external links\n\nBehavior: clicking Item2.Link calls closeMenu from context.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:08:07.231Z"
+      },
+      {
+        "id": 5,
+        "title": "Add closeMenu to MenuItem.Item2.ShortLink onClick",
+        "description": "Call closeMenu() when Item2.ShortLink is clicked",
+        "details": "In `apps/site/src/components/Layout/SideNavigation/MenuItem/Item2/ShortLink/index.tsx`:\n\n1. Import the hook:\n   ```typescript\n   import { useSideNavigation } from '../../../context';\n   ```\n\n2. Inside the ShortLink component (line 13), extract closeMenu:\n   ```typescript\n   const { closeMenu } = useSideNavigation();\n   ```\n\n3. On the NextLink element (line 22), add onClick:\n   ```typescript\n   <NextLink\n     href={href}\n     onClick={closeMenu}\n     aria-label={ariaLabel}\n     className={classNames(ROOT_STYLE, className)}\n     // ... rest of props\n   ```\n\nNo other changes.",
+        "testStrategy": "Unit test at `apps/site/tests/components/Layout/SideNavigation/MenuItem/Item2/ShortLink.test.tsx`:\n- Mock useSideNavigation to return mockCloseMenu\n- Render Item2.ShortLink with test props (href, icon, aria-label, newTab)\n- Use Testing Library to click the link\n- Verify mockCloseMenu was called once\n- Verify link renders with correct aria-label and target\n\nBehavior: clicking Item2.ShortLink calls closeMenu from context.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:11:41.572Z"
+      },
+      {
+        "id": 6,
+        "title": "Add closeMenu to ThemeToggle onChange",
+        "description": "Call closeMenu() inside onChangeTheme after setTheme when a theme radio option is selected",
+        "details": "In `apps/site/src/components/Layout/SideNavigation/ThemeToggle.tsx`:\n\n1. Import the hook:\n   ```typescript\n   import { useSideNavigation } from './context';\n   ```\n\n2. Inside the ThemeToggle component (line 18), extract closeMenu:\n   ```typescript\n   const { closeMenu } = useSideNavigation();\n   ```\n\n3. Update onChangeTheme callback (lines 23-28) to call closeMenu after setTheme:\n   ```typescript\n   const onChangeTheme = useCallback<RadioGroupProps['onChange']>(\n     (event) => {\n       setTheme(event.target.value as Theme);\n       closeMenu();\n     },\n     [setTheme, closeMenu],\n   );\n   ```\n\nNo other changes. The existing setTheme side effect is preserved, closeMenu is called immediately after.",
+        "testStrategy": "Update existing test at `apps/site/tests/components/View/SideNavigation/ThemeToggle.test.tsx`:\n- Mock useSideNavigation to return mockCloseMenu\n- Keep existing mockSetTheme mock\n- Existing tests verify setTheme is called for each theme option (light/dark/system)\n- Add new assertions to each test:\n  - Verify mockCloseMenu was called once\n  - Verify mockCloseMenu was called after setTheme (order matters)\n\nBehavior: selecting a theme radio calls both setTheme and closeMenu.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:13:50.657Z"
+      },
+      {
+        "id": 7,
+        "title": "Add closeMenu to LanguageSelector onChange",
+        "description": "Call closeMenu() inside onChangeLanguage after replace when a language radio option is selected",
+        "details": "In `apps/site/src/components/Layout/SideNavigation/LanguageSelector.tsx`:\n\n1. Import the hook:\n   ```typescript\n   import { useSideNavigation } from './context';\n   ```\n\n2. Inside the LanguageSelector component (line 17), extract closeMenu:\n   ```typescript\n   const { closeMenu } = useSideNavigation();\n   ```\n\n3. Update onChangeLanguage callback (lines 24-30) to call closeMenu after replace:\n   ```typescript\n   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(\n     (event) => {\n       const { value } = event.target;\n       replace(pathname.replace(`/${locale}`, `/${value}`));\n       closeMenu();\n     },\n     [replace, pathname, locale, closeMenu],\n   );\n   ```\n\nNo other changes. The existing replace navigation is preserved, closeMenu is called immediately after.",
+        "testStrategy": "Update existing test at `apps/site/tests/components/View/SideNavigation/LanguageSelector.test.tsx`:\n- Mock useSideNavigation to return mockCloseMenu\n- Keep existing mockReplace mock\n- Existing tests verify replace is called with correct paths for each language (en-US/pt-BR/es)\n- Add new assertions to each navigation test:\n  - Verify mockCloseMenu was called once\n  - Verify mockCloseMenu was called after replace (order matters)\n\nBehavior: selecting a language radio calls both replace and closeMenu.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T15:14:53.855Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-07-01T15:14:53.856Z",
+      "taskCount": 7,
+      "completedCount": 7,
+      "tags": [
+        "mobile-menu-close-on-item-click"
       ]
     }
   }

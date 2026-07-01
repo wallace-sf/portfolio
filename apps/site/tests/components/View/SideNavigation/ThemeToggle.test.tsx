@@ -7,9 +7,14 @@ import { ThemeToggle } from '~/components/Layout/SideNavigation/ThemeToggle';
 // ---------------------------------------------------------------------------
 
 const mockSetTheme = vi.fn();
+const mockCloseMenu = vi.fn();
 
 vi.mock('~hooks', () => ({
   useTheme: () => ({ theme: 'system', setTheme: mockSetTheme }),
+}));
+
+vi.mock('~/components/Layout/SideNavigation/context', () => ({
+  useSideNavigation: () => ({ closeMenu: mockCloseMenu }),
 }));
 
 vi.mock('next-intl', () => ({
@@ -124,5 +129,13 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />);
 
     expect(screen.getByTestId('theme-expandable')).toBeInTheDocument();
+  });
+
+  it('should call closeMenu when a theme option is selected', () => {
+    render(<ThemeToggle />);
+
+    fireEvent.click(screen.getByTestId('radio-dark'));
+
+    expect(mockCloseMenu).toHaveBeenCalledOnce();
   });
 });

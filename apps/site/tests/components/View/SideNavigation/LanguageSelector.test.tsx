@@ -3,8 +3,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { LanguageSelector } from '~/components/Layout/SideNavigation/LanguageSelector';
 
 const mockReplace = vi.fn();
+const mockCloseMenu = vi.fn();
 let mockPathname = '/en-US/about';
 let mockLocale = 'en-US';
+
+vi.mock('~/components/Layout/SideNavigation/context', () => ({
+  useSideNavigation: () => ({ closeMenu: mockCloseMenu }),
+}));
 
 vi.mock('next/navigation', () => ({
   redirect: vi.fn(),
@@ -127,5 +132,13 @@ describe('LanguageSelector', () => {
     fireEvent.click(screen.getByTestId('radio-en-US'));
 
     expect(mockReplace).toHaveBeenCalledWith('/en-US/about');
+  });
+
+  it('should call closeMenu when a language option is selected', () => {
+    render(<LanguageSelector />);
+
+    fireEvent.click(screen.getByTestId('radio-pt-BR'));
+
+    expect(mockCloseMenu).toHaveBeenCalledOnce();
   });
 });
