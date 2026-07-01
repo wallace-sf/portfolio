@@ -1,4 +1,4 @@
-# Mobile side menu: close on item click
+# PRD: Close mobile side menu on menu item click
 
 ## Problem
 
@@ -12,7 +12,7 @@ Close the mobile menu whenever the user acts on any menu item:
 - `MenuItem.Item2.Link` / `MenuItem.Item2.ShortLink` (LinkedIn, GitHub, RSS)
 - Selecting a `Radio` option inside the `ThemeToggle` or `LanguageSelector` expandables (i.e. their `RadioGroup`'s `onChange`)
 
-Out of scope: any change to `Accordion` semantics. `ThemeToggle` and `LanguageSelector` remain two independent `Accordion.Root` instances — expanding one does not collapse the other. The "radio" behavior referenced in the request is the existing `Radio`/`RadioGroup` used for selecting a theme/language inside each expandable, not a radio relationship between the two accordions.
+Out of scope: any change to `Accordion` semantics. `ThemeToggle` and `LanguageSelector` remain two independent `Accordion.Root` instances — expanding one does not collapse the other. The "radio" behavior referenced in the original request is the existing `Radio`/`RadioGroup` used for selecting a theme/language inside each expandable, not a radio relationship between the two accordions.
 
 Desktop is unaffected: `isOpen` is already gated by `!isDesktop && open`, so calling close on desktop is a no-op in practice, but consumers don't need to know or care about breakpoint — they just declare "close on selection."
 
@@ -43,11 +43,11 @@ The context lives alongside `SideNavigation` (`apps/site/src/components/Layout/S
 
 ## Testing
 
-Behavior-focused tests (no implementation details):
+Behavior-focused tests (no implementation details), per `docs/08-TESTING.md`:
 
 - `Item1`, `Item2.Link`, `Item2.ShortLink`: clicking the link calls `closeMenu` from a mocked `SideNavigationContext`.
 - `ThemeToggle`, `LanguageSelector`: selecting a radio option calls `closeMenu` in addition to the existing `setTheme`/`replace` side effect.
-- `SideNavigation`: an integration-level test (or the existing test file for it, if any) confirming that clicking a nested `Item1` link transitions `open` back to `false`.
+- `SideNavigation`: an integration-level test confirming that clicking a nested `Item1` link transitions `open` back to `false`.
 
 ## Non-goals
 
