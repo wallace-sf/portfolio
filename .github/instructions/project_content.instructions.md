@@ -103,5 +103,20 @@ Answer these before writing the first draft. Mark `n/a` for anything confidentia
 - Keep technical English — no marketing jargon
 - Target length: 250–400 words in the rendered `content` field
 - Use `==text==` to highlight 3–5 key phrases the reader will scan for
-- Use `**Label** — description` format for bullet items (label gets accent color)
+- Use `**Label**: description` format for bullet items (label gets accent color via `li > strong:first-child` in `packages/ui/globals.css` — this is CSS-driven, not tied to any specific separator character)
 - Use `*italic caption*` as the only content in a paragraph after an image (renders as caption)
+
+---
+
+## Avoiding AI-sounding prose
+
+LLM-drafted text has recognizable tells. Actively avoid these when writing or revising content:
+
+- **Em dash as a crutch** — don't reach for `—` as the default way to join two clauses. Most of the time a period, comma, or colon reads more naturally. Bullet labels use a colon (`**Label**: description`), not a dash — reserve `—` for genuine, occasional asides only.
+- **Rule of three** — don't force every list or justification into exactly 3 items. Real work has 2 constraints sometimes, or 5. Vary list length across sections instead of defaulting to 3 every time.
+- **"Not X — it's Y" reframes** — don't structure sentences as a negation followed by a "true" reveal (e.g., "This wasn't a requirement — it was a decision"). One per whole project entry is the ceiling; look for it and cut extras.
+- **Listicle-in-disguise** — don't turn an entire section into repeated `**Bold Label** — explanation.` bullets back to back. Mix in a paragraph of connected prose between or instead of some bullets, especially in "Technical Highlights."
+- **Meta-commentary about the writing itself** — don't explain why the structure you chose works (e.g., "this shows X because..."). Just say the thing.
+- **Uniform sentence rhythm** — don't let every sentence in a section land at a similar length and cadence. Mix a short, blunt sentence in with longer ones.
+- **Banned vocabulary** — avoid: *leverage, seamless, robust, delve, underscore(s), meticulous, commendable, boasts, cutting-edge, in today's landscape*.
+- **No lived texture** — every section should be checkable against "could this apply to any similar project?" If yes, add a concrete detail only this project has: a wrong turn, a number, a reverted decision, an opinion stated flatly without hedging.
