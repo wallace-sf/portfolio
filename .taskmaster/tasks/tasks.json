@@ -6775,8 +6775,9 @@
         "testStrategy": "Unit test for `useSideNavigation` hook:\n- Mock context provider with closeMenu function\n- Verify hook returns context when inside provider\n- Verify invariant throws when hook used outside provider (should throw error with message 'useSideNavigation must be used within a SideNavigationProvider.')\n\nCreate test file at `apps/site/tests/components/Layout/SideNavigation/useSideNavigation.test.tsx`",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-07-01T14:49:55.101Z"
       },
       {
         "id": 2,
@@ -6863,9 +6864,13 @@
       }
     ],
     "metadata": {
-      "created": "2026-07-01T14:21:47.335Z",
-      "updated": "2026-07-01T14:38:11.709Z",
-      "description": "Tasks for mobile-menu-close-on-item-click context"
+      "version": "1.0.0",
+      "lastModified": "2026-07-01T14:49:55.102Z",
+      "taskCount": 7,
+      "completedCount": 0,
+      "tags": [
+        "mobile-menu-close-on-item-click"
+      ]
     }
   }
 }
