@@ -8,6 +8,7 @@ import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { useSideNavigation } from '../../context';
 import { Text } from '../Text';
 import { IGhostLinkProps } from '../types';
 
@@ -21,6 +22,7 @@ export const Item1: FC<IGhostLinkProps> = ({
 }) => {
   const locale = useLocale();
   const pathname = usePathname();
+  const { closeMenu } = useSideNavigation();
   const localizedHref = href === '/' ? `/${locale}` : `/${locale}${href}`;
   const newHref = newTab ? href : localizedHref;
 
@@ -34,6 +36,7 @@ export const Item1: FC<IGhostLinkProps> = ({
   return (
     <Link
       href={newHref}
+      onClick={closeMenu}
       aria-current={isActive ? 'page' : undefined}
       className={classNames(
         'flex flex-row items-center justify-between transition-all px-4 py-3 rounded-lg',
