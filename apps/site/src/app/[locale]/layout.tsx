@@ -1,4 +1,5 @@
-import { LOCALES } from '@repo/core/shared';
+import { GetProfile } from '@repo/application/portfolio';
+import { type Locale, LOCALES } from '@repo/core/shared';
 import classNames from 'classnames';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
@@ -10,7 +11,10 @@ import {
 import { Inter } from 'next/font/google';
 
 import { SITE_URL } from '~/lib/og';
-import { AppLayout } from '~components';
+import { buildAlternates } from '~/lib/seo/alternates';
+import { buildPersonJsonLd } from '~/lib/seo/structuredData';
+import { getServerContainer } from '~/lib/server/container';
+import { AppLayout, JsonLd } from '~components';
 
 import '@repo/tailwind-config/tailwind.css';
 import '@repo/ui/globals.css';
@@ -48,6 +52,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
     },
     alternates: {
+      ...buildAlternates('', locale as Locale),
       types: {
         'application/rss+xml': [
           {
@@ -75,6 +80,18 @@ export default async function RootLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
+  const profileResult = await new GetProfile(
+    getServerContainer().profileRepository,
+  ).execute({ locale: locale as Locale });
+
+  const personJsonLd = profileResult.isRight()
+    ? buildPersonJsonLd({
+        name: profileResult.value.name,
+        headline: profileResult.value.headline,
+        photo: profileResult.value.photo,
+      })
+    : null;
+
   return (
     <html dir="ltr" lang={locale}>
       <body
@@ -83,6 +100,7 @@ export default async function RootLayout({
           inter.className,
         )}
       >
+        {personJsonLd && <JsonLd data={personJsonLd} />}
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AppLayout>{children}</AppLayout>
         </NextIntlClientProvider>

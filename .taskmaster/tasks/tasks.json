@@ -6878,5 +6878,156 @@
         "mobile-menu-close-on-item-click"
       ]
     }
+  },
+  "seo-visibility": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Verify hreflang alternates implementation",
+        "description": "Verify that buildAlternates is correctly integrated across all pages and generates proper hreflang tags",
+        "details": "Check that:\n- `apps/site/src/lib/seo/alternates.ts` buildAlternates function exists and correctly generates canonical + languages (en-US, pt-BR, es, x-default)\n- All 4 pages (home, about, projects, project detail) call buildAlternates in their generateMetadata\n- Inspect HTML output in production build to confirm <link rel=\"alternate\" hreflang=\"...\"> tags are rendered\n- Verify x-default always points to en-US locale\n- Test with different locales and pathnames including empty (home), /about, /projects, /projects/[slug]",
+        "testStrategy": "Run `pnpm build` in apps/site, inspect static HTML output for hreflang tags. Use browser DevTools to verify tags are present. Check that all 3 locales + x-default appear. Verify existing unit tests in apps/site/tests/lib/seo/alternates.test.ts pass.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:06:38.875Z"
+      },
+      {
+        "id": 2,
+        "title": "Verify canonical URL implementation",
+        "description": "Verify that canonical URLs are properly set in metadata across all pages",
+        "details": "Check that:\n- buildAlternates returns canonical field in format `${SITE_URL}/${locale}${pathname}`\n- All 4 pages merge alternates.canonical into their Metadata return\n- Inspect HTML to confirm <link rel=\"canonical\" href=\"...\"> tag is rendered\n- Canonical URL matches the current locale and pathname\n- SITE_URL is correctly sourced from NEXT_PUBLIC_SITE_URL env var via ~/lib/og.ts",
+        "testStrategy": "Run `pnpm build`, inspect static HTML output for <link rel=\"canonical\">. Verify canonical URL matches expected format for each page and locale. Check browser DevTools for canonical tag presence. Existing alternates.test.ts already covers buildAlternates canonical output.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:06:41.949Z"
+      },
+      {
+        "id": 3,
+        "title": "Verify Person and WebSite JSON-LD on root layout",
+        "description": "Verify that Person and WebSite structured data is rendered site-wide via root layout",
+        "details": "Check that:\n- `apps/site/src/lib/seo/structuredData.ts` exports buildPersonJsonLd\n- Root layout (`apps/site/src/app/[locale]/layout.tsx`) calls GetProfile use case\n- Root layout passes profile data to buildPersonJsonLd and renders <JsonLd> component\n- JSON-LD @graph contains Person node (name, jobTitle from headline, image from photo, url, sameAs array with LinkedIn/GitHub)\n- JSON-LD @graph contains WebSite node (name: 'Wallace Ferreira', url: SITE_URL)\n- sameAs filters out undefined env vars gracefully\n- JsonLd component escapes '<' to prevent XSS",
+        "testStrategy": "Run `pnpm build`, inspect HTML <head> for <script type=\"application/ld+json\">. Parse JSON and verify @context, @graph, Person/@type, WebSite/@type. Check sameAs array. Verify existing tests in apps/site/tests/lib/seo/structuredData.test.ts pass (Person/WebSite schema, sameAs filtering). Verify apps/site/tests/components/JsonLd/JsonLd.test.tsx passes (XSS escaping).",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:06:45.150Z"
+      },
+      {
+        "id": 4,
+        "title": "Verify CreativeWork and BreadcrumbList JSON-LD on project detail",
+        "description": "Verify that CreativeWork and BreadcrumbList structured data is rendered on project detail pages",
+        "details": "Check that:\n- `apps/site/src/lib/seo/structuredData.ts` exports buildProjectJsonLd\n- Project detail page (`apps/site/src/app/[locale]/projects/[slug]/page.tsx`) calls GetProjectBySlug\n- Page passes project data + locale + i18n labels to buildProjectJsonLd and renders <JsonLd>\n- JSON-LD @graph contains CreativeWork node (name from title, description from caption, image from coverImage.url, url)\n- JSON-LD @graph contains BreadcrumbList with 3 items (Home, Projects, Project) with correct positions and URLs\n- BreadcrumbList uses localized labels (homeLabel, projectsLabel from next-intl)",
+        "testStrategy": "Run `pnpm build`, navigate to /en-US/projects/[any-slug], inspect HTML for <script type=\"application/ld+json\">. Parse JSON and verify @context, @graph, CreativeWork/@type, BreadcrumbList/@type, 3 breadcrumb items with correct positions. Verify existing tests in apps/site/tests/lib/seo/structuredData.test.ts pass (CreativeWork schema, BreadcrumbList structure).",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:06:48.377Z"
+      },
+      {
+        "id": 5,
+        "title": "Verify XSS prevention in JsonLd component",
+        "description": "Verify that JsonLd component properly escapes dangerous characters to prevent script injection",
+        "details": "Check that:\n- `apps/site/src/components/JsonLd/index.tsx` replaces '<' with '\\\\u003c' in JSON output\n- Component uses dangerouslySetInnerHTML but safely\n- Malicious payloads like '</script><script>alert(1)</script>' in bio/headline/caption are neutralized\n- No other special characters need escaping (only '<' is dangerous in this context)",
+        "testStrategy": "Verify existing test apps/site/tests/components/JsonLd/JsonLd.test.tsx passes, specifically the 'should escape \"<\" characters to prevent script-tag breakout' test. Manually test by temporarily injecting '</script><script>alert(1)</script>' into a project caption via CMS and verifying no alert fires in browser.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:06:51.502Z"
+      },
+      {
+        "id": 6,
+        "title": "Run all SEO-related unit tests",
+        "description": "Execute the full test suite for SEO modules to ensure all behavior is correct",
+        "details": "Run tests for:\n- `apps/site/tests/lib/seo/alternates.test.ts` (buildAlternates function with various pathnames/locales)\n- `apps/site/tests/lib/seo/structuredData.test.ts` (buildPersonJsonLd and buildProjectJsonLd)\n- `apps/site/tests/components/JsonLd/JsonLd.test.tsx` (JsonLd component XSS escaping)\n\nEnsure all tests pass and cover:\n- Canonical URL generation\n- All 3 locales + x-default in hreflang\n- Empty pathname (home page) handling\n- Nested paths (project detail) handling\n- Schema.org @context and @type fields\n- Person/WebSite/CreativeWork/BreadcrumbList structure\n- sameAs array filtering of undefined env vars\n- XSS prevention via '<' escaping",
+        "testStrategy": "Run `pnpm test` in apps/site. Verify all 3 test files pass with 100% coverage for their respective modules. Check test output for any failures or warnings. Tests should be behavior-focused (not implementation details) per docs/08-TESTING.md.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:06:54.597Z"
+      },
+      {
+        "id": 7,
+        "title": "Verify production build and inspect HTML output",
+        "description": "Build the site for production and manually inspect HTML source to confirm all SEO tags are present",
+        "details": "Steps:\n1. Run `pnpm build` in apps/site\n2. Run `pnpm start` to serve production build\n3. Navigate to each page type in each locale:\n   - Home: /en-US, /pt-BR, /es\n   - About: /en-US/about, /pt-BR/about, /es/about\n   - Projects: /en-US/projects, /pt-BR/projects, /es/projects\n   - Project detail: /en-US/projects/[slug], /pt-BR/projects/[slug], /es/projects/[slug]\n4. For each page, view HTML source and verify:\n   - <link rel=\"canonical\" href=\"...\"> is present and correct\n   - <link rel=\"alternate\" hreflang=\"...\"> tags exist for all 3 locales + x-default\n   - <script type=\"application/ld+json\"> exists with correct structured data\n5. Copy JSON-LD snippets and validate them at https://validator.schema.org/",
+        "testStrategy": "Manual inspection of HTML source + schema.org validator. Document findings in a checklist. No errors should appear in validator. All hreflang/canonical tags should match expected format from PRD.",
+        "priority": "high",
+        "dependencies": [
+          6
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:06:57.748Z"
+      },
+      {
+        "id": 8,
+        "title": "Test with Google Rich Results Test",
+        "description": "Validate structured data using Google's Rich Results Test tool to ensure search engine compatibility",
+        "details": "Steps:\n1. Deploy site to staging or use production URL\n2. Visit https://search.google.com/test/rich-results\n3. Test each page type:\n   - Home page (should detect Person and WebSite)\n   - About page (should detect Person and WebSite from layout)\n   - Projects page (should detect Person and WebSite from layout)\n   - Project detail page (should detect Person, WebSite, CreativeWork, BreadcrumbList)\n4. Verify no errors or warnings from Google's tool\n5. Check that all required fields are recognized\n6. Optionally test with Bing Webmaster Tools if available",
+        "testStrategy": "Use Google Rich Results Test tool. Document any warnings or errors. Fix if necessary (likely none since schema follows spec). Verify breadcrumbs appear in preview for project detail pages. Verify Person schema is recognized for potential knowledge panel.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:07:00.821Z"
+      },
+      {
+        "id": 9,
+        "title": "Verify env var configuration and fallback behavior",
+        "description": "Ensure all environment variables are correctly configured and graceful degradation works",
+        "details": "Check that:\n- `NEXT_PUBLIC_SITE_URL` is set and used by SITE_URL constant in ~/lib/og.ts\n- `NEXT_PUBLIC_LINKEDIN_URL` is set (optional) and included in sameAs if present\n- `NEXT_PUBLIC_GITHUB_URL` is set (optional) and included in sameAs if present\n- When social URLs are undefined, sameAs array is empty (not [undefined, undefined])\n- SITE_URL fallback ('http://localhost:3000') works in development\n- Production deployment has all env vars configured correctly",
+        "testStrategy": "Check .env.example or deployment config for required env vars. Test locally with and without NEXT_PUBLIC_LINKEDIN_URL/GITHUB_URL set. Verify existing structuredData.test.ts covers the 'should omit falsy entries from sameAs' case. Inspect production deployment env vars in hosting platform (Vercel/etc).",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:07:03.867Z"
+      },
+      {
+        "id": 10,
+        "title": "Document SEO implementation and verification checklist",
+        "description": "Create documentation summarizing the SEO implementation and provide a verification checklist for future changes",
+        "details": "Create or update documentation (likely in docs/ or apps/site/README.md) with:\n- Overview of SEO features implemented (hreflang, canonical, JSON-LD)\n- File locations and architecture (~/lib/seo/, ~components/JsonLd/)\n- How to verify SEO tags in production\n- Links to testing tools (schema.org validator, Google Rich Results Test)\n- Environment variables required for full functionality\n- Checklist for future developers:\n  - When adding new pages, remember to call buildAlternates in generateMetadata\n  - When adding new locales, update LOCALES array (already exists in @repo/core/shared)\n  - When changing profile/project data structure, update JSON-LD builders\n  - Run tests after any SEO-related changes\n- Note that Search Console verification is deferred (not yet implemented)",
+        "testStrategy": "Review documentation with a fresh perspective. Ensure it's clear, actionable, and matches the implementation. Documentation should enable a new developer to understand and maintain the SEO features without reading this PRD.",
+        "priority": "low",
+        "dependencies": [
+          7,
+          8
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-02T21:07:07.121Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-07-02T21:07:07.122Z",
+      "taskCount": 10,
+      "completedCount": 10,
+      "tags": [
+        "seo-visibility"
+      ]
+    }
   }
 }

@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildOgImageUrl } from '~/lib/og';
+import { buildAlternates } from '~/lib/seo/alternates';
 import { getServerContainer } from '~/lib/server/container';
 import { BioSection } from '~features/about/BioSection';
 import { CurriculumCTA } from '~features/about/CurriculumCTA';
@@ -34,13 +35,15 @@ export async function generateMetadata({
     getServerContainer().profileRepository,
   ).execute({ locale });
 
-  if (profileResult.isLeft()) return { title };
+  if (profileResult.isLeft())
+    return { title, alternates: buildAlternates('/about', locale) };
 
   const { bio } = profileResult.value;
 
   return {
     title,
     description: bio,
+    alternates: buildAlternates('/about', locale),
     openGraph: {
       title,
       description: bio,
