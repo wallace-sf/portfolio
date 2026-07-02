@@ -68,7 +68,7 @@ importers:
         version: link:../../packages/utils
       next:
         specifier: 16.2.6
-        version: 16.2.6(@babel/core@7.29.7)(react-dom@19.2.7)(react@19.2.7)
+        version: 16.2.6(@babel/core@7.29.7)(@playwright/test@1.61.1)(react-dom@19.2.7)(react@19.2.7)
       next-intl:
         specifier: ^4.11.0
         version: 4.11.0(patch_hash=2oeidtwegskk6lt7ov3o3mcu6i)(next@16.2.6)(react@19.2.7)(typescript@5.9.3)
@@ -171,7 +171,7 @@ importers:
         version: 2.5.1
       next:
         specifier: 16.2.6
-        version: 16.2.6(@babel/core@7.29.7)(react-dom@19.2.7)(react@19.2.7)
+        version: 16.2.6(@babel/core@7.29.7)(@playwright/test@1.61.1)(react-dom@19.2.7)(react@19.2.7)
       next-intl:
         specifier: 4.11.0
         version: 4.11.0(patch_hash=2oeidtwegskk6lt7ov3o3mcu6i)(next@16.2.6)(react@19.2.7)(typescript@5.9.3)
@@ -194,6 +194,9 @@ importers:
         specifier: ^4.3.6
         version: 4.4.3
     devDependencies:
+      '@playwright/test':
+        specifier: ^1.61.1
+        version: 1.61.1
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -330,7 +333,7 @@ importers:
         version: 9.1.2(eslint@8.57.1)
       eslint-config-turbo:
         specifier: ^2.0.0
-        version: 2.9.18(eslint@8.57.1)(turbo@2.10.0)
+        version: 2.9.18(eslint@8.57.1)(turbo@2.10.2)
       eslint-import-resolver-typescript:
         specifier: ^3.6.1
         version: 3.10.1(eslint-plugin-import@2.32.0)(eslint@8.57.1)
@@ -2231,6 +2234,13 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     dev: true
 
+  /@playwright/test@1.61.1:
+    resolution: {integrity: sha512-8nKv6+0RJSL9FE4jYOEGXnPeM/Hg12qZpmqzZjRh3qM0Y7c3z1mrOTfFLids72RDQYVh9WpLEfR5WdpNX4fkig==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      playwright: 1.61.1
+
   /@prisma/client@6.19.3(prisma@6.19.3)(typescript@5.9.3):
     resolution: {integrity: sha512-mKq3jQFhjvko5LTJFHGilsuQs+W+T3Gm451NzuTDGQxwCzwXHYnIu2zGkRoW+Exq3Rob7yp2MfzSrdIiZVhrBg==}
     engines: {node: '>=18.18'}
@@ -2963,8 +2973,8 @@ packages:
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
     dev: true
 
-  /@turbo/darwin-64@2.10.0:
-    resolution: {integrity: sha512-EwvHThXzpY0KGd1/NAmuewI5D+aVa3Rl/OlxE36yfjUKb/+ySrfJrSlEFt8aD1OXwnnaHnQnPKHFndor0Zxlsg==}
+  /@turbo/darwin-64@2.10.2:
+    resolution: {integrity: sha512-wBM3ObqOWnKUDmg7QfUFDkDHPFUAJmrYlYqmEM8jMPAPA/I6wRJIbWimeQUqhOiQ8xPKhzyWM+xaiUP0wz8FEQ==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
@@ -2979,8 +2989,8 @@ packages:
     dev: true
     optional: true
 
-  /@turbo/darwin-arm64@2.10.0:
-    resolution: {integrity: sha512-9d2fTyyG0lf5Wq1bwJA9qUaeecViMkLcdctWaMMmCkxZ/JqypmqOwK3W6vmejeKVgkr06gSoiX8bD+xN5Jpxcg==}
+  /@turbo/darwin-arm64@2.10.2:
+    resolution: {integrity: sha512-/Cq0joWnuMjDPfhjbFP4sv+C/7gkQ415zlaO4XUzD5EZxbtrKgXKvuuydMvogG8GeUnN1aDltW71RlmEfpjbyw==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
@@ -2995,8 +3005,8 @@ packages:
     dev: true
     optional: true
 
-  /@turbo/linux-64@2.10.0:
-    resolution: {integrity: sha512-sZBtjMuufitanjzi6UssoUpJMnnPlLMcdcJj3m3ptNsSq31Xh7MnjhwA5nWvLDTfEFg8GPcbYFXMo8vSdKRfqQ==}
+  /@turbo/linux-64@2.10.2:
+    resolution: {integrity: sha512-mMsf5IIhiKuceEXNstd25IbadjBXZ0amxzFOqliEzJX6HyeeHdBQPVSY583PWqYDyqM/FB8d5ZjkthfBSeuH3Q==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
@@ -3011,8 +3021,8 @@ packages:
     dev: true
     optional: true
 
-  /@turbo/linux-arm64@2.10.0:
-    resolution: {integrity: sha512-vkq/Z8R+1DQ+kifWFa810IjRy2NNBVvha3cg9sWA3nFh6nnGrHSMnnJKrzH7c/No9kq4Jb55Ru44YKsCSBgrKg==}
+  /@turbo/linux-arm64@2.10.2:
+    resolution: {integrity: sha512-Wcng1i2kaKmXutmwxT9MUoYZvdaIekXAdlGr4+0TpgbhGLw7nDuEcRBFrxb5BbRoX1d1q8SpdRxLc45TvDZIdQ==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
@@ -3027,8 +3037,8 @@ packages:
     dev: true
     optional: true
 
-  /@turbo/windows-64@2.10.0:
-    resolution: {integrity: sha512-CRUEguLWxFQHptYZS7HjPhNhAFawfea07iR+xAQ5e4klgLrPCMdexBkXwSCwOxqTFknJ7RZFN3gOaADsw+Gttg==}
+  /@turbo/windows-64@2.10.2:
+    resolution: {integrity: sha512-SsNhM7Ho7EpAdwtrJKBOic9Hso23vu6Dp0gAfLOvUFjPzurr/sGQlXZEvr6z89ne4RDOypTwz5CBDrixpMKtXw==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
@@ -3043,8 +3053,8 @@ packages:
     dev: true
     optional: true
 
-  /@turbo/windows-arm64@2.10.0:
-    resolution: {integrity: sha512-dVHGaf9F8twzgibcBqKoADT/LLqf9++jDb+hq/LPWWaOmRpp4M+/pVOm7vy4z9D++xg8eaxWLT0+wQxFwhYu9A==}
+  /@turbo/windows-arm64@2.10.2:
+    resolution: {integrity: sha512-Gf+S7ICAdimT/n02bOuVWKvhHnct/HYjZg3oBNIz5hZ9ZyWHbQim9J3P5Qip8WpX0ksxF7eaBVziJCuLnjhqDg==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
@@ -5064,15 +5074,15 @@ packages:
       eslint: 8.57.1
     dev: true
 
-  /eslint-config-turbo@2.9.18(eslint@8.57.1)(turbo@2.10.0):
+  /eslint-config-turbo@2.9.18(eslint@8.57.1)(turbo@2.10.2):
     resolution: {integrity: sha512-zgbFkvM7+qoWxL/JJ7ytEEE5DHg/xsAv1qzzIAyQEYkROIMKk/0mBb3sjxF/qjHjOuwVF8ZYX2P014qLG/Ng9g==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 8.57.1
-      eslint-plugin-turbo: 2.9.18(eslint@8.57.1)(turbo@2.10.0)
-      turbo: 2.10.0
+      eslint-plugin-turbo: 2.9.18(eslint@8.57.1)(turbo@2.10.2)
+      turbo: 2.10.2
     dev: true
 
   /eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.32.0):
@@ -5484,7 +5494,7 @@ packages:
       '@microsoft/tsdoc-config': 0.16.2
     dev: true
 
-  /eslint-plugin-turbo@2.9.18(eslint@8.57.1)(turbo@2.10.0):
+  /eslint-plugin-turbo@2.9.18(eslint@8.57.1)(turbo@2.10.2):
     resolution: {integrity: sha512-WbvNDtwxyNQnX6ODtWs39EutD8a2Eoh25EgGkSqbqRpw8llHG/waCgBUwUUG7i1yh73d6p4HNBWEk+C+mvx9Xw==}
     peerDependencies:
       eslint: '>6.6.0'
@@ -5492,7 +5502,7 @@ packages:
     dependencies:
       dotenv: 16.0.3
       eslint: 8.57.1
-      turbo: 2.10.0
+      turbo: 2.10.2
     dev: true
 
   /eslint-plugin-unicorn@48.0.1(eslint@8.57.1):
@@ -5805,6 +5815,13 @@ packages:
   /fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
     dev: true
+
+  /fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+    requiresBuild: true
+    optional: true
 
   /fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -7712,7 +7729,7 @@ packages:
       '@swc/core': 1.15.41
       icu-minify: 4.13.0
       negotiator: 1.0.0
-      next: 16.2.6(@babel/core@7.29.7)(react-dom@19.2.7)(react@19.2.7)
+      next: 16.2.6(@babel/core@7.29.7)(@playwright/test@1.61.1)(react-dom@19.2.7)(react@19.2.7)
       next-intl-swc-plugin-extractor: 4.13.0
       po-parser: 2.1.1
       react: 19.2.7
@@ -7723,7 +7740,7 @@ packages:
     dev: false
     patched: true
 
-  /next@16.2.6(@babel/core@7.29.7)(react-dom@19.2.7)(react@19.2.7):
+  /next@16.2.6(@babel/core@7.29.7)(@playwright/test@1.61.1)(react-dom@19.2.7)(react@19.2.7):
     resolution: {integrity: sha512-qOVgKJg1+At15NpeUP+eJgCHvTCgXsogweq87Ri/Ix7PkqQHg4sdaXmSFqKlgaIXE4kW0g25LE68W87UANlHtw==}
     engines: {node: '>=20.9.0'}
     hasBin: true
@@ -7745,6 +7762,7 @@ packages:
         optional: true
     dependencies:
       '@next/env': 16.2.6
+      '@playwright/test': 1.61.1
       '@swc/helpers': 0.5.15
       baseline-browser-mapping: 2.10.36
       caniuse-lite: 1.0.30001799
@@ -8085,6 +8103,20 @@ packages:
       confbox: 0.2.4
       exsolve: 1.0.8
       pathe: 2.0.3
+
+  /playwright-core@1.61.1:
+    resolution: {integrity: sha512-h7Qlt6m4REp25qvIdvbDtVmD4LqVXfpRxhORv9L0jzETM05p4fuPJ3dKyuSXQxDSbXnmS79HAgi9589lGSpLkg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  /playwright@1.61.1:
+    resolution: {integrity: sha512-DWnY5o3YbLWK4GovuAVwpqL+1VwGNdUGrRr++8j8PtQQzvAVZUIMjKQ90fY689sEJZJBbZVw1rXaOKSTitkzPQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      playwright-core: 1.61.1
+    optionalDependencies:
+      fsevents: 2.3.2
 
   /pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -9453,16 +9485,16 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /turbo@2.10.0:
-    resolution: {integrity: sha512-o016H9PPtuH2deb3mh3Vci3Avfi9UYgM/RONQisY7HnloupP0IFSbFS3gFYJgFJP8nwBrByHWFQIDa8T2zIXPw==}
+  /turbo@2.10.2:
+    resolution: {integrity: sha512-wTExrNrRjB8qzIcg+ZLm0A3GFNLDsWNwdS/RBXB0FPrBDyzk3i96Yx+TxWZC7a0k1SIreFB8ciUbxjmEqTH8IQ==}
     hasBin: true
     optionalDependencies:
-      '@turbo/darwin-64': 2.10.0
-      '@turbo/darwin-arm64': 2.10.0
-      '@turbo/linux-64': 2.10.0
-      '@turbo/linux-arm64': 2.10.0
-      '@turbo/windows-64': 2.10.0
-      '@turbo/windows-arm64': 2.10.0
+      '@turbo/darwin-64': 2.10.2
+      '@turbo/darwin-arm64': 2.10.2
+      '@turbo/linux-64': 2.10.2
+      '@turbo/linux-arm64': 2.10.2
+      '@turbo/windows-64': 2.10.2
+      '@turbo/windows-arm64': 2.10.2
     dev: true
 
   /turbo@2.9.18:

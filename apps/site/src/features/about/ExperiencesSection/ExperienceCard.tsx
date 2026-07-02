@@ -73,66 +73,69 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
     LOCATION_TYPE_ICONS[locationType] ?? 'mdi:map-marker-outline';
 
   return (
-    <article className="flex flex-col gap-y-2">
-      <h2 className="text-2xl font-bold text-content-primary">{position}</h2>
-
-      <div className="flex flex-wrap items-baseline gap-x-2">
-        {logo && (
-          <Image
-            src={logo.url}
-            alt={logo.alt}
-            width={32}
-            height={32}
-            className="inline-block size-8 shrink-0 self-center rounded-full object-cover"
-          />
-        )}
-        <span className="text-xl font-bold uppercase text-content-primary">
-          {company}
-        </span>
-        <span className="text-base text-content-disabled">
-          {period} ({duration})
-        </span>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-base text-content-disabled">
-        <span className="flex items-center gap-x-1">
-          <Icon icon={LOCATION_ICON} className="shrink-0 text-base" />
-          {location}
-        </span>
-        <span className="flex items-center gap-x-1">
-          <Icon icon={employmentIcon} className="shrink-0 text-base" />
-          {employmentLabel}
-        </span>
-        <span className="flex items-center gap-x-1">
-          <Icon icon={locationTypeIcon} className="shrink-0 text-base" />
-          {locationLabel}
-        </span>
-      </div>
-
-      {description && (
-        <div className="flex flex-col gap-y-1">
-          <TextRich
-            content={description}
-            className={classNames('text-base text-content-disabled', {
-              'line-clamp-3': !expanded,
-            })}
-          />
-          <button
-            type="button"
-            className="self-start text-sm text-content-disabled underline"
-            onClick={toggleDescription}
-          >
-            {expanded ? t('see_less') : t('see_more')}
-          </button>
-        </div>
+    <article className="flex gap-x-3">
+      {logo && (
+        <Image
+          src={logo.url}
+          alt={logo.alt}
+          width={40}
+          height={40}
+          className="size-10 shrink-0 rounded-full object-cover"
+        />
       )}
 
-      <SkillGroup
-        skills={skills}
-        max={isXL ? 3 : 2}
-        initializeWithMax={2}
-        total={skills.length}
-      />
+      <div className="flex min-w-0 flex-1 flex-col gap-y-2">
+        <h2 className="text-2xl font-bold text-content-primary">{position}</h2>
+
+        <div className="flex flex-wrap items-baseline gap-x-2">
+          <span className="text-xl font-bold uppercase text-content-primary">
+            {company}
+          </span>
+          <span className="text-base text-content-disabled">
+            {period} ({duration})
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-base text-content-disabled">
+          <span className="flex items-center gap-x-1">
+            <Icon icon={LOCATION_ICON} className="shrink-0 text-base" />
+            {location}
+          </span>
+          <span className="flex items-center gap-x-1">
+            <Icon icon={employmentIcon} className="shrink-0 text-base" />
+            {employmentLabel}
+          </span>
+          <span className="flex items-center gap-x-1">
+            <Icon icon={locationTypeIcon} className="shrink-0 text-base" />
+            {locationLabel}
+          </span>
+        </div>
+
+        {description && (
+          <div className="flex flex-col gap-y-1">
+            <TextRich
+              content={description}
+              className={classNames('text-base text-content-disabled', {
+                'line-clamp-3': !expanded,
+              })}
+            />
+            <button
+              type="button"
+              className="self-start text-sm text-content-disabled underline"
+              onClick={toggleDescription}
+            >
+              {expanded ? t('see_less') : t('see_more')}
+            </button>
+          </div>
+        )}
+
+        <SkillGroup
+          skills={skills}
+          max={isXL ? 3 : 2}
+          initializeWithMax={2}
+          total={skills.length}
+        />
+      </div>
     </article>
   );
 };

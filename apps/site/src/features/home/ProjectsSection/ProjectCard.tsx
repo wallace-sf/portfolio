@@ -88,15 +88,11 @@ export const ProjectCard: FC<IProjectCardProps> = ({
             </span>
           )}
 
-          <div className="min-h-16">
+          <div className="min-h-16 flex flex-wrap items-center gap-x-2 gap-y-2">
             <h3 className="line-clamp-2 text-2xl font-bold text-content-primary">
               {title}
-              {repositoryUrl && (
-                <span className="ml-2 inline-flex align-middle">
-                  <OpenSourceBadge repositoryUrl={repositoryUrl} />
-                </span>
-              )}
             </h3>
+            {repositoryUrl && <OpenSourceBadge repositoryUrl={repositoryUrl} />}
           </div>
 
           <p
