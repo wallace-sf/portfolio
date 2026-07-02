@@ -1,6 +1,6 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { GetProfile } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
-import { GoogleAnalytics } from '@next/third-parties/google';
 import classNames from 'classnames';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
@@ -11,7 +11,7 @@ import {
 } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 
-import { SITE_URL } from '~/lib/og';
+import { env } from '~/config/env';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildPersonJsonLd } from '~/lib/seo/structuredData';
 import { getServerContainer } from '~/lib/server/container';
@@ -31,7 +31,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Metadata' });
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(env.siteUrl),
     title: {
       default: 'Wallace Ferreira',
       template: '%s | Wallace Ferreira',
@@ -57,7 +57,7 @@ export async function generateMetadata({
       types: {
         'application/rss+xml': [
           {
-            url: `${SITE_URL}/${locale}/feed.xml`,
+            url: `${env.siteUrl}/${locale}/feed.xml`,
             title: 'Wallace Ferreira',
           },
         ],
@@ -105,9 +105,7 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AppLayout>{children}</AppLayout>
         </NextIntlClientProvider>
-        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-        )}
+        {env.gaMeasurementId && <GoogleAnalytics gaId={env.gaMeasurementId} />}
       </body>
     </html>
   );

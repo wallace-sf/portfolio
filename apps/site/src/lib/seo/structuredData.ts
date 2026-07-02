@@ -1,6 +1,6 @@
 import type { Locale } from '@repo/core/shared';
 
-import { SITE_URL } from '~/lib/og';
+import { env } from '~/config/env';
 
 interface BuildPersonJsonLdParams {
   name: string;
@@ -33,10 +33,9 @@ export function buildPersonJsonLd({
   headline,
   photo,
 }: BuildPersonJsonLdParams): PersonJsonLd {
-  const sameAs = [
-    process.env.NEXT_PUBLIC_LINKEDIN_URL,
-    process.env.NEXT_PUBLIC_GITHUB_URL,
-  ].filter((url): url is string => Boolean(url));
+  const sameAs = [env.linkedinUrl, env.githubUrl].filter((url): url is string =>
+    Boolean(url),
+  );
 
   return {
     '@context': 'https://schema.org',
@@ -46,13 +45,13 @@ export function buildPersonJsonLd({
         name,
         jobTitle: headline,
         image: photo.url,
-        url: SITE_URL,
+        url: env.siteUrl,
         sameAs,
       },
       {
         '@type': 'WebSite',
         name: 'Wallace Ferreira',
-        url: SITE_URL,
+        url: env.siteUrl,
       },
     ],
   };
@@ -102,7 +101,7 @@ export function buildProjectJsonLd({
   homeLabel,
   projectsLabel,
 }: BuildProjectJsonLdParams): ProjectJsonLd {
-  const homeUrl = `${SITE_URL}/${locale}`;
+  const homeUrl = `${env.siteUrl}/${locale}`;
   const projectsUrl = `${homeUrl}/projects`;
   const projectUrl = `${projectsUrl}/${slug}`;
 

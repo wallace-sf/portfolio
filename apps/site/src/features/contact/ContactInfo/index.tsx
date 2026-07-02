@@ -9,12 +9,13 @@ import { formatCellphone } from '@repo/utils';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { MenuItem } from '~/components/Layout/SideNavigation/MenuItem';
+import { env } from '~/config/env';
 
 export const ContactInfo: FC = () => {
   const t = useTranslations('ContactInfo');
   const tClip = useTranslations('Clipboard');
   const locale = useLocale();
-  const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_NUMBER}?text=${encodeURIComponent(t('whatsappMessage'))}`;
+  const whatsappUrl = `https://wa.me/${env.contactNumber}?text=${encodeURIComponent(t('whatsappMessage'))}`;
 
   return (
     <section className="flex flex-col gap-y-6 xl:w-[326px]">
@@ -33,10 +34,10 @@ export const ContactInfo: FC = () => {
           </div>
           <div className="flex items-center gap-x-2">
             <span className="text-base text-content-secondary">
-              {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
+              {env.contactEmail}
             </span>
             <Button.Clipboard
-              text={process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? ''}
+              text={env.contactEmail ?? ''}
               tooltip={tClip('copy')}
               aria-label={tClip('copy')}
               unstyled
@@ -61,10 +62,10 @@ export const ContactInfo: FC = () => {
           </div>
           <div className="flex items-center gap-x-2">
             <span className="text-base text-content-secondary">
-              {formatCellphone(process.env.NEXT_PUBLIC_CONTACT_NUMBER)}
+              {formatCellphone(env.contactNumber)}
             </span>
             <Button.Clipboard
-              text={process.env.NEXT_PUBLIC_CONTACT_NUMBER ?? ''}
+              text={env.contactNumber ?? ''}
               tooltip={tClip('copy')}
               aria-label={tClip('copy')}
               unstyled
@@ -91,13 +92,13 @@ export const ContactInfo: FC = () => {
           newTab
         />
         <MenuItem.Item2.ShortLink
-          href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
+          href={env.linkedinUrl}
           icon="devicon:linkedin"
           aria-label={t('linkedin')}
           newTab
         />
         <MenuItem.Item2.ShortLink
-          href={process.env.NEXT_PUBLIC_GITHUB_URL}
+          href={env.githubUrl}
           icon="mdi:github"
           iconClassName="text-content-primary"
           aria-label={t('github')}

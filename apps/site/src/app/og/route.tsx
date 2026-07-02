@@ -2,12 +2,12 @@ import { DEFAULT_LOCALE } from '@repo/core';
 import { ImageResponse } from 'next/og';
 import { type NextRequest } from 'next/server';
 
-import { SITE_URL } from '~/lib/og';
+import { env } from '~/config/env';
 
 export const runtime = 'edge';
 
 const SIZE = { width: 1200, height: 630 };
-const siteHost = new URL(SITE_URL).host;
+const siteHost = new URL(env.siteUrl).host;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;

@@ -1,4 +1,4 @@
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+import { env } from '~/config/env';
 
 interface OgImageParams {
   title: string;
@@ -15,7 +15,7 @@ export function buildOgImageUrl({
   page,
   jobTitle,
 }: OgImageParams): string {
-  const url = new URL('/og', SITE_URL);
+  const url = new URL('/og', env.siteUrl);
   url.searchParams.set('title', title);
   if (subtitle) url.searchParams.set('subtitle', subtitle);
   if (locale) url.searchParams.set('locale', locale);
@@ -23,5 +23,3 @@ export function buildOgImageUrl({
   if (jobTitle) url.searchParams.set('jobTitle', jobTitle);
   return url.toString();
 }
-
-export { SITE_URL };

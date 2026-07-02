@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
 import { useBoolean, useScrollLock } from 'usehooks-ts';
 
+import { env } from '~/config/env';
 import { getResumeUrl } from '~/lib/resume';
 import { useBreakpoint } from '~hooks';
 
@@ -72,7 +73,7 @@ export const SideNavigation: FC = () => {
           <ul className="flex flex-col gap-y-3 px-6 pb-8 lg:justify-end lg:px-0">
             <li>
               <MenuItem.Item2.Link
-                href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
+                href={env.linkedinUrl}
                 icon="devicon:linkedin"
                 newTab
               >
@@ -81,7 +82,7 @@ export const SideNavigation: FC = () => {
             </li>
             <li>
               <MenuItem.Item2.Link
-                href={process.env.NEXT_PUBLIC_GITHUB_URL}
+                href={env.githubUrl}
                 icon="mdi:github"
                 iconClassName="text-content-primary"
                 newTab
