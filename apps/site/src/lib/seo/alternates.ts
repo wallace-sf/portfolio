@@ -1,11 +1,9 @@
 import type { Locale } from '@repo/core/shared';
-import { LOCALES } from '@repo/core/shared';
+import { DEFAULT_LOCALE, LOCALES } from '@repo/core/shared';
 
 import { SITE_URL } from '~/lib/og';
 
 import type { HreflangMap, Pathname } from './types';
-
-const HREFLANG_DEFAULT_LOCALE: Locale = 'en-US';
 
 export function buildAlternates(
   pathname: Pathname,
@@ -17,7 +15,7 @@ export function buildAlternates(
       return acc;
     },
     {
-      'x-default': `${SITE_URL}/${HREFLANG_DEFAULT_LOCALE}${pathname}`,
+      'x-default': `${SITE_URL}/${DEFAULT_LOCALE}${pathname}`,
     } as HreflangMap,
   );
 
