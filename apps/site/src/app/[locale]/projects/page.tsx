@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildOgImageUrl } from '~/lib/og';
+import { buildAlternates } from '~/lib/seo/alternates';
 import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/projects/HeroSection';
 import { ProjectsSection } from '~features/projects/ProjectsSection';
@@ -30,6 +31,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    alternates: buildAlternates('/projects', locale),
     openGraph: {
       title,
       description,

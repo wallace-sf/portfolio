@@ -4,11 +4,14 @@ import {
 } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
+import { buildAlternates } from '~/lib/seo/alternates';
+import { buildProjectJsonLd } from '~/lib/seo/structuredData';
 import { getServerContainer } from '~/lib/server/container';
+import { JsonLd } from '~components';
 import { ProjectDetail } from '~features/projects/ProjectDetail';
 
 export async function generateStaticParams() {
@@ -45,6 +48,7 @@ export async function generateMetadata({
   return {
     title,
     description: caption,
+    alternates: buildAlternates(`/projects/${slug}`, locale as Locale),
     openGraph: {
       title,
       description: caption,
@@ -68,5 +72,22 @@ export default async function ProjectDetailPage({
 
   if (result.isLeft()) notFound();
 
-  return <ProjectDetail {...result.value} />;
+  const t = await getTranslations({ locale, namespace: 'SideNavigation' });
+  const { title, caption, coverImage } = result.value;
+  const projectJsonLd = buildProjectJsonLd({
+    title,
+    caption,
+    coverImage,
+    slug,
+    locale: locale as Locale,
+    homeLabel: t('home'),
+    projectsLabel: t('projects'),
+  });
+
+  return (
+    <>
+      <JsonLd data={projectJsonLd} />
+      <ProjectDetail {...result.value} />
+    </>
+  );
 }

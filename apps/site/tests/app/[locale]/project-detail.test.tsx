@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 
 vi.mock('next-intl/server', () => ({
   setRequestLocale: vi.fn(),
+  getTranslations: vi.fn().mockResolvedValue((key: string) => key),
 }));
 
 vi.mock('@repo/core/shared', () => ({
@@ -56,7 +57,10 @@ const PROJECT = {
   title: 'My Project',
   caption: 'A great project',
   coverImage: { url: 'https://example.com/img.jpg', alt: 'Cover' },
-  thumbnailImage: { url: 'https://example.com/thumbnail.webp', alt: 'Thumbnail' },
+  thumbnailImage: {
+    url: 'https://example.com/thumbnail.webp',
+    alt: 'Thumbnail',
+  },
   skills: [{ name: 'React', icon: '' }],
   content: '# Hello',
   publishedAt: '2024-01-01',
@@ -64,7 +68,11 @@ const PROJECT = {
   relatedProjects: [],
 };
 
-const right = (value: unknown) => ({ isRight: () => true, isLeft: () => false, value });
+const right = (value: unknown) => ({
+  isRight: () => true,
+  isLeft: () => false,
+  value,
+});
 const left = () => ({ isRight: () => false, isLeft: () => true });
 
 beforeEach(() => {
@@ -76,11 +84,12 @@ describe('ProjectDetailPage', () => {
   it('should render project detail when use case returns data', async () => {
     mockExecute.mockResolvedValue(right(PROJECT));
 
-    const { default: Page } = await import(
-      '~/app/[locale]/projects/[slug]/page'
-    );
+    const { default: Page } =
+      await import('~/app/[locale]/projects/[slug]/page');
     render(
-      await Page({ params: Promise.resolve({ locale: 'en-US', slug: 'my-project' }) }),
+      await Page({
+        params: Promise.resolve({ locale: 'en-US', slug: 'my-project' }),
+      }),
     );
 
     expect(screen.getByTestId('project-detail')).toBeInTheDocument();
@@ -91,9 +100,8 @@ describe('ProjectDetailPage', () => {
     mockExecute.mockResolvedValue(left());
 
     const { notFound } = await import('next/navigation');
-    const { default: Page } = await import(
-      '~/app/[locale]/projects/[slug]/page'
-    );
+    const { default: Page } =
+      await import('~/app/[locale]/projects/[slug]/page');
     await expect(
       Page({ params: Promise.resolve({ locale: 'en-US', slug: 'missing' }) }),
     ).rejects.toThrow('NEXT_NOT_FOUND');

@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildOgImageUrl } from '~/lib/og';
+import { buildAlternates } from '~/lib/seo/alternates';
 import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/home/HeroSection';
 import { ProjectsSection } from '~features/home/ProjectsSection';
@@ -30,13 +31,17 @@ export async function generateMetadata({
   ).execute({ locale });
 
   if (profileResult.isLeft())
-    return { title: { absolute: `${t('HomePage.title')} | Wallace Ferreira` } };
+    return {
+      title: { absolute: `${t('HomePage.title')} | Wallace Ferreira` },
+      alternates: buildAlternates('', locale),
+    };
 
   const { name, headline } = profileResult.value;
 
   return {
     title: { absolute: `${t('HomePage.title')} | Wallace Ferreira` },
     description: headline,
+    alternates: buildAlternates('', locale),
     openGraph: {
       title: name,
       description: headline,
