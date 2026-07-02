@@ -11,6 +11,7 @@ declare global {
       readonly NEXT_PUBLIC_RESUME_URL_PT_BR: string;
       readonly NEXT_PUBLIC_RESUME_URL_ES: string;
       readonly NEXT_PUBLIC_WHATSAPP_URL: string;
+      readonly NEXT_PUBLIC_GA_MEASUREMENT_ID?: string;
     }
   }
 }

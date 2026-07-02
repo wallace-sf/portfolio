@@ -1,5 +1,6 @@
 import { GetProfile } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import classNames from 'classnames';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
@@ -104,6 +105,9 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AppLayout>{children}</AppLayout>
         </NextIntlClientProvider>
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
       </body>
     </html>
   );
