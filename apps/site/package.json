@@ -6,6 +6,7 @@
     "test": "node ./scripts/assert-test-discovery.mjs && vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
     "dev:clean": "rm -rf .next && NODE_OPTIONS='--max-old-space-size=4096' next dev",
     "build": "next build",
@@ -36,6 +37,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
