@@ -87,8 +87,8 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
       <div className="flex min-w-0 flex-1 flex-col gap-y-2">
         <h2 className="text-2xl font-bold text-content-primary">{position}</h2>
 
-        <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className="text-xl font-bold uppercase text-content-primary">
+        <div className="flex flex-col">
+          <span className="text-base font-bold uppercase text-content-disabled">
             {company}
           </span>
           <span className="text-base text-content-disabled">
