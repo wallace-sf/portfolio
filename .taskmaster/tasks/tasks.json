@@ -7096,8 +7096,9 @@
         "dependencies": [
           "4"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-03T02:15:42.871Z"
       },
       {
         "id": 6,
@@ -7141,9 +7142,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-07-03T02:11:15.225Z",
+      "lastModified": "2026-07-03T02:15:42.872Z",
       "taskCount": 8,
-      "completedCount": 4,
+      "completedCount": 5,
       "tags": [
         "project-weight-ordering"
       ]
