@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { env } from '../../../src/config/env';
 import {
   buildPersonJsonLd,
   buildProjectJsonLd,
 } from '../../../src/lib/seo/structuredData';
-import { SITE_URL } from '../../../src/lib/og';
+
+const SITE_URL = env.siteUrl;
 
 const PROFILE = {
   name: 'Wallace Ferreira',

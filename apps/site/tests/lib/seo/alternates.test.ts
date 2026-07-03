@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { env } from '../../../src/config/env';
 import { buildAlternates } from '../../../src/lib/seo/alternates';
-import { SITE_URL } from '../../../src/lib/og';
+
+const SITE_URL = env.siteUrl;
 
 describe('buildAlternates', () => {
   it('should build canonical and all locale alternates when given a pathname and locale', () => {
