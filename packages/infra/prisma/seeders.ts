@@ -829,15 +829,23 @@ Los errores de dominio nunca lanzan excepción. El ==patrón Either== propaga \`
 Built the complete SPA with React 18 and Vite:
 
 - Public side: landing page, brand showcase, and contact form, visible to any visitor
-- Gated side: registration with email confirmation, manual owner activation, then access to the full catalog
-- Infinite-scroll product catalog segmented by brand
-- Cart → Quote → Order flow with per-brand separation and automatic quote expiration
 
 ![TC Representações home: public landing page and gated login portal](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-hero.webp)
 
+*Home page: institutional content for public visitors, login for approved retailers*
+
+![The six represented brands, listed on the public institutional site](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+*Brand showcase: public page listing the six represented brands, open to any visitor*
+
+- Gated side: registration with email confirmation, manual owner activation, then access to the full catalog
+
 ![Three-step retailer registration form requiring business credentials and owner approval](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
 
-![The six represented brands, each with a dedicated product catalog](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+*Retailer registration: business credentials collected up front, activation held for owner approval*
+
+- Infinite-scroll product catalog segmented by brand, restricted to authenticated and approved retailers
+- Cart → Quote → Order flow with per-brand separation and automatic quote expiration
 
 ## API & Backend
 
@@ -870,15 +878,23 @@ Designed the REST API following ==Clean Architecture== with a DDD-inspired domai
 Construí o SPA completo com React 18 e Vite:
 
 - Lado público: landing page, vitrine de marcas e formulário de contato, visível para qualquer visitante
-- Lado restrito: cadastro com confirmação por e-mail, ativação manual pelo dono e acesso ao catálogo completo
-- Catálogo com scroll infinito segmentado por marca
-- Fluxo Carrinho → Orçamento → Pedido com separação por marca e expiração automática do orçamento
 
 ![Home da TC Representações: landing page pública e portal de acesso restrito](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-hero.webp)
 
+*Página inicial: conteúdo institucional para visitantes públicos, login para lojistas aprovados*
+
+![As seis marcas representadas, listadas no site institucional público](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+*Vitrine de marcas: página pública que lista as seis marcas representadas, aberta a qualquer visitante*
+
+- Lado restrito: cadastro com confirmação por e-mail, ativação manual pelo dono e acesso ao catálogo completo
+
 ![Formulário de cadastro de lojista em três etapas com dados empresariais e aprovação manual](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
 
-![As seis marcas representadas, cada uma com catálogo de produtos dedicado](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+*Cadastro de lojista: dados empresariais coletados no início, ativação pendente de aprovação do dono*
+
+- Catálogo com scroll infinito segmentado por marca, restrito a lojistas autenticados e aprovados
+- Fluxo Carrinho → Orçamento → Pedido com separação por marca e expiração automática do orçamento
 
 ## API & Backend
 
@@ -911,15 +927,23 @@ Projetei a API REST seguindo ==Arquitetura Limpa== com camada de domínio inspir
 Construí el SPA completo con React 18 y Vite:
 
 - Lado público: landing page, vitrina de marcas y formulario de contacto, visible para cualquier visitante
-- Lado restringido: registro con confirmación por correo, activación manual por el dueño y acceso al catálogo completo
-- Catálogo con scroll infinito segmentado por marca
-- Flujo Carrito → Presupuesto → Pedido con separación por marca y vencimiento automático del presupuesto
 
 ![Home de TC Representações: landing page pública y portal de acceso restringido](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-hero.webp)
 
+*Página de inicio: contenido institucional para visitantes públicos, login para minoristas aprobados*
+
+![Las seis marcas representadas, listadas en el sitio institucional público](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+
+*Vitrina de marcas: página pública que lista las seis marcas representadas, abierta a cualquier visitante*
+
+- Lado restringido: registro con confirmación por correo, activación manual por el dueño y acceso al catálogo completo
+
 ![Formulario de registro de minoristas en tres pasos con datos empresariales y aprobación manual](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-cadastro.webp)
 
-![Las seis marcas representadas, cada una con catálogo de productos dedicado](https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/projects/b2b-ecommerce/b2b-representadas.webp)
+*Registro de minoristas: datos empresariales recogidos al inicio, activación pendiente de aprobación del dueño*
+
+- Catálogo con scroll infinito segmentado por marca, restringido a minoristas autenticados y aprobados
+- Flujo Carrito → Presupuesto → Pedido con separación por marca y vencimiento automático del presupuesto
 
 ## API & Backend
 
