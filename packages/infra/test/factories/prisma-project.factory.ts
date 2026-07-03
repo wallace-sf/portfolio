@@ -20,7 +20,7 @@ export type PrismaProject = {
   status: ProjectStatus;
   weight: number;
   repositoryUrl: string | null;
-  liveUrl: string | null;
+  projectUrl: string | null;
   relatedProjectSlugs: string[];
   skillIds: string[];
   createdAt: Date;
@@ -51,7 +51,7 @@ export function buildPrismaProject(overrides?: Partial<PrismaProject>): PrismaPr
     status: 'DRAFT',
     weight: 0,
     repositoryUrl: null,
-    liveUrl: null,
+    projectUrl: null,
     relatedProjectSlugs: [],
     skillIds: [crypto.randomUUID()],
     createdAt: new Date('2024-01-01T00:00:00.000Z'),

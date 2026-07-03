@@ -46,7 +46,7 @@ export interface IProjectProps extends IEntityProps {
   status: ProjectStatus;
   weight?: number;
   repositoryUrl?: string;
-  liveUrl?: string;
+  projectUrl?: string;
   relatedProjects?: string[];
 }
 
@@ -69,7 +69,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   public status: ProjectStatus;
   public readonly weight: number;
   public readonly repositoryUrl: Url | undefined;
-  public readonly liveUrl: Url | undefined;
+  public readonly projectUrl: Url | undefined;
   public readonly relatedProjects: Slug[];
 
   private constructor(
@@ -89,7 +89,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     period: DateRange,
     weight: number,
     repositoryUrl: Url | undefined,
-    liveUrl: Url | undefined,
+    projectUrl: Url | undefined,
     relatedProjects: Slug[],
   ) {
     super(props);
@@ -109,7 +109,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     this.featured = props.featured;
     this.weight = weight;
     this.repositoryUrl = repositoryUrl;
-    this.liveUrl = liveUrl;
+    this.projectUrl = projectUrl;
     this.relatedProjects = relatedProjects;
   }
 
@@ -150,8 +150,8 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       props.repositoryUrl
         ? Url.create(props.repositoryUrl)
         : right<ValidationError, Url | undefined>(undefined),
-      props.liveUrl
-        ? Url.create(props.liveUrl)
+      props.projectUrl
+        ? Url.create(props.projectUrl)
         : right<ValidationError, Url | undefined>(undefined),
     ]);
     if (fieldsResult.isLeft()) return left(fieldsResult.value);
@@ -170,7 +170,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
       objectives,
       role,
       repositoryUrl,
-      liveUrl,
+      projectUrl,
     ] = fieldsResult.value;
 
     const skills: Id[] = [];
@@ -228,7 +228,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
         period,
         weight,
         repositoryUrl as Url | undefined,
-        liveUrl as Url | undefined,
+        projectUrl as Url | undefined,
         relatedSlugs,
       ),
     );

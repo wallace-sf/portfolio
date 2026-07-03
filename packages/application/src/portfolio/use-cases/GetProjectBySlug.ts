@@ -109,7 +109,7 @@ export class GetProjectBySlug extends UseCase<
       objectives: project.objectives?.get(locale),
       role: project.role?.get(locale),
       repositoryUrl: project.repositoryUrl?.value,
-      liveUrl: project.liveUrl?.value,
+      projectUrl: project.projectUrl?.value,
       period: {
         startAt: project.period.startAt.value,
         endAt: project.period.endAt?.value,
