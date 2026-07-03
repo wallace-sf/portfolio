@@ -7118,14 +7118,15 @@
         "id": 7,
         "title": "Update application layer use cases and DTOs",
         "description": "Update GetFeaturedProjects to pass limit parameter to repository. Remove client-side sorting from GetPublishedProjects. ProfileDTO and GetProfile changes already completed in task 2.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "6"
         ],
         "priority": "medium",
         "details": "ProfileDTO and GetProfile.toDTO() changes already completed in task 2 (packages/application/src/portfolio/dtos/ProfileDTO.ts no longer has featuredProjectSlugs field; packages/application/src/portfolio/use-cases/GetProfile.ts:54 no longer maps featuredProjectSlugs).\n\nRemaining scope:\n\n1. In packages/application/src/portfolio/use-cases/GetFeaturedProjects.ts:\n   - Update line 30: Change `const projects = await this.projectRepository.findFeatured();` to `const projects = await this.projectRepository.findFeatured(6);`\n   - This passes explicit limit=6 to repository, delegating featured project count control to application layer\n   - Repository (after task 6) handles weight+periodStart composite ordering, so project iteration logic (lines 31-40) remains unchanged\n\n2. In packages/application/src/portfolio/use-cases/GetPublishedProjects.ts:\n   - Remove lines 31-33 (client-side sorting): `const sorted = [...projects].sort((a, b) => b.period.startAt.ms - a.period.startAt.ms);`\n   - Update line 34: Change `const allIds = [...new Set(sorted.flatMap((p) => p.skills.map((s) => s.value)))];` to use `projects` directly instead of `sorted`\n   - Update line 41: Change `return right(sorted.map((p) => this.toDTO(p, input.locale, skillNames)));` to use `projects` directly\n   - Repository (after task 6) now returns projects pre-sorted by weight desc, periodStart desc composite ordering\n\nDependencies: Task 6 must be complete (repository weight-based ordering) before this task.",
         "testStrategy": "Unit tests for use cases:\n\n1. packages/application/test/portfolio/GetFeaturedProjects.test.ts:\n   - Update test at line 189-197 'should call findFeatured() on the repository': verify mock is called with limit=6 argument\n   - Add new test: 'should pass explicit limit of 6 to repository' that asserts `expect(findFeatured).toHaveBeenCalledWith(6);`\n   - Existing tests (lines 75-187) should pass unchanged - they verify DTO mapping, localization, skill resolution, and error handling\n\n2. packages/application/test/portfolio/GetPublishedProjects.test.ts:\n   - Remove or update test at lines 100-126 'should sort projects by publishedAt descending (newest first)': now verifies repository returns pre-sorted projects (no client-side sort)\n   - Update test expectation: repository mock should return projects in weight desc, periodStart desc order; use case returns them in same order\n   - Remove test at lines 128-148 'should not mutate the original array from the repository': no longer applicable since we don't copy/sort\n   - Add new test: 'should return projects in repository order without client-side sorting' that verifies projects array is used directly\n   - Existing mapping tests (lines 150-267) should pass unchanged\n\n3. Verify existing tests pass with updated logic:\n   - Run `pnpm test packages/application/test/portfolio/GetProfile.test.ts` (should pass - no changes needed, featuredProjectSlugs assertions already removed in task 2)\n   - Run `pnpm test packages/application/test/portfolio/GetFeaturedProjects.test.ts`\n   - Run `pnpm test packages/application/test/portfolio/GetPublishedProjects.test.ts`",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-07-03T02:27:50.379Z"
       },
       {
         "id": 8,
@@ -7143,9 +7144,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-07-03T02:20:09.939Z",
+      "lastModified": "2026-07-03T02:27:50.379Z",
       "taskCount": 8,
-      "completedCount": 6,
+      "completedCount": 7,
       "tags": [
         "project-weight-ordering"
       ]

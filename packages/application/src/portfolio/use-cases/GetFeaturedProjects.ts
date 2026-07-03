@@ -27,7 +27,7 @@ export class GetFeaturedProjects extends UseCase<
     input: GetFeaturedProjectsInput,
   ): Promise<Either<DomainError, ProjectSummaryDTO[]>> {
     try {
-      const projects = await this.projectRepository.findFeatured();
+      const projects = await this.projectRepository.findFeatured(6);
       const allIds = [
         ...new Set(projects.flatMap((p) => p.skills.map((s) => s.value))),
       ];

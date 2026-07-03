@@ -186,7 +186,7 @@ describe('GetFeaturedProjects', () => {
       expect((result.value as DomainError).code).toBe('FETCH_FAILED');
     });
 
-    it('should call findFeatured() on the repository', async () => {
+    it('should call findFeatured() with a limit of 6', async () => {
       const findFeatured = vi.fn().mockResolvedValue([]);
       const repo = makeRepository({ findFeatured });
       const useCase = new GetFeaturedProjects(repo, makeSkillRepository());
@@ -194,6 +194,7 @@ describe('GetFeaturedProjects', () => {
       await useCase.execute({ locale: 'pt-BR' });
 
       expect(findFeatured).toHaveBeenCalledOnce();
+      expect(findFeatured).toHaveBeenCalledWith(6);
     });
   });
 });
