@@ -7,6 +7,8 @@ import { Button, Label, Text, TextArea } from '@repo/ui/Control';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
+import { env } from '~/config/env';
+
 import { contactSchema, ContactFormValues } from './contact-schema';
 
 export const ContactForm: FC = () => {
@@ -28,7 +30,7 @@ export const ContactForm: FC = () => {
     const body = encodeURIComponent(
       `${data.name} <${data.email}>\n\n${data.message}`,
     );
-    window.location.href = `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${env.contactEmail}?subject=${subject}&body=${body}`;
     setSubmitted(true);
   };
 

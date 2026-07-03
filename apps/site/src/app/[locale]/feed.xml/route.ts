@@ -3,11 +3,10 @@ import { LOCALES } from '@repo/core/shared';
 import type { Locale } from '@repo/core/shared';
 import { getTranslations } from 'next-intl/server';
 
+import { env } from '~/config/env';
 import { getServerContainer } from '~/lib/server/container';
 
 export const dynamic = 'force-static';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 function escapeXml(value: string): string {
   return value
@@ -44,9 +43,9 @@ export async function GET(
       (p) => `
     <item>
       <title>${escapeXml(p.title)}</title>
-      <link>${SITE_URL}/${locale}/projects/${escapeXml(p.slug)}</link>
+      <link>${env.siteUrl}/${locale}/projects/${escapeXml(p.slug)}</link>
       <description>${escapeXml(p.caption)}</description>
-      <guid isPermaLink="true">${SITE_URL}/${locale}/projects/${escapeXml(p.slug)}</guid>
+      <guid isPermaLink="true">${env.siteUrl}/${locale}/projects/${escapeXml(p.slug)}</guid>
     </item>`,
     )
     .join('');
@@ -55,11 +54,11 @@ export async function GET(
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Wallace Ferreira</title>
-    <link>${SITE_URL}/${locale}</link>
+    <link>${env.siteUrl}/${locale}</link>
     <description>${escapeXml(description)}</description>
     <language>${locale}</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="${SITE_URL}/${locale}/feed.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="${env.siteUrl}/${locale}/feed.xml" rel="self" type="application/rss+xml"/>
     ${items}
   </channel>
 </rss>`;
