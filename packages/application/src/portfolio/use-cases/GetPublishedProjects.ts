@@ -28,17 +28,16 @@ export class GetPublishedProjects extends UseCase<
   ): Promise<Either<DomainError, ProjectSummaryDTO[]>> {
     try {
       const projects = await this.projectRepository.findPublished();
-      const sorted = [...projects].sort(
-        (a, b) => b.period.startAt.ms - a.period.startAt.ms,
-      );
       const allIds = [
-        ...new Set(sorted.flatMap((p) => p.skills.map((s) => s.value))),
+        ...new Set(projects.flatMap((p) => p.skills.map((s) => s.value))),
       ];
       const skillNames = await this.skillRepository.findNamesByIds(
         allIds,
         input.locale,
       );
-      return right(sorted.map((p) => this.toDTO(p, input.locale, skillNames)));
+      return right(
+        projects.map((p) => this.toDTO(p, input.locale, skillNames)),
+      );
     } catch {
       return left(
         new DomainError('FETCH_FAILED', {

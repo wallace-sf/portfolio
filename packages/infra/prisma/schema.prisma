@@ -88,12 +88,15 @@ model Project {
   periodEnd           DateTime?
   featured            Boolean       @default(false)
   status              ProjectStatus @default(DRAFT)
+  weight              Int           @default(0)
   repositoryUrl       String?
   relatedProjectSlugs String[]
   skillIds            String[]  @db.Uuid
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   deletedAt           DateTime?
+
+  @@index([weight])
 }
 
 // ---------------------------------------------------------------------------
@@ -143,7 +146,6 @@ model Profile {
   bio                 Json
   photoUrl            String
   photoAlt            Json
-  featuredProjectSlugs String[]
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 

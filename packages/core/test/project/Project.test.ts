@@ -190,6 +190,36 @@ describe('Project', () => {
       expect(result.value.repositoryUrl).toBeUndefined();
     });
 
+    it('should create project with weight when provided', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withWeight(42).toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.weight).toBe(42);
+    });
+
+    it('should default weight to 0 when omitted', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withoutWeight().toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.weight).toBe(0);
+    });
+
+    it('should accept weight equal to 0', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withWeight(0).toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.weight).toBe(0);
+    });
+
     it('should create project with repositoryUrl as a Url VO when provided', () => {
       const result = Project.create(
         ProjectBuilder.build()
@@ -313,6 +343,24 @@ describe('Project', () => {
         ProjectBuilder.build()
           .withStatus('INVALID' as ProjectStatus)
           .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
+    });
+
+    it('should return Left when weight is negative', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withWeight(-1).toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Project.ERROR_CODE);
+    });
+
+    it('should return Left when weight is not an integer', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withWeight(2.5).toProps(),
       );
 
       expect(result.isLeft()).toBe(true);

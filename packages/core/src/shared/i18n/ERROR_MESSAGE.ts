@@ -38,9 +38,6 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
     INVALID_PROFESSIONAL_VALUE: { message: 'Invalid professional value data.' },
     INVALID_PROFILE_STAT: { message: 'Invalid profile stat data.' },
     INVALID_SOCIAL_NETWORK: { message: 'Invalid social network data.' },
-    TOO_MANY_FEATURED_PROJECTS: {
-      message: 'A profile can feature at most 6 projects.',
-    },
 
     // Identity context
     INVALID_USER: { message: 'Invalid user data.' },
@@ -100,9 +97,6 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
       message: 'Dados da estatística do perfil inválidos.',
     },
     INVALID_SOCIAL_NETWORK: { message: 'Dados da rede social inválidos.' },
-    TOO_MANY_FEATURED_PROJECTS: {
-      message: 'Um perfil pode ter no máximo 6 projetos em destaque.',
-    },
 
     // Identity context
     INVALID_USER: { message: 'Dados do utilizador inválidos.' },
@@ -165,9 +159,6 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
       message: 'Datos de la estadística del perfil inválidos.',
     },
     INVALID_SOCIAL_NETWORK: { message: 'Datos de la red social inválidos.' },
-    TOO_MANY_FEATURED_PROJECTS: {
-      message: 'Un perfil puede destacar como máximo 6 proyectos.',
-    },
 
     // Identity context
     INVALID_USER: { message: 'Datos del usuario inválidos.' },

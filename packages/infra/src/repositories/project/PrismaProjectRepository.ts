@@ -15,7 +15,7 @@ export class PrismaProjectRepository implements IProjectRepository {
   async findAll(): Promise<Project[]> {
     const rows = await this.db.project.findMany({
       where: { deletedAt: null },
-      orderBy: { periodStart: 'desc' },
+      orderBy: [{ weight: 'desc' }, { periodStart: 'desc' }],
     });
     return rows.map(ProjectMapper.toDomain);
   }
@@ -23,19 +23,20 @@ export class PrismaProjectRepository implements IProjectRepository {
   async findPublished(): Promise<Project[]> {
     const rows = await this.db.project.findMany({
       where: { status: ProjectStatus.PUBLISHED, deletedAt: null },
-      orderBy: { periodStart: 'desc' },
+      orderBy: [{ weight: 'desc' }, { periodStart: 'desc' }],
     });
     return rows.map(ProjectMapper.toDomain);
   }
 
-  async findFeatured(): Promise<Project[]> {
+  async findFeatured(limit = 6): Promise<Project[]> {
     const rows = await this.db.project.findMany({
       where: {
         featured: true,
         status: ProjectStatus.PUBLISHED,
         deletedAt: null,
       },
-      orderBy: { periodStart: 'desc' },
+      orderBy: [{ weight: 'desc' }, { periodStart: 'desc' }],
+      take: limit,
     });
     return rows.map(ProjectMapper.toDomain);
   }

@@ -97,22 +97,13 @@ describe('GetPublishedProjects', () => {
       expect(result.value as ProjectSummaryDTO[]).toHaveLength(1);
     });
 
-    it('should sort projects by publishedAt descending (newest first)', async () => {
-      const oldest = makeProject({
-        slug: 'oldest',
-        period: { start: '2021-01-01T00:00:00.000Z' },
-      });
-      const middle = makeProject({
-        slug: 'middle',
-        period: { start: '2022-06-01T00:00:00.000Z' },
-      });
-      const newest = makeProject({
-        slug: 'newest',
-        period: { start: '2023-12-01T00:00:00.000Z' },
-      });
+    it('should preserve the order returned by the repository', async () => {
+      const first = makeProject({ slug: 'first' });
+      const second = makeProject({ slug: 'second' });
+      const third = makeProject({ slug: 'third' });
 
       const repo = makeRepository({
-        findPublished: vi.fn().mockResolvedValue([oldest, newest, middle]),
+        findPublished: vi.fn().mockResolvedValue([first, second, third]),
       });
       const useCase = new GetPublishedProjects(repo, makeSkillRepository());
 
@@ -120,31 +111,9 @@ describe('GetPublishedProjects', () => {
 
       expect(result.isRight()).toBe(true);
       const dtos = result.value as ProjectSummaryDTO[];
-      expect(dtos[0]!.slug).toBe('newest');
-      expect(dtos[1]!.slug).toBe('middle');
-      expect(dtos[2]!.slug).toBe('oldest');
-    });
-
-    it('should not mutate the original array from the repository', async () => {
-      const oldest = makeProject({
-        slug: 'oldest',
-        period: { start: '2021-01-01T00:00:00.000Z' },
-      });
-      const newest = makeProject({
-        slug: 'newest',
-        period: { start: '2023-01-01T00:00:00.000Z' },
-      });
-      const original = [oldest, newest];
-
-      const repo = makeRepository({
-        findPublished: vi.fn().mockResolvedValue(original),
-      });
-      const useCase = new GetPublishedProjects(repo, makeSkillRepository());
-
-      await useCase.execute({ locale: 'pt-BR' });
-
-      expect(original[0]!.slug.value).toBe('oldest');
-      expect(original[1]!.slug.value).toBe('newest');
+      expect(dtos[0]!.slug).toBe('first');
+      expect(dtos[1]!.slug).toBe('second');
+      expect(dtos[2]!.slug).toBe('third');
     });
 
     it('should map all DTO fields correctly for pt-BR locale', async () => {

@@ -1,15 +1,12 @@
-import { Validator } from '@repo/utils/validator';
-
 import {
-  collect,
   Either,
+  collect,
   AggregateRoot,
   IEntityProps,
   Image,
   left,
   Name,
   right,
-  Slug,
   ValidationError,
 } from '../../../../shared';
 import {
@@ -24,19 +21,14 @@ export interface IProfileProps extends IEntityProps {
   bio: ILocalizedTextInput;
   photo: { url: string; alt: ILocalizedTextInput };
   stats: IProfileStatProps[];
-  featuredProjectSlugs: string[];
 }
 
 export class Profile extends AggregateRoot<Profile, IProfileProps> {
-  static readonly ERROR_CODE = 'TOO_MANY_FEATURED_PROJECTS';
-  private static readonly MAX_FEATURED_PROJECTS = 6;
-
   public readonly name: Name;
   public readonly headline: LocalizedText;
   public readonly bio: LocalizedText;
   public readonly photo: Image;
   public readonly stats: ProfileStat[];
-  public readonly featuredProjectSlugs: Slug[];
 
   private constructor(
     props: IProfileProps,
@@ -45,7 +37,6 @@ export class Profile extends AggregateRoot<Profile, IProfileProps> {
     bio: LocalizedText,
     photo: Image,
     stats: ProfileStat[],
-    featuredProjectSlugs: Slug[],
   ) {
     super(props);
     this.name = name;
@@ -53,17 +44,9 @@ export class Profile extends AggregateRoot<Profile, IProfileProps> {
     this.bio = bio;
     this.photo = photo;
     this.stats = stats;
-    this.featuredProjectSlugs = featuredProjectSlugs;
   }
 
   static create(props: IProfileProps): Either<ValidationError, Profile> {
-    const { isValid } = Validator.of(props.featuredProjectSlugs)
-      .refine((slugs) => slugs.length <= Profile.MAX_FEATURED_PROJECTS)
-      .validate();
-
-    if (!isValid)
-      return left(new ValidationError({ code: Profile.ERROR_CODE }));
-
     const requiredResult = collect([
       Name.create(props.name),
       LocalizedText.create(props.headline),
@@ -81,13 +64,6 @@ export class Profile extends AggregateRoot<Profile, IProfileProps> {
       stats.push(statResult.value);
     }
 
-    const slugs: Slug[] = [];
-    for (const slugStr of props.featuredProjectSlugs) {
-      const slugResult = Slug.create(slugStr);
-      if (slugResult.isLeft()) return left(slugResult.value);
-      slugs.push(slugResult.value);
-    }
-
-    return right(new Profile(props, name, headline, bio, photo, stats, slugs));
+    return right(new Profile(props, name, headline, bio, photo, stats));
   }
 }

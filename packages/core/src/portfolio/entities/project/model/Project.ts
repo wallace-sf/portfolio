@@ -44,6 +44,7 @@ export interface IProjectProps extends IEntityProps {
   period: IProjectPeriod;
   featured: boolean;
   status: ProjectStatus;
+  weight?: number;
   repositoryUrl?: string;
   relatedProjects?: string[];
 }
@@ -65,6 +66,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
   public readonly period: DateRange;
   public readonly featured: boolean;
   public status: ProjectStatus;
+  public readonly weight: number;
   public readonly repositoryUrl: Url | undefined;
   public readonly relatedProjects: Slug[];
 
@@ -83,6 +85,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     objectives: LocalizedText | undefined,
     role: LocalizedText | undefined,
     period: DateRange,
+    weight: number,
     repositoryUrl: Url | undefined,
     relatedProjects: Slug[],
   ) {
@@ -101,6 +104,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
     this.role = role;
     this.period = period;
     this.featured = props.featured;
+    this.weight = weight;
     this.repositoryUrl = repositoryUrl;
     this.relatedProjects = relatedProjects;
   }
@@ -188,6 +192,16 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
         return left(new ValidationError({ code: Project.ERROR_CODE }));
     }
 
+    const weight = props.weight ?? 0;
+    {
+      const { isValid } = Validator.of(weight)
+        .refine((w) => Number.isInteger(w))
+        .refine((w) => w >= 0)
+        .validate();
+      if (!isValid)
+        return left(new ValidationError({ code: Project.ERROR_CODE }));
+    }
+
     return right(
       new Project(
         props,
@@ -204,6 +218,7 @@ export class Project extends AggregateRoot<Project, IProjectProps> {
         objectives as LocalizedText | undefined,
         role as LocalizedText | undefined,
         period,
+        weight,
         repositoryUrl as Url | undefined,
         relatedSlugs,
       ),

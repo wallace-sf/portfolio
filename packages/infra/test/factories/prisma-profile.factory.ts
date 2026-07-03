@@ -24,7 +24,6 @@ export type PrismaProfileWithRelations = {
   bio: Prisma.JsonValue;
   photoUrl: string;
   photoAlt: Prisma.JsonValue;
-  featuredProjectSlugs: string[];
   createdAt: Date;
   updatedAt: Date;
   stats: PrismaProfileStat[];
@@ -52,7 +51,6 @@ export function buildPrismaProfile(
       'en-US': "Wallace's photo",
       'pt-BR': 'Foto de Wallace',
     },
-    featuredProjectSlugs: ['project-a', 'project-b'],
     createdAt: new Date('2024-01-01T00:00:00.000Z'),
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
     stats: [

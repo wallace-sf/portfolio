@@ -1,4 +1,4 @@
-import { LocalizedText, Name, Slug, ValidationError } from '~/index';
+import { LocalizedText, Name, ValidationError } from '~/index';
 import { Profile } from '~/portfolio/entities/profile/model/Profile';
 import { ProfileStat } from '~/portfolio/entities/profile/model/ProfileStat';
 
@@ -22,7 +22,6 @@ const validProps = {
     alt: Data.image.alt(),
   },
   stats: [validStat],
-  featuredProjectSlugs: ['my-project', 'portfolio-app'],
 };
 
 describe('Profile', () => {
@@ -44,35 +43,6 @@ describe('Profile', () => {
       expect(result.value.bio).toBeInstanceOf(LocalizedText);
       expect(result.value.stats).toHaveLength(1);
       expect(result.value.stats[0]).toBeInstanceOf(ProfileStat);
-      expect(result.value.featuredProjectSlugs).toHaveLength(2);
-      expect(result.value.featuredProjectSlugs[0]).toBeInstanceOf(Slug);
-    });
-
-    it('should allow profile with exactly 6 featured projects', () => {
-      const result = Profile.create({
-        ...validProps,
-        featuredProjectSlugs: [
-          'project-one',
-          'project-two',
-          'project-three',
-          'project-four',
-          'project-five',
-          'project-six',
-        ],
-      });
-
-      expect(result.isRight()).toBe(true);
-    });
-
-    it('should allow profile with zero featured projects', () => {
-      const result = Profile.create({
-        ...validProps,
-        featuredProjectSlugs: [],
-      });
-
-      expect(result.isRight()).toBe(true);
-      if (!result.isRight()) return;
-      expect(result.value.featuredProjectSlugs).toHaveLength(0);
     });
 
     it('should allow profile with empty stats', () => {
@@ -81,28 +51,6 @@ describe('Profile', () => {
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
       expect(result.value.stats).toHaveLength(0);
-    });
-  });
-
-  describe('when invariant is violated', () => {
-    it('should return Left when featured projects exceed 6', () => {
-      const result = Profile.create({
-        ...validProps,
-        featuredProjectSlugs: [
-          'project-one',
-          'project-two',
-          'project-three',
-          'project-four',
-          'project-five',
-          'project-six',
-          'project-seven',
-        ],
-      });
-
-      expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(
-        'TOO_MANY_FEATURED_PROJECTS',
-      );
     });
   });
 
@@ -145,16 +93,6 @@ describe('Profile', () => {
       });
 
       expect(result.isLeft()).toBe(true);
-    });
-
-    it('should return Left when a featured slug is invalid', () => {
-      const result = Profile.create({
-        ...validProps,
-        featuredProjectSlugs: ['valid-slug', 'INVALID SLUG'],
-      });
-
-      expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Slug.ERROR_CODE);
     });
 
     it('should propagate stat validation errors', () => {

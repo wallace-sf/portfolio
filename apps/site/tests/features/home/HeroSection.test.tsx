@@ -45,7 +45,6 @@ const PROFILE = {
   bio: 'Bio text.',
   photo: { url: 'https://example.com/photo.jpg', alt: 'Profile photo' },
   stats: [{ label: 'Years', value: '6+', icon: 'mdi:calendar' }],
-  featuredProjectSlugs: [],
   socialNetworks: [],
 };
 
