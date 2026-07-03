@@ -1115,6 +1115,7 @@ La compatibilidad retroactiva fue el principal driver de diseño: la nueva UI de
       featured: false,
       status: 'PUBLISHED' as const,
       weight: 50,
+      liveUrl: 'https://www.galaxies.com.br/',
       periodStart: new Date('2023-10-01'),
       periodEnd: new Date('2023-12-31'),
       skillIds: [ID.skills.typescript, ID.skills.react, ID.skills.graphql],
@@ -1370,6 +1371,7 @@ El storefront y el admin de merchants viven en un único monorepo con npm worksp
       featured: false,
       status: 'PUBLISHED' as const,
       weight: 70,
+      liveUrl: 'https://apps.shopify.com/buyr',
       periodStart: new Date('2024-10-01'),
       periodEnd: new Date('2025-02-28'),
       skillIds: [
@@ -1534,6 +1536,7 @@ CSS Modules con alcance via Vite aisló los estilos del widget de cualquier tema
       featured: false,
       status: 'PUBLISHED' as const,
       weight: 60,
+      liveUrl: 'https://www.noteefy.com/products/ai-pro-shop-assistant',
       periodStart: new Date('2025-01-01'),
       periodEnd: new Date('2025-03-31'),
       skillIds: [ID.skills.react, ID.skills.vite, ID.skills.typescript],
