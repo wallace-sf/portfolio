@@ -17,7 +17,6 @@ describe('ProfileMapper', () => {
       expect(profile.bio.value).toEqual(raw.bio);
       expect(profile.photo.url.value).toBe(raw.photoUrl);
       expect(profile.stats).toHaveLength(2);
-      expect(profile.featuredProjectSlugs).toHaveLength(2);
     });
 
     it('should order stats by the order field', () => {
@@ -48,33 +47,16 @@ describe('ProfileMapper', () => {
       expect(profile.stats[1]!.label.value).toEqual({ 'en-US': 'B', 'pt-BR': 'B' });
     });
 
-    it('should map featuredProjectSlugs to Slug VOs', () => {
-      const raw = buildPrismaProfile({ featuredProjectSlugs: ['my-project'] });
-
-      const profile = ProfileMapper.toDomain(raw);
-
-      expect(profile.featuredProjectSlugs[0]!.value).toBe('my-project');
-    });
-
-    it('should map empty stats and featuredProjectSlugs', () => {
-      const raw = buildPrismaProfile({ stats: [], featuredProjectSlugs: [] });
+    it('should map empty stats', () => {
+      const raw = buildPrismaProfile({ stats: [] });
 
       const profile = ProfileMapper.toDomain(raw);
 
       expect(profile.stats).toHaveLength(0);
-      expect(profile.featuredProjectSlugs).toHaveLength(0);
     });
 
     it('should throw InfrastructureError when data is invalid', () => {
       const raw = buildPrismaProfile({ name: '' });
-
-      expect(() => ProfileMapper.toDomain(raw)).toThrow(InfrastructureError);
-    });
-
-    it('should throw InfrastructureError when too many featured projects', () => {
-      const raw = buildPrismaProfile({
-        featuredProjectSlugs: ['a', 'b', 'c', 'd', 'e', 'f', 'g'].map((s) => `project-${s}`),
-      });
 
       expect(() => ProfileMapper.toDomain(raw)).toThrow(InfrastructureError);
     });
@@ -90,7 +72,6 @@ describe('ProfileMapper', () => {
       expect(data.id).toBe(raw.id);
       expect(data.name).toBe(raw.name);
       expect(data.photoUrl).toBe(raw.photoUrl);
-      expect(data.featuredProjectSlugs).toEqual(['project-a', 'project-b']);
     });
 
     it('should serialize stats with order index', () => {
@@ -102,15 +83,6 @@ describe('ProfileMapper', () => {
       expect(data.stats).toHaveLength(2);
       expect(data.stats[0]!.order).toBe(0);
       expect(data.stats[1]!.order).toBe(1);
-    });
-
-    it('should serialize featuredProjectSlugs as string array', () => {
-      const raw = buildPrismaProfile({ featuredProjectSlugs: ['project-x'] });
-      const profile = ProfileMapper.toDomain(raw);
-
-      const data = ProfileMapper.toPrisma(profile);
-
-      expect(data.featuredProjectSlugs).toEqual(['project-x']);
     });
   });
 });

@@ -31,7 +31,6 @@ export class ProfileBuilder extends EntityBuilder<IProfileProps> {
           icon: 'briefcase',
         },
       ],
-      featuredProjectSlugs: ['my-project', 'portfolio-app'],
     });
   }
 
@@ -58,11 +57,6 @@ export class ProfileBuilder extends EntityBuilder<IProfileProps> {
 
   public withStats(stats: IProfileStatProps[]): ProfileBuilder {
     this._props.stats = stats;
-    return this;
-  }
-
-  public withFeaturedProjectSlugs(slugs: string[]): ProfileBuilder {
-    this._props.featuredProjectSlugs = slugs;
     return this;
   }
 }

@@ -70,25 +70,6 @@ describe('PrismaProfileRepository', () => {
       expect(profile!.stats[1]!.label.value).toEqual({ 'en-US': 'B', 'pt-BR': 'B' });
     });
 
-    it('should return the profile with featuredProjectSlugs', async () => {
-      const raw = buildPrismaProfile({ stats: [] });
-      await db.profile.create({
-        data: {
-          id: raw.id,
-          name: raw.name,
-          headline: raw.headline,
-          bio: raw.bio,
-          photoUrl: raw.photoUrl,
-          photoAlt: raw.photoAlt,
-          featuredProjectSlugs: ['project-a', 'project-b'],
-        },
-      });
-
-      const profile = await repo.find();
-
-      expect(profile!.featuredProjectSlugs).toHaveLength(2);
-      expect(profile!.featuredProjectSlugs[0]!.value).toBe('project-a');
-    });
   });
 
   describe('save', () => {

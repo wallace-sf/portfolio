@@ -51,7 +51,6 @@ export class GetProfile extends UseCase<
         alt: profile.photo.alt.get(locale),
       },
       stats: profile.stats.map((s) => this.toStatDTO(s, locale)),
-      featuredProjectSlugs: profile.featuredProjectSlugs.map((s) => s.value),
       socialNetworks: [] as SocialNetworkDTO[],
     };
   }

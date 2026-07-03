@@ -7054,8 +7054,9 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-03T01:00:05.663Z"
       },
       {
         "id": 3,
@@ -7073,14 +7074,14 @@
       {
         "id": 4,
         "title": "Update ProjectMapper and ProfileMapper for weight field",
-        "description": "Update mappers to handle the new weight field in Project and remove featuredProjectSlugs mapping in Profile.",
-        "details": "1. In packages/infra/src/repositories/project/ProjectMapper.ts:\n   - In toDomain(): add weight: raw.weight to IProjectProps object construction\n   - In toPrisma(): add weight: project.weight to returned ProjectScalarData object\n2. In packages/infra/src/repositories/profile/ProfileMapper.ts:\n   - In toDomain(): remove featuredProjectSlugs: raw.featuredProjectSlugs from IProfileProps\n   - In toPrisma(): remove featuredProjectSlugs: profile.featuredProjectSlugs.map((s) => s.value) from returned object\n3. Ensure TypeScript compilation passes after Prisma client regeneration",
-        "testStrategy": "Integration tests for mappers:\n- Test ProjectMapper.toDomain() correctly maps weight from Prisma row to domain props\n- Test ProjectMapper.toPrisma() correctly maps weight from domain entity to Prisma data\n- Test ProfileMapper.toDomain() works without featuredProjectSlugs field\n- Test ProfileMapper.toPrisma() does not include featuredProjectSlugs in output\n- Run existing mapper tests to ensure no regression",
-        "priority": "medium",
-        "dependencies": [
-          "3"
-        ],
+        "description": "Update ProjectMapper to handle the new weight field. ProfileMapper changes were already completed in task 2.",
         "status": "pending",
+        "dependencies": [
+          3
+        ],
+        "priority": "medium",
+        "details": "ProfileMapper changes completed in task 2 (packages/infra/src/repositories/profile/ProfileMapper.ts:76 now writes featuredProjectSlugs: [] as a bridge until task 3 drops the column).\n\nRemaining scope for task 4:\n\n1. In packages/infra/src/repositories/project/ProjectMapper.ts:\n   - In toDomain() method (line 15): Add weight: raw.weight to the IProjectProps object construction\n   - In toPrisma() method (line 58): Add weight: project.weight to the returned ProjectScalarData object\n\n2. In packages/infra/test/factories/prisma-project.factory.ts:\n   - Add weight: number to PrismaProject type definition (line 3)\n   - Add weight: 0 to buildPrismaProject default return object (line 29)\n\n3. Update packages/infra/test/repositories/project/ProjectMapper.test.ts:\n   - Add test case for toDomain(): should correctly map weight from Prisma row (test raw.weight = 50 maps to project.weight = 50)\n   - Add test case for toPrisma(): should correctly map weight from domain entity (test project.weight = 75 maps to data.weight = 75)\n   - Add test case for default weight value (test raw.weight = 0 maps correctly)\n\nNote: This task depends on task 3 completing the Prisma schema migration that adds the weight column to the Project table. The core domain entity already supports weight (packages/core/src/portfolio/entities/project/model/Project.ts:69, 195-203).",
+        "testStrategy": "Integration tests for ProjectMapper (packages/infra/test/repositories/project/ProjectMapper.test.ts):\n\n1. toDomain() weight mapping:\n   - Test that raw.weight = 50 correctly maps to project.weight = 50\n   - Test that raw.weight = 0 correctly maps to project.weight = 0\n   - Test that raw.weight = 100 correctly maps to project.weight = 100\n\n2. toPrisma() weight mapping:\n   - Test that project.weight = 75 correctly appears in data.weight = 75\n   - Test that project.weight = 0 correctly appears in data.weight = 0\n\n3. Round-trip verification:\n   - Test that weight value survives toDomain() \u2192 toPrisma() round-trip without loss\n\n4. Regression verification:\n   - Run existing ProjectMapper test suite to ensure no regressions\n   - Verify TypeScript compilation passes: npx tsc --noEmit in packages/infra\n\nProfileMapper tests (packages/infra/test/repositories/profile/ProfileMapper.test.ts) already pass with task 2's changes - no updates needed.",
         "subtasks": []
       },
       {
@@ -7112,14 +7113,14 @@
       {
         "id": 7,
         "title": "Update application layer use cases and DTOs",
-        "description": "Remove featuredProjectSlugs from ProfileDTO and GetProfile use case. Update GetFeaturedProjects to pass limit parameter to repository. Remove client-side sorting from GetPublishedProjects.",
-        "details": "1. In packages/application/src/portfolio/dtos/ProfileDTO.ts:\n   - Remove featuredProjectSlugs: string[] field from ProfileDTO type\n2. In packages/application/src/portfolio/use-cases/GetProfile.ts:\n   - Remove featuredProjectSlugs: profile.featuredProjectSlugs.map((s) => s.value) from toDTO() method (line 54)\n3. In packages/application/src/portfolio/use-cases/GetFeaturedProjects.ts:\n   - Update line 30: const projects = await this.projectRepository.findFeatured(6); (explicit limit)\n   - Repository now handles ordering, so no changes needed to project iteration\n4. In packages/application/src/portfolio/use-cases/GetPublishedProjects.ts:\n   - Remove lines 31-33 (client-side sorting): const sorted = [...projects].sort((a, b) => b.period.startAt.ms - a.period.startAt.ms);\n   - Change line 34 to use projects directly instead of sorted: const allIds = [...new Set(projects.flatMap((p) => p.skills.map((s) => s.value)))];\n   - Change line 41 to use projects: return right(projects.map((p) => this.toDTO(p, input.locale, skillNames)));",
-        "testStrategy": "Unit tests for use cases:\n- Update packages/application/test/portfolio/GetProfile.test.ts: remove assertions on featuredProjectSlugs field\n- Update packages/application/test/portfolio/GetFeaturedProjects.test.ts: verify limit=6 is passed to repository mock\n- Update packages/application/test/portfolio/GetPublishedProjects.test.ts: remove client-side sorting, verify projects come pre-sorted from repository\n- Test that use cases correctly delegate ordering to repository layer\n- Ensure existing use case tests pass with updated logic",
-        "priority": "medium",
-        "dependencies": [
-          "6"
-        ],
+        "description": "Update GetFeaturedProjects to pass limit parameter to repository. Remove client-side sorting from GetPublishedProjects. ProfileDTO and GetProfile changes already completed in task 2.",
         "status": "pending",
+        "dependencies": [
+          6
+        ],
+        "priority": "medium",
+        "details": "ProfileDTO and GetProfile.toDTO() changes already completed in task 2 (packages/application/src/portfolio/dtos/ProfileDTO.ts no longer has featuredProjectSlugs field; packages/application/src/portfolio/use-cases/GetProfile.ts:54 no longer maps featuredProjectSlugs).\n\nRemaining scope:\n\n1. In packages/application/src/portfolio/use-cases/GetFeaturedProjects.ts:\n   - Update line 30: Change `const projects = await this.projectRepository.findFeatured();` to `const projects = await this.projectRepository.findFeatured(6);`\n   - This passes explicit limit=6 to repository, delegating featured project count control to application layer\n   - Repository (after task 6) handles weight+periodStart composite ordering, so project iteration logic (lines 31-40) remains unchanged\n\n2. In packages/application/src/portfolio/use-cases/GetPublishedProjects.ts:\n   - Remove lines 31-33 (client-side sorting): `const sorted = [...projects].sort((a, b) => b.period.startAt.ms - a.period.startAt.ms);`\n   - Update line 34: Change `const allIds = [...new Set(sorted.flatMap((p) => p.skills.map((s) => s.value)))];` to use `projects` directly instead of `sorted`\n   - Update line 41: Change `return right(sorted.map((p) => this.toDTO(p, input.locale, skillNames)));` to use `projects` directly\n   - Repository (after task 6) now returns projects pre-sorted by weight desc, periodStart desc composite ordering\n\nDependencies: Task 6 must be complete (repository weight-based ordering) before this task.",
+        "testStrategy": "Unit tests for use cases:\n\n1. packages/application/test/portfolio/GetFeaturedProjects.test.ts:\n   - Update test at line 189-197 'should call findFeatured() on the repository': verify mock is called with limit=6 argument\n   - Add new test: 'should pass explicit limit of 6 to repository' that asserts `expect(findFeatured).toHaveBeenCalledWith(6);`\n   - Existing tests (lines 75-187) should pass unchanged - they verify DTO mapping, localization, skill resolution, and error handling\n\n2. packages/application/test/portfolio/GetPublishedProjects.test.ts:\n   - Remove or update test at lines 100-126 'should sort projects by publishedAt descending (newest first)': now verifies repository returns pre-sorted projects (no client-side sort)\n   - Update test expectation: repository mock should return projects in weight desc, periodStart desc order; use case returns them in same order\n   - Remove test at lines 128-148 'should not mutate the original array from the repository': no longer applicable since we don't copy/sort\n   - Add new test: 'should return projects in repository order without client-side sorting' that verifies projects array is used directly\n   - Existing mapping tests (lines 150-267) should pass unchanged\n\n3. Verify existing tests pass with updated logic:\n   - Run `pnpm test packages/application/test/portfolio/GetProfile.test.ts` (should pass - no changes needed, featuredProjectSlugs assertions already removed in task 2)\n   - Run `pnpm test packages/application/test/portfolio/GetFeaturedProjects.test.ts`\n   - Run `pnpm test packages/application/test/portfolio/GetPublishedProjects.test.ts`",
         "subtasks": []
       },
       {
@@ -7138,12 +7139,14 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-07-03T00:48:58.257Z",
+      "lastModified": "2026-07-03T01:00:05.664Z",
       "taskCount": 8,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "project-weight-ordering"
-      ]
+      ],
+      "created": "2026-07-03T01:16:16.562Z",
+      "description": "Tasks for project-weight-ordering context"
     }
   }
 }
