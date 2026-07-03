@@ -28,6 +28,7 @@ export interface IProjectDetailProps {
   role?: string;
   period: { startAt: string; endAt?: string };
   repositoryUrl?: string;
+  liveUrl?: string;
   content: string;
   relatedProjects: ProjectSummary[];
 }
@@ -39,6 +40,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
   skills,
   role,
   repositoryUrl,
+  liveUrl,
   content,
   relatedProjects,
 }) => {
@@ -103,14 +105,33 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
           )}
         </div>
 
-        {role && (
+        {(role || liveUrl) && (
           <dl className="flex flex-row flex-wrap gap-x-10 gap-y-4">
-            <div className="flex flex-col gap-y-1">
-              <dt className="text-base font-bold text-content-primary">
-                {t('role_label')}
-              </dt>
-              <dd className="text-base text-content-primary">{role}</dd>
-            </div>
+            {role && (
+              <div className="flex flex-col gap-y-1">
+                <dt className="text-base font-bold text-content-primary">
+                  {t('role_label')}
+                </dt>
+                <dd className="text-base text-content-primary">{role}</dd>
+              </div>
+            )}
+            {liveUrl && (
+              <div className="flex flex-col gap-y-1">
+                <dt className="text-base font-bold text-content-primary">
+                  {t('live_url_label')}
+                </dt>
+                <dd className="text-base text-content-primary">
+                  <a
+                    href={liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    {liveUrl}
+                  </a>
+                </dd>
+              </div>
+            )}
           </dl>
         )}
 

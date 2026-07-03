@@ -136,7 +136,8 @@
     "breadcrumb_projects": "Projetos",
     "back": "Voltar",
     "related_title": "Outros projetos",
-    "role_label": "Função"
+    "role_label": "Função",
+    "live_url_label": "Site ao vivo"
   },
   "Metadata": {
     "Layout": {

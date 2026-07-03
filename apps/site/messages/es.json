@@ -136,7 +136,8 @@
     "breadcrumb_projects": "Proyectos",
     "back": "Volver",
     "related_title": "Otros proyectos",
-    "role_label": "Rol"
+    "role_label": "Rol",
+    "live_url_label": "Sitio en vivo"
   },
   "Metadata": {
     "Layout": {
