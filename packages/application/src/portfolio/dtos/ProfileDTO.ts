@@ -8,6 +8,5 @@ export type ProfileDTO = {
   bio: string;
   photo: { url: string; alt: string };
   stats: ProfileStatDTO[];
-  featuredProjectSlugs: string[];
   socialNetworks: SocialNetworkDTO[];
 };

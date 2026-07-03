@@ -227,7 +227,6 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
       name: 'Wallace Ferreira',
       photoUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/profile/images/hero-landing-page.webp',
-      featuredProjectSlugs: ['personal-portfolio', 'b2b-ecommerce-platform'],
       headline: loc(
         'Frontend Engineer · React & Next.js · TypeScript',
         'Engenheiro Frontend · React & Next.js · TypeScript',
@@ -306,7 +305,6 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
       photoUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/profile/images/hero-landing-page.webp',
       photoAlt: loc('Professional Picture 1 of Wallace Ferreira', 'Foto profissional 1 de Wallace Ferreira', 'Foto profesional 1 de Wallace Ferreira'),
-      featuredProjectSlugs: ['personal-portfolio', 'b2b-ecommerce-platform'],
       stats: {
         create: [
           {
@@ -776,6 +774,7 @@ Los errores de dominio nunca lanzan excepción. El ==patrón Either== propaga \`
       ),
       featured: true,
       status: 'PUBLISHED' as const,
+      weight: 90,
       repositoryUrl: 'https://github.com/wallace-sf/portfolio',
       periodStart: new Date('2024-01-01'),
       periodEnd: null,
@@ -942,6 +941,7 @@ Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio i
       ),
       featured: true,
       status: 'PUBLISHED' as const,
+      weight: 80,
       periodStart: new Date('2021-12-01'),
       periodEnd: new Date('2024-08-31'),
       skillIds: [
@@ -1089,6 +1089,7 @@ La compatibilidad retroactiva fue el principal driver de diseño: la nueva UI de
       ),
       featured: false,
       status: 'PUBLISHED' as const,
+      weight: 50,
       periodStart: new Date('2023-10-01'),
       periodEnd: new Date('2023-12-31'),
       skillIds: [ID.skills.typescript, ID.skills.react, ID.skills.graphql],
@@ -1343,6 +1344,7 @@ El storefront y el admin de merchants viven en un único monorepo con npm worksp
       ),
       featured: false,
       status: 'PUBLISHED' as const,
+      weight: 70,
       periodStart: new Date('2024-10-01'),
       periodEnd: new Date('2025-02-28'),
       skillIds: [
@@ -1506,6 +1508,7 @@ CSS Modules con alcance via Vite aisló los estilos del widget de cualquier tema
       ),
       featured: false,
       status: 'PUBLISHED' as const,
+      weight: 60,
       periodStart: new Date('2025-01-01'),
       periodEnd: new Date('2025-03-31'),
       skillIds: [ID.skills.react, ID.skills.vite, ID.skills.typescript],
@@ -1607,6 +1610,7 @@ Construida y ==publicada en npm== como el único punto de integración MQTT para
       ),
       featured: false,
       status: 'PUBLISHED' as const,
+      weight: 40,
       repositoryUrl: 'https://github.com/flow-build/react-mqtt-workflow-manager',
       periodStart: new Date('2023-02-01'),
       periodEnd: new Date('2023-03-01'),
@@ -1629,6 +1633,7 @@ Construida y ==publicada en npm== como el único punto de integración MQTT para
         thumbnailImageAlt: project.thumbnailImageAlt,
         featured: project.featured,
         status: project.status,
+        weight: project.weight,
         repositoryUrl: project.repositoryUrl ?? null,
         periodStart: project.periodStart,
         periodEnd: project.periodEnd,

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { IUserRepository, Role, UnauthorizedError, User } from '@repo/core/identity';
 import { IProfileProps, IProfileRepository } from '@repo/core/portfolio';
-import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
+import { DomainError, NotFoundError } from '@repo/core/shared';
 
 import { EnsureAdmin } from '~/identity/use-cases/EnsureAdmin';
 import { UpdateProfile } from '~/portfolio/use-cases/UpdateProfile';
@@ -28,7 +28,6 @@ const VALID_PROFILE_PROPS: IProfileProps = {
   stats: [
     { label: { 'en-US': 'Years', 'pt-BR': 'Anos' }, value: '5+', icon: 'briefcase' },
   ],
-  featuredProjectSlugs: [],
 };
 
 function makeUser(role: Role): User {
@@ -80,22 +79,6 @@ describe('UpdateProfile', () => {
 
       expect(result.isRight()).toBe(true);
       expect(profileRepo.save).toHaveBeenCalledTimes(1);
-    });
-
-    it('should return Left(ValidationError) when profile has too many featured projects', async () => {
-      const admin = makeUser(Role.ADMIN);
-      const { useCase } = makeUseCase(admin);
-
-      const result = await useCase.execute({
-        userId: ADMIN_UUID,
-        profileProps: {
-          ...VALID_PROFILE_PROPS,
-          featuredProjectSlugs: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'],
-        },
-      });
-
-      expect(result.isLeft()).toBe(true);
-      expect(result.value).toBeInstanceOf(ValidationError);
     });
 
     it('should return Left(DomainError) when repository throws', async () => {

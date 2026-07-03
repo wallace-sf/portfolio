@@ -30,6 +30,7 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
       period: { start: '2024-01-01' },
       featured: false,
       status: ProjectStatus.DRAFT,
+      weight: 0,
       relatedProjects: [],
     });
   }
@@ -111,6 +112,16 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
 
   public withStatus(status: ProjectStatus): ProjectBuilder {
     this._props.status = status;
+    return this;
+  }
+
+  public withWeight(weight: number): ProjectBuilder {
+    this._props.weight = weight;
+    return this;
+  }
+
+  public withoutWeight(): ProjectBuilder {
+    this._props.weight = undefined;
     return this;
   }
 

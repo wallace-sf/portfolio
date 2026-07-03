@@ -61,6 +61,14 @@ describe('ProjectMapper', () => {
       expect(project.skills[1]!.value).toBe(skillId2);
     });
 
+    it('should map weight from the prisma row', () => {
+      const raw = buildPrismaProject({ weight: 42 });
+
+      const project = ProjectMapper.toDomain(raw);
+
+      expect(project.weight).toBe(42);
+    });
+
     it('should map a PUBLISHED project status', () => {
       const raw = buildPrismaProject({ status: 'PUBLISHED' });
 
@@ -125,6 +133,15 @@ describe('ProjectMapper', () => {
       expect(data.coverImageUrl).toBe(raw.coverImageUrl);
       expect(data.featured).toBe(true);
       expect(data.status).toBe('PUBLISHED');
+    });
+
+    it('should map weight to prisma scalar data', () => {
+      const raw = buildPrismaProject({ weight: 7 });
+      const project = ProjectMapper.toDomain(raw);
+
+      const data = ProjectMapper.toPrisma(project);
+
+      expect(data.weight).toBe(7);
     });
 
     it('should set optional json fields to Prisma.JsonNull when absent', () => {

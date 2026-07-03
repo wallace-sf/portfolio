@@ -30,7 +30,6 @@ const BASE_PROPS: IProfileProps = {
     alt: { 'pt-BR': 'Foto do perfil', 'en-US': 'Profile photo' },
   },
   stats: [BASE_STAT],
-  featuredProjectSlugs: ['my-project', 'another-project'],
 };
 
 function makeProfile(overrides: Partial<IProfileProps> = {}): Profile {
@@ -155,34 +154,8 @@ describe('GetProfile', () => {
       expect((enResult.value as ProfileDTO).stats[0]!.label).toBe('Years');
     });
 
-    it('should map featuredProjectSlugs as string array', async () => {
-      const profile = makeProfile({
-        featuredProjectSlugs: ['project-a', 'project-b', 'project-c'],
-      });
-      const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
-      const useCase = new GetProfile(repo);
-
-      const result = await useCase.execute({ locale: 'pt-BR' });
-
-      const dto = result.value as ProfileDTO;
-      expect(dto.featuredProjectSlugs).toEqual(['project-a', 'project-b', 'project-c']);
-    });
-
-    it('should respect the domain invariant of max 6 featuredProjectSlugs', async () => {
-      const profile = makeProfile({
-        featuredProjectSlugs: ['p-one', 'p-two', 'p-three', 'p-four', 'p-five', 'p-six'],
-      });
-      const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
-      const useCase = new GetProfile(repo);
-
-      const result = await useCase.execute({ locale: 'pt-BR' });
-
-      expect(result.isRight()).toBe(true);
-      expect((result.value as ProfileDTO).featuredProjectSlugs).toHaveLength(6);
-    });
-
-    it('should return empty arrays when stats and featuredProjectSlugs are empty', async () => {
-      const profile = makeProfile({ stats: [], featuredProjectSlugs: [] });
+    it('should return empty arrays when stats are empty', async () => {
+      const profile = makeProfile({ stats: [] });
       const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
       const useCase = new GetProfile(repo);
 
@@ -190,7 +163,6 @@ describe('GetProfile', () => {
 
       const dto = result.value as ProfileDTO;
       expect(dto.stats).toEqual([]);
-      expect(dto.featuredProjectSlugs).toEqual([]);
       expect(dto.socialNetworks).toEqual([]);
     });
 
