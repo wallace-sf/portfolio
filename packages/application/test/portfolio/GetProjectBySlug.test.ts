@@ -88,7 +88,7 @@ describe('GetProjectBySlug', () => {
         objectives: { 'pt-BR': 'Objetivos PT', 'en-US': 'Objectives EN' },
         role: { 'pt-BR': 'Papel PT', 'en-US': 'Role EN' },
         period: { start: '2023-01-01T00:00:00.000Z', end: '2023-12-31T00:00:00.000Z' },
-        liveUrl: 'https://tcrepresentacoes.com.br',
+        projectUrl: 'https://tcrepresentacoes.com.br',
       });
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
@@ -111,7 +111,7 @@ describe('GetProjectBySlug', () => {
       expect(dto.summary).toBe('Resumo PT');
       expect(dto.objectives).toBe('Objetivos PT');
       expect(dto.role).toBe('Papel PT');
-      expect(dto.liveUrl).toBe('https://tcrepresentacoes.com.br');
+      expect(dto.projectUrl).toBe('https://tcrepresentacoes.com.br');
       expect(dto.period.startAt).toBe('2023-01-01T00:00:00.000Z');
       expect(dto.period.endAt).toBe('2023-12-31T00:00:00.000Z');
       expect(dto.relatedProjects).toEqual([]);
