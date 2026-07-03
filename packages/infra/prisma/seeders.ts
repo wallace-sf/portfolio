@@ -227,7 +227,6 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
       name: 'Wallace Ferreira',
       photoUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/profile/images/hero-landing-page.webp',
-      featuredProjectSlugs: ['personal-portfolio', 'b2b-ecommerce-platform'],
       headline: loc(
         'Frontend Engineer · React & Next.js · TypeScript',
         'Engenheiro Frontend · React & Next.js · TypeScript',
@@ -306,7 +305,6 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
       photoUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/profile/images/hero-landing-page.webp',
       photoAlt: loc('Professional Picture 1 of Wallace Ferreira', 'Foto profissional 1 de Wallace Ferreira', 'Foto profesional 1 de Wallace Ferreira'),
-      featuredProjectSlugs: ['personal-portfolio', 'b2b-ecommerce-platform'],
       stats: {
         create: [
           {

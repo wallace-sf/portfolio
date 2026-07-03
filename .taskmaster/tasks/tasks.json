@@ -7068,8 +7068,9 @@
         "dependencies": [
           "2"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-03T02:03:35.274Z"
       },
       {
         "id": 4,
@@ -7077,7 +7078,7 @@
         "description": "Update ProjectMapper to handle the new weight field. ProfileMapper changes were already completed in task 2.",
         "status": "pending",
         "dependencies": [
-          3
+          "3"
         ],
         "priority": "medium",
         "details": "ProfileMapper changes completed in task 2 (packages/infra/src/repositories/profile/ProfileMapper.ts:76 now writes featuredProjectSlugs: [] as a bridge until task 3 drops the column).\n\nRemaining scope for task 4:\n\n1. In packages/infra/src/repositories/project/ProjectMapper.ts:\n   - In toDomain() method (line 15): Add weight: raw.weight to the IProjectProps object construction\n   - In toPrisma() method (line 58): Add weight: project.weight to the returned ProjectScalarData object\n\n2. In packages/infra/test/factories/prisma-project.factory.ts:\n   - Add weight: number to PrismaProject type definition (line 3)\n   - Add weight: 0 to buildPrismaProject default return object (line 29)\n\n3. Update packages/infra/test/repositories/project/ProjectMapper.test.ts:\n   - Add test case for toDomain(): should correctly map weight from Prisma row (test raw.weight = 50 maps to project.weight = 50)\n   - Add test case for toPrisma(): should correctly map weight from domain entity (test project.weight = 75 maps to data.weight = 75)\n   - Add test case for default weight value (test raw.weight = 0 maps correctly)\n\nNote: This task depends on task 3 completing the Prisma schema migration that adds the weight column to the Project table. The core domain entity already supports weight (packages/core/src/portfolio/entities/project/model/Project.ts:69, 195-203).",
@@ -7116,7 +7117,7 @@
         "description": "Update GetFeaturedProjects to pass limit parameter to repository. Remove client-side sorting from GetPublishedProjects. ProfileDTO and GetProfile changes already completed in task 2.",
         "status": "pending",
         "dependencies": [
-          6
+          "6"
         ],
         "priority": "medium",
         "details": "ProfileDTO and GetProfile.toDTO() changes already completed in task 2 (packages/application/src/portfolio/dtos/ProfileDTO.ts no longer has featuredProjectSlugs field; packages/application/src/portfolio/use-cases/GetProfile.ts:54 no longer maps featuredProjectSlugs).\n\nRemaining scope:\n\n1. In packages/application/src/portfolio/use-cases/GetFeaturedProjects.ts:\n   - Update line 30: Change `const projects = await this.projectRepository.findFeatured();` to `const projects = await this.projectRepository.findFeatured(6);`\n   - This passes explicit limit=6 to repository, delegating featured project count control to application layer\n   - Repository (after task 6) handles weight+periodStart composite ordering, so project iteration logic (lines 31-40) remains unchanged\n\n2. In packages/application/src/portfolio/use-cases/GetPublishedProjects.ts:\n   - Remove lines 31-33 (client-side sorting): `const sorted = [...projects].sort((a, b) => b.period.startAt.ms - a.period.startAt.ms);`\n   - Update line 34: Change `const allIds = [...new Set(sorted.flatMap((p) => p.skills.map((s) => s.value)))];` to use `projects` directly instead of `sorted`\n   - Update line 41: Change `return right(sorted.map((p) => this.toDTO(p, input.locale, skillNames)));` to use `projects` directly\n   - Repository (after task 6) now returns projects pre-sorted by weight desc, periodStart desc composite ordering\n\nDependencies: Task 6 must be complete (repository weight-based ordering) before this task.",
@@ -7139,14 +7140,12 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-07-03T01:00:05.664Z",
+      "lastModified": "2026-07-03T02:03:35.275Z",
       "taskCount": 8,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "project-weight-ordering"
-      ],
-      "created": "2026-07-03T01:16:16.562Z",
-      "description": "Tasks for project-weight-ordering context"
+      ]
     }
   }
 }

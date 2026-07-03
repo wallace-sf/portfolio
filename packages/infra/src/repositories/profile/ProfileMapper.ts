@@ -72,8 +72,6 @@ export class ProfileMapper {
       bio: profile.bio.value,
       photoUrl: profile.photo.url.value,
       photoAlt: profile.photo.alt.value,
-      // Column still required by schema.prisma; domain no longer tracks it.
-      featuredProjectSlugs: [],
       createdAt: new Date(profile.created_at.value),
       updatedAt: new Date(profile.updated_at.value),
       stats: profile.stats.map((s, index) => ({

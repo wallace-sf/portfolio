@@ -42,7 +42,6 @@ describe('PrismaProfileRepository', () => {
           bio: raw.bio,
           photoUrl: raw.photoUrl,
           photoAlt: raw.photoAlt,
-          featuredProjectSlugs: raw.featuredProjectSlugs,
           stats: {
             create: [
               {
@@ -69,7 +68,6 @@ describe('PrismaProfileRepository', () => {
       expect(profile!.stats[0]!.label.value).toEqual({ 'en-US': 'A', 'pt-BR': 'A' });
       expect(profile!.stats[1]!.label.value).toEqual({ 'en-US': 'B', 'pt-BR': 'B' });
     });
-
   });
 
   describe('save', () => {
