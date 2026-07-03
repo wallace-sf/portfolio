@@ -56,30 +56,29 @@ const BASE_PROPS = {
 };
 
 describe('projects/ProjectDetail', () => {
-  it('should render the live URL link when liveUrl is provided', async () => {
+  it('should render the project URL link when projectUrl is provided', async () => {
     const { ProjectDetail } = await import('~features/projects/ProjectDetail');
 
     render(
       <ProjectDetail
         {...BASE_PROPS}
-        liveUrl="https://tcrepresentacoes.com.br"
+        projectUrl="https://tcrepresentacoes.com.br"
       />,
     );
 
-    expect(screen.getByText('ProjectDetail.live_url_label')).toBeInTheDocument();
     const link = screen.getByRole('link', {
-      name: 'https://tcrepresentacoes.com.br',
+      name: 'ProjectDetail.project_url_label',
     });
     expect(link).toHaveAttribute('href', 'https://tcrepresentacoes.com.br');
   });
 
-  it('should not render the live URL link when liveUrl is absent', async () => {
+  it('should not render the project URL link when projectUrl is absent', async () => {
     const { ProjectDetail } = await import('~features/projects/ProjectDetail');
 
     render(<ProjectDetail {...BASE_PROPS} role="Engineer" />);
 
     expect(
-      screen.queryByText('ProjectDetail.live_url_label'),
+      screen.queryByText('ProjectDetail.project_url_label'),
     ).not.toBeInTheDocument();
   });
 });

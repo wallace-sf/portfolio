@@ -14,6 +14,7 @@ import {
 import { Breadcrumb } from '~features/shared/Breadcrumb';
 import { OpenSourceBadge } from '~features/shared/OpenSourceBadge';
 import { SkillGroup } from '~features/shared/SkillGroup';
+import { WebsiteBadge } from '~features/shared/WebsiteBadge';
 import { Link } from '~i18n/routing';
 
 import styles from './ProjectDetail.module.css';
@@ -28,7 +29,7 @@ export interface IProjectDetailProps {
   role?: string;
   period: { startAt: string; endAt?: string };
   repositoryUrl?: string;
-  liveUrl?: string;
+  projectUrl?: string;
   content: string;
   relatedProjects: ProjectSummary[];
 }
@@ -40,7 +41,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
   skills,
   role,
   repositoryUrl,
-  liveUrl,
+  projectUrl,
   content,
   relatedProjects,
 }) => {
@@ -91,6 +92,12 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
               {repositoryUrl && (
                 <OpenSourceBadge repositoryUrl={repositoryUrl} />
               )}
+              {projectUrl && (
+                <WebsiteBadge
+                  projectUrl={projectUrl}
+                  label={t('project_url_label')}
+                />
+              )}
             </div>
             <p className="text-xl text-content-primary">{caption}</p>
           </header>
@@ -105,33 +112,14 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
           )}
         </div>
 
-        {(role || liveUrl) && (
+        {role && (
           <dl className="flex flex-row flex-wrap gap-x-10 gap-y-4">
-            {role && (
-              <div className="flex flex-col gap-y-1">
-                <dt className="text-base font-bold text-content-primary">
-                  {t('role_label')}
-                </dt>
-                <dd className="text-base text-content-primary">{role}</dd>
-              </div>
-            )}
-            {liveUrl && (
-              <div className="flex flex-col gap-y-1">
-                <dt className="text-base font-bold text-content-primary">
-                  {t('live_url_label')}
-                </dt>
-                <dd className="text-base text-content-primary">
-                  <a
-                    href={liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline"
-                  >
-                    {liveUrl}
-                  </a>
-                </dd>
-              </div>
-            )}
+            <div className="flex flex-col gap-y-1">
+              <dt className="text-base font-bold text-content-primary">
+                {t('role_label')}
+              </dt>
+              <dd className="text-base text-content-primary">{role}</dd>
+            </div>
           </dl>
         )}
 

@@ -130,8 +130,8 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return this;
   }
 
-  public withLiveUrl(liveUrl: string): ProjectBuilder {
-    this._props.liveUrl = liveUrl;
+  public withProjectUrl(projectUrl: string): ProjectBuilder {
+    this._props.projectUrl = projectUrl;
     return this;
   }
 
