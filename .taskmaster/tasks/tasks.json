@@ -7076,14 +7076,15 @@
         "id": 4,
         "title": "Update ProjectMapper and ProfileMapper for weight field",
         "description": "Update ProjectMapper to handle the new weight field. ProfileMapper changes were already completed in task 2.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           "3"
         ],
         "priority": "medium",
         "details": "ProfileMapper changes completed in task 2 (packages/infra/src/repositories/profile/ProfileMapper.ts:76 now writes featuredProjectSlugs: [] as a bridge until task 3 drops the column).\n\nRemaining scope for task 4:\n\n1. In packages/infra/src/repositories/project/ProjectMapper.ts:\n   - In toDomain() method (line 15): Add weight: raw.weight to the IProjectProps object construction\n   - In toPrisma() method (line 58): Add weight: project.weight to the returned ProjectScalarData object\n\n2. In packages/infra/test/factories/prisma-project.factory.ts:\n   - Add weight: number to PrismaProject type definition (line 3)\n   - Add weight: 0 to buildPrismaProject default return object (line 29)\n\n3. Update packages/infra/test/repositories/project/ProjectMapper.test.ts:\n   - Add test case for toDomain(): should correctly map weight from Prisma row (test raw.weight = 50 maps to project.weight = 50)\n   - Add test case for toPrisma(): should correctly map weight from domain entity (test project.weight = 75 maps to data.weight = 75)\n   - Add test case for default weight value (test raw.weight = 0 maps correctly)\n\nNote: This task depends on task 3 completing the Prisma schema migration that adds the weight column to the Project table. The core domain entity already supports weight (packages/core/src/portfolio/entities/project/model/Project.ts:69, 195-203).",
         "testStrategy": "Integration tests for ProjectMapper (packages/infra/test/repositories/project/ProjectMapper.test.ts):\n\n1. toDomain() weight mapping:\n   - Test that raw.weight = 50 correctly maps to project.weight = 50\n   - Test that raw.weight = 0 correctly maps to project.weight = 0\n   - Test that raw.weight = 100 correctly maps to project.weight = 100\n\n2. toPrisma() weight mapping:\n   - Test that project.weight = 75 correctly appears in data.weight = 75\n   - Test that project.weight = 0 correctly appears in data.weight = 0\n\n3. Round-trip verification:\n   - Test that weight value survives toDomain() \u2192 toPrisma() round-trip without loss\n\n4. Regression verification:\n   - Run existing ProjectMapper test suite to ensure no regressions\n   - Verify TypeScript compilation passes: npx tsc --noEmit in packages/infra\n\nProfileMapper tests (packages/infra/test/repositories/profile/ProfileMapper.test.ts) already pass with task 2's changes - no updates needed.",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-07-03T02:11:15.225Z"
       },
       {
         "id": 5,
@@ -7140,9 +7141,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-07-03T02:03:35.275Z",
+      "lastModified": "2026-07-03T02:11:15.225Z",
       "taskCount": 8,
-      "completedCount": 3,
+      "completedCount": 4,
       "tags": [
         "project-weight-ordering"
       ]
