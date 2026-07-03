@@ -1,4 +1,4 @@
 {
-  "buildCommand": "cd ../.. && turbo run build --filter=site",
+  "buildCommand": "cd ../.. && pnpm --filter @repo/infra db:migrate:deploy && turbo run build --filter=site",
   "framework": "nextjs"
 }
