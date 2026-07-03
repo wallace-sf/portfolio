@@ -966,6 +966,7 @@ Diseñé la API REST siguiendo ==Arquitectura Limpia== con una capa de dominio i
       featured: true,
       status: 'PUBLISHED' as const,
       weight: 80,
+      liveUrl: 'https://tcrepresentacoes.com.br',
       periodStart: new Date('2021-12-01'),
       periodEnd: new Date('2024-08-31'),
       skillIds: [
@@ -1659,6 +1660,7 @@ Construida y ==publicada en npm== como el único punto de integración MQTT para
         status: project.status,
         weight: project.weight,
         repositoryUrl: project.repositoryUrl ?? null,
+        liveUrl: project.liveUrl ?? null,
         periodStart: project.periodStart,
         periodEnd: project.periodEnd,
         skillIds: project.skillIds,

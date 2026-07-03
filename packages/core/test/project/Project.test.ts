@@ -234,6 +234,21 @@ describe('Project', () => {
         'https://github.com/wallace-sf/portfolio',
       );
     });
+
+    it('should create project with liveUrl as a Url VO when provided', () => {
+      const result = Project.create(
+        ProjectBuilder.build()
+          .withLiveUrl('https://tcrepresentacoes.com.br')
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.liveUrl).toBeInstanceOf(Url);
+      expect(result.value.liveUrl?.value).toBe(
+        'https://tcrepresentacoes.com.br',
+      );
+    });
   });
 
   describe('when created from invalid props', () => {
@@ -372,6 +387,15 @@ describe('Project', () => {
         ProjectBuilder.build()
           .withRepositoryUrl('not-a-valid-url')
           .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Url.ERROR_CODE);
+    });
+
+    it('should return Left when liveUrl is not a valid URL', () => {
+      const result = Project.create(
+        ProjectBuilder.build().withLiveUrl('not-a-valid-url').toProps(),
       );
 
       expect(result.isLeft()).toBe(true);

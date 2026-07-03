@@ -110,6 +110,15 @@ describe('ProjectMapper', () => {
       expect(project.repositoryUrl?.value).toBe(url);
     });
 
+    it('should map liveUrl to a Url VO when present in DB', () => {
+      const url = 'https://tcrepresentacoes.com.br';
+      const raw = buildPrismaProject({ liveUrl: url });
+
+      const project = ProjectMapper.toDomain(raw);
+
+      expect(project.liveUrl?.value).toBe(url);
+    });
+
     it('should throw InfrastructureError when raw data produces an invalid domain object', () => {
       const raw = buildPrismaProject({ slug: '' });
 
@@ -230,6 +239,16 @@ describe('ProjectMapper', () => {
       const data = ProjectMapper.toPrisma(project);
 
       expect(data.repositoryUrl).toBe(url);
+    });
+
+    it('should map liveUrl string when present', () => {
+      const url = 'https://tcrepresentacoes.com.br';
+      const raw = buildPrismaProject({ liveUrl: url });
+      const project = ProjectMapper.toDomain(raw);
+
+      const data = ProjectMapper.toPrisma(project);
+
+      expect(data.liveUrl).toBe(url);
     });
   });
 });

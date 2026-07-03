@@ -90,6 +90,7 @@ model Project {
   status              ProjectStatus @default(DRAFT)
   weight              Int           @default(0)
   repositoryUrl       String?
+  liveUrl             String?
   relatedProjectSlugs String[]
   skillIds            String[]  @db.Uuid
   createdAt           DateTime  @default(now())
