@@ -186,9 +186,10 @@ describe('PrismaProjectRepository', () => {
     });
 
     it('should respect the limit parameter', async () => {
-      await seedProject({ status: 'PUBLISHED', featured: true, weight: 1 });
-      await seedProject({ status: 'PUBLISHED', featured: true, weight: 2 });
-      await seedProject({ status: 'PUBLISHED', featured: true, weight: 3 });
+      // High weights guarantee these outrank any other seeded/real featured projects.
+      await seedProject({ status: 'PUBLISHED', featured: true, weight: 1001 });
+      await seedProject({ status: 'PUBLISHED', featured: true, weight: 1002 });
+      await seedProject({ status: 'PUBLISHED', featured: true, weight: 1003 });
 
       const projects = await repo.findFeatured(2);
       const testProjects = projects.filter((p) => p.slug.value.startsWith(TEST_SLUG_PREFIX));
@@ -197,8 +198,9 @@ describe('PrismaProjectRepository', () => {
     });
 
     it('should default the limit to 6', async () => {
+      // High weights guarantee these outrank any other seeded/real featured projects.
       for (let i = 0; i < 7; i++) {
-        await seedProject({ status: 'PUBLISHED', featured: true, weight: i });
+        await seedProject({ status: 'PUBLISHED', featured: true, weight: 1000 + i });
       }
 
       const projects = await repo.findFeatured();
