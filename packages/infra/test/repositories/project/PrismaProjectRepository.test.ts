@@ -44,6 +44,7 @@ async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProj
       periodEnd: raw.periodEnd,
       featured: raw.featured,
       status: raw.status,
+      weight: raw.weight,
       relatedProjectSlugs: raw.relatedProjectSlugs,
       skillIds: raw.skillIds,
       createdAt: raw.createdAt,
@@ -90,6 +91,28 @@ describe('PrismaProjectRepository', () => {
 
       expect(found).toBeUndefined();
     });
+
+    it('should order by weight desc, then periodStart desc as tiebreaker', async () => {
+      const low = await seedProject({
+        weight: 1,
+        periodStart: new Date('2024-06-01'),
+      });
+      const high = await seedProject({
+        weight: 10,
+        periodStart: new Date('2024-01-01'),
+      });
+      const tieOlder = await seedProject({
+        weight: 1,
+        periodStart: new Date('2024-01-01'),
+      });
+
+      const projects = await repo.findAll();
+      const testSlugs = projects
+        .map((p) => p.slug.value)
+        .filter((s) => s.startsWith(TEST_SLUG_PREFIX));
+
+      expect(testSlugs).toEqual([high.slug, low.slug, tieOlder.slug]);
+    });
   });
 
   describe('findPublished', () => {
@@ -103,6 +126,26 @@ describe('PrismaProjectRepository', () => {
       expect(testProjects).toHaveLength(1);
       expect(testProjects[0]!.slug.value).toBe(published.slug);
       expect(testProjects[0]!.status).toBe(ProjectStatus.PUBLISHED);
+    });
+
+    it('should order published projects by weight desc, then periodStart desc', async () => {
+      const low = await seedProject({
+        status: 'PUBLISHED',
+        weight: 1,
+        periodStart: new Date('2024-06-01'),
+      });
+      const high = await seedProject({
+        status: 'PUBLISHED',
+        weight: 10,
+        periodStart: new Date('2024-01-01'),
+      });
+
+      const projects = await repo.findPublished();
+      const testSlugs = projects
+        .map((p) => p.slug.value)
+        .filter((s) => s.startsWith(TEST_SLUG_PREFIX));
+
+      expect(testSlugs).toEqual([high.slug, low.slug]);
     });
   });
 
@@ -118,6 +161,50 @@ describe('PrismaProjectRepository', () => {
       expect(testProjects).toHaveLength(1);
       expect(testProjects[0]!.slug.value).toBe(featured.slug);
       expect(testProjects[0]!.featured).toBe(true);
+    });
+
+    it('should order featured projects by weight desc, then periodStart desc', async () => {
+      const low = await seedProject({
+        status: 'PUBLISHED',
+        featured: true,
+        weight: 1,
+        periodStart: new Date('2024-06-01'),
+      });
+      const high = await seedProject({
+        status: 'PUBLISHED',
+        featured: true,
+        weight: 10,
+        periodStart: new Date('2024-01-01'),
+      });
+
+      const projects = await repo.findFeatured();
+      const testSlugs = projects
+        .map((p) => p.slug.value)
+        .filter((s) => s.startsWith(TEST_SLUG_PREFIX));
+
+      expect(testSlugs).toEqual([high.slug, low.slug]);
+    });
+
+    it('should respect the limit parameter', async () => {
+      await seedProject({ status: 'PUBLISHED', featured: true, weight: 1 });
+      await seedProject({ status: 'PUBLISHED', featured: true, weight: 2 });
+      await seedProject({ status: 'PUBLISHED', featured: true, weight: 3 });
+
+      const projects = await repo.findFeatured(2);
+      const testProjects = projects.filter((p) => p.slug.value.startsWith(TEST_SLUG_PREFIX));
+
+      expect(testProjects).toHaveLength(2);
+    });
+
+    it('should default the limit to 6', async () => {
+      for (let i = 0; i < 7; i++) {
+        await seedProject({ status: 'PUBLISHED', featured: true, weight: i });
+      }
+
+      const projects = await repo.findFeatured();
+      const testProjects = projects.filter((p) => p.slug.value.startsWith(TEST_SLUG_PREFIX));
+
+      expect(testProjects).toHaveLength(6);
     });
   });
 
