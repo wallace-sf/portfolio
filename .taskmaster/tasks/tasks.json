@@ -7040,8 +7040,9 @@
         "testStrategy": "Unit tests in packages/core/test/project/Project.test.ts:\n- Test Project.create() rejects negative weight values\n- Test Project.create() rejects non-integer weight values (e.g., 2.5)\n- Test Project.create() accepts weight = 0\n- Test Project.create() accepts positive integers (e.g., 1, 100)\n- Test Project.create() defaults to 0 when weight is omitted from props",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-07-03T00:48:58.257Z"
       },
       {
         "id": 2,
@@ -7051,7 +7052,7 @@
         "testStrategy": "Update/remove tests in packages/core/test/profile/Profile.test.ts:\n- Remove tests that verify TOO_MANY_FEATURED_PROJECTS validation\n- Remove tests that verify featuredProjectSlugs slug mapping\n- Ensure remaining Profile.create() tests pass without featuredProjectSlugs",
         "priority": "high",
         "dependencies": [
-          1
+          "1"
         ],
         "status": "pending",
         "subtasks": []
@@ -7064,7 +7065,7 @@
         "testStrategy": "Manual verification:\n- Inspect generated migration file to confirm correct DDL\n- After applying migration, verify schema changes in portfolio-dev database:\n  - SELECT weight FROM \"Project\" LIMIT 5; (should return 0 for existing rows)\n  - \\d \"Project\" (should show weight column and index)\n  - \\d \"Profile\" (should NOT show featuredProjectSlugs column)\n- Run: npx prisma generate to update Prisma client types",
         "priority": "high",
         "dependencies": [
-          2
+          "2"
         ],
         "status": "pending",
         "subtasks": []
@@ -7077,7 +7078,7 @@
         "testStrategy": "Integration tests for mappers:\n- Test ProjectMapper.toDomain() correctly maps weight from Prisma row to domain props\n- Test ProjectMapper.toPrisma() correctly maps weight from domain entity to Prisma data\n- Test ProfileMapper.toDomain() works without featuredProjectSlugs field\n- Test ProfileMapper.toPrisma() does not include featuredProjectSlugs in output\n- Run existing mapper tests to ensure no regression",
         "priority": "medium",
         "dependencies": [
-          3
+          "3"
         ],
         "status": "pending",
         "subtasks": []
@@ -7090,7 +7091,7 @@
         "testStrategy": "Interface change verification:\n- TypeScript compilation should pass\n- All implementations of IProjectRepository must be updated to match new signature\n- Verify signature change with: npx tsc --noEmit in packages/core",
         "priority": "medium",
         "dependencies": [
-          4
+          "4"
         ],
         "status": "pending",
         "subtasks": []
@@ -7103,7 +7104,7 @@
         "testStrategy": "Integration tests for PrismaProjectRepository:\n- Test findAll() returns projects ordered by weight desc, then periodStart desc (tie-breaking)\n- Test findPublished() returns only published projects with correct composite ordering\n- Test findFeatured() returns only featured, published projects with correct ordering\n- Test findFeatured() respects limit parameter (default 6, custom values)\n- Test ordering with projects having same weight (verify periodStart tie-breaking)\n- Mock database with test data having varied weight values and dates",
         "priority": "high",
         "dependencies": [
-          5
+          "5"
         ],
         "status": "pending",
         "subtasks": []
@@ -7116,7 +7117,7 @@
         "testStrategy": "Unit tests for use cases:\n- Update packages/application/test/portfolio/GetProfile.test.ts: remove assertions on featuredProjectSlugs field\n- Update packages/application/test/portfolio/GetFeaturedProjects.test.ts: verify limit=6 is passed to repository mock\n- Update packages/application/test/portfolio/GetPublishedProjects.test.ts: remove client-side sorting, verify projects come pre-sorted from repository\n- Test that use cases correctly delegate ordering to repository layer\n- Ensure existing use case tests pass with updated logic",
         "priority": "medium",
         "dependencies": [
-          6
+          "6"
         ],
         "status": "pending",
         "subtasks": []
@@ -7129,16 +7130,20 @@
         "testStrategy": "Manual verification after seeding:\n- Query database: SELECT slug, weight, featured, \"periodStart\" FROM \"Project\" ORDER BY weight DESC, \"periodStart\" DESC LIMIT 10;\n- Verify top projects by weight match intended professional importance\n- Verify featured projects (featured=true) are within top 6 by weight\n- Query Profile table to confirm featuredProjectSlugs column is empty/absent\n- Test full application flow: run apps/site locally and verify project listing order matches weight-based ordering\n- Verify featured section shows correct projects in correct order",
         "priority": "medium",
         "dependencies": [
-          7
+          "7"
         ],
         "status": "pending",
         "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2026-06-30T23:47:12.929Z",
-      "updated": "2026-06-30T23:50:18.992Z",
-      "description": "Tasks for project-weight-ordering context"
+      "version": "1.0.0",
+      "lastModified": "2026-07-03T00:48:58.257Z",
+      "taskCount": 8,
+      "completedCount": 1,
+      "tags": [
+        "project-weight-ordering"
+      ]
     }
   }
 }
