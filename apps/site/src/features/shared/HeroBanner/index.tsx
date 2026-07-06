@@ -52,15 +52,10 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
         )}
       >
         <TitleTag
-          className={classNames(
-            'text-content-primary font-bold mb-3 line-clamp-2',
-            {
-              'text-3xl leading-[42px] lg:text-[32px] lg:leading-[44.8px] 2xl:text-[40px] 2xl:leading-[56px]':
-                titleSize === 'lg',
-              'text-3xl leading-[42px] lg:text-4xl lg:leading-[50.4px] 2xl:text-5xl 2xl:leading-[67.2px]':
-                titleSize === 'xl',
-            },
-          )}
+          className={classNames('mb-3 line-clamp-2', {
+            'text-heading-h2': titleSize === 'lg',
+            'text-heading-h1': titleSize === 'xl',
+          })}
         >
           {title}
         </TitleTag>
