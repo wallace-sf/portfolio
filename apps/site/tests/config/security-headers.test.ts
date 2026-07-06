@@ -34,4 +34,27 @@ describe('security headers', () => {
     expect(csp).toContain('https://cdn.jsdelivr.net');
     expect(csp).toContain('https://api.iconify.design');
   });
+
+  it('should only allow unsafe-eval outside production, since React dev mode requires it but production never uses eval()', async () => {
+    const originalEnv = process.env.NODE_ENV;
+
+    vi.resetModules();
+    vi.stubEnv('NODE_ENV', 'development');
+    const { default: devConfig } = await import('../../next.config.mjs');
+    const devCsp = (await devConfig.headers?.())
+      ?.find((r) => r.source === '/(.*)')
+      ?.headers.find((h) => h.key === 'Content-Security-Policy')?.value;
+
+    vi.resetModules();
+    vi.stubEnv('NODE_ENV', 'production');
+    const { default: prodConfig } = await import('../../next.config.mjs');
+    const prodCsp = (await prodConfig.headers?.())
+      ?.find((r) => r.source === '/(.*)')
+      ?.headers.find((h) => h.key === 'Content-Security-Policy')?.value;
+
+    expect(devCsp).toContain("'unsafe-eval'");
+    expect(prodCsp).not.toContain("'unsafe-eval'");
+
+    vi.stubEnv('NODE_ENV', originalEnv ?? 'test');
+  });
 });

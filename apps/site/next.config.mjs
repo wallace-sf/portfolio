@@ -1,8 +1,17 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net",
+  [
+    "script-src 'self' 'unsafe-inline'",
+    // React dev mode uses eval() for debugging; never used in production builds.
+    !isProduction && "'unsafe-eval'",
+    'https://www.googletagmanager.com https://cdn.jsdelivr.net',
+  ]
+    .filter(Boolean)
+    .join(' '),
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
