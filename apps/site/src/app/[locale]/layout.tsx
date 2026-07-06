@@ -13,6 +13,7 @@ import { Inter } from 'next/font/google';
 
 import { env } from '~/config/env';
 import { buildAlternates } from '~/lib/seo/alternates';
+import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { buildPersonJsonLd } from '~/lib/seo/structuredData';
 import { getServerContainer } from '~/lib/server/container';
 import { AppLayout, JsonLd } from '~components';
@@ -38,8 +39,7 @@ export async function generateMetadata({
     },
     description: t('Layout.description'),
     openGraph: {
-      type: 'website',
-      siteName: 'Wallace Ferreira',
+      ...buildOpenGraph(locale as Locale, ''),
       images: [
         {
           url: '/og',
