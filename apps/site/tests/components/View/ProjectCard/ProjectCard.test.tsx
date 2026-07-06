@@ -17,6 +17,22 @@ vi.mock('next/image', () => ({
   ),
 }));
 
+vi.mock('next/link', () => ({
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a data-testid="next-link" href={href} className={className}>
+      {children}
+    </a>
+  ),
+}));
+
 vi.mock('@repo/ui/Imagery', () => ({
   Icon: ({ icon }: { icon: string; className?: string }) => (
     <span data-testid={`icon-${icon}`} />
@@ -40,14 +56,16 @@ vi.mock('@repo/ui/Control', () => ({
       children,
       href,
       className,
+      component: Component = 'a',
     }: {
       children: React.ReactNode;
       href: string;
       className?: string;
+      component?: React.ElementType;
     }) => (
-      <a href={href} className={className}>
+      <Component href={href} className={className}>
         {children}
-      </a>
+      </Component>
     ),
   },
 }));
@@ -97,5 +115,11 @@ describe('ProjectCard', () => {
   it('should render the theme label when provided', () => {
     render(<ProjectCard {...defaultProps} theme="Web App" />);
     expect(screen.getByText('Web App')).toBeInTheDocument();
+  });
+
+  it('should use next/link for the project detail CTA to enable client-side navigation', () => {
+    render(<ProjectCard {...defaultProps} />);
+    const link = screen.getByTestId('next-link');
+    expect(link).toHaveAttribute('href', '/en-US/projects/my-project');
   });
 });

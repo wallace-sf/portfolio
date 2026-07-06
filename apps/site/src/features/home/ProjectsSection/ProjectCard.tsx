@@ -8,6 +8,7 @@ import { Icon } from '@repo/ui/Imagery';
 import classNames from 'classnames';
 import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { useBreakpoint } from '~/hooks';
 import { OpenSourceBadge } from '~features/shared/OpenSourceBadge';
@@ -114,6 +115,7 @@ export const ProjectCard: FC<IProjectCardProps> = ({
           />
 
           <Button.Link
+            component={Link}
             href={`/${locale}/projects/${slug}`}
             className="flex flex-row items-center justify-center gap-2"
           >
