@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildOgImageUrl } from '~/lib/og';
 import { buildAlternates } from '~/lib/seo/alternates';
+import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
 import { HeroSection } from '~features/home/HeroSection';
 import { ProjectsSection } from '~features/home/ProjectsSection';
@@ -43,9 +44,9 @@ export async function generateMetadata({
     description: headline,
     alternates: buildAlternates('', locale),
     openGraph: {
+      ...buildOpenGraph(locale, ''),
       title: name,
       description: headline,
-      siteName: 'Wallace Ferreira',
       images: [
         {
           url: buildOgImageUrl({

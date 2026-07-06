@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildAlternates } from '~/lib/seo/alternates';
+import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { buildProjectJsonLd } from '~/lib/seo/structuredData';
 import { getServerContainer } from '~/lib/server/container';
 import { JsonLd } from '~components';
@@ -50,9 +51,9 @@ export async function generateMetadata({
     description: caption,
     alternates: buildAlternates(`/projects/${slug}`, locale as Locale),
     openGraph: {
+      ...buildOpenGraph(locale as Locale, `/projects/${slug}`, 'article'),
       title,
       description: caption,
-      siteName: 'Wallace Ferreira',
       images: [{ url: coverImage.url, alt: coverImage.alt }],
     },
   };
