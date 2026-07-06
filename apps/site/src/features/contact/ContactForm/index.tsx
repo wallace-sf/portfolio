@@ -37,9 +37,7 @@ export const ContactForm: FC = () => {
   if (submitted) {
     return (
       <div className="w-full">
-        <h2 className="mb-6 text-2xl font-bold text-content-primary">
-          {tForm('title')}
-        </h2>
+        <h2 className="text-heading-h5 mb-6">{tForm('title')}</h2>
         <p className="text-accent">{tForm('success')}</p>
       </div>
     );
@@ -47,10 +45,7 @@ export const ContactForm: FC = () => {
 
   return (
     <>
-      <h2
-        id="contact-form-title"
-        className="mb-6 text-2xl font-bold text-content-primary"
-      >
+      <h2 id="contact-form-title" className="text-heading-h5 mb-6">
         {tForm('title')}
       </h2>
 

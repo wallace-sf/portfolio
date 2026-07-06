@@ -86,9 +86,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
 
           <header className="flex flex-col gap-y-3">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-              <h1 className="text-[40px] font-bold text-content-primary">
-                {title}
-              </h1>
+              <h1 className="text-heading-h2">{title}</h1>
               {repositoryUrl && (
                 <OpenSourceBadge repositoryUrl={repositoryUrl} />
               )}
@@ -129,9 +127,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
 
         {relatedProjects.length > 0 && (
           <section className="flex flex-col gap-y-6">
-            <h2 className="text-[32px] font-bold text-content-primary">
-              {t('related_title')}
-            </h2>
+            <h2 className="text-heading-h4">{t('related_title')}</h2>
             <ProjectList projects={relatedProjects} />
           </section>
         )}

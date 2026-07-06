@@ -19,7 +19,7 @@ export const ContactInfo: FC = () => {
 
   return (
     <section className="flex flex-col gap-y-6 xl:w-[326px]">
-      <h2 className="text-2xl font-bold text-content-primary">{t('title')}</h2>
+      <h2 className="text-heading-h5">{t('title')}</h2>
 
       <address className="flex flex-col gap-y-6 not-italic">
         <div className="flex flex-col gap-y-1">
