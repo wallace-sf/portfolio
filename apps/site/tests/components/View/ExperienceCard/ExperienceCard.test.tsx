@@ -123,10 +123,10 @@ const defaultProps = {
 };
 
 describe('ExperienceCard', () => {
-  it('should render position as h2', () => {
+  it('should render position as h3', () => {
     render(<ExperienceCard {...defaultProps} />);
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Senior Developer' }),
+      screen.getByRole('heading', { level: 3, name: 'Senior Developer' }),
     ).toBeInTheDocument();
   });
 
