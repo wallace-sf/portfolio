@@ -5,6 +5,9 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 
+vi.mock('next-intl/server', () => ({
+  getTranslations: vi.fn().mockResolvedValue((key: string) => `t.${key}`),
+}));
 
 vi.mock('@repo/ui/View', () => ({
   Divider: () => <hr />,
@@ -69,6 +72,30 @@ beforeEach(() => {
 });
 
 describe('about/ExperiencesSection', () => {
+  it('should render section title from i18n', async () => {
+    mockExecute.mockResolvedValue(right(EXPERIENCES));
+
+    const { ExperiencesSection } = await import(
+      '~features/about/ExperiencesSection'
+    );
+    render(await ExperiencesSection({ locale: 'en-US' }));
+
+    expect(screen.getByText('t.experience_title')).toBeInTheDocument();
+  });
+
+  it('should not render the section when there are no experiences', async () => {
+    mockExecute.mockResolvedValue(right([]));
+
+    const { ExperiencesSection } = await import(
+      '~features/about/ExperiencesSection'
+    );
+    const { container } = render(
+      (await ExperiencesSection({ locale: 'en-US' })) ?? <></>,
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('should render experience cards from use case response', async () => {
     mockExecute.mockResolvedValue(right(EXPERIENCES));
 
