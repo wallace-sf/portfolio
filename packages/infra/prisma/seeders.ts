@@ -1428,7 +1428,7 @@ Delivery had a ==fixed deadline from day one==. Before implementation could star
 
 Integration against Noteefy's own backend, which manages the AI conversation engine and connects to tee sheet systems, added coordination overhead across time zones throughout the sprint.
 
-## AI Pro Shop Assistant
+## The Build
 
 Built the complete widget using **React** and **Vite**, with **Material UI** providing the component system for the chat interface and UI elements.
 
@@ -1468,7 +1468,7 @@ A entrega tinha ==prazo fixo desde o primeiro dia==. Antes de iniciar a implemen
 
 A integração com o backend próprio da Noteefy, que gerencia o motor de conversação com IA e conecta com os sistemas de tee sheet, adicionou overhead de coordenação entre fusos horários ao longo do sprint.
 
-## AI Pro Shop Assistant
+## A Construção
 
 Construí o widget completo com **React** e **Vite**, usando **Material UI** como sistema de componentes para a interface de chat e os elementos de UI.
 
@@ -1508,7 +1508,7 @@ La entrega tenía ==plazo fijo desde el primer día==. Antes de iniciar la imple
 
 La integración contra el backend propio de Noteefy, que gestiona el motor de conversación con IA y conecta con los sistemas de tee sheet, añadió overhead de coordinación entre zonas horarias a lo largo del sprint.
 
-## AI Pro Shop Assistant
+## La Construcción
 
 Construí el widget completo con **React** y **Vite**, usando **Material UI** como sistema de componentes para la interfaz de chat y los elementos de UI.
 

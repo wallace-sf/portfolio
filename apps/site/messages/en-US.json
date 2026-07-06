@@ -86,7 +86,8 @@
     "hero_caption": "Frontend Engineer · React · Next.js · TypeScript",
     "hero_image_alt": "Professional Picture 2 of Wallace Ferreira",
     "bio_title": "About me",
-    "values_title": "My professional values"
+    "values_title": "My professional values",
+    "experience_title": "Experience"
   },
   "CurriculumCTA": {
     "description": "Access my resume to discover exclusive details about my projects, achievements and technical skills.",
