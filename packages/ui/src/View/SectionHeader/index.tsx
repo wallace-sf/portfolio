@@ -30,9 +30,7 @@ export const SectionHeader: FC<ISectionHeaderProps> = ({
       )}
     >
       {overline && (
-        <span className="text-body-xs !font-semibold tracking-widest uppercase !text-content-muted">
-          {overline}
-        </span>
+        <span className="text-overline-sm !text-content-muted">{overline}</span>
       )}
       <Tag className="text-body-lg !font-bold !text-content-primary">
         {title}

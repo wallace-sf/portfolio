@@ -42,8 +42,6 @@ export async function HeroSection({ locale, profile }: HeroSectionProps) {
         title={profile?.name ?? t('hero_title')}
         caption={profile?.headline ?? t('hero_caption')}
         alt={profile?.photo.alt ?? t('hero_image_alt')}
-        titleSize="lg"
-        titleAs="h1"
         textColumnClassName="lg:w-1/2"
         imageClassName="object-contain 2xl:object-cover"
         className="shadow-drop-md"

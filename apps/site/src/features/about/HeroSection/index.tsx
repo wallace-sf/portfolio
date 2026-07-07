@@ -20,8 +20,7 @@ export async function HeroSection({ locale }: { locale: Locale }) {
       title={profile?.name ?? t('hero_title')}
       caption={profile?.headline ?? t('hero_caption')}
       alt={t('hero_image_alt')}
-      titleSize="xl"
-      titleAs="h1"
+      titleClassName="text-heading-h1"
       textColumnClassName="lg:w-1/2"
       imageClassName="object-contain"
       className="shadow-drop-md"
