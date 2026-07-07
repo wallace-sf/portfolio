@@ -24,9 +24,7 @@ export async function ExperiencesSection({ locale }: { locale: Locale }) {
 
   return (
     <section className="mt-10 flex flex-col gap-y-4 xl:mt-16 2xl:mt-20">
-      <h2 className="text-left text-[32px] font-bold text-content-primary">
-        {t('experience_title')}
-      </h2>
+      <h2 className="text-heading-h4 text-left">{t('experience_title')}</h2>
       <ul className="flex flex-col">
         {experiences.map((experience, i) => (
           <li

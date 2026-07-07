@@ -55,29 +55,27 @@
   --tw-shadow-drop-up: 0px -4px 15px 0px #0000001A;
 }
 
-@layer base {
-  h1 {
-    @apply text-5xl font-bold leading-[67.2px] tracking-[0.24px] text-content-primary;
+@layer utilities {
+  .text-heading-h1 {
+    @apply text-4xl font-bold leading-[50.4px] tracking-[0.18px] text-content-primary lg:text-5xl lg:leading-[67.2px] lg:tracking-[0.24px];
   }
 
-  h2 {
-    @apply text-[40px] font-bold leading-[56px] tracking-[0.2px] text-content-primary;
+  .text-heading-h2 {
+    @apply text-4xl font-bold leading-[50.4px] tracking-[0.18px] text-content-primary lg:text-[40px] lg:leading-[56px] lg:tracking-[0.2px];
   }
 
-  h3 {
+  .text-heading-h3 {
     @apply text-4xl font-bold leading-[50.4px] tracking-[0.18px] text-content-primary;
   }
 
-  h4 {
-    @apply text-[32px] font-bold leading-[44.8px] tracking-[0.16px] text-content-primary;
+  .text-heading-h4 {
+    @apply text-2xl font-bold leading-[33.6px] tracking-[0.12px] text-content-primary lg:text-[32px] lg:leading-[44.8px] lg:tracking-[0.16px];
   }
 
-  h5 {
+  .text-heading-h5 {
     @apply text-2xl font-bold leading-[33.6px] tracking-[0.12px] text-content-primary;
   }
-}
 
-@layer utilities {
   .text-body-xl {
     @apply text-2xl font-normal leading-[33.6px] tracking-[0.12px] text-content-primary;
   }
@@ -96,5 +94,21 @@
 
   .text-body-xs {
     @apply text-sm font-normal leading-[19.6px] tracking-[0.07px] text-content-primary;
+  }
+
+  .text-body-smallest {
+    @apply text-xs font-normal leading-[16.8px] tracking-[0.06px] text-content-primary;
+  }
+
+  .text-overline-lg {
+    @apply text-xl font-semibold uppercase tracking-widest leading-7 text-content-primary;
+  }
+
+  .text-overline-md {
+    @apply text-base font-semibold uppercase tracking-widest leading-[22.4px] text-content-primary;
+  }
+
+  .text-overline-sm {
+    @apply text-sm font-semibold uppercase tracking-widest leading-[19.6px] text-content-primary;
   }
 }

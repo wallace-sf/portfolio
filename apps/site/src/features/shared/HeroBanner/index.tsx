@@ -9,8 +9,7 @@ export interface IHeroBannerProps {
   title: string;
   caption: string;
   alt: string;
-  titleSize?: 'lg' | 'xl';
-  titleAs?: 'h1' | 'h2';
+  titleClassName?: string;
   className?: string;
   imageClassName?: string;
   textColumnClassName?: string;
@@ -21,8 +20,7 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
   title,
   caption,
   alt,
-  titleSize = 'lg',
-  titleAs: TitleTag = 'h2',
+  titleClassName = 'text-heading-h2',
   className = '',
   imageClassName = '',
   textColumnClassName = '',
@@ -51,19 +49,9 @@ export const HeroBanner: FC<IHeroBannerProps> = ({
           textColumnClassName,
         )}
       >
-        <TitleTag
-          className={classNames(
-            'text-content-primary font-bold mb-3 line-clamp-2',
-            {
-              'text-3xl leading-[42px] lg:text-[32px] lg:leading-[44.8px] 2xl:text-[40px] 2xl:leading-[56px]':
-                titleSize === 'lg',
-              'text-3xl leading-[42px] lg:text-4xl lg:leading-[50.4px] 2xl:text-5xl 2xl:leading-[67.2px]':
-                titleSize === 'xl',
-            },
-          )}
-        >
+        <h1 className={classNames('mb-3 line-clamp-2', titleClassName)}>
           {title}
-        </TitleTag>
+        </h1>
         <p className="text-sm text-content-secondary md:text-base lg:text-lg 2xl:text-2xl 2xl:leading-[33.6px]">
           {caption}
         </p>
