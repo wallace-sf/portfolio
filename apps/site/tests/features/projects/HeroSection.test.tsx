@@ -14,16 +14,8 @@ vi.mock('~assets/images/hero-projects.png', () => ({
 }));
 
 vi.mock('~features/shared/HeroBanner', () => ({
-  HeroBanner: ({
-    title,
-    caption,
-    titleAs,
-  }: {
-    title: string;
-    caption: string;
-    titleAs?: string;
-  }) => (
-    <div data-testid="hero-banner" data-title-as={titleAs}>
+  HeroBanner: ({ title, caption }: { title: string; caption: string }) => (
+    <div data-testid="hero-banner">
       <span data-testid="hero-title">{title}</span>
       <span data-testid="hero-caption">{caption}</span>
     </div>
@@ -37,12 +29,5 @@ describe('projects/HeroSection', () => {
 
     expect(screen.getByTestId('hero-title')).toHaveTextContent('t.hero_title');
     expect(screen.getByTestId('hero-caption')).toHaveTextContent('t.hero_caption');
-  });
-
-  it('should render HeroBanner with titleAs h1', async () => {
-    const { HeroSection } = await import('~features/projects/HeroSection');
-    render(await HeroSection({ locale: 'en-US' }));
-
-    expect(screen.getByTestId('hero-banner')).toHaveAttribute('data-title-as', 'h1');
   });
 });
