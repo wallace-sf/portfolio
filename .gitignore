@@ -60,9 +60,8 @@ node_modules/
 *.sw?
 # OS specific
 
-# Task files
-# tasks.json
-# tasks/
+# Task files — tasks.json is the single source of truth; generated per-task markdown is not tracked
+.taskmaster/tasks/*.md
 
 # Local scratch / study files
 tmp/
