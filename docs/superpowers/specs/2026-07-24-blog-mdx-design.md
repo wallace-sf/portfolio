@@ -25,12 +25,13 @@ pure infra swap.
   excuse to skip a translation.
 - SEO: per-post metadata, OG images, sitemap.
 - Syntax highlighting for code blocks (posts are technical write-ups).
+- Tags: stored in `meta.json`, displayed on the post as metadata/badges.
+- RSS: one feed per locale (`/blog/<locale>/rss.xml`).
 
 **Explicitly out of scope (future phases, tracked in ROADMAP.md):**
 - Backoffice/admin authoring UI backed by a database.
-- Tags/categories as a navigation/filtering feature (tags are stored in `meta.json` now, but no
-  tag index pages yet).
-- RSS feed.
+- Tag listing/index pages (e.g. `/blog/[locale]/tag/[tag]`) — tags exist as data now, but no
+  dedicated navigation/filtering pages yet.
 - Comments, newsletter, reading analytics.
 
 ## 2. Architecture
@@ -96,7 +97,16 @@ the build — never ships a broken post to production.
   `generateStaticParams` (SSG per slug × locale), dynamic `opengraph-image.tsx` (from
   `coverImage` or generated from the title), `sitemap.ts` covering all posts × locales.
 
-## 5. Cross-app routing (Vercel multi-zone)
+## 5. RSS feeds
+
+- One feed per locale: `apps/blog/src/app/[locale]/rss.xml/route.ts` (Route Handler), reachable
+  as `wallace-ferreira.dev/blog/<locale>/rss.xml`.
+- Each feed calls `ListBlogPosts` (same use case as the listing page) and renders title,
+  description, link, and `publishedAt` for that locale only — no mixing locales in one feed.
+- Feed link (`<link rel="alternate" type="application/rss+xml">`) added per locale in the blog
+  layout `<head>`, and referenced in `robots.txt`/footer for discoverability.
+
+## 6. Cross-app routing (Vercel multi-zone)
 
 - `apps/site`: `next.config.mjs` `rewrites()` sends `/blog` and `/blog/:path*` to the `apps/blog`
   Vercel deployment URL.
@@ -106,7 +116,7 @@ the build — never ships a broken post to production.
   on the primary domain, not a subdomain, to keep domain authority/link equity unified (per
   `SEO-BACKLINK-STRATEGY.md` findings on paulie.dev's backlink profile).
 
-## 6. Testing
+## 7. Testing
 
 - **`core`**: invariant tests for `BlogPost`/`Tag` (invalid slug, missing `publishedAt`, etc.) —
   Either pattern, no mocks.
@@ -114,7 +124,8 @@ the build — never ships a broken post to production.
   directory (valid post, post missing a locale file → build error, malformed frontmatter → Zod
   error).
 - **`apps/blog`**: detail page renders correct title/OG/canonical from a mocked
-  `IBlogPostRepository` (no integration with real files).
+  `IBlogPostRepository` (no integration with real files); RSS route returns valid XML with only
+  the requested locale's posts, from the same mocked repository.
 
 ## Open questions for implementation planning
 
