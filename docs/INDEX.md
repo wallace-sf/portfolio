@@ -63,6 +63,7 @@
 - **[packages/core/README.md](../packages/core/README.md)** — Core package overview, links to 02-ARCHITECTURE and 03-BOUNDED-CONTEXTS
 - **[packages/core/decisions/](../packages/core/decisions/)** — Architectural Decision Records (ADRs)
 - **[ROADMAP.md](./ROADMAP.md)** — Product roadmap and sprint planning
+- **[ISSUES-FOLLOWUP.md](./ISSUES-FOLLOWUP.md)** — Snapshot of GitHub issues still open after the latest triage audit, pending follow-up
 
 ---
 
