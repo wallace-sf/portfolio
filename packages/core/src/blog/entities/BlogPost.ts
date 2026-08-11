@@ -26,11 +26,6 @@ export interface IBlogPostProps extends IEntityProps {
   coverImage?: string;
 }
 
-function hasAllLocales(value: LocalizedText): boolean {
-  const v = value.value;
-  return Boolean(v['en-US'] && v['pt-BR'] && v.es);
-}
-
 export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
   static readonly ERROR_CODE = 'INVALID_BLOG_POST';
 
@@ -79,9 +74,9 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       fieldsResult.value;
 
     const { isValid } = Validator.of(title)
-      .refine(hasAllLocales)
-      .refine(() => hasAllLocales(description))
-      .refine(() => hasAllLocales(content))
+      .refine((t) => t.hasAllLocales())
+      .refine(() => description.hasAllLocales())
+      .refine(() => content.hasAllLocales())
       .validate();
     if (!isValid)
       return left(new ValidationError({ code: BlogPost.ERROR_CODE }));
