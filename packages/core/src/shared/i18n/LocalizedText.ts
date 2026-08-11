@@ -3,6 +3,7 @@ import { Validator } from '@repo/utils/validator';
 import { ValueObject } from '../base/ValueObject';
 import { left, right, Either } from '../either';
 import { ValidationError } from '../errors';
+import { LOCALES } from './Locale';
 import type { Locale } from './Locale';
 
 export type LocalizedTextValue = Readonly<{
@@ -70,6 +71,16 @@ export class LocalizedText extends ValueObject<LocalizedTextValue> {
       if (forFallback !== undefined && forFallback !== '') return forFallback;
     }
     return v['en-US'];
+  }
+
+  /**
+   * True when every supported locale (LOCALES) has a non-empty value —
+   * i.e. no partial translations. Used by contexts that require full
+   * i18n coverage (e.g. Blog), as opposed to the optional-locale default.
+   */
+  hasAllLocales(): boolean {
+    const v = this.value;
+    return LOCALES.every((locale) => Boolean(this._getLocaleValue(v, locale)));
   }
 
   private _getLocaleValue(
