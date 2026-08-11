@@ -1074,9 +1074,9 @@
         "testStrategy": "Unit tests for BlogPost and Tag using Either pattern. Test valid creation, all validation rules (slug format, publishedAt presence, locale requirements for BlogPost; kebab-case and length for Tag). No mocks needed—pure domain logic tests.",
         "priority": "high",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [],
-        "updatedAt": "2026-08-11T05:00:38.452Z"
+        "updatedAt": "2026-08-11T05:17:06.967Z"
       },
       {
         "id": "14",
@@ -1203,9 +1203,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-11T05:00:38.452Z",
+      "lastModified": "2026-08-11T05:17:06.967Z",
       "taskCount": 22,
-      "completedCount": 12,
+      "completedCount": 13,
       "tags": [
         "master"
       ]
