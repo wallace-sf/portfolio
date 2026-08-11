@@ -1067,143 +1067,148 @@
         "updatedAt": "2026-07-06T03:57:23.301Z"
       },
       {
-        "id": 13,
+        "id": "13",
         "title": "Create BlogPost entity and Tag value object in packages/core",
         "description": "Implement core domain models for the Blog bounded context following DDD patterns",
         "details": "Create `packages/core/src/blog/entities/BlogPost.ts` and `packages/core/src/blog/value-objects/Tag.ts`.\n\n**BlogPost entity:**\n- Extends `AggregateRoot<BlogPost, IBlogPostProps>`\n- Properties: `slug: Slug`, `title: LocalizedText`, `description: LocalizedText`, `content: LocalizedText`, `tags: Tag[]`, `publishedAt: DateValue`, `coverImage?: Url`\n- Validation via `Validator`: slug kebab-case (reuse `Slug.create`), `publishedAt` must be present, at least one locale for title/description/content\n- `create()` static factory returning `Either<ValidationError, BlogPost>`\n- Zero framework dependencies\n\n**Tag value object:**\n- Extends `ValueObject<string>`\n- Validation: kebab-case, 2-50 characters, `Validator.of(value).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Tag must be kebab-case').length(2, 50, 'Tag must be 2-50 characters')`\n- `create()` static factory returning `Either<ValidationError, Tag>`\n\n**Export from `packages/core/src/blog/index.ts`:**\n```ts\nexport * from './entities/BlogPost';\nexport * from './value-objects/Tag';\n```\n\n**Tests (mandatory):**\n- `packages/core/test/blog/BlogPost.test.ts`: valid creation, invalid slug, missing publishedAt, missing locale\n- `packages/core/test/blog/Tag.test.ts`: valid tag, invalid format, too short/long",
         "testStrategy": "Unit tests for BlogPost and Tag using Either pattern. Test valid creation, all validation rules (slug format, publishedAt presence, locale requirements for BlogPost; kebab-case and length for Tag). No mocks needed—pure domain logic tests.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-08-11T05:00:38.452Z"
       },
       {
-        "id": 14,
+        "id": "14",
         "title": "Define IBlogPostRepository port in packages/application",
         "description": "Create repository interface for blog posts following the established port pattern",
         "details": "Create `packages/application/src/blog/ports/IBlogPostRepository.ts`:\n\n```ts\nimport { BlogPost, Slug } from '@repo/core/blog';\n\nexport interface IBlogPostRepository {\n  findAll(): Promise<BlogPost[]>;\n  findBySlug(slug: Slug): Promise<BlogPost | null>;\n}\n```\n\nExport from `packages/application/src/blog/ports/index.ts`:\n```ts\nexport * from './IBlogPostRepository';\n```\n\n**Tests (mandatory):**\nNo direct tests for the interface itself, but the use cases (task 15) will test against this contract via mocks.",
         "testStrategy": "Interface definition—no direct tests. Tested indirectly via use case tests (tasks 15) which mock this interface.",
         "priority": "high",
         "dependencies": [
-          13
+          "13"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 15,
+        "id": "15",
         "title": "Implement blog use cases (ListBlogPosts, GetBlogPostBySlug)",
         "description": "Create application-layer use cases for listing and retrieving blog posts",
         "details": "Create two use cases in `packages/application/src/blog/use-cases/`:\n\n**1. ListBlogPosts.ts:**\n```ts\nimport { BlogPost } from '@repo/core/blog';\nimport { DomainError, Either, Locale, left, right } from '@repo/core/shared';\nimport { UseCase } from '../../shared/UseCase';\nimport { IBlogPostRepository } from '../ports';\nimport { BlogPostSummaryDTO } from '../dtos/BlogPostSummaryDTO';\n\nexport type ListBlogPostsInput = { locale: Locale };\n\nexport class ListBlogPosts extends UseCase<ListBlogPostsInput, BlogPostSummaryDTO[]> {\n  constructor(private readonly repository: IBlogPostRepository) { super(); }\n\n  async execute(input: ListBlogPostsInput): Promise<Either<DomainError, BlogPostSummaryDTO[]>> {\n    try {\n      const posts = await this.repository.findAll();\n      return right(posts.map(p => this.toDTO(p, input.locale)));\n    } catch {\n      return left(new DomainError('FETCH_FAILED', { message: 'Failed to fetch blog posts' }));\n    }\n  }\n\n  private toDTO(post: BlogPost, locale: Locale): BlogPostSummaryDTO {\n    return {\n      slug: post.slug.value,\n      title: post.title.get(locale),\n      description: post.description.get(locale),\n      publishedAt: post.publishedAt.value,\n      tags: post.tags.map(t => t.value),\n      coverImage: post.coverImage?.value,\n    };\n  }\n}\n```\n\n**2. GetBlogPostBySlug.ts:**\n- Similar structure, calls `repository.findBySlug(slug)`, returns `BlogPostDetailDTO`\n- Returns `DomainError('POST_NOT_FOUND')` if null\n\n**DTOs:**\n- `BlogPostSummaryDTO.ts`: slug, title, description, publishedAt, tags, coverImage?\n- `BlogPostDetailDTO.ts`: extends summary + content field\n\nExport from `packages/application/src/blog/index.ts`.\n\n**Tests (mandatory):**\n- `packages/application/test/blog/ListBlogPosts.test.ts`: mock repository, verify DTO mapping per locale\n- `packages/application/test/blog/GetBlogPostBySlug.test.ts`: found case, not-found case",
         "testStrategy": "Unit tests with mocked IBlogPostRepository. Test success paths (correct DTO mapping for each locale), error paths (repository throws, post not found). Verify Either return values.",
         "priority": "high",
         "dependencies": [
-          14
+          "14"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 16,
+        "id": "16",
         "title": "Implement FileSystemBlogPostRepository in packages/infra",
         "description": "Create filesystem-based repository that reads MDX files from content/posts/ directory",
         "details": "Create `packages/infra/src/repositories/blog/FileSystemBlogPostRepository.ts` implementing `IBlogPostRepository`.\n\n**Implementation:**\n- `findAll()`: reads `content/posts/*/meta.json`, parses each with Zod schema, constructs `BlogPost` entities via `BlogPost.create()`, returns array sorted by `publishedAt` desc\n- `findBySlug(slug)`: reads `content/posts/<slug>/meta.json` + all `.mdx` files, constructs `BlogPost`, returns entity or null\n- **Frontmatter parsing:** use `gray-matter` to extract YAML frontmatter from each `.mdx` file (title, description)\n- **Zod schemas:**\n  - `MetaJsonSchema`: `{ slug: string, publishedAt: string, tags: string[], coverImage?: string }`\n  - `MdxFrontmatterSchema`: `{ title: string, description: string }`\n  - Validate on read; throw `InfrastructureError` on schema failure (fail-fast at build time)\n- **File structure assumption:** `content/posts/<slug>/meta.json`, `en-US.mdx`, `pt-BR.mdx`, `es.mdx`\n- **Missing locale:** if any of the three locales is missing, throw `InfrastructureError` with clear message—PRD requires full i18n from day one\n- Use Node.js `fs.promises` for file I/O\n\n**Mapper:**\n- `BlogPostMapper.toDomain(meta, frontmatters)`: combines `meta.json` + parsed frontmatter from all locales into `IBlogPostProps`, calls `BlogPost.create()`, unwraps Either (throw if left—this is infra edge validation per `06-VALIDATION.md`)\n\nExport from `packages/infra/src/repositories/blog/index.ts`.\n\n**Tests (mandatory):**\n- `packages/infra/test/repositories/blog/FileSystemBlogPostRepository.test.ts`:\n  - Valid post fixture in `test/fixtures/posts/test-post/` (meta.json + 3 MDX files)\n  - Test `findAll()` and `findBySlug()`\n  - Test missing locale file → throws `InfrastructureError`\n  - Test malformed meta.json → throws `InfrastructureError`\n  - Test malformed frontmatter → throws `InfrastructureError`",
         "testStrategy": "Integration-style tests using a fixture directory. Verify correct entity construction from valid files, error handling for missing/malformed files. Test all edge validation rules.",
         "priority": "high",
         "dependencies": [
-          13,
-          14
+          "13",
+          "14"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 17,
+        "id": "17",
         "title": "Bootstrap apps/blog Next.js application with i18n and multi-zone config",
         "description": "Create the blog app structure, configure basePath, next-intl, and Vercel multi-zone routing",
         "details": "**1. Create `apps/blog/` directory structure:**\n```\napps/blog/\n  src/\n    app/\n      [locale]/\n        layout.tsx\n        page.tsx       # listing\n        [slug]/\n          page.tsx     # detail\n      favicon.ico\n    lib/\n      server/\n        container.ts   # DI container for blog\n    i18n/\n      routing.ts       # reuse LOCALES/DEFAULT_LOCALE from @repo/core/shared\n  package.json\n  tsconfig.json\n  next.config.mjs\n  tailwind.config.ts\n```\n\n**2. `apps/blog/package.json`:**\n- Dependencies: `@repo/application`, `@repo/core`, `@repo/infra`, `@repo/ui`, `next@16.2.6`, `react@^19.2.7`, `react-dom@^19.2.7`, `next-intl@4.11.0`, `next-mdx-remote`, `rehype-pretty-code`, `shiki`, `zod`, `gray-matter`\n- Scripts: `dev`, `build`, `lint`, `test` (mirror `apps/site`)\n\n**3. `apps/blog/next.config.mjs`:**\n```js\nimport createNextIntlPlugin from 'next-intl/plugin';\n\nconst nextConfig = {\n  basePath: '/blog',\n  // ... security headers (copy from apps/site)\n};\n\nexport default createNextIntlPlugin()(nextConfig);\n```\n\n**4. Update `apps/site/next.config.mjs`:**\nAdd `rewrites()` to send `/blog` paths to the `apps/blog` deployment:\n```js\nasync rewrites() {\n  return [\n    {\n      source: '/blog',\n      destination: `${process.env.BLOG_APP_URL}/blog`,\n    },\n    {\n      source: '/blog/:path*',\n      destination: `${process.env.BLOG_APP_URL}/blog/:path*`,\n    },\n  ];\n},\n```\n(Environment variable `BLOG_APP_URL` points to the Vercel deployment of `apps/blog` for multi-zone.)\n\n**5. Update `turbo.json`:**\nAdd `blog#build` task:\n```json\n\"blog#build\": {\n  \"dependsOn\": [\"^build\"],\n  \"env\": [\"NEXT_PUBLIC_*\"]\n}\n```\n\n**6. Update `pnpm-workspace.yaml` (already includes `apps/*`).**\n\n**7. Create `apps/blog/src/lib/server/container.ts`:**\n```ts\nimport { FileSystemBlogPostRepository } from '@repo/infra/repositories/blog';\n\nexport function getServerContainer() {\n  return { blogPostRepository: new FileSystemBlogPostRepository() };\n}\n```\n\n**No tests for this task—scaffolding only. Tests will come in task 18 (pages/routes).**",
         "testStrategy": "No direct tests—scaffolding task. Integration verified in task 18 when pages are tested.",
         "priority": "high",
         "dependencies": [
-          16
+          "16"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 18,
+        "id": "18",
         "title": "Implement blog listing and detail pages with SSG and SEO",
         "description": "Create blog index and detail pages using Server Components, generateStaticParams, and generateMetadata",
         "details": "**1. `apps/blog/src/app/[locale]/page.tsx` (listing):**\n- Server Component\n- `generateStaticParams()`: returns `LOCALES.map(locale => ({ locale }))`\n- `generateMetadata({ params })`: title/description from i18n keys, alternates for each locale\n- Component: calls `new ListBlogPosts(blogPostRepository).execute({ locale })`, maps to JSX list of post cards (title, description, publishedAt, tags as `Badge` from `@repo/ui`, coverImage)\n- If result is left, show empty state\n\n**2. `apps/blog/src/app/[locale]/[slug]/page.tsx` (detail):**\n- Server Component\n- `generateStaticParams()`: calls `ListBlogPosts` for default locale, returns `LOCALES.flatMap(locale => slugs.map(slug => ({ locale, slug })))`\n- `generateMetadata({ params })`: calls `GetBlogPostBySlug`, returns title, description, OG image (from `coverImage` or fallback), canonical per locale\n- Component: calls `GetBlogPostBySlug`, renders title, description, publishedAt, tags, then renders `content` MDX via `next-mdx-remote/rsc` `<MDXRemote />` component\n- **MDX components:** map `h1`, `h2`, `pre`, etc., to styled components (reuse `@repo/ui` where applicable)\n- **Syntax highlighting:** configure `rehype-pretty-code` in `mdx-components.tsx` (Shiki with default theme)\n- If result is left, call `notFound()`\n\n**3. `apps/blog/src/app/[locale]/layout.tsx`:**\n- Root layout for blog, sets locale via `setRequestLocale(locale)`, includes `<html lang={locale}>`, shared header/footer (import from `@repo/ui` or local components)\n- No need to re-implement i18n provider—next-intl plugin handles it\n\n**4. SEO utilities:**\n- Reuse `buildAlternates`, `buildOpenGraph` from `apps/site/src/lib/seo/` (or extract to shared package if preferred)\n- Add `apps/blog/src/app/sitemap.ts`: `generateSitemaps()` returns one entry per locale; each sitemap includes all blog post URLs for that locale, calls `ListBlogPosts` to get slugs\n\n**Tests (mandatory):**\n- `apps/blog/test/app/[locale]/page.test.tsx`: render with mocked `ListBlogPosts`, verify post cards rendered\n- `apps/blog/test/app/[locale]/[slug]/page.test.tsx`: render with mocked `GetBlogPostBySlug`, verify title/content rendered, test `notFound()` case\n- Test `generateMetadata` returns correct title/description",
         "testStrategy": "Component tests using @testing-library/react. Mock use cases (ListBlogPosts, GetBlogPostBySlug) to return Either values. Verify correct rendering of posts, metadata, and error states (notFound). Test generateStaticParams output.",
         "priority": "high",
         "dependencies": [
-          17
+          "17"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 19,
+        "id": "19",
         "title": "Configure MDX compilation with next-mdx-remote and rehype-pretty-code",
         "description": "Set up MDX rendering pipeline with syntax highlighting for code blocks",
         "details": "**1. Install dependencies in `apps/blog/package.json`:**\n```json\n\"next-mdx-remote\": \"^5.0.0\",\n\"rehype-pretty-code\": \"^0.15.0\",\n\"shiki\": \"^1.24.2\"\n```\n\n**2. Create `apps/blog/src/lib/mdx/mdx-components.tsx`:**\n```tsx\nimport type { MDXComponents } from 'mdx/types';\nimport { Badge } from '@repo/ui';\n\nexport const mdxComponents: MDXComponents = {\n  h1: (props) => <h1 className=\"text-4xl font-bold mb-4\" {...props} />,\n  h2: (props) => <h2 className=\"text-3xl font-semibold mb-3\" {...props} />,\n  p: (props) => <p className=\"mb-4 leading-relaxed\" {...props} />,\n  pre: (props) => <pre className=\"overflow-x-auto p-4 rounded-lg bg-gray-900 text-white\" {...props} />,\n  code: (props) => <code className=\"font-mono text-sm\" {...props} />,\n  // Add more as needed\n};\n```\n\n**3. Configure rehype-pretty-code:**\nIn the detail page (`apps/blog/src/app/[locale]/[slug]/page.tsx`), when calling `<MDXRemote />`, pass options:\n```tsx\nimport { MDXRemote } from 'next-mdx-remote/rsc';\nimport rehypePrettyCode from 'rehype-pretty-code';\nimport { mdxComponents } from '~/lib/mdx/mdx-components';\n\nconst options = {\n  mdxOptions: {\n    rehypePlugins: [\n      [rehypePrettyCode, { theme: 'github-dark', keepBackground: true }],\n    ],\n  },\n};\n\n<MDXRemote source={content} components={mdxComponents} options={options} />\n```\n\n**4. Update `FileSystemBlogPostRepository` (task 16):**\n- When reading `.mdx` files, store raw MDX content (after frontmatter extraction) in `BlogPost.content` as a `LocalizedText` (one MDX string per locale)\n- The repository doesn't compile MDX—just reads raw strings; compilation happens at render time in the page component\n\n**No direct tests for this task—visual/integration verification only. Tested implicitly in task 18 page tests.**",
         "testStrategy": "No isolated tests—verified via task 18 page rendering tests and manual visual inspection of syntax-highlighted code blocks in dev/production.",
         "priority": "medium",
         "dependencies": [
-          18
+          "18"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 20,
+        "id": "20",
         "title": "Implement RSS feeds (one per locale) as Route Handlers",
         "description": "Create /blog/<locale>/rss.xml endpoints that generate valid RSS 2.0 XML from blog posts",
         "details": "**1. Create `apps/blog/src/app/[locale]/rss.xml/route.ts`:**\n```ts\nimport { ListBlogPosts } from '@repo/application/blog';\nimport { type Locale, LOCALES } from '@repo/core/shared';\nimport { getServerContainer } from '~/lib/server/container';\n\nexport async function GET(\n  request: Request,\n  { params }: { params: Promise<{ locale: string }> }\n) {\n  const { locale } = await params;\n  const { blogPostRepository } = getServerContainer();\n  const result = await new ListBlogPosts(blogPostRepository).execute({ locale: locale as Locale });\n\n  if (result.isLeft()) {\n    return new Response('Failed to generate RSS', { status: 500 });\n  }\n\n  const posts = result.value;\n  const rss = generateRSS(posts, locale as Locale);\n\n  return new Response(rss, {\n    headers: { 'Content-Type': 'application/rss+xml; charset=utf-8' },\n  });\n}\n\nexport async function generateStaticParams() {\n  return LOCALES.map(locale => ({ locale }));\n}\n\nfunction generateRSS(posts: BlogPostSummaryDTO[], locale: Locale): string {\n  const siteUrl = 'https://wallace-ferreira.dev';\n  const items = posts.map(p => `\n    <item>\n      <title><![CDATA[${p.title}]]></title>\n      <description><![CDATA[${p.description}]]></description>\n      <link>${siteUrl}/blog/${locale}/${p.slug}</link>\n      <guid isPermaLink=\"true\">${siteUrl}/blog/${locale}/${p.slug}</guid>\n      <pubDate>${new Date(p.publishedAt).toUTCString()}</pubDate>\n    </item>\n  `).join('');\n\n  return `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n  <channel>\n    <title>Wallace Ferreira - Blog (${locale})</title>\n    <link>${siteUrl}/blog/${locale}</link>\n    <description>Technical blog by Wallace Ferreira</description>\n    <language>${locale}</language>\n    <atom:link href=\"${siteUrl}/blog/${locale}/rss.xml\" rel=\"self\" type=\"application/rss+xml\" />\n    ${items}\n  </channel>\n</rss>`;\n}\n```\n\n**2. Add RSS link to layout:**\nIn `apps/blog/src/app/[locale]/layout.tsx`, add to `<head>`:\n```tsx\n<link rel=\"alternate\" type=\"application/rss+xml\" title={`Blog - ${locale}`} href={`/blog/${locale}/rss.xml`} />\n```\n\n**3. Reference in `apps/blog/src/app/robots.ts` (if separate from site):**\nAllow all, no disallow rules for blog.\n\n**Tests (mandatory):**\n- `apps/blog/test/app/[locale]/rss.xml/route.test.ts`: mock `ListBlogPosts`, call GET handler, parse XML, verify structure (title, link, pubDate for each post), verify only the requested locale's posts are included",
         "testStrategy": "Integration test of the Route Handler. Mock ListBlogPosts use case, call GET with a locale, parse XML response, verify RSS structure and content (correct locale, all posts present, valid XML).",
         "priority": "medium",
         "dependencies": [
-          15,
-          17
+          "15",
+          "17"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 21,
+        "id": "21",
         "title": "Create sample blog post fixture and content directory structure",
         "description": "Establish content/posts/ directory with at least one complete example post for testing and validation",
         "details": "**1. Create directory structure:**\n```\ncontent/\n  posts/\n    sample-post/\n      meta.json\n      en-US.mdx\n      pt-BR.mdx\n      es.mdx\n      cover.png (optional, can be a placeholder)\n```\n\n**2. `content/posts/sample-post/meta.json`:**\n```json\n{\n  \"slug\": \"sample-post\",\n  \"publishedAt\": \"2026-08-01\",\n  \"tags\": [\"nextjs\", \"architecture\", \"ddd\"],\n  \"coverImage\": \"/content/posts/sample-post/cover.png\"\n}\n```\n\n**3. `content/posts/sample-post/en-US.mdx`:**\n```mdx\n---\ntitle: Sample Blog Post\ndescription: This is a sample post to demonstrate the blog architecture.\n---\n\n# Sample Blog Post\n\nThis is a **sample** blog post written in MDX.\n\n## Code Example\n\n```typescript\nfunction hello() {\n  console.log('Hello, world!');\n}\n```\n\nMore content here...\n```\n\n**4. Translate to `pt-BR.mdx` and `es.mdx`:**\n- `pt-BR.mdx`: Portuguese title/description/content\n- `es.mdx`: Spanish title/description/content\n\n**5. Add `.gitignore` exception if needed:**\nEnsure `content/` is committed (not ignored).\n\n**6. Validation:**\n- Run `FileSystemBlogPostRepository.findAll()` in a test/dev script to confirm the post parses correctly\n- Manually test the blog listing and detail pages in dev mode (`pnpm dev:blog` or similar)\n\n**No automated tests for this task—manual verification and used as fixture for other tests (e.g., task 16).**",
         "testStrategy": "Manual verification—browse to /blog/<locale> and /blog/<locale>/sample-post in dev mode. Confirm all three locales render correctly, syntax highlighting works, tags display. Used as fixture in FileSystemBlogPostRepository tests (task 16).",
         "priority": "medium",
         "dependencies": [
-          16,
-          17
+          "16",
+          "17"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 22,
+        "id": "22",
         "title": "Add blog-related Vercel deployment configuration and environment variables",
         "description": "Configure Vercel project settings for apps/blog deployment and multi-zone routing",
         "details": "**1. Create `apps/blog/vercel.json` (if needed for specific settings):**\n```json\n{\n  \"buildCommand\": \"pnpm build --filter=blog\",\n  \"outputDirectory\": \".next\"\n}\n```\n\n**2. Set up Vercel environment variables for `apps/blog`:**\n- `NEXT_PUBLIC_SITE_URL`: `https://wallace-ferreira.dev`\n- Any other public env vars needed (GA tracking, etc.)\n\n**3. Configure `apps/site` Vercel project:**\n- Add `BLOG_APP_URL` environment variable pointing to the `apps/blog` Vercel deployment URL (e.g., `https://blog-app-XXXX.vercel.app`)\n- This is used in the `rewrites()` function (task 17) to route `/blog` traffic to the blog app\n\n**4. Deploy both apps:**\n- Deploy `apps/blog` as a separate Vercel project (name: `portfolio-blog` or similar)\n- Deploy `apps/site` with the updated `BLOG_APP_URL` env var\n- Verify multi-zone routing: `wallace-ferreira.dev/blog` serves content from `apps/blog`\n\n**5. Test in production:**\n- Visit `wallace-ferreira.dev/blog/en-US` and verify it serves the blog app, not 404\n- Check RSS feed: `wallace-ferreira.dev/blog/en-US/rss.xml`\n- Verify OG images, canonical URLs, sitemaps\n\n**No automated tests—deployment/infrastructure task. Validated via manual production testing.**",
         "testStrategy": "Manual production verification—deploy to Vercel, test multi-zone routing, RSS endpoints, SEO tags (view source), OG images (share on Slack/Twitter to see preview). No automated tests.",
         "priority": "low",
         "dependencies": [
-          17,
-          18,
-          20
+          "17",
+          "18",
+          "20"
         ],
         "status": "pending",
         "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2026-08-11T04:44:42.215Z",
-      "updated": "2026-08-11T04:44:42.215Z",
-      "description": "Tasks for master context"
+      "version": "1.0.0",
+      "lastModified": "2026-08-11T05:00:38.452Z",
+      "taskCount": 22,
+      "completedCount": 12,
+      "tags": [
+        "master"
+      ]
     }
   },
   "sprint-0": {
