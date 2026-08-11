@@ -1,3 +1,4 @@
+export * from './BlogPostBuilder';
 export * from './EntityBuilder';
 export * from './ExperienceBuilder';
 export * from './LanguageBuilder';

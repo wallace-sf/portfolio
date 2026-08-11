@@ -1,7 +1,7 @@
 import {
   BlogPost,
   DateTime,
-  IBlogPostProps,
+  ILocalizedTextInput,
   LocalizedText,
   Slug,
   Tag,
@@ -9,41 +9,23 @@ import {
   ValidationError,
 } from '~/index';
 
-function validProps(overrides: Partial<IBlogPostProps> = {}): IBlogPostProps {
-  return {
-    slug: 'my-first-post',
-    title: {
-      'en-US': 'My First Post',
-      'pt-BR': 'Meu Primeiro Post',
-      es: 'Mi Primer Post',
-    },
-    description: {
-      'en-US': 'A short description.',
-      'pt-BR': 'Uma descrição curta.',
-      es: 'Una descripción corta.',
-    },
-    content: {
-      'en-US': 'Full post content.',
-      'pt-BR': 'Conteúdo completo do post.',
-      es: 'Contenido completo del post.',
-    },
-    tags: ['nextjs', 'architecture'],
-    publishedAt: '2026-08-01T00:00:00.000Z',
-    ...overrides,
-  };
-}
+import { BlogPostBuilder } from '../helpers';
 
 describe('BlogPost', () => {
   describe('when created from valid props', () => {
     it('should return Right with a valid BlogPost', () => {
-      const result = BlogPost.create(validProps());
+      const result = BlogPost.create(BlogPostBuilder.build().toProps());
 
       expect(result.isRight()).toBe(true);
       expect(result.value).toBeInstanceOf(BlogPost);
     });
 
     it('should create BlogPost with all fields as VOs', () => {
-      const result = BlogPost.create(validProps());
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withTitle({ 'en-US': 'My First Post', 'pt-BR': 'x', es: 'x' })
+          .toProps(),
+      );
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
@@ -57,7 +39,7 @@ describe('BlogPost', () => {
     });
 
     it('should create BlogPost without a coverImage', () => {
-      const result = BlogPost.create(validProps());
+      const result = BlogPost.create(BlogPostBuilder.build().toProps());
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
@@ -66,7 +48,9 @@ describe('BlogPost', () => {
 
     it('should create BlogPost with a coverImage', () => {
       const result = BlogPost.create(
-        validProps({ coverImage: 'https://example.com/cover.png' }),
+        BlogPostBuilder.build()
+          .withCoverImage('https://example.com/cover.png')
+          .toProps(),
       );
 
       expect(result.isRight()).toBe(true);
@@ -75,7 +59,9 @@ describe('BlogPost', () => {
     });
 
     it('should create BlogPost with an empty tags list', () => {
-      const result = BlogPost.create(validProps({ tags: [] }));
+      const result = BlogPost.create(
+        BlogPostBuilder.build().withTags([]).toProps(),
+      );
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
@@ -84,7 +70,9 @@ describe('BlogPost', () => {
 
     it('should default to an empty tags list when tags is undefined', () => {
       const result = BlogPost.create(
-        validProps({ tags: undefined as unknown as string[] }),
+        BlogPostBuilder.build()
+          .withTags(undefined as unknown as string[])
+          .toProps(),
       );
 
       expect(result.isRight()).toBe(true);
@@ -95,7 +83,9 @@ describe('BlogPost', () => {
 
   describe('when created from invalid props', () => {
     it('should return Left for an invalid slug', () => {
-      const result = BlogPost.create(validProps({ slug: 'Not A Slug' }));
+      const result = BlogPost.create(
+        BlogPostBuilder.build().withSlug('Not A Slug').toProps(),
+      );
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
@@ -103,7 +93,9 @@ describe('BlogPost', () => {
 
     it('should return Left for a missing publishedAt', () => {
       const result = BlogPost.create(
-        validProps({ publishedAt: undefined as unknown as string }),
+        BlogPostBuilder.build()
+          .withPublishedAt(undefined as unknown as string)
+          .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
@@ -111,16 +103,18 @@ describe('BlogPost', () => {
     });
 
     it('should return Left for an invalid publishedAt', () => {
-      const result = BlogPost.create(validProps({ publishedAt: 'not-a-date' }));
+      const result = BlogPost.create(
+        BlogPostBuilder.build().withPublishedAt('not-a-date').toProps(),
+      );
 
       expect(result.isLeft()).toBe(true);
     });
 
     it('should return Left when title is missing the pt-BR locale', () => {
       const result = BlogPost.create(
-        validProps({
-          title: { 'en-US': 'My First Post', es: 'Mi Primer Post' },
-        }),
+        BlogPostBuilder.build()
+          .withTitle({ 'en-US': 'My First Post', es: 'Mi Primer Post' })
+          .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
@@ -129,7 +123,9 @@ describe('BlogPost', () => {
 
     it('should return Left when title is undefined', () => {
       const result = BlogPost.create(
-        validProps({ title: undefined as unknown as IBlogPostProps['title'] }),
+        BlogPostBuilder.build()
+          .withTitle(undefined as unknown as ILocalizedTextInput)
+          .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
@@ -140,9 +136,9 @@ describe('BlogPost', () => {
 
     it('should return Left when description is undefined', () => {
       const result = BlogPost.create(
-        validProps({
-          description: undefined as unknown as IBlogPostProps['description'],
-        }),
+        BlogPostBuilder.build()
+          .withDescription(undefined as unknown as ILocalizedTextInput)
+          .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
@@ -153,9 +149,9 @@ describe('BlogPost', () => {
 
     it('should return Left when content is undefined', () => {
       const result = BlogPost.create(
-        validProps({
-          content: undefined as unknown as IBlogPostProps['content'],
-        }),
+        BlogPostBuilder.build()
+          .withContent(undefined as unknown as ILocalizedTextInput)
+          .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
@@ -166,12 +162,12 @@ describe('BlogPost', () => {
 
     it('should return Left when description is missing the es locale', () => {
       const result = BlogPost.create(
-        validProps({
-          description: {
+        BlogPostBuilder.build()
+          .withDescription({
             'en-US': 'A short description.',
             'pt-BR': 'Uma descrição curta.',
-          },
-        }),
+          })
+          .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
@@ -180,9 +176,9 @@ describe('BlogPost', () => {
 
     it('should return Left when content is missing the pt-BR locale', () => {
       const result = BlogPost.create(
-        validProps({
-          content: { 'en-US': 'Full post content.', es: 'Contenido.' },
-        }),
+        BlogPostBuilder.build()
+          .withContent({ 'en-US': 'Full post content.', es: 'Contenido.' })
+          .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
@@ -190,7 +186,9 @@ describe('BlogPost', () => {
     });
 
     it('should return Left when a tag is invalid', () => {
-      const result = BlogPost.create(validProps({ tags: ['Invalid Tag!'] }));
+      const result = BlogPost.create(
+        BlogPostBuilder.build().withTags(['Invalid Tag!']).toProps(),
+      );
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Tag.ERROR_CODE);
@@ -198,7 +196,7 @@ describe('BlogPost', () => {
 
     it('should return Left for an invalid coverImage url', () => {
       const result = BlogPost.create(
-        validProps({ coverImage: 'not-a-url' }),
+        BlogPostBuilder.build().withCoverImage('not-a-url').toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
