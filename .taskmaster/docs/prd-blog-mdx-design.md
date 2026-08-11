@@ -1,8 +1,8 @@
 # Blog (`apps/blog`) — MDX-in-Git Design
 
 > Status: approved design, pending implementation plan.
-> Related: [ROADMAP.md](../../ROADMAP.md), [03-BOUNDED-CONTEXTS.md](../../03-BOUNDED-CONTEXTS.md),
-> [SEO-BACKLINK-STRATEGY.md](../../SEO-BACKLINK-STRATEGY.md), [12-DESIGN-SYSTEM.md](../../12-DESIGN-SYSTEM.md).
+> Related: [ROADMAP.md](../../docs/ROADMAP.md), [03-BOUNDED-CONTEXTS.md](../../docs/03-BOUNDED-CONTEXTS.md),
+> [SEO-BACKLINK-STRATEGY.md](../../docs/SEO-BACKLINK-STRATEGY.md), [12-DESIGN-SYSTEM.md](../../docs/12-DESIGN-SYSTEM.md).
 
 ## Goal
 
