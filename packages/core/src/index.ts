@@ -5,6 +5,7 @@
 export * from './shared';
 export * from './portfolio';
 export * as portfolio from './portfolio';
+export * from './blog';
 export * as blog from './blog';
 export * as contact from './contact';
 export * from './identity';

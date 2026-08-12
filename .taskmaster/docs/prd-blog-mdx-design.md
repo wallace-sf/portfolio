@@ -28,10 +28,14 @@ pure infra swap.
 - Tags: stored in `meta.json`, displayed on the post as metadata/badges.
 - RSS: one feed per locale (`/blog/<locale>/rss.xml`).
 
-**Explicitly out of scope (future phases, tracked in ROADMAP.md):**
+**Explicitly out of scope (future phases, tracked in [ROADMAP.md](../../docs/ROADMAP.md)):**
 - Backoffice/admin authoring UI backed by a database.
 - Tag listing/index pages (e.g. `/blog/[locale]/tag/[tag]`) — tags exist as data now, but no
   dedicated navigation/filtering pages yet.
+- `/archives` page (year-grouped post timeline).
+- "Recently updated" and "trending tags" sidebar widgets.
+- Sticky table of contents on post pages.
+- Reading-time estimate on post pages.
 - Comments, newsletter, reading analytics.
 
 ## 2. Architecture
@@ -112,8 +116,11 @@ the build — never ships a broken post to production.
   Vercel deployment URL.
 - `apps/blog`: `basePath: '/blog'`, its own `[locale]` routing via next-intl, reusing
   `LOCALES`/`DEFAULT_LOCALE` from `@repo/core/shared`. Deployed as an independent Vercel project.
-- Final URLs: `wallace-ferreira.dev/blog`, `wallace-ferreira.dev/blog/pt-BR/<slug>`, etc. — path
-  on the primary domain, not a subdomain, to keep domain authority/link equity unified (per
+- Post URLs embed the publication year/month (`/blog/<locale>/<yyyy>/<mm>/<slug>`), derived from
+  `BlogPost.publishedAt`. Decided in the MVP (not deferred) because changing URL structure later
+  breaks already-indexed links and SEO equity — cheap to do now, expensive to retrofit.
+- Final URLs: `wallace-ferreira.dev/blog`, `wallace-ferreira.dev/blog/pt-BR/2026/08/<slug>`, etc.
+  — path on the primary domain, not a subdomain, to keep domain authority/link equity unified (per
   `SEO-BACKLINK-STRATEGY.md` findings on paulie.dev's backlink profile).
 
 ## 7. Testing

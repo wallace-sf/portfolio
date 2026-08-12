@@ -130,6 +130,47 @@ describe('LocalizedText', () => {
     });
   });
 
+  describe('hasAllLocales()', () => {
+    it('returns true when en-US, pt-BR and es are all present', () => {
+      const result = LocalizedText.create({
+        'en-US': 'Hello',
+        'pt-BR': 'Olá',
+        es: 'Hola',
+      });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.hasAllLocales()).toBe(true);
+    });
+
+    it('returns false when pt-BR is missing', () => {
+      const result = LocalizedText.create({ 'en-US': 'Hello', es: 'Hola' });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.hasAllLocales()).toBe(false);
+    });
+
+    it('returns false when es is missing', () => {
+      const result = LocalizedText.create({
+        'en-US': 'Hello',
+        'pt-BR': 'Olá',
+      });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.hasAllLocales()).toBe(false);
+    });
+
+    it('returns false when only en-US is present', () => {
+      const result = LocalizedText.create({ 'en-US': 'Hello' });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.hasAllLocales()).toBe(false);
+    });
+  });
+
   describe('equals (deep comparison)', () => {
     it('should be equal when two LocalizedText instances have the same content', () => {
       const r1 = LocalizedText.create({ 'pt-BR': 'Olá', 'en-US': 'Hello' });

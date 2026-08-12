@@ -1,5 +1,5 @@
 /**
- * Blog bounded context (stub). Future: BlogPost, Tag, publication.
+ * Blog bounded context: posts, tags, publication.
  */
-// Stub — no exports yet
-export {};
+export * from './entities/BlogPost';
+export * from './value-objects/Tag';
