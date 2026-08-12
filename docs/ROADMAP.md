@@ -78,6 +78,14 @@ Items required before MVP launch, using [Paul Scanlon's portfolio](https://www.p
 ## Post-MVP
 
 - [ ] **Blog** (`apps/blog`) — `BlogPost`, `Tag`, public API, listing and detail pages
+  ([design spec](../.taskmaster/docs/prd-blog-mdx-design.md)). Post-MVP items deferred from the
+  initial launch:
+  - [ ] `/archives` page — reverse-chronological listing grouped by year
+  - [ ] Tag index pages (`/blog/[locale]/tag/[tag]`)
+  - [ ] "Recently updated" and "Trending tags" sidebar widgets
+  - [ ] Sticky table of contents on post pages (heading extraction + scroll-spy)
+  - [ ] Reading-time estimate on post pages
+  - [ ] Comments, newsletter, reading analytics
 - [ ] **`IAuthenticationGateway`** — pluggable Supabase gateway, `authSubject`, `EnsureAppUserForAuthSession`
 - [ ] **Dedicated backend** — REST API in a separate repository; `apps/site` remains a pure SSG consumer
 - [ ] **Playwright E2E** — end-to-end tests for critical flows
