@@ -16,6 +16,17 @@ export { ResendEmailService } from './services/ResendEmailService';
 export type { IResendEmailServiceConfig } from './services/ResendEmailService';
 export { UserMapper } from './repositories/user/UserMapper';
 export { PrismaUserRepository } from './repositories/user/PrismaUserRepository';
+export { BlogPostMapper } from './repositories/blog/BlogPostMapper';
+export type {
+  IParsedLocaleFile,
+  ParsedLocaleFiles,
+} from './repositories/blog/BlogPostMapper';
+export { FileSystemBlogPostRepository } from './repositories/blog/FileSystemBlogPostRepository';
+export {
+  MetaJsonSchema,
+  MdxFrontmatterSchema,
+} from './repositories/blog/schemas';
+export type { MetaJson, MdxFrontmatter } from './repositories/blog/schemas';
 export {
   SupabaseAuthenticationGateway,
   SUPABASE_ACCESS_TOKEN_COOKIE,
