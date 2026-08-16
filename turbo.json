@@ -11,6 +11,7 @@
     "SUPABASE_URL",
     "SUPABASE_ANON_KEY",
     "SITE_API_URL",
+    "BLOG_APP_URL",
     "NODE_ENV"
   ],
   "tasks": {
@@ -25,6 +26,10 @@
     "admin#build": {
       "dependsOn": ["^build"],
       "env": ["NEXT_PUBLIC_*", "SITE_API_URL"]
+    },
+    "blog#build": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_*"]
     },
     "lint": {
       "dependsOn": ["^lint"]
