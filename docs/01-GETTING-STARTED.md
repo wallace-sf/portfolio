@@ -106,7 +106,7 @@ Follow this sequence for every piece of work, without exception:
 4. **Move the GitHub issue to "In Progress"** in all linked Project boards.
 5. **Create the branch from the issue**: `gh issue develop <issue-number> --base develop --checkout` — always pass `--base develop` explicitly; without it, `gh issue develop` bases the branch on the repo's default branch (`master`), not `develop`
 6. **Implement** — code, tests, commits.
-7. **Open PR against `develop`**: `gh pr create --base develop`, following `.github/PULL_REQUEST_TEMPLATE.md` (`## Summary` + `## Test plan` + `Refs #N`)
+7. **Open PR against `develop`**: `gh pr create --base develop`, following `.github/PULL_REQUEST_TEMPLATE.md` (`## Summary` + `## Test plan` — commands run plus manual/browser verification when there's a UI flow involved + `Refs #N`)
 8. **Set Task Master status to Done**: `task-master set-status --id=<id> --status=done`
 9. **Commit Task Master status to git**: create branch `chore/update-task-<N>-status-done` from `develop`, commit `.taskmaster/tasks/tasks.json`, open PR against `develop`
 
