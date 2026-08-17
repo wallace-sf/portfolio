@@ -22,6 +22,7 @@ packages/
   infra/        → Concrete repositories (Prisma + Supabase)
   ui/           → Shared design system (React components)
   utils/        → Shared utilities (Validator, formatters)
+  seo/          → Shared SEO/metadata builders for Next.js apps (canonical, hreflang, OpenGraph, RSS link)
 ```
 
 ---

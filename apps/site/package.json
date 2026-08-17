@@ -23,6 +23,7 @@
     "@repo/application": "workspace:*",
     "@repo/core": "workspace:*",
     "@repo/infra": "workspace:*",
+    "@repo/seo": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "@upstash/ratelimit": "^2.0.8",
