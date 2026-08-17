@@ -1,0 +1,92 @@
+---
+title: El Patrón Either en TypeScript
+description: Por qué este código nunca usa throw para errores de reglas de negocio, y cómo un tipo Either de dos valores convierte el fallo en un ciudadano de primera clase del sistema de tipos.
+---
+
+# El Patrón Either en TypeScript
+
+`throw` es una herramienta de control de flujo tomada de lenguajes que nunca tuvieron una
+buena forma de decir "esta función puede fallar" en su propia firma. TypeScript sí la tiene —
+un union type — y el patrón Either es lo que ocurre cuando te tomas eso en serio para los
+errores de dominio.
+
+## El problema de throw
+
+Una firma de función como esta te está mintiendo:
+
+```ts
+function createSlug(raw: string): Slug {
+  if (!isValid(raw)) throw new Error('Invalid slug');
+  return new Slug(raw);
+}
+```
+
+Nada en `Slug` le dice a quien llama que esta función puede fallar. La única forma de saberlo
+es leer la implementación — o descubrirlo en producción, cuando nadie envolvió la llamada en
+un `try/catch`.
+
+## Either como alternativa
+
+`Either<L, R>` es un contenedor que siempre está en uno de dos estados: `Left` (fallo) o
+`Right` (éxito). Quien llama está obligado a comprobar cuál recibió antes de tocar el valor:
+
+```ts
+type Either<L, R> = Left<L, R> | Right<L, R>;
+
+class Left<L, R> {
+  constructor(readonly value: L) {}
+  isLeft(): this is Left<L, R> { return true; }
+  isRight(): this is Right<L, R> { return false; }
+}
+
+class Right<L, R> {
+  constructor(readonly value: R) {}
+  isLeft(): this is Left<L, R> { return false; }
+  isRight(): this is Right<L, R> { return true; }
+}
+
+export const left = <L, R>(v: L): Either<L, R> => new Left(v);
+export const right = <L, R>(v: R): Either<L, R> => new Right(v);
+```
+
+Y una factory `create` que devuelve un Either en lugar de lanzar una excepción:
+
+```ts
+class Slug {
+  private constructor(readonly value: string) {}
+
+  static create(raw: string): Either<ValidationError, Slug> {
+    if (!isValid(raw)) {
+      return left(new ValidationError({ code: 'INVALID_SLUG' }));
+    }
+    return right(new Slug(raw));
+  }
+}
+```
+
+Ahora el compilador obliga a la comprobación:
+
+```ts
+const result = Slug.create('my-project');
+if (result.isLeft()) {
+  // aquí, result.value es ValidationError — ya acotado, sin cast
+  return;
+}
+// aquí, result.value es Slug
+```
+
+## Qué ganas con esto
+
+- **La firma dice la verdad.** `Either<ValidationError, Slug>` dice, en el propio tipo, que
+  esto puede fallar y con qué.
+- **Nada de excepciones silenciosas sin manejar.** Un `try/catch` olvidado alrededor de una
+  función que lanza excepción falla en runtime, en producción. Una comprobación `isLeft()`
+  olvidada falla en tiempo de compilación, en tu máquina.
+- **Los errores se componen.** Encadenar varias llamadas que devuelven `Either` (vía un helper
+  tipo `collect`/`chain`) se detiene en el primer fallo, igual que una cadena de `Promise` se
+  detiene en el primer rechazo — pero para validación síncrona de dominio.
+
+`throw` no está prohibido en todas partes — sigue teniendo sentido para estados verdaderamente
+excepcionales e irrecuperables (una variable de entorno ausente, un invariante roto). Lo que no
+tiene sentido es usarlo para validación de reglas de negocio, que no tiene nada de excepcional:
+un slug inválido es un resultado esperado y cotidiano que el sistema de tipos debería conocer.
