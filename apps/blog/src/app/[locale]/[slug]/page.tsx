@@ -13,9 +13,14 @@ import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
 import { mdxComponents } from '~/mdx-components';
 
+const rehypePrettyCodePlugin: [
+  typeof rehypePrettyCode,
+  { theme: string; keepBackground: boolean },
+] = [rehypePrettyCode, { theme: 'github-dark', keepBackground: true }];
+
 const MDX_OPTIONS = {
   mdxOptions: {
-    rehypePlugins: [rehypePrettyCode],
+    rehypePlugins: [rehypePrettyCodePlugin],
   },
 };
 
