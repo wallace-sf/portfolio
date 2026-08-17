@@ -188,13 +188,14 @@ interface IProjectRepository {
 
 ### Issue → Branch → PR Protocol
 
+0. **If no GitHub issue exists yet** for this work (e.g. a defect surfaced during review, or a Task Master task never turned into an issue), create one first with `gh issue create`, following `.github/ISSUE_TEMPLATE/task.md` (planned feature/refactor/chore) or `.github/ISSUE_TEMPLATE/bug.md` (defect found in existing code) — do not free-form the body structure. Apply labels from `gh label list` (at minimum a `type: *` and a `layer: *`/`context: *` label); there is no fixed default set, judge per issue.
 1. **Confirm task** — ensure it exists in Task Master under the correct Sprint tag
 2. **Verify work not done** — check: (a) `gh issue view <n>` — if closed, stop; (b) merged PRs; (c) git log; (d) existing branches
 3. **Set Task Master to In Progress**: `task-master set-status --id=<id> --status=in-progress`
 4. **Move GitHub issue to "In Progress"** in all linked Project boards
 5. **Create branch from issue**: `gh issue develop <issue-number> --base develop --checkout` — always pass `--base develop` explicitly; without it, `gh issue develop` bases the branch on the repo's default branch (`master`), not `develop`. If a branch was already created without `--base develop` and has diverged from its remote after a manual rebase, do **not** force-push — delete the remote branch and push the local one fresh (`git push origin --delete <branch>` then `git push -u origin <branch>`), but note this breaks the issue's linked-branch relationship, so prefer `--base develop` from the start
 6. **Implement** — code, tests, commits
-7. **Open PR against `develop`**: `gh pr create --base develop`
+7. **Open PR against `develop`**: `gh pr create --base develop`, following the structure in `.github/PULL_REQUEST_TEMPLATE.md` (`## Summary` bullets + `## Test plan` checklist of commands actually run + `Refs #N` trailer)
 8. **Set Task Master to Done**: `task-master set-status --id=<id> --status=done`
 9. **Commit Task Master status to git**: create branch `chore/update-task-<N>-status-done` from `develop`, commit `.taskmaster/tasks/tasks.json`, open PR against `develop`
 
