@@ -192,7 +192,7 @@ interface IProjectRepository {
 2. **Verify work not done** — check: (a) `gh issue view <n>` — if closed, stop; (b) merged PRs; (c) git log; (d) existing branches
 3. **Set Task Master to In Progress**: `task-master set-status --id=<id> --status=in-progress`
 4. **Move GitHub issue to "In Progress"** in all linked Project boards
-5. **Create branch from issue**: `gh issue develop <issue-number> --checkout` — **immediately rebase onto develop**: `git rebase origin/develop` (`gh issue develop` uses the repo default branch, not `develop`)
+5. **Create branch from issue**: `gh issue develop <issue-number> --base develop --checkout` — always pass `--base develop` explicitly; without it, `gh issue develop` bases the branch on the repo's default branch (`master`), not `develop`. If a branch was already created without `--base develop` and has diverged from its remote after a manual rebase, do **not** force-push — delete the remote branch and push the local one fresh (`git push origin --delete <branch>` then `git push -u origin <branch>`), but note this breaks the issue's linked-branch relationship, so prefer `--base develop` from the start
 6. **Implement** — code, tests, commits
 7. **Open PR against `develop`**: `gh pr create --base develop`
 8. **Set Task Master to Done**: `task-master set-status --id=<id> --status=done`
