@@ -52,17 +52,7 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
     },
-    alternates: {
-      ...buildAlternates('', locale as Locale),
-      types: {
-        'application/rss+xml': [
-          {
-            url: `${env.siteUrl}/${locale}/feed.xml`,
-            title: 'Wallace Ferreira',
-          },
-        ],
-      },
-    },
+    alternates: buildAlternates('', locale as Locale),
   };
 }
 
