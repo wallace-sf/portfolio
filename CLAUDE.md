@@ -234,6 +234,7 @@ interface IProjectRepository {
 - Import order: external libs → internal packages → relative imports
 - Test naming: `should <expected behavior> when <context>`
 - **Tests are mandatory for every implementation** — never commit a new class, port, adapter, use case, or gateway without accompanying tests in the same branch/PR. A PR without tests for new production code is incomplete. See [docs/08-TESTING.md](./docs/08-TESTING.md) for strategy and naming.
+- **Evaluate cross-app reuse when adding new code to any `apps/*`** — before finishing a new util, config pattern, middleware, or DI wiring inside one app, check whether another app (`site`/`blog`/`admin`) is likely to need the same thing. If so, extract it into a shared `packages/*` at that point rather than letting duplication accumulate for a later audit. `packages/seo` (issue #960, PR #961) is the concrete precedent: framework-agnostic logic parameterized per app, depending only on `@repo/core` (never `@repo/utils`, which `core` itself depends on — that would be circular).
 
 ---
 
