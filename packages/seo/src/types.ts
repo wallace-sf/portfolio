@@ -39,6 +39,11 @@ export interface IOpenGraphResult {
   siteName: string;
 }
 
+export interface IRobotsResult {
+  rules: { userAgent: string; allow: string };
+  sitemap: string;
+}
+
 export interface ISeoBuilders {
   buildAlternates(pathname: Pathname, locale: Locale): IAlternatesResult;
   buildOpenGraph(
@@ -46,4 +51,5 @@ export interface ISeoBuilders {
     pathname: Pathname,
     type?: 'website' | 'article',
   ): IOpenGraphResult;
+  buildRobots(): IRobotsResult;
 }
