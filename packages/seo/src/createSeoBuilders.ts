@@ -4,6 +4,7 @@ import type {
   IAlternatesResult,
   HreflangMap,
   IOpenGraphResult,
+  IRobotsResult,
   Pathname,
   ISeoBuilders,
   ISeoBuildersConfig,
@@ -73,5 +74,12 @@ export function createSeoBuilders(config: ISeoBuildersConfig): ISeoBuilders {
     };
   }
 
-  return { buildAlternates, buildOpenGraph };
+  function buildRobots(): IRobotsResult {
+    return {
+      rules: { userAgent: '*', allow: '/' },
+      sitemap: `${siteUrl}${basePath}/sitemap.xml`,
+    };
+  }
+
+  return { buildAlternates, buildOpenGraph, buildRobots };
 }

@@ -104,4 +104,35 @@ describe('createSeoBuilders', () => {
       });
     });
   });
+
+  describe('buildRobots', () => {
+    it('should build the sitemap URL without a basePath', () => {
+      const { buildRobots } = createSeoBuilders({
+        siteUrl: 'https://example.com',
+        siteName: 'Example',
+      });
+
+      const result = buildRobots();
+
+      expect(result).toEqual({
+        rules: { userAgent: '*', allow: '/' },
+        sitemap: 'https://example.com/sitemap.xml',
+      });
+    });
+
+    it('should prefix the sitemap URL with basePath when configured', () => {
+      const { buildRobots } = createSeoBuilders({
+        siteUrl: 'https://example.com',
+        basePath: '/blog',
+        siteName: 'Example Blog',
+      });
+
+      const result = buildRobots();
+
+      expect(result).toEqual({
+        rules: { userAgent: '*', allow: '/' },
+        sitemap: 'https://example.com/blog/sitemap.xml',
+      });
+    });
+  });
 });

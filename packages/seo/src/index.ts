@@ -3,6 +3,7 @@ export type {
   IAlternatesResult,
   HreflangMap,
   IOpenGraphResult,
+  IRobotsResult,
   Pathname,
   IRssFeedConfig,
   RssTypeMap,
