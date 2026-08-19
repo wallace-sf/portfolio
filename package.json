@@ -12,12 +12,7 @@
     "test": "turbo test",
     "test:ci": "pnpm -r --filter=!@repo/infra test",
     "types:ci": "pnpm -r types",
-    "test:core": "pnpm -C packages/core test",
-    "test:utils": "pnpm -C packages/utils test",
-    "test:site": "pnpm -C apps/site test",
-    "seed": "pnpm --filter @repo/infra db:seed",
-    "dev:site": "pnpm --filter site dev",
-    "dev:site:clean": "pnpm --filter site dev:clean"
+    "seed": "pnpm --filter @repo/infra db:seed"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",

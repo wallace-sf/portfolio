@@ -138,9 +138,6 @@ pnpm dev
 | `pnpm types` | Run type checks |
 | `pnpm test` | Run test tasks |
 | `pnpm test:ci` | Run CI test command |
-| `pnpm test:core` | Run core package tests |
-| `pnpm test:utils` | Run utils package tests |
-| `pnpm test:site` | Run site app tests |
 | `pnpm seed` | Seed data through `@repo/infra` |
 
 ---
