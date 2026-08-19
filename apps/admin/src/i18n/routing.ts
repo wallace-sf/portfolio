@@ -1,9 +1,10 @@
+import { DEFAULT_LOCALE, LOCALES } from '@repo/core/shared';
 import { createNavigation } from 'next-intl/navigation';
 import { defineRouting } from 'next-intl/routing';
 
 export const routing = defineRouting({
-  locales: ['en-US', 'es', 'pt-BR'],
-  defaultLocale: 'en-US',
+  locales: LOCALES,
+  defaultLocale: DEFAULT_LOCALE,
 });
 
 export const { Link, redirect, usePathname, useRouter } =
