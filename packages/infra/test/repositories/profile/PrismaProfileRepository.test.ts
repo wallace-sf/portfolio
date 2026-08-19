@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { seedProfile } from '../../../prisma/seeders';
@@ -38,10 +38,10 @@ describe('PrismaProfileRepository', () => {
         data: {
           id: raw.id,
           name: raw.name,
-          headline: raw.headline,
-          bio: raw.bio,
+          headline: raw.headline as Prisma.InputJsonValue,
+          bio: raw.bio as Prisma.InputJsonValue,
           photoUrl: raw.photoUrl,
-          photoAlt: raw.photoAlt,
+          photoAlt: raw.photoAlt as Prisma.InputJsonValue,
           stats: {
             create: [
               {

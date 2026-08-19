@@ -49,6 +49,7 @@ function makeUserRepo(user: User | null): IUserRepository {
     findByEmail: vi.fn(),
     findByAuthSubject: vi.fn(),
     linkAuthSubject: vi.fn(),
+    save: vi.fn(),
   };
 }
 

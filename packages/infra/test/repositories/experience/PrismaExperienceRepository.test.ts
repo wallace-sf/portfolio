@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { seedExperiences } from '../../../prisma/seeders';
@@ -25,12 +25,12 @@ async function seedExperience(
   await db.experience.create({
     data: {
       id: raw.id,
-      company: raw.company,
-      position: raw.position,
-      location: raw.location,
-      description: raw.description,
+      company: raw.company as Prisma.InputJsonValue,
+      position: raw.position as Prisma.InputJsonValue,
+      location: raw.location as Prisma.InputJsonValue,
+      description: raw.description as Prisma.InputJsonValue,
       logoUrl: raw.logoUrl,
-      logoAlt: raw.logoAlt,
+      logoAlt: raw.logoAlt as Prisma.InputJsonValue,
       employmentType: raw.employmentType,
       locationType: raw.locationType,
       skillIds: raw.skillIds,

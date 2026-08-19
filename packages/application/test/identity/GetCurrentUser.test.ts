@@ -30,6 +30,7 @@ function makeRepository(overrides: Partial<IUserRepository> = {}): IUserReposito
     findByEmail: vi.fn(),
     findByAuthSubject: vi.fn(),
     linkAuthSubject: vi.fn(),
+    save: vi.fn(),
     ...overrides,
   };
 }

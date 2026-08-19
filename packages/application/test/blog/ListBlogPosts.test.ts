@@ -100,7 +100,8 @@ describe('ListBlogPosts', () => {
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value[0].coverImage).toBe('https://example.com/cover.png');
+      expect(result.value).toHaveLength(1);
+      expect(result.value[0]?.coverImage).toBe('https://example.com/cover.png');
     });
 
     it('should return Left(DomainError) when the repository throws', async () => {
