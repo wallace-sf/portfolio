@@ -62,7 +62,8 @@ describe('ResendEmailService', () => {
       await service.send(validMessage);
 
       const [call] = sendMock.mock.calls;
-      const html = call[0].html as string;
+      expect(call).toBeDefined();
+      const html = call?.[0].html as string;
       expect(html).toContain(validMessage.name);
       expect(html).toContain(validMessage.email);
       expect(html).toContain(validMessage.message);

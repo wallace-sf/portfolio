@@ -53,7 +53,9 @@ function makeAuthMock(overrides: Record<string, ReturnType<typeof vi.fn>> = {}) 
 
 function mockClient(authOverrides: Record<string, ReturnType<typeof vi.fn>> = {}) {
   const auth = makeAuthMock(authOverrides);
-  vi.mocked(createClient).mockReturnValue({ auth } as ReturnType<typeof createClient>);
+  vi.mocked(createClient).mockReturnValue(
+    { auth } as unknown as ReturnType<typeof createClient>,
+  );
   return auth;
 }
 
@@ -141,27 +143,21 @@ describe('SupabaseAuthenticationGateway — signInWithPassword', () => {
 describe('SupabaseAuthenticationGateway — signOut', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('should return Right(void) and delete cookies when tokens are present', async () => {
+  it('should return Right(void) when tokens are present', async () => {
     mockClient({
       setSession: vi.fn().mockResolvedValue({ data: {}, error: null }),
       signOut: vi.fn().mockResolvedValue({ error: null }),
     });
-    const cookies = makeCookieApi({
-      [SUPABASE_ACCESS_TOKEN_COOKIE]: 'access-jwt',
-      [SUPABASE_REFRESH_TOKEN_COOKIE]: 'refresh-token',
-    });
 
-    const result = await makeGateway().signOut(cookies);
+    const result = await makeGateway().signOut('access-jwt', 'refresh-token');
 
     expect(result.isRight()).toBe(true);
-    expect(cookies.store[SUPABASE_ACCESS_TOKEN_COOKIE]).toBeUndefined();
-    expect(cookies.store[SUPABASE_REFRESH_TOKEN_COOKIE]).toBeUndefined();
   });
 
-  it('should return Right(void) even when cookies are already absent', async () => {
+  it('should return Right(void) even when tokens are absent', async () => {
     mockClient();
 
-    const result = await makeGateway().signOut(makeCookieApi());
+    const result = await makeGateway().signOut('', '');
 
     expect(result.isRight()).toBe(true);
   });
@@ -171,12 +167,8 @@ describe('SupabaseAuthenticationGateway — signOut', () => {
       setSession: vi.fn().mockResolvedValue({ data: {}, error: null }),
       signOut: vi.fn().mockRejectedValue(new Error('Supabase unreachable')),
     });
-    const cookies = makeCookieApi({
-      [SUPABASE_ACCESS_TOKEN_COOKIE]: 'access-jwt',
-      [SUPABASE_REFRESH_TOKEN_COOKIE]: 'refresh-token',
-    });
 
-    const result = await makeGateway().signOut(cookies);
+    const result = await makeGateway().signOut('access-jwt', 'refresh-token');
 
     expect(result.isLeft()).toBe(true);
     expect((result.value as DomainError).code).toBe('AUTH_UNEXPECTED_ERROR');
@@ -195,9 +187,8 @@ describe('SupabaseAuthenticationGateway — refreshSession', () => {
     mockClient({
       refreshSession: vi.fn().mockResolvedValue({ data: { session: newSession }, error: null }),
     });
-    const cookies = makeCookieApi({ [SUPABASE_REFRESH_TOKEN_COOKIE]: 'old-refresh' });
 
-    const result = await makeGateway().refreshSession(cookies);
+    const result = await makeGateway().refreshSession('old-refresh');
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toMatchObject({
@@ -206,10 +197,10 @@ describe('SupabaseAuthenticationGateway — refreshSession', () => {
     });
   });
 
-  it('should return Left(DomainError NO_REFRESH_TOKEN) when cookie is absent', async () => {
+  it('should return Left(DomainError NO_REFRESH_TOKEN) when refresh token is absent', async () => {
     mockClient();
 
-    const result = await makeGateway().refreshSession(makeCookieApi());
+    const result = await makeGateway().refreshSession('');
 
     expect(result.isLeft()).toBe(true);
     expect((result.value as DomainError).code).toBe('NO_REFRESH_TOKEN');
@@ -222,9 +213,8 @@ describe('SupabaseAuthenticationGateway — refreshSession', () => {
         error: { message: 'Refresh token already used' },
       }),
     });
-    const cookies = makeCookieApi({ [SUPABASE_REFRESH_TOKEN_COOKIE]: 'stale-token' });
 
-    const result = await makeGateway().refreshSession(cookies);
+    const result = await makeGateway().refreshSession('stale-token');
 
     expect(result.isLeft()).toBe(true);
     expect((result.value as DomainError).code).toBe('INVALID_REFRESH_TOKEN');
@@ -235,9 +225,8 @@ describe('SupabaseAuthenticationGateway — refreshSession', () => {
     mockClient({
       refreshSession: vi.fn().mockRejectedValue(new Error('Network timeout')),
     });
-    const cookies = makeCookieApi({ [SUPABASE_REFRESH_TOKEN_COOKIE]: 'some-token' });
 
-    const result = await makeGateway().refreshSession(cookies);
+    const result = await makeGateway().refreshSession('some-token');
 
     expect(result.isLeft()).toBe(true);
     expect((result.value as DomainError).code).toBe('AUTH_UNEXPECTED_ERROR');

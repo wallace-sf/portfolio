@@ -28,8 +28,8 @@ describe('FileSystemBlogPostRepository', () => {
         'test-post',
         'older-post',
       ]);
-      expect(posts[0].title.get('en-US')).toBe('Test Post');
-      expect(posts[0].tags.map((t) => t.value)).toEqual([
+      expect(posts[0]?.title.get('en-US')).toBe('Test Post');
+      expect(posts[0]?.tags.map((t) => t.value)).toEqual([
         'nextjs',
         'architecture',
       ]);
