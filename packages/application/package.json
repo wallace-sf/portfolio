@@ -20,7 +20,7 @@
     "format": "prettier --write ./src/**/*.ts",
     "format:check": "prettier --check ./src/**/*.ts",
     "build": "tsc --build tsconfig.build.json",
-    "types": "tsc --build tsconfig.build.json"
+    "types": "tsc -p tsconfig.build.json --noEmit"
   },
   "dependencies": {
     "@repo/core": "workspace:*",
