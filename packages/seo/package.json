@@ -20,7 +20,7 @@
     "lint:check": "eslint --ext .ts ./src",
     "format": "prettier --write ./src/**/*.ts",
     "format:check": "prettier --check ./src/**/*.ts",
-    "build:types": "tsc --build tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json",
     "types": "tsc --build tsconfig.build.json"
   },
   "devDependencies": {

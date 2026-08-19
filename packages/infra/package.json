@@ -19,7 +19,7 @@
     "format": "prettier --write ./src/**/*.ts",
     "format:check": "prettier --check ./src/**/*.ts",
     "postinstall": "prisma generate",
-    "build:types": "tsc --build tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json",
     "types": "tsc --build tsconfig.build.json",
     "db:generate": "prisma generate",
     "db:migrate": "node scripts/assert-safe-db.mjs && prisma migrate dev",
