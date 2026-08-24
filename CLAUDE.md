@@ -87,12 +87,11 @@ class Slug extends ValueObject<string> {
 
   static create(raw?: string): Either<ValidationError, Slug> {
     const normalized = raw?.trim().toLowerCase() ?? '';
-    const { error, isValid } = Validator.of(normalized)
-      .length(3, 100, 'Slug must be at least 3 characters.')
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be kebab-case.')
+    const { isValid } = Validator.of(normalized)
+      .length(3, 100)
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
       .validate();
-    if (!isValid && error)
-      return left(new ValidationError({ code: Slug.ERROR_CODE, message: error }));
+    if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
     return right(new Slug(normalized));
   }
 }
@@ -125,14 +124,15 @@ class Project extends Entity<Project, IProjectProps> {
 - Chain rules (chain of responsibility); `.validate()` returns the **first** error — one single `left` per validation flow.
 - **Do not** use manual `if` guards for domain invariants. Express each rule with `.refine()` (or `.length()`, `.regex()`, `.in()`, etc.) and end with a single `if (!isValid && error) return left(...)` after `.validate()`.
 
+- The `error` message parameter on rule methods (`.refine()`, `.length()`, `.regex()`, `.in()`, etc.) is **optional** — omit it in domain and application code. `ValidationError` carries only the `code`; the user-facing message is resolved later at the application layer via `ERROR_MESSAGE`, keyed by that code. See [docs/06-VALIDATION.md](./docs/06-VALIDATION.md#domain-invariants) for the full convention, including the one exception (HTTP boundary code may supply a message directly).
+
 ```typescript
 // ✅ correct
-const { error, isValid } = Validator.of(value)
-  .refine((v) => someRule(v), 'Rule A message.')
-  .refine((v) => anotherRule(v), 'Rule B message.')
+const { isValid } = Validator.of(value)
+  .refine((v) => someRule(v))
+  .refine((v) => anotherRule(v))
   .validate();
-if (!isValid && error)
-  return left(new ValidationError({ code: Foo.ERROR_CODE, message: error }));
+if (!isValid) return left(new ValidationError({ code: Foo.ERROR_CODE }));
 
 // ❌ avoid
 if (!someRule(value)) return left(new ValidationError({ ... }));
@@ -162,11 +162,10 @@ public readonly period: DateRange;   // DateRange.create(start, end)
 public readonly status: ProjectStatus;
 // in create():
 {
-  const { error, isValid } = Validator.of(props.status)
-    .in(Object.values(ProjectStatus), 'Invalid status.')
+  const { isValid } = Validator.of(props.status)
+    .in(Object.values(ProjectStatus))
     .validate();
-  if (!isValid && error)
-    return left(new ValidationError({ code: Project.ERROR_CODE, message: error }));
+  if (!isValid) return left(new ValidationError({ code: Project.ERROR_CODE }));
 }
 
 // ❌ avoid — no VO and no Validator check for a domain-meaningful value
