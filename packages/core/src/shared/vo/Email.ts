@@ -6,6 +6,8 @@ import { ValidationError } from '../errors';
 
 export class Email extends ValueObject<string> {
   static readonly ERROR_CODE = 'INVALID_EMAIL';
+  private static readonly MIN_LENGTH = 3;
+  private static readonly MAX_LENGTH = 254;
 
   private constructor(value: string) {
     super({ value });
@@ -14,7 +16,7 @@ export class Email extends ValueObject<string> {
   static create(value?: string): Either<ValidationError, Email> {
     const normalized = value?.trim().toLowerCase() ?? '';
     const { isValid } = Validator.of(normalized)
-      .length(3, 254)
+      .length(Email.MIN_LENGTH, Email.MAX_LENGTH)
       .email()
       .validate();
 
