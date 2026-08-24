@@ -5,6 +5,7 @@ import {
 } from '@repo/core/portfolio';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { ProjectSummaryDTO, SkillSummary } from '../dtos/ProjectSummaryDTO';
 
@@ -40,7 +41,7 @@ export class GetPublishedProjects extends UseCase<
       );
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', {
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
           message: 'Failed to fetch published projects',
         }),
       );

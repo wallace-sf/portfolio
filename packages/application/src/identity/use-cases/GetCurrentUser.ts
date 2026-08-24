@@ -8,6 +8,7 @@ import {
   right,
 } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { UserDTO } from '../dtos/UserDTO';
 
@@ -40,7 +41,9 @@ export class GetCurrentUser extends UseCase<
       return right(this.toDTO(user));
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', { message: 'Failed to fetch user' }),
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
+          message: 'Failed to fetch user',
+        }),
       );
     }
   }

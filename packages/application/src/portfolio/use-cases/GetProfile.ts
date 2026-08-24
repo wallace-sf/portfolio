@@ -8,6 +8,7 @@ import {
   right,
 } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { ProfileDTO } from '../dtos/ProfileDTO';
 import { ProfileStatDTO } from '../dtos/ProfileStatDTO';
@@ -35,7 +36,9 @@ export class GetProfile extends UseCase<
       return right(this.toDTO(profile, input.locale));
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', { message: 'Failed to fetch profile' }),
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
+          message: 'Failed to fetch profile',
+        }),
       );
     }
   }
