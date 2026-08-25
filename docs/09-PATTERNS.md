@@ -68,6 +68,8 @@ class Slug extends ValueObject<string> {
 - Use `Validator` from `@repo/utils` for all validation
 - Use stable `ERROR_CODE` constants
 - Omit the optional `error` message on rule methods — the domain layer carries only the `code`; see [06-VALIDATION](./06-VALIDATION.md#domain-invariants)
+- Extract numeric validation bounds (min/max length, count limits, etc.) as named `static readonly` constants — never leave unnamed literals in a `Validator` chain
+- Every such constant carries a one-line comment stating its source: an external standard/RFC, a persistence constraint it must stay consistent with (verify the constraint actually exists in `schema.prisma` before citing it), or an explicit product/business decision. If none of these exist, say so honestly (e.g. `// arbitrary, no documented source — confirm with product`) rather than implying a justification that isn't real
 
 ---
 

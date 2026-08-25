@@ -7,6 +7,11 @@ import { ValidationError } from '../errors';
 export class Slug extends ValueObject<string> {
   static readonly ERROR_CODE = 'INVALID_SLUG';
   private static readonly SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  // Arbitrary — no external standard or schema.prisma constraint backs this
+  // range (`slug` is an unconstrained Postgres `text` column). Confirm with
+  // product/SEO if a real requirement (e.g. URL length guidance) should
+  // replace these bounds.
+  private static readonly MIN_LENGTH = 3;
   private static readonly MAX_LENGTH = 100;
 
   private constructor(value: string) {
@@ -17,7 +22,7 @@ export class Slug extends ValueObject<string> {
     const normalized = raw?.trim().toLowerCase() ?? '';
 
     const { isValid } = Validator.of(normalized)
-      .length(3, Slug.MAX_LENGTH)
+      .length(Slug.MIN_LENGTH, Slug.MAX_LENGTH)
       .regex(Slug.SLUG_REGEX)
       .validate();
 
