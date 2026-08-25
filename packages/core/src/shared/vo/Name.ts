@@ -6,6 +6,9 @@ import { ValidationError } from '../errors';
 
 export class Name extends ValueObject<string> {
   static readonly ERROR_CODE = 'INVALID_NAME';
+  // Arbitrary — no external standard or schema.prisma constraint backs this
+  // range (the `name` columns are unconstrained Postgres `text`). Confirm
+  // with product if a real requirement should replace these bounds.
   private static readonly MIN_LENGTH = 3;
   private static readonly MAX_LENGTH = 100;
 
