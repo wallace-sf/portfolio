@@ -56,6 +56,30 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
     INTERNAL_ERROR: {
       message: 'An unexpected error occurred. Please try again later.',
     },
+
+    // Operation failures (repository / use case level)
+    FETCH_FAILED: { message: 'Failed to fetch the requested data.' },
+    SAVE_FAILED: { message: 'Failed to save the data.' },
+    DELETE_FAILED: { message: 'Failed to delete the resource.' },
+    INVALID_INPUT: { message: 'Invalid input.' },
+
+    // Identity / auth session
+    INVALID_AUTH_SUBJECT: { message: 'Invalid authentication subject.' },
+    ENSURE_USER_FAILED: { message: 'Failed to ensure the user account.' },
+    USER_CREATION_FAILED: { message: 'Failed to create the user account.' },
+    AUTH_UNEXPECTED_ERROR: {
+      message: 'An unexpected authentication error occurred.',
+    },
+    INVALID_CREDENTIALS: { message: 'Invalid email or password.' },
+    INVALID_ACCESS_TOKEN: { message: 'Access token is invalid or expired.' },
+    INVALID_REFRESH_TOKEN: {
+      message: 'Refresh token is invalid or expired.',
+    },
+    NO_ACCESS_TOKEN: { message: 'No access token found in the session.' },
+    NO_REFRESH_TOKEN: { message: 'No refresh token found in the session.' },
+
+    // Notifications
+    EMAIL_SEND_FAILED: { message: 'Failed to send the email.' },
   },
 
   'pt-BR': {
@@ -117,6 +141,36 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
     INTERNAL_ERROR: {
       message: 'Ocorreu um erro inesperado. Por favor, tente novamente.',
     },
+
+    // Operation failures (repository / use case level)
+    FETCH_FAILED: { message: 'Falha ao buscar os dados solicitados.' },
+    SAVE_FAILED: { message: 'Falha ao salvar os dados.' },
+    DELETE_FAILED: { message: 'Falha ao excluir o recurso.' },
+    INVALID_INPUT: { message: 'Entrada inválida.' },
+
+    // Identity / auth session
+    INVALID_AUTH_SUBJECT: { message: 'Sujeito de autenticação inválido.' },
+    ENSURE_USER_FAILED: { message: 'Falha ao garantir a conta do usuário.' },
+    USER_CREATION_FAILED: { message: 'Falha ao criar a conta do usuário.' },
+    AUTH_UNEXPECTED_ERROR: {
+      message: 'Ocorreu um erro inesperado de autenticação.',
+    },
+    INVALID_CREDENTIALS: { message: 'E-mail ou senha inválidos.' },
+    INVALID_ACCESS_TOKEN: {
+      message: 'Token de acesso inválido ou expirado.',
+    },
+    INVALID_REFRESH_TOKEN: {
+      message: 'Token de atualização inválido ou expirado.',
+    },
+    NO_ACCESS_TOKEN: {
+      message: 'Nenhum token de acesso encontrado na sessão.',
+    },
+    NO_REFRESH_TOKEN: {
+      message: 'Nenhum token de atualização encontrado na sessão.',
+    },
+
+    // Notifications
+    EMAIL_SEND_FAILED: { message: 'Falha ao enviar o e-mail.' },
   },
 
   es: {
@@ -179,6 +233,40 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
     INTERNAL_ERROR: {
       message: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo.',
     },
+
+    // Operation failures (repository / use case level)
+    FETCH_FAILED: { message: 'Error al obtener los datos solicitados.' },
+    SAVE_FAILED: { message: 'Error al guardar los datos.' },
+    DELETE_FAILED: { message: 'Error al eliminar el recurso.' },
+    INVALID_INPUT: { message: 'Entrada inválida.' },
+
+    // Identity / auth session
+    INVALID_AUTH_SUBJECT: { message: 'Sujeto de autenticación inválido.' },
+    ENSURE_USER_FAILED: {
+      message: 'Error al garantizar la cuenta del usuario.',
+    },
+    USER_CREATION_FAILED: { message: 'Error al crear la cuenta del usuario.' },
+    AUTH_UNEXPECTED_ERROR: {
+      message: 'Ocurrió un error de autenticación inesperado.',
+    },
+    INVALID_CREDENTIALS: {
+      message: 'Correo electrónico o contraseña inválidos.',
+    },
+    INVALID_ACCESS_TOKEN: {
+      message: 'El token de acceso es inválido o ha expirado.',
+    },
+    INVALID_REFRESH_TOKEN: {
+      message: 'El token de actualización es inválido o ha expirado.',
+    },
+    NO_ACCESS_TOKEN: {
+      message: 'No se encontró un token de acceso en la sesión.',
+    },
+    NO_REFRESH_TOKEN: {
+      message: 'No se encontró un token de actualización en la sesión.',
+    },
+
+    // Notifications
+    EMAIL_SEND_FAILED: { message: 'Error al enviar el correo electrónico.' },
   },
 };
 

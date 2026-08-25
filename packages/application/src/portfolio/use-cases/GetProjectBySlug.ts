@@ -14,6 +14,7 @@ import {
   right,
 } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { ProjectDetailDTO } from '../dtos/ProjectDetailDTO';
 import { ProjectSummaryDTO, SkillSummary } from '../dtos/ProjectSummaryDTO';
@@ -48,7 +49,9 @@ export class GetProjectBySlug extends UseCase<
       project = await this.projectRepository.findBySlug(slugResult.value);
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', { message: 'Failed to fetch project' }),
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
+          message: 'Failed to fetch project',
+        }),
       );
     }
 

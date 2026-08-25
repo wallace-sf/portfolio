@@ -31,6 +31,16 @@ const nextConfig = {
   async headers() {
     return [{ source: '/(.*)', headers: SECURITY_HEADERS }];
   },
+  async rewrites() {
+    if (!process.env.BLOG_APP_URL) return [];
+    return [
+      { source: '/blog', destination: `${process.env.BLOG_APP_URL}/blog` },
+      {
+        source: '/blog/:path*',
+        destination: `${process.env.BLOG_APP_URL}/blog/:path*`,
+      },
+    ];
+  },
   env: {
     NEXT_PUBLIC_CONTACT_EMAIL: process.env.NEXT_PUBLIC_CONTACT_EMAIL,
     NEXT_PUBLIC_CONTACT_NUMBER: process.env.NEXT_PUBLIC_CONTACT_NUMBER,

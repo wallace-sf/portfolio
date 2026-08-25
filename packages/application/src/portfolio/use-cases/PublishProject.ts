@@ -11,6 +11,7 @@ import {
 } from '@repo/core/shared';
 
 import { EnsureAdmin } from '../../identity/use-cases/EnsureAdmin';
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 
 export type PublishProjectInput = {
@@ -55,7 +56,9 @@ export class PublishProject extends UseCase<
       project = await this.projectRepository.findById(idResult.value);
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', { message: 'Failed to fetch project' }),
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
+          message: 'Failed to fetch project',
+        }),
       );
     }
 
@@ -70,7 +73,9 @@ export class PublishProject extends UseCase<
       return right(undefined);
     } catch {
       return left(
-        new DomainError('SAVE_FAILED', { message: 'Failed to save project' }),
+        new DomainError(ApplicationErrorCode.SAVE_FAILED, {
+          message: 'Failed to save project',
+        }),
       );
     }
   }

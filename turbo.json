@@ -11,6 +11,7 @@
     "SUPABASE_URL",
     "SUPABASE_ANON_KEY",
     "SITE_API_URL",
+    "BLOG_APP_URL",
     "NODE_ENV"
   ],
   "tasks": {
@@ -26,6 +27,10 @@
       "dependsOn": ["^build"],
       "env": ["NEXT_PUBLIC_*", "SITE_API_URL"]
     },
+    "blog#build": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_*"]
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
@@ -39,8 +44,7 @@
       "dependsOn": ["^format:check"]
     },
     "types": {
-      "dependsOn": ["^types"],
-      "outputs": ["dist/types/**"]
+      "dependsOn": ["^build"]
     },
     "test": {
       "dependsOn": ["^test"]

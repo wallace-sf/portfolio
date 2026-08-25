@@ -22,6 +22,7 @@ packages/
   infra/        → Concrete repositories (Prisma + Supabase)
   ui/           → Shared design system (React components)
   utils/        → Shared utilities (Validator, formatters)
+  seo/          → Shared SEO/metadata builders for Next.js apps (canonical, hreflang, OpenGraph, RSS link)
 ```
 
 ---
@@ -86,12 +87,11 @@ class Slug extends ValueObject<string> {
 
   static create(raw?: string): Either<ValidationError, Slug> {
     const normalized = raw?.trim().toLowerCase() ?? '';
-    const { error, isValid } = Validator.of(normalized)
-      .length(3, 100, 'Slug must be at least 3 characters.')
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be kebab-case.')
+    const { isValid } = Validator.of(normalized)
+      .length(3, 100)
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
       .validate();
-    if (!isValid && error)
-      return left(new ValidationError({ code: Slug.ERROR_CODE, message: error }));
+    if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
     return right(new Slug(normalized));
   }
 }
@@ -124,14 +124,15 @@ class Project extends Entity<Project, IProjectProps> {
 - Chain rules (chain of responsibility); `.validate()` returns the **first** error — one single `left` per validation flow.
 - **Do not** use manual `if` guards for domain invariants. Express each rule with `.refine()` (or `.length()`, `.regex()`, `.in()`, etc.) and end with a single `if (!isValid && error) return left(...)` after `.validate()`.
 
+- The `error` message parameter on rule methods (`.refine()`, `.length()`, `.regex()`, `.in()`, etc.) is **optional** — omit it in domain and application code. `ValidationError` carries only the `code`; the user-facing message is resolved later at the application layer via `ERROR_MESSAGE`, keyed by that code. See [docs/06-VALIDATION.md](./docs/06-VALIDATION.md#domain-invariants) for the full convention, including the one exception (HTTP boundary code may supply a message directly).
+
 ```typescript
 // ✅ correct
-const { error, isValid } = Validator.of(value)
-  .refine((v) => someRule(v), 'Rule A message.')
-  .refine((v) => anotherRule(v), 'Rule B message.')
+const { isValid } = Validator.of(value)
+  .refine((v) => someRule(v))
+  .refine((v) => anotherRule(v))
   .validate();
-if (!isValid && error)
-  return left(new ValidationError({ code: Foo.ERROR_CODE, message: error }));
+if (!isValid) return left(new ValidationError({ code: Foo.ERROR_CODE }));
 
 // ❌ avoid
 if (!someRule(value)) return left(new ValidationError({ ... }));
@@ -161,11 +162,10 @@ public readonly period: DateRange;   // DateRange.create(start, end)
 public readonly status: ProjectStatus;
 // in create():
 {
-  const { error, isValid } = Validator.of(props.status)
-    .in(Object.values(ProjectStatus), 'Invalid status.')
+  const { isValid } = Validator.of(props.status)
+    .in(Object.values(ProjectStatus))
     .validate();
-  if (!isValid && error)
-    return left(new ValidationError({ code: Project.ERROR_CODE, message: error }));
+  if (!isValid) return left(new ValidationError({ code: Project.ERROR_CODE }));
 }
 
 // ❌ avoid — no VO and no Validator check for a domain-meaningful value
@@ -188,13 +188,14 @@ interface IProjectRepository {
 
 ### Issue → Branch → PR Protocol
 
+0. **If no GitHub issue exists yet** for this work (e.g. a defect surfaced during review, or a Task Master task never turned into an issue), create one first with `gh issue create`, following `.github/ISSUE_TEMPLATE/task.md` (planned feature/refactor/chore) or `.github/ISSUE_TEMPLATE/bug.md` (defect found in existing code) — do not free-form the body structure. Apply labels from `gh label list` (at minimum a `type: *` and a `layer: *`/`context: *` label); there is no fixed default set, judge per issue.
 1. **Confirm task** — ensure it exists in Task Master under the correct Sprint tag
 2. **Verify work not done** — check: (a) `gh issue view <n>` — if closed, stop; (b) merged PRs; (c) git log; (d) existing branches
 3. **Set Task Master to In Progress**: `task-master set-status --id=<id> --status=in-progress`
 4. **Move GitHub issue to "In Progress"** in all linked Project boards
-5. **Create branch from issue**: `gh issue develop <issue-number> --checkout` — **immediately rebase onto develop**: `git rebase origin/develop` (`gh issue develop` uses the repo default branch, not `develop`)
+5. **Create branch from issue**: `gh issue develop <issue-number> --base develop --checkout` — always pass `--base develop` explicitly; without it, `gh issue develop` bases the branch on the repo's default branch (`master`), not `develop`. If a branch was already created without `--base develop` and has diverged from its remote after a manual rebase, do **not** force-push — delete the remote branch and push the local one fresh (`git push origin --delete <branch>` then `git push -u origin <branch>`), but note this breaks the issue's linked-branch relationship, so prefer `--base develop` from the start
 6. **Implement** — code, tests, commits
-7. **Open PR against `develop`**: `gh pr create --base develop`
+7. **Open PR against `develop`**: `gh pr create --base develop`, following the structure in `.github/PULL_REQUEST_TEMPLATE.md` (`## Summary` bullets + `## Test plan` — commands actually run **and**, when there's a UI/user-facing flow, manual/browser verification, not automated commands alone — + `Refs #N` trailer)
 8. **Set Task Master to Done**: `task-master set-status --id=<id> --status=done`
 9. **Commit Task Master status to git**: create branch `chore/update-task-<N>-status-done` from `develop`, commit `.taskmaster/tasks/tasks.json`, open PR against `develop`
 
@@ -232,6 +233,7 @@ interface IProjectRepository {
 - Import order: external libs → internal packages → relative imports
 - Test naming: `should <expected behavior> when <context>`
 - **Tests are mandatory for every implementation** — never commit a new class, port, adapter, use case, or gateway without accompanying tests in the same branch/PR. A PR without tests for new production code is incomplete. See [docs/08-TESTING.md](./docs/08-TESTING.md) for strategy and naming.
+- **Evaluate cross-app reuse when adding new code to any `apps/*`** — before finishing a new util, config pattern, middleware, or DI wiring inside one app, check whether another app (`site`/`blog`/`admin`) is likely to need the same thing. If so, extract it into a shared `packages/*` at that point rather than letting duplication accumulate for a later audit. `packages/seo` (issue #960, PR #961) is the concrete precedent: framework-agnostic logic parameterized per app, depending only on `@repo/core` (never `@repo/utils`, which `core` itself depends on — that would be circular).
 
 ---
 

@@ -14,6 +14,7 @@ import {
 } from '@repo/core/shared';
 
 import { EnsureAdmin } from '../../identity/use-cases/EnsureAdmin';
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 
 export type SaveExperienceInput = {
@@ -52,7 +53,7 @@ export class SaveExperience extends UseCase<
       return right(undefined);
     } catch {
       return left(
-        new DomainError('SAVE_FAILED', {
+        new DomainError(ApplicationErrorCode.SAVE_FAILED, {
           message: 'Failed to save experience',
         }),
       );

@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "exports": {
     ".": { "types": "./dist/types/index.d.ts", "default": "./src/index.ts" },
+    "./blog": { "types": "./dist/types/blog/index.d.ts", "default": "./src/blog/index.ts" },
     "./identity": { "types": "./dist/types/identity/index.d.ts", "default": "./src/identity/index.ts" },
     "./portfolio": { "types": "./dist/types/portfolio/index.d.ts", "default": "./src/portfolio/index.ts" },
     "./contact": { "types": "./dist/types/contact/index.d.ts", "default": "./src/contact/index.ts" },
@@ -18,8 +19,8 @@
     "lint:check": "eslint --ext .ts ./src",
     "format": "prettier --write ./src/**/*.ts",
     "format:check": "prettier --check ./src/**/*.ts",
-    "build:types": "tsc --build tsconfig.build.json",
-    "types": "tsc --build tsconfig.build.json"
+    "build": "tsc --build tsconfig.build.json",
+    "types": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@repo/core": "workspace:*",

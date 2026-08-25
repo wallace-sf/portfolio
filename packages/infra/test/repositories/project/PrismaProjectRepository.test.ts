@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { ProjectStatus } from '@repo/core/portfolio';
@@ -30,16 +30,16 @@ async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProj
       id: raw.id,
       slug: raw.slug,
       coverImageUrl: raw.coverImageUrl,
-      coverImageAlt: raw.coverImageAlt,
+      coverImageAlt: raw.coverImageAlt as Prisma.InputJsonValue,
       thumbnailImageUrl: raw.thumbnailImageUrl,
-      thumbnailImageAlt: raw.thumbnailImageAlt,
-      title: raw.title,
-      caption: raw.caption,
-      content: raw.content,
-      theme: raw.theme ?? undefined,
-      summary: raw.summary ?? undefined,
-      objectives: raw.objectives ?? undefined,
-      role: raw.role ?? undefined,
+      thumbnailImageAlt: raw.thumbnailImageAlt as Prisma.InputJsonValue,
+      title: raw.title as Prisma.InputJsonValue,
+      caption: raw.caption as Prisma.InputJsonValue,
+      content: raw.content as Prisma.InputJsonValue,
+      theme: (raw.theme as Prisma.InputJsonValue | null) ?? undefined,
+      summary: (raw.summary as Prisma.InputJsonValue | null) ?? undefined,
+      objectives: (raw.objectives as Prisma.InputJsonValue | null) ?? undefined,
+      role: (raw.role as Prisma.InputJsonValue | null) ?? undefined,
       periodStart: raw.periodStart,
       periodEnd: raw.periodEnd,
       featured: raw.featured,

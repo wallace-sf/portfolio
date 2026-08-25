@@ -140,7 +140,7 @@ describe.skipIf(missingEnv)(
     // -----------------------------------------------------------------------
 
     describe('signOut', () => {
-      it('should return Right(void) and remove cookies when tokens are present', async () => {
+      it('should return Right(void) when tokens are present', async () => {
         const signInResult = await makeGateway().signInWithPassword({
           email: TEST_EMAIL,
           password: TEST_PASSWORD,
@@ -151,20 +151,14 @@ describe.skipIf(missingEnv)(
           accessToken: string;
           refreshToken: string;
         };
-        const cookies = makeCookieApi({
-          [SUPABASE_ACCESS_TOKEN_COOKIE]: accessToken,
-          [SUPABASE_REFRESH_TOKEN_COOKIE]: refreshToken,
-        });
 
-        const result = await makeGateway().signOut(cookies);
+        const result = await makeGateway().signOut(accessToken, refreshToken);
 
         expect(result.isRight()).toBe(true);
-        expect(cookies.store[SUPABASE_ACCESS_TOKEN_COOKIE]).toBeUndefined();
-        expect(cookies.store[SUPABASE_REFRESH_TOKEN_COOKIE]).toBeUndefined();
       });
 
-      it('should return Right(void) even when cookies are absent (no-op)', async () => {
-        const result = await makeGateway().signOut(makeCookieApi());
+      it('should return Right(void) even when tokens are absent (no-op)', async () => {
+        const result = await makeGateway().signOut('', '');
 
         expect(result.isRight()).toBe(true);
       });
@@ -183,11 +177,8 @@ describe.skipIf(missingEnv)(
         expect(signInResult.isRight()).toBe(true);
 
         const { refreshToken } = signInResult.value as { refreshToken: string };
-        const cookies = makeCookieApi({
-          [SUPABASE_REFRESH_TOKEN_COOKIE]: refreshToken,
-        });
 
-        const result = await makeGateway().refreshSession(cookies);
+        const result = await makeGateway().refreshSession(refreshToken);
 
         expect(result.isRight()).toBe(true);
         const newSession = result.value as {
@@ -198,19 +189,17 @@ describe.skipIf(missingEnv)(
         expect(newSession.accessToken.length).toBeGreaterThan(0);
       });
 
-      it('should return Left(NO_REFRESH_TOKEN) when cookie is absent', async () => {
-        const result = await makeGateway().refreshSession(makeCookieApi());
+      it('should return Left(NO_REFRESH_TOKEN) when refresh token is absent', async () => {
+        const result = await makeGateway().refreshSession('');
 
         expect(result.isLeft()).toBe(true);
         expect((result.value as DomainError).code).toBe('NO_REFRESH_TOKEN');
       });
 
       it('should return Left(INVALID_REFRESH_TOKEN) when token is bogus', async () => {
-        const cookies = makeCookieApi({
-          [SUPABASE_REFRESH_TOKEN_COOKIE]: 'totally-invalid-refresh-token',
-        });
-
-        const result = await makeGateway().refreshSession(cookies);
+        const result = await makeGateway().refreshSession(
+          'totally-invalid-refresh-token',
+        );
 
         expect(result.isLeft()).toBe(true);
         expect((result.value as DomainError).code).toBe('INVALID_REFRESH_TOKEN');

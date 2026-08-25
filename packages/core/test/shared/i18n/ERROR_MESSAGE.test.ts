@@ -1,6 +1,42 @@
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ERROR_MESSAGE, getErrorMessage } from '../../../src/shared/i18n/ERROR_MESSAGE';
+
+import {
+  ERROR_MESSAGE,
+  getErrorMessage,
+} from '../../../src/shared/i18n/ERROR_MESSAGE';
 import { LOCALES } from '../../../src/shared/i18n/Locale';
+
+const DOMAIN_ERROR_SRC_ROOTS = [
+  join(__dirname, '../../../src'),
+  join(__dirname, '../../../../application/src'),
+  join(__dirname, '../../../../infra/src'),
+];
+
+function collectTsFiles(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) return collectTsFiles(fullPath);
+    return entry.name.endsWith('.ts') ? [fullPath] : [];
+  });
+}
+
+function findDomainErrorCodesInUse(): Set<string> {
+  const codes = new Set<string>();
+  const pattern = /new DomainError\(\s*'([A-Z_]+)'/g;
+
+  for (const root of DOMAIN_ERROR_SRC_ROOTS) {
+    for (const file of collectTsFiles(root)) {
+      const content = readFileSync(file, 'utf-8');
+      for (const match of content.matchAll(pattern)) {
+        codes.add(match[1]!);
+      }
+    }
+  }
+
+  return codes;
+}
 
 const ALL_CODES = [
   'INVALID_SLUG',
@@ -30,9 +66,37 @@ const ALL_CODES = [
   'AUTH_INVALID_CREDENTIALS',
   'AUTH_SUBJECT_CONFLICT',
   'INTERNAL_ERROR',
+  'FETCH_FAILED',
+  'SAVE_FAILED',
+  'DELETE_FAILED',
+  'INVALID_INPUT',
+  'INVALID_AUTH_SUBJECT',
+  'ENSURE_USER_FAILED',
+  'USER_CREATION_FAILED',
+  'AUTH_UNEXPECTED_ERROR',
+  'INVALID_CREDENTIALS',
+  'INVALID_ACCESS_TOKEN',
+  'INVALID_REFRESH_TOKEN',
+  'NO_ACCESS_TOKEN',
+  'NO_REFRESH_TOKEN',
+  'EMAIL_SEND_FAILED',
 ] as const;
 
 describe('ERROR_MESSAGE', () => {
+  describe('regression guard', () => {
+    it('should have a dictionary entry for every DomainError code thrown in core/application/infra source', () => {
+      const codesInUse = findDomainErrorCodesInUse();
+      const missing = [...codesInUse].filter(
+        (code) => !ERROR_MESSAGE['en-US'][code],
+      );
+
+      expect(
+        missing,
+        `Codes thrown via "new DomainError(...)" but missing from ERROR_MESSAGE: ${missing.join(', ')}`,
+      ).toEqual([]);
+    });
+  });
+
   describe('dictionary completeness', () => {
     it.each(LOCALES)('should have entries for all codes in %s', (locale) => {
       for (const code of ALL_CODES) {

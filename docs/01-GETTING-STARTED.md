@@ -99,13 +99,14 @@ Turborepo handles this automatically via `dependsOn` in `turbo.json`.
 
 Follow this sequence for every piece of work, without exception:
 
+0. **If no GitHub issue exists yet**, create one with `gh issue create` following `.github/ISSUE_TEMPLATE/task.md` (planned work) or `.github/ISSUE_TEMPLATE/bug.md` (defect found in existing code) — don't free-form the body. Apply labels from `gh label list`.
 1. **Confirm the task exists in Task Master** under the correct Sprint tag (`task-master tags use sprint-X`).
 2. **Verify the work hasn't already been done** — check the issue state, merged PRs, and existing branches before writing any code.
 3. **Set Task Master status to In Progress**: `task-master set-status --id=<id> --status=in-progress`
 4. **Move the GitHub issue to "In Progress"** in all linked Project boards.
-5. **Create the branch from the issue**: `gh issue develop <issue-number> --checkout` — **immediately rebase onto develop**: `git rebase origin/develop` (`gh issue develop` uses the repo default branch, not `develop`)
+5. **Create the branch from the issue**: `gh issue develop <issue-number> --base develop --checkout` — always pass `--base develop` explicitly; without it, `gh issue develop` bases the branch on the repo's default branch (`master`), not `develop`
 6. **Implement** — code, tests, commits.
-7. **Open PR against `develop`**: `gh pr create --base develop`
+7. **Open PR against `develop`**: `gh pr create --base develop`, following `.github/PULL_REQUEST_TEMPLATE.md` (`## Summary` + `## Test plan` — commands run plus manual/browser verification when there's a UI flow involved + `Refs #N`)
 8. **Set Task Master status to Done**: `task-master set-status --id=<id> --status=done`
 9. **Commit Task Master status to git**: create branch `chore/update-task-<N>-status-done` from `develop`, commit `.taskmaster/tasks/tasks.json`, open PR against `develop`
 
