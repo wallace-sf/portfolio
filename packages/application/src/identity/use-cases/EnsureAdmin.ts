@@ -8,6 +8,7 @@ import {
   right,
 } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 
 export type EnsureAdminInput = {
@@ -46,7 +47,7 @@ export class EnsureAdmin extends UseCase<
       return right(undefined);
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', {
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
           message: 'Failed to verify admin status',
         }),
       );

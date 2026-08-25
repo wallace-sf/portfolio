@@ -10,6 +10,7 @@ import {
   right,
 } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { BlogPostDetailDTO } from '../dtos/BlogPostDetailDTO';
 import { IBlogPostRepository } from '../ports';
@@ -41,7 +42,7 @@ export class GetBlogPostBySlug extends UseCase<
       post = await this.repository.findBySlug(slugResult.value);
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', {
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
           message: 'Failed to fetch blog post',
         }),
       );

@@ -15,6 +15,7 @@ import {
 } from '@repo/core/shared';
 
 import { EnsureAdmin } from '../../identity/use-cases/EnsureAdmin';
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 
 export type SaveProjectInput = {
@@ -62,7 +63,9 @@ export class SaveProject extends UseCase<
     } catch (err) {
       if (err instanceof ConflictError) return left(err);
       return left(
-        new DomainError('SAVE_FAILED', { message: 'Failed to save project' }),
+        new DomainError(ApplicationErrorCode.SAVE_FAILED, {
+          message: 'Failed to save project',
+        }),
       );
     }
   }

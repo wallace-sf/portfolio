@@ -1,6 +1,7 @@
 import { BlogPost } from '@repo/core/blog';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { BlogPostSummaryDTO } from '../dtos/BlogPostSummaryDTO';
 import { IBlogPostRepository } from '../ports';
@@ -25,7 +26,7 @@ export class ListBlogPosts extends UseCase<
       return right(posts.map((post) => this.toDTO(post, input.locale)));
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', {
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
           message: 'Failed to fetch blog posts',
         }),
       );

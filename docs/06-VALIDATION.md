@@ -50,35 +50,42 @@ The domain enforces invariants via `Validator` from `@repo/utils` and returns er
 // VO using Validator
 static create(raw?: string): Either<ValidationError, Slug> {
   const normalized = raw?.trim().toLowerCase() ?? '';
-  const { error, isValid } = Validator.of(normalized)
-    .length(3, 100, 'Slug must be at least 3 characters.')
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be kebab-case.')
+  const { isValid } = Validator.of(normalized)
+    .length(3, 100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
     .validate();
-  if (!isValid && error)
-    return left(new ValidationError({ code: Slug.ERROR_CODE, message: error }));
+  if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
   return right(new Slug(normalized));
 }
 ```
 
+**The `error` message parameter on rule methods (`.length()`, `.regex()`, `.refine()`, etc.) is optional** — omit it in domain and application code:
+
+- **Domain layer** (`@repo/core`): omit the message. `ValidationError` carries only the `code`; the user-facing message is resolved later at the application layer via `ERROR_MESSAGE` (`packages/core/src/shared/i18n/ERROR_MESSAGE.ts`), keyed by that code and localized per request.
+- **Application layer**: omit the message for the same reason — it stays a pass-through of the domain's `code`.
+- **HTTP boundary** (route handlers): may supply an explicit message where a direct, user-facing error is being built outside the domain/application `ERROR_MESSAGE` resolution flow.
+
 `Validator` methods:
+
+`error` is an optional message parameter on every rule method — see the convention above for when to supply it.
 
 | Method | Description |
 |--------|-------------|
-| `.length(min, max, error)` | String length between `min` and `max` |
-| `.notEmpty(error)` | Non-empty string |
-| `.empty(error)` | Empty string |
-| `.alpha(error)` | Alphabetic characters only (supports accents) |
-| `.string(error)` | Valid string type |
-| `.regex(pattern, error)` | Matches regular expression |
-| `.url(error)` | Valid URL |
-| `.uuid(error)` | Valid UUID |
-| `.datetime(error)` | Valid ISO 8601 datetime |
-| `.in(values, error)` | Value must be one of the allowed values |
-| `.gt(n, error)` / `.gte(n, error)` | Number greater than / greater than or equal to `n` |
-| `.lt(n, error)` / `.lte(n, error)` | Number less than / less than or equal to `n` |
-| `.nil(error)` | Value is `null` or `undefined` |
-| `.notNil(error)` | Value is not `null` or `undefined` |
-| `.refine(predicate, error)` | Arbitrary predicate function |
+| `.length(min, max, error?)` | String length between `min` and `max` |
+| `.notEmpty(error?)` | Non-empty string |
+| `.empty(error?)` | Empty string |
+| `.alpha(error?)` | Alphabetic characters only (supports accents) |
+| `.string(error?)` | Valid string type |
+| `.regex(pattern, error?)` | Matches regular expression |
+| `.url(error?)` | Valid URL |
+| `.uuid(error?)` | Valid UUID |
+| `.datetime(error?)` | Valid ISO 8601 datetime |
+| `.in(values, error?)` | Value must be one of the allowed values |
+| `.gt(n, error?)` / `.gte(n, error?)` | Number greater than / greater than or equal to `n` |
+| `.lt(n, error?)` / `.lte(n, error?)` | Number less than / less than or equal to `n` |
+| `.nil(error?)` | Value is `null` or `undefined` |
+| `.notNil(error?)` | Value is not `null` or `undefined` |
+| `.refine(predicate, error?)` | Arbitrary predicate function |
 
 ---
 
@@ -89,11 +96,10 @@ For simple enum or primitive properties that do not warrant a dedicated VO, vali
 ```typescript
 // ✅ enum validated in entity create() — no VO needed
 {
-  const { error, isValid } = Validator.of(props.status)
-    .in(Object.values(ProjectStatus), 'Invalid status.')
+  const { isValid } = Validator.of(props.status)
+    .in(Object.values(ProjectStatus))
     .validate();
-  if (!isValid && error)
-    return left(new ValidationError({ code: Project.ERROR_CODE, message: error }));
+  if (!isValid) return left(new ValidationError({ code: Project.ERROR_CODE }));
 }
 ```
 
