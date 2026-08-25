@@ -5,6 +5,7 @@ import {
 } from '@repo/core/portfolio';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { ExperienceDTO } from '../dtos/ExperienceDTO';
 import { SkillSummary } from '../dtos/ProjectSummaryDTO';
@@ -42,7 +43,7 @@ export class GetExperiences extends UseCase<
       return right(sorted.map((e) => this.toDTO(e, input.locale, skillNames)));
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', {
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
           message: 'Failed to fetch experiences',
         }),
       );

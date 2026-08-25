@@ -4,6 +4,7 @@ import {
 } from '@repo/core/portfolio';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
+import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { ProfessionalValueDTO } from '../dtos/ProfessionalValueDTO';
 
@@ -29,7 +30,7 @@ export class GetProfessionalValues extends UseCase<
       return right(values.map((v) => this.toDTO(v, input.locale)));
     } catch {
       return left(
-        new DomainError('FETCH_FAILED', {
+        new DomainError(ApplicationErrorCode.FETCH_FAILED, {
           message: 'Failed to fetch professional values',
         }),
       );
