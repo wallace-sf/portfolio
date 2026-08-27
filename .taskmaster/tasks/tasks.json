@@ -2,7 +2,7 @@
   "master": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Implement Either pattern for domain error handling",
         "description": "Create the Either<L, R> type with Left and Right classes as the foundation for functional error handling across the domain layer",
         "details": "Implement `packages/core/src/shared/either.ts` with:\n\n```typescript\nexport class Left<L, R> {\n  readonly value: L;\n  constructor(value: L) {\n    this.value = value;\n  }\n  isLeft(): this is Left<L, R> {\n    return true;\n  }\n  isRight(): this is Right<L, R> {\n    return false;\n  }\n}\n\nexport class Right<L, R> {\n  readonly value: R;\n  constructor(value: R) {\n    this.value = value;\n  }\n  isLeft(): this is Left<L, R> {\n    return false;\n  }\n  isRight(): this is Right<L, R> {\n    return true;\n  }\n}\n\nexport type Either<L, R> = Left<L, R> | Right<L, R>;\n\nexport const left = <L, R>(value: L): Either<L, R> => new Left(value);\nexport const right = <L, R>(value: R): Either<L, R> => new Right(value);\n```\n\nUpdate `packages/core/src/shared/index.ts` to export: `Either`, `Left`, `Right`, `left`, `right`.\n\nThis implementation provides type-safe discriminated unions with `.isLeft()` and `.isRight()` type guards, enabling exhaustive pattern matching and eliminating runtime exceptions for domain errors.",
@@ -52,7 +52,7 @@
         "expansionPrompt": "Break down the Either pattern implementation into: (1) creating the core Either type with Left and Right classes including type guards, (2) implementing helper functions (left, right) and ensuring proper TypeScript type inference, (3) writing comprehensive unit tests covering all type narrowing scenarios and immutability guarantees."
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Migrate test runner from Jest to Vitest",
         "description": "Replace Jest with Vitest as the standard test runner for packages/core to align with monorepo conventions",
         "details": "1. Remove Jest configuration and dependencies:\n   - Delete `packages/core/jest.config.ts`\n   - Remove from `package.json` devDependencies: `jest`, `ts-jest`, `@types/jest`\n\n2. Add Vitest configuration:\n   - Create `packages/core/vitest.config.ts`:\n```typescript\nimport { defineConfig } from 'vitest/config';\nimport path from 'path';\n\nexport default defineConfig({\n  test: {\n    globals: true,\n    environment: 'node',\n    include: ['test/**/*.test.ts'],\n    coverage: {\n      provider: 'v8',\n      reporter: ['text', 'json', 'html'],\n      include: ['src/**/*.ts'],\n      exclude: ['src/**/index.ts'],\n    },\n  },\n  resolve: {\n    alias: {\n      '~': path.resolve(__dirname, './src'),\n    },\n  },\n});\n```\n\n3. Update `package.json` scripts:\n   - Change `\"test\": \"jest\"` to `\"test\": \"vitest run\"`\n   - Change `\"test:watch\": \"jest --watchAll --collectCoverage\"` to `\"test:watch\": \"vitest\"`\n   - Add `vitest` to devDependencies\n\n4. Update test files:\n   - Replace `describe`, `it`, `expect` imports if any (Vitest globals mode handles this)\n   - Verify all existing tests pass with `pnpm test`",
@@ -111,7 +111,7 @@
         "expansionPrompt": "Split the migration into: (1) removing Jest dependencies and configuration files, (2) adding Vitest configuration with proper coverage and alias setup, (3) updating package.json scripts and verifying test compatibility, (4) running full test suite validation and fixing any migration issues."
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Fix ValueObject and Entity base class bugs",
         "description": "Fix ValueObject.equals() for deep comparison, remove isNew concept, and fix Entity.props mutation in constructor",
         "details": "1. Fix `packages/core/src/shared/base/ValueObject.ts`:\n   - Remove `isNew` from `IValueObjectProps` interface\n   - Remove `isNew` getter method\n   - Fix `equals()` method to perform deep equality for object types:\n```typescript\npublic equals(vo: ValueObject<TValue, TConfig>): boolean {\n  if (vo == null) return false;\n  // For primitive types, use strict equality\n  if (typeof this.value !== 'object' || this.value === null) {\n    return this.value === vo.value;\n  }\n  // For object types, perform deep comparison\n  return JSON.stringify(this.value) === JSON.stringify(vo.value);\n}\n```\n\n2. Fix `packages/core/src/shared/base/Entity.ts`:\n   - Make `props` field private: `private readonly props: TProps`\n   - Fix constructor to avoid mutating input object:\n```typescript\nconstructor(props: TProps) {\n  this.created_at = DateTime.new(props.created_at);\n  this.deleted_at = props.deleted_at ? DateTime.new(props.deleted_at) : null;\n  this.id = Id.new(props.id);\n  this.updated_at = DateTime.new(props.updated_at);\n  // Use spread to avoid mutating input\n  this.props = Object.freeze({ ...props, id: this.id.value });\n}\n```\n\n3. Update all VOs that pass `isNew` to remove this parameter.\n\n4. Remove invalid `~components/*` path from `packages/core/tsconfig.json`.",
@@ -184,7 +184,7 @@
         "expansionPrompt": "Organize fixes into: (1) removing isNew from ValueObject interface and implementation, (2) implementing deep equality comparison for ValueObject.equals() handling both primitives and objects, (3) fixing Entity constructor to prevent props mutation and making props private, (4) updating all 10 VOs that currently use isNew parameter, (5) comprehensive testing of equality, immutability, and ensuring no regression in 19 existing test files."
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Migrate all Value Objects to Either pattern",
         "description": "Refactor all VOs (Id, DateTime, Text, Name, Url, EmploymentType, Fluency, LocationType, SkillType, LocalizedText) from throw-based to Either-based error handling",
         "details": "For each VO in `packages/core/src/shared/vo/`:\n\n1. Change static factory method to return `Either<ValidationError, T>`:\n```typescript\nstatic create(value: string): Either<ValidationError, VoName> {\n  const validation = Validator.new(value)\n    .required('Value is required')\n    .min(3, 'Minimum 3 characters')\n    .validate();\n  \n  if (!validation.isValid && validation.error) {\n    return left(new ValidationError({ \n      code: 'INVALID_VO_NAME',\n      message: validation.error \n    }));\n  }\n  \n  return right(new VoName(value));\n}\n```\n\n2. For Id VO:\n   - Create `Id.generate()` that returns `Id` directly (no Either) for generating new UUIDs\n   - Keep `Id.create(value)` returning `Either<ValidationError, Id>` for validation\n\n3. Remove all `throw` statements for domain errors\n\n4. Standardize error codes to `INVALID_<NAME>` format (e.g., `INVALID_ID`, `INVALID_TEXT`)\n\n5. Translate all Portuguese error messages to English\n\n6. Delete `packages/core/src/shared/i18n/ERROR_MESSAGE.ts` (no longer needed)\n\n7. Update exports in `packages/core/src/shared/vo/index.ts`\n\nVOs to migrate:\n- Id\n- DateTime\n- Text\n- Name\n- Url\n- EmploymentType\n- Fluency\n- LocationType\n- SkillType\n- LocalizedText",
@@ -339,7 +339,7 @@
         "expansionPrompt": "Break down by VO type: (1) migrate Id VO with both create() and generate() methods, (2) migrate DateTime VO, (3) migrate Text VO with config support, (4) migrate Name VO, (5) migrate Url VO, (6) migrate EmploymentType enum-based VO, (7) migrate Fluency enum-based VO, (8) migrate LocationType enum-based VO, (9) migrate SkillType enum-based VO, (10) migrate LocalizedText complex VO, (11) translate all error messages to English and standardize error codes, (12) delete ERROR_MESSAGE.ts and update all test files to Either pattern."
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Create missing Value Objects: Slug, Image, DateRange",
         "description": "Implement three new VOs required by the domain model with Either-based validation",
         "details": "1. Create `packages/core/src/shared/vo/Slug.ts`:\n```typescript\nimport { Either, left, right } from '../either';\nimport { ValidationError } from '../errors';\nimport { ValueObject } from '../base/ValueObject';\n\nexport class Slug extends ValueObject<string> {\n  private static readonly SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;\n  \n  private constructor(value: string) {\n    super({ value });\n  }\n\n  static create(raw: string): Either<ValidationError, Slug> {\n    if (!raw?.trim() || raw.length < 3) {\n      return left(new ValidationError({\n        code: 'INVALID_SLUG',\n        message: 'Slug must be at least 3 characters'\n      }));\n    }\n    \n    const normalized = raw.toLowerCase().trim();\n    \n    if (!this.SLUG_REGEX.test(normalized)) {\n      return left(new ValidationError({\n        code: 'INVALID_SLUG',\n        message: 'Slug must be kebab-case (lowercase letters, numbers, hyphens only)'\n      }));\n    }\n    \n    return right(new Slug(normalized));\n  }\n\n  toPath(): string {\n    return `/${this.value}`;\n  }\n}\n```\n\n2. Create `packages/core/src/shared/vo/Image.ts` composing Url and LocalizedText:\n```typescript\nexport class Image extends ValueObject<{ url: Url; alt: LocalizedText }> {\n  private constructor(url: Url, alt: LocalizedText) {\n    super({ value: { url, alt } });\n  }\n\n  static create(urlStr: string, alt: Record<string, string>): Either<ValidationError, Image> {\n    const urlResult = Url.create(urlStr);\n    if (urlResult.isLeft()) return left(urlResult.value);\n    \n    const altResult = LocalizedText.create(alt);\n    if (altResult.isLeft()) return left(altResult.value);\n    \n    return right(new Image(urlResult.value, altResult.value));\n  }\n\n  get url(): Url { return this.value.url; }\n  get alt(): LocalizedText { return this.value.alt; }\n}\n```\n\n3. Create `packages/core/src/shared/vo/DateRange.ts`:\n```typescript\nexport class DateRange extends ValueObject<{ startAt: DateTime; endAt?: DateTime }> {\n  private constructor(startAt: DateTime, endAt?: DateTime) {\n    super({ value: { startAt, endAt } });\n  }\n\n  static create(start: string, end?: string): Either<ValidationError, DateRange> {\n    const startResult = DateTime.create(start);\n    if (startResult.isLeft()) return left(startResult.value);\n    \n    let endAt: DateTime | undefined;\n    if (end) {\n      const endResult = DateTime.create(end);\n      if (endResult.isLeft()) return left(endResult.value);\n      endAt = endResult.value;\n      \n      if (startResult.value.ms > endAt.ms) {\n        return left(new ValidationError({\n          code: 'INVALID_DATE_RANGE',\n          message: 'Start date must be before or equal to end date'\n        }));\n      }\n    }\n    \n    return right(new DateRange(startResult.value, endAt));\n  }\n\n  isActive(): boolean {\n    return this.value.endAt === undefined;\n  }\n  \n  get startAt(): DateTime { return this.value.startAt; }\n  get endAt(): DateTime | undefined { return this.value.endAt; }\n}\n```\n\n4. Update `packages/core/src/shared/vo/index.ts` to export all three\n\n5. Create test data providers in `packages/core/test/data/bases/`",
@@ -427,7 +427,7 @@
         "expansionPrompt": "Organize into: (1) implement Slug VO with kebab-case validation and regex matching, (2) implement Image VO composing Url and LocalizedText with proper error handling, (3) implement DateRange VO with start/end validation and isActive() method, (4) create comprehensive unit tests for Slug including edge cases, (5) create comprehensive unit tests for Image composition, (6) create comprehensive unit tests for DateRange including boundary conditions, and create test data providers."
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Migrate all Entities to Either pattern and reorganize structure",
         "description": "Refactor entity factory methods to return Either, make constructors private, and reorganize directories to match CLAUDE.md conventions",
         "details": "For each entity (Project, Experience, Skill, Language, ProfessionalValue, SocialNetwork):\n\n1. Make constructor private\n2. Add `static create()` returning `Either<DomainError, Entity>`\n3. Move entities to `src/portfolio/entities/<name>/model/<Name>.ts` structure\n4. Update `SkillFactory.bulk()` to return `Either<DomainError, Skill[]>` with index in error messages\n\nExample for Skill entity:\n```typescript\nexport class Skill extends Entity<Skill, ISkillProps> {\n  private constructor(props: ISkillProps) {\n    super(props);\n    // Initialize fields\n  }\n\n  static create(props: ISkillProps): Either<DomainError, Skill> {\n    const nameResult = Name.create(props.name);\n    if (nameResult.isLeft()) return left(nameResult.value);\n    \n    const typeResult = SkillType.create(props.type);\n    if (typeResult.isLeft()) return left(typeResult.value);\n    \n    return right(new Skill({\n      ...props,\n      name: nameResult.value,\n      type: typeResult.value\n    }));\n  }\n}\n```\n\nFor SkillFactory.bulk():\n```typescript\nstatic bulk(skillsProps: ISkillProps[]): Either<DomainError, Skill[]> {\n  const skills: Skill[] = [];\n  \n  for (let i = 0; i < skillsProps.length; i++) {\n    const result = Skill.create(skillsProps[i]);\n    if (result.isLeft()) {\n      return left(new ValidationError({\n        code: 'INVALID_SKILL_AT_INDEX',\n        message: `Invalid skill at index ${i}: ${result.value.message}`,\n        details: { index: i, error: result.value }\n      }));\n    }\n    skills.push(result.value);\n  }\n  \n  return right(skills);\n}\n```\n\nDirectory reorganization:\n- Move `src/project/model/Project.ts` → `src/portfolio/entities/project/model/Project.ts`\n- Move `src/skill/model/Skill.ts` → `src/portfolio/entities/skill/model/Skill.ts`\n- Move `src/experience/Experience.ts` → `src/portfolio/entities/experience/model/Experience.ts`\n- Update all imports and re-exports in `src/portfolio/index.ts`",
@@ -563,7 +563,7 @@
         "expansionPrompt": "Break down by entity and concerns: (1) refactor Project entity to Either pattern and relocate to portfolio/entities/project/model/, (2) refactor Experience entity to Either pattern and relocate to portfolio/entities/experience/model/, (3) refactor Skill entity to Either pattern and relocate to portfolio/entities/skill/model/, (4) refactor Language entity to Either pattern and relocate, (5) refactor ProfessionalValue entity to Either pattern and relocate, (6) refactor SocialNetwork entity to Either pattern and relocate, (7) update SkillFactory.bulk() to return Either with indexed error messages, (8) reorganize directory structure and update all imports/exports across packages, (9) update all entity test builders to handle Either returns, (10) comprehensive testing ensuring all 6 entities work with Either pattern and directory reorganization doesn't break imports."
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "Create Profile entity with featured projects invariant",
         "description": "Implement the Profile entity representing personal portfolio data with business rule: maximum 6 featured projects",
         "details": "Create `packages/core/src/portfolio/entities/profile/model/Profile.ts`:\n\n```typescript\nimport { Entity, IEntityProps } from '../../../../shared/base/Entity';\nimport { Name, LocalizedText, Image, Slug } from '../../../../shared/vo';\nimport { Either, left, right } from '../../../../shared/either';\nimport { ValidationError } from '../../../../shared/errors';\nimport { ProfileStat } from './ProfileStat';\n\nexport interface IProfileProps extends IEntityProps {\n  name: string;\n  headline: Record<string, string>;\n  bio: Record<string, string>;\n  photo: { url: string; alt: Record<string, string> };\n  stats: Array<{ label: Record<string, string>; value: string; icon: string }>;\n  featuredProjectSlugs: string[];\n}\n\nexport class Profile extends Entity<Profile, IProfileProps> {\n  private static readonly MAX_FEATURED_PROJECTS = 6;\n  \n  public readonly name: Name;\n  public readonly headline: LocalizedText;\n  public readonly bio: LocalizedText;\n  public readonly photo: Image;\n  public readonly stats: ProfileStat[];\n  public readonly featuredProjectSlugs: Slug[];\n\n  private constructor(props: IProfileProps, domainObjects: {\n    name: Name;\n    headline: LocalizedText;\n    bio: LocalizedText;\n    photo: Image;\n    stats: ProfileStat[];\n    featuredProjectSlugs: Slug[];\n  }) {\n    super(props);\n    this.name = domainObjects.name;\n    this.headline = domainObjects.headline;\n    this.bio = domainObjects.bio;\n    this.photo = domainObjects.photo;\n    this.stats = domainObjects.stats;\n    this.featuredProjectSlugs = domainObjects.featuredProjectSlugs;\n  }\n\n  static create(props: IProfileProps): Either<ValidationError, Profile> {\n    // Validate featured projects invariant\n    if (props.featuredProjectSlugs.length > this.MAX_FEATURED_PROJECTS) {\n      return left(new ValidationError({\n        code: 'TOO_MANY_FEATURED_PROJECTS',\n        message: `Maximum ${this.MAX_FEATURED_PROJECTS} featured projects allowed, got ${props.featuredProjectSlugs.length}`\n      }));\n    }\n\n    // Validate and create VOs\n    const nameResult = Name.create(props.name);\n    if (nameResult.isLeft()) return left(nameResult.value);\n\n    const headlineResult = LocalizedText.create(props.headline);\n    if (headlineResult.isLeft()) return left(headlineResult.value);\n\n    const bioResult = LocalizedText.create(props.bio);\n    if (bioResult.isLeft()) return left(bioResult.value);\n\n    const photoResult = Image.create(props.photo.url, props.photo.alt);\n    if (photoResult.isLeft()) return left(photoResult.value);\n\n    // Create stats\n    const stats: ProfileStat[] = [];\n    for (const statProps of props.stats) {\n      const statResult = ProfileStat.create(statProps);\n      if (statResult.isLeft()) return left(statResult.value);\n      stats.push(statResult.value);\n    }\n\n    // Create featured project slugs\n    const slugs: Slug[] = [];\n    for (const slugStr of props.featuredProjectSlugs) {\n      const slugResult = Slug.create(slugStr);\n      if (slugResult.isLeft()) return left(slugResult.value);\n      slugs.push(slugResult.value);\n    }\n\n    return right(new Profile(props, {\n      name: nameResult.value,\n      headline: headlineResult.value,\n      bio: bioResult.value,\n      photo: photoResult.value,\n      stats,\n      featuredProjectSlugs: slugs\n    }));\n  }\n}\n```\n\nCreate `packages/core/src/portfolio/entities/profile/model/ProfileStat.ts`:\n```typescript\nexport interface IProfileStatProps {\n  label: Record<string, string>;\n  value: string;\n  icon: string;\n}\n\nexport class ProfileStat {\n  public readonly label: LocalizedText;\n  public readonly value: string;\n  public readonly icon: Text;\n\n  private constructor(label: LocalizedText, value: string, icon: Text) {\n    this.label = label;\n    this.value = value;\n    this.icon = icon;\n  }\n\n  static create(props: IProfileStatProps): Either<ValidationError, ProfileStat> {\n    const labelResult = LocalizedText.create(props.label);\n    if (labelResult.isLeft()) return left(labelResult.value);\n\n    const iconResult = Text.create(props.icon);\n    if (iconResult.isLeft()) return left(iconResult.value);\n\n    return right(new ProfileStat(labelResult.value, props.value, iconResult.value));\n  }\n}\n```\n\nUpdate `packages/core/src/portfolio/index.ts` to export Profile and ProfileStat.",
@@ -660,7 +660,7 @@
         "expansionPrompt": "Structure implementation as: (1) create ProfileStat VO with LocalizedText composition and Either validation, (2) implement Profile entity skeleton with private constructor and IProfileProps interface, (3) implement Profile.create() with featured projects invariant validation (max 6), (4) implement VO composition for all Profile fields (name, headline, bio, photo), (5) implement stats array validation with indexed errors, (6) implement featuredProjectSlugs array validation, (7) create comprehensive tests for invariant violations, valid creation, and ProfileBuilder test utility."
       },
       {
-        "id": "8",
+        "id": 8,
         "title": "Update Project entity with complete Figma design fields",
         "description": "Extend Project entity with all fields required for Portfolio and Project Detail pages including slug, images, metadata, and relations",
         "details": "Update `packages/core/src/portfolio/entities/project/model/Project.ts`:\n\n1. Create ProjectStatus enum in separate file:\n```typescript\n// packages/core/src/portfolio/entities/project/model/ProjectStatus.ts\nexport enum ProjectStatus {\n  DRAFT = 'DRAFT',\n  PUBLISHED = 'PUBLISHED',\n  ARCHIVED = 'ARCHIVED'\n}\n```\n\n2. Update IProjectProps interface:\n```typescript\nexport interface IProjectProps extends IEntityProps {\n  // Existing\n  content: string;\n  skills: ISkillProps[];\n  \n  // Updated to LocalizedText\n  title: Record<string, string>;\n  caption: Record<string, string>;\n  \n  // New fields\n  slug: string;\n  coverImage: { url: string; alt: Record<string, string> };\n  theme: Record<string, string>;\n  summary: Record<string, string>;\n  objectives: Record<string, string>;\n  role: Record<string, string>;\n  team: string;\n  period: { start: string; end?: string };\n  featured: boolean;\n  status: ProjectStatus;\n  relatedProjects: string[];\n}\n```\n\n3. Update Project class fields:\n```typescript\nexport class Project extends Entity<Project, IProjectProps> {\n  // Updated\n  public readonly title: LocalizedText;\n  public readonly caption: LocalizedText;\n  \n  // New\n  public readonly slug: Slug;\n  public readonly coverImage: Image;\n  public readonly theme: LocalizedText;\n  public readonly summary: LocalizedText;\n  public readonly objectives: LocalizedText;\n  public readonly role: LocalizedText;\n  public readonly team: string;\n  public readonly period: DateRange;\n  public readonly featured: boolean;\n  public readonly status: ProjectStatus;\n  public readonly relatedProjects: Slug[];\n  \n  // Existing\n  public readonly content: Text;\n  public readonly skills: Skill[];\n\n  private constructor(props: IProjectProps, domainObjects: {...}) {\n    super(props);\n    // Initialize all fields from domainObjects\n  }\n\n  static create(props: IProjectProps): Either<DomainError, Project> {\n    // Validate all VOs and compose\n    // Content validation with min 3 chars, max 500000 (or no upper limit)\n    const contentResult = Text.create(props.content, { min: 3, max: 500000 });\n    // ... other validations\n    \n    // Validate related projects slugs\n    const relatedSlugs: Slug[] = [];\n    for (const slugStr of props.relatedProjects) {\n      const slugResult = Slug.create(slugStr);\n      if (slugResult.isLeft()) return left(slugResult.value);\n      relatedSlugs.push(slugResult.value);\n    }\n    \n    return right(new Project(props, { /* all domain objects */ }));\n  }\n}\n```\n\nUpdate `ProjectBuilder` in `test/data/ProjectBuilder.ts` to support new fields.",
@@ -787,7 +787,7 @@
         "expansionPrompt": "Organize into: (1) create ProjectStatus enum in separate file, (2) update IProjectProps interface with all new fields (slug, coverImage, theme, summary, objectives, role, team, period, featured, status, relatedProjects), (3) convert title and caption from Text to LocalizedText, (4) implement all new VO fields in Project class (Slug, Image, LocalizedText fields, DateRange), (5) update Project.create() with Either-based validation for all new VOs, (6) implement relatedProjects array validation with Slug VOs, (7) update content validation with new min/max constraints, (8) update ProjectBuilder with factory methods for all statuses, (9) comprehensive testing of all new fields, validation rules, and ProjectStatus transitions."
       },
       {
-        "id": "9",
+        "id": 9,
         "title": "Update Experience entity and create ExperienceSkill VO",
         "description": "Add missing fields to Experience entity (logo, description) and create ExperienceSkill VO to support contextual work descriptions per skill",
         "details": "1. Create `packages/core/src/portfolio/entities/experience/model/ExperienceSkill.ts`:\n```typescript\nimport { ValueObject } from '../../../../shared/base/ValueObject';\nimport { LocalizedText } from '../../../../shared/vo';\nimport { Skill } from '../../skill/model/Skill';\nimport { Either, left, right } from '../../../../shared/either';\nimport { ValidationError } from '../../../../shared/errors';\n\nexport interface IExperienceSkillProps {\n  skill: ISkillProps;\n  workDescription: Record<string, string>;\n}\n\nexport class ExperienceSkill extends ValueObject<{\n  skill: Skill;\n  workDescription: LocalizedText;\n}> {\n  private constructor(skill: Skill, workDescription: LocalizedText) {\n    super({ value: { skill, workDescription } });\n  }\n\n  static create(props: IExperienceSkillProps): Either<ValidationError, ExperienceSkill> {\n    const skillResult = Skill.create(props.skill);\n    if (skillResult.isLeft()) return left(skillResult.value);\n\n    const workDescResult = LocalizedText.create(props.workDescription);\n    if (workDescResult.isLeft()) return left(workDescResult.value);\n\n    return right(new ExperienceSkill(skillResult.value, workDescResult.value));\n  }\n\n  get skill(): Skill {\n    return this.value.skill;\n  }\n\n  get workDescription(): LocalizedText {\n    return this.value.workDescription;\n  }\n}\n```\n\n2. Update `packages/core/src/portfolio/entities/experience/model/Experience.ts`:\n```typescript\nexport interface IExperienceProps extends IEntityProps {\n  // Updated to LocalizedText\n  company: Record<string, string>;\n  position: Record<string, string>;\n  location: Record<string, string>;\n  \n  // New fields\n  logo: { url: string; alt: Record<string, string> };\n  description: Record<string, string>;\n  \n  // Updated type\n  skills: IExperienceSkillProps[];\n  \n  // Existing\n  employment_type: EmploymentTypeValue;\n  location_type: LocationTypeValue;\n  start_at: string;\n  end_at?: string;\n}\n\nexport class Experience extends Entity<Experience, IExperienceProps> {\n  public readonly company: LocalizedText;\n  public readonly position: LocalizedText;\n  public readonly location: LocalizedText;\n  public readonly logo: Image;\n  public readonly description: LocalizedText;\n  public readonly employment_type: EmploymentType;\n  public readonly location_type: LocationType;\n  public readonly skills: ExperienceSkill[];\n  public readonly period: DateRange;\n\n  private constructor(props: IExperienceProps, domainObjects: {...}) {\n    super(props);\n    // Initialize fields\n  }\n\n  static create(props: IExperienceProps): Either<DomainError, Experience> {\n    // Validate company, position, location as LocalizedText\n    const companyResult = LocalizedText.create(props.company);\n    if (companyResult.isLeft()) return left(companyResult.value);\n\n    // Validate logo\n    const logoResult = Image.create(props.logo.url, props.logo.alt);\n    if (logoResult.isLeft()) return left(logoResult.value);\n\n    // Validate description\n    const descResult = LocalizedText.create(props.description);\n    if (descResult.isLeft()) return left(descResult.value);\n\n    // Validate period using DateRange VO (delegates validation)\n    const periodResult = DateRange.create(props.start_at, props.end_at);\n    if (periodResult.isLeft()) return left(periodResult.value);\n\n    // Create ExperienceSkills\n    const skills: ExperienceSkill[] = [];\n    for (let i = 0; i < props.skills.length; i++) {\n      const skillResult = ExperienceSkill.create(props.skills[i]);\n      if (skillResult.isLeft()) {\n        return left(new ValidationError({\n          code: 'INVALID_EXPERIENCE_SKILL',\n          message: `Invalid skill at index ${i}`,\n          details: { index: i, error: skillResult.value }\n        }));\n      }\n      skills.push(skillResult.value);\n    }\n\n    return right(new Experience(props, {\n      company: companyResult.value,\n      position: positionResult.value,\n      location: locationResult.value,\n      logo: logoResult.value,\n      description: descResult.value,\n      employment_type: employmentTypeResult.value,\n      location_type: locationTypeResult.value,\n      period: periodResult.value,\n      skills\n    }));\n  }\n}\n```\n\n3. Remove date validation logic from Experience (delegated to DateRange)\n\n4. Update `ExperienceBuilder` and tests",
@@ -884,7 +884,7 @@
         "expansionPrompt": "Break down into: (1) create ExperienceSkill VO composing Skill and LocalizedText for workDescription, (2) update IExperienceProps interface with logo, description, and updated skills field, (3) convert company, position, location from Text to LocalizedText in Experience entity, (4) add logo (Image) and description (LocalizedText) fields to Experience, (5) update skills field from Skill[] to ExperienceSkill[] with indexed validation, (6) remove date validation logic from Experience (delegate to DateRange VO), (7) update ExperienceBuilder and create comprehensive tests for ExperienceSkill and updated Experience."
       },
       {
-        "id": "10",
+        "id": 10,
         "title": "Define repository interfaces for infrastructure contracts",
         "description": "Create repository interface definitions in the domain layer to establish contracts for the infrastructure layer implementation",
         "details": "Create repository interfaces in respective entity directories:\n\n1. `packages/core/src/portfolio/entities/project/repositories/IProjectRepository.ts`:\n```typescript\nimport { Project } from '../model/Project';\nimport { ProjectId } from '../value-objects/ProjectId';\nimport { Slug } from '../../../../shared/vo/Slug';\n\nexport interface IProjectRepository {\n  findAll(): Promise<Project[]>;\n  findPublished(): Promise<Project[]>;\n  findFeatured(): Promise<Project[]>;\n  findById(id: ProjectId): Promise<Project | null>;\n  findBySlug(slug: Slug): Promise<Project | null>;\n  findRelated(id: ProjectId, limit?: number): Promise<Project[]>;\n  save(project: Project): Promise<void>;\n  delete(id: ProjectId): Promise<void>;\n}\n```\n\n2. `packages/core/src/portfolio/entities/experience/repositories/IExperienceRepository.ts`:\n```typescript\nimport { Experience } from '../model/Experience';\nimport { Id } from '../../../../shared/vo/Id';\n\nexport interface IExperienceRepository {\n  findAll(): Promise<Experience[]>;\n  findById(id: Id): Promise<Experience | null>;\n  save(experience: Experience): Promise<void>;\n  delete(id: Id): Promise<void>;\n}\n```\n\n3. `packages/core/src/portfolio/entities/profile/repositories/IProfileRepository.ts`:\n```typescript\nimport { Profile } from '../model/Profile';\nimport { Id } from '../../../../shared/vo/Id';\n\nexport interface IProfileRepository {\n  find(): Promise<Profile | null>; // Singleton pattern - only one profile\n  save(profile: Profile): Promise<void>;\n}\n```\n\n4. `packages/core/src/portfolio/entities/skill/repositories/ISkillRepository.ts`:\n```typescript\nimport { Skill } from '../model/Skill';\nimport { Id } from '../../../../shared/vo/Id';\n\nexport interface ISkillRepository {\n  findAll(): Promise<Skill[]>;\n  findById(id: Id): Promise<Skill | null>;\n  save(skill: Skill): Promise<void>;\n  delete(id: Id): Promise<void>;\n}\n```\n\nKey principles:\n- All interfaces use domain types (entities, VOs) - never primitives\n- No imports of external libraries (Prisma, Supabase, etc.)\n- Methods return Promise for async operations\n- Repository pattern for each aggregate root\n\nUpdate `packages/core/src/portfolio/index.ts` to export all four interfaces.",
@@ -959,7 +959,7 @@
         "expansionPrompt": "Organize into: (1) create IProjectRepository interface in portfolio/entities/project/repositories/ with 8 methods using domain types, (2) create IExperienceRepository interface in portfolio/entities/experience/repositories/ with 4 CRUD methods, (3) create IProfileRepository interface in portfolio/entities/profile/repositories/ with singleton pattern (find/save only), (4) create ISkillRepository interface in portfolio/entities/skill/repositories/ with 4 CRUD methods, (5) update portfolio/index.ts exports and validate architecture rules (no external imports, TypeScript compilation, proper exports)."
       },
       {
-        "id": "11",
+        "id": 11,
         "title": "Create packages/core architecture documentation",
         "description": "Document bounded contexts, architectural decisions, layer rules, and ubiquitous language for the domain layer",
         "details": "Create comprehensive documentation for packages/core:\n\n1. `packages/core/ARCHITECTURE.md`:\n   - Bounded context map (Portfolio, Blog, Contact, Shared Kernel)\n   - Dependency rules between contexts\n   - Layer isolation rules (what core can/cannot import)\n   - Visual diagram of context boundaries\n   - Export structure (@repo/core/portfolio, @repo/core/shared, etc.)\n\n2. `packages/core/GLOSSARY.md`:\n   - Ubiquitous Language definitions for Portfolio context:\n     - Project, Experience, Profile, Skill\n     - Value Objects: Slug, Image, DateRange, LocalizedText, etc.\n   - Term definitions with examples\n   - Relationships between domain concepts\n\n3. `packages/core/decisions/adr-template.md`:\n```markdown\n# ADR-XXX: [Title]\n\n## Status\n[Proposed | Accepted | Deprecated | Superseded]\n\n## Context\n[What is the issue we're facing?]\n\n## Decision\n[What did we decide?]\n\n## Consequences\n[What becomes easier or harder?]\n\n## Alternatives Considered\n[What other options did we evaluate?]\n```\n\n4. `packages/core/decisions/ADR-001-repository-interfaces-in-core.md`:\n```markdown\n# ADR-001: Repository Interfaces Belong in Core, Not Application\n\n## Status\nAccepted\n\n## Context\nIn Clean Architecture, repository interfaces (ports) can be placed in either the domain layer (core) or application layer. We need to decide where they belong in our monorepo.\n\n## Decision\nRepository interfaces are defined in `packages/core` alongside their respective entities, not in `packages/application`.\n\nStructure:\n- `packages/core/src/portfolio/entities/project/repositories/IProjectRepository.ts`\n- `packages/core/src/portfolio/entities/experience/repositories/IExperienceRepository.ts`\n\n## Consequences\n\n**Positive:**\n- Interfaces live with their aggregate roots (high cohesion)\n- Domain defines its own persistence contract\n- Application layer doesn't need to define infrastructure contracts\n- Easier to understand what operations are available per entity\n\n**Negative:**\n- Some Clean Architecture implementations put interfaces in application\n- Requires clear documentation of this architectural choice\n\n## Alternatives Considered\n\n1. **Application Layer Interfaces**: Place in `packages/application/ports/repositories/`\n   - Rejected: Separates interface from entity, lower cohesion\n\n2. **Separate Ports Package**: Create `packages/ports`\n   - Rejected: Over-engineering for monorepo, adds unnecessary complexity\n```\n\nEnsure documentation is referenced from root `CLAUDE.md`.",
@@ -1045,7 +1045,7 @@
         "expansionPrompt": "Structure documentation into: (1) create ARCHITECTURE.md with bounded context map, dependency rules, and layer isolation guidelines, (2) create visual diagrams for context boundaries and package structure, (3) create GLOSSARY.md with ubiquitous language definitions for all domain concepts, (4) create ADR template (adr-template.md) in decisions/ directory, (5) write ADR-001 documenting repository interface placement decision with rationale, (6) integrate documentation references into root CLAUDE.md and validate completeness."
       },
       {
-        "id": "12",
+        "id": 12,
         "title": "Refactor ButtonLink to accept polymorphic Link component for framework-agnostic client-side navigation",
         "description": "Refactor ButtonLink component in packages/ui to accept a polymorphic 'component' prop (defaulting to <a>) enabling consumers to inject framework-specific Link components (e.g., next/link) for client-side RSC soft navigation instead of full document reloads.",
         "details": "## Context\n\nCurrently, ButtonLink hardcodes a raw `<a>` tag (packages/ui/src/Control/Button/Link/index.tsx:22), causing full document reloads when navigating to internal routes. In apps/site, ProjectCard.tsx:116 and CurriculumCTA/index.tsx:45 use Button.Link for navigation, resulting in 'document' type requests visible in DevTools Network tab. Other navigation components in apps/site (Header, SideNavigation) use next/link's Link component, which enables RSC soft navigation without document reloads.\n\n## Implementation Steps\n\n### 1. Update ButtonLink Interface and Component (packages/ui/src/Control/Button/Link/index.tsx)\n\n**Current pattern reference:** RadioGroup uses `containerElementType?: Extract<keyof JSX.IntrinsicElements, string>` for intrinsic elements only (packages/ui/src/Control/RadioGroup/types.ts:10). ButtonLink needs broader polymorphism to accept both intrinsic elements AND custom component types (like next/link's Link).\n\n```typescript\nimport { AnchorHTMLAttributes, ComponentType, ElementType, FC } from 'react';\n\nimport { buttonVariants, ButtonAppearance, ButtonSize } from '../variants';\n\n// Support both intrinsic anchor elements and custom Link components\nexport interface IButtonLinkProps<C extends ElementType = 'a'>\n  extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'> {\n  size?: ButtonSize;\n  appearance?: ButtonAppearance;\n  unstyled?: boolean;\n  component?: C; // Accept any valid React component or element type\n  className?: string;\n}\n\nexport const ButtonLink: FC<IButtonLinkProps> = ({\n  children,\n  className,\n  size = 'large',\n  appearance = 'filled',\n  unstyled = false,\n  component: Component = 'a', // Default to native anchor element\n  ...props\n}) => {\n  return (\n    <Component\n      {...props}\n      className={buttonVariants({ size, appearance, unstyled, className })}\n    >\n      {children}\n    </Component>\n  );\n};\n```\n\n**Key design decisions:**\n- Use `component` prop (not `as`) to align with React ecosystem conventions (Material-UI, Chakra UI)\n- Default to `'a'` to maintain backward compatibility for external links\n- Extend `AnchorHTMLAttributes` to preserve type safety for href, target, rel, etc.\n- Generic type parameter `C extends ElementType` enables polymorphic typing but may require `FC<IButtonLinkProps<any>>` for practical use\n\n### 2. Update Button namespace export (packages/ui/src/Control/Button/index.ts)\n\nNo changes needed—ButtonLink export remains the same. Type export already includes IButtonLinkProps.\n\n### 3. Update apps/site usage to inject next/link\n\n**ProjectCard.tsx (apps/site/src/features/home/ProjectsSection/ProjectCard.tsx:116-122):**\n\n```typescript\nimport Link from 'next/link';\n\n// In ProjectCard component render:\n<Button.Link\n  component={Link}  // Inject next/link's Link component\n  href={`/${locale}/projects/${slug}`}\n  className=\"flex flex-row items-center justify-center gap-2\"\n>\n  {t('view_project')}\n  <Icon icon=\"ic:round-arrow-forward\" className=\"text-xl\" />\n</Button.Link>\n```\n\n**CurriculumCTA (apps/site/src/features/about/CurriculumCTA/index.tsx:45-53):**\n\nThis is an external link (resume PDF, target=\"_blank\"), so it should **NOT** use next/link. Keep as-is without component prop (defaults to `<a>`).\n\n```typescript\n// No changes needed—external links should use native <a>\n<ButtonLink\n  href={url}\n  target=\"_blank\"\n  rel=\"noopener noreferrer\"\n  className=\"inline-flex w-full items-center justify-center gap-x-2 lg:w-[292px]\"\n>\n  {t('button')}\n  <Icon icon=\"material-symbols:open-in-new\" className=\"text-2xl\" />\n</ButtonLink>\n```\n\n**Search for other Button.Link usages:**\n\n```bash\n# Verify all internal navigation in apps/site uses component={Link}\ngrep -r \"Button\\.Link\" apps/site/src --include=\"*.tsx\"\n```\n\n### 4. Add Vitest tests (new file: packages/ui/test/Control/Button/Link.test.tsx)\n\npackages/ui currently has no test infrastructure. Follow test patterns from packages/core (uses vitest, @vitest/coverage-v8).\n\n**Setup test environment:**\n\n1. Add vitest dependencies to packages/ui/package.json (match packages/core/package.json:38-39):\n   ```json\n   \"devDependencies\": {\n     \"@testing-library/react\": \"^16.1.0\",\n     \"@testing-library/jest-dom\": \"^6.6.3\",\n     \"@vitest/coverage-v8\": \"^3.0.0\",\n     \"vitest\": \"^3.0.0\",\n     \"jsdom\": \"^25.0.1\"\n   }\n   ```\n\n2. Add test scripts to packages/ui/package.json (match packages/core:18-20):\n   ```json\n   \"scripts\": {\n     \"test\": \"vitest run\",\n     \"test:watch\": \"vitest\",\n     \"test:coverage\": \"vitest run --coverage\"\n   }\n   ```\n\n3. Create vitest.config.ts in packages/ui/:\n   ```typescript\n   import { defineConfig } from 'vitest/config';\n   \n   export default defineConfig({\n     test: {\n       environment: 'jsdom',\n       globals: true,\n       setupFiles: './test/setup.ts',\n     },\n   });\n   ```\n\n4. Create test/setup.ts:\n   ```typescript\n   import '@testing-library/jest-dom/vitest';\n   ```\n\n**Test file (packages/ui/test/Control/Button/Link.test.tsx):**\n\n```typescript\nimport { render, screen } from '@testing-library/react';\nimport { describe, it, expect } from 'vitest';\nimport { ButtonLink } from '../../../src/Control/Button/Link';\n\ndescribe('ButtonLink', () => {\n  describe('component prop injection', () => {\n    it('should render native <a> element when component prop is not provided', () => {\n      render(<ButtonLink href=\"/test\">Click me</ButtonLink>);\n      const link = screen.getByRole('link', { name: 'Click me' });\n      expect(link.tagName).toBe('A');\n      expect(link).toHaveAttribute('href', '/test');\n    });\n\n    it('should render injected Link component when component prop is provided', () => {\n      // Mock Next.js Link component\n      const MockLink = ({ href, children, className }: any) => (\n        <a href={href} className={className} data-testid=\"mock-link\">\n          {children}\n        </a>\n      );\n\n      render(\n        <ButtonLink component={MockLink} href=\"/projects/slug\">\n          View Project\n        </ButtonLink>\n      );\n\n      const link = screen.getByTestId('mock-link');\n      expect(link).toBeInTheDocument();\n      expect(link).toHaveAttribute('href', '/projects/slug');\n      expect(link).toHaveTextContent('View Project');\n    });\n\n    it('should pass all props to injected component', () => {\n      const MockLink = ({ href, target, rel, className, children }: any) => (\n        <a\n          href={href}\n          target={target}\n          rel={rel}\n          className={className}\n          data-testid=\"custom-link\"\n        >\n          {children}\n        </a>\n      );\n\n      render(\n        <ButtonLink\n          component={MockLink}\n          href=\"https://example.com\"\n          target=\"_blank\"\n          rel=\"noopener noreferrer\"\n        >\n          External\n        </ButtonLink>\n      );\n\n      const link = screen.getByTestId('custom-link');\n      expect(link).toHaveAttribute('target', '_blank');\n      expect(link).toHaveAttribute('rel', 'noopener noreferrer');\n    });\n  });\n\n  describe('style variants', () => {\n    it('should apply button variants to native <a> element', () => {\n      render(\n        <ButtonLink href=\"/test\" size=\"small\" appearance=\"outline\">\n          Styled Link\n        </ButtonLink>\n      );\n      const link = screen.getByRole('link', { name: 'Styled Link' });\n      expect(link.className).toContain('py-2'); // small size\n    });\n\n    it('should apply button variants to injected component', () => {\n      const MockLink = ({ className, children }: any) => (\n        <a className={className} data-testid=\"styled-custom\">\n          {children}\n        </a>\n      );\n\n      render(\n        <ButtonLink component={MockLink} size=\"large\" appearance=\"filled\">\n          Custom Styled\n        </ButtonLink>\n      );\n\n      const link = screen.getByTestId('styled-custom');\n      expect(link.className).toContain('py-3'); // large size\n    });\n  });\n});\n```\n\n## Architectural Alignment\n\n- **Framework-agnostic principle:** packages/ui must not depend on Next.js (02-ARCHITECTURE.md). The `component` prop enables framework-agnostic design—consumers inject their framework's Link component.\n- **Backward compatibility:** Default `component='a'` ensures existing external link usage (like CurriculumCTA) requires no changes.\n- **Type safety:** Generic `ElementType` preserves IntelliSense for href/target/rel props.\n\n## Edge Cases\n\n1. **Server Components:** CurriculumCTA is a Server Component (async function). ButtonLink can be used in both Server and Client Components because it's marked `'use client'`.\n2. **External vs Internal Links:** Only internal navigation (same-domain routes) should use `component={Link}`. External links (target=\"_blank\") must use native `<a>`.\n\n## Verification\n\nAfter implementation, verify in DevTools Network tab:\n1. Navigate from Home → Project detail page\n2. **Before refactor:** Network shows `document` type request with 200/304 status (full reload)\n3. **After refactor:** Network shows NO document request (RSC soft navigation, same as Home/Projects/About links)",
@@ -1067,7 +1067,7 @@
         "updatedAt": "2026-07-06T03:57:23.301Z"
       },
       {
-        "id": "13",
+        "id": 13,
         "title": "Create BlogPost entity and Tag value object in packages/core",
         "description": "Implement core domain models for the Blog bounded context following DDD patterns",
         "details": "Create `packages/core/src/blog/entities/BlogPost.ts` and `packages/core/src/blog/value-objects/Tag.ts`.\n\n**BlogPost entity:**\n- Extends `AggregateRoot<BlogPost, IBlogPostProps>`\n- Properties: `slug: Slug`, `title: LocalizedText`, `description: LocalizedText`, `content: LocalizedText`, `tags: Tag[]`, `publishedAt: DateValue`, `coverImage?: Url`\n- Validation via `Validator`: slug kebab-case (reuse `Slug.create`), `publishedAt` must be present, at least one locale for title/description/content\n- `create()` static factory returning `Either<ValidationError, BlogPost>`\n- Zero framework dependencies\n\n**Tag value object:**\n- Extends `ValueObject<string>`\n- Validation: kebab-case, 2-50 characters, `Validator.of(value).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Tag must be kebab-case').length(2, 50, 'Tag must be 2-50 characters')`\n- `create()` static factory returning `Either<ValidationError, Tag>`\n\n**Export from `packages/core/src/blog/index.ts`:**\n```ts\nexport * from './entities/BlogPost';\nexport * from './value-objects/Tag';\n```\n\n**Tests (mandatory):**\n- `packages/core/test/blog/BlogPost.test.ts`: valid creation, invalid slug, missing publishedAt, missing locale\n- `packages/core/test/blog/Tag.test.ts`: valid tag, invalid format, too short/long",
@@ -1079,7 +1079,7 @@
         "updatedAt": "2026-08-11T05:17:06.967Z"
       },
       {
-        "id": "14",
+        "id": 14,
         "title": "Define IBlogPostRepository port in packages/application",
         "description": "Create repository interface for blog posts following the established port pattern",
         "details": "Create `packages/application/src/blog/ports/IBlogPostRepository.ts`:\n\n```ts\nimport { BlogPost, Slug } from '@repo/core/blog';\n\nexport interface IBlogPostRepository {\n  findAll(): Promise<BlogPost[]>;\n  findBySlug(slug: Slug): Promise<BlogPost | null>;\n}\n```\n\nExport from `packages/application/src/blog/ports/index.ts`:\n```ts\nexport * from './IBlogPostRepository';\n```\n\n**Tests (mandatory):**\nNo direct tests for the interface itself, but the use cases (task 15) will test against this contract via mocks.",
@@ -1093,7 +1093,7 @@
         "updatedAt": "2026-08-12T01:42:39.028Z"
       },
       {
-        "id": "15",
+        "id": 15,
         "title": "Implement blog use cases (ListBlogPosts, GetBlogPostBySlug)",
         "description": "Create application-layer use cases for listing and retrieving blog posts",
         "details": "Create two use cases in `packages/application/src/blog/use-cases/`:\n\n**1. ListBlogPosts.ts:**\n```ts\nimport { BlogPost } from '@repo/core/blog';\nimport { DomainError, Either, Locale, left, right } from '@repo/core/shared';\nimport { UseCase } from '../../shared/UseCase';\nimport { IBlogPostRepository } from '../ports';\nimport { BlogPostSummaryDTO } from '../dtos/BlogPostSummaryDTO';\n\nexport type ListBlogPostsInput = { locale: Locale };\n\nexport class ListBlogPosts extends UseCase<ListBlogPostsInput, BlogPostSummaryDTO[]> {\n  constructor(private readonly repository: IBlogPostRepository) { super(); }\n\n  async execute(input: ListBlogPostsInput): Promise<Either<DomainError, BlogPostSummaryDTO[]>> {\n    try {\n      const posts = await this.repository.findAll();\n      return right(posts.map(p => this.toDTO(p, input.locale)));\n    } catch {\n      return left(new DomainError('FETCH_FAILED', { message: 'Failed to fetch blog posts' }));\n    }\n  }\n\n  private toDTO(post: BlogPost, locale: Locale): BlogPostSummaryDTO {\n    return {\n      slug: post.slug.value,\n      title: post.title.get(locale),\n      description: post.description.get(locale),\n      publishedAt: post.publishedAt.value,\n      tags: post.tags.map(t => t.value),\n      coverImage: post.coverImage?.value,\n    };\n  }\n}\n```\n\n**2. GetBlogPostBySlug.ts:**\n- Similar structure, calls `repository.findBySlug(slug)`, returns `BlogPostDetailDTO`\n- Returns `DomainError('POST_NOT_FOUND')` if null\n\n**DTOs:**\n- `BlogPostSummaryDTO.ts`: slug, title, description, publishedAt, tags, coverImage?\n- `BlogPostDetailDTO.ts`: extends summary + content field\n\nExport from `packages/application/src/blog/index.ts`.\n\n**Tests (mandatory):**\n- `packages/application/test/blog/ListBlogPosts.test.ts`: mock repository, verify DTO mapping per locale\n- `packages/application/test/blog/GetBlogPostBySlug.test.ts`: found case, not-found case",
@@ -1107,7 +1107,7 @@
         "updatedAt": "2026-08-12T02:12:34.390Z"
       },
       {
-        "id": "16",
+        "id": 16,
         "title": "Implement FileSystemBlogPostRepository in packages/infra",
         "description": "Create filesystem-based repository that reads MDX files from content/posts/ directory",
         "details": "Create `packages/infra/src/repositories/blog/FileSystemBlogPostRepository.ts` implementing `IBlogPostRepository`.\n\n**Implementation:**\n- `findAll()`: reads `content/posts/*/meta.json`, parses each with Zod schema, constructs `BlogPost` entities via `BlogPost.create()`, returns array sorted by `publishedAt` desc\n- `findBySlug(slug)`: reads `content/posts/<slug>/meta.json` + all `.mdx` files, constructs `BlogPost`, returns entity or null\n- **Frontmatter parsing:** use `gray-matter` to extract YAML frontmatter from each `.mdx` file (title, description)\n- **Zod schemas:**\n  - `MetaJsonSchema`: `{ slug: string, publishedAt: string, tags: string[], coverImage?: string }`\n  - `MdxFrontmatterSchema`: `{ title: string, description: string }`\n  - Validate on read; throw `InfrastructureError` on schema failure (fail-fast at build time)\n- **File structure assumption:** `content/posts/<slug>/meta.json`, `en-US.mdx`, `pt-BR.mdx`, `es.mdx`\n- **Missing locale:** if any of the three locales is missing, throw `InfrastructureError` with clear message—PRD requires full i18n from day one\n- Use Node.js `fs.promises` for file I/O\n\n**Mapper:**\n- `BlogPostMapper.toDomain(meta, frontmatters)`: combines `meta.json` + parsed frontmatter from all locales into `IBlogPostProps`, calls `BlogPost.create()`, unwraps Either (throw if left—this is infra edge validation per `06-VALIDATION.md`)\n\nExport from `packages/infra/src/repositories/blog/index.ts`.\n\n**Tests (mandatory):**\n- `packages/infra/test/repositories/blog/FileSystemBlogPostRepository.test.ts`:\n  - Valid post fixture in `test/fixtures/posts/test-post/` (meta.json + 3 MDX files)\n  - Test `findAll()` and `findBySlug()`\n  - Test missing locale file → throws `InfrastructureError`\n  - Test malformed meta.json → throws `InfrastructureError`\n  - Test malformed frontmatter → throws `InfrastructureError`",
@@ -1122,7 +1122,7 @@
         "updatedAt": "2026-08-14T22:48:00.031Z"
       },
       {
-        "id": "17",
+        "id": 17,
         "title": "Bootstrap apps/blog Next.js application with i18n and multi-zone config",
         "description": "Create the blog app structure, configure basePath, next-intl, and Vercel multi-zone routing",
         "details": "**1. Create `apps/blog/` directory structure:**\n```\napps/blog/\n  src/\n    app/\n      [locale]/\n        layout.tsx\n        page.tsx       # listing\n        [slug]/\n          page.tsx     # detail\n      favicon.ico\n    lib/\n      server/\n        container.ts   # DI container for blog\n    i18n/\n      routing.ts       # reuse LOCALES/DEFAULT_LOCALE from @repo/core/shared\n  package.json\n  tsconfig.json\n  next.config.mjs\n  tailwind.config.ts\n```\n\n**2. `apps/blog/package.json`:**\n- Dependencies: `@repo/application`, `@repo/core`, `@repo/infra`, `@repo/ui`, `next@16.2.6`, `react@^19.2.7`, `react-dom@^19.2.7`, `next-intl@4.11.0`, `next-mdx-remote`, `rehype-pretty-code`, `shiki`, `zod`, `gray-matter`\n- Scripts: `dev`, `build`, `lint`, `test` (mirror `apps/site`)\n\n**3. `apps/blog/next.config.mjs`:**\n```js\nimport createNextIntlPlugin from 'next-intl/plugin';\n\nconst nextConfig = {\n  basePath: '/blog',\n  // ... security headers (copy from apps/site)\n};\n\nexport default createNextIntlPlugin()(nextConfig);\n```\n\n**4. Update `apps/site/next.config.mjs`:**\nAdd `rewrites()` to send `/blog` paths to the `apps/blog` deployment:\n```js\nasync rewrites() {\n  return [\n    {\n      source: '/blog',\n      destination: `${process.env.BLOG_APP_URL}/blog`,\n    },\n    {\n      source: '/blog/:path*',\n      destination: `${process.env.BLOG_APP_URL}/blog/:path*`,\n    },\n  ];\n},\n```\n(Environment variable `BLOG_APP_URL` points to the Vercel deployment of `apps/blog` for multi-zone.)\n\n**5. Update `turbo.json`:**\nAdd `blog#build` task:\n```json\n\"blog#build\": {\n  \"dependsOn\": [\"^build\"],\n  \"env\": [\"NEXT_PUBLIC_*\"]\n}\n```\n\n**6. Update `pnpm-workspace.yaml` (already includes `apps/*`).**\n\n**7. Create `apps/blog/src/lib/server/container.ts`:**\n```ts\nimport { FileSystemBlogPostRepository } from '@repo/infra/repositories/blog';\n\nexport function getServerContainer() {\n  return { blogPostRepository: new FileSystemBlogPostRepository() };\n}\n```\n\n**No tests for this task—scaffolding only. Tests will come in task 18 (pages/routes).**",
@@ -1136,7 +1136,7 @@
         "updatedAt": "2026-08-16T23:52:09.537Z"
       },
       {
-        "id": "18",
+        "id": 18,
         "title": "Implement blog listing and detail pages with SSG and SEO",
         "description": "Create blog index and detail pages using Server Components, generateStaticParams, and generateMetadata",
         "details": "**1. `apps/blog/src/app/[locale]/page.tsx` (listing):**\n- Server Component\n- `generateStaticParams()`: returns `LOCALES.map(locale => ({ locale }))`\n- `generateMetadata({ params })`: title/description from i18n keys, alternates for each locale\n- Component: calls `new ListBlogPosts(blogPostRepository).execute({ locale })`, maps to JSX list of post cards (title, description, publishedAt, tags as `Badge` from `@repo/ui`, coverImage)\n- If result is left, show empty state\n\n**2. `apps/blog/src/app/[locale]/[slug]/page.tsx` (detail):**\n- Server Component\n- `generateStaticParams()`: calls `ListBlogPosts` for default locale, returns `LOCALES.flatMap(locale => slugs.map(slug => ({ locale, slug })))`\n- `generateMetadata({ params })`: calls `GetBlogPostBySlug`, returns title, description, OG image (from `coverImage` or fallback), canonical per locale\n- Component: calls `GetBlogPostBySlug`, renders title, description, publishedAt, tags, then renders `content` MDX via `next-mdx-remote/rsc` `<MDXRemote />` component\n- **MDX components:** map `h1`, `h2`, `pre`, etc., to styled components (reuse `@repo/ui` where applicable)\n- **Syntax highlighting:** configure `rehype-pretty-code` in `mdx-components.tsx` (Shiki with default theme)\n- If result is left, call `notFound()`\n\n**3. `apps/blog/src/app/[locale]/layout.tsx`:**\n- Root layout for blog, sets locale via `setRequestLocale(locale)`, includes `<html lang={locale}>`, shared header/footer (import from `@repo/ui` or local components)\n- No need to re-implement i18n provider—next-intl plugin handles it\n\n**4. SEO utilities:**\n- Reuse `buildAlternates`, `buildOpenGraph` from `apps/site/src/lib/seo/` (or extract to shared package if preferred)\n- Add `apps/blog/src/app/sitemap.ts`: `generateSitemaps()` returns one entry per locale; each sitemap includes all blog post URLs for that locale, calls `ListBlogPosts` to get slugs\n\n**Tests (mandatory):**\n- `apps/blog/test/app/[locale]/page.test.tsx`: render with mocked `ListBlogPosts`, verify post cards rendered\n- `apps/blog/test/app/[locale]/[slug]/page.test.tsx`: render with mocked `GetBlogPostBySlug`, verify title/content rendered, test `notFound()` case\n- Test `generateMetadata` returns correct title/description",
@@ -1150,7 +1150,7 @@
         "updatedAt": "2026-08-17T01:04:18.157Z"
       },
       {
-        "id": "19",
+        "id": 19,
         "title": "Configure MDX compilation with next-mdx-remote and rehype-pretty-code",
         "description": "Set up MDX rendering pipeline with syntax highlighting for code blocks",
         "details": "**1. Install dependencies in `apps/blog/package.json`:**\n```json\n\"next-mdx-remote\": \"^5.0.0\",\n\"rehype-pretty-code\": \"^0.15.0\",\n\"shiki\": \"^1.24.2\"\n```\n\n**2. Create `apps/blog/src/lib/mdx/mdx-components.tsx`:**\n```tsx\nimport type { MDXComponents } from 'mdx/types';\nimport { Badge } from '@repo/ui';\n\nexport const mdxComponents: MDXComponents = {\n  h1: (props) => <h1 className=\"text-4xl font-bold mb-4\" {...props} />,\n  h2: (props) => <h2 className=\"text-3xl font-semibold mb-3\" {...props} />,\n  p: (props) => <p className=\"mb-4 leading-relaxed\" {...props} />,\n  pre: (props) => <pre className=\"overflow-x-auto p-4 rounded-lg bg-gray-900 text-white\" {...props} />,\n  code: (props) => <code className=\"font-mono text-sm\" {...props} />,\n  // Add more as needed\n};\n```\n\n**3. Configure rehype-pretty-code:**\nIn the detail page (`apps/blog/src/app/[locale]/[slug]/page.tsx`), when calling `<MDXRemote />`, pass options:\n```tsx\nimport { MDXRemote } from 'next-mdx-remote/rsc';\nimport rehypePrettyCode from 'rehype-pretty-code';\nimport { mdxComponents } from '~/lib/mdx/mdx-components';\n\nconst options = {\n  mdxOptions: {\n    rehypePlugins: [\n      [rehypePrettyCode, { theme: 'github-dark', keepBackground: true }],\n    ],\n  },\n};\n\n<MDXRemote source={content} components={mdxComponents} options={options} />\n```\n\n**4. Update `FileSystemBlogPostRepository` (task 16):**\n- When reading `.mdx` files, store raw MDX content (after frontmatter extraction) in `BlogPost.content` as a `LocalizedText` (one MDX string per locale)\n- The repository doesn't compile MDX—just reads raw strings; compilation happens at render time in the page component\n\n**No direct tests for this task—visual/integration verification only. Tested implicitly in task 18 page tests.**",
@@ -1164,7 +1164,7 @@
         "updatedAt": "2026-08-17T01:50:02.976Z"
       },
       {
-        "id": "20",
+        "id": 20,
         "title": "Implement RSS feeds (one per locale) as Route Handlers",
         "description": "Create /blog/<locale>/rss.xml endpoints that generate valid RSS 2.0 XML from blog posts",
         "details": "**1. Create `apps/blog/src/app/[locale]/rss.xml/route.ts`:**\n```ts\nimport { ListBlogPosts } from '@repo/application/blog';\nimport { type Locale, LOCALES } from '@repo/core/shared';\nimport { getServerContainer } from '~/lib/server/container';\n\nexport async function GET(\n  request: Request,\n  { params }: { params: Promise<{ locale: string }> }\n) {\n  const { locale } = await params;\n  const { blogPostRepository } = getServerContainer();\n  const result = await new ListBlogPosts(blogPostRepository).execute({ locale: locale as Locale });\n\n  if (result.isLeft()) {\n    return new Response('Failed to generate RSS', { status: 500 });\n  }\n\n  const posts = result.value;\n  const rss = generateRSS(posts, locale as Locale);\n\n  return new Response(rss, {\n    headers: { 'Content-Type': 'application/rss+xml; charset=utf-8' },\n  });\n}\n\nexport async function generateStaticParams() {\n  return LOCALES.map(locale => ({ locale }));\n}\n\nfunction generateRSS(posts: BlogPostSummaryDTO[], locale: Locale): string {\n  const siteUrl = 'https://wallace-ferreira.dev';\n  const items = posts.map(p => `\n    <item>\n      <title><![CDATA[${p.title}]]></title>\n      <description><![CDATA[${p.description}]]></description>\n      <link>${siteUrl}/blog/${locale}/${p.slug}</link>\n      <guid isPermaLink=\"true\">${siteUrl}/blog/${locale}/${p.slug}</guid>\n      <pubDate>${new Date(p.publishedAt).toUTCString()}</pubDate>\n    </item>\n  `).join('');\n\n  return `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n  <channel>\n    <title>Wallace Ferreira - Blog (${locale})</title>\n    <link>${siteUrl}/blog/${locale}</link>\n    <description>Technical blog by Wallace Ferreira</description>\n    <language>${locale}</language>\n    <atom:link href=\"${siteUrl}/blog/${locale}/rss.xml\" rel=\"self\" type=\"application/rss+xml\" />\n    ${items}\n  </channel>\n</rss>`;\n}\n```\n\n**2. Add RSS link to layout:**\nIn `apps/blog/src/app/[locale]/layout.tsx`, add to `<head>`:\n```tsx\n<link rel=\"alternate\" type=\"application/rss+xml\" title={`Blog - ${locale}`} href={`/blog/${locale}/rss.xml`} />\n```\n\n**3. Reference in `apps/blog/src/app/robots.ts` (if separate from site):**\nAllow all, no disallow rules for blog.\n\n**Tests (mandatory):**\n- `apps/blog/test/app/[locale]/rss.xml/route.test.ts`: mock `ListBlogPosts`, call GET handler, parse XML, verify structure (title, link, pubDate for each post), verify only the requested locale's posts are included",
@@ -1179,7 +1179,7 @@
         "updatedAt": "2026-08-17T02:07:39.994Z"
       },
       {
-        "id": "21",
+        "id": 21,
         "title": "Create sample blog post fixture and content directory structure",
         "description": "Establish content/posts/ directory with at least one complete example post for testing and validation",
         "details": "**1. Create directory structure:**\n```\ncontent/\n  posts/\n    sample-post/\n      meta.json\n      en-US.mdx\n      pt-BR.mdx\n      es.mdx\n      cover.png (optional, can be a placeholder)\n```\n\n**2. `content/posts/sample-post/meta.json`:**\n```json\n{\n  \"slug\": \"sample-post\",\n  \"publishedAt\": \"2026-08-01\",\n  \"tags\": [\"nextjs\", \"architecture\", \"ddd\"],\n  \"coverImage\": \"/content/posts/sample-post/cover.png\"\n}\n```\n\n**3. `content/posts/sample-post/en-US.mdx`:**\n```mdx\n---\ntitle: Sample Blog Post\ndescription: This is a sample post to demonstrate the blog architecture.\n---\n\n# Sample Blog Post\n\nThis is a **sample** blog post written in MDX.\n\n## Code Example\n\n```typescript\nfunction hello() {\n  console.log('Hello, world!');\n}\n```\n\nMore content here...\n```\n\n**4. Translate to `pt-BR.mdx` and `es.mdx`:**\n- `pt-BR.mdx`: Portuguese title/description/content\n- `es.mdx`: Spanish title/description/content\n\n**5. Add `.gitignore` exception if needed:**\nEnsure `content/` is committed (not ignored).\n\n**6. Validation:**\n- Run `FileSystemBlogPostRepository.findAll()` in a test/dev script to confirm the post parses correctly\n- Manually test the blog listing and detail pages in dev mode (`pnpm dev:blog` or similar)\n\n**No automated tests for this task—manual verification and used as fixture for other tests (e.g., task 16).**",
@@ -1189,11 +1189,12 @@
           "16",
           "17"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-08-27T01:21:01.957Z"
       },
       {
-        "id": "22",
+        "id": 22,
         "title": "Add blog-related Vercel deployment configuration and environment variables",
         "description": "Configure Vercel project settings for apps/blog deployment and multi-zone routing",
         "details": "**1. Create `apps/blog/vercel.json` (if needed for specific settings):**\n```json\n{\n  \"buildCommand\": \"pnpm build --filter=blog\",\n  \"outputDirectory\": \".next\"\n}\n```\n\n**2. Set up Vercel environment variables for `apps/blog`:**\n- `NEXT_PUBLIC_SITE_URL`: `https://wallace-ferreira.dev`\n- Any other public env vars needed (GA tracking, etc.)\n\n**3. Configure `apps/site` Vercel project:**\n- Add `BLOG_APP_URL` environment variable pointing to the `apps/blog` Vercel deployment URL (e.g., `https://blog-app-XXXX.vercel.app`)\n- This is used in the `rewrites()` function (task 17) to route `/blog` traffic to the blog app\n\n**4. Deploy both apps:**\n- Deploy `apps/blog` as a separate Vercel project (name: `portfolio-blog` or similar)\n- Deploy `apps/site` with the updated `BLOG_APP_URL` env var\n- Verify multi-zone routing: `wallace-ferreira.dev/blog` serves content from `apps/blog`\n\n**5. Test in production:**\n- Visit `wallace-ferreira.dev/blog/en-US` and verify it serves the blog app, not 404\n- Check RSS feed: `wallace-ferreira.dev/blog/en-US/rss.xml`\n- Verify OG images, canonical URLs, sitemaps\n\n**No automated tests—deployment/infrastructure task. Validated via manual production testing.**",
@@ -1204,18 +1205,33 @@
           "18",
           "20"
         ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-08-27T01:21:05.098Z"
+      },
+      {
+        "id": 23,
+        "title": "Blog/site shared layout & cross-zone integration",
+        "description": "Epic tracked in tag 'feature-blog-shared-layout' (10 tasks): shared packages/layout header/footer, cross-zone locale-preserving links, packages/seo reuse in apps/blog, GA4, shared security headers. See .taskmaster/docs/prd-blog-shared-layout.md.",
+        "details": "",
+        "testStrategy": "",
         "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
         "subtasks": []
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-17T02:07:39.994Z",
+      "lastModified": "2026-08-27T01:21:05.098Z",
       "taskCount": 22,
-      "completedCount": 20,
+      "completedCount": 22,
       "tags": [
         "master"
-      ]
+      ],
+      "created": "2026-08-27T02:15:00.720Z",
+      "description": "Tasks for master context",
+      "updated": "2026-08-27T02:30:10.779Z"
     }
   },
   "sprint-0": {
@@ -7434,6 +7450,603 @@
       "created": "2026-07-06T03:38:12.441Z",
       "description": "Tasks for project-weight-ordering context",
       "updated": "2026-07-06T03:39:58.023Z"
+    }
+  },
+  "feature-blog-shared-layout": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Extract security headers into shared configuration",
+        "description": "Consolidate SECURITY_HEADERS from both apps/site and apps/blog into a single shared source to prevent divergence",
+        "details": "Create `packages/config` (new package) or extend `packages/utils` with a shared `SECURITY_HEADERS` export. The site's next.config.mjs includes CSP with GA/analytics sources, while blog's config has a minimal set. The shared config must support the site's full CSP policy (including dynamic `isProduction` check for unsafe-eval in dev mode). Both apps' next.config.mjs files will import and consume this shared array. Include CSP directives for: default-src 'self', script-src with GTM/jsdelivr, style-src, img-src, font-src, connect-src with GA domains and iconify APIs, and frame-ancestors 'none'. Also include X-Frame-Options: DENY, X-Content-Type-Options: nosniff, and Referrer-Policy: strict-origin-when-cross-origin.",
+        "testStrategy": "Unit tests verifying the SECURITY_HEADERS export structure; manual verification that both apps serve identical security headers in production (curl -I); verify dev mode includes unsafe-eval for React dev tools.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create packages/config package structure with SECURITY_HEADERS builder",
+            "description": "Set up new packages/config package following monorepo conventions and implement the SECURITY_HEADERS builder function with isProduction parameter",
+            "dependencies": [],
+            "details": "Create packages/config directory with package.json (name: @repo/config, exports: ./src/index.ts), tsconfig.json extending base config, and build scripts matching existing packages. Implement src/securityHeaders.ts exporting a buildSecurityHeaders(isProduction: boolean) function that returns the full SECURITY_HEADERS array. Include all CSP directives: default-src 'self', script-src with 'self' + GTM/jsdelivr sources + conditional 'unsafe-eval' when !isProduction, style-src 'self' 'unsafe-inline', img-src 'self' data: https:, font-src 'self' data:, connect-src 'self' + GA domains + iconify APIs, frame-ancestors 'none'. Also include X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin. Export both the function and a SIZE constant if needed. Add pnpm build script and ensure package compiles correctly.",
+            "status": "pending",
+            "testStrategy": "Unit tests in packages/config/test/securityHeaders.test.ts verifying: (1) buildSecurityHeaders(true) returns array with correct CSP directives excluding unsafe-eval, (2) buildSecurityHeaders(false) includes 'unsafe-eval' in script-src for dev mode, (3) all expected headers present (X-Frame-Options, X-Content-Type-Options, Referrer-Policy), (4) CSP string format is valid (key: value pairs). Run pnpm test in packages/config to verify all tests pass."
+          },
+          {
+            "id": 2,
+            "title": "Update apps/site/next.config.mjs to use shared security headers",
+            "description": "Replace the inline SECURITY_HEADERS array in apps/site with an import from @repo/config and verify production headers",
+            "dependencies": [
+              1
+            ],
+            "details": "In apps/site/next.config.mjs, add import { buildSecurityHeaders } from '@repo/config' at the top. Remove the existing SECURITY_HEADERS constant definition (approximately 20 lines). In the nextConfig.headers() async function, replace the hardcoded array with: const SECURITY_HEADERS = buildSecurityHeaders(process.env.NODE_ENV === 'production'). Ensure the dynamic isProduction check is preserved by passing the correct boolean. Verify the site still builds and serves headers correctly. Update packages/site/package.json dependencies to include @repo/config workspace reference if not already present via turbo.",
+            "status": "pending",
+            "testStrategy": "Integration tests: (1) pnpm build in apps/site succeeds without errors, (2) pnpm dev in apps/site and verify dev server starts, (3) curl -I http://localhost:3000 in dev mode confirms Content-Security-Policy includes 'unsafe-eval', (4) pnpm build && pnpm start, then curl -I http://localhost:3000 in production mode confirms CSP excludes 'unsafe-eval', (5) verify all other headers present (X-Frame-Options, X-Content-Type-Options, Referrer-Policy). Manual browser check: open site in dev mode, verify React DevTools work (confirming unsafe-eval is present)."
+          },
+          {
+            "id": 3,
+            "title": "Update apps/blog/next.config.mjs to adopt full security headers",
+            "description": "Replace the minimal SECURITY_HEADERS in apps/blog with the shared configuration from @repo/config",
+            "dependencies": [
+              1
+            ],
+            "details": "In apps/blog/next.config.mjs, add import { buildSecurityHeaders } from '@repo/config'. Remove the existing minimal SECURITY_HEADERS array (currently only 3 directives). Replace with: const SECURITY_HEADERS = buildSecurityHeaders(process.env.NODE_ENV === 'production'). This upgrades the blog to the full CSP policy including GTM, GA, iconify, and other sources required for analytics and assets. Verify blog builds and runs correctly with the expanded policy. Update packages/blog/package.json dependencies to include @repo/config workspace reference if needed.",
+            "status": "pending",
+            "testStrategy": "Integration tests: (1) pnpm build in apps/blog succeeds, (2) pnpm dev in apps/blog and curl -I http://localhost:3001 (or blog port) confirms full CSP with unsafe-eval in dev mode, (3) pnpm build && pnpm start, then curl -I confirms production CSP without unsafe-eval, (4) verify X-Frame-Options, X-Content-Type-Options, Referrer-Policy all present. Manual verification: open blog in browser, check Network tab to confirm CSP header matches site's policy, verify no console CSP violation errors when loading assets/analytics."
+          },
+          {
+            "id": 4,
+            "title": "Verify header parity and document shared configuration usage",
+            "description": "Confirm both apps serve identical security headers in production and add documentation for the shared config package",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Build both apps in production mode (pnpm build in apps/site and apps/blog). Start both production servers and use curl -I to fetch headers from both. Compare the Content-Security-Policy header strings character-by-character to ensure they are identical. Verify all other security headers match. Create packages/config/README.md documenting: (1) purpose of the package, (2) buildSecurityHeaders(isProduction: boolean) API and return type, (3) usage example from next.config.mjs, (4) how to add new CSP sources when needed, (5) reminder to test in both dev and production modes. Add inline JSDoc comments to the buildSecurityHeaders function explaining the isProduction parameter and unsafe-eval conditional.",
+            "status": "pending",
+            "testStrategy": "Manual verification: (1) curl -I https://site-domain.com and curl -I https://blog-domain.com (or localhost prod servers), diff the CSP header strings to confirm identical, (2) verify both apps include all expected CSP directives and security headers, (3) code review of packages/config/README.md to ensure clarity and completeness, (4) verify JSDoc comments render correctly in IDE hover tooltips. Regression check: ensure no existing site or blog functionality breaks due to header changes (check analytics, fonts, icons load correctly)."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Create packages/layout with SiteHeader component",
+        "description": "Extract apps/site's Header component into a new shared packages/layout package as SiteHeader, making it consumable by both apps",
+        "details": "Create `packages/layout` following monorepo conventions (package.json with exports, tsconfig, build scripts). Move `apps/site/src/components/Layout/Header/index.tsx` to `packages/layout/src/SiteHeader/index.tsx`. The component must remain presentational-only (no @repo/application imports). It receives `locale: Locale`, `onToggle: () => void`, `isOpen: boolean` as props. The logo is currently a static import from assets — extract logo.svg to `packages/layout/assets` or accept it as a prop. Dependencies: React, next-intl (useTranslations for aria-labels), Next.js (NextLink), @repo/ui (Button, Icon), @repo/tailwind-config (screens). Refactor `apps/site/src/components/Layout/Header` to re-export from `@repo/layout` instead of duplicating. The component must support mobile hamburger toggle and responsive logo sizing (66x44 mobile, 99x66 desktop).",
+        "testStrategy": "Component tests in packages/layout/test/SiteHeader.test.tsx verifying: renders logo link with locale, calls onToggle when menu button clicked, displays correct icon based on isOpen state, responsive behavior. Integration test in apps/site ensuring existing Header behavior unchanged.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create packages/layout package structure with build configuration",
+            "description": "Set up the new packages/layout package following monorepo conventions with proper package.json, TypeScript configuration, and build scripts",
+            "dependencies": [],
+            "details": "Create `packages/layout/` directory. Add `package.json` with: name '@repo/layout', private true, exports mapping './SiteHeader' to './dist/SiteHeader/index.js', main/module/types fields, build script 'tsc'. Create `tsconfig.json` extending from root with composite: true, outDir: 'dist', include: ['src/**/*']. Add dependencies: react, react-dom, next, next-intl, @repo/ui, @repo/tailwind-config (all as peerDependencies to avoid duplication). Update root `pnpm-workspace.yaml` if needed. Add `packages/layout/README.md` describing the package purpose. Configure build in root package.json if using turbo/nx.",
+            "status": "pending",
+            "testStrategy": "Verify package builds successfully with `pnpm build` from packages/layout. Check that dist/ output contains proper ESM exports. Validate tsconfig extends correctly and no compilation errors occur."
+          },
+          {
+            "id": 2,
+            "title": "Extract Header component to packages/layout/src/SiteHeader",
+            "description": "Move the Header component from apps/site to packages/layout as SiteHeader, refactoring static logo import to package asset or prop pattern",
+            "dependencies": [
+              1
+            ],
+            "details": "Copy `apps/site/src/components/Layout/Header/index.tsx` to `packages/layout/src/SiteHeader/index.tsx`. Refactor component to accept explicit props: `locale: Locale`, `onToggle: () => void`, `isOpen: boolean`. Decision on logo: extract `logo.svg` from `apps/site/src/assets/images/` to `packages/layout/assets/logo.svg` and import it within SiteHeader, OR accept `logoSrc: string` as prop for flexibility (recommended for reusability). Update imports: ensure next-intl useTranslations works, NextLink from 'next/link', Button/Icon from '@repo/ui', screens from '@repo/tailwind-config'. Maintain responsive behavior: logo size 66x44 mobile, 99x66 desktop using screens.md breakpoint. Keep presentational-only constraint (no @repo/application imports). Export SiteHeader from `packages/layout/src/index.ts`.",
+            "status": "pending",
+            "testStrategy": "Manual code review verifying no @repo/application imports present. Build packages/layout and verify no TypeScript errors. Visual inspection of component JSX matching original Header structure."
+          },
+          {
+            "id": 3,
+            "title": "Write component tests for SiteHeader",
+            "description": "Create comprehensive test suite for SiteHeader component verifying props handling, user interactions, and responsive rendering",
+            "dependencies": [
+              2
+            ],
+            "details": "Create `packages/layout/test/SiteHeader.test.tsx` using React Testing Library and Vitest (or Jest, matching project conventions). Test cases: (1) renders logo link with correct href including locale prop, (2) calls onToggle callback when hamburger menu button clicked, (3) displays Menu icon when isOpen=false and X icon when isOpen=true, (4) renders logo with responsive dimensions (mock window.matchMedia for mobile/desktop breakpoints or test className application), (5) applies correct aria-labels from next-intl useTranslations mock. Mock next-intl's useTranslations to return test strings. Mock Next.js Link component. Follow existing test patterns from the 339 test files in codebase (check apps/site/test/ for Header.test.tsx patterns if exists).",
+            "status": "pending",
+            "testStrategy": "Run `pnpm test` in packages/layout. Verify all 5+ test cases pass with >90% coverage on SiteHeader component. Check test output for any missing edge cases (null props, undefined handlers, etc.)."
+          },
+          {
+            "id": 4,
+            "title": "Refactor apps/site to consume SiteHeader from @repo/layout",
+            "description": "Update apps/site to import and use SiteHeader from packages/layout instead of local Header component",
+            "dependencies": [
+              3
+            ],
+            "details": "In `apps/site/src/components/Layout/Header/index.tsx`, replace implementation with re-export: `export { SiteHeader as default } from '@repo/layout/SiteHeader'` or fully replace file content with `'use client'; import { SiteHeader } from '@repo/layout'; export default SiteHeader;`. Update parent component that renders Header (likely `apps/site/src/components/Layout/index.tsx` or page layout) to pass logo prop if using prop pattern: `<Header locale={locale} onToggle={toggleMenu} isOpen={menuOpen} logoSrc=\"/assets/images/logo.svg\" />`. If using package asset pattern, no logoSrc needed. Update `apps/site/package.json` dependencies to include `@repo/layout: \"workspace:*\"`. Run `pnpm install` to link workspace dependency. Verify mobile hamburger toggle functionality and responsive logo sizing (66x44 mobile, 99x66 desktop) still work correctly.",
+            "status": "pending",
+            "testStrategy": "Integration test: run apps/site dev server, navigate to homepage, verify header renders with logo, click hamburger menu button on mobile viewport (toggle state changes icon), resize browser to desktop (logo scales to 99x66). Run existing apps/site test suite (if Header.test.tsx exists) and verify no regressions. Visual regression test comparing before/after screenshots of header on mobile and desktop viewports."
+          },
+          {
+            "id": 5,
+            "title": "Verify cross-app compatibility and finalize logo asset strategy",
+            "description": "Ensure SiteHeader works correctly in both apps/site and apps/blog contexts, and document logo asset decision",
+            "dependencies": [
+              4
+            ],
+            "details": "If logo was extracted to `packages/layout/assets/logo.svg`, verify it's properly exported in package.json (`\"./assets/*\": \"./assets/*\"`) and accessible from consuming apps. If using prop pattern, document in `packages/layout/README.md` that consumers must provide logoSrc prop pointing to their logo asset. Test SiteHeader in apps/blog context (even if blog layout isn't fully implemented yet): create temporary test page in apps/blog importing SiteHeader with same props structure, verify it renders without errors and handles locale/toggle/isOpen correctly. Check bundle size impact: compare apps/site bundle before/after extraction (should be similar or smaller due to shared chunk). Update `packages/layout/package.json` keywords and description for discoverability. Add usage example in README showing both apps/site and apps/blog import patterns.",
+            "status": "pending",
+            "testStrategy": "Build both apps/site and apps/blog successfully with no TypeScript errors. Run apps/blog dev server with temporary SiteHeader integration, verify no console errors and component renders. Bundle analysis: check that @repo/layout is properly shared chunk, not duplicated. Code review of README documentation completeness."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Create packages/layout with SiteFooter component",
+        "description": "Extract apps/site's ContactSection footer into packages/layout as SiteFooter, or create a generic footer if contact section is site-specific",
+        "details": "Analyze `apps/site/src/features/contact/ContactSection` — it's a client component with dynamic ContactForm and ContactInfo. This is likely too site-specific to share directly. Instead, create a generic `packages/layout/src/SiteFooter/index.tsx` that accepts children or config for rendering arbitrary footer content (links, copyright, social icons). The blog may not need the full contact form. Alternative: SiteFooter accepts `sections: React.ReactNode[]` to compose different footer content per app. Decide during implementation whether to extract ContactSection's structure or provide a simpler, composable footer primitive. If the latter, apps/site continues using ContactSection but wraps it in the shared SiteFooter for consistent styling. Dependencies: React, @repo/ui primitives if needed.",
+        "testStrategy": "Component tests for SiteFooter verifying: renders provided children/sections, applies consistent styling/spacing. Integration test in apps/site ensuring footer renders correctly. Manual verification that blog can render a minimal footer without the contact form.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyze ContactSection to determine site-specific vs reusable footer structure",
+            "description": "Examine apps/site/src/features/contact/ContactSection to understand what parts are site-specific (ContactForm) versus what could be reused in a generic footer structure (layout, styling, sections pattern)",
+            "dependencies": [],
+            "details": "Read apps/site/src/features/contact/ContactSection and its dependencies (ContactForm, ContactInfo). Document: (1) component structure - how it's composed, what's client-side, (2) site-specific elements - ContactForm with form submission logic, email/phone fields, (3) potentially reusable patterns - section layout, grid/flex structure, social links, copyright text, responsive behavior. Decision criteria: if ContactSection's structure is tightly coupled to contact form, create a simpler composable SiteFooter primitive that accepts children/sections. If structure is generic, extract the shell and let apps provide content. Review packages/seo precedent (issue #960) for API design - parameterized per app, framework-agnostic. Output: documented analysis with recommendation on approach (wrapper primitive vs extracted structure).",
+            "status": "pending",
+            "testStrategy": null
+          },
+          {
+            "id": 2,
+            "title": "Design and implement generic SiteFooter component in packages/layout",
+            "description": "Create packages/layout/src/SiteFooter/index.tsx with a flexible API that supports both site's contact section and blog's minimal footer needs without duplicating site-specific logic",
+            "dependencies": [
+              1
+            ],
+            "details": "Based on subtask 1 analysis, implement SiteFooter in packages/layout. Recommended approach: composable primitive accepting `sections: React.ReactNode[]` or `children: React.ReactNode` to avoid coupling to ContactForm. Component requirements: (1) presentational-only, no @repo/application imports, (2) consistent styling/spacing for footer sections, (3) responsive grid/flex layout, (4) optional props for common footer elements (copyright text, social links array), (5) TypeScript types exported from index.ts. File structure: packages/layout/src/SiteFooter/index.tsx (main component), SiteFooter.types.ts (prop types). Dependencies: React, potentially @repo/ui primitives for consistent spacing/typography. The blog should be able to render a minimal footer (copyright + links) while site can compose ContactSection inside SiteFooter wrapper for consistent styling. Export from packages/layout/src/index.ts.",
+            "status": "pending",
+            "testStrategy": "Component tests in packages/layout/test/SiteFooter.test.tsx verifying: renders children correctly, renders sections array with proper spacing, applies consistent CSS classes, responsive behavior (mobile/desktop snapshots), handles empty/null children gracefully"
+          },
+          {
+            "id": 3,
+            "title": "Write component tests for SiteFooter verifying children/sections rendering",
+            "description": "Create comprehensive test suite for SiteFooter component ensuring it renders provided content with consistent styling and handles edge cases",
+            "dependencies": [
+              2
+            ],
+            "details": "Create packages/layout/test/SiteFooter.test.tsx following project testing standards (docs/08-TESTING.md). Test cases: (1) 'should render children when provided as ReactNode' - pass div with test content, verify rendered, (2) 'should render multiple sections with proper spacing when sections array provided' - pass 3 sections, verify all rendered with spacing classes, (3) 'should apply consistent footer styling classes' - verify className includes expected layout/spacing tokens, (4) 'should handle empty children gracefully' - pass null/undefined, verify no crash and renders container, (5) 'should render optional copyright and social links when provided' - if SiteFooter accepts these props, verify they render. Use @testing-library/react for rendering, test behavior not implementation. Naming convention: 'should <expected> when <context>'. Run with pnpm test from packages/layout. All tests must pass before proceeding.",
+            "status": "pending",
+            "testStrategy": "Unit tests using @testing-library/react. Verify component behavior: content rendering, styling application, edge case handling. Tests must follow 08-TESTING.md naming conventions and behavior-focused assertions."
+          },
+          {
+            "id": 4,
+            "title": "Integration test in apps/site ensuring footer renders correctly with SiteFooter",
+            "description": "Verify that apps/site can use the new SiteFooter component (either wrapping ContactSection or replacing it) without breaking existing footer functionality",
+            "dependencies": [
+              3
+            ],
+            "details": "Integration test approach: (1) if SiteFooter is a wrapper, update apps/site to import SiteFooter from @repo/layout and compose ContactSection inside it - verify existing contact form, contact info, and footer structure all render, (2) if ContactSection remains standalone, document why (too site-specific) and verify blog can use SiteFooter independently. Test file: apps/site/test/integration/footer.test.tsx. Test cases: 'should render footer with contact section in site app' - render page with footer, verify ContactForm and ContactInfo present, verify SiteFooter wrapper classes applied if using wrapper pattern. Manual verification: pnpm dev in apps/site, navigate to homepage, scroll to footer, confirm visual appearance unchanged, contact form functional. Screenshot comparison optional. The goal is ensuring no regression in site's footer while establishing pattern blog can adopt for minimal footer (copyright + links only).",
+            "status": "pending",
+            "testStrategy": "Integration test in apps/site verifying footer renders with all expected sections. Manual verification via pnpm dev confirming visual appearance and contact form functionality unchanged. Ensures no regression while establishing reusable pattern for blog."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Implement buildCrossZoneHref helper in packages/utils",
+        "description": "Create typed URL builder for cross-zone navigation that preserves locale, preventing silent locale loss when users cross app boundaries",
+        "details": "Add `packages/utils/src/buildCrossZoneHref.ts` (or `packages/layout/src/buildCrossZoneHref.ts` if layout-specific, decide during implementation). Function signature: `buildCrossZoneHref(targetZone: 'site' | 'blog', locale: Locale, path: string = ''): string`. Implementation: if targetZone === 'site', return `/${locale}${path}` (site has no basePath); if targetZone === 'blog', return `/blog/${locale}${path}` (blog has basePath: '/blog'). Path must start with `/` or be empty string. Validate locale using `isLocale` from @repo/core. Export from packages/utils/src/index.ts. This helper centralizes the multi-zone locale-preservation rule so every nav link uses the same logic instead of ad-hoc string concatenation.",
+        "testStrategy": "Unit tests in packages/utils/test/buildCrossZoneHref.test.ts covering: all (targetZone, locale) combinations for each of the 3 locales ('en-US', 'pt-BR', 'es'), path variations (empty, root `/`, nested `/foo/bar`), rejects invalid locale with error or returns fallback. Verify blog URLs include `/blog` prefix, site URLs do not.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement core buildCrossZoneHref function in packages/utils",
+            "description": "Create packages/utils/src/buildCrossZoneHref.ts with the core function that handles site vs blog basePath logic and locale validation",
+            "dependencies": [],
+            "details": "Create packages/utils/src/buildCrossZoneHref.ts with signature `buildCrossZoneHref(targetZone: 'site' | 'blog', locale: Locale, path?: string): string`. Import `Locale` and `isLocale` from @repo/core. Implement logic: validate locale using isLocale (throw or return error if invalid), normalize path to ensure it starts with '/' or is empty string, if targetZone === 'site' return `/${locale}${path}`, if targetZone === 'blog' return `/blog/${locale}${path}`. Add JSDoc comments explaining the zone basePath rules. This is a pure function with no side effects, approximately 15-20 lines of typed TypeScript.",
+            "status": "pending",
+            "testStrategy": "Unit tests will be added in subtask 2. This subtask focuses on implementation only."
+          },
+          {
+            "id": 2,
+            "title": "Write comprehensive unit tests for buildCrossZoneHref",
+            "description": "Create packages/utils/test/buildCrossZoneHref.test.ts with exhaustive test coverage for all zones, locales, and path variations",
+            "dependencies": [
+              1
+            ],
+            "details": "Create packages/utils/test/buildCrossZoneHref.test.ts following existing test patterns in packages/utils. Cover all combinations: 2 zones ('site', 'blog') × 3 locales ('en-US', 'pt-BR', 'es') × 3 path variations (empty string, root '/', nested '/foo/bar') = 18 core test cases. Add edge cases: invalid locale handling (expect error or fallback), path without leading slash (verify normalization or error), path with trailing slash (verify preservation or normalization). Use describe blocks to organize by zone, nested describe for locale groups. Verify exact output strings match expected format. Aim for ~20-25 test cases total to achieve comprehensive coverage per project test culture (339 existing test files).",
+            "status": "pending",
+            "testStrategy": "Run `pnpm test packages/utils/test/buildCrossZoneHref.test.ts` to verify all tests pass. Verify coverage report shows 100% line/branch coverage for buildCrossZoneHref.ts. Manual verification: check test output confirms all locale×zone×path combinations produce correct URLs."
+          },
+          {
+            "id": 3,
+            "title": "Export buildCrossZoneHref from packages/utils public API",
+            "description": "Add buildCrossZoneHref to packages/utils/src/index.ts following existing export patterns to make it available as @repo/utils/buildCrossZoneHref or via main @repo/utils barrel export",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Open packages/utils/src/index.ts and add export statement following existing patterns. The package currently exports multiple modules (@repo/utils, @repo/utils/hooks, @repo/utils/validator, @repo/utils/env). Determine if buildCrossZoneHref should be: (a) exported directly from main barrel `export { buildCrossZoneHref } from './buildCrossZoneHref'` for import as `import { buildCrossZoneHref } from '@repo/utils'`, or (b) exported as separate subpath `export * from './buildCrossZoneHref'` in a new index file for `import { buildCrossZoneHref } from '@repo/utils/buildCrossZoneHref'`. Prefer option (a) for simplicity unless function is large/complex. Verify TypeScript types are exported correctly. Update packages/utils/package.json exports field if using subpath pattern.",
+            "status": "pending",
+            "testStrategy": "Create minimal test file importing buildCrossZoneHref via public API: `import { buildCrossZoneHref } from '@repo/utils'` and verify it resolves correctly. Run `pnpm build` in packages/utils and verify no TypeScript errors. Check dist/ output includes buildCrossZoneHref types and implementation."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Refactor apps/site to consume packages/layout components",
+        "description": "Replace apps/site's existing Header with the shared SiteHeader from packages/layout, update nav links to use buildCrossZoneHref",
+        "details": "Update `apps/site/src/components/Layout/Header/index.tsx` to re-export `SiteHeader` from `@repo/layout` (or delete and update import paths). Update `apps/site/src/components/Layout/AppLayout/index.tsx` to import SiteHeader from `@repo/layout`. Refactor `apps/site/src/components/Layout/SideNavigation` to use `buildCrossZoneHref` for any links pointing to `/blog` (currently those links likely don't exist or use plain hrefs). The SideNavigation menu items should include a Blog link constructed with `buildCrossZoneHref('blog', locale, '')`. Preserve existing mobile/desktop navigation behavior (drawer, toggle state). If SiteFooter is generic, refactor AppLayout's footer to use it; otherwise continue using ContactSection directly.",
+        "testStrategy": "Integration tests verifying: Header renders with correct logo, mobile menu toggles, SideNavigation includes Blog link with correct locale-prefixed URL. Manual browser verification: click Blog link from site, confirm lands on /blog/{locale}. Existing tests for Header, AppLayout, SideNavigation must pass without modification (or updated minimally for import path changes).",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Update apps/site Header to use SiteHeader from @repo/layout",
+            "description": "Replace apps/site's local Header implementation with the shared SiteHeader component from packages/layout, updating import paths in AppLayout and removing or converting the local Header component to a re-export",
+            "dependencies": [],
+            "details": "Modify `apps/site/src/components/Layout/AppLayout/index.tsx` to import `SiteHeader` from `@repo/layout` instead of the local Header component. Update `apps/site/src/components/Layout/Header/index.tsx` to either re-export SiteHeader from `@repo/layout` (maintaining backward compatibility for any other imports) or delete the file entirely if no other modules depend on it. Verify that the SiteHeader receives the same props (locale from useLocale(), onToggle callback, isOpen state) that the original Header component expected. Preserve existing mobile/desktop toggle behavior and ensure the component tree structure remains unchanged to avoid breaking existing tests.",
+            "status": "pending",
+            "testStrategy": "Run existing integration tests in apps/site/tests/ to verify Header renders with correct logo and locale-prefixed links. Verify mobile menu toggle functionality works correctly. Check that no import errors occur and the application builds successfully. Manual browser verification: load site, verify header appears correctly, test mobile menu toggle on responsive viewport."
+          },
+          {
+            "id": 2,
+            "title": "Add Blog navigation link to SideNavigation using buildCrossZoneHref",
+            "description": "Refactor apps/site/src/components/Layout/SideNavigation to include a Blog menu item that uses buildCrossZoneHref helper to generate locale-aware cross-zone navigation URLs",
+            "dependencies": [
+              1
+            ],
+            "details": "Update `apps/site/src/components/Layout/SideNavigation/index.tsx` to import `buildCrossZoneHref` from `@repo/utils` (or `@repo/layout` depending on task 4 implementation decision). Import `useLocale` hook to get current locale. Add a new Blog menu item in the first navigation section (around lines 41-71, near Home/Projects/About/Resume links). The Blog link should use `buildCrossZoneHref('blog', locale, '')` to construct the href, ensuring it points to `/blog/{locale}`. Position the Blog link appropriately in the navigation order (suggest after Home, before or after Projects). Preserve all existing navigation behavior including drawer state management with useBoolean, scroll lock functionality, responsive mobile/desktop rendering, and icon/label structure for consistency with existing menu items.",
+            "status": "pending",
+            "testStrategy": "Integration tests verifying: SideNavigation renders Blog link with correct text and icon, Blog link href matches expected pattern `/blog/{locale}` for each supported locale (en-US, pt-BR, es), clicking Blog link navigates correctly (mock Next.js Link component if needed). Manual browser verification: open site in all supported locales, open mobile navigation drawer, verify Blog link appears and points to correct locale-prefixed blog URL, verify existing navigation items still work correctly."
+          },
+          {
+            "id": 3,
+            "title": "Update AppLayout footer to use SiteFooter or preserve ContactSection",
+            "description": "Refactor apps/site AppLayout footer implementation to consume shared SiteFooter from packages/layout if a generic implementation was created in task 3, otherwise continue using the existing ContactSection component directly",
+            "dependencies": [
+              2
+            ],
+            "details": "Review the implementation outcome of task 3 to determine if a generic SiteFooter component was created. If SiteFooter exists in `packages/layout` and supports the site's contact section requirements (either through children composition or section configuration props), update `apps/site/src/components/Layout/AppLayout/index.tsx` to import and use `SiteFooter` from `@repo/layout`, passing ContactSection as children or configuring it via props. If task 3 determined ContactSection is too site-specific and created only a minimal generic footer, preserve the existing direct usage of ContactSection in AppLayout. Ensure footer rendering behavior, styling, and layout remain identical to current implementation. Document the decision and any integration patterns established for future reference.",
+            "status": "pending",
+            "testStrategy": "Integration tests verifying: footer section renders in AppLayout, ContactSection (or SiteFooter with ContactSection content) displays correctly with all expected elements (contact form, contact info, social links), footer maintains existing responsive behavior and styling. Visual regression testing recommended if available. Manual browser verification: scroll to footer on site pages, verify contact form functionality, verify all footer links and content render correctly across different viewport sizes."
+          },
+          {
+            "id": 4,
+            "title": "Run integration tests and verify cross-zone navigation",
+            "description": "Execute full integration test suite for apps/site to verify all refactored components work correctly, Header renders properly, SideNavigation includes Blog link with correct locale-prefixed URLs, and all existing tests pass without breaking changes",
+            "dependencies": [
+              3
+            ],
+            "details": "Run the complete integration test suite in `apps/site/tests/` using the project's test command (likely `pnpm test` or similar). Verify all existing tests pass without modification, or update only import paths if Header/Footer components were moved. Add new integration tests specifically covering: (1) SiteHeader renders from @repo/layout with correct logo and props, (2) SideNavigation Blog link appears in navigation menu with href matching `/blog/{locale}` pattern for all supported locales, (3) clicking Blog link produces correct navigation behavior, (4) mobile menu drawer toggle functionality preserved, (5) footer renders correctly whether using SiteFooter or ContactSection. Perform manual browser verification: start dev server, test navigation flow from site to blog by clicking new Blog link, verify locale is preserved in URL (e.g., site /en-US → blog /blog/en-US), test in all three supported locales (en-US, pt-BR, es), verify responsive behavior on mobile and desktop viewports.",
+            "status": "pending",
+            "testStrategy": "Automated integration tests must all pass with exit code 0. New tests specifically verify: Header component identity (SiteHeader from @repo/layout), Blog navigation link presence and correct href format, locale preservation across navigation. Manual verification checklist: (1) site loads correctly in all locales, (2) Blog link visible in navigation, (3) Blog link points to /blog/{locale}, (4) clicking Blog link successfully navigates to blog app, (5) mobile menu toggles correctly, (6) footer renders completely, (7) no console errors or warnings, (8) build process completes successfully with no type errors or linting issues."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Integrate packages/layout components into apps/blog",
+        "description": "Add SiteHeader and SiteFooter to apps/blog's layout to unify visual identity with apps/site, using buildCrossZoneHref for site links",
+        "details": "Create `apps/blog/src/components/Layout` directory. Create `apps/blog/src/components/Layout/BlogLayout.tsx` (or similar) that wraps children with SiteHeader and SiteFooter. SiteHeader receives locale from params, toggle state for mobile menu (useState), and logo. SiteFooter renders minimal content (e.g., copyright, link back to site). Import `buildCrossZoneHref` and construct nav items: site home link using `buildCrossZoneHref('site', locale, '')`, blog home using `buildCrossZoneHref('blog', locale, '')`. Update `apps/blog/src/app/[locale]/layout.tsx` to wrap children with BlogLayout. The blog currently has no header/footer, so this is net-new UI. Ensure mobile menu toggle state is managed (client component for interactivity). The blog's layout will now match the site's header/footer chrome, creating a unified experience.",
+        "testStrategy": "Component tests for BlogLayout verifying: renders SiteHeader with locale, renders SiteFooter, passes children through. Integration test in apps/blog: build static pages, verify header/footer present on all routes. Manual browser verification: navigate from blog to site via header link, confirm locale preserved (/blog/en-US → /en-US).",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create apps/blog/src/components/Layout directory and BlogLayout component structure",
+            "description": "Create the directory structure for layout components in apps/blog and scaffold the BlogLayout component that will wrap children with SiteHeader and SiteFooter",
+            "dependencies": [],
+            "details": "Create `apps/blog/src/components/Layout` directory. Create `apps/blog/src/components/Layout/BlogLayout.tsx` as a client component ('use client' directive) to support mobile menu toggle state. Scaffold the component to accept children as props and locale (either as prop or via useLocale() hook from next-intl). Import SiteHeader and SiteFooter from @repo/layout. Set up useState for mobile menu toggle (isOpen state). The component should render: SiteHeader at top, children in main content area, SiteFooter at bottom. This is greenfield work since the blog currently has no header/footer UI.",
+            "status": "pending",
+            "testStrategy": "Component test in apps/blog/test/components/Layout/BlogLayout.test.tsx verifying: component renders without crashing, accepts and renders children prop, initializes toggle state to false, SiteHeader and SiteFooter are rendered in correct order"
+          },
+          {
+            "id": 2,
+            "title": "Construct navigation items using buildCrossZoneHref for bidirectional site-blog navigation",
+            "description": "Build the navigation items array for SiteHeader using buildCrossZoneHref to create cross-zone links between site and blog, ensuring locale preservation",
+            "dependencies": [
+              1
+            ],
+            "details": "Import `buildCrossZoneHref` from @repo/seo in BlogLayout. Construct nav items array with: (1) site home link using `buildCrossZoneHref('site', locale, '')` with label like 'Portfolio' or 'Home', (2) blog home link using `buildCrossZoneHref('blog', locale, '')` with label 'Blog'. The locale must be obtained either from props passed down from server layout or via useLocale() hook. Pass this navItems array to SiteHeader along with locale prop. Handle the server/client boundary: the parent layout.tsx receives async params, so locale must be passed down to BlogLayout as a prop. Update BlogLayout to accept locale: Locale as a required prop.",
+            "status": "pending",
+            "testStrategy": "Component test verifying: buildCrossZoneHref is called with correct arguments ('site', locale, '') and ('blog', locale, ''), nav items array has expected structure with href and label properties, SiteHeader receives navItems prop. Integration test building static pages and checking generated hrefs include correct locale prefix and zone base paths"
+          },
+          {
+            "id": 3,
+            "title": "Wire BlogLayout mobile menu toggle state and event handlers to SiteHeader",
+            "description": "Connect the mobile menu toggle state managed in BlogLayout to SiteHeader's onToggle callback and isOpen prop for interactive menu behavior",
+            "dependencies": [
+              2
+            ],
+            "details": "In BlogLayout, implement useState hook: `const [isMenuOpen, setIsMenuOpen] = useState(false)`. Create toggle handler: `const handleToggle = () => setIsMenuOpen(prev => !prev)`. Pass `onToggle={handleToggle}` and `isOpen={isMenuOpen}` props to SiteHeader. Ensure SiteHeader's toggle button behavior works correctly in blog context (same as in apps/site). The logo prop can either be imported statically from @repo/layout/assets or passed as a prop if configurable. For MVP, static import is acceptable. This completes the interactive header functionality for the blog.",
+            "status": "pending",
+            "testStrategy": "Component test verifying: toggle handler updates isMenuOpen state correctly, SiteHeader receives isOpen and onToggle props, clicking menu button calls onToggle callback. Manual browser verification: open blog in dev mode, click mobile menu toggle, confirm menu opens/closes, verify no console errors"
+          },
+          {
+            "id": 4,
+            "title": "Update apps/blog/src/app/[locale]/layout.tsx to wrap children with BlogLayout",
+            "description": "Integrate BlogLayout into the blog's root layout to apply SiteHeader and SiteFooter chrome to all blog routes",
+            "dependencies": [
+              3
+            ],
+            "details": "Open `apps/blog/src/app/[locale]/layout.tsx` (currently ~50 lines with basic NextIntlClientProvider wrapper). Import BlogLayout from `@/components/Layout/BlogLayout`. Extract locale from params: since params is now async in Next.js 15, await it first: `const { locale } = await params`. Wrap the existing children with `<BlogLayout locale={locale}>{children}</BlogLayout>`. Ensure the NextIntlClientProvider still wraps BlogLayout. The final structure should be: RootLayout receives async params, awaits locale, returns HTML with body containing NextIntlClientProvider wrapping BlogLayout wrapping children. This applies header/footer to all blog routes (/blog/[locale], /blog/[locale]/[slug]).",
+            "status": "pending",
+            "testStrategy": "Integration test: run `pnpm build` in apps/blog, verify build succeeds. Check generated static HTML for routes includes SiteHeader and SiteFooter markup. Unit test for layout component if feasible (Next.js layouts are hard to unit test). Manual browser verification: navigate to /blog/en, /blog/pt-BR, /blog/en/some-post, confirm header and footer present on all routes"
+          },
+          {
+            "id": 5,
+            "title": "Run comprehensive tests and manual verification of cross-zone navigation and locale preservation",
+            "description": "Execute component tests, integration tests, and manual browser testing to verify BlogLayout integration, header/footer presence, and cross-zone navigation with locale preservation",
+            "dependencies": [
+              4
+            ],
+            "details": "Run all component tests for BlogLayout (should already be written in previous subtasks). Run integration tests: build apps/blog statically, programmatically verify header/footer elements present in generated HTML for multiple routes and locales. Manual browser testing checklist: (1) Start blog in dev mode, navigate to /blog/en, verify SiteHeader and SiteFooter render, (2) click site home link in header, confirm navigation to site with /en preserved, (3) from site, navigate back to blog, confirm /blog/en loads correctly, (4) repeat for /pt-BR locale, (5) test mobile menu toggle on small viewport, (6) verify no console errors or hydration mismatches. Document any issues found and fix before marking task complete. This is the final validation step ensuring the blog's unified visual identity with the site.",
+            "status": "pending",
+            "testStrategy": "Comprehensive test suite: component tests (BlogLayout renders correctly, toggle works, children passed through), integration tests (build verification, HTML inspection), manual tests (cross-zone navigation, locale preservation, mobile menu, visual parity with site). Acceptance criteria: all automated tests pass, manual checklist completed with no blocking issues, header/footer visually match site's chrome"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Integrate Google Analytics into apps/blog using @next/third-parties",
+        "description": "Wire @next/third-parties/google GoogleAnalytics component into apps/blog's layout, reusing the same GA4 property as apps/site for unified analytics",
+        "details": "Install `@next/third-parties` in `apps/blog` (check if already in package.json; apps/site already has it). Import `{ GoogleAnalytics } from '@next/third-parties/google'` in `apps/blog/src/app/[locale]/layout.tsx`. Add `<GoogleAnalytics gaId={env.gaMeasurementId} />` before closing </body>, mirroring apps/site/src/app/[locale]/layout.tsx:98. Ensure `apps/blog/src/config/env.ts` exposes `gaMeasurementId` (or `NEXT_PUBLIC_GA_MEASUREMENT_ID`). Both apps must use the **same GA4 measurement ID** — verify .env or Vercel env vars supply the same value to both apps. Update CSP in blog's next.config.mjs (via shared SECURITY_HEADERS from task 1) to allow GTM/GA domains (script-src, connect-src, img-src). The unified GA property will track both site and blog traffic in a single funnel.",
+        "testStrategy": "Manual verification: build blog in dev, confirm GA script tag present in HTML. Check browser Network tab for GTM/GA requests. In GA4 dashboard, verify events from /blog routes appear (may require deploying to staging/production). Unit test for env.gaMeasurementId presence if applicable.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Verify @next/third-parties dependency and expose gaMeasurementId in apps/blog env config",
+            "description": "Check if @next/third-parties is in apps/blog/package.json and install if missing. Ensure apps/blog/src/config/env.ts exposes gaMeasurementId (or NEXT_PUBLIC_GA_MEASUREMENT_ID) following the same pattern as apps/site. Verify both apps use the identical GA4 measurement ID from environment variables.",
+            "dependencies": [],
+            "details": "1. Check apps/blog/package.json for @next/third-parties dependency (check version against apps/site if present). 2. If missing, run `pnpm add @next/third-parties` in apps/blog workspace. 3. Read apps/site/src/config/env.ts to understand the gaMeasurementId exposure pattern. 4. Mirror the same pattern in apps/blog/src/config/env.ts, ensuring it reads from NEXT_PUBLIC_GA_MEASUREMENT_ID or equivalent env var. 5. Verify .env or Vercel environment variables supply the same GA4 measurement ID to both apps (check .env.local, .env.production, or Vercel dashboard). 6. Document the shared measurement ID requirement in apps/blog README or env.example if applicable.",
+            "status": "pending",
+            "testStrategy": "Manual verification: ensure apps/blog/package.json lists @next/third-parties with compatible version. Read apps/blog/src/config/env.ts and confirm gaMeasurementId export exists. Check that process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID is the same value across both apps' .env files. Unit test for env.gaMeasurementId presence if env config has test coverage."
+          },
+          {
+            "id": 2,
+            "title": "Import GoogleAnalytics component and add to apps/blog layout before closing body tag",
+            "description": "Import GoogleAnalytics from @next/third-parties/google in apps/blog/src/app/[locale]/layout.tsx and render <GoogleAnalytics gaId={env.gaMeasurementId} /> before the closing </body> tag, following the exact pattern from apps/site/src/app/[locale]/layout.tsx:98.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Open apps/site/src/app/[locale]/layout.tsx and locate line 98 where <GoogleAnalytics gaId={env.gaMeasurementId} /> is rendered. 2. Open apps/blog/src/app/[locale]/layout.tsx (created/modified in task 6). 3. Add import statement: `import { GoogleAnalytics } from '@next/third-parties/google'`. 4. Import env config: `import { env } from '@/config/env'` (adjust path as needed). 5. Locate the closing </body> tag in the layout component. 6. Insert <GoogleAnalytics gaId={env.gaMeasurementId} /> immediately before </body>, matching the site layout structure. 7. Ensure the component is outside any client-only boundaries if the layout has mixed server/client components.",
+            "status": "pending",
+            "testStrategy": "Component-level verification: build apps/blog in dev mode (`pnpm dev` in apps/blog), inspect HTML source for GA script tag injection. Check that gaId prop receives the correct measurement ID value. Browser DevTools: verify <script> tag with googletagmanager.com or google-analytics.com is present in the <head> or before </body>."
+          },
+          {
+            "id": 3,
+            "title": "Verify CSP headers allow GA domains and perform manual GA integration verification",
+            "description": "Confirm that shared SECURITY_HEADERS from task 1 include GTM/GA domains (googletagmanager.com, google-analytics.com) in script-src, connect-src, and img-src CSP directives. Perform manual verification: build blog, check GA script tag in HTML, verify Network requests to GA endpoints, and confirm GA4 dashboard shows /blog route events.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "1. Review the shared SECURITY_HEADERS implementation from task 1 (likely in packages/layout or apps/blog/next.config.mjs). 2. Verify CSP directives include: script-src allows *.googletagmanager.com, *.google-analytics.com; connect-src allows *.google-analytics.com, *.analytics.google.com, *.googletagmanager.com; img-src allows *.google-analytics.com, *.googletagmanager.com. 3. If missing, update CSP to include these domains. 4. Build apps/blog in dev mode and open in browser. 5. Inspect HTML source: confirm <script> tag with GA/GTM URL is present. 6. Open browser Network tab (filter by 'google'), navigate blog pages, verify requests to www.google-analytics.com/g/collect or similar endpoints succeed (status 200). 7. Deploy to staging/production if necessary (GA may require public URL). 8. Open GA4 dashboard (https://analytics.google.com), select the shared property, navigate to Realtime or Events view, confirm events from /blog routes appear (e.g., page_view events with page_location containing /blog). 9. Verify locale-specific routes (e.g., /blog/en-US, /blog/pt-BR) are tracked correctly.",
+            "status": "pending",
+            "testStrategy": "Manual verification checklist: (1) CSP headers in response include GA domains in script-src, connect-src, img-src (use browser DevTools Network tab > Response Headers). (2) HTML source contains GA script tag. (3) Network tab shows successful requests to googletagmanager.com or google-analytics.com. (4) GA4 Realtime dashboard shows active users on /blog routes within 60 seconds of navigation. (5) Events (page_view, user_engagement) appear in GA4 Events report with correct page_location and locale parameters. Document verification steps and screenshots if needed for team review."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Extract OG image rendering logic into packages/seo",
+        "description": "Create reusable OG image rendering helper in packages/seo to avoid duplicating ImageResponse JSX between apps/site and apps/blog",
+        "details": "Analyze `apps/site/src/app/og/route.tsx` — it uses `next/og` ImageResponse with custom JSX (gradient background, watermark W, header with logo, main content title/subtitle, footer). The blog will need per-post OG images with similar styling. Extract the JSX rendering function into `packages/seo/src/renderOgImage.tsx` (or similar). Function signature: `renderOgImage(params: { title: string; subtitle?: string; locale: Locale; page?: string; jobTitle?: string; siteHost: string }): JSX.Element`. Return the JSX tree (not ImageResponse instance — the route handler wraps it). Export SIZE constant `{ width: 1200, height: 630 }`. Both apps' OG routes will import this helper and call `new ImageResponse(renderOgImage({ ... }), SIZE)`. This follows the cross-app-reuse precedent from packages/seo (issue #960) — extract once a second app needs it. Ensure no Next.js-specific runtime imports in the JSX (next/og ImageResponse is called by the route, not the helper).",
+        "testStrategy": "Unit tests for renderOgImage verifying: JSX structure includes title, subtitle (when provided), locale badge, watermark. Integration tests in both apps' OG routes: request /og?title=Test&locale=en-US, verify 1200x630 PNG response, basic pixel comparison or snapshot test. Manual browser verification: share a blog post URL, confirm OG image renders in social preview.",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyze apps/site/src/app/og/route.tsx to identify extractable rendering logic",
+            "description": "Read and analyze the current OG image route implementation (75 lines) to identify which parts are pure rendering logic (JSX structure, styling, layout) vs route-specific concerns (ImageResponse instantiation, edge runtime config, request handling). Document the JSX structure including gradient background, watermark W, header with logo, main content sections, and footer.",
+            "dependencies": [],
+            "details": "Use Read tool to examine apps/site/src/app/og/route.tsx. Identify: (1) JSX rendering logic that should be extracted (gradient background with Tailwind tw prop, watermark W positioning, header structure with logo, main title/subtitle sections, footer content), (2) Route-specific code that stays in apps/site (ImageResponse constructor, edge runtime export, searchParams handling, font loading, response headers), (3) Current parameters used (title, subtitle, locale badge, page, jobTitle) and how they map to the proposed function signature { title, subtitle?, locale, page?, jobTitle?, siteHost }. Verify no Next.js runtime imports are mixed in the JSX that would create extraction barriers. Document any static assets (logo SVG) that need to be accessible from packages/seo or passed as props.",
+            "status": "pending",
+            "testStrategy": null
+          },
+          {
+            "id": 2,
+            "title": "Create packages/seo/src/renderOgImage.tsx with JSX rendering function and SIZE constant",
+            "description": "Implement the shared OG image rendering helper in packages/seo following the established structure from issue #960. Export renderOgImage function accepting { title, subtitle?, locale, page?, jobTitle?, siteHost } params and returning JSX.Element, plus SIZE constant { width: 1200, height: 630 }. Ensure no next/og imports in this file.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create packages/seo/src/renderOgImage.tsx exporting: (1) renderOgImage function with TypeScript signature `(params: { title: string; subtitle?: string; locale: Locale; page?: string; jobTitle?: string; siteHost: string }): JSX.Element` that returns the JSX tree extracted from task 8.1 (gradient background, watermark W, header, title/subtitle sections, footer), (2) SIZE constant `export const SIZE = { width: 1200, height: 630 }` for route handlers to reference. Use Tailwind tw prop for styling (same as current implementation). Import Locale type from @repo/core. Parameterize all dynamic content (title required, subtitle conditional rendering, locale badge display, page/jobTitle for footer context). Ensure the helper has zero Next.js runtime dependencies - no next/og, next/server imports (ImageResponse stays in route handlers). Update packages/seo/src/index.ts to export { renderOgImage, SIZE }. Follow packages/seo precedent: depends only on @repo/core, not @repo/utils (avoid circular deps).",
+            "status": "pending",
+            "testStrategy": "Unit tests verifying JSX structure: (1) title is rendered in main section, (2) subtitle renders only when provided (conditional check), (3) locale badge displays correctly, (4) watermark W is present, (5) gradient background classes applied, (6) page and jobTitle appear in footer when provided. Test with minimal params { title, locale, siteHost } and full params including optional fields."
+          },
+          {
+            "id": 3,
+            "title": "Refactor apps/site/src/app/og/route.tsx to use renderOgImage helper",
+            "description": "Update the existing site OG route to import and use the shared renderOgImage function from packages/seo, wrapping the JSX result in new ImageResponse(renderOgImage(...), SIZE). Keep all route-specific concerns (edge runtime, font loading, searchParams parsing, response headers) in the route handler.",
+            "dependencies": [
+              2
+            ],
+            "details": "Modify apps/site/src/app/og/route.tsx: (1) Import { renderOgImage, SIZE } from '@repo/seo', (2) Replace the inline JSX tree with a call to renderOgImage({ title, subtitle, locale, page, jobTitle, siteHost }), passing values extracted from searchParams, (3) Wrap the result: `new ImageResponse(renderOgImage({ ... }), { ...SIZE, fonts: [...] })`, (4) Keep edge runtime export, font loading logic, and all request/response handling in the route file. Verify the route still handles searchParams correctly (title required, others optional). Ensure imports from next/og (ImageResponse) remain only in this route file, not in packages/seo. Test locally that /og route still generates 1200x630 PNG with identical visual output to pre-refactor version.",
+            "status": "pending",
+            "testStrategy": "Integration test for apps/site/src/app/og/route.tsx: (1) Mock request to /og?title=Test&subtitle=Subtitle&locale=en-US&page=home, (2) Verify response status 200, Content-Type image/png, (3) Verify image dimensions 1200x630, (4) Basic visual regression - snapshot test or pixel comparison against pre-refactor baseline PNG. Manual browser verification: open /og route with various param combinations, confirm gradient, watermark, title, subtitle, locale badge render correctly."
+          },
+          {
+            "id": 4,
+            "title": "Write comprehensive tests for renderOgImage and prepare for blog integration",
+            "description": "Create unit tests for the renderOgImage JSX structure in packages/seo and integration tests for apps/site OG route. Document usage pattern for apps/blog to implement its own /og route using the shared helper, following the same ImageResponse wrapper pattern.",
+            "dependencies": [
+              3
+            ],
+            "details": "Create packages/seo/test/renderOgImage.test.tsx with unit tests: (1) Renders title in main section with correct styling, (2) Subtitle renders only when provided (test both with and without), (3) Locale badge displays correct locale string, (4) Watermark W element present with correct positioning classes, (5) Gradient background applied, (6) Footer includes page and jobTitle when provided (conditional rendering tests), (7) SIZE constant exports { width: 1200, height: 630 }. Use React Testing Library to render JSX and query elements. Create apps/site/test/og-route.test.ts for integration: request /og with query params, verify 1200x630 PNG response, snapshot or pixel comparison. Document in packages/seo/README.md (or inline JSDoc) the usage pattern for apps/blog: `import { renderOgImage, SIZE } from '@repo/seo'; export const GET = (req) => { /* parse params */; return new ImageResponse(renderOgImage({ ... }), SIZE); }`. Verify no circular dependencies introduced (packages/seo should only import @repo/core, not @repo/utils).",
+            "status": "pending",
+            "testStrategy": "Run all tests in packages/seo and apps/site: `pnpm test packages/seo` and `pnpm test apps/site`. Verify 100% coverage of renderOgImage function (all branches for optional params tested). Integration test must confirm PNG output matches pre-refactor baseline. Manual verification: build both apps, test OG routes in browser, prepare to implement apps/blog /og route in future task using documented pattern."
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Implement per-post OG image route in apps/blog",
+        "description": "Create dynamic OpenGraph image route for blog posts using the shared renderOgImage helper from packages/seo",
+        "details": "Create `apps/blog/src/app/[locale]/[slug]/opengraph-image.tsx` (Next.js App Router convention for dynamic OG images). Import `{ ImageResponse }` from `next/og`, `renderOgImage` and `SIZE` from `@repo/seo`. Implement `export async function GET(request, { params })` that extracts `locale` and `slug` from params, fetches post metadata (title, excerpt) — either inline or via a use case if one exists — then returns `new ImageResponse(renderOgImage({ title: post.title, subtitle: post.excerpt, locale, siteHost: new URL(env.siteUrl).host }), SIZE)`. Set `export const runtime = 'edge'`. Update the post page's `generateMetadata` to include `openGraph: { images: [{ url: `/blog/${locale}/${slug}/opengraph-image`, width: 1200, height: 630 }] }`. This generates a unique OG image per post, mirroring the site's /og route but scoped to blog content.",
+        "testStrategy": "Integration test: build blog with static posts, request /blog/en-US/example-post/opengraph-image, verify 1200x630 response with post title rendered. Manual browser verification: share blog post URL on Slack/Twitter, confirm OG preview displays post-specific image with title/excerpt. Snapshot test for consistent rendering across posts.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create opengraph-image.tsx route file in blog app",
+            "description": "Create apps/blog/src/app/[locale]/[slug]/opengraph-image.tsx following Next.js App Router convention for dynamic OG images. Set up imports and basic structure.",
+            "dependencies": [],
+            "details": "Create the file at apps/blog/src/app/[locale]/[slug]/opengraph-image.tsx. Import { ImageResponse } from 'next/og', renderOgImage and SIZE from '@repo/seo'. Set export const runtime = 'edge'. Set up basic GET function skeleton that receives request and { params } containing locale and slug. This establishes the route structure before implementing data fetching and rendering logic.",
+            "status": "pending",
+            "testStrategy": "Manual verification that the route file exists in correct location. TypeScript compilation passes with correct imports from @repo/seo (depends on task 8 completion)."
+          },
+          {
+            "id": 2,
+            "title": "Implement post metadata fetching logic",
+            "description": "Investigate how blog posts are loaded (MDX with frontmatter, use case, or repository) and implement logic to fetch post title and excerpt given locale and slug parameters.",
+            "dependencies": [
+              1
+            ],
+            "details": "Investigate apps/blog structure to determine post loading mechanism - check for existing use cases in @repo/application, repositories in @repo/infra, or direct MDX file reading. Implement async logic in GET function to fetch post metadata (title, excerpt) from slug and locale. Handle case where post is not found (return 404 or fallback image). Consider caching if fetching is expensive. Ensure approach works within edge runtime constraints.",
+            "status": "pending",
+            "testStrategy": "Unit tests verifying post metadata fetching: valid slug returns title/excerpt, invalid slug handles gracefully. Test with multiple locales (en-US, pt-BR, es). Verify edge runtime compatibility."
+          },
+          {
+            "id": 3,
+            "title": "Return ImageResponse with post-specific OG image",
+            "description": "Implement GET function to return new ImageResponse using renderOgImage with post title, excerpt, locale, and siteHost, respecting SIZE from @repo/seo.",
+            "dependencies": [
+              2
+            ],
+            "details": "Complete GET function implementation: extract locale and slug from params (await params if Next.js 15+), fetch post metadata using logic from subtask 2, construct siteHost from env.siteUrl (new URL(env.siteUrl).host). Return new ImageResponse(renderOgImage({ title: post.title, subtitle: post.excerpt, locale, siteHost }), SIZE). Handle errors gracefully (missing post, invalid locale). Ensure response headers are correct (Content-Type: image/png, cache headers for static posts).",
+            "status": "pending",
+            "testStrategy": "Integration test: build blog with static posts, request /blog/en-US/example-post/opengraph-image, verify 1200x630 response with correct Content-Type. Verify response includes post-specific title rendered in image. Test with multiple posts and locales. Snapshot test comparing rendered image structure."
+          },
+          {
+            "id": 4,
+            "title": "Update post page generateMetadata with OG image URL",
+            "description": "Modify the blog post page's generateMetadata function to include openGraph.images with dynamic URL pointing to the per-post opengraph-image route.",
+            "dependencies": [
+              3
+            ],
+            "details": "Locate the blog post page file (likely apps/blog/src/app/[locale]/[slug]/page.tsx or similar). Update or create generateMetadata function to include openGraph: { images: [{ url: `/blog/${locale}/${slug}/opengraph-image`, width: 1200, height: 630 }] } in the metadata return object. Ensure locale and slug are correctly extracted from params. Verify basePath: '/blog' is handled correctly in URL construction. Consider absolute URL if required by social platforms (protocol + domain + path).",
+            "status": "pending",
+            "testStrategy": "Integration test: build static blog posts, inspect generated HTML meta tags, verify og:image tag contains correct URL /blog/{locale}/{slug}/opengraph-image with width/height attributes. Manual browser verification: share blog post URL on Slack/Twitter/LinkedIn, confirm social preview displays post-specific OG image with correct title and excerpt. Test across multiple posts and locales."
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Cross-zone locale preservation end-to-end testing",
+        "description": "Manual and automated browser verification that locale is preserved across all site ↔ blog navigation paths",
+        "details": "Create comprehensive manual test plan covering all cross-zone navigation scenarios: (1) Site /en-US → Blog /blog/en-US, (2) Site /pt-BR → Blog /blog/pt-BR, (3) Site /es → Blog /blog/es, (4) Blog /blog/en-US → Site /en-US, (5) Blog /blog/pt-BR → Site /pt-BR, (6) Blog /blog/es → Site /es. Test on both mobile (hamburger menu) and desktop (side nav). Verify each locale's cookie (NEXT_LOCALE) remains scoped (site: Path=/, blog: Path=/blog) and is never shared. Verify direct /blog links (no locale) redirect to default locale or current locale (middleware behavior). Optionally, create Playwright E2E tests automating these flows: navigate from site home to blog link, assert URL contains correct locale segment, navigate back, assert locale unchanged. This test suite is the acceptance criteria for the entire PRD — locale must NEVER be lost crossing zones.",
+        "testStrategy": "Manual test checklist executed in each of 3 locales (en-US, pt-BR, es) on both mobile and desktop viewports. Playwright E2E tests (optional but recommended) for automated regression coverage. All tests must pass before PRD is considered complete. Document results in test report or GitHub issue comment.",
+        "priority": "high",
+        "dependencies": [
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create comprehensive manual test plan document for cross-zone navigation",
+            "description": "Document all 12 test scenarios (6 navigation paths × 2 viewports) covering site ↔ blog locale preservation, cookie scoping verification, and direct /blog link behavior",
+            "dependencies": [],
+            "details": "Create `.taskmaster/docs/e2e-cross-zone-locale-test-plan.md` documenting: (1) Test environment setup requirements (both apps running in dev or deployed to staging), (2) All 6 navigation scenarios: Site /en-US → Blog /blog/en-US, Site /pt-BR → Blog /blog/pt-BR, Site /es → Blog /blog/es, Blog /blog/en-US → Site /en-US, Blog /blog/pt-BR → Site /pt-BR, Blog /blog/es → Site /es, (3) For each scenario, specify mobile (hamburger menu) and desktop (side nav) test cases, (4) Cookie verification steps: inspect NEXT_LOCALE cookie in browser DevTools for each zone, verify site cookie has Path=/, verify blog cookie has Path=/blog, confirm cookies are never shared between zones, (5) Direct /blog link tests without locale segment - verify middleware redirects to default locale or preserves current locale, (6) Expected results for each test case with pass/fail criteria. This document serves as the manual QA checklist.",
+            "status": "pending",
+            "testStrategy": "Manual review of test plan document for completeness. Verify all 6 navigation paths are covered, both viewports are specified, cookie verification steps are clear, and acceptance criteria are defined."
+          },
+          {
+            "id": 2,
+            "title": "Execute manual tests for site → blog navigation across all locales and viewports",
+            "description": "Run manual browser tests for site to blog navigation in all 3 locales (en-US, pt-BR, es) on both mobile and desktop, verifying locale preservation in URL segments",
+            "dependencies": [
+              1
+            ],
+            "details": "Execute manual test plan for site → blog flows: (1) Start site in /en-US, navigate to blog via header/side nav link, verify lands on /blog/en-US, (2) Start site in /pt-BR, navigate to blog, verify lands on /blog/pt-BR, (3) Start site in /es, navigate to blog, verify lands on /blog/es. Repeat each scenario on desktop viewport (side navigation) and mobile viewport (hamburger menu). Use browser DevTools to inspect URL after navigation. Record results in test plan document or GitHub issue comment. If any locale is lost (e.g., /en-US → /blog/pt-BR), document as failure and file issue referencing tasks 5 and 6. Requires both apps/site and apps/blog running locally or in staging environment.",
+            "status": "pending",
+            "testStrategy": "Manual execution with screenshot evidence or video recording. Pass criteria: all 6 tests (3 locales × 2 viewports) preserve locale in blog URL segment. Document results in test report."
+          },
+          {
+            "id": 3,
+            "title": "Execute manual tests for blog → site navigation across all locales and viewports",
+            "description": "Run manual browser tests for blog to site navigation in all 3 locales (en-US, pt-BR, es) on both mobile and desktop, verifying locale preservation in URL segments",
+            "dependencies": [
+              1
+            ],
+            "details": "Execute manual test plan for blog → site flows: (1) Start blog in /blog/en-US, navigate to site via header/side nav link (e.g., Home or Projects), verify lands on /en-US, (2) Start blog in /blog/pt-BR, navigate to site, verify lands on /pt-BR, (3) Start blog in /blog/es, navigate to site, verify lands on /es. Repeat each scenario on desktop viewport (side navigation) and mobile viewport (hamburger menu). Use browser DevTools to inspect URL after navigation. Record results in test plan document or GitHub issue comment. If any locale is lost (e.g., /blog/pt-BR → /en-US), document as failure and file issue referencing tasks 5 and 6. Requires both apps running.",
+            "status": "pending",
+            "testStrategy": "Manual execution with screenshot evidence or video recording. Pass criteria: all 6 tests (3 locales × 2 viewports) preserve locale in site URL segment. Document results in test report."
+          },
+          {
+            "id": 4,
+            "title": "Verify NEXT_LOCALE cookie scoping and isolation between site and blog zones",
+            "description": "Inspect browser cookies in DevTools to confirm site NEXT_LOCALE has Path=/, blog NEXT_LOCALE has Path=/blog, and cookies are never shared between zones",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "After completing navigation tests in subtasks 2 and 3, use browser DevTools (Application/Storage > Cookies) to verify: (1) When on site (e.g., /en-US), NEXT_LOCALE cookie exists with Path=/ and value matching current locale, (2) When on blog (e.g., /blog/pt-BR), NEXT_LOCALE cookie exists with Path=/blog and value matching current locale, (3) Cookies are isolated - site cannot read blog's cookie and vice versa due to Path attribute, (4) Switching locales within a zone updates only that zone's cookie, not the other. Test in all 3 locales. Document findings with screenshots of DevTools cookie panel showing Path attribute. If cookie scoping is incorrect (e.g., both have Path=/), this is a critical failure requiring fix in apps/site and apps/blog next.config.mjs cookie configuration. Reference Next.js i18n cookie docs if needed.",
+            "status": "pending",
+            "testStrategy": "Manual inspection in browser DevTools with screenshots. Pass criteria: site cookie has Path=/, blog cookie has Path=/blog, both are isolated. Document results in test report with visual evidence."
+          },
+          {
+            "id": 5,
+            "title": "Test direct /blog links without locale segment and verify middleware redirect behavior",
+            "description": "Access /blog directly (no locale) and verify Next.js middleware redirects to default locale or current locale based on NEXT_LOCALE cookie",
+            "dependencies": [
+              1
+            ],
+            "details": "Test middleware behavior for direct /blog access: (1) Clear all cookies, navigate to /blog (no locale segment), verify middleware redirects to default locale (likely /blog/en-US per Next.js i18n config), (2) Set NEXT_LOCALE cookie to pt-BR for blog zone (Path=/blog), navigate to /blog, verify middleware redirects to /blog/pt-BR (current locale), (3) Set NEXT_LOCALE cookie to es, navigate to /blog, verify redirects to /blog/es. Repeat for direct site access at / (root). Document expected vs actual behavior. If middleware doesn't redirect or redirects to wrong locale, this indicates middleware misconfiguration in apps/blog (and possibly apps/site). Check apps/blog/middleware.ts (if exists) or Next.js i18n middleware setup. Record results in test plan document. This test validates that users always land on a locale-prefixed URL, never a locale-less /blog route.",
+            "status": "pending",
+            "testStrategy": "Manual testing with cookie manipulation in DevTools. Pass criteria: /blog redirects to /blog/{default-locale} when no cookie, /blog redirects to /blog/{cookie-locale} when cookie exists. Document results."
+          },
+          {
+            "id": 6,
+            "title": "Optionally create Playwright E2E tests automating cross-zone navigation flows",
+            "description": "Implement automated E2E tests with Playwright to verify locale preservation across site ↔ blog navigation, asserting URL segments and cookie state",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Create `apps/site/e2e/cross-zone-locale.spec.ts` (or `apps/blog/e2e/` if preferred) using @playwright/test. Tests: (1) test('site en-US to blog preserves locale', async ({ page }) => { await page.goto('/en-US'); await page.click('a[href*=\"/blog\"]'); await expect(page).toHaveURL(/\\/blog\\/en-US/); }), (2) Repeat for pt-BR and es locales, (3) Reverse tests: start on blog, navigate to site (home/projects link), assert site URL has correct locale, (4) Mobile viewport test: set viewport to mobile size, use hamburger menu selectors, (5) Cookie assertions: use page.context().cookies() to verify NEXT_LOCALE Path attribute for each zone. Run tests with `pnpm --filter=site test:e2e` (or similar script). If apps/blog doesn't have Playwright setup, either add it or keep tests in apps/site only. Document test results in GitHub issue comment or test report. This subtask is optional but provides automated regression coverage for future changes.",
+            "status": "pending",
+            "testStrategy": "Automated Playwright E2E tests. Pass criteria: all tests pass in CI/local environment. Tests assert URL locale segments and cookie Path attributes. Optionally integrate into CI pipeline for continuous validation."
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2026-08-27T02:15:00.728Z",
+      "updated": "2026-08-27T02:17:51.574Z",
+      "description": "Tasks for feature-blog-shared-layout context"
     }
   }
 }
