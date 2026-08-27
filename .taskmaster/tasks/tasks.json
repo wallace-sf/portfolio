@@ -7663,51 +7663,67 @@
         "id": "4",
         "title": "Implement buildCrossZoneHref helper in packages/utils",
         "description": "Create typed URL builder for cross-zone navigation that preserves locale, preventing silent locale loss when users cross app boundaries",
-        "details": "Add `packages/utils/src/buildCrossZoneHref.ts` (or `packages/layout/src/buildCrossZoneHref.ts` if layout-specific, decide during implementation). Function signature: `buildCrossZoneHref(targetZone: 'site' | 'blog', locale: Locale, path: string = ''): string`. Implementation: if targetZone === 'site', return `/${locale}${path}` (site has no basePath); if targetZone === 'blog', return `/blog/${locale}${path}` (blog has basePath: '/blog'). Path must start with `/` or be empty string. Validate locale using `isLocale` from @repo/core. Export from packages/utils/src/index.ts. This helper centralizes the multi-zone locale-preservation rule so every nav link uses the same logic instead of ad-hoc string concatenation.",
-        "testStrategy": "Unit tests in packages/utils/test/buildCrossZoneHref.test.ts covering: all (targetZone, locale) combinations for each of the 3 locales ('en-US', 'pt-BR', 'es'), path variations (empty, root `/`, nested `/foo/bar`), rejects invalid locale with error or returns fallback. Verify blog URLs include `/blog` prefix, site URLs do not.",
-        "priority": "high",
+        "status": "done",
         "dependencies": [],
-        "status": "pending",
+        "priority": "high",
+        "details": "**Decision: packages/layout, not packages/utils** — Create new `packages/layout` package now (ahead of task 2's SiteHeader). Reason: (1) circular dependency prevention (packages/utils -> @repo/core -> packages/utils, since @repo/core already depends on @repo/utils/validator, and this helper needs Locale/isLocale from @repo/core), (2) topology-awareness (the function knows 'site'/'blog' zones specific to this project, which is a layout/navigation concern, not a generic reusable utility). Implementation: Create `packages/layout/src/buildCrossZoneHref.ts` with signature `buildCrossZoneHref(targetZone: 'site' | 'blog', locale: Locale, path: string = ''): string`. Import `Locale` and `isLocale` from `@repo/core/shared`. Logic: if targetZone === 'site', return `/${locale}${path}` (site has no basePath); if targetZone === 'blog', return `/blog/${locale}${path}` (blog has basePath: '/blog'). Path must start with `/` or be empty string. Validate locale using `isLocale`. Export from packages/layout/src/index.ts. Task 2 will add SiteHeader into this same already-created package rather than creating packages/layout from scratch.",
+        "testStrategy": "Unit tests in packages/layout/test/buildCrossZoneHref.test.ts covering: all (targetZone, locale) combinations for each of the 3 locales ('en-US', 'pt-BR', 'es'), path variations (empty, root `/`, nested `/foo/bar`), rejects invalid locale with error or returns fallback. Verify blog URLs include `/blog` prefix, site URLs do not. Follow existing test pattern from packages/config/test/securityHeaders.test.ts.",
         "subtasks": [
           {
             "id": 1,
-            "title": "Implement core buildCrossZoneHref function in packages/utils",
-            "description": "Create packages/utils/src/buildCrossZoneHref.ts with the core function that handles site vs blog basePath logic and locale validation",
+            "title": "Create packages/layout package structure with minimal boilerplate",
+            "description": "Initialize packages/layout following monorepo conventions: package.json, tsconfig.json, build config, and test setup based on packages/config pattern",
             "dependencies": [],
-            "details": "Create packages/utils/src/buildCrossZoneHref.ts with signature `buildCrossZoneHref(targetZone: 'site' | 'blog', locale: Locale, path?: string): string`. Import `Locale` and `isLocale` from @repo/core. Implement logic: validate locale using isLocale (throw or return error if invalid), normalize path to ensure it starts with '/' or is empty string, if targetZone === 'site' return `/${locale}${path}`, if targetZone === 'blog' return `/blog/${locale}${path}`. Add JSDoc comments explaining the zone basePath rules. This is a pure function with no side effects, approximately 15-20 lines of typed TypeScript.",
-            "status": "pending",
-            "testStrategy": "Unit tests will be added in subtask 2. This subtask focuses on implementation only.",
+            "details": "Create `packages/layout/` directory. Copy structure from `packages/config/` as template. Create `package.json` with name `@repo/layout`, version `0.0.0`, private: true, main: `dist/index.js`, exports pointing to dist/index.{js,mjs,d.ts}, scripts for test/lint/format/build/types, devDependencies: @repo/eslint-config, @repo/prettier-config, @repo/typescript-config, @vitest/coverage-v8, tsup ^8.3.5, vitest ^3.0.0. Add dependency on `@repo/core: workspace:*` to import Locale/isLocale. Create `tsconfig.json` extending @repo/typescript-config/base.json with module: ESNext, moduleResolution: Bundler, include src/test/vitest.config.ts. Create `tsup.config.ts` for build (entry: src/index.ts, format: cjs+esm, dts: true). Create `.eslintrc.js` and `.prettierrc.json` following existing package patterns. Create `vitest.config.ts` for test runner. Create empty `src/index.ts` and `test/globals.d.ts`. This establishes the package shell that buildCrossZoneHref will live in, and that task 2's SiteHeader will extend.",
+            "status": "done",
+            "testStrategy": "Verify package structure: (a) `pnpm install` from monorepo root resolves workspace dependency, (b) `pnpm --filter @repo/layout build` compiles successfully (even with empty src/index.ts), (c) `pnpm --filter @repo/layout test` runs vitest with no tests (exits 0), (d) TypeScript can resolve `@repo/core` import without errors. Check dist/ contains index.js, index.mjs, index.d.ts after build.",
+            "updatedAt": "2026-08-27T04:06:03.752Z",
             "parentId": "undefined"
           },
           {
             "id": 2,
-            "title": "Write comprehensive unit tests for buildCrossZoneHref",
-            "description": "Create packages/utils/test/buildCrossZoneHref.test.ts with exhaustive test coverage for all zones, locales, and path variations",
+            "title": "Implement core buildCrossZoneHref function in packages/layout",
+            "description": "Create packages/layout/src/buildCrossZoneHref.ts with the core function that handles site vs blog basePath logic and locale validation",
             "dependencies": [
               1
             ],
-            "details": "Create packages/utils/test/buildCrossZoneHref.test.ts following existing test patterns in packages/utils. Cover all combinations: 2 zones ('site', 'blog') × 3 locales ('en-US', 'pt-BR', 'es') × 3 path variations (empty string, root '/', nested '/foo/bar') = 18 core test cases. Add edge cases: invalid locale handling (expect error or fallback), path without leading slash (verify normalization or error), path with trailing slash (verify preservation or normalization). Use describe blocks to organize by zone, nested describe for locale groups. Verify exact output strings match expected format. Aim for ~20-25 test cases total to achieve comprehensive coverage per project test culture (339 existing test files).",
-            "status": "pending",
-            "testStrategy": "Run `pnpm test packages/utils/test/buildCrossZoneHref.test.ts` to verify all tests pass. Verify coverage report shows 100% line/branch coverage for buildCrossZoneHref.ts. Manual verification: check test output confirms all locale×zone×path combinations produce correct URLs.",
-            "parentId": "undefined"
+            "details": "Create `packages/layout/src/buildCrossZoneHref.ts`. Import `Locale` and `isLocale` from `@repo/core/shared` (or `@repo/core/shared/i18n` if more specific subpath exists — verify during implementation). Function signature: `buildCrossZoneHref(targetZone: 'site' | 'blog', locale: Locale, path: string = ''): string`. Implementation: (1) validate locale using `isLocale(locale)` — if invalid, throw new Error or return error message (decide based on project error-handling culture, likely throw since this is infrastructure-level), (2) normalize path to ensure it starts with `/` or is empty string (if path provided and doesn't start with `/`, prepend it; if empty/undefined, use ``), (3) if targetZone === 'site', return `/${locale}${path}`, (4) if targetZone === 'blog', return `/blog/${locale}${path}`. Add JSDoc comment explaining the zone basePath rules (site has no basePath, blog has `/blog`). Pure function, no side effects, approximately 15-20 lines of typed TypeScript. Example: `buildCrossZoneHref('blog', 'en-US', '/post-1')` returns `/blog/en-US/post-1`, `buildCrossZoneHref('site', 'pt-BR', '')` returns `/pt-BR`.",
+            "status": "done",
+            "testStrategy": "Unit tests will be added in subtask 3. This subtask focuses on implementation only. Manual verification: `buildCrossZoneHref('site', 'en-US', '/about')` should return `/en-US/about`, `buildCrossZoneHref('blog', 'pt-BR', '')` should return `/blog/pt-BR`.",
+            "parentId": "undefined",
+            "updatedAt": "2026-08-27T04:06:06.985Z"
           },
           {
             "id": 3,
-            "title": "Export buildCrossZoneHref from packages/utils public API",
-            "description": "Add buildCrossZoneHref to packages/utils/src/index.ts following existing export patterns to make it available as @repo/utils/buildCrossZoneHref or via main @repo/utils barrel export",
+            "title": "Write comprehensive unit tests for buildCrossZoneHref",
+            "description": "Create packages/layout/test/buildCrossZoneHref.test.ts with exhaustive test coverage for all zones, locales, and path variations",
             "dependencies": [
-              1,
               2
             ],
-            "details": "Open packages/utils/src/index.ts and add export statement following existing patterns. The package currently exports multiple modules (@repo/utils, @repo/utils/hooks, @repo/utils/validator, @repo/utils/env). Determine if buildCrossZoneHref should be: (a) exported directly from main barrel `export { buildCrossZoneHref } from './buildCrossZoneHref'` for import as `import { buildCrossZoneHref } from '@repo/utils'`, or (b) exported as separate subpath `export * from './buildCrossZoneHref'` in a new index file for `import { buildCrossZoneHref } from '@repo/utils/buildCrossZoneHref'`. Prefer option (a) for simplicity unless function is large/complex. Verify TypeScript types are exported correctly. Update packages/utils/package.json exports field if using subpath pattern.",
+            "details": "Create `packages/layout/test/buildCrossZoneHref.test.ts` following existing test pattern from `packages/config/test/securityHeaders.test.ts`. Cover all combinations: 2 zones ('site', 'blog') × 3 locales ('en-US', 'pt-BR', 'es') × 3 path variations (empty string `''`, root `/`, nested `/foo/bar`) = 18 core test cases. Structure: `describe('buildCrossZoneHref', () => { describe('site zone', () => { it('should build site URL for en-US with empty path', ...), it('should build site URL for en-US with root path', ...), it('should build site URL for en-US with nested path', ...), ... }); describe('blog zone', () => { ... }); })`. Add edge cases: (a) invalid locale handling (pass non-Locale string like 'invalid', expect error thrown or fallback behavior), (b) path without leading slash (e.g. `'about'` instead of `'/about'`, verify normalization or error), (c) path with trailing slash (e.g. `'/about/'`, verify preservation or normalization). Verify exact output strings match expected format. Aim for ~20-25 test cases total to achieve comprehensive coverage per project test culture (339 existing test files). Use `expect(...).toBe(...)` for exact string matching.",
+            "status": "done",
+            "testStrategy": "Run `pnpm --filter @repo/layout test` to verify all tests pass. Check test output confirms all locale×zone×path combinations produce correct URLs. Run `pnpm --filter @repo/layout test:coverage` and verify coverage report shows 100% line/branch coverage for buildCrossZoneHref.ts. Manual verification: review test file to ensure all 3 locales ('en-US', 'pt-BR', 'es') are covered, not just en-US.",
+            "parentId": "undefined",
+            "updatedAt": "2026-08-27T04:06:10.168Z"
+          },
+          {
+            "id": 4,
+            "title": "Export buildCrossZoneHref from packages/layout public API",
+            "description": "Add buildCrossZoneHref to packages/layout/src/index.ts to make it available as @repo/layout export",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Open `packages/layout/src/index.ts` (currently empty from subtask 1). Add export statement: `export { buildCrossZoneHref } from './buildCrossZoneHref';`. Since this is the first export in the package, it will be the only export for now (task 2 will add SiteHeader later). Verify package.json exports field points to correct dist files (should already be configured in subtask 1). This makes the function importable as `import { buildCrossZoneHref } from '@repo/layout'` from apps/site, apps/blog, or other packages. Verify TypeScript types are exported correctly (tsup generates .d.ts automatically).",
             "status": "pending",
-            "testStrategy": "Create minimal test file importing buildCrossZoneHref via public API: `import { buildCrossZoneHref } from '@repo/utils'` and verify it resolves correctly. Run `pnpm build` in packages/utils and verify no TypeScript errors. Check dist/ output includes buildCrossZoneHref types and implementation.",
+            "testStrategy": "Create minimal integration test in `packages/layout/test/index.test.ts`: import buildCrossZoneHref via public API `import { buildCrossZoneHref } from '../src/index'` (or `from '@repo/layout'` if workspace resolution works in tests) and verify it resolves correctly (call function and assert basic output). Run `pnpm --filter @repo/layout build` and verify no TypeScript errors. Check `dist/index.d.ts` includes `export { buildCrossZoneHref }` declaration. From apps/site or apps/blog, attempt import in a throwaway file to verify workspace resolution (then delete throwaway file).",
             "parentId": "undefined"
           }
         ],
         "complexity": 3,
         "recommendedSubtasks": 3,
-        "expansionPrompt": "Break down the buildCrossZoneHref implementation into: (1) implement the core function in packages/utils/src/buildCrossZoneHref.ts with signature buildCrossZoneHref(targetZone: 'site' | 'blog', locale: Locale, path?: string): string, including site (no basePath) vs blog (/blog basePath) logic and locale validation using isLocale from @repo/core, (2) write comprehensive unit tests covering all (targetZone, locale) combinations for 3 locales (en-US, pt-BR, es), path variations (empty, root /, nested /foo/bar), and invalid locale handling, (3) export from packages/utils/src/index.ts following existing export patterns. This is a pure function with clear business rules and strong test requirements."
+        "expansionPrompt": "Break down the buildCrossZoneHref implementation into: (1) implement the core function in packages/utils/src/buildCrossZoneHref.ts with signature buildCrossZoneHref(targetZone: 'site' | 'blog', locale: Locale, path?: string): string, including site (no basePath) vs blog (/blog basePath) logic and locale validation using isLocale from @repo/core, (2) write comprehensive unit tests covering all (targetZone, locale) combinations for 3 locales (en-US, pt-BR, es), path variations (empty, root /, nested /foo/bar), and invalid locale handling, (3) export from packages/utils/src/index.ts following existing export patterns. This is a pure function with clear business rules and strong test requirements.",
+        "updatedAt": "2026-08-27T04:06:13.378Z"
       },
       {
         "id": "5",
@@ -8122,9 +8138,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-27T03:23:10.544Z",
+      "lastModified": "2026-08-27T04:06:13.378Z",
       "taskCount": 10,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "feature-blog-shared-layout"
       ]
