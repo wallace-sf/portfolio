@@ -568,6 +568,28 @@ importers:
         specifier: ^3.0.0
         version: 3.2.6(@types/node@20.19.43)(tsx@4.22.4)
 
+  packages/layout:
+    dependencies:
+      '@repo/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:../prettier-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@vitest/coverage-v8':
+        specifier: ^3.0.0
+        version: 3.2.6(vitest@3.2.6)
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.6(@types/node@20.19.43)(jsdom@25.0.1)
+
   packages/prettier-config: {}
 
   packages/seo:
