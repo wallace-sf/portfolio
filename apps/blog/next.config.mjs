@@ -1,10 +1,9 @@
+import { getSecurityHeaders } from '@repo/config';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const SECURITY_HEADERS = [
-  { key: 'X-Frame-Options', value: 'DENY' },
-  { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-];
+const SECURITY_HEADERS = getSecurityHeaders({
+  isProduction: process.env.NODE_ENV === 'production',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
