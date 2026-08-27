@@ -409,6 +409,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^3.0.0
         version: 3.2.6(vitest@3.2.6)
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
       vitest:
         specifier: ^3.0.0
         version: 3.2.6(@types/node@20.19.43)(jsdom@25.0.1)

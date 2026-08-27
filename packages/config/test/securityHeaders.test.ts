@@ -1,4 +1,4 @@
-import { getSecurityHeaders } from '~/securityHeaders';
+import { getSecurityHeaders } from '../src/securityHeaders';
 
 describe('getSecurityHeaders', () => {
   it('should include unsafe-eval in the CSP when not production', () => {
