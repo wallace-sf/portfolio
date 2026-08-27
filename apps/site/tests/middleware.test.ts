@@ -27,4 +27,14 @@ describe('middleware', () => {
     expect(response.status).not.toBe(307);
   });
 
+  it('should exclude /blog paths when matching the second matcher pattern', async () => {
+    const { config } = await import('~/proxy');
+    const blogPattern = config.matcher.find(
+      (pattern) => typeof pattern === 'string' && pattern.includes('?!'),
+    ) as string;
+    const regex = new RegExp(`^${blogPattern}$`);
+
+    expect(regex.test('/blog')).toBe(false);
+    expect(regex.test('/blog/en-US')).toBe(false);
+  });
 });
