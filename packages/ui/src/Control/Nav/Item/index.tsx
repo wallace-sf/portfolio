@@ -24,6 +24,8 @@ export interface INavItemProps extends Omit<
   onNavigate?: () => void;
   /** Injected router link (e.g. `next/link`); defaults to a plain anchor. */
   component?: ElementType;
+  /** Forwarded to the injected component — e.g. `next/link`'s `prefetch`. */
+  prefetch?: boolean;
 }
 
 /**

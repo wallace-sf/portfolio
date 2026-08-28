@@ -4,14 +4,16 @@ import { FC } from 'react';
 
 import type { Locale } from '@repo/core/shared';
 import { buildCrossZoneHref } from '@repo/layout';
+import { Nav } from '@repo/ui/Control';
 import { Divider } from '@repo/ui/View';
 import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
+import NextLink from 'next/link';
 import { useBoolean, useScrollLock } from 'usehooks-ts';
 
 import { env } from '~/config/env';
 import { getResumeUrl } from '~/lib/resume';
-import { useBreakpoint } from '~hooks';
+import { useBreakpoint, useNavLink } from '~hooks';
 
 import { Header } from '../Header';
 import { SideNavigationProvider } from './context';
@@ -25,6 +27,10 @@ export const SideNavigation: FC = () => {
   const isDesktop = useBreakpoint('lg');
   const { value: open, toggle, setFalse: closeMenu } = useBoolean(false);
   const isOpen = !isDesktop && open;
+
+  const home = useNavLink('/');
+  const projects = useNavLink('/projects');
+  const about = useNavLink('/about');
 
   useScrollLock({ autoLock: isOpen });
 
@@ -42,42 +48,61 @@ export const SideNavigation: FC = () => {
         >
           <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:px-0 lg:pt-15">
             <li>
-              <MenuItem.Item1 href="/" icon="material-symbols:home">
+              <Nav.Item
+                component={NextLink}
+                href={home.href}
+                active={home.active}
+                onNavigate={closeMenu}
+                icon="material-symbols:home"
+              >
                 {t('home')}
-              </MenuItem.Item1>
+              </Nav.Item>
             </li>
             <li>
-              <MenuItem.Item1
-                href="/projects"
+              <Nav.Item
+                component={NextLink}
+                href={projects.href}
+                active={projects.active}
+                onNavigate={closeMenu}
                 icon="material-symbols:deployed-code"
               >
                 {t('projects')}
-              </MenuItem.Item1>
+              </Nav.Item>
             </li>
             <li>
-              <MenuItem.Item1 href="/about" icon="material-symbols:person">
+              <Nav.Item
+                component={NextLink}
+                href={about.href}
+                active={about.active}
+                onNavigate={closeMenu}
+                icon="material-symbols:person"
+              >
                 {t('about')}
-              </MenuItem.Item1>
+              </Nav.Item>
             </li>
             <li>
-              <MenuItem.Item1
+              <Nav.Item
+                component={NextLink}
                 href={buildCrossZoneHref('blog', locale as Locale)}
+                onNavigate={closeMenu}
+                prefetch={false}
                 icon="material-symbols:article"
-                localize={false}
               >
                 {t('blog')}
-              </MenuItem.Item1>
+              </Nav.Item>
             </li>
             <li>
-              <MenuItem.Item1
+              <Nav.Item
+                component={NextLink}
                 href={getResumeUrl(
                   locale as Parameters<typeof getResumeUrl>[0],
                 )}
+                onNavigate={closeMenu}
+                external
                 icon="material-symbols:description"
-                newTab
               >
                 {t('resume')}
-              </MenuItem.Item1>
+              </Nav.Item>
             </li>
           </ul>
           <Divider className="mx-6 lg:mx-0" />
