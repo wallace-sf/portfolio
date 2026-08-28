@@ -3,6 +3,7 @@
 import { FC, useCallback } from 'react';
 
 import {
+  Nav,
   Radio,
   RadioGroup,
   RadioGroupProps,
@@ -14,7 +15,6 @@ import { Theme, useTheme } from '~hooks';
 
 import { THEME_OPTIONS } from './constants';
 import { useSideNavigation } from './context';
-import { MenuItem } from './MenuItem';
 
 export const ThemeToggle: FC = () => {
   const t = useTranslations('SideNavigation');
@@ -56,7 +56,7 @@ export const ThemeToggle: FC = () => {
   );
 
   return (
-    <MenuItem.Item2.Expandable
+    <Nav.Expandable
       title={t('theme')}
       icon="material-symbols:contrast"
       iconClassName="text-content-primary"
@@ -69,6 +69,6 @@ export const ThemeToggle: FC = () => {
       >
         {renderThemes}
       </RadioGroup>
-    </MenuItem.Item2.Expandable>
+    </Nav.Expandable>
   );
 };
