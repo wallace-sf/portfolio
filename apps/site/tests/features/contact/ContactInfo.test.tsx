@@ -6,7 +6,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('next-intl', () => ({
-  useTranslations: (namespace: string) => (key: string) => `${namespace}.${key}`,
+  useTranslations: (namespace: string) => (key: string) =>
+    `${namespace}.${key}`,
   useLocale: () => 'en',
 }));
 
@@ -20,6 +21,11 @@ vi.mock('@repo/ui/Control', () => ({
       'aria-label'?: string;
     }) => <button aria-label={ariaLabel}>{children}</button>,
   },
+  Nav: {
+    ShortLink: ({ 'aria-label': ariaLabel }: { 'aria-label'?: string }) => (
+      <a aria-label={ariaLabel} />
+    ),
+  },
 }));
 
 vi.mock('@repo/ui/Imagery', () => ({
@@ -32,14 +38,6 @@ vi.mock('@repo/ui/View', () => ({
 
 vi.mock('@repo/utils', () => ({
   formatCellphone: (v: string) => v,
-}));
-
-vi.mock('~/components/Layout/SideNavigation/MenuItem', () => ({
-  MenuItem: {
-    Item2: {
-      ShortLink: () => <a />,
-    },
-  },
 }));
 
 describe('ContactInfo', () => {

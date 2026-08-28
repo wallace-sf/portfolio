@@ -2,13 +2,13 @@
 
 import { FC } from 'react';
 
-import { Button } from '@repo/ui/Control';
+import { Button, Nav } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
 import { Divider } from '@repo/ui/View';
 import { formatCellphone } from '@repo/utils';
 import { useLocale, useTranslations } from 'next-intl';
+import NextLink from 'next/link';
 
-import { MenuItem } from '~/components/Layout/SideNavigation/MenuItem';
 import { env } from '~/config/env';
 
 export const ContactInfo: FC = () => {
@@ -85,31 +85,35 @@ export const ContactInfo: FC = () => {
       <p className="text-base text-content-primary">{t('paragraph2')}</p>
 
       <nav className="flex gap-x-3">
-        <MenuItem.Item2.ShortLink
+        <Nav.ShortLink
+          component={NextLink}
           href={whatsappUrl}
           icon="logos:whatsapp-icon"
           aria-label={t('whatsapp')}
-          newTab
+          external
         />
-        <MenuItem.Item2.ShortLink
+        <Nav.ShortLink
+          component={NextLink}
           href={env.linkedinUrl}
           icon="devicon:linkedin"
           aria-label={t('linkedin')}
-          newTab
+          external
         />
-        <MenuItem.Item2.ShortLink
+        <Nav.ShortLink
+          component={NextLink}
           href={env.githubUrl}
           icon="mdi:github"
           iconClassName="text-content-primary"
           aria-label={t('github')}
-          newTab
+          external
         />
-        <MenuItem.Item2.ShortLink
+        <Nav.ShortLink
+          component={NextLink}
           href={`/${locale}/feed.xml`}
           icon="mdi:rss"
           iconClassName="text-content-primary"
           aria-label={t('rss')}
-          newTab
+          external
         />
       </nav>
     </section>
