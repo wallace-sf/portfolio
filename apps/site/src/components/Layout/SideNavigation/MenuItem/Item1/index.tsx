@@ -12,23 +12,37 @@ import { useSideNavigation } from '../../context';
 import { Text } from '../Text';
 import { IGhostLinkProps } from '../types';
 
-export const Item1: FC<IGhostLinkProps> = ({
+export interface IItem1Props extends IGhostLinkProps {
+  /**
+   * Prefix `href` with the active locale. Disable for links that already
+   * carry their locale (and zone), e.g. cross-zone `buildCrossZoneHref` URLs.
+   */
+  localize?: boolean;
+}
+
+export const Item1: FC<IItem1Props> = ({
   children,
   className,
   href,
   icon,
   iconClassName,
   newTab = false,
+  localize = true,
 }) => {
   const locale = useLocale();
   const pathname = usePathname();
   const { closeMenu } = useSideNavigation();
-  const localizedHref = href === '/' ? `/${locale}` : `/${locale}${href}`;
+  const localizedHref = !localize
+    ? href
+    : href === '/'
+      ? `/${locale}`
+      : `/${locale}${href}`;
   const newHref = newTab ? href : localizedHref;
 
   const isRoot = localizedHref === `/${locale}`;
   const isActive =
     !newTab &&
+    localize &&
     (isRoot
       ? pathname === localizedHref
       : pathname === localizedHref || pathname.startsWith(`${localizedHref}/`));
@@ -36,6 +50,7 @@ export const Item1: FC<IGhostLinkProps> = ({
   return (
     <Link
       href={newHref}
+      prefetch={localize ? undefined : false}
       onClick={closeMenu}
       aria-current={isActive ? 'page' : undefined}
       className={classNames(
