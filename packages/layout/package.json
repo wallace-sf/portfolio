@@ -20,6 +20,11 @@
       "import": "./dist/SiteHeader/index.mjs",
       "require": "./dist/SiteHeader/index.js"
     },
+    "./SiteFooter": {
+      "types": "./dist/types/SiteFooter/index.d.ts",
+      "import": "./dist/SiteFooter/index.mjs",
+      "require": "./dist/SiteFooter/index.js"
+    },
     "./SiteLogo": {
       "types": "./dist/types/SiteLogo/index.d.ts",
       "import": "./dist/SiteLogo/index.mjs",

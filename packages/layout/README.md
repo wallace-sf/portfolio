@@ -13,6 +13,7 @@ Server Components.
 | ------------------------- | --------------------------------------------------------------------------------- |
 | `@repo/layout`            | `buildCrossZoneHref` — builds locale-preserving URLs across the `site`/`blog` zones |
 | `@repo/layout/SiteHeader` | `SiteHeader` — the shared top bar (logo link + mobile hamburger toggle)             |
+| `@repo/layout/SiteFooter` | `SiteFooter` — the shared footer band (`<footer>` shell); content via `children`    |
 | `@repo/layout/SiteLogo`   | `SiteLogo` — the inlined brand mark (`<svg>`, forwards all SVG props)               |
 
 ### `SiteHeader`
@@ -25,6 +26,19 @@ import { SiteHeader } from '@repo/layout/SiteHeader';
 ```
 
 The brand logo is inlined by the package (`SiteLogo`) — apps don't pass an asset.
+
+### `SiteFooter`
+
+```tsx
+import { SiteFooter } from '@repo/layout/SiteFooter';
+
+<SiteFooter>
+  <ContactSection /> {/* or any zone-specific footer content */}
+</SiteFooter>;
+```
+
+Owns the footer band chrome (max width, surface, padding, top border, upward
+shadow); the child provides the content.
 
 Requirements in the consuming app:
 
