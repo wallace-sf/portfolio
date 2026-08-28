@@ -7,6 +7,10 @@
     "rootDir": "src",
     "declarationDir": "dist/types"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "build"]
+  "references": [
+    { "path": "../../packages/core/tsconfig.build.json" },
+    { "path": "../../packages/ui/tsconfig.build.json" }
+  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "build", "test"]
 }

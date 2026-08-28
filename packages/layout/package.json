@@ -2,35 +2,69 @@
   "name": "@repo/layout",
   "version": "0.0.0",
   "private": true,
+  "sideEffects": false,
   "os": [
     "linux"
   ],
-  "main": "src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "default": "./src/index.ts"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./SiteHeader": {
+      "types": "./dist/types/SiteHeader/index.d.ts",
+      "import": "./dist/SiteHeader/index.mjs",
+      "require": "./dist/SiteHeader/index.js"
     }
   },
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint --fix --ext .ts ./src",
-    "lint:check": "eslint --ext .ts ./src",
-    "format": "prettier --write ./src/**/*.ts",
-    "format:check": "prettier --check ./src/**/*.ts",
-    "build": "tsc --build tsconfig.build.json",
-    "types": "tsc -p tsconfig.json --noEmit"
+    "lint": "eslint --fix --ext .ts,.tsx ./src",
+    "lint:check": "eslint --ext .ts,.tsx ./src",
+    "format": "prettier --write ./src/**/*.{ts,tsx}",
+    "format:check": "prettier --check ./src/**/*.{ts,tsx}",
+    "build": "tsup",
+    "build:types": "tsc --build tsconfig.build.json",
+    "types": "tsc --build tsconfig.build.json"
+  },
+  "peerDependencies": {
+    "next": ">=15",
+    "next-intl": ">=4",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "dependencies": {
-    "@repo/core": "workspace:*"
+    "@repo/core": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
+    "@repo/ui": "workspace:*"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.0.0",
     "@vitest/coverage-v8": "^3.0.0",
+    "jsdom": "^25.0.0",
+    "next": "16.3.1",
+    "next-intl": "4.11.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwindcss": "^3.4.1",
+    "tsup": "^8.3.5",
     "vitest": "^3.0.0"
   }
 }
