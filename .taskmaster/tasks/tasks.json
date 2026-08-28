@@ -7805,7 +7805,7 @@
           "3",
           "4"
         ],
-        "status": "pending",
+        "status": "deferred",
         "subtasks": [
           {
             "id": 1,
@@ -7868,7 +7868,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break down the apps/blog integration into: (1) create apps/blog/src/components/Layout directory structure, (2) implement BlogLayout component wrapping children with SiteHeader and SiteFooter, managing mobile menu toggle state with useState since this is net-new UI for the blog, (3) construct nav items using buildCrossZoneHref for site home link (targetZone='site') and blog home link (targetZone='blog'), passing locale from params, (4) update apps/blog/src/app/[locale]/layout.tsx to wrap children with BlogLayout, (5) run component tests for BlogLayout and integration tests verifying header/footer present on all routes, plus manual browser verification of locale preservation during cross-zone navigation. The blog currently has minimal layout (50 lines, no header/footer), so this is greenfield UI work."
+        "expansionPrompt": "Break down the apps/blog integration into: (1) create apps/blog/src/components/Layout directory structure, (2) implement BlogLayout component wrapping children with SiteHeader and SiteFooter, managing mobile menu toggle state with useState since this is net-new UI for the blog, (3) construct nav items using buildCrossZoneHref for site home link (targetZone='site') and blog home link (targetZone='blog'), passing locale from params, (4) update apps/blog/src/app/[locale]/layout.tsx to wrap children with BlogLayout, (5) run component tests for BlogLayout and integration tests verifying header/footer present on all routes, plus manual browser verification of locale preservation during cross-zone navigation. The blog currently has minimal layout (50 lines, no header/footer), so this is greenfield UI work.",
+        "updatedAt": "2026-08-28T04:34:46.113Z"
       },
       {
         "id": "7",
@@ -7995,7 +7996,7 @@
         "dependencies": [
           "8"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -8046,7 +8047,8 @@
         ],
         "complexity": 5,
         "recommendedSubtasks": 4,
-        "expansionPrompt": "Break down the per-post OG image route into: (1) create apps/blog/src/app/[locale]/[slug]/opengraph-image.tsx following Next.js App Router convention, (2) implement GET function extracting locale and slug from params, fetching post metadata (title, excerpt) - investigate if a use case exists or fetch inline from MDX, (3) return new ImageResponse(renderOgImage({ title: post.title, subtitle: post.excerpt, locale, siteHost }), SIZE) with runtime = 'edge', (4) update post page's generateMetadata to include openGraph.images with dynamic URL /blog/{locale}/{slug}/opengraph-image, and write integration tests verifying 1200x630 response with post-specific title plus manual browser verification of social preview. This generates unique OG images per blog post."
+        "expansionPrompt": "Break down the per-post OG image route into: (1) create apps/blog/src/app/[locale]/[slug]/opengraph-image.tsx following Next.js App Router convention, (2) implement GET function extracting locale and slug from params, fetching post metadata (title, excerpt) - investigate if a use case exists or fetch inline from MDX, (3) return new ImageResponse(renderOgImage({ title: post.title, subtitle: post.excerpt, locale, siteHost }), SIZE) with runtime = 'edge', (4) update post page's generateMetadata to include openGraph.images with dynamic URL /blog/{locale}/{slug}/opengraph-image, and write integration tests verifying 1200x630 response with post-specific title plus manual browser verification of social preview. This generates unique OG images per blog post.",
+        "updatedAt": "2026-08-28T04:43:20.760Z"
       },
       {
         "id": "10",
@@ -8142,9 +8144,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-28T04:14:01.885Z",
+      "lastModified": "2026-08-28T04:43:20.760Z",
       "taskCount": 10,
-      "completedCount": 6,
+      "completedCount": 7,
       "tags": [
         "feature-blog-shared-layout"
       ]
