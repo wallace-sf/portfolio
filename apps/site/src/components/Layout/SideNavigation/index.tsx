@@ -2,6 +2,8 @@
 
 import { FC } from 'react';
 
+import type { Locale } from '@repo/core/shared';
+import { buildCrossZoneHref } from '@repo/layout';
 import { Divider } from '@repo/ui/View';
 import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
@@ -55,6 +57,15 @@ export const SideNavigation: FC = () => {
             <li>
               <MenuItem.Item1 href="/about" icon="material-symbols:person">
                 {t('about')}
+              </MenuItem.Item1>
+            </li>
+            <li>
+              <MenuItem.Item1
+                href={buildCrossZoneHref('blog', locale as Locale)}
+                icon="material-symbols:article"
+                localize={false}
+              >
+                {t('blog')}
               </MenuItem.Item1>
             </li>
             <li>

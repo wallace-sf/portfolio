@@ -79,9 +79,8 @@ beforeEach(() => {
 
 describe('SideNavigation', () => {
   it('should render ul elements with only li as direct children', async () => {
-    const { SideNavigation } = await import(
-      '~/components/Layout/SideNavigation'
-    );
+    const { SideNavigation } =
+      await import('~/components/Layout/SideNavigation');
     const { container } = render(React.createElement(SideNavigation));
 
     const lists = container.querySelectorAll('ul');
@@ -95,13 +94,23 @@ describe('SideNavigation', () => {
   });
 
   it('should provide closeMenu to descendants via SideNavigationContext', async () => {
-    const { SideNavigation } = await import(
-      '~/components/Layout/SideNavigation'
-    );
+    const { SideNavigation } =
+      await import('~/components/Layout/SideNavigation');
     render(React.createElement(SideNavigation));
 
     fireEvent.click(screen.getByText('home'));
 
     expect(mockSetFalse).toHaveBeenCalledOnce();
+  });
+
+  it('should include a Blog link to the blog zone carrying the active locale', async () => {
+    const { SideNavigation } =
+      await import('~/components/Layout/SideNavigation');
+    render(React.createElement(SideNavigation));
+
+    expect(screen.getByText('blog').closest('a')).toHaveAttribute(
+      'href',
+      '/blog/en-US',
+    );
   });
 });
