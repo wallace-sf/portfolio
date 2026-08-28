@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 
+import { env } from '~/config/env';
 import { buildAlternates } from '~/lib/seo/alternates';
 
 import '@repo/tailwind-config/tailwind.css';
@@ -23,6 +24,9 @@ export async function generateMetadata({
   const { locale } = await params;
 
   return {
+    // Includes the `/blog` basePath so file-convention metadata URLs
+    // (e.g. per-post `opengraph-image`) resolve under the blog zone.
+    metadataBase: new URL('/blog', env.siteUrl),
     alternates: buildAlternates('', locale as Locale),
   };
 }
