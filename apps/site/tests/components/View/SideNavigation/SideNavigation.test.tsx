@@ -45,40 +45,29 @@ vi.mock('@repo/layout', () => ({
   buildCrossZoneHref: (_zone: string, locale: string) => `/blog/${locale}`,
 }));
 
+const navLinkMock = ({
+  children,
+  href,
+  onNavigate,
+}: {
+  children: React.ReactNode;
+  href: string;
+  onNavigate?: () => void;
+}) => (
+  <a href={href} onClick={onNavigate}>
+    {children}
+  </a>
+);
+
 vi.mock('@repo/ui/Control', () => ({
   Nav: {
-    Item: ({
-      children,
-      href,
-      onNavigate,
-    }: {
-      children: React.ReactNode;
-      href: string;
-      onNavigate?: () => void;
-    }) => (
-      <a href={href} onClick={onNavigate}>
-        {children}
-      </a>
-    ),
+    Item: navLinkMock,
+    Link: navLinkMock,
   },
 }));
 
 vi.mock('~/components/Layout/Header', () => ({
   Header: () => <div data-testid="header" />,
-}));
-
-vi.mock('~/components/Layout/SideNavigation/MenuItem', () => ({
-  MenuItem: {
-    Item2: {
-      Link: ({
-        children,
-        href,
-      }: {
-        children: React.ReactNode;
-        href: string;
-      }) => <a href={href}>{children}</a>,
-    },
-  },
 }));
 
 vi.mock('~/components/Layout/SideNavigation/ThemeToggle', () => ({

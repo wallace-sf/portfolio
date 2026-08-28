@@ -18,7 +18,6 @@ import { useBreakpoint, useNavLink } from '~hooks';
 import { Header } from '../Header';
 import { SideNavigationProvider } from './context';
 import { LanguageSelector } from './LanguageSelector';
-import { MenuItem } from './MenuItem';
 import { ThemeToggle } from './ThemeToggle';
 
 export const SideNavigation: FC = () => {
@@ -108,33 +107,39 @@ export const SideNavigation: FC = () => {
           <Divider className="mx-6 lg:mx-0" />
           <ul className="flex flex-col gap-y-3 px-6 pb-8 lg:justify-end lg:px-0">
             <li>
-              <MenuItem.Item2.Link
+              <Nav.Link
+                component={NextLink}
                 href={env.linkedinUrl}
+                onNavigate={closeMenu}
+                external
                 icon="devicon:linkedin"
-                newTab
               >
                 {t('linkedin')}
-              </MenuItem.Item2.Link>
+              </Nav.Link>
             </li>
             <li>
-              <MenuItem.Item2.Link
+              <Nav.Link
+                component={NextLink}
                 href={env.githubUrl}
+                onNavigate={closeMenu}
+                external
                 icon="mdi:github"
                 iconClassName="text-content-primary"
-                newTab
               >
                 {t('github')}
-              </MenuItem.Item2.Link>
+              </Nav.Link>
             </li>
             <li>
-              <MenuItem.Item2.Link
+              <Nav.Link
+                component={NextLink}
                 href={`/${locale}/feed.xml`}
+                onNavigate={closeMenu}
+                external
                 icon="mdi:rss"
                 iconClassName="text-content-primary"
-                newTab
               >
                 {t('rss')}
-              </MenuItem.Item2.Link>
+              </Nav.Link>
             </li>
             <li>
               <ThemeToggle />
