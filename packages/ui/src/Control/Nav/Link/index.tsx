@@ -6,8 +6,8 @@ import classNames from 'classnames';
 
 import { Icon, IconProps } from '~/Imagery/Icon';
 
-import { Container } from '../Container';
 import { ROOT_STYLE } from '../constants';
+import { Container } from '../Container';
 import { Text } from '../Text';
 
 export interface INavLinkProps extends Omit<
