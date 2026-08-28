@@ -10,24 +10,38 @@
     ".": {
       "types": "./dist/types/index.d.ts",
       "default": "./src/index.ts"
+    },
+    "./renderOgImage": {
+      "types": "./dist/types/renderOgImage.d.ts",
+      "default": "./src/renderOgImage.tsx"
     }
   },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint --fix --ext .ts ./src",
-    "lint:check": "eslint --ext .ts ./src",
-    "format": "prettier --write ./src/**/*.ts",
-    "format:check": "prettier --check ./src/**/*.ts",
+    "lint": "eslint --fix --ext .ts,.tsx ./src",
+    "lint:check": "eslint --ext .ts,.tsx ./src",
+    "format": "prettier --write ./src/**/*.{ts,tsx}",
+    "format:check": "prettier --check ./src/**/*.{ts,tsx}",
     "build": "tsc --build tsconfig.build.json",
     "types": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^19"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.0.1",
+    "@types/react": "^19.2.17",
+    "@vitejs/plugin-react": "^4.0.0",
     "@vitest/coverage-v8": "^3.0.0",
+    "jsdom": "^25.0.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "vitest": "^3.0.0"
   },
   "dependencies": {

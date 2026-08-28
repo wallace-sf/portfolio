@@ -7,6 +7,6 @@
     "rootDir": "src",
     "declarationDir": "dist/types"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "build"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "build", "test"]
 }
