@@ -8,6 +8,7 @@ const config: Config = {
     './src/features/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     '../../packages/ui/src/**/*.{ts,tsx}',
+    '../../packages/layout/src/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {
@@ -26,10 +27,6 @@ const config: Config = {
       height: {
         'sidenav-desktop': 'calc(100vh - var(--header-height-desktop))',
         'sidenav-mobile': 'calc(100vh - var(--header-height-mobile))',
-      },
-      spacing: {
-        'header-desktop': 'var(--header-height-desktop)',
-        'header-mobile': 'var(--header-height-mobile)',
       },
     },
   },

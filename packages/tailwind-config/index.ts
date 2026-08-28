@@ -84,6 +84,8 @@ export default plugin(() => {}, {
         card: '1.25rem',
       },
       spacing: {
+        'header-desktop': 'var(--header-height-desktop)',
+        'header-mobile': 'var(--header-height-mobile)',
         '2.5': '0.625rem',
         15: '3.75rem',
         24.5: '6.125rem',

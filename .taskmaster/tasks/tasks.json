@@ -7531,7 +7531,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -7594,7 +7594,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break down the SiteHeader extraction into: (1) create packages/layout package structure with package.json, tsconfig, exports, and build scripts, (2) extract Header component from apps/site to packages/layout/src/SiteHeader, refactoring the static logo import to either extract logo.svg to packages/layout/assets or accept as prop, (3) update dependencies in packages/layout to include React, next-intl, Next.js, @repo/ui, and @repo/tailwind-config, (4) write component tests for SiteHeader verifying locale prop, toggle behavior, responsive logo rendering, and icon state, (5) refactor apps/site to re-export SiteHeader from @repo/layout and verify existing behavior unchanged. Consider whether logo should be an asset in the package or a prop for flexibility."
+        "expansionPrompt": "Break down the SiteHeader extraction into: (1) create packages/layout package structure with package.json, tsconfig, exports, and build scripts, (2) extract Header component from apps/site to packages/layout/src/SiteHeader, refactoring the static logo import to either extract logo.svg to packages/layout/assets or accept as prop, (3) update dependencies in packages/layout to include React, next-intl, Next.js, @repo/ui, and @repo/tailwind-config, (4) write component tests for SiteHeader verifying locale prop, toggle behavior, responsive logo rendering, and icon state, (5) refactor apps/site to re-export SiteHeader from @repo/layout and verify existing behavior unchanged. Consider whether logo should be an asset in the package or a prop for flexibility.",
+        "updatedAt": "2026-08-28T03:00:25.153Z"
       },
       {
         "id": "3",
@@ -8138,9 +8139,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-27T04:06:13.378Z",
+      "lastModified": "2026-08-28T03:00:25.154Z",
       "taskCount": 10,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "feature-blog-shared-layout"
       ]
