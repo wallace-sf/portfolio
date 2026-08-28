@@ -15,20 +15,19 @@ describe('SiteFooter', () => {
     expect(footer).toContainElement(screen.getByText('zone content'));
   });
 
-  it('should apply the shared footer-band classes when rendered', () => {
+  it('should center the footer landmark and keep the surface band on an inner element', () => {
     render(
       <SiteFooter>
         <span>x</span>
       </SiteFooter>,
     );
 
-    expect(screen.getByRole('contentinfo')).toHaveClass(
-      'mx-auto',
-      'w-full',
-      'max-w-237.5',
-      'bg-surface-overlay',
-      'py-10',
-      'shadow-drop-up',
-    );
+    const footer = screen.getByRole('contentinfo');
+    // Centering classes stay on the landmark, uncontested by the 2xl bleed.
+    expect(footer).toHaveClass('mx-auto', 'w-full', 'max-w-237.5', 'shadow-drop-up');
+    expect(footer).not.toHaveClass('2xl:mx-[-161px]');
+
+    const band = footer.firstElementChild;
+    expect(band).toHaveClass('bg-surface-overlay', 'py-10', '2xl:mx-[-161px]');
   });
 });
