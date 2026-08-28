@@ -7929,7 +7929,7 @@
         "testStrategy": "Unit tests for renderOgImage verifying: JSX structure includes title, subtitle (when provided), locale badge, watermark. Integration tests in both apps' OG routes: request /og?title=Test&locale=en-US, verify 1200x630 PNG response, basic pixel comparison or snapshot test. Manual browser verification: share a blog post URL, confirm OG image renders in social preview.",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -7980,7 +7980,8 @@
         ],
         "complexity": 5,
         "recommendedSubtasks": 4,
-        "expansionPrompt": "Break down the OG image extraction into: (1) analyze apps/site/src/app/og/route.tsx (75 lines with complex JSX: gradient background, watermark W, header with logo, main title/subtitle, footer) to identify extractable rendering logic vs route-specific concerns, (2) create packages/seo/src/renderOgImage.tsx exporting renderOgImage function with params signature { title, subtitle?, locale, page?, jobTitle?, siteHost } that returns JSX.Element and SIZE constant { width: 1200, height: 630 }, ensuring no Next.js runtime imports in the helper (ImageResponse stays in routes), (3) update apps/site/src/app/og/route.tsx to use renderOgImage, wrapping result in new ImageResponse(renderOgImage(...), SIZE), (4) write unit tests for renderOgImage JSX structure and integration tests for both apps' OG routes verifying 1200x630 PNG response and basic rendering (snapshot or pixel comparison). Follow packages/seo precedent from issue #960 - extract when second app needs it."
+        "expansionPrompt": "Break down the OG image extraction into: (1) analyze apps/site/src/app/og/route.tsx (75 lines with complex JSX: gradient background, watermark W, header with logo, main title/subtitle, footer) to identify extractable rendering logic vs route-specific concerns, (2) create packages/seo/src/renderOgImage.tsx exporting renderOgImage function with params signature { title, subtitle?, locale, page?, jobTitle?, siteHost } that returns JSX.Element and SIZE constant { width: 1200, height: 630 }, ensuring no Next.js runtime imports in the helper (ImageResponse stays in routes), (3) update apps/site/src/app/og/route.tsx to use renderOgImage, wrapping result in new ImageResponse(renderOgImage(...), SIZE), (4) write unit tests for renderOgImage JSX structure and integration tests for both apps' OG routes verifying 1200x630 PNG response and basic rendering (snapshot or pixel comparison). Follow packages/seo precedent from issue #960 - extract when second app needs it.",
+        "updatedAt": "2026-08-28T03:45:53.791Z"
       },
       {
         "id": "9",
@@ -8139,9 +8140,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-28T03:00:25.154Z",
+      "lastModified": "2026-08-28T03:45:53.791Z",
       "taskCount": 10,
-      "completedCount": 3,
+      "completedCount": 4,
       "tags": [
         "feature-blog-shared-layout"
       ]

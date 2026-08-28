@@ -1,13 +1,17 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@repo/typescript-config/react.json",
   "compilerOptions": {
     "baseUrl": "src",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "paths": {
       "~/*": ["*"]
     }
   },
-  "include": ["src/**/*.ts", "vitest.config.ts", "test/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vitest.config.ts",
+    "test/**/*.ts",
+    "test/**/*.tsx"
+  ],
   "exclude": ["node_modules", "dist", "build"]
 }
