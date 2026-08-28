@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
     'SiteHeader/index': 'src/SiteHeader/index.tsx',
+    'SiteFooter/index': 'src/SiteFooter/index.tsx',
     'SiteLogo/index': 'src/SiteLogo/index.tsx',
   },
   dts: true,
