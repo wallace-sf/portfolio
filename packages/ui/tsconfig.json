@@ -16,8 +16,11 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx",
     "tailwind.config.ts",
     "tsup.config.ts",
+    "vitest.config.ts",
     "globals.d.ts"
   ],
   "exclude": ["dist", "build", "node_modules"]
