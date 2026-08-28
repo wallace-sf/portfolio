@@ -24,17 +24,12 @@ vi.mock('next-intl', () => ({
   useLocale: () => mockLocale,
 }));
 
-vi.mock('~/components/Layout/SideNavigation/MenuItem', () => ({
-  MenuItem: {
-    Item2: {
-      Expandable: ({ children }: { children: React.ReactNode }) => (
-        <div data-testid="language-expandable">{children}</div>
-      ),
-    },
-  },
-}));
-
 vi.mock('@repo/ui/Control', () => ({
+  Nav: {
+    Expandable: ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="language-expandable">{children}</div>
+    ),
+  },
   RadioGroup: ({
     children,
     name,

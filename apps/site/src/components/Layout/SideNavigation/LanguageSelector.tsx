@@ -3,6 +3,7 @@
 import { FC, useCallback } from 'react';
 
 import {
+  Nav,
   Radio,
   RadioGroup,
   RadioGroupChildrenFn,
@@ -13,7 +14,6 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { LANGUAGES_OPTIONS } from './constants';
 import { useSideNavigation } from './context';
-import { MenuItem } from './MenuItem';
 
 export const LanguageSelector: FC = () => {
   const t = useTranslations('SideNavigation');
@@ -57,7 +57,7 @@ export const LanguageSelector: FC = () => {
   );
 
   return (
-    <MenuItem.Item2.Expandable
+    <Nav.Expandable
       title={t('language')}
       icon="material-symbols:language"
       iconClassName="text-content-primary"
@@ -70,6 +70,6 @@ export const LanguageSelector: FC = () => {
       >
         {renderLanguages}
       </RadioGroup>
-    </MenuItem.Item2.Expandable>
+    </Nav.Expandable>
   );
 };

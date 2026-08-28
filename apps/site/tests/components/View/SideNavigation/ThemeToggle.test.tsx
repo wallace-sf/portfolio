@@ -21,17 +21,12 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-vi.mock('~/components/Layout/SideNavigation/MenuItem', () => ({
-  MenuItem: {
-    Item2: {
-      Expandable: ({ children }: { children: React.ReactNode }) => (
-        <div data-testid="theme-expandable">{children}</div>
-      ),
-    },
-  },
-}));
-
 vi.mock('@repo/ui/Control', () => ({
+  Nav: {
+    Expandable: ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="theme-expandable">{children}</div>
+    ),
+  },
   RadioGroup: ({
     children,
     name,
