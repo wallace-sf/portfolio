@@ -7739,7 +7739,7 @@
           "3",
           "4"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -7790,7 +7790,8 @@
         ],
         "complexity": 5,
         "recommendedSubtasks": 4,
-        "expansionPrompt": "Break down the apps/site refactor into: (1) update apps/site/src/components/Layout/Header to re-export SiteHeader from @repo/layout or update import paths in AppLayout, (2) refactor apps/site/src/components/Layout/SideNavigation to add a Blog menu item using buildCrossZoneHref('blog', locale, '') in the navigation list, (3) update AppLayout footer to use SiteFooter if generic implementation was created, otherwise continue using ContactSection, (4) run integration tests verifying Header renders with correct logo, mobile menu toggles, SideNavigation includes Blog link with /blog/{locale} URL, and existing tests pass. Focus on minimal changes to preserve existing behavior while adding cross-zone navigation."
+        "expansionPrompt": "Break down the apps/site refactor into: (1) update apps/site/src/components/Layout/Header to re-export SiteHeader from @repo/layout or update import paths in AppLayout, (2) refactor apps/site/src/components/Layout/SideNavigation to add a Blog menu item using buildCrossZoneHref('blog', locale, '') in the navigation list, (3) update AppLayout footer to use SiteFooter if generic implementation was created, otherwise continue using ContactSection, (4) run integration tests verifying Header renders with correct logo, mobile menu toggles, SideNavigation includes Blog link with /blog/{locale} URL, and existing tests pass. Focus on minimal changes to preserve existing behavior while adding cross-zone navigation.",
+        "updatedAt": "2026-08-28T04:14:01.885Z"
       },
       {
         "id": "6",
@@ -8141,9 +8142,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-28T04:00:19.740Z",
+      "lastModified": "2026-08-28T04:14:01.885Z",
       "taskCount": 10,
-      "completedCount": 5,
+      "completedCount": 6,
       "tags": [
         "feature-blog-shared-layout"
       ]
