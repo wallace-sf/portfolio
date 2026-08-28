@@ -10,24 +10,21 @@ Server Components.
 ## Exports
 
 | Path                      | Description                                                                         |
-| ------------------------- | ----------------------------------------------------------------------------------- |
+| ------------------------- | --------------------------------------------------------------------------------- |
 | `@repo/layout`            | `buildCrossZoneHref` — builds locale-preserving URLs across the `site`/`blog` zones |
 | `@repo/layout/SiteHeader` | `SiteHeader` — the shared top bar (logo link + mobile hamburger toggle)             |
+| `@repo/layout/SiteLogo`   | `SiteLogo` — the inlined brand mark (`<svg>`, forwards all SVG props)               |
 
 ### `SiteHeader`
 
 ```tsx
 'use client';
 import { SiteHeader } from '@repo/layout/SiteHeader';
-import logo from '~assets/images/logo.svg';
 
-<SiteHeader
-  locale={locale}
-  logoSrc={logo.src}
-  isOpen={isOpen}
-  onToggle={onToggle}
-/>;
+<SiteHeader locale={locale} isOpen={isOpen} onToggle={onToggle} />;
 ```
+
+The brand logo is inlined by the package (`SiteLogo`) — apps don't pass an asset.
 
 Requirements in the consuming app:
 

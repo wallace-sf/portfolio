@@ -19,6 +19,11 @@
       "types": "./dist/types/SiteHeader/index.d.ts",
       "import": "./dist/SiteHeader/index.mjs",
       "require": "./dist/SiteHeader/index.js"
+    },
+    "./SiteLogo": {
+      "types": "./dist/types/SiteLogo/index.d.ts",
+      "import": "./dist/SiteLogo/index.mjs",
+      "require": "./dist/SiteLogo/index.js"
     }
   },
   "files": [

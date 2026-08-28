@@ -24,10 +24,6 @@ vi.mock('next/link', () => ({
   ),
 }));
 
-vi.mock('@repo/tailwind-config/screens', () => ({
-  screens: { lg: '1024px' },
-}));
-
 vi.mock('@repo/ui/Control', () => ({
   Button: {
     Base: ({
@@ -44,12 +40,13 @@ vi.mock('@repo/ui/Control', () => ({
 }));
 
 vi.mock('@repo/ui/Imagery', () => ({
-  Icon: ({ icon }: { icon: string }) => <span data-testid="icon" data-icon={icon} />,
+  Icon: ({ icon }: { icon: string }) => (
+    <span data-testid="icon" data-icon={icon} />
+  ),
 }));
 
 const defaultProps = {
   locale: 'pt-BR' as const,
-  logoSrc: '/logo.svg',
   isOpen: false,
   onToggle: vi.fn(),
 };
@@ -64,13 +61,12 @@ describe('SiteHeader', () => {
     );
   });
 
-  it('should render the logo image with the provided source when rendered', () => {
-    render(<SiteHeader {...defaultProps} logoSrc="/brand/logo.svg" />);
+  it('should render the inlined brand logo inside the link when rendered', () => {
+    render(<SiteHeader {...defaultProps} />);
 
-    expect(screen.getByAltText('logo_alt')).toHaveAttribute(
-      'src',
-      '/brand/logo.svg',
-    );
+    expect(
+      screen.getByRole('link', { name: 'logo_alt' }).querySelector('svg'),
+    ).toBeInTheDocument();
   });
 
   it('should call onToggle when the menu button is clicked', async () => {
