@@ -1,5 +1,21 @@
 {
   "slug": "the-either-pattern-in-typescript",
   "publishedAt": "2026-08-01",
-  "tags": ["typescript", "ddd", "architecture"]
+  "tags": ["typescript", "ddd", "architecture"],
+  "coverImage": {
+    "url": "https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/blog/the-either-pattern-in-typescript/cover.webp",
+    "alt": {
+      "en-US": "The Either Pattern in TypeScript — article cover",
+      "pt-BR": "O padrão Either em TypeScript — capa do artigo",
+      "es": "El patrón Either en TypeScript — portada del artículo"
+    }
+  },
+  "thumbnailImage": {
+    "url": "https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/blog/the-either-pattern-in-typescript/thumbnail.webp",
+    "alt": {
+      "en-US": "The Either Pattern in TypeScript — article thumbnail",
+      "pt-BR": "O padrão Either em TypeScript — miniatura do artigo",
+      "es": "El patrón Either en TypeScript — miniatura del artículo"
+    }
+  }
 }
