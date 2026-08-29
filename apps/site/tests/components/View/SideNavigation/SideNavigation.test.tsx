@@ -17,8 +17,11 @@ vi.mock('usehooks-ts', () => ({
   useScrollLock: vi.fn(),
 }));
 
-vi.mock('~hooks', () => ({
+vi.mock('@repo/utils/hooks', () => ({
   useBreakpoint: () => true,
+}));
+
+vi.mock('~hooks', () => ({
   useNavLink: (path: string) => ({
     href: path === '/' ? '/en-US' : `/en-US${path}`,
     active: false,

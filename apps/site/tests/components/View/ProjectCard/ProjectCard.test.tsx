@@ -6,7 +6,7 @@ vi.mock('next-intl', () => ({
   useLocale: () => 'en-US',
 }));
 
-vi.mock('~hooks', () => ({
+vi.mock('@repo/utils/hooks', () => ({
   useBreakpoint: () => false,
 }));
 
@@ -85,7 +85,10 @@ const defaultProps = {
   slug: 'my-project',
   title: 'My Project',
   caption: 'A great project',
-  thumbnailImage: { url: 'https://example.com/thumbnail.webp', alt: 'My project thumbnail' },
+  thumbnailImage: {
+    url: 'https://example.com/thumbnail.webp',
+    alt: 'My project thumbnail',
+  },
   skills: [
     { name: 'React', icon: '' },
     { name: 'TypeScript', icon: '' },

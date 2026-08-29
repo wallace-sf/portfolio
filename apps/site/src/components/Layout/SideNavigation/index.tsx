@@ -6,6 +6,7 @@ import type { Locale } from '@repo/core/shared';
 import { buildCrossZoneHref } from '@repo/layout';
 import { Nav } from '@repo/ui/Control';
 import { Divider } from '@repo/ui/View';
+import { useBreakpoint } from '@repo/utils/hooks';
 import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
 import NextLink from 'next/link';
@@ -13,7 +14,7 @@ import { useBoolean, useScrollLock } from 'usehooks-ts';
 
 import { env } from '~/config/env';
 import { getResumeUrl } from '~/lib/resume';
-import { useBreakpoint, useNavLink } from '~hooks';
+import { useNavLink } from '~hooks';
 
 import { Header } from '../Header';
 import { SideNavigationProvider } from './context';
