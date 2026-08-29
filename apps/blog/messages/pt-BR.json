@@ -9,7 +9,27 @@
     "closeMenu": "Fechar menu"
   },
   "SideNavigation": {
-    "mainNav": "Navegação principal"
+    "mainNav": "Navegação principal",
+    "home": "Início",
+    "projects": "Projetos",
+    "about": "Sobre mim",
+    "resume": "Currículo",
+    "blogHome": "Blog",
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "rss": "RSS Feed",
+    "theme": "Tema",
+    "language": "Idioma"
+  },
+  "Theme": {
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Sistema"
+  },
+  "Language": {
+    "enUS": "ENG",
+    "ptBR": "PT-BR",
+    "es": "ESP"
   },
   "Footer": {
     "copyright": "© {year} Wallace Ferreira",

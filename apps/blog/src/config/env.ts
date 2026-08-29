@@ -1,3 +1,5 @@
+import type { Locale } from '@repo/core/shared';
+
 /**
  * Single source of truth for `NEXT_PUBLIC_*` environment variables read by
  * apps/blog. Each key is a lazy getter so values are read from
@@ -15,5 +17,24 @@ export const env = {
    */
   get gaMeasurementId() {
     return process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  },
+
+  /** GitHub profile URL, linked from the side navigation's portfolio group. */
+  get githubUrl() {
+    return process.env.NEXT_PUBLIC_GITHUB_URL;
+  },
+
+  /** LinkedIn profile URL, linked from the side navigation's portfolio group. */
+  get linkedinUrl() {
+    return process.env.NEXT_PUBLIC_LINKEDIN_URL;
+  },
+
+  /** Resume file URL per locale, used by the side navigation's "Resume" link. Shared with apps/site. */
+  get resumeUrlByLocale(): Record<Locale, string> {
+    return {
+      'en-US': process.env.NEXT_PUBLIC_RESUME_URL_EN_US,
+      'pt-BR': process.env.NEXT_PUBLIC_RESUME_URL_PT_BR,
+      es: process.env.NEXT_PUBLIC_RESUME_URL_ES,
+    };
   },
 } as const;
