@@ -8,4 +8,12 @@ export const env = {
   get siteUrl() {
     return process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3002';
   },
+
+  /**
+   * GA4 Measurement ID, shared with apps/site for unified site + blog
+   * analytics. When unset, `<GoogleAnalytics>` is not rendered.
+   */
+  get gaMeasurementId() {
+    return process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  },
 } as const;
