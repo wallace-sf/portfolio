@@ -19,47 +19,56 @@ vi.mock('usehooks-ts', () => ({
 
 vi.mock('~hooks', () => ({
   useBreakpoint: () => true,
+  useNavLink: (path: string) => ({
+    href: path === '/' ? '/en-US' : `/en-US${path}`,
+    active: false,
+  }),
+}));
+
+vi.mock('next/link', () => ({
+  default: ({
+    children,
+    href,
+    onClick,
+  }: {
+    children: React.ReactNode;
+    href: string;
+    onClick?: () => void;
+  }) => (
+    <a href={href} onClick={onClick}>
+      {children}
+    </a>
+  ),
+}));
+
+vi.mock('@repo/layout', () => ({
+  buildCrossZoneHref: (_zone: string, locale: string) => `/blog/${locale}`,
+}));
+
+const navLinkMock = ({
+  children,
+  href,
+  onNavigate,
+}: {
+  children: React.ReactNode;
+  href: string;
+  onNavigate?: () => void;
+}) => (
+  <a href={href} onClick={onNavigate}>
+    {children}
+  </a>
+);
+
+vi.mock('@repo/ui/Control', () => ({
+  Nav: {
+    Item: navLinkMock,
+    Link: navLinkMock,
+  },
 }));
 
 vi.mock('~/components/Layout/Header', () => ({
   Header: () => <div data-testid="header" />,
 }));
-
-vi.mock('~/components/Layout/SideNavigation/MenuItem', async () => {
-  const { useSideNavigation } = await vi.importActual<
-    typeof import('~/components/Layout/SideNavigation/context')
-  >('~/components/Layout/SideNavigation/context');
-
-  const Item1 = ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => {
-    const { closeMenu } = useSideNavigation();
-    return (
-      <a href={href} onClick={closeMenu}>
-        {children}
-      </a>
-    );
-  };
-
-  return {
-    MenuItem: {
-      Item1,
-      Item2: {
-        Link: ({
-          children,
-          href,
-        }: {
-          children: React.ReactNode;
-          href: string;
-        }) => <a href={href}>{children}</a>,
-      },
-    },
-  };
-});
 
 vi.mock('~/components/Layout/SideNavigation/ThemeToggle', () => ({
   ThemeToggle: () => <div data-testid="theme-toggle" />,
@@ -79,9 +88,8 @@ beforeEach(() => {
 
 describe('SideNavigation', () => {
   it('should render ul elements with only li as direct children', async () => {
-    const { SideNavigation } = await import(
-      '~/components/Layout/SideNavigation'
-    );
+    const { SideNavigation } =
+      await import('~/components/Layout/SideNavigation');
     const { container } = render(React.createElement(SideNavigation));
 
     const lists = container.querySelectorAll('ul');
@@ -94,14 +102,24 @@ describe('SideNavigation', () => {
     });
   });
 
-  it('should provide closeMenu to descendants via SideNavigationContext', async () => {
-    const { SideNavigation } = await import(
-      '~/components/Layout/SideNavigation'
-    );
+  it('should close the mobile menu when a primary nav link is clicked', async () => {
+    const { SideNavigation } =
+      await import('~/components/Layout/SideNavigation');
     render(React.createElement(SideNavigation));
 
     fireEvent.click(screen.getByText('home'));
 
     expect(mockSetFalse).toHaveBeenCalledOnce();
+  });
+
+  it('should include a Blog link to the blog zone carrying the active locale', async () => {
+    const { SideNavigation } =
+      await import('~/components/Layout/SideNavigation');
+    render(React.createElement(SideNavigation));
+
+    expect(screen.getByText('blog').closest('a')).toHaveAttribute(
+      'href',
+      '/blog/en-US',
+    );
   });
 });

@@ -48,17 +48,18 @@ export async function generateMetadata({
 
   if (result.isLeft()) return {};
 
-  const { title, description, coverImage } = result.value;
+  const { title, description } = result.value;
 
   return {
     title,
     description,
     alternates: buildAlternates(`/${slug}`, locale as Locale),
+    // `og:image` comes from the sibling `opengraph-image.tsx` (Next file
+    // convention) — a per-post rendered card via @repo/seo's renderOgImage.
     openGraph: {
       ...buildOpenGraph(locale as Locale, `/${slug}`, 'article'),
       title,
       description,
-      images: coverImage ? [{ url: coverImage }] : undefined,
     },
   };
 }

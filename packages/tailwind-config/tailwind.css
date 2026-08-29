@@ -27,6 +27,10 @@
   --tw-shadow-drop-sm: none;
   --tw-shadow-drop-md: none;
   --tw-shadow-drop-up: none;
+
+  /* Shared layout tokens — consumed by @repo/layout's SiteHeader across zones */
+  --header-height-desktop: 104px;
+  --header-height-mobile: 68px;
 }
 
 .light {
@@ -52,7 +56,7 @@
   --tw-success: 82 206 122; /* #52CE7A */
   --tw-shadow-drop-sm: 0px 3px 12px 2px #00000014;
   --tw-shadow-drop-md: 0px 4px 20px 4px #00000014;
-  --tw-shadow-drop-up: 0px -4px 15px 0px #0000001A;
+  --tw-shadow-drop-up: 0px -4px 15px 0px #0000001a;
 }
 
 @layer utilities {

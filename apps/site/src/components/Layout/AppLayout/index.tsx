@@ -1,5 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
 
+import { SiteFooter } from '@repo/layout/SiteFooter';
+
 import { ContactSection } from '~features/contact/ContactSection';
 
 import { SideNavigation } from '../SideNavigation';
@@ -12,9 +14,9 @@ export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
         <main className="mx-auto flex h-auto w-full max-w-237.5 flex-1 flex-col px-4 pt-6 lg:pt-16 xl:px-0 xl:pt-20">
           {children}
         </main>
-        <footer className="mx-auto w-full max-w-237.5 shadow-drop-up">
+        <SiteFooter>
           <ContactSection />
-        </footer>
+        </SiteFooter>
       </div>
     </>
   );
