@@ -11,6 +11,12 @@ const nextConfig = {
   async headers() {
     return [{ source: '/(.*)', headers: SECURITY_HEADERS }];
   },
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'placehold.co' },
+      { protocol: 'https', hostname: '*.supabase.co' },
+    ],
+  },
 };
 
 export default createNextIntlPlugin()(nextConfig);
