@@ -52,7 +52,7 @@ const defaultProps = {
 };
 
 describe('SiteHeader', () => {
-  it('should render the logo link pointing to the locale root when rendered', () => {
+  it('should link the logo to the portfolio home for the active locale when rendered', () => {
     render(<SiteHeader {...defaultProps} locale="es" />);
 
     expect(screen.getByRole('link', { name: 'logo_alt' })).toHaveAttribute(

@@ -7455,7 +7455,7 @@
   "feature-blog-shared-layout": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Extract security headers into shared configuration",
         "description": "Consolidate SECURITY_HEADERS from both apps/site and apps/blog into a single shared source to prevent divergence",
         "details": "Create `packages/config` (new package) or extend `packages/utils` with a shared `SECURITY_HEADERS` export. The site's next.config.mjs includes CSP with GA/analytics sources, while blog's config has a minimal set. The shared config must support the site's full CSP policy (including dynamic `isProduction` check for unsafe-eval in dev mode). Both apps' next.config.mjs files will import and consume this shared array. Include CSP directives for: default-src 'self', script-src with GTM/jsdelivr, style-src, img-src, font-src, connect-src with GA domains and iconify APIs, and frame-ancestors 'none'. Also include X-Frame-Options: DENY, X-Content-Type-Options: nosniff, and Referrer-Policy: strict-origin-when-cross-origin.",
@@ -7522,7 +7522,7 @@
         "updatedAt": "2026-08-27T03:23:10.544Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Create packages/layout with SiteHeader component",
         "description": "Extract apps/site's Header component into a new shared packages/layout package as SiteHeader, making it consumable by both apps",
         "details": "Create `packages/layout` following monorepo conventions (package.json with exports, tsconfig, build scripts). Move `apps/site/src/components/Layout/Header/index.tsx` to `packages/layout/src/SiteHeader/index.tsx`. The component must remain presentational-only (no @repo/application imports). It receives `locale: Locale`, `onToggle: () => void`, `isOpen: boolean` as props. The logo is currently a static import from assets — extract logo.svg to `packages/layout/assets` or accept it as a prop. Dependencies: React, next-intl (useTranslations for aria-labels), Next.js (NextLink), @repo/ui (Button, Icon), @repo/tailwind-config (screens). Refactor `apps/site/src/components/Layout/Header` to re-export from `@repo/layout` instead of duplicating. The component must support mobile hamburger toggle and responsive logo sizing (66x44 mobile, 99x66 desktop).",
@@ -7598,7 +7598,7 @@
         "updatedAt": "2026-08-28T03:00:25.153Z"
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Create packages/layout with SiteFooter component",
         "description": "Extract apps/site's ContactSection footer into packages/layout as SiteFooter, or create a generic footer if contact section is site-specific",
         "details": "Analyze `apps/site/src/features/contact/ContactSection` — it's a client component with dynamic ContactForm and ContactInfo. This is likely too site-specific to share directly. Instead, create a generic `packages/layout/src/SiteFooter/index.tsx` that accepts children or config for rendering arbitrary footer content (links, copyright, social icons). The blog may not need the full contact form. Alternative: SiteFooter accepts `sections: React.ReactNode[]` to compose different footer content per app. Decide during implementation whether to extract ContactSection's structure or provide a simpler, composable footer primitive. If the latter, apps/site continues using ContactSection but wraps it in the shared SiteFooter for consistent styling. Dependencies: React, @repo/ui primitives if needed.",
@@ -7662,7 +7662,7 @@
         "updatedAt": "2026-08-28T04:00:19.740Z"
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Implement buildCrossZoneHref helper in packages/utils",
         "description": "Create typed URL builder for cross-zone navigation that preserves locale, preventing silent locale loss when users cross app boundaries",
         "status": "done",
@@ -7728,7 +7728,7 @@
         "updatedAt": "2026-08-27T04:06:13.378Z"
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Refactor apps/site to consume packages/layout components",
         "description": "Replace apps/site's existing Header with the shared SiteHeader from packages/layout, update nav links to use buildCrossZoneHref",
         "details": "Update `apps/site/src/components/Layout/Header/index.tsx` to re-export `SiteHeader` from `@repo/layout` (or delete and update import paths). Update `apps/site/src/components/Layout/AppLayout/index.tsx` to import SiteHeader from `@repo/layout`. Refactor `apps/site/src/components/Layout/SideNavigation` to use `buildCrossZoneHref` for any links pointing to `/blog` (currently those links likely don't exist or use plain hrefs). The SideNavigation menu items should include a Blog link constructed with `buildCrossZoneHref('blog', locale, '')`. Preserve existing mobile/desktop navigation behavior (drawer, toggle state). If SiteFooter is generic, refactor AppLayout's footer to use it; otherwise continue using ContactSection directly.",
@@ -7794,7 +7794,7 @@
         "updatedAt": "2026-08-28T04:14:01.885Z"
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Integrate packages/layout components into apps/blog",
         "description": "Add SiteHeader and SiteFooter to apps/blog's layout to unify visual identity with apps/site, using buildCrossZoneHref for site links",
         "details": "Create `apps/blog/src/components/Layout` directory. Create `apps/blog/src/components/Layout/BlogLayout.tsx` (or similar) that wraps children with SiteHeader and SiteFooter. SiteHeader receives locale from params, toggle state for mobile menu (useState), and logo. SiteFooter renders minimal content (e.g., copyright, link back to site). Import `buildCrossZoneHref` and construct nav items: site home link using `buildCrossZoneHref('site', locale, '')`, blog home using `buildCrossZoneHref('blog', locale, '')`. Update `apps/blog/src/app/[locale]/layout.tsx` to wrap children with BlogLayout. The blog currently has no header/footer, so this is net-new UI. Ensure mobile menu toggle state is managed (client component for interactivity). The blog's layout will now match the site's header/footer chrome, creating a unified experience.",
@@ -7872,7 +7872,7 @@
         "updatedAt": "2026-08-28T04:34:46.113Z"
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "Integrate Google Analytics into apps/blog using @next/third-parties",
         "description": "Wire @next/third-parties/google GoogleAnalytics component into apps/blog's layout, reusing the same GA4 property as apps/site for unified analytics",
         "details": "Install `@next/third-parties` in `apps/blog` (check if already in package.json; apps/site already has it). Import `{ GoogleAnalytics } from '@next/third-parties/google'` in `apps/blog/src/app/[locale]/layout.tsx`. Add `<GoogleAnalytics gaId={env.gaMeasurementId} />` before closing </body>, mirroring apps/site/src/app/[locale]/layout.tsx:98. Ensure `apps/blog/src/config/env.ts` exposes `gaMeasurementId` (or `NEXT_PUBLIC_GA_MEASUREMENT_ID`). Both apps must use the **same GA4 measurement ID** — verify .env or Vercel env vars supply the same value to both apps. Update CSP in blog's next.config.mjs (via shared SECURITY_HEADERS from task 1) to allow GTM/GA domains (script-src, connect-src, img-src). The unified GA property will track both site and blog traffic in a single funnel.",
@@ -7925,7 +7925,7 @@
         "updatedAt": "2026-08-29T00:10:11.392Z"
       },
       {
-        "id": "8",
+        "id": 8,
         "title": "Extract OG image rendering logic into packages/seo",
         "description": "Create reusable OG image rendering helper in packages/seo to avoid duplicating ImageResponse JSX between apps/site and apps/blog",
         "details": "Analyze `apps/site/src/app/og/route.tsx` — it uses `next/og` ImageResponse with custom JSX (gradient background, watermark W, header with logo, main content title/subtitle, footer). The blog will need per-post OG images with similar styling. Extract the JSX rendering function into `packages/seo/src/renderOgImage.tsx` (or similar). Function signature: `renderOgImage(params: { title: string; subtitle?: string; locale: Locale; page?: string; jobTitle?: string; siteHost: string }): JSX.Element`. Return the JSX tree (not ImageResponse instance — the route handler wraps it). Export SIZE constant `{ width: 1200, height: 630 }`. Both apps' OG routes will import this helper and call `new ImageResponse(renderOgImage({ ... }), SIZE)`. This follows the cross-app-reuse precedent from packages/seo (issue #960) — extract once a second app needs it. Ensure no Next.js-specific runtime imports in the JSX (next/og ImageResponse is called by the route, not the helper).",
@@ -7987,7 +7987,7 @@
         "updatedAt": "2026-08-28T03:45:53.791Z"
       },
       {
-        "id": "9",
+        "id": 9,
         "title": "Implement per-post OG image route in apps/blog",
         "description": "Create dynamic OpenGraph image route for blog posts using the shared renderOgImage helper from packages/seo",
         "details": "Create `apps/blog/src/app/[locale]/[slug]/opengraph-image.tsx` (Next.js App Router convention for dynamic OG images). Import `{ ImageResponse }` from `next/og`, `renderOgImage` and `SIZE` from `@repo/seo`. Implement `export async function GET(request, { params })` that extracts `locale` and `slug` from params, fetches post metadata (title, excerpt) — either inline or via a use case if one exists — then returns `new ImageResponse(renderOgImage({ title: post.title, subtitle: post.excerpt, locale, siteHost: new URL(env.siteUrl).host }), SIZE)`. Set `export const runtime = 'edge'`. Update the post page's `generateMetadata` to include `openGraph: { images: [{ url: `/blog/${locale}/${slug}/opengraph-image`, width: 1200, height: 630 }] }`. This generates a unique OG image per post, mirroring the site's /og route but scoped to blog content.",
@@ -8051,7 +8051,7 @@
         "updatedAt": "2026-08-28T04:43:20.760Z"
       },
       {
-        "id": "10",
+        "id": 10,
         "title": "Cross-zone locale preservation end-to-end testing",
         "description": "Manual and automated browser verification that locale is preserved across all site ↔ blog navigation paths",
         "details": "Create comprehensive manual test plan covering all cross-zone navigation scenarios: (1) Site /en-US → Blog /blog/en-US, (2) Site /pt-BR → Blog /blog/pt-BR, (3) Site /es → Blog /blog/es, (4) Blog /blog/en-US → Site /en-US, (5) Blog /blog/pt-BR → Site /pt-BR, (6) Blog /blog/es → Site /es. Test on both mobile (hamburger menu) and desktop (side nav). Verify each locale's cookie (NEXT_LOCALE) remains scoped (site: Path=/, blog: Path=/blog) and is never shared. Verify direct /blog links (no locale) redirect to default locale or current locale (middleware behavior). Optionally, create Playwright E2E tests automating these flows: navigate from site home to blog link, assert URL contains correct locale segment, navigate back, assert locale unchanged. This test suite is the acceptance criteria for the entire PRD — locale must NEVER be lost crossing zones.",
@@ -8080,7 +8080,7 @@
             "dependencies": [
               1
             ],
-            "details": "Execute manual test plan for site → blog flows: (1) Start site in /en-US, navigate to blog via header/side nav link, verify lands on /blog/en-US, (2) Start site in /pt-BR, navigate to blog, verify lands on /blog/pt-BR, (3) Start site in /es, navigate to blog, verify lands on /blog/es. Repeat each scenario on desktop viewport (side navigation) and mobile viewport (hamburger menu). Use browser DevTools to inspect URL after navigation. Record results in test plan document or GitHub issue comment. If any locale is lost (e.g., /en-US → /blog/pt-BR), document as failure and file issue referencing tasks 5 and 6. Requires both apps/site and apps/blog running locally or in staging environment.",
+            "details": "Execute manual test plan for site → blog flows: (1) Start site in /en-US, navigate to blog via header/side nav link, verify lands on /blog/en-US, (2) Start site in /pt-BR, navigate to blog, verify lands on /blog/pt-BR, (3) Start site in /es, navigate to blog, verify lands on /blog/es. Repeat each scenario on desktop viewport (side navigation) and mobile viewport (hamburger menu). Use browser DevTools to inspect URL after navigation. Record results in test plan document or GitHub issue comment. If any locale is lost (e.g., /en-US → /blog/pt-BR), document as failure and file issue referencing tasks 5 and 6. Requires both apps/site and apps/blog running locally or in staging environment.\n<info added on 2026-08-29T00:29:07.511Z>\nProduction HTTP-level verification completed on 2026-08-29 against wallace-ferreira.dev (post-#982 deploy). HTTP assertions PASS: /blog/{en-US,pt-BR} return 200 with expected blog HTML; /blog redirects 307 -> /blog/en-US; RSS feed /blog/en-US/rss.xml valid; canonical, og:url, and hreflang (x-default + en-US/pt-BR/es) all carry /blog prefix on listing and detail pages; per-post opengraph-image routes return PNG 200; NEXT_LOCALE cookie scoping correct (Path=/blog for blog app, Path=/ for site app, no cross-zone leak); cross-zone Blog nav link present in site HTML with correct locale. Browser testing INCOMPLETE — pending: full browser manual tests for all 3 locales (en-US, pt-BR, es) on both mobile (hamburger menu) and desktop (side navigation) viewports; round-trip navigation assertions (site -> blog -> back, locale unchanged). Blocked on task 6 (BlogLayout implementation) for in-blog navigation structure before completing full end-to-end user flow verification.\n</info added on 2026-08-29T00:29:07.511Z>",
             "status": "pending",
             "testStrategy": "Manual execution with screenshot evidence or video recording. Pass criteria: all 6 tests (3 locales × 2 viewports) preserve locale in blog URL segment. Document results in test report.",
             "parentId": "undefined"
@@ -8149,7 +8149,9 @@
       "completedCount": 8,
       "tags": [
         "feature-blog-shared-layout"
-      ]
+      ],
+      "created": "2026-08-29T00:28:50.334Z",
+      "description": "Tasks for feature-blog-shared-layout context"
     }
   }
 }
