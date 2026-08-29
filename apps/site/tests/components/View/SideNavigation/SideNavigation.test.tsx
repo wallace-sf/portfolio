@@ -5,27 +5,42 @@ import React from 'react';
 
 import { render, screen, fireEvent } from '@testing-library/react';
 
+const mockCloseMenu = vi.fn();
+
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
   useLocale: () => 'en-US',
 }));
 
-const mockSetFalse = vi.fn();
-
-vi.mock('usehooks-ts', () => ({
-  useBoolean: () => ({ value: false, toggle: vi.fn(), setFalse: mockSetFalse }),
-  useScrollLock: vi.fn(),
+vi.mock('@repo/layout', () => ({
+  buildCrossZoneHref: (_zone: string, locale: string) => `/blog/${locale}`,
 }));
 
-vi.mock('@repo/utils/hooks', () => ({
-  useBreakpoint: () => true,
-}));
-
-vi.mock('~hooks', () => ({
+vi.mock('@repo/layout/SideNav', () => ({
   useNavLink: (path: string) => ({
     href: path === '/' ? '/en-US' : `/en-US${path}`,
     active: false,
   }),
+  SideNav: ({
+    primary,
+    secondary,
+  }: {
+    primary: (ctx: { closeMenu: () => void }) => React.ReactNode;
+    secondary: (ctx: { closeMenu: () => void }) => React.ReactNode;
+  }) => (
+    <div>
+      <ul>{primary({ closeMenu: mockCloseMenu })}</ul>
+      <ul>{secondary({ closeMenu: mockCloseMenu })}</ul>
+    </div>
+  ),
+}));
+
+vi.mock('@repo/layout/ThemeToggle', () => ({
+  ThemeToggle: () => <div data-testid="theme-toggle" />,
+}));
+
+vi.mock('@repo/layout/LanguageSelector', () => ({
+  LanguageSelector: () => <div data-testid="language-selector" />,
 }));
 
 vi.mock('next/link', () => ({
@@ -44,46 +59,22 @@ vi.mock('next/link', () => ({
   ),
 }));
 
-vi.mock('@repo/layout', () => ({
-  buildCrossZoneHref: (_zone: string, locale: string) => `/blog/${locale}`,
-}));
-
-const navLinkMock = ({
-  children,
-  href,
-  onNavigate,
-}: {
-  children: React.ReactNode;
-  href: string;
-  onNavigate?: () => void;
-}) => (
-  <a href={href} onClick={onNavigate}>
-    {children}
-  </a>
-);
-
-vi.mock('@repo/ui/Control', () => ({
-  Nav: {
-    Item: navLinkMock,
-    Link: navLinkMock,
-  },
-}));
-
-vi.mock('~/components/Layout/Header', () => ({
-  Header: () => <div data-testid="header" />,
-}));
-
-vi.mock('~/components/Layout/SideNavigation/ThemeToggle', () => ({
-  ThemeToggle: () => <div data-testid="theme-toggle" />,
-}));
-
-vi.mock('~/components/Layout/SideNavigation/LanguageSelector', () => ({
-  LanguageSelector: () => <div data-testid="language-selector" />,
-}));
-
-vi.mock('@repo/ui/View', () => ({
-  Divider: () => <hr />,
-}));
+vi.mock('@repo/ui/Control', () => {
+  const item = ({
+    children,
+    href,
+    onNavigate,
+  }: {
+    children: React.ReactNode;
+    href: string;
+    onNavigate?: () => void;
+  }) => (
+    <a href={href} onClick={onNavigate}>
+      {children}
+    </a>
+  );
+  return { Nav: { Item: item, Link: item } };
+});
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -97,7 +88,6 @@ describe('SideNavigation', () => {
 
     const lists = container.querySelectorAll('ul');
     expect(lists.length).toBeGreaterThanOrEqual(2);
-
     lists.forEach((ul) => {
       Array.from(ul.children).forEach((child) => {
         expect(child.tagName).toBe('LI');
@@ -112,7 +102,7 @@ describe('SideNavigation', () => {
 
     fireEvent.click(screen.getByText('home'));
 
-    expect(mockSetFalse).toHaveBeenCalledOnce();
+    expect(mockCloseMenu).toHaveBeenCalled();
   });
 
   it('should include a Blog link to the blog zone carrying the active locale', async () => {
