@@ -16,14 +16,26 @@ import { SideNavProvider } from './context';
 export { SideNavProvider, useSideNav, type ISideNavContext } from './context';
 export { useNavLink, type INavLinkState } from './useNavLink';
 
+/**
+ * A nav slot is either static content or a function that receives the
+ * drawer's `closeMenu` — so items rendered directly in the slot can close
+ * the drawer on click without each app wrapping them in a context consumer.
+ */
+export type SideNavSlot =
+  | ReactNode
+  | ((ctx: { closeMenu: () => void }) => ReactNode);
+
 export interface SideNavProps {
   /** Active locale — passed through to the shared `SiteHeader`. */
   locale: Locale;
   /** Primary nav group (top `<ul>`). */
-  primary: ReactNode;
+  primary: SideNavSlot;
   /** Secondary nav group (bottom `<ul>`, below the divider). */
-  secondary: ReactNode;
+  secondary: SideNavSlot;
 }
+
+const renderSlot = (slot: SideNavSlot, closeMenu: () => void): ReactNode =>
+  typeof slot === 'function' ? slot({ closeMenu }) : slot;
 
 /**
  * The side-navigation shell shared across the `site` and `blog` zones: the
@@ -53,11 +65,11 @@ export const SideNav = ({ locale, primary, secondary }: SideNavProps) => {
           )}
         >
           <ul className="flex flex-col gap-y-3 px-6 pt-10 lg:px-0 lg:pt-15">
-            {primary}
+            {renderSlot(primary, closeMenu)}
           </ul>
           <Divider className="mx-6 lg:mx-0" />
           <ul className="flex flex-col gap-y-3 px-6 pb-8 lg:justify-end lg:px-0">
-            {secondary}
+            {renderSlot(secondary, closeMenu)}
           </ul>
         </nav>
       </SideNavProvider>
