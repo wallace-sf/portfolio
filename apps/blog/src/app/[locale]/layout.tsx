@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Inter } from 'next/font/google';
 
+import { BlogLayout } from '~/components/Layout/BlogLayout';
 import { env } from '~/config/env';
 import { buildAlternates } from '~/lib/seo/alternates';
 
@@ -45,9 +46,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`antialiased ${inter.className}`}>
+      <body className={`bg-surface-base antialiased ${inter.className}`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          <BlogLayout locale={locale as Locale}>{children}</BlogLayout>
         </NextIntlClientProvider>
         {env.gaMeasurementId && <GoogleAnalytics gaId={env.gaMeasurementId} />}
       </body>
