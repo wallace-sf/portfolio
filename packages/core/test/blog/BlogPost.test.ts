@@ -1,15 +1,21 @@
 import {
   BlogPost,
   DateTime,
+  Image,
   ILocalizedTextInput,
   LocalizedText,
   Slug,
   Tag,
-  Url,
   ValidationError,
 } from '~/index';
 
 import { BlogPostBuilder } from '../helpers';
+
+const validAlt = {
+  'en-US': 'Cover',
+  'pt-BR': 'Capa',
+  es: 'Portada',
+};
 
 describe('BlogPost', () => {
   describe('when created from valid props', () => {
@@ -38,24 +44,55 @@ describe('BlogPost', () => {
       expect(result.value.title.get('en-US')).toBe('My First Post');
     });
 
-    it('should create BlogPost without a coverImage', () => {
+    it('should create BlogPost without a coverImage or thumbnailImage', () => {
       const result = BlogPost.create(BlogPostBuilder.build().toProps());
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
       expect(result.value.coverImage).toBeUndefined();
+      expect(result.value.thumbnailImage).toBeUndefined();
     });
 
-    it('should create BlogPost with a coverImage', () => {
+    it('should create BlogPost with a coverImage as an Image VO', () => {
       const result = BlogPost.create(
         BlogPostBuilder.build()
-          .withCoverImage('https://example.com/cover.png')
+          .withCoverImage({
+            url: 'https://example.com/cover.png',
+            alt: validAlt,
+          })
           .toProps(),
       );
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value.coverImage).toBeInstanceOf(Url);
+      expect(result.value.coverImage).toBeInstanceOf(Image);
+      expect(result.value.coverImage?.url.value).toBe(
+        'https://example.com/cover.png',
+      );
+      expect(result.value.coverImage?.alt.get('pt-BR')).toBe('Capa');
+    });
+
+    it('should create BlogPost with both cover and thumbnail Image VOs', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withCoverImage({
+            url: 'https://example.com/cover.png',
+            alt: validAlt,
+          })
+          .withThumbnailImage({
+            url: 'https://example.com/thumb.png',
+            alt: validAlt,
+          })
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.coverImage).toBeInstanceOf(Image);
+      expect(result.value.thumbnailImage).toBeInstanceOf(Image);
+      expect(result.value.thumbnailImage?.url.value).toBe(
+        'https://example.com/thumb.png',
+      );
     });
 
     it('should create BlogPost with an empty tags list', () => {
@@ -196,11 +233,24 @@ describe('BlogPost', () => {
 
     it('should return Left for an invalid coverImage url', () => {
       const result = BlogPost.create(
-        BlogPostBuilder.build().withCoverImage('not-a-url').toProps(),
+        BlogPostBuilder.build()
+          .withCoverImage({ url: 'not-a-url', alt: validAlt })
+          .toProps(),
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Url.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(Image.ERROR_CODE_URL);
+    });
+
+    it('should return Left for an invalid thumbnailImage url', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withThumbnailImage({ url: 'not-a-url', alt: validAlt })
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Image.ERROR_CODE_URL);
     });
   });
 });
