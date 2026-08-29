@@ -24,10 +24,6 @@ const config: Config = {
           'canvas-end': '#10251C',
         },
       },
-      height: {
-        'sidenav-desktop': 'calc(100vh - var(--header-height-desktop))',
-        'sidenav-mobile': 'calc(100vh - var(--header-height-mobile))',
-      },
     },
   },
   plugins: [sharedConfig],
