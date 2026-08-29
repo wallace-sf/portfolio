@@ -8,14 +8,19 @@ const ZONE_BASE_PATH: Record<Zone, string> = {
 };
 
 /**
- * Builds a URL for navigating between the `site` and `blog` multi-zone
- * deployments, always embedding the current locale in the path.
+ * Builds an **absolute** URL for navigating between the `site` and `blog`
+ * multi-zone deployments, always embedding the current locale in the path.
  *
- * Each zone resolves locale independently (separate `NEXT_LOCALE` cookies
- * scoped by basePath) — a link built without an explicit locale segment
- * silently drops the user's language when it crosses the zone boundary.
- * Every cross-zone link must go through this helper instead of ad hoc
- * string concatenation.
+ * Why absolute: the two zones are separate Next.js apps served under one
+ * domain via a rewrite. A bare path (`/en-US`) handed to `next/link` inside
+ * the `blog` app is silently rewritten to `/blog/en-US` by its `basePath` —
+ * so cross-zone links must be full URLs, which `next/link` treats as external
+ * (no `basePath` munging, no broken cross-app client routing). It also keeps
+ * the locale explicit so language is never dropped at the zone boundary
+ * (each zone scopes its own `NEXT_LOCALE` cookie by `basePath`).
+ *
+ * The origin comes from `NEXT_PUBLIC_SITE_URL` (the shared public domain),
+ * falling back to the site's local dev server.
  */
 export function buildCrossZoneHref(
   targetZone: Zone,
@@ -31,5 +36,9 @@ export function buildCrossZoneHref(
     );
   }
 
-  return `${ZONE_BASE_PATH[targetZone]}/${locale}${path}`;
+  const origin = (
+    process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  ).replace(/\/$/, '');
+
+  return `${origin}${ZONE_BASE_PATH[targetZone]}/${locale}${path}`;
 }

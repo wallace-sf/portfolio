@@ -8,14 +8,6 @@ const config: Config = {
     '../../packages/ui/src/**/*.{ts,tsx}',
     '../../packages/layout/src/**/*.{ts,tsx}',
   ],
-  theme: {
-    extend: {
-      height: {
-        'sidenav-desktop': 'calc(100vh - var(--header-height-desktop))',
-        'sidenav-mobile': 'calc(100vh - var(--header-height-mobile))',
-      },
-    },
-  },
   plugins: [sharedConfig],
 };
 export default config;

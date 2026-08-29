@@ -29,6 +29,21 @@
       "types": "./dist/types/SiteLogo/index.d.ts",
       "import": "./dist/SiteLogo/index.mjs",
       "require": "./dist/SiteLogo/index.js"
+    },
+    "./SideNav": {
+      "types": "./dist/types/SideNav/index.d.ts",
+      "import": "./dist/SideNav/index.mjs",
+      "require": "./dist/SideNav/index.js"
+    },
+    "./ThemeToggle": {
+      "types": "./dist/types/ThemeToggle/index.d.ts",
+      "import": "./dist/ThemeToggle/index.mjs",
+      "require": "./dist/ThemeToggle/index.js"
+    },
+    "./LanguageSelector": {
+      "types": "./dist/types/LanguageSelector/index.d.ts",
+      "import": "./dist/LanguageSelector/index.mjs",
+      "require": "./dist/LanguageSelector/index.js"
     }
   },
   "files": [
@@ -55,7 +70,9 @@
   "dependencies": {
     "@repo/core": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
-    "@repo/ui": "workspace:*"
+    "@repo/ui": "workspace:*",
+    "classnames": "^2.5.1",
+    "usehooks-ts": "^3.1.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

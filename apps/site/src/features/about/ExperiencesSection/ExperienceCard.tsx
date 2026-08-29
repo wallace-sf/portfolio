@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { useBoolean } from 'usehooks-ts';
 
 import { SkillGroup } from '~features/shared/SkillGroup';
-import { useBreakpoint } from '~hooks';
+import { useBreakpoint } from '@repo/utils/hooks';
 import { formatDuration } from '~utils';
 
 import {

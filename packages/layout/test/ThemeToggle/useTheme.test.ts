@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as usehooksTs from 'usehooks-ts';
 
-import { useTheme } from '../../src/hooks/useTheme';
+import { useTheme } from '~/ThemeToggle/useTheme';
 
 vi.mock('usehooks-ts', () => ({
   useLocalStorage: vi.fn(),
@@ -29,7 +29,11 @@ describe('useTheme', () => {
   });
 
   it('should apply dark class and remove light class when theme is dark', () => {
-    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue(['dark', vi.fn(), vi.fn()]);
+    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue([
+      'dark',
+      vi.fn(),
+      vi.fn(),
+    ]);
 
     renderHook(() => useTheme());
 
@@ -38,7 +42,11 @@ describe('useTheme', () => {
   });
 
   it('should apply light class and remove dark class when theme is light', () => {
-    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue(['light', vi.fn(), vi.fn()]);
+    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue([
+      'light',
+      vi.fn(),
+      vi.fn(),
+    ]);
 
     renderHook(() => useTheme());
 
@@ -47,7 +55,11 @@ describe('useTheme', () => {
   });
 
   it('should apply dark class when theme is system and system prefers dark mode', () => {
-    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue(['system', vi.fn(), vi.fn()]);
+    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue([
+      'system',
+      vi.fn(),
+      vi.fn(),
+    ]);
     vi.mocked(usehooksTs.useDarkMode).mockReturnValue({
       ...mockDarkMode,
       isDarkMode: true,
@@ -60,7 +72,11 @@ describe('useTheme', () => {
   });
 
   it('should apply light class when theme is system and system prefers light mode', () => {
-    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue(['system', vi.fn(), vi.fn()]);
+    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue([
+      'system',
+      vi.fn(),
+      vi.fn(),
+    ]);
     vi.mocked(usehooksTs.useDarkMode).mockReturnValue({
       ...mockDarkMode,
       isDarkMode: false,
@@ -74,7 +90,11 @@ describe('useTheme', () => {
 
   it('should not modify classes when not yet client-side hydrated', () => {
     vi.mocked(usehooksTs.useIsClient).mockReturnValue(false);
-    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue(['dark', vi.fn(), vi.fn()]);
+    vi.mocked(usehooksTs.useLocalStorage).mockReturnValue([
+      'dark',
+      vi.fn(),
+      vi.fn(),
+    ]);
 
     renderHook(() => useTheme());
 
