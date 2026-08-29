@@ -7879,10 +7879,9 @@
         "testStrategy": "Manual verification: build blog in dev, confirm GA script tag present in HTML. Check browser Network tab for GTM/GA requests. In GA4 dashboard, verify events from /blog routes appear (may require deploying to staging/production). Unit test for env.gaMeasurementId presence if applicable.",
         "priority": "medium",
         "dependencies": [
-          "1",
-          "6"
+          "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -7922,7 +7921,8 @@
         ],
         "complexity": 4,
         "recommendedSubtasks": 3,
-        "expansionPrompt": "Break down the GA integration into: (1) verify @next/third-parties is in apps/blog/package.json (if not, install it) and ensure apps/blog/src/config/env.ts exposes gaMeasurementId (or NEXT_PUBLIC_GA_MEASUREMENT_ID), mirroring apps/site env setup, (2) import GoogleAnalytics from @next/third-parties/google in apps/blog/src/app/[locale]/layout.tsx and add <GoogleAnalytics gaId={env.gaMeasurementId} /> before closing body tag following the pattern from apps/site layout.tsx:98, (3) verify CSP headers from task 1's shared SECURITY_HEADERS already include GTM/GA domains (script-src, connect-src, img-src) and perform manual verification: build blog in dev, check GA script tag in HTML, verify Network requests, and confirm GA4 dashboard shows /blog route events. Both apps must use the same GA4 measurement ID for unified analytics."
+        "expansionPrompt": "Break down the GA integration into: (1) verify @next/third-parties is in apps/blog/package.json (if not, install it) and ensure apps/blog/src/config/env.ts exposes gaMeasurementId (or NEXT_PUBLIC_GA_MEASUREMENT_ID), mirroring apps/site env setup, (2) import GoogleAnalytics from @next/third-parties/google in apps/blog/src/app/[locale]/layout.tsx and add <GoogleAnalytics gaId={env.gaMeasurementId} /> before closing body tag following the pattern from apps/site layout.tsx:98, (3) verify CSP headers from task 1's shared SECURITY_HEADERS already include GTM/GA domains (script-src, connect-src, img-src) and perform manual verification: build blog in dev, check GA script tag in HTML, verify Network requests, and confirm GA4 dashboard shows /blog route events. Both apps must use the same GA4 measurement ID for unified analytics.",
+        "updatedAt": "2026-08-29T00:10:11.392Z"
       },
       {
         "id": "8",
@@ -8144,9 +8144,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-28T04:43:20.760Z",
+      "lastModified": "2026-08-29T00:10:11.392Z",
       "taskCount": 10,
-      "completedCount": 7,
+      "completedCount": 8,
       "tags": [
         "feature-blog-shared-layout"
       ]
