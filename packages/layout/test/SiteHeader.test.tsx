@@ -5,23 +5,10 @@ import userEvent from '@testing-library/user-event';
 
 import { SiteHeader } from '~/SiteHeader';
 
+vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://wallace-ferreira.dev');
+
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
-}));
-
-vi.mock('next/link', () => ({
-  default: ({
-    children,
-    href,
-    ...rest
-  }: {
-    children: ReactNode;
-    href: string;
-  }) => (
-    <a href={href} {...rest}>
-      {children}
-    </a>
-  ),
 }));
 
 vi.mock('@repo/ui/Control', () => ({
@@ -57,7 +44,7 @@ describe('SiteHeader', () => {
 
     expect(screen.getByRole('link', { name: 'logo_alt' })).toHaveAttribute(
       'href',
-      '/es',
+      'https://wallace-ferreira.dev/es',
     );
   });
 

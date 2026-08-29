@@ -71,8 +71,17 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
     return this;
   }
 
-  public withCoverImage(coverImage: string): BlogPostBuilder {
+  public withCoverImage(
+    coverImage: IBlogPostProps['coverImage'],
+  ): BlogPostBuilder {
     this._props.coverImage = coverImage;
+    return this;
+  }
+
+  public withThumbnailImage(
+    thumbnailImage: IBlogPostProps['thumbnailImage'],
+  ): BlogPostBuilder {
+    this._props.thumbnailImage = thumbnailImage;
     return this;
   }
 }

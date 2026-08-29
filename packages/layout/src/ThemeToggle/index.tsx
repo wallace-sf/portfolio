@@ -11,16 +11,20 @@ import {
 } from '@repo/ui/Control';
 import { useTranslations } from 'next-intl';
 
-import { Theme, useTheme } from '~hooks';
+import { useSideNav } from '~/SideNav/context';
 
 import { THEME_OPTIONS } from './constants';
-import { useSideNavigation } from './context';
+import { type Theme, useTheme } from './useTheme';
+
+export { useTheme, type Theme } from './useTheme';
+export { useDarkMode } from './useDarkMode';
+export { THEME_OPTIONS } from './constants';
 
 export const ThemeToggle: FC = () => {
   const t = useTranslations('SideNavigation');
   const tTheme = useTranslations('Theme');
   const { theme, setTheme } = useTheme();
-  const { closeMenu } = useSideNavigation();
+  const { closeMenu } = useSideNav();
 
   const onChangeTheme = useCallback<RadioGroupProps['onChange']>(
     (event) => {

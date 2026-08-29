@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 
-import { useNavLink } from '~/hooks/useNavLink';
+import { useNavLink } from '~/SideNav/useNavLink';
 
 const mocks = vi.hoisted(() => ({ pathname: '/en-US/projects' }));
 

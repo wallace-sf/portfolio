@@ -10,7 +10,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useBreakpoint } from '~/hooks';
+import { useBreakpoint } from '@repo/utils/hooks';
 import { OpenSourceBadge } from '~features/shared/OpenSourceBadge';
 import { ShareButton } from '~features/shared/ShareButton';
 import { SkillGroup } from '~features/shared/SkillGroup';

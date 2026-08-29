@@ -87,21 +87,34 @@ describe('ListBlogPosts', () => {
       expect(result.value).toEqual([]);
     });
 
-    it('should include coverImage when the post has one', async () => {
+    it('should include cover and thumbnail images with alt resolved to the locale', async () => {
       const post = makeBlogPost({
-        coverImage: 'https://example.com/cover.png',
+        coverImage: {
+          url: 'https://example.com/cover.png',
+          alt: { 'en-US': 'Cover', 'pt-BR': 'Capa', es: 'Portada' },
+        },
+        thumbnailImage: {
+          url: 'https://example.com/thumb.png',
+          alt: { 'en-US': 'Thumb', 'pt-BR': 'Miniatura', es: 'Miniatura' },
+        },
       });
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([post]),
       });
       const useCase = new ListBlogPosts(repo);
 
-      const result = await useCase.execute({ locale: 'en-US' });
+      const result = await useCase.execute({ locale: 'pt-BR' });
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value).toHaveLength(1);
-      expect(result.value[0]?.coverImage).toBe('https://example.com/cover.png');
+      expect(result.value[0]?.coverImage).toEqual({
+        url: 'https://example.com/cover.png',
+        alt: 'Capa',
+      });
+      expect(result.value[0]?.thumbnailImage).toEqual({
+        url: 'https://example.com/thumb.png',
+        alt: 'Miniatura',
+      });
     });
 
     it('should return Left(DomainError) when the repository throws', async () => {

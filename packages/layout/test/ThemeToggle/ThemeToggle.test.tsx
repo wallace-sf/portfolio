@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import { ThemeToggle } from '~/components/Layout/SideNavigation/ThemeToggle';
+import { ThemeToggle } from '~/ThemeToggle';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -9,12 +9,12 @@ import { ThemeToggle } from '~/components/Layout/SideNavigation/ThemeToggle';
 const mockSetTheme = vi.fn();
 const mockCloseMenu = vi.fn();
 
-vi.mock('~hooks', () => ({
+vi.mock('~/ThemeToggle/useTheme', () => ({
   useTheme: () => ({ theme: 'system', setTheme: mockSetTheme }),
 }));
 
-vi.mock('~/components/Layout/SideNavigation/context', () => ({
-  useSideNavigation: () => ({ closeMenu: mockCloseMenu }),
+vi.mock('~/SideNav/context', () => ({
+  useSideNav: () => ({ closeMenu: mockCloseMenu }),
 }));
 
 vi.mock('next-intl', () => ({

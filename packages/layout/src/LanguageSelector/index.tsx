@@ -12,8 +12,9 @@ import {
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { useSideNav } from '~/SideNav/context';
+
 import { LANGUAGES_OPTIONS } from './constants';
-import { useSideNavigation } from './context';
 
 export const LanguageSelector: FC = () => {
   const t = useTranslations('SideNavigation');
@@ -21,7 +22,7 @@ export const LanguageSelector: FC = () => {
   const locale = useLocale();
   const { replace } = useRouter();
   const pathname = usePathname();
-  const { closeMenu } = useSideNavigation();
+  const { closeMenu } = useSideNav();
 
   const onChangeLanguage = useCallback<RadioGroupProps['onChange']>(
     (event) => {
