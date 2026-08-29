@@ -29,6 +29,11 @@
       "types": "./dist/types/SiteLogo/index.d.ts",
       "import": "./dist/SiteLogo/index.mjs",
       "require": "./dist/SiteLogo/index.js"
+    },
+    "./SideNav": {
+      "types": "./dist/types/SideNav/index.d.ts",
+      "import": "./dist/SideNav/index.mjs",
+      "require": "./dist/SideNav/index.js"
     }
   },
   "files": [

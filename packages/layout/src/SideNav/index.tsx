@@ -13,6 +13,9 @@ import { SiteHeader } from '~/SiteHeader';
 
 import { SideNavProvider } from './context';
 
+export { SideNavProvider, useSideNav, type ISideNavContext } from './context';
+export { useNavLink, type INavLinkState } from './useNavLink';
+
 export interface SideNavProps {
   /** Active locale — passed through to the shared `SiteHeader`. */
   locale: Locale;

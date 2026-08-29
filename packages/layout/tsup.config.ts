@@ -6,6 +6,7 @@ export default defineConfig({
     'SiteHeader/index': 'src/SiteHeader/index.tsx',
     'SiteFooter/index': 'src/SiteFooter/index.tsx',
     'SiteLogo/index': 'src/SiteLogo/index.tsx',
+    'SideNav/index': 'src/SideNav/index.tsx',
   },
   dts: true,
   format: ['cjs', 'esm'],
