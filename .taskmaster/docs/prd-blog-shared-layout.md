@@ -1,6 +1,7 @@
 # Blog/Site Shared Layout & Cross-Zone Integration
 
-> Status: draft, pending review.
+> Status: sections 1–6 largely delivered (tasks 1–5, 8, 9). Sections 7–9 added 2026-08-29
+> to scope the blog's visual layout (task 6 and follow-ups).
 > Related: [prd-blog-mdx-design.md](./prd-blog-mdx-design.md), [02-ARCHITECTURE.md](../../docs/02-ARCHITECTURE.md).
 > Precedent: `packages/seo` (issue #960, PR #961) — framework-agnostic logic extracted once a
 > second app needed it, depending only on `@repo/core`.
@@ -44,9 +45,10 @@ routing composition) remains the chosen architecture; see discussion log for the
   a strategy; it couples the two apps through shared cookie state instead of explicit, typed URLs.
 - Sitemap aggregation strategy (whether `apps/site`'s `sitemap.xml` references `apps/blog`'s, or
   they stay fully isolated) — open question, needs a decision before implementation (see below).
-- Full design-system pass on the blog's own visual identity beyond the shared header/footer —
-  `apps/blog` still has no dedicated UI design phase; this PRD only covers the parts that must be
-  shared to avoid the site/blog feeling disconnected.
+- ~~Full design-system pass on the blog's own visual identity beyond the shared header/footer.~~
+  **Partially pulled in-scope** by section 7 below: the blog gets a coherent layout skeleton +
+  a first visual pass on its listing/post pages, using our existing design tokens. A deeper
+  design-system pass (bespoke components, motion, etc.) is still deferred.
 
 ## 2. Problem: locale loss across zone boundaries
 
@@ -108,3 +110,117 @@ rule so it isn't reimplemented ad hoc in every place a cross-zone link appears.
 - Manual/browser verification: navigate site → blog and blog → site in each of the three locales,
   confirm the locale is preserved every time (this is the concrete regression this PRD exists to
   prevent).
+
+---
+
+## 7. Blog visual layout — Chirpy-informed skeleton
+
+> Added 2026-08-29. Resolves the deferred task 6 by fixing the blog's chrome and giving its
+> listing/post pages a coherent first visual pass. Depends on the shared `packages/layout`
+> (`SiteHeader`/`SiteFooter`, tasks 2–3), `buildCrossZoneHref` (task 4), and the headless `Nav`
+> primitives extracted to `@repo/ui/Control` (issue #1006). The `SiteHeader` logo link was made
+> zone-correct in issue #1014.
+
+### 7.1 Design decision
+
+Adopt the **layout skeleton** of the Chirpy Jekyll theme (used by e.g. Loiane Groner's blog):
+persistent **left sidebar** on desktop / **drawer** on mobile, a single **content column**, and
+an optional **right TOC rail** on post pages. Rendered entirely in our own visual identity and
+existing design tokens — this is a structural template, not a re-skin, and **not** an adoption of
+Chirpy's feature set (see 7.6). What the blog already has (SSG listing/detail pages, RSS, per-post
+OG images, MDX rendering) is kept; only its presentation changes.
+
+### 7.2 `BlogLayout` shell
+
+- New `apps/blog/src/components/Layout/BlogLayout.tsx` (client component — owns the mobile
+  drawer open/close state, same as `apps/site`'s `SideNavigation`).
+- Composes `@repo/layout`'s `SiteHeader` (logo → portfolio home via its internal
+  `buildCrossZoneHref('site', locale)`) + a blog `SideNavigation` (7.3) + `SiteFooter`.
+- Chirpy arrangement: sidebar fixed on `lg+`, off-canvas drawer below `lg` toggled by the header
+  hamburger; content column with a comfortable max reading width.
+- Wired into `apps/blog/src/app/[locale]/layout.tsx`, wrapping `children` inside the existing
+  `NextIntlClientProvider`. `locale` comes from the awaited `params` and is passed down as a prop.
+
+### 7.3 Blog `SideNavigation` (hybrid nav)
+
+Assembled in `apps/blog` (only the `Nav.*` primitives are shared — the assembled component is
+app-local, mirroring `apps/site`). Nav model **(c) hybrid**:
+
+- **Portfolio** section — cross-zone via `buildCrossZoneHref('site', locale)`: Home, Projects,
+  About, Resume. Never marked active (different zone).
+- **Blog** section — Blog Home (`buildCrossZoneHref('blog', locale)` / local `/`), marked active
+  on the listing route. Tag/Archive entries are added here later (7.6), not now.
+- **Social** — LinkedIn, GitHub, RSS (`/${locale}/rss.xml`), all `external`.
+- **Theme toggle** + **Language selector** — same UX as `apps/site`; the selector logic
+  (`next-intl` routing, theme hook) stays app-local, only the `Nav.Expandable` shell is shared.
+
+### 7.4 Styled listing + post pages
+
+- **Listing** (`app/[locale]/page.tsx`): replace the bare `<ul>` with a Chirpy-style post list —
+  cards showing **thumbnail** (7.5), title, published date (locale-formatted), description, and
+  tag badges. Links use the locale-aware `~/i18n/routing` `Link`.
+- **Post** (`app/[locale]/[slug]/page.tsx`): **cover image** hero (7.5), styled post header
+  (title, date, tags), MDX body with proper prose typography (headings, lists, blockquotes,
+  inline code, and the existing `rehype-pretty-code` blocks), and **prev/next post** navigation
+  at the foot (order comes from `ListBlogPosts`, already sorted by `publishedAt` desc).
+- Typography/prose treatment uses existing `@repo/tailwind-config` tokens; no new token set.
+
+### 7.5 Post imagery — align with `Project`
+
+Blog posts currently carry only an optional bare `coverImage` URL string (`meta.json` →
+`BlogPost.coverImage?: Url` → `BlogPostSummaryDTO.coverImage?: string`). Upgrade to match how
+`Project` models imagery:
+
+- **`coverImage`** and **`thumbnailImage`**, each `{ url, alt }` with a **localized** `alt`,
+  using the shared-kernel `Image` VO (`@repo/core/shared`) — the same VO `Project` uses.
+- **`packages/core`** — `BlogPost` entity: replace `coverImage?: Url` with `coverImage?: Image`,
+  add `thumbnailImage?: Image`. Both optional (posts may ship without art).
+- **`packages/infra`** — `MetaJsonSchema`: `coverImage` / `thumbnailImage` become
+  `{ url: string; alt: LocalizedText }` (alt keyed by locale, consistent with `meta.json`
+  already being the locale-agnostic file). `BlogPostMapper` maps them through `Image.create`.
+- **`packages/application`** — `BlogPostSummaryDTO` gains `thumbnailImage?: { url; alt }`,
+  `BlogPostDetailDTO` gains `coverImage?: { url; alt }` (alt already resolved to the request
+  locale by the use case, same pattern as `Project` DTOs).
+- **Storage** — reuse the existing Supabase `portfolio-images` bucket under `blog/<slug>/`
+  (`cover.webp`, `thumbnail.webp`); `apps/blog/next.config.mjs` `images.remotePatterns` must allow
+  `*.supabase.co` (mirror `apps/site`).
+- **Content** — backfill the existing `the-either-pattern-in-typescript` post with a cover +
+  thumbnail so the styled pages have real art to render.
+
+### 7.6 Explicitly deferred (Chirpy features — separate future issues, NOT this scope)
+
+Right-rail **table of contents** + scroll-spy · **tag pages** (`/tags/[tag]`) · **archives**
+page · **search** · **read-time** estimate · **related posts** · **pagination** on the listing ·
+**comments** (giscus/Disqus). Each becomes its own issue as the content model and need justify it.
+
+---
+
+## 8. Architecture notes for section 7
+
+- **Dependency order** (per `docs/02-ARCHITECTURE.md` and the project's build order
+  core → infra → application → app): the imagery change (7.5) lands bottom-up —
+  `@repo/core` entity → `@repo/infra` schema/mapper → `@repo/application` DTOs → `apps/blog` UI.
+  The layout shell (7.2–7.4) is `apps/blog`-only and can proceed in parallel once 7.5's DTO shape
+  is settled.
+- **No new shared package.** The blog `SideNavigation` is app-local; if `apps/blog` and
+  `apps/site` nav assemblies later converge, revisit per the cross-app-reuse rule — not now.
+- **`@repo/layout` stays presentational.** `BlogLayout` is a client component in `apps/blog`;
+  it must not import `@repo/application` (blog data reaches it as props from the server layout /
+  pages).
+- **`Image` VO reuse** keeps the blog and portfolio image contracts identical, so a future
+  `next/image` wrapper or CDN-transform helper can be shared.
+
+## 9. Testing for section 7
+
+- **`@repo/core`** — `BlogPost` entity tests: constructs with/without `coverImage`/`thumbnailImage`;
+  invalid image URL / missing alt locale returns a single `left` (mirrors `Project` + `Image` tests).
+- **`@repo/infra`** — `BlogPostMapper` tests: `meta.json` with the new image shape maps to `Image`
+  VOs; absent images map to `undefined`; malformed image entry surfaces an `InfrastructureError`.
+- **`@repo/application`** — `ListBlogPosts` / `GetBlogPostBySlug` tests: DTO carries
+  `thumbnailImage` / `coverImage` with the alt resolved to the requested locale.
+- **`apps/blog`** — `BlogLayout` component test (renders `SiteHeader` + nav + `SiteFooter`, passes
+  children, toggles the drawer); blog `SideNavigation` test (portfolio links are cross-zone and
+  locale-correct, Blog Home active on the listing route, social links `external`); listing/post
+  page tests updated for the card / cover markup and prev-next nav.
+- **Manual/browser** — folds into task 10's cross-zone checklist: sidebar + drawer in all three
+  locales on mobile and desktop, logo → portfolio home, images render, prose is readable.

@@ -7805,7 +7805,7 @@
           "3",
           "4"
         ],
-        "status": "deferred",
+        "status": "cancelled",
         "subtasks": [
           {
             "id": 1,
@@ -7869,7 +7869,7 @@
         "complexity": 6,
         "recommendedSubtasks": 5,
         "expansionPrompt": "Break down the apps/blog integration into: (1) create apps/blog/src/components/Layout directory structure, (2) implement BlogLayout component wrapping children with SiteHeader and SiteFooter, managing mobile menu toggle state with useState since this is net-new UI for the blog, (3) construct nav items using buildCrossZoneHref for site home link (targetZone='site') and blog home link (targetZone='blog'), passing locale from params, (4) update apps/blog/src/app/[locale]/layout.tsx to wrap children with BlogLayout, (5) run component tests for BlogLayout and integration tests verifying header/footer present on all routes, plus manual browser verification of locale preservation during cross-zone navigation. The blog currently has minimal layout (50 lines, no header/footer), so this is greenfield UI work.",
-        "updatedAt": "2026-08-28T04:34:46.113Z"
+        "updatedAt": "2026-08-29T01:23:48.156Z"
       },
       {
         "id": 7,
@@ -8059,7 +8059,7 @@
         "priority": "high",
         "dependencies": [
           "5",
-          "6"
+          "16"
         ],
         "status": "pending",
         "subtasks": [
@@ -8140,17 +8140,120 @@
         "complexity": 7,
         "recommendedSubtasks": 6,
         "expansionPrompt": "Break down the E2E testing into: (1) create comprehensive manual test plan document covering all 6 cross-zone navigation scenarios (site → blog and blog → site for each of 3 locales: en-US, pt-BR, es) on both mobile and desktop viewports, (2) execute manual tests verifying locale preservation in URL segments, (3) verify NEXT_LOCALE cookie scoping (site: Path=/, blog: Path=/blog) is never shared between zones, (4) test direct /blog links without locale redirect to default or current locale (middleware behavior), (5) optionally create Playwright E2E tests automating these flows with assertions on URL locale segments and cookie state, (6) document all test results in a report or GitHub issue comment as acceptance criteria for PRD completion. All locale-crossing navigation must preserve the user's locale without loss."
+      },
+      {
+        "id": 11,
+        "title": "Upgrade BlogPost imagery model to use shared-kernel Image VO",
+        "description": "Replace BlogPost.coverImage?: Url with coverImage?: Image and add thumbnailImage?: Image, mirroring the Project entity pattern",
+        "details": "In `packages/core/src/blog/entities/BlogPost.ts`:\n\n1. Import the shared-kernel `Image` VO from `@repo/core/shared`\n2. Update `IBlogPostProps` interface:\n   - Replace `coverImage?: string` with `coverImage?: { url: string; alt: { 'en-US': string; 'pt-BR': string; es: string } }`\n   - Add `thumbnailImage?: { url: string; alt: { 'en-US': string; 'pt-BR': string; es: string } }`\n3. Update the `BlogPost` class:\n   - Replace `public readonly coverImage: Url | undefined` with `public readonly coverImage: Image | undefined`\n   - Add `public readonly thumbnailImage: Image | undefined`\n4. Update the constructor signature to accept both optional Image VOs\n5. In `BlogPost.create()`, replace the cover image creation logic with:\n   ```typescript\n   props.coverImage\n     ? Image.create(props.coverImage.url, props.coverImage.alt)\n     : right<ValidationError, Image | undefined>(undefined)\n   ```\n6. Add similar logic for thumbnailImage\n7. Thread both through collect() and destructure them\n8. Update the constructor call to pass both image VOs\n9. Ensure a single `left` is returned on invalid image input (URL or missing alt locale)\n\nThis follows the exact pattern established in the `Project` entity where both images are optional and validated through `Image.create`.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/BlogPost.test.ts`:\n\n1. Test BlogPost.create() with neither coverImage nor thumbnailImage → succeeds with both undefined\n2. Test with only coverImage → succeeds with coverImage as Image VO, thumbnailImage undefined\n3. Test with only thumbnailImage → succeeds with thumbnailImage as Image VO, coverImage undefined\n4. Test with both images → succeeds with both as Image VOs\n5. Test with invalid coverImage URL → returns single left with ValidationError\n6. Test with missing alt locale in coverImage → returns single left with ValidationError\n7. Test with invalid thumbnailImage URL → returns single left with ValidationError\n8. Test with missing alt locale in thumbnailImage → returns single left with ValidationError\n9. Verify the error propagation matches the Either pattern (single left per validation flow)",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Update MetaJsonSchema and BlogPostMapper to handle new image shape",
+        "description": "Update the Zod schema to validate the new image object structure and modify BlogPostMapper to construct Image VOs",
+        "details": "In `packages/infra/src/repositories/blog/schemas.ts`:\n\n1. Update `MetaJsonSchema` to use:\n   ```typescript\n   const ImageSchema = z.object({\n     url: z.string(),\n     alt: z.object({\n       'en-US': z.string(),\n       'pt-BR': z.string(),\n       es: z.string(),\n     }),\n   });\n\n   export const MetaJsonSchema = z.object({\n     slug: z.string(),\n     publishedAt: z.string(),\n     tags: z.array(z.string()),\n     coverImage: ImageSchema.optional(),\n     thumbnailImage: ImageSchema.optional(),\n   });\n   ```\n\nIn `packages/infra/src/repositories/blog/BlogPostMapper.ts`:\n\n1. Update the `toDomain` method to handle the new image structure:\n   - Pass `coverImage` and `thumbnailImage` directly from the parsed meta to `IBlogPostProps`\n2. The `BlogPost.create()` method will handle Image VO creation and validation\n3. When `BlogPost.create()` returns a left (malformed image), catch it and wrap in `InfrastructureError` with a clear message like: `Failed to map blog post ${meta.slug}: invalid image data - ${result.value.message}`\n\nThis preserves the existing error handling pattern where schema validation happens at the infra boundary and domain validation errors surface as InfrastructureErrors.",
+        "testStrategy": "Unit tests in `packages/infra/test/repositories/blog/BlogPostMapper.test.ts`:\n\n1. Test mapping meta.json with new coverImage shape → BlogPost with Image VO\n2. Test mapping with new thumbnailImage shape → BlogPost with Image VO\n3. Test mapping with both images → BlogPost with both Image VOs\n4. Test mapping with absent images → BlogPost with undefined for both\n5. Test malformed coverImage (invalid URL) → throws InfrastructureError with clear message\n6. Test malformed thumbnailImage (missing alt locale) → throws InfrastructureError with clear message\n7. Test MetaJsonSchema validation with correct structure → passes\n8. Test MetaJsonSchema validation with incorrect structure → Zod error\n\nIntegration test in `packages/infra/test/repositories/blog/FileSystemBlogPostRepository.test.ts`:\n- Create test meta.json with new image shape → repository returns BlogPost with Image VOs",
+        "priority": "high",
+        "dependencies": [
+          "11"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Expose image fields with localized alt in blog DTOs",
+        "description": "Add thumbnailImage to BlogPostSummaryDTO and coverImage to BlogPostDetailDTO, resolving alt text to request locale",
+        "details": "In `packages/application/src/blog/dtos/BlogPostSummaryDTO.ts`:\n\n1. Add optional thumbnailImage field:\n   ```typescript\n   export type BlogPostSummaryDTO = {\n     slug: string;\n     title: string;\n     description: string;\n     publishedAt: string;\n     tags: string[];\n     coverImage?: string;  // keep existing for now\n     thumbnailImage?: { url: string; alt: string };\n   };\n   ```\n\nIn `packages/application/src/blog/dtos/BlogPostDetailDTO.ts`:\n\n1. Add optional coverImage field:\n   ```typescript\n   export type BlogPostDetailDTO = BlogPostSummaryDTO & {\n     content: string;\n     coverImage?: { url: string; alt: string };\n   };\n   ```\n\nIn `packages/application/src/blog/use-cases/ListBlogPosts.ts`:\n\n1. Map the thumbnailImage from the BlogPost entity:\n   ```typescript\n   thumbnailImage: post.thumbnailImage\n     ? {\n         url: post.thumbnailImage.url.value,\n         alt: post.thumbnailImage.alt.resolve(input.locale),\n       }\n     : undefined,\n   ```\n\nIn `packages/application/src/blog/use-cases/GetBlogPostBySlug.ts`:\n\n1. Map the coverImage from the BlogPost entity:\n   ```typescript\n   coverImage: post.coverImage\n     ? {\n         url: post.coverImage.url.value,\n         alt: post.coverImage.alt.resolve(input.locale),\n       }\n     : undefined,\n   ```\n\nThis mirrors the pattern used in Project DTOs where LocalizedText.resolve() returns the string for the requested locale.",
+        "testStrategy": "Unit tests in `packages/application/test/blog/ListBlogPosts.test.ts`:\n\n1. Test with posts that have thumbnailImage → DTO includes thumbnailImage with URL and alt resolved to requested locale (en-US, pt-BR, es)\n2. Test with posts without thumbnailImage → DTO omits thumbnailImage field\n3. Test locale-specific alt resolution for each locale\n\nUnit tests in `packages/application/test/blog/GetBlogPostBySlug.test.ts`:\n\n1. Test with post that has coverImage → DTO includes coverImage with URL and alt resolved to requested locale\n2. Test with post without coverImage → DTO omits coverImage field\n3. Test locale-specific alt resolution for each locale (en-US, pt-BR, es)\n4. Verify the alt text differs per locale to ensure proper resolution",
+        "priority": "high",
+        "dependencies": [
+          "11",
+          "12"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Configure Next.js image domains and backfill existing blog post",
+        "description": "Add Supabase image domains to blog next.config.mjs and upload cover + thumbnail for the existing Either Pattern post",
+        "details": "In `apps/blog/next.config.mjs`:\n\n1. Add images configuration mirroring `apps/site/next.config.mjs`:\n   ```javascript\n   const nextConfig = {\n     basePath: '/blog',\n     images: {\n       remotePatterns: [\n         {\n           protocol: 'https',\n           hostname: '*.supabase.co',\n         },\n         {\n           protocol: 'https',\n           hostname: 'placehold.co',\n         },\n       ],\n     },\n     async headers() {\n       return [{ source: '/(.*)', headers: SECURITY_HEADERS }];\n     },\n   };\n   ```\n\nContent backfill:\n\n1. Upload a cover image (e.g., 1200x630 OG-sized) to Supabase `portfolio-images` bucket under path: `blog/the-either-pattern-in-typescript/cover.png`\n2. Upload a thumbnail image (e.g., 400x200) to: `blog/the-either-pattern-in-typescript/thumbnail.png`\n3. Update `apps/blog/content/posts/the-either-pattern-in-typescript/meta.json` with:\n   ```json\n   {\n     \"slug\": \"the-either-pattern-in-typescript\",\n     \"publishedAt\": \"2024-01-15\",\n     \"tags\": [\"typescript\", \"functional-programming\"],\n     \"coverImage\": {\n       \"url\": \"https://[your-supabase-project].supabase.co/storage/v1/object/public/portfolio-images/blog/the-either-pattern-in-typescript/cover.png\",\n       \"alt\": {\n         \"en-US\": \"Either pattern visualization in TypeScript\",\n         \"pt-BR\": \"Visualização do padrão Either em TypeScript\",\n         \"es\": \"Visualización del patrón Either en TypeScript\"\n       }\n     },\n     \"thumbnailImage\": {\n       \"url\": \"https://[your-supabase-project].supabase.co/storage/v1/object/public/portfolio-images/blog/the-either-pattern-in-typescript/thumbnail.png\",\n       \"alt\": {\n         \"en-US\": \"Either pattern thumbnail\",\n         \"pt-BR\": \"Miniatura do padrão Either\",\n         \"es\": \"Miniatura del patrón Either\"\n       }\n     }\n   }\n   ```\n\n4. Verify by running the blog app and checking that `ListBlogPosts` and `GetBlogPostBySlug` return the image URLs in their DTOs",
+        "testStrategy": "Manual verification:\n\n1. Start blog app in dev mode: `pnpm dev --filter blog`\n2. Navigate to blog listing page → verify thumbnail image renders\n3. Navigate to the Either Pattern post detail → verify cover image renders\n4. Test all three locales (en-US, pt-BR, es) → verify alt text changes per locale\n5. Inspect Network tab → verify images load from Supabase CDN without CORS errors\n6. Verify Next.js Image component optimizations are working (webp/avif formats, responsive sizes)\n\nAutomated test:\n- Update existing integration tests to verify the meta.json schema validation passes with the new image structure",
+        "priority": "medium",
+        "dependencies": [
+          "13"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Build BlogLayout shell component with responsive sidebar",
+        "description": "Create the main BlogLayout component that composes SiteHeader, blog SideNavigation, and SiteFooter in a Chirpy-style layout",
+        "details": "Create `apps/blog/src/components/Layout/BlogLayout.tsx` as a client component:\n\n1. Component structure:\n   ```typescript\n   'use client';\n   import { SiteHeader, SiteFooter } from '@repo/layout';\n   import { useState } from 'react';\n   import { SideNavigation } from './SideNavigation';\n\n   export function BlogLayout({ children, locale }: { children: React.ReactNode; locale: string }) {\n     const [drawerOpen, setDrawerOpen] = useState(false);\n\n     return (\n       <div className=\"flex min-h-screen flex-col\">\n         <SiteHeader\n           locale={locale}\n           onMenuToggle={() => setDrawerOpen(!drawerOpen)}\n           zone=\"blog\"\n         />\n         <div className=\"flex flex-1\">\n           <SideNavigation\n             locale={locale}\n             open={drawerOpen}\n             onClose={() => setDrawerOpen(false)}\n           />\n           <main className=\"flex-1 px-4 py-8 lg:ml-60 lg:max-w-3xl\">\n             {children}\n           </main>\n         </div>\n         <SiteFooter />\n       </div>\n     );\n   }\n   ```\n\n2. Layout behavior:\n   - Desktop (`lg+`): left sidebar fixed at 240px (w-60), content has left margin\n   - Mobile: sidebar as off-canvas drawer, toggled by header hamburger\n   - Content max-width for comfortable reading (~3xl / 768px)\n\n3. Wire into `apps/blog/src/app/[locale]/layout.tsx`:\n   ```typescript\n   import { BlogLayout } from '~/components/Layout/BlogLayout';\n\n   export default async function RootLayout({ children, params }: ...) {\n     const { locale } = await params;\n     // ... existing code ...\n     return (\n       <html lang={locale}>\n         <body className={`antialiased ${inter.className}`}>\n           <NextIntlClientProvider locale={locale} messages={messages}>\n             <BlogLayout locale={locale}>{children}</BlogLayout>\n           </NextIntlClientProvider>\n           {env.gaMeasurementId && <GoogleAnalytics gaId={env.gaMeasurementId} />}\n         </body>\n       </html>\n     );\n   }\n   ```\n\n4. Add i18n namespaces `Header` and `Footer` to all 3 blog message files (`messages/en-US.json`, `pt-BR.json`, `es.json`) - can initially be empty objects as shared components use their own translations",
+        "testStrategy": "Unit tests in `apps/blog/test/components/Layout/BlogLayout.test.tsx`:\n\n1. Test component renders SiteHeader, SideNavigation, SiteFooter, and children\n2. Test drawer state: initially closed, opens on header toggle, closes on navigation close\n3. Test locale prop is passed to SiteHeader and SideNavigation\n4. Test responsive behavior: sidebar visible on lg+, hidden drawer on mobile\n5. Test children are rendered within the main content area\n\nIntegration test:\n- Render a blog page and verify the full layout appears\n- Test viewport resize behavior (mobile ↔ desktop)",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Build blog SideNavigation with hybrid nav model",
+        "description": "Create blog-specific SideNavigation using Nav.* primitives with portfolio cross-zone links and blog-local active states",
+        "details": "Create `apps/blog/src/components/Layout/SideNavigation/index.tsx` (client component):\n\n1. Import `Nav.*` primitives from `@repo/ui/Control` (Nav.Item, Nav.Link, Nav.Expandable)\n2. Import `buildCrossZoneHref` from `@repo/layout`\n3. Hybrid navigation structure:\n   - **Portfolio section** (cross-zone):\n     - Home → `buildCrossZoneHref('site', locale, '/')`\n     - Projects → `buildCrossZoneHref('site', locale, '/projects')`\n     - About → `buildCrossZoneHref('site', locale, '/about')`\n     - Resume → `buildCrossZoneHref('site', locale, '/resume')` (or direct URL if external)\n     - These items are never `active` (user is in blog zone)\n   - **Blog section**:\n     - Blog Home → `/${locale}` (blog-local route, active when pathname === '/blog' or '/blog/{locale}')\n   - **Social section**:\n     - LinkedIn → external link with `external` prop\n     - GitHub → external link with `external` prop\n     - RSS → `/blog/${locale}/feed.xml` with `external` prop\n   - **Utilities**:\n     - Theme toggle (reuse `apps/site` pattern with `Nav.Expandable`)\n     - Language selector (reuse `apps/site` pattern)\n\n4. Props: `{ locale: string; open: boolean; onClose: () => void }`\n5. Responsive behavior:\n   - Desktop: always visible, fixed position\n   - Mobile: drawer overlay, closes on item click via `onClose`\n6. Add `SideNavigation` i18n namespace to blog messages with keys: `mainNav`, `home`, `projects`, `about`, `resume`, `blogHome`, `linkedin`, `github`, `rss`, `theme`, `language`\n\n7. Reference `apps/site/src/components/Layout/SideNavigation/index.tsx` for the exact Nav.* primitive usage patterns, but adapt for the blog hybrid model",
+        "testStrategy": "Unit tests in `apps/blog/test/components/Layout/SideNavigation.test.tsx`:\n\n1. Test portfolio links use buildCrossZoneHref with correct zone='site' and locale\n2. Test portfolio links are never active (no active prop passed)\n3. Test Blog Home link is active when on listing route\n4. Test Blog Home link is inactive when on detail route\n5. Test social links have `external` prop\n6. Test drawer closes on item click (onClose called)\n7. Test theme toggle and language selector render\n8. Test all i18n keys are used and translations load correctly\n9. Test responsive visibility (visible on lg+, drawer on mobile)\n\nIntegration test:\n- Navigate between blog listing, blog detail, and cross-zone links\n- Verify active states update correctly\n- Verify drawer behavior on mobile",
+        "priority": "high",
+        "dependencies": [
+          "15"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Style blog listing page with Chirpy-inspired post cards",
+        "description": "Replace bare post list with styled cards featuring thumbnails, metadata, and tag badges",
+        "details": "Update `apps/blog/src/app/[locale]/page.tsx`:\n\n1. Replace the `<ul>` with a styled card grid:\n   ```typescript\n   <div className=\"grid gap-6 md:grid-cols-2\">\n     {posts.map((post) => (\n       <Link\n         key={post.slug}\n         href={`/${post.slug}`}\n         className=\"group block overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition-shadow hover:shadow-md\"\n       >\n         {post.thumbnailImage && (\n           <div className=\"aspect-video overflow-hidden\">\n             <Image\n               src={post.thumbnailImage.url}\n               alt={post.thumbnailImage.alt}\n               width={400}\n               height={200}\n               className=\"h-full w-full object-cover transition-transform group-hover:scale-105\"\n             />\n           </div>\n         )}\n         <div className=\"p-4\">\n           <h2 className=\"mb-2 text-xl font-semibold text-content-primary group-hover:text-brand\">\n             {post.title}\n           </h2>\n           <time className=\"text-sm text-content-secondary\">\n             {new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(\n               new Date(post.publishedAt)\n             )}\n           </time>\n           <p className=\"mt-2 text-content-secondary line-clamp-2\">\n             {post.description}\n           </p>\n           <div className=\"mt-3 flex flex-wrap gap-2\">\n             {post.tags.map((tag) => (\n               <Badge.Text key={tag} label={tag} size=\"sm\" />\n             ))}\n           </div>\n         </div>\n       </Link>\n     ))}\n   </div>\n   ```\n\n2. Handle empty state with a centered message styled with existing tokens\n3. Add locale-formatted published date using `Intl.DateTimeFormat`\n4. Import Next.js Image component for optimized thumbnails\n5. Use existing `@repo/tailwind-config` tokens: `border-border`, `bg-surface`, `text-content-primary`, `text-content-secondary`, `text-brand`\n6. Add responsive grid: single column on mobile, 2 columns on md+",
+        "testStrategy": "Unit tests in `apps/blog/test/app/[locale]/page.test.tsx`:\n\n1. Test posts with thumbnailImage render Image component with correct src and alt\n2. Test posts without thumbnailImage render card without image section\n3. Test empty state renders centered message\n4. Test tag badges render for each post\n5. Test locale-formatted dates for all locales (en-US, pt-BR, es)\n6. Test Link href is correct for each post\n7. Test responsive grid classes are applied\n8. Test hover effects (shadow, scale) are applied via Tailwind classes\n\nVisual test:\n- Screenshot comparison for card layout and spacing\n- Verify thumbnail images load and scale on hover",
+        "priority": "medium",
+        "dependencies": [
+          "13",
+          "15"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Style blog post detail page with cover hero and prev/next navigation",
+        "description": "Add cover image hero, styled post header, prose typography for MDX, and prev/next post navigation",
+        "details": "Update `apps/blog/src/app/[locale]/[slug]/page.tsx`:\n\n1. Add cover image hero before post header:\n   ```typescript\n   {post.coverImage && (\n     <div className=\"-mx-4 mb-8 aspect-video overflow-hidden lg:-mx-8\">\n       <Image\n         src={post.coverImage.url}\n         alt={post.coverImage.alt}\n         width={1200}\n         height={630}\n         className=\"h-full w-full object-cover\"\n         priority\n       />\n     </div>\n   )}\n   ```\n\n2. Style post header:\n   ```typescript\n   <header className=\"mb-8 border-b border-border pb-6\">\n     <h1 className=\"mb-3 text-4xl font-bold text-content-primary\">\n       {title}\n     </h1>\n     <div className=\"flex items-center gap-4 text-sm text-content-secondary\">\n       <time dateTime={publishedAt}>\n         {new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(\n           new Date(publishedAt)\n         )}\n       </time>\n       <div className=\"flex gap-2\">\n         {tags.map((tag) => (\n           <Badge.Text key={tag} label={tag} size=\"sm\" />\n         ))}\n       </div>\n     </div>\n   </header>\n   ```\n\n3. Add prose typography to MDX article:\n   ```typescript\n   <article className=\"prose prose-slate max-w-none dark:prose-invert\">\n     <MDXRemote source={content} components={mdxComponents} options={MDX_OPTIONS} />\n   </article>\n   ```\n\n4. Add prev/next navigation at foot:\n   - Fetch adjacent posts from `ListBlogPosts` (already sorted by publishedAt desc)\n   - Find current post index, get prev/next from array\n   ```typescript\n   <nav className=\"mt-12 flex justify-between border-t border-border pt-6\">\n     {prevPost && (\n       <Link href={`/${prevPost.slug}`} className=\"text-brand hover:underline\">\n         ← {prevPost.title}\n       </Link>\n     )}\n     {nextPost && (\n       <Link href={`/${nextPost.slug}`} className=\"ml-auto text-brand hover:underline\">\n         {nextPost.title} →\n       </Link>\n     )}\n   </nav>\n   ```\n\n5. Use existing `@repo/tailwind-config` tokens for all styling\n6. Ensure MDX prose styles work with `rehype-pretty-code` (already configured)",
+        "testStrategy": "Unit tests in `apps/blog/test/app/[locale]/[slug]/page.test.tsx`:\n\n1. Test cover image renders when present in DTO\n2. Test cover image is omitted when absent\n3. Test post header renders title, date (locale-formatted), and tags\n4. Test locale-specific date formatting for all locales\n5. Test MDX article has prose classes applied\n6. Test prev/next navigation:\n   - First post has only next link\n   - Last post has only prev link\n   - Middle post has both links\n   - Single post has no navigation\n7. Test prev/next links have correct hrefs and titles\n\nIntegration test:\n- Render post detail page and verify full layout\n- Navigate via prev/next links and verify correct posts load\n- Verify MDX content renders with syntax highlighting",
+        "priority": "medium",
+        "dependencies": [
+          "13",
+          "15"
+        ],
+        "status": "pending",
+        "subtasks": []
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-29T00:10:11.392Z",
-      "taskCount": 10,
+      "lastModified": "2026-08-29T01:23:48.157Z",
+      "taskCount": 18,
       "completedCount": 8,
       "tags": [
         "feature-blog-shared-layout"
       ],
-      "created": "2026-08-29T00:28:50.334Z",
+      "created": "2026-08-29T01:23:51.505Z",
       "description": "Tasks for feature-blog-shared-layout context"
     }
   }
