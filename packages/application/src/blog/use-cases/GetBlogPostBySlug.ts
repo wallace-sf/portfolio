@@ -62,7 +62,18 @@ export class GetBlogPostBySlug extends UseCase<
       description: post.description.get(locale),
       publishedAt: post.publishedAt.value,
       tags: post.tags.map((tag) => tag.value),
-      coverImage: post.coverImage?.value,
+      coverImage: post.coverImage
+        ? {
+            url: post.coverImage.url.value,
+            alt: post.coverImage.alt.get(locale),
+          }
+        : undefined,
+      thumbnailImage: post.thumbnailImage
+        ? {
+            url: post.thumbnailImage.url.value,
+            alt: post.thumbnailImage.alt.get(locale),
+          }
+        : undefined,
       content: post.content.get(locale),
     };
   }

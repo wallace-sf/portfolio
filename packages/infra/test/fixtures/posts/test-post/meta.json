@@ -2,5 +2,20 @@
   "slug": "test-post",
   "publishedAt": "2026-08-01",
   "tags": ["nextjs", "architecture"],
-  "coverImage": "https://wallace-ferreira.dev/content/posts/test-post/cover.png"
+  "coverImage": {
+    "url": "https://x.supabase.co/storage/v1/object/public/portfolio-images/blog/test-post/cover.webp",
+    "alt": {
+      "en-US": "Test post cover",
+      "pt-BR": "Capa do post de teste",
+      "es": "Portada de la publicación de prueba"
+    }
+  },
+  "thumbnailImage": {
+    "url": "https://x.supabase.co/storage/v1/object/public/portfolio-images/blog/test-post/thumbnail.webp",
+    "alt": {
+      "en-US": "Test post thumbnail",
+      "pt-BR": "Miniatura do post de teste",
+      "es": "Miniatura de la publicación de prueba"
+    }
+  }
 }

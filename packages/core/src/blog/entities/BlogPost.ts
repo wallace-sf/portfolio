@@ -5,16 +5,21 @@ import {
   Either,
   AggregateRoot,
   IEntityProps,
+  Image,
   ILocalizedTextInput,
   LocalizedText,
   DateTime,
   Slug,
-  Url,
   ValidationError,
   left,
   right,
 } from '../../shared';
 import { Tag } from '../value-objects/Tag';
+
+export interface IBlogPostImage {
+  url: string;
+  alt: ILocalizedTextInput;
+}
 
 export interface IBlogPostProps extends IEntityProps {
   slug: string;
@@ -23,7 +28,8 @@ export interface IBlogPostProps extends IEntityProps {
   content: ILocalizedTextInput;
   tags: string[];
   publishedAt: string;
-  coverImage?: string;
+  coverImage?: IBlogPostImage;
+  thumbnailImage?: IBlogPostImage;
 }
 
 export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
@@ -35,7 +41,8 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
   public readonly content: LocalizedText;
   public readonly tags: Tag[];
   public readonly publishedAt: DateTime;
-  public readonly coverImage: Url | undefined;
+  public readonly coverImage: Image | undefined;
+  public readonly thumbnailImage: Image | undefined;
 
   private constructor(
     props: IBlogPostProps,
@@ -45,7 +52,8 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     content: LocalizedText,
     tags: Tag[],
     publishedAt: DateTime,
-    coverImage: Url | undefined,
+    coverImage: Image | undefined,
+    thumbnailImage: Image | undefined,
   ) {
     super(props);
     this.slug = slug;
@@ -55,6 +63,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     this.tags = tags;
     this.publishedAt = publishedAt;
     this.coverImage = coverImage;
+    this.thumbnailImage = thumbnailImage;
   }
 
   static create(props: IBlogPostProps): Either<ValidationError, BlogPost> {
@@ -65,13 +74,23 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       LocalizedText.create(props.content ?? { 'en-US': '' }),
       DateTime.create(props.publishedAt),
       props.coverImage
-        ? Url.create(props.coverImage)
-        : right<ValidationError, Url | undefined>(undefined),
+        ? Image.create(props.coverImage.url, props.coverImage.alt)
+        : right<ValidationError, Image | undefined>(undefined),
+      props.thumbnailImage
+        ? Image.create(props.thumbnailImage.url, props.thumbnailImage.alt)
+        : right<ValidationError, Image | undefined>(undefined),
     ]);
     if (fieldsResult.isLeft()) return left(fieldsResult.value);
 
-    const [slug, title, description, content, publishedAt, coverImage] =
-      fieldsResult.value;
+    const [
+      slug,
+      title,
+      description,
+      content,
+      publishedAt,
+      coverImage,
+      thumbnailImage,
+    ] = fieldsResult.value;
 
     const { isValid } = Validator.of(title)
       .refine((t) => t.hasAllLocales())
@@ -94,7 +113,8 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
         content,
         tags,
         publishedAt,
-        coverImage as Url | undefined,
+        coverImage as Image | undefined,
+        thumbnailImage as Image | undefined,
       ),
     );
   }

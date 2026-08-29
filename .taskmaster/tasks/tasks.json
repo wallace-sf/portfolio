@@ -8149,8 +8149,9 @@
         "testStrategy": "Unit tests in `packages/core/test/blog/BlogPost.test.ts`:\n\n1. Test BlogPost.create() with neither coverImage nor thumbnailImage → succeeds with both undefined\n2. Test with only coverImage → succeeds with coverImage as Image VO, thumbnailImage undefined\n3. Test with only thumbnailImage → succeeds with thumbnailImage as Image VO, coverImage undefined\n4. Test with both images → succeeds with both as Image VOs\n5. Test with invalid coverImage URL → returns single left with ValidationError\n6. Test with missing alt locale in coverImage → returns single left with ValidationError\n7. Test with invalid thumbnailImage URL → returns single left with ValidationError\n8. Test with missing alt locale in thumbnailImage → returns single left with ValidationError\n9. Verify the error propagation matches the Either pattern (single left per validation flow)",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-08-29T01:38:19.100Z"
       },
       {
         "id": 12,
@@ -8162,8 +8163,9 @@
         "dependencies": [
           "11"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-08-29T01:38:12.713Z"
       },
       {
         "id": 13,
@@ -8176,8 +8178,9 @@
           "11",
           "12"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-08-29T01:38:15.852Z"
       },
       {
         "id": 14,
@@ -8247,9 +8250,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-29T01:23:48.157Z",
+      "lastModified": "2026-08-29T01:38:19.100Z",
       "taskCount": 18,
-      "completedCount": 8,
+      "completedCount": 11,
       "tags": [
         "feature-blog-shared-layout"
       ],

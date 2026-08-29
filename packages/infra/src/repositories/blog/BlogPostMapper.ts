@@ -33,6 +33,7 @@ export class BlogPostMapper {
       tags: meta.tags,
       publishedAt: meta.publishedAt,
       coverImage: meta.coverImage,
+      thumbnailImage: meta.thumbnailImage,
     };
 
     const result = BlogPost.create(props);
