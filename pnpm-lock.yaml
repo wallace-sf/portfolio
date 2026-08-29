@@ -594,6 +594,12 @@ importers:
       '@repo/ui':
         specifier: workspace:*
         version: link:../ui
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
+      usehooks-ts:
+        specifier: ^3.1.1
+        version: 3.1.1(react@19.2.7)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*

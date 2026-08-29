@@ -55,7 +55,9 @@
   "dependencies": {
     "@repo/core": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
-    "@repo/ui": "workspace:*"
+    "@repo/ui": "workspace:*",
+    "classnames": "^2.5.1",
+    "usehooks-ts": "^3.1.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
