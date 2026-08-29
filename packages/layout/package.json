@@ -34,6 +34,16 @@
       "types": "./dist/types/SideNav/index.d.ts",
       "import": "./dist/SideNav/index.mjs",
       "require": "./dist/SideNav/index.js"
+    },
+    "./ThemeToggle": {
+      "types": "./dist/types/ThemeToggle/index.d.ts",
+      "import": "./dist/ThemeToggle/index.mjs",
+      "require": "./dist/ThemeToggle/index.js"
+    },
+    "./LanguageSelector": {
+      "types": "./dist/types/LanguageSelector/index.d.ts",
+      "import": "./dist/LanguageSelector/index.mjs",
+      "require": "./dist/LanguageSelector/index.js"
     }
   },
   "files": [

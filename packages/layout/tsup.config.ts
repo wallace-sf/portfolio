@@ -7,6 +7,8 @@ export default defineConfig({
     'SiteFooter/index': 'src/SiteFooter/index.tsx',
     'SiteLogo/index': 'src/SiteLogo/index.tsx',
     'SideNav/index': 'src/SideNav/index.tsx',
+    'ThemeToggle/index': 'src/ThemeToggle/index.tsx',
+    'LanguageSelector/index': 'src/LanguageSelector/index.tsx',
   },
   dts: true,
   format: ['cjs', 'esm'],

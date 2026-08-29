@@ -16,6 +16,10 @@ import { useSideNav } from '~/SideNav/context';
 import { THEME_OPTIONS } from './constants';
 import { type Theme, useTheme } from './useTheme';
 
+export { useTheme, type Theme } from './useTheme';
+export { useDarkMode } from './useDarkMode';
+export { THEME_OPTIONS } from './constants';
+
 export const ThemeToggle: FC = () => {
   const t = useTranslations('SideNavigation');
   const tTheme = useTranslations('Theme');
