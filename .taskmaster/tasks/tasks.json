@@ -8204,8 +8204,9 @@
         "testStrategy": "Unit tests in `apps/blog/test/components/Layout/BlogLayout.test.tsx`:\n\n1. Test component renders SiteHeader, SideNavigation, SiteFooter, and children\n2. Test drawer state: initially closed, opens on header toggle, closes on navigation close\n3. Test locale prop is passed to SiteHeader and SideNavigation\n4. Test responsive behavior: sidebar visible on lg+, hidden drawer on mobile\n5. Test children are rendered within the main content area\n\nIntegration test:\n- Render a blog page and verify the full layout appears\n- Test viewport resize behavior (mobile ↔ desktop)",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-08-29T02:24:37.107Z"
       },
       {
         "id": 16,
@@ -8251,9 +8252,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-29T01:56:04.755Z",
+      "lastModified": "2026-08-29T02:24:37.108Z",
       "taskCount": 18,
-      "completedCount": 12,
+      "completedCount": 13,
       "tags": [
         "feature-blog-shared-layout"
       ],

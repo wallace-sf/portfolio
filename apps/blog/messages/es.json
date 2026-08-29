@@ -2,5 +2,17 @@
   "Metadata": {
     "title": "Blog",
     "description": "Artículos técnicos de Wallace Ferreira."
+  },
+  "Header": {
+    "logo_alt": "Logo",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
+  },
+  "SideNavigation": {
+    "mainNav": "Navegación principal"
+  },
+  "Footer": {
+    "copyright": "© {year} Wallace Ferreira",
+    "backToPortfolio": "Volver al portafolio"
   }
 }

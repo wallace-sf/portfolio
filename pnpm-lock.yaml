@@ -160,12 +160,18 @@ importers:
       '@repo/infra':
         specifier: workspace:*
         version: link:../../packages/infra
+      '@repo/layout':
+        specifier: workspace:*
+        version: link:../../packages/layout
       '@repo/seo':
         specifier: workspace:*
         version: link:../../packages/seo
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -190,6 +196,9 @@ importers:
       shiki:
         specifier: ^1.29.2
         version: 1.29.2
+      usehooks-ts:
+        specifier: ^3.1.1
+        version: 3.1.1(react@19.2.7)
       zod:
         specifier: ^4.3.6
         version: 4.4.3

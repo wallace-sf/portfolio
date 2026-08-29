@@ -8,6 +8,8 @@ const SECURITY_HEADERS = getSecurityHeaders({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: '/blog',
+  // Don't let `next dev` scaffold AGENTS.md / CLAUDE.md in the app root.
+  agentRules: false,
   async headers() {
     return [{ source: '/(.*)', headers: SECURITY_HEADERS }];
   },
