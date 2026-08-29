@@ -65,7 +65,6 @@ export const SideNavigation: FC = () => {
               component={NextLink}
               href={buildCrossZoneHref('blog', locale as Locale)}
               onNavigate={closeMenu}
-              prefetch={false}
               icon="material-symbols:article"
             >
               {t('blog')}

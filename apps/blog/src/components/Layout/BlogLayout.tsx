@@ -6,7 +6,6 @@ import type { Locale } from '@repo/core/shared';
 import { buildCrossZoneHref } from '@repo/layout';
 import { SiteFooter } from '@repo/layout/SiteFooter';
 import { useTranslations } from 'next-intl';
-import NextLink from 'next/link';
 
 import { SideNavigation } from './SideNavigation';
 
@@ -32,12 +31,12 @@ export const BlogLayout = ({ children, locale }: BlogLayoutProps) => {
         <SiteFooter>
           <div className="mx-4 flex flex-col items-center gap-y-2 text-center text-body-sm text-content-secondary xl:mx-8">
             <p>{t('copyright', { year: new Date().getFullYear() })}</p>
-            <NextLink
+            <a
               href={buildCrossZoneHref('site', locale)}
               className="font-bold text-content-primary hover:underline"
             >
               {t('backToPortfolio')}
-            </NextLink>
+            </a>
           </div>
         </SiteFooter>
       </div>
