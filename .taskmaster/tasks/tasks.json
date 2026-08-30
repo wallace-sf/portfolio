@@ -8061,7 +8061,7 @@
           "5",
           "16"
         ],
-        "status": "pending",
+        "status": "cancelled",
         "subtasks": [
           {
             "id": 1,
@@ -8139,7 +8139,8 @@
         ],
         "complexity": 7,
         "recommendedSubtasks": 6,
-        "expansionPrompt": "Break down the E2E testing into: (1) create comprehensive manual test plan document covering all 6 cross-zone navigation scenarios (site → blog and blog → site for each of 3 locales: en-US, pt-BR, es) on both mobile and desktop viewports, (2) execute manual tests verifying locale preservation in URL segments, (3) verify NEXT_LOCALE cookie scoping (site: Path=/, blog: Path=/blog) is never shared between zones, (4) test direct /blog links without locale redirect to default or current locale (middleware behavior), (5) optionally create Playwright E2E tests automating these flows with assertions on URL locale segments and cookie state, (6) document all test results in a report or GitHub issue comment as acceptance criteria for PRD completion. All locale-crossing navigation must preserve the user's locale without loss."
+        "expansionPrompt": "Break down the E2E testing into: (1) create comprehensive manual test plan document covering all 6 cross-zone navigation scenarios (site → blog and blog → site for each of 3 locales: en-US, pt-BR, es) on both mobile and desktop viewports, (2) execute manual tests verifying locale preservation in URL segments, (3) verify NEXT_LOCALE cookie scoping (site: Path=/, blog: Path=/blog) is never shared between zones, (4) test direct /blog links without locale redirect to default or current locale (middleware behavior), (5) optionally create Playwright E2E tests automating these flows with assertions on URL locale segments and cookie state, (6) document all test results in a report or GitHub issue comment as acceptance criteria for PRD completion. All locale-crossing navigation must preserve the user's locale without loss.",
+        "updatedAt": "2026-08-30T01:05:39.667Z"
       },
       {
         "id": 11,
@@ -8218,8 +8219,9 @@
         "dependencies": [
           "15"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "cancelled",
+        "subtasks": [],
+        "updatedAt": "2026-08-30T01:05:39.696Z"
       },
       {
         "id": 17,
@@ -8232,8 +8234,9 @@
           "13",
           "15"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "cancelled",
+        "subtasks": [],
+        "updatedAt": "2026-08-30T01:05:39.725Z"
       },
       {
         "id": 18,
@@ -8246,13 +8249,14 @@
           "13",
           "15"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "cancelled",
+        "subtasks": [],
+        "updatedAt": "2026-08-30T01:05:39.748Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-29T02:24:37.108Z",
+      "lastModified": "2026-08-30T01:05:39.748Z",
       "taskCount": 18,
       "completedCount": 13,
       "tags": [
