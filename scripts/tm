@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+#
+# Retry wrapper around `task-master`.
+#
+# Why: with `provider: "claude-code"` (see .taskmaster/config.json), the
+# AI-powered commands (parse-prd, expand, add-task, update-task, analyze-
+# complexity) intermittently crash with a stack overflow inside the child
+# `claude` process that task-master's bundled @anthropic-ai/claude-agent-sdk
+# spawns:
+#
+#   [ERROR] Claude Code object generation failed: Claude Code process exited with code 7
+#     stderr: RangeError: Maximum call stack size exceeded
+#
+# The crash is non-deterministic and a fresh run almost always succeeds. This
+# wrapper re-runs the command when the exit is non-zero AND the output carries
+# that specific signature, up to $TM_MAX_ATTEMPTS times (default 3). Any other
+# failure is passed straight through.
+#
+# Remove this once task-master ships a fixed claude-agent-sdk or the project
+# switches the provider to @ai-sdk/anthropic. Tracked in issue #1035.
+#
+# Usage: scripts/tm <any task-master args>
+#   e.g. scripts/tm parse-prd .taskmaster/docs/foo.md --tag bar --num-tasks 9
+#        scripts/tm expand --id=3
+#        scripts/tm list            # non-AI commands pass straight through
+
+set -o pipefail
+
+MAX_ATTEMPTS="${TM_MAX_ATTEMPTS:-3}"
+RETRY_DELAY="${TM_RETRY_DELAY:-5}"
+CRASH_RE='Maximum call stack size exceeded|Claude Code process exited with code 7'
+
+if ! command -v task-master >/dev/null 2>&1; then
+  echo "scripts/tm: task-master not found on PATH" >&2
+  exit 127
+fi
+
+attempt=1
+while :; do
+  log="$(mktemp -t tm-run.XXXXXX)"
+  task-master "$@" 2>&1 | tee "$log"
+  code=${PIPESTATUS[0]}
+
+  if [ "$code" -eq 0 ]; then
+    rm -f "$log"
+    exit 0
+  fi
+
+  if [ "$attempt" -ge "$MAX_ATTEMPTS" ] || ! grep -qE "$CRASH_RE" "$log"; then
+    rm -f "$log"
+    exit "$code"
+  fi
+
+  rm -f "$log"
+  echo >&2
+  echo "scripts/tm: hit the known claude-agent-sdk stack-overflow crash" \
+       "(attempt ${attempt}/${MAX_ATTEMPTS}). Retrying in ${RETRY_DELAY}s…" >&2
+  attempt=$((attempt + 1))
+  sleep "$RETRY_DELAY"
+done
