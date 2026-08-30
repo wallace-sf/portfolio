@@ -18,8 +18,13 @@ route tree, deletes the multi-zone plumbing and the `@repo/layout` package
 boundary, and finishes the blog's first visual pass (styled listing + post
 pages) — once, in the single app.
 
-**Public URLs are unchanged** (`wallace-ferreira.dev/blog`,
-`wallace-ferreira.dev/blog/<locale>/...`).
+**URL scheme:** blog routes live under the shared `[locale]` segment, so the
+public paths become `wallace-ferreira.dev/<locale>/blog` and
+`wallace-ferreira.dev/<locale>/blog/<slug>` — locale first, consistent with
+every other route (`/<locale>/projects`, `/<locale>/about`). This differs from
+the multi-zone layout (`/blog/<locale>/...`); redirects from the old paths are
+handled in task 6 if the standalone blog project ever had indexed URLs (open
+question §8).
 
 ## 1. Scope
 
@@ -109,14 +114,16 @@ Delivered by the `feature-blog-shared-layout` tag, survives the migration as-is:
 
 Ordered for safe incremental delivery. Each is a PR against `develop`.
 
-1. **Merge blog routes into `apps/site`.** Move `app/[locale]/{page,[slug]/page,
-   [slug]/opengraph-image,rss.xml}` → `apps/site/src/app/[locale]/blog/...`.
-   Merge blog `sitemap`/`robots` output into `apps/site`'s. Wire
+1. **Merge blog routes into `apps/site`.** Recreate `app/[locale]/{page,[slug]/page,
+   [slug]/opengraph-image,rss.xml}` under `apps/site/src/app/[locale]/blog/...`,
+   adapted to `apps/site`'s i18n/SEO/env/container modules and the locale-first
+   URL scheme. Merge blog `sitemap` output into `apps/site`'s. Wire
    `blogPostRepository` into `apps/site`'s server container. Move blog
    server-only deps into `apps/site/package.json`. Blog pages still render with
    their current (unstyled) markup — this task is a pure move + wire, no visual
-   change. Delete `apps/blog/src/{i18n,proxy.ts,config,mdx-components.tsx}` and
-   `apps/blog/next.config.mjs`.
+   change. `apps/blog` is left fully intact (still building) until task 3 deletes
+   the whole app — piecemeal deletion here would leave a knowingly-broken app in
+   the tree for two PRs with no CI `build` job (added in task 6) to catch it.
 2. **Merge blog i18n messages.** `apps/blog/messages/*.json` → `Blog.*` namespace
    in `apps/site/messages/*.json`. Update blog page/route message keys. Delete
    `apps/blog/messages/`.

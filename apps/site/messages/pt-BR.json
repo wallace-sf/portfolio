@@ -158,6 +158,12 @@
       "ogSubtitle": "6+ anos construindo produtos web modernos com React, Next.js e TypeScript.",
       "ogPage": "SOBRE"
     },
+    "BlogPage": {
+      "title": "Blog",
+      "description": "Artigos técnicos de Wallace Ferreira.",
+      "ogSubtitle": "Artigos técnicos sobre TypeScript, DDD e o ecossistema Next.js.",
+      "ogPage": "BLOG"
+    },
     "ProjectsPage": {
       "title": "Projetos",
       "description": "Projetos de software desenvolvidos por Wallace Ferreira — aplicações web escaláveis com React, Next.js e TypeScript.",

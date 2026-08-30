@@ -8276,7 +8276,7 @@
         "testStrategy": "Unit tests: apps/site/test/app/[locale]/blog/page.test.tsx, [slug]/page.test.tsx, rss.xml/route.test.tsx, [slug]/opengraph-image.test.tsx (copy from apps/blog/test/, adjust container mock). Integration: pnpm dev in apps/site, navigate to /blog and /blog/[locale]/the-either-pattern-in-typescript, verify pages render, RSS feed returns XML, OG image generates. Verify sitemap includes blog URLs, robots.txt unchanged.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
