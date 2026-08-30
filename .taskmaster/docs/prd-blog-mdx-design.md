@@ -1,8 +1,19 @@
-# Blog (`apps/blog`) — MDX-in-Git Design
+# Blog — MDX-in-Git Design
 
-> Status: approved design, pending implementation plan.
+> Status: design delivered (core/application/infra + pages). Delivery topology
+> changed — see the delivery note below.
 > Related: [ROADMAP.md](../../docs/ROADMAP.md), [03-BOUNDED-CONTEXTS.md](../../docs/03-BOUNDED-CONTEXTS.md),
 > [SEO-BACKLINK-STRATEGY.md](../../docs/SEO-BACKLINK-STRATEGY.md), [12-DESIGN-SYSTEM.md](../../docs/12-DESIGN-SYSTEM.md).
+
+> **Delivery topology (updated 2026-08-29):** the blog was originally built as a
+> separate `apps/blog` Next.js app composed into `wallace-ferreira.dev/blog` via
+> a Vercel multi-zone rewrite. That split was reversed — the blog is now a
+> `/[locale]/blog/...` route tree **inside `apps/site`**. Rationale and migration
+> in [RFC-blog-multizone-vs-single-app.md](../../docs/RFC-blog-multizone-vs-single-app.md)
+> and [prd-blog-single-app-migration.md](./prd-blog-single-app-migration.md).
+> §1 and §6 below are updated for this; the bounded-context, content-model,
+> rendering/SEO, and RSS design (§2–5) is topology-independent and unchanged.
+> Public URLs are unchanged.
 
 ## Goal
 
@@ -17,8 +28,8 @@ pure infra swap.
 ## 1. Scope
 
 **In scope now:**
-- `apps/blog`, a dedicated Next.js app, served at `wallace-ferreira.dev/blog` via Vercel
-  multi-zone rewrite from `apps/site`.
+- The blog served at `wallace-ferreira.dev/blog`, as a `/[locale]/blog/...` route tree inside
+  `apps/site` (see delivery note above — originally a separate `apps/blog` multi-zone app).
 - Content authored as MDX in git, no database.
 - Full i18n from day one: every published post ships in `en-US`, `pt-BR`, and `es` — no partial
   translations, `en-US` is the runtime fallback only for locale-negotiation edge cases, never an
@@ -53,12 +64,12 @@ pages.
 - **`packages/infra`** — `FileSystemBlogPostRepository`: reads `content/posts/<slug>/*`, parses
   frontmatter (Zod schema, edge validation per `06-VALIDATION.md`), constructs `BlogPost`
   entities. No Prisma/Supabase involved in this phase.
-- **`apps/blog`** — Server Components call `ListBlogPosts` / `GetBlogPostBySlug` directly at
-  build time (SSG), same pattern as Portfolio.
+- **`apps/site` (blog routes)** — Server Components call `ListBlogPosts` / `GetBlogPostBySlug`
+  directly at build time (SSG), same pattern as Portfolio.
 
 When the backoffice phase happens: implement `PrismaBlogPostRepository`, wire it in the DI
-container instead of `FileSystemBlogPostRepository`. `core`, `application`, and `apps/blog`
-pages are untouched.
+container instead of `FileSystemBlogPostRepository`. `core`, `application`, and the blog pages
+are untouched.
 
 ## 3. Content model
 
@@ -103,25 +114,27 @@ the build — never ships a broken post to production.
 
 ## 5. RSS feeds
 
-- One feed per locale: `apps/blog/src/app/[locale]/rss.xml/route.ts` (Route Handler), reachable
-  as `wallace-ferreira.dev/blog/<locale>/rss.xml`.
+- One feed per locale: `apps/site/src/app/[locale]/blog/rss.xml/route.ts` (Route Handler),
+  reachable as `wallace-ferreira.dev/blog/<locale>/rss.xml`.
 - Each feed calls `ListBlogPosts` (same use case as the listing page) and renders title,
   description, link, and `publishedAt` for that locale only — no mixing locales in one feed.
 - Feed link (`<link rel="alternate" type="application/rss+xml">`) added per locale in the blog
   layout `<head>`, and referenced in `robots.txt`/footer for discoverability.
 
-## 6. Cross-app routing (Vercel multi-zone)
+## 6. Routing
 
-- `apps/site`: `next.config.mjs` `rewrites()` sends `/blog` and `/blog/:path*` to the `apps/blog`
-  Vercel deployment URL.
-- `apps/blog`: `basePath: '/blog'`, its own `[locale]` routing via next-intl, reusing
-  `LOCALES`/`DEFAULT_LOCALE` from `@repo/core/shared`. Deployed as an independent Vercel project.
+- The blog lives under `apps/site/src/app/[locale]/blog/...` — native routes, one `[locale]`
+  segment shared with the portfolio, one next-intl config, one middleware. No `basePath`, no
+  rewrite hop, no per-zone `NEXT_LOCALE` cookie scoping.
+- Reuses `LOCALES`/`DEFAULT_LOCALE` from `@repo/core/shared` (same as the portfolio routes).
 - Post URLs embed the publication year/month (`/blog/<locale>/<yyyy>/<mm>/<slug>`), derived from
   `BlogPost.publishedAt`. Decided in the MVP (not deferred) because changing URL structure later
   breaks already-indexed links and SEO equity — cheap to do now, expensive to retrofit.
 - Final URLs: `wallace-ferreira.dev/blog`, `wallace-ferreira.dev/blog/pt-BR/2026/08/<slug>`, etc.
   — path on the primary domain, not a subdomain, to keep domain authority/link equity unified (per
   `SEO-BACKLINK-STRATEGY.md` findings on paulie.dev's backlink profile).
+- History: originally an independent `apps/blog` Vercel project reached via
+  `apps/site` `rewrites()` — see [RFC-blog-multizone-vs-single-app.md](../../docs/RFC-blog-multizone-vs-single-app.md).
 
 ## 7. Testing
 
@@ -130,12 +143,12 @@ the build — never ships a broken post to production.
 - **`infra`**: `FileSystemBlogPostRepository` tests against a test fixture `content/posts/`
   directory (valid post, post missing a locale file → build error, malformed frontmatter → Zod
   error).
-- **`apps/blog`**: detail page renders correct title/OG/canonical from a mocked
+- **`apps/site` (blog routes)**: detail page renders correct title/OG/canonical from a mocked
   `IBlogPostRepository` (no integration with real files); RSS route returns valid XML with only
   the requested locale's posts, from the same mocked repository.
 
 ## Open questions for implementation planning
 
 - First post topic(s) and publishing cadence — not decided here, tracked separately.
-- Exact DI container wiring pattern for `apps/blog` (mirrors how `apps/site` wires Portfolio use
-  cases today — to confirm during planning).
+- Exact DI container wiring for the blog's `IBlogPostRepository` inside `apps/site` (mirrors how
+  `apps/site` wires Portfolio use cases today — to confirm during planning).
