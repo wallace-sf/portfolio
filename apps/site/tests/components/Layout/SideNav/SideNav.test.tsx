@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { SideNav } from '~/SideNav';
-import { useSideNav } from '~/SideNav/context';
+import { SideNav } from '~/components/Layout/SideNav';
+import { useSideNav } from '~/components/Layout/SideNav/context';
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-vi.mock('~/SiteHeader', () => ({
+vi.mock('~/components/Layout/SiteHeader', () => ({
   SiteHeader: ({
     locale,
     isOpen,

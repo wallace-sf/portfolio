@@ -14,7 +14,7 @@ vi.mock('next-intl', () => ({
 
 const activePath = { current: '' };
 
-vi.mock('@repo/layout/SideNav', () => ({
+vi.mock('~/components/Layout/SideNav', () => ({
   useNavLink: (path: string) => ({
     href: path === '/' ? '/en-US' : `/en-US${path}`,
     active: path === activePath.current,
@@ -33,11 +33,11 @@ vi.mock('@repo/layout/SideNav', () => ({
   ),
 }));
 
-vi.mock('@repo/layout/ThemeToggle', () => ({
+vi.mock('~/components/Layout/ThemeToggle', () => ({
   ThemeToggle: () => <div data-testid="theme-toggle" />,
 }));
 
-vi.mock('@repo/layout/LanguageSelector', () => ({
+vi.mock('~/components/Layout/LanguageSelector', () => ({
   LanguageSelector: () => <div data-testid="language-selector" />,
 }));
 

@@ -1,13 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import { LanguageSelector } from '~/LanguageSelector';
+import { LanguageSelector } from '~/components/Layout/LanguageSelector';
 
 const mockReplace = vi.fn();
 const mockCloseMenu = vi.fn();
 let mockPathname = '/en-US/about';
 let mockLocale = 'en-US';
 
-vi.mock('~/SideNav/context', () => ({
+vi.mock('~/components/Layout/SideNav/context', () => ({
   useSideNav: () => ({ closeMenu: mockCloseMenu }),
 }));
 

@@ -1,10 +1,9 @@
 import { FC, PropsWithChildren } from 'react';
 
-import { SiteFooter } from '@repo/layout/SiteFooter';
-
 import { ContactSection } from '~features/contact/ContactSection';
 
 import { SideNavigation } from '../SideNavigation';
+import { SiteFooter } from '../SiteFooter';
 
 export const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   return (

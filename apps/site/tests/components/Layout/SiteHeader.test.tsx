@@ -3,12 +3,25 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { SiteHeader } from '~/SiteHeader';
-
-vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://wallace-ferreira.dev');
+import { SiteHeader } from '~/components/Layout/SiteHeader';
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
+}));
+
+vi.mock('next/link', () => ({
+  default: ({
+    children,
+    href,
+    ...rest
+  }: {
+    children: ReactNode;
+    href: string;
+  }) => (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock('@repo/ui/Control', () => ({
@@ -39,12 +52,12 @@ const defaultProps = {
 };
 
 describe('SiteHeader', () => {
-  it('should link the logo to the portfolio home for the active locale when rendered', () => {
+  it('should link the logo to the site home for the active locale when rendered', () => {
     render(<SiteHeader {...defaultProps} locale="es" />);
 
     expect(screen.getByRole('link', { name: 'logo_alt' })).toHaveAttribute(
       'href',
-      'https://wallace-ferreira.dev/es',
+      '/es',
     );
   });
 

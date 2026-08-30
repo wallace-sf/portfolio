@@ -28,7 +28,7 @@
   --tw-shadow-drop-md: none;
   --tw-shadow-drop-up: none;
 
-  /* Shared layout tokens — consumed by @repo/layout's SiteHeader across zones */
+  /* Layout tokens — consumed by apps/site's SiteHeader / SideNav chrome */
   --header-height-desktop: 104px;
   --header-height-mobile: 68px;
 }

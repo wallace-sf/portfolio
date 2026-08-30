@@ -24,7 +24,6 @@
     "@repo/config": "workspace:*",
     "@repo/core": "workspace:*",
     "@repo/infra": "workspace:*",
-    "@repo/layout": "workspace:*",
     "@repo/seo": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
