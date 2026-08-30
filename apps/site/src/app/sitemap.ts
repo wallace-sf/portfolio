@@ -1,3 +1,4 @@
+import { ListBlogPosts } from '@repo/application/blog';
 import { GetPublishedProjects } from '@repo/application/portfolio';
 import { LOCALES } from '@repo/core/shared';
 import type { MetadataRoute } from 'next';
@@ -11,7 +12,7 @@ export const dynamic = 'force-static';
 const BUILD_DATE = new Date().toISOString();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes = ['', '/about', '/projects'];
+  const staticRoutes = ['', '/about', '/projects', '/blog'];
 
   const staticEntries: MetadataRoute.Sitemap = LOCALES.flatMap((locale) =>
     staticRoutes.map((route) => ({
@@ -40,7 +41,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
     );
 
-    return [...staticEntries, ...projectEntries];
+    const blogResult = await new ListBlogPosts(
+      getServerContainer().blogPostRepository,
+    ).execute({ locale: DEFAULT_LOCALE });
+
+    const blogPosts = blogResult.isRight() ? blogResult.value : [];
+
+    const blogEntries: MetadataRoute.Sitemap = LOCALES.flatMap((locale) =>
+      blogPosts.map((post) => ({
+        url: `${env.siteUrl}/${locale}/blog/${post.slug}`,
+        lastModified: BUILD_DATE,
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+      })),
+    );
+
+    return [...staticEntries, ...projectEntries, ...blogEntries];
   } catch {
     return staticEntries;
   }
