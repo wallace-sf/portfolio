@@ -124,15 +124,23 @@ Ordered for safe incremental delivery. Each is a PR against `develop`.
    change. `apps/blog` is left fully intact (still building) until task 3 deletes
    the whole app — piecemeal deletion here would leave a knowingly-broken app in
    the tree for two PRs with no CI `build` job (added in task 6) to catch it.
-2. **Merge blog i18n messages.** `apps/blog/messages/*.json` → `Blog.*` namespace
-   in `apps/site/messages/*.json`. Update blog page/route message keys. Delete
-   `apps/blog/messages/`.
+2. **Merge blog i18n messages.** Absorbed by task 1: the blog's route-facing
+   strings were migrated as `Metadata.BlogPage`, and `apps/site` already carried
+   `Header` + `SideNavigation.mainNav` identically. The blog's `Footer` chrome
+   strings (`copyright`, `backToPortfolio`) are retired — the blog renders inside
+   `apps/site`'s `AppLayout` / `ContactSection` footer (no copyright line), and
+   `BlogLayout`, their only consumer, is removed in tasks 4–5. So no message
+   content is left to merge; this task ships a locale-parity guard test
+   (`apps/site/tests/messages.test.ts` — the repo had none) covering the "no
+   missing translation keys" requirement. `apps/blog/messages/` deletion moves to
+   task 3 with the app.
 3. **Remove multi-zone plumbing.** Delete `apps/site` `next.config` `rewrites()`,
    the `blog` exclusion in `apps/site/src/proxy.ts`, `BLOG_APP_URL` from
    `apps/site` `env` / `.env.example` / `turbo.json` `globalEnv`,
-   `apps/blog/vercel.json`. Delete the now-empty `apps/blog/` and its
-   `package.json` / configs from the workspace. Update `pnpm-workspace.yaml`,
-   root `turbo.json`, `tsconfig` references.
+   `apps/blog/vercel.json`. Delete `apps/blog/` entirely (including
+   `apps/blog/messages/`, still loaded by its own `i18n/request.ts` until here)
+   and its `package.json` / configs from the workspace. Update
+   `pnpm-workspace.yaml`, root `turbo.json`, `tsconfig` references.
 4. **Inline `@repo/layout` into `apps/site`.** Move `SiteHeader`, `SiteFooter`,
    `SiteLogo`, `ThemeToggle`, `LanguageSelector`, `SideNav` shell, `useNavLink`,
    `useTheme`, `useDarkMode` to `apps/site/src/components/Layout/` (+ a local
@@ -164,7 +172,9 @@ Ordered for safe incremental delivery. Each is a PR against `develop`.
 - **Unchanged**: `core` / `application` / `infra` blog tests — no code change.
 - **Moved**: blog page + RSS + OG tests move to `apps/site/test/app/[locale]/blog/`;
   adjust import paths and the mocked-repository wiring for the site container.
-- **New**: `SideNavigation` unified test (all items render, `/blog` active on the
+- **New**: locale-parity guard (`apps/site/tests/messages.test.ts` — en-US /
+  pt-BR / es share an identical key set, blog listing metadata non-empty per
+  locale); `SideNavigation` unified test (all items render, `/blog` active on the
   blog route, drawer closes on item click); `error.tsx` renders on a thrown blog
   page; `generateStaticParams` skips a malformed fixture post.
 - **Deleted**: all `buildCrossZoneHref` tests; the entire old Task 10 cross-zone
