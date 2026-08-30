@@ -12,14 +12,12 @@ vi.mock('next-intl', () => ({
   useLocale: () => 'en-US',
 }));
 
-vi.mock('@repo/layout', () => ({
-  buildCrossZoneHref: (_zone: string, locale: string) => `/blog/${locale}`,
-}));
+const activePath = { current: '' };
 
 vi.mock('@repo/layout/SideNav', () => ({
   useNavLink: (path: string) => ({
     href: path === '/' ? '/en-US' : `/en-US${path}`,
-    active: false,
+    active: path === activePath.current,
   }),
   SideNav: ({
     primary,
@@ -63,13 +61,15 @@ vi.mock('@repo/ui/Control', () => {
   const item = ({
     children,
     href,
+    active,
     onNavigate,
   }: {
     children: React.ReactNode;
     href: string;
+    active?: boolean;
     onNavigate?: () => void;
   }) => (
-    <a href={href} onClick={onNavigate}>
+    <a href={href} data-active={active ? 'true' : 'false'} onClick={onNavigate}>
       {children}
     </a>
   );
@@ -78,6 +78,7 @@ vi.mock('@repo/ui/Control', () => {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  activePath.current = '';
 });
 
 describe('SideNavigation', () => {
@@ -105,14 +106,30 @@ describe('SideNavigation', () => {
     expect(mockCloseMenu).toHaveBeenCalled();
   });
 
-  it('should include a Blog link to the blog zone carrying the active locale', async () => {
+  it('should link Blog to the locale-prefixed /blog route', async () => {
     const { SideNavigation } =
       await import('~/components/Layout/SideNavigation');
     render(React.createElement(SideNavigation));
 
     expect(screen.getByText('blog').closest('a')).toHaveAttribute(
       'href',
-      '/blog/en-US',
+      '/en-US/blog',
+    );
+  });
+
+  it('should mark the Blog link active on blog routes', async () => {
+    activePath.current = '/blog';
+    const { SideNavigation } =
+      await import('~/components/Layout/SideNavigation');
+    render(React.createElement(SideNavigation));
+
+    expect(screen.getByText('blog').closest('a')).toHaveAttribute(
+      'data-active',
+      'true',
+    );
+    expect(screen.getByText('home').closest('a')).toHaveAttribute(
+      'data-active',
+      'false',
     );
   });
 });

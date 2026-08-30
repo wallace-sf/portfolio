@@ -140,7 +140,11 @@ Ordered for safe incremental delivery. Each is a PR against `develop`.
    `apps/blog/vercel.json`. Delete `apps/blog/` entirely (including
    `apps/blog/messages/`, still loaded by its own `i18n/request.ts` until here)
    and its `package.json` / configs from the workspace. Update
-   `pnpm-workspace.yaml`, root `turbo.json`, `tsconfig` references.
+   `pnpm-workspace.yaml`, root `turbo.json`, `tsconfig` references. Also does the
+   minimum nav fix the deletion forces now (not task 5): `apps/site`'s
+   `SideNavigation` "Blog" item switches from `buildCrossZoneHref` (a href that
+   404s once the rewrite is gone) to an internal `useNavLink('/blog')` link with
+   a real active state.
 4. **Inline `@repo/layout` into `apps/site`.** Move `SiteHeader`, `SiteFooter`,
    `SiteLogo`, `ThemeToggle`, `LanguageSelector`, `SideNav` shell, `useNavLink`,
    `useTheme`, `useDarkMode` to `apps/site/src/components/Layout/` (+ a local
