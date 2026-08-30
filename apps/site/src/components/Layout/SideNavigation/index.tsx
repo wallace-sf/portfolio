@@ -3,7 +3,6 @@
 import { FC } from 'react';
 
 import type { Locale } from '@repo/core/shared';
-import { buildCrossZoneHref } from '@repo/layout';
 import { LanguageSelector } from '@repo/layout/LanguageSelector';
 import { SideNav, useNavLink } from '@repo/layout/SideNav';
 import { ThemeToggle } from '@repo/layout/ThemeToggle';
@@ -21,6 +20,7 @@ export const SideNavigation: FC = () => {
   const home = useNavLink('/');
   const projects = useNavLink('/projects');
   const about = useNavLink('/about');
+  const blog = useNavLink('/blog');
 
   return (
     <SideNav
@@ -63,7 +63,8 @@ export const SideNavigation: FC = () => {
           <li>
             <Nav.Item
               component={NextLink}
-              href={buildCrossZoneHref('blog', locale as Locale)}
+              href={blog.href}
+              active={blog.active}
               onNavigate={closeMenu}
               icon="material-symbols:article"
             >

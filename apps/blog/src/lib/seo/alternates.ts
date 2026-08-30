@@ -1,1 +1,0 @@
-export { buildAlternates } from './builders';
