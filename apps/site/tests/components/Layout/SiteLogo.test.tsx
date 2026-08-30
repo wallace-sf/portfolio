@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { SiteLogo } from '~/SiteLogo';
+import { SiteLogo } from '~/components/Layout/SiteLogo';
 
 describe('SiteLogo', () => {
   it('should render an svg hidden from assistive tech when rendered', () => {

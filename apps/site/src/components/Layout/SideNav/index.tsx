@@ -9,12 +9,12 @@ import classNames from 'classnames';
 import { useTranslations } from 'next-intl';
 import { useBoolean, useMediaQuery, useScrollLock } from 'usehooks-ts';
 
-import { SiteHeader } from '~/SiteHeader';
+import { SiteHeader } from '../SiteHeader';
 
 import { SideNavProvider } from './context';
 
 export { SideNavProvider, useSideNav, type ISideNavContext } from './context';
-export { useNavLink, type INavLinkState } from './useNavLink';
+export { useNavLink, type INavLinkState } from '~/hooks/useNavLink';
 
 /**
  * A nav slot is either static content or a function that receives the

@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 
-import { SideNavProvider, useSideNav } from '~/SideNav/context';
+import {
+  SideNavProvider,
+  useSideNav,
+} from '~/components/Layout/SideNav/context';
 
 const Consumer = () => {
   const { closeMenu } = useSideNav();

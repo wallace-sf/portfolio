@@ -3,13 +3,13 @@
 import { FC } from 'react';
 
 import type { Locale } from '@repo/core/shared';
-import { LanguageSelector } from '@repo/layout/LanguageSelector';
-import { SideNav, useNavLink } from '@repo/layout/SideNav';
-import { ThemeToggle } from '@repo/layout/ThemeToggle';
 import { Nav } from '@repo/ui/Control';
 import { useLocale, useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 
+import { LanguageSelector } from '~/components/Layout/LanguageSelector';
+import { SideNav, useNavLink } from '~/components/Layout/SideNav';
+import { ThemeToggle } from '~/components/Layout/ThemeToggle';
 import { env } from '~/config/env';
 import { getResumeUrl } from '~/lib/resume';
 

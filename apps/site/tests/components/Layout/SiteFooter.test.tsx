@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { SiteFooter } from '~/SiteFooter';
+import { SiteFooter } from '~/components/Layout/SiteFooter';
 
 describe('SiteFooter', () => {
   it('should render its children inside a contentinfo landmark when given content', () => {
@@ -24,7 +24,12 @@ describe('SiteFooter', () => {
 
     const footer = screen.getByRole('contentinfo');
     // Centering classes stay on the landmark, uncontested by the 2xl bleed.
-    expect(footer).toHaveClass('mx-auto', 'w-full', 'max-w-237.5', 'shadow-drop-up');
+    expect(footer).toHaveClass(
+      'mx-auto',
+      'w-full',
+      'max-w-237.5',
+      'shadow-drop-up',
+    );
     expect(footer).not.toHaveClass('2xl:mx-[-161px]');
 
     const band = footer.firstElementChild;

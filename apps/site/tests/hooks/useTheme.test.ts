@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as usehooksTs from 'usehooks-ts';
 
-import { useTheme } from '~/ThemeToggle/useTheme';
+import { useTheme } from '~/hooks/useTheme';
 
 vi.mock('usehooks-ts', () => ({
   useLocalStorage: vi.fn(),

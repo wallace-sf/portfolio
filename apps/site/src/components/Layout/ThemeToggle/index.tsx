@@ -11,13 +11,14 @@ import {
 } from '@repo/ui/Control';
 import { useTranslations } from 'next-intl';
 
-import { useSideNav } from '~/SideNav/context';
+import { type Theme, useTheme } from '~/hooks/useTheme';
+
+import { useSideNav } from '../SideNav/context';
 
 import { THEME_OPTIONS } from './constants';
-import { type Theme, useTheme } from './useTheme';
 
-export { useTheme, type Theme } from './useTheme';
-export { useDarkMode } from './useDarkMode';
+export { useTheme, type Theme } from '~/hooks/useTheme';
+export { useDarkMode } from '~/hooks/useDarkMode';
 export { THEME_OPTIONS } from './constants';
 
 export const ThemeToggle: FC = () => {

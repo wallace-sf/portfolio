@@ -12,7 +12,7 @@ import {
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { useSideNav } from '~/SideNav/context';
+import { useSideNav } from '../SideNav/context';
 
 import { LANGUAGES_OPTIONS } from './constants';
 
