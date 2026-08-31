@@ -29,6 +29,13 @@ export async function generateStaticParams() {
     getServerContainer().blogPostRepository,
   ).execute({ locale: DEFAULT_LOCALE });
 
+  if (result.isLeft()) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      '[blog] could not list posts for static params — no post pages will be prerendered',
+    );
+  }
+
   const slugs = result.isRight() ? result.value.map((p) => p.slug) : [];
   return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
 }

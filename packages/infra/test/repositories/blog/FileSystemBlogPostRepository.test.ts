@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Slug } from '@repo/core/shared';
 
@@ -16,6 +16,10 @@ function unwrapSlug(raw: string): Slug {
 }
 
 describe('FileSystemBlogPostRepository', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe('findAll', () => {
     it('should return all posts sorted by publishedAt desc when the content directory has valid posts', async () => {
       const repo = new FileSystemBlogPostRepository(
@@ -33,6 +37,20 @@ describe('FileSystemBlogPostRepository', () => {
         'nextjs',
         'architecture',
       ]);
+    });
+
+    it('should skip a malformed post with a warning and still return the valid ones', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const repo = new FileSystemBlogPostRepository(
+        path.join(FIXTURES_DIR, 'posts-mixed'),
+      );
+
+      const posts = await repo.findAll();
+
+      expect(posts.map((p) => p.slug.value)).toEqual(['good-post']);
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('skipping malformed post "bad-post"'),
+      );
     });
   });
 
