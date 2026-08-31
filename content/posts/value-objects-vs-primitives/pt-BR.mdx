@@ -1,0 +1,46 @@
+---
+title: "Value Objects vs primitivos: onde traçar a linha"
+description: Nem todo campo merece a própria classe. Uma regra concreta para decidir quando um valor é rico o bastante para virar um Value Object e quando um primitivo validado é a escolha honesta.
+---
+
+# Value Objects vs primitivos: onde traçar a linha
+
+O Domain-Driven Design empurra você a envolver valores em tipos — `Slug` em vez de `string`,
+`DateRange` em vez de dois `Date`. Levado ao pé da letra, isso termina com uma classe para cada
+campo e um codebase que é só cerimônia e nenhum sinal.
+
+## A regra que este projeto usa
+
+Uma propriedade vira **Value Object** quando o conceito é **rico ou reutilizado**:
+
+- Carrega invariantes que viajam com o valor por toda parte (`Slug` é sempre minúsculo,
+  kebab-case, 3–100 caracteres).
+- Tem comportamento, não só forma (`DateRange.overlaps(other)`).
+- O mesmo conceito aparece em mais de um agregado (`LocalizedText`, `Url`).
+
+Uma propriedade continua **primitivo ou enum** quando o valor é **simples e local à entidade**:
+
+- Um enum estável (`ProjectStatus`), um booleano, ou uma única regra simples.
+- Nada mais no codebase precisa saber dele.
+
+```ts
+// VO — conceito rico, reutilizado
+public readonly slug: Slug;          // Slug.create(props.slug)
+public readonly period: DateRange;   // DateRange.create(start, end)
+
+// primitivo + Validator — enum estável, local à entidade
+public readonly status: ProjectStatus;
+// validado no create():
+const { isValid } = Validator.of(props.status)
+  .in(Object.values(ProjectStatus))
+  .validate();
+if (!isValid) return left(new ValidationError({ code: Project.ERROR_CODE }));
+```
+
+## Por que não "VO em tudo"
+
+Um VO `Status` dedicado que só embrulha uma checagem `.in([...])` adiciona um arquivo, um
+construtor, uma factory e um teste — para expressar uma regra que uma linha de `Validator` já
+expressa no ponto em que importa. O VO justifica seu peso quando a regra não é trivial ou quando
+duplicá-la entre entidades seria um risco real de divergência. Abaixo dessa barra, um primitivo
+validado não é um atalho — é a descrição exata do que o valor é.

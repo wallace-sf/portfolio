@@ -1,13 +1,12 @@
 import { ListBlogPosts } from '@repo/application/blog';
 import { type Locale, LOCALES } from '@repo/core/shared';
-import { Badge } from '@repo/ui/View';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { Link } from '~/i18n/routing';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
+import { PostCard } from '~features/blog/PostCard';
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -41,6 +40,8 @@ export default async function BlogListingPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const t = await getTranslations({ locale, namespace: 'Blog' });
+
   const result = await new ListBlogPosts(
     getServerContainer().blogPostRepository,
   ).execute({ locale: locale as Locale });
@@ -48,27 +49,25 @@ export default async function BlogListingPage({
   const posts = result.isRight() ? result.value : [];
 
   return (
-    <main>
-      <h1>Blog</h1>
+    <section className="mx-auto w-full max-w-3xl py-4 lg:py-8">
+      <header className="mb-8 flex flex-col gap-3 lg:mb-12">
+        <h1 className="text-heading-h2">{t('title')}</h1>
+        <p className="text-body-base text-content-secondary">{t('subtitle')}</p>
+      </header>
+
       {posts.length === 0 ? (
-        <p>No posts published yet.</p>
+        <p className="py-16 text-center text-body-base text-content-muted">
+          {t('empty')}
+        </p>
       ) : (
-        <ul>
+        <ul className="flex flex-col gap-5">
           {posts.map((post) => (
             <li key={post.slug}>
-              <Link href={`/blog/${post.slug}`}>
-                <h2>{post.title}</h2>
-              </Link>
-              <p>{post.description}</p>
-              <div>
-                {post.tags.map((tag) => (
-                  <Badge.Text key={tag} label={tag} />
-                ))}
-              </div>
+              <PostCard post={post} locale={locale} />
             </li>
           ))}
         </ul>
       )}
-    </main>
+    </section>
   );
 }

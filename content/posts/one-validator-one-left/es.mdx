@@ -1,0 +1,50 @@
+---
+title: "Un Validator, un Left"
+description: Cómo encadenar reglas de dominio a través de un único Validator — y devolver exactamente un Left por flujo de validación — mantiene las factories de entidad legibles y el manejo de errores predecible.
+---
+
+# Un Validator, un Left
+
+Los métodos `create()` de entidad atraen guard clauses. Una regla, un `if`, un `throw` o
+`return`. Cinco reglas después la factory es un muro de early returns y quien lee tiene que
+rastrear cada rama para saber qué errores son siquiera posibles.
+
+## La convención
+
+Expresa cada regla con `Validator`, encadénalas, y termina con **una** comprobación:
+
+```ts
+static create(raw?: string): Either<ValidationError, Slug> {
+  const normalized = raw?.trim().toLowerCase() ?? '';
+
+  const { isValid } = Validator.of(normalized)
+    .length(3, 100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+    .validate();
+
+  if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
+  return right(new Slug(normalized));
+}
+```
+
+`.validate()` ejecuta el encadenamiento como un chain of responsibility y devuelve el
+**primer** fallo. La factory tiene exactamente un `left` y un `right`. No hay nada que
+rastrear.
+
+## Dos detalles que importan
+
+**Sin strings de mensaje en el dominio.** Los métodos de regla reciben un mensaje `error`
+opcional — omítelo. `ValidationError` lleva solo un `code`; el texto de cara al usuario se
+resuelve después en la capa de aplicación, indexado por ese code. El dominio no es dueño del
+texto.
+
+**Nunca renombres `error` / `isValid`.** Vienen directo de `.validate()`. Si el ámbito
+circundante ya usa esos nombres, envuelve la validación en su propio bloque — no crees alias de
+las propiedades desestructuradas, porque todo lector espera que esos dos nombres signifiquen
+exactamente esto.
+
+## Cuándo los guards siguen siendo correctos
+
+Reglas entre campos que un único `Validator.of(unValor)` no puede expresar, o propagar un `Left`
+del `create()` de un VO anidado, siguen usando un `if`. La convención trata de *reglas de campo
+de valor único*, no de prohibir el control de flujo.

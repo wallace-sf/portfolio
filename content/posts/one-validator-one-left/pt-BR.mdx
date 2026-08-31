@@ -1,0 +1,47 @@
+---
+title: "Um Validator, um Left"
+description: Como encadear regras de domínio por um único Validator — e retornar exatamente um Left por fluxo de validação — mantém as factories de entidade legíveis e o tratamento de erro previsível.
+---
+
+# Um Validator, um Left
+
+Métodos `create()` de entidade atraem guard clauses. Uma regra, um `if`, um `throw` ou `return`.
+Cinco regras depois a factory é uma parede de early returns e quem lê precisa rastrear cada
+branch para saber quais erros são sequer possíveis.
+
+## A convenção
+
+Expresse cada regra com `Validator`, encadeie, e termine com **uma** checagem:
+
+```ts
+static create(raw?: string): Either<ValidationError, Slug> {
+  const normalized = raw?.trim().toLowerCase() ?? '';
+
+  const { isValid } = Validator.of(normalized)
+    .length(3, 100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+    .validate();
+
+  if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
+  return right(new Slug(normalized));
+}
+```
+
+`.validate()` roda o encadeamento como um chain of responsibility e retorna a **primeira**
+falha. A factory tem exatamente um `left` e um `right`. Não há nada para rastrear.
+
+## Dois detalhes que importam
+
+**Sem strings de mensagem no domínio.** Os métodos de regra recebem uma mensagem `error`
+opcional — omita. `ValidationError` carrega só um `code`; o texto voltado ao usuário é
+resolvido depois na camada de aplicação, indexado por esse code. O domínio não é dono do texto.
+
+**Nunca renomeie `error` / `isValid`.** Eles vêm direto do `.validate()`. Se o escopo ao redor
+já usa esses nomes, envolva a validação no próprio bloco — não crie alias das propriedades
+desestruturadas, porque todo leitor espera que esses dois nomes signifiquem exatamente isto.
+
+## Quando guards ainda são certos
+
+Regras entre campos que um único `Validator.of(umValor)` não consegue expressar, ou propagar um
+`Left` do `create()` de um VO aninhado, ainda usam `if`. A convenção é sobre *regras de campo de
+valor único*, não sobre banir controle de fluxo.
