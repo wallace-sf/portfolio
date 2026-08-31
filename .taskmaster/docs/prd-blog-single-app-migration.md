@@ -157,10 +157,16 @@ Ordered for safe incremental delivery. Each is a PR against `develop`.
    type, `renderSlot`) into `SideNavigation` — one self-contained component that
    owns the drawer state and renders the item lists inline. `SideNavContext` moves
    to `SideNavigation/context.ts`. One consolidated test file.
-6. **Blast-radius mitigations + CI.** `error.tsx` on the blog route segment;
-   `generateStaticParams` skips a malformed post with a `console.warn` instead of
-   throwing; add a `build` job (`turbo run build`) to
-   `.github/workflows/ci.yml`.
+6. **Blast-radius mitigations.** `error.tsx` on the blog route segment.
+   `FileSystemBlogPostRepository.findAll()` skips a malformed post with a
+   `console.warn` (`Promise.allSettled`) instead of rejecting the whole batch —
+   the fix lives in the infra adapter, not `generateStaticParams`, since the
+   list use case already collapses any repo throw to a single `Left`. Blog
+   `generateStaticParams` logs a warning on that `Left`. **CI `build` job cut:**
+   `.github/workflows/ci.yml` is `workflow_dispatch`-only and `lefthook` already
+   runs `CI=1 pnpm build` on every `pre-push`. **Old-URL redirects cut:** the
+   blog was never launched; the deleted `portfolio-blog` project served no
+   indexed content.
 7. **Style the blog listing page** (carried from `prd-blog-shared-layout.md`
    §7.4). Chirpy-style post cards: thumbnail, title, locale-formatted date,
    description, tag badges; empty state; responsive grid. Existing
