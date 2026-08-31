@@ -13,7 +13,7 @@ vi.mock('~/hooks/useTheme', () => ({
   useTheme: () => ({ theme: 'system', setTheme: mockSetTheme }),
 }));
 
-vi.mock('~/components/Layout/SideNav/context', () => ({
+vi.mock('~/components/Layout/SideNavigation/context', () => ({
   useSideNav: () => ({ closeMenu: mockCloseMenu }),
 }));
 
