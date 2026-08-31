@@ -1,0 +1,46 @@
+---
+title: "Server Components são o composition root"
+description: Por que este site chama use cases direto dos Server Components em tempo de build, passa dados puros para baixo como props, e nunca busca dados de um useEffect.
+---
+
+# Server Components são o composition root
+
+Um app React clássico tem um problema de data fetching: os componentes montam, disparam um
+`useEffect`, mostram um spinner, e re-renderizam. O App Router remove o problema em vez de
+administrá-lo melhor.
+
+## A regra
+
+- **Server Components** importam `@repo/application` e chamam use cases direto. Isso roda em
+  tempo de build (SSG) ou no servidor — o código nunca chega ao browser.
+- Componentes **`'use client'`** nunca importam `@repo/application`. Eles recebem dados como
+  props de um Server Component.
+- Não existe `useEffect` para dados. Se um componente client precisa de dados do servidor, um
+  Server Component busca e passa para baixo.
+
+```tsx
+// Server Component — o composition root desta página
+export default async function ProjectsPage({ params }: Props) {
+  const { locale } = await params;
+
+  const result = await new GetPublishedProjects(
+    getServerContainer().projectRepository,
+    getServerContainer().skillRepository,
+  ).execute({ locale });
+
+  const projects = result.isRight() ? result.value : [];
+
+  return <ProjectList projects={projects} />; // dados puros, para baixo como props
+}
+```
+
+## Por que isso é Clean Architecture, não um atalho
+
+A regra de dependência é `core ← application ← infra ← apps`. O Server Component fica no anel
+mais externo: pode conhecer `application` e montar o container. Ele é o **composition root** — o
+único lugar que monta dependências concretas — e o App Router te dá um por rota, de graça,
+rodando antes de qualquer HTML ser enviado.
+
+O bundle do client só enxerga o DTO. Ele não consegue importar um use case nem por acidente,
+porque o import puxaria código server-only para o build do browser e falharia. A fronteira de
+arquitetura é garantida pelo bundler, não por disciplina.

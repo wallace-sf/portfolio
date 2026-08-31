@@ -60,7 +60,7 @@ export default async function BlogListingPage({
           {t('empty')}
         </p>
       ) : (
-        <ul className="grid gap-6 sm:grid-cols-2">
+        <ul className="flex flex-col gap-5">
           {posts.map((post) => (
             <li key={post.slug}>
               <PostCard post={post} locale={locale} />

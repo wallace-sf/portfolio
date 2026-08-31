@@ -25,21 +25,21 @@ export function PostCard({ post, locale }: IPostCardProps) {
   const { slug, title, description, publishedAt, tags, thumbnailImage } = post;
 
   return (
-    <Link href={`/blog/${slug}`} className="group block h-full">
-      <article className="flex h-full flex-col overflow-hidden rounded-card bg-surface shadow-drop-sm transition-shadow group-hover:shadow-drop-md">
+    <Link href={`/blog/${slug}`} className="group block">
+      <article className="flex flex-col overflow-hidden rounded-card bg-surface shadow-drop-sm transition-shadow group-hover:shadow-drop-md sm:flex-row">
         {thumbnailImage && (
-          <div className="relative aspect-[16/9] overflow-hidden bg-surface-sunken">
+          <div className="relative aspect-[16/9] shrink-0 overflow-hidden bg-surface-sunken sm:aspect-auto sm:w-56">
             <Image
               src={thumbnailImage.url}
               alt={thumbnailImage.alt}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-              sizes={`(min-width: ${screens.sm}) 24rem, calc(100vw - 2rem)`}
+              sizes={`(min-width: ${screens.sm}) 14rem, calc(100vw - 2rem)`}
             />
           </div>
         )}
 
-        <div className="flex flex-1 flex-col gap-3 p-5">
+        <div className="flex flex-col gap-2.5 p-5 sm:py-6">
           <time
             dateTime={publishedAt}
             className="text-body-xs text-content-muted"
@@ -49,12 +49,12 @@ export function PostCard({ post, locale }: IPostCardProps) {
 
           <h2 className="text-heading-h5 text-content-primary">{title}</h2>
 
-          <p className="text-body-sm line-clamp-2 text-content-secondary">
+          <p className="line-clamp-2 text-body-sm text-content-secondary">
             {description}
           </p>
 
           {tags.length > 0 && (
-            <div className="mt-auto flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-2 pt-1">
               {tags.map((tag) => (
                 <Badge.Text key={tag} label={tag} />
               ))}

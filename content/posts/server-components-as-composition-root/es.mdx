@@ -1,0 +1,46 @@
+---
+title: "Los Server Components son el composition root"
+description: Por qué este sitio llama a los use cases directamente desde los Server Components en tiempo de build, pasa datos planos hacia abajo como props, y nunca hace fetch desde un useEffect.
+---
+
+# Los Server Components son el composition root
+
+Una app React clásica tiene un problema de data fetching: los componentes montan, disparan un
+`useEffect`, muestran un spinner, y vuelven a renderizar. El App Router elimina el problema en
+vez de gestionarlo mejor.
+
+## La regla
+
+- Los **Server Components** importan `@repo/application` y llaman a los use cases directamente.
+  Esto corre en tiempo de build (SSG) o en el servidor — el código nunca llega al navegador.
+- Los componentes **`'use client'`** nunca importan `@repo/application`. Reciben los datos como
+  props desde un Server Component.
+- No hay `useEffect` para datos. Si un componente client necesita datos del servidor, un Server
+  Component los obtiene y los pasa hacia abajo.
+
+```tsx
+// Server Component — el composition root de esta página
+export default async function ProjectsPage({ params }: Props) {
+  const { locale } = await params;
+
+  const result = await new GetPublishedProjects(
+    getServerContainer().projectRepository,
+    getServerContainer().skillRepository,
+  ).execute({ locale });
+
+  const projects = result.isRight() ? result.value : [];
+
+  return <ProjectList projects={projects} />; // datos planos, hacia abajo como props
+}
+```
+
+## Por qué esto es Clean Architecture, no un atajo
+
+La regla de dependencia es `core ← application ← infra ← apps`. El Server Component se sitúa en
+el anillo más externo: puede conocer `application` y cablear el container. Es el **composition
+root** — el único lugar que ensambla dependencias concretas — y el App Router te da uno por
+ruta, gratis, ejecutándose antes de que se envíe cualquier HTML.
+
+El bundle del client solo ve el DTO. No puede importar un use case ni por accidente, porque el
+import arrastraría código server-only al build del navegador y fallaría. La frontera de
+arquitectura la impone el bundler, no la disciplina.
