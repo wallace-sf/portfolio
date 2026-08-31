@@ -87,6 +87,35 @@ describe('ListBlogPosts', () => {
       expect(result.value).toEqual([]);
     });
 
+    it('should order posts newest-first regardless of the repository order', async () => {
+      const repo = makeRepository({
+        findAll: vi.fn().mockResolvedValue([
+          makeBlogPost({
+            slug: 'older',
+            publishedAt: '2026-01-01T00:00:00.000Z',
+          }),
+          makeBlogPost({
+            slug: 'newest',
+            publishedAt: '2026-12-01T00:00:00.000Z',
+          }),
+          makeBlogPost({
+            slug: 'middle',
+            publishedAt: '2026-06-01T00:00:00.000Z',
+          }),
+        ]),
+      });
+
+      const result = await new ListBlogPosts(repo).execute({ locale: 'en-US' });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.map((p) => p.slug)).toEqual([
+        'newest',
+        'middle',
+        'older',
+      ]);
+    });
+
     it('should include cover and thumbnail images with alt resolved to the locale', async () => {
       const post = makeBlogPost({
         coverImage: {

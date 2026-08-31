@@ -1,4 +1,8 @@
-import { GetBlogPostBySlug, ListBlogPosts } from '@repo/application/blog';
+import {
+  GetAdjacentBlogPosts,
+  GetBlogPostBySlug,
+  ListBlogPosts,
+} from '@repo/application/blog';
 import { type Locale, LOCALES } from '@repo/core/shared';
 import { Divider } from '@repo/ui/View';
 import type { Metadata } from 'next';
@@ -65,14 +69,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const container = getServerContainer();
+  const { blogPostRepository } = getServerContainer();
 
-  const [postResult, listResult] = await Promise.all([
-    new GetBlogPostBySlug(container.blogPostRepository).execute({
+  const [postResult, navResult] = await Promise.all([
+    new GetBlogPostBySlug(blogPostRepository).execute({
       slug,
       locale: locale as Locale,
     }),
-    new ListBlogPosts(container.blogPostRepository).execute({
+    new GetAdjacentBlogPosts(blogPostRepository).execute({
+      slug,
       locale: locale as Locale,
     }),
   ]);
@@ -80,13 +85,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (postResult.isLeft()) notFound();
 
   const post = postResult.value;
-
-  // Posts are sorted newest-first: index-1 is newer, index+1 is older.
-  const ordered = listResult.isRight() ? listResult.value : [];
-  const index = ordered.findIndex((p) => p.slug === slug);
-  const newer = index > 0 ? ordered[index - 1] : undefined;
-  const older =
-    index >= 0 && index < ordered.length - 1 ? ordered[index + 1] : undefined;
+  const { newer, older } = navResult.isRight() ? navResult.value : {};
 
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-8 py-4 lg:py-8">
@@ -107,11 +106,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {(newer || older) && (
         <>
           <Divider />
-          <PrevNextNav
-            newer={newer ? { slug: newer.slug, title: newer.title } : undefined}
-            older={older ? { slug: older.slug, title: older.title } : undefined}
-            locale={locale}
-          />
+          <PrevNextNav newer={newer} older={older} locale={locale} />
         </>
       )}
     </article>

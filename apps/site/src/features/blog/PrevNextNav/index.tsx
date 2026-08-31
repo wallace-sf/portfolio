@@ -1,17 +1,13 @@
+import type { BlogPostLinkDTO } from '@repo/application/blog';
 import { getTranslations } from 'next-intl/server';
 
 import { Link } from '~/i18n/routing';
 
-export interface IAdjacentPost {
-  slug: string;
-  title: string;
-}
-
 export interface IPrevNextNavProps {
   /** The chronologically newer post, if any. */
-  newer?: IAdjacentPost;
+  newer?: BlogPostLinkDTO;
   /** The chronologically older post, if any. */
-  older?: IAdjacentPost;
+  older?: BlogPostLinkDTO;
   locale: string;
 }
 
