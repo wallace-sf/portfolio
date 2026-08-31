@@ -3,8 +3,6 @@ title: "Server Components são o composition root"
 description: Por que este site chama use cases direto dos Server Components em tempo de build, passa dados puros para baixo como props, e nunca busca dados de um useEffect.
 ---
 
-# Server Components são o composition root
-
 Um app React clássico tem um problema de data fetching: os componentes montam, disparam um
 `useEffect`, mostram um spinner, e re-renderizam. O App Router remove o problema em vez de
 administrá-lo melhor.

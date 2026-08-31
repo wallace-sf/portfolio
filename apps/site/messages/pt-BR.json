@@ -25,7 +25,10 @@
   "Blog": {
     "title": "Blog",
     "subtitle": "Anotações sobre TypeScript, DDD e o ecossistema Next.js — da linha de frente da construção deste projeto.",
-    "empty": "Nenhum post publicado ainda."
+    "empty": "Nenhum post publicado ainda.",
+    "newerPost": "Post mais recente",
+    "olderPost": "Post mais antigo",
+    "postNavigation": "Navegação de posts"
   },
   "Clipboard": {
     "copy": "Copiar para a área de transferência"

@@ -3,8 +3,6 @@ title: The Either Pattern in TypeScript
 description: Why this codebase never throws for business-rule errors, and how a two-value Either type makes failure a first-class citizen of the type system.
 ---
 
-# The Either Pattern in TypeScript
-
 `throw` is a control-flow tool borrowed from languages that never had a good way to say
 "this function can fail" in its own signature. TypeScript does have that way — a union type —
 and the Either pattern is what happens when you take that seriously for domain errors.
