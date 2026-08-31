@@ -150,10 +150,13 @@ Ordered for safe incremental delivery. Each is a PR against `develop`.
    `useTheme`, `useDarkMode` to `apps/site/src/components/Layout/` (+ a local
    hooks dir). Delete `packages/layout` and `buildCrossZoneHref` + tests. Fix
    `apps/site` imports. Move the layout tests into `apps/site/test`.
-5. **Unify `SideNavigation`.** One component: portfolio + blog items, real
-   active states everywhere. Delete the cross-zone "never active" path. One test
-   file. Confirm the `SideNavigation` / `Theme` / `Language` namespaces (already
-   in `apps/site` messages) cover every key.
+5. **Unify `SideNavigation`.** The active-state half landed in task 3 (Blog
+   item → `useNavLink('/blog')`, cross-zone "never active" path gone) and task 4
+   (`buildCrossZoneHref` deleted). This does the structural collapse: fold the
+   generic `SideNav` shell (render-prop `primary`/`secondary` slots, `SideNavSlot`
+   type, `renderSlot`) into `SideNavigation` — one self-contained component that
+   owns the drawer state and renders the item lists inline. `SideNavContext` moves
+   to `SideNavigation/context.ts`. One consolidated test file.
 6. **Blast-radius mitigations + CI.** `error.tsx` on the blog route segment;
    `generateStaticParams` skips a malformed post with a `console.warn` instead of
    throwing; add a `build` job (`turbo run build`) to

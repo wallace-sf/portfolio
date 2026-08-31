@@ -13,7 +13,7 @@ import { useTranslations } from 'next-intl';
 
 import { type Theme, useTheme } from '~/hooks/useTheme';
 
-import { useSideNav } from '../SideNav/context';
+import { useSideNav } from '../SideNavigation/context';
 
 import { THEME_OPTIONS } from './constants';
 

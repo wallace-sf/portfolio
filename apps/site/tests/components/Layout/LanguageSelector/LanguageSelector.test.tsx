@@ -7,7 +7,7 @@ const mockCloseMenu = vi.fn();
 let mockPathname = '/en-US/about';
 let mockLocale = 'en-US';
 
-vi.mock('~/components/Layout/SideNav/context', () => ({
+vi.mock('~/components/Layout/SideNavigation/context', () => ({
   useSideNav: () => ({ closeMenu: mockCloseMenu }),
 }));
 
