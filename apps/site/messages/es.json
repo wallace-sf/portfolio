@@ -22,6 +22,11 @@
     "github": "GitHub",
     "rss": "Canal RSS"
   },
+  "Blog": {
+    "title": "Blog",
+    "subtitle": "Notas sobre TypeScript, DDD y el ecosistema Next.js — desde la trinchera de construir este proyecto.",
+    "empty": "Aún no hay publicaciones."
+  },
   "Clipboard": {
     "copy": "Copiar al portapapeles"
   },
