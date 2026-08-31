@@ -17,7 +17,7 @@ import {
   BlogPostNavigationDTO,
 } from '../dtos/BlogPostNavigationDTO';
 import { IBlogPostRepository } from '../ports';
-import { orderByPublication } from './order-by-publication';
+import { newestFirst } from './newest-first';
 
 export type GetAdjacentBlogPostsInput = {
   slug: string;
@@ -26,8 +26,9 @@ export type GetAdjacentBlogPostsInput = {
 
 /**
  * Resolves the posts immediately newer and older than `slug` in publication
- * order. The ordering rule and the adjacency computation live here so the
- * delivery layer only renders the result.
+ * order. Composes the domain's publication order (`BlogPost.compareByPublication`,
+ * applied newest-first) with the adjacency lookup, so the delivery layer only
+ * renders the result.
  */
 export class GetAdjacentBlogPosts extends UseCase<
   GetAdjacentBlogPostsInput,
@@ -57,7 +58,7 @@ export class GetAdjacentBlogPosts extends UseCase<
       );
     }
 
-    const ordered = orderByPublication(posts);
+    const ordered = newestFirst(posts);
     const index = ordered.findIndex(
       (post) => post.slug.value === slugResult.value.value,
     );

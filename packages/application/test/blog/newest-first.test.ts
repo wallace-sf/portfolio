@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { BlogPost, IBlogPostProps } from '@repo/core/blog';
 
-import { orderByPublication } from '~/blog/use-cases/order-by-publication';
+import { newestFirst } from '~/blog/use-cases/newest-first';
 
 const BASE: IBlogPostProps = {
   slug: 'a-post',
@@ -19,13 +19,13 @@ function makePost(slug: string, publishedAt: string): BlogPost {
   return result.value;
 }
 
-describe('orderByPublication', () => {
+describe('newestFirst', () => {
   it('should order posts from most to least recently published', () => {
     const older = makePost('older', '2026-01-01T00:00:00.000Z');
     const newest = makePost('newest', '2026-12-01T00:00:00.000Z');
     const middle = makePost('middle', '2026-06-01T00:00:00.000Z');
 
-    const ordered = orderByPublication([older, newest, middle]);
+    const ordered = newestFirst([older, newest, middle]);
 
     expect(ordered.map((p) => p.slug.value)).toEqual([
       'newest',
@@ -41,12 +41,12 @@ describe('orderByPublication', () => {
     ];
     const snapshot = [...input];
 
-    orderByPublication(input);
+    newestFirst(input);
 
     expect(input).toEqual(snapshot);
   });
 
   it('should return an empty array unchanged', () => {
-    expect(orderByPublication([])).toEqual([]);
+    expect(newestFirst([])).toEqual([]);
   });
 });

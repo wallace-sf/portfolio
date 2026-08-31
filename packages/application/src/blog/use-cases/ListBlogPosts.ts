@@ -5,7 +5,7 @@ import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { BlogPostSummaryDTO } from '../dtos/BlogPostSummaryDTO';
 import { IBlogPostRepository } from '../ports';
-import { orderByPublication } from './order-by-publication';
+import { newestFirst } from './newest-first';
 
 export type ListBlogPostsInput = {
   locale: Locale;
@@ -23,7 +23,7 @@ export class ListBlogPosts extends UseCase<
     input: ListBlogPostsInput,
   ): Promise<Either<DomainError, BlogPostSummaryDTO[]>> {
     try {
-      const posts = orderByPublication(await this.repository.findAll());
+      const posts = newestFirst(await this.repository.findAll());
       return right(posts.map((post) => this.toDTO(post, input.locale)));
     } catch {
       return left(
