@@ -42,7 +42,7 @@ export class FileSystemBlogPostRepository implements IBlogPostRepository {
       return [];
     });
 
-    return posts.sort((a, b) => b.publishedAt.ms - a.publishedAt.ms);
+    return posts.sort((a, b) => BlogPost.compareByPublication(b, a));
   }
 
   async findBySlug(slug: Slug): Promise<BlogPost | null> {
