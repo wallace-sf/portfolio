@@ -3,8 +3,6 @@ title: "Um Validator, um Left"
 description: Como encadear regras de domínio por um único Validator — e retornar exatamente um Left por fluxo de validação — mantém as factories de entidade legíveis e o tratamento de erro previsível.
 ---
 
-# Um Validator, um Left
-
 Métodos `create()` de entidade atraem guard clauses. Uma regra, um `if`, um `throw` ou `return`.
 Cinco regras depois a factory é uma parede de early returns e quem lê precisa rastrear cada
 branch para saber quais erros são sequer possíveis.
