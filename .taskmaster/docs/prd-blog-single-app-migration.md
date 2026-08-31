@@ -176,7 +176,9 @@ Ordered for safe incremental delivery. Each is a PR against `develop`.
    (title / date / tags), `PostBody` (MDX prose via arbitrary-variant classes —
    no `@tailwindcss/typography`; fenced blocks arrive fully styled from
    `rehype-pretty-code`'s single `github-dark` theme + `keepBackground`),
-   `PrevNextNav` (newer / older from `ListBlogPosts` order). `formatPublishedAt`
+   `PrevNextNav` (newer / older from a `GetAdjacentBlogPosts` use case that owns
+   the publication ordering + adjacency — the page does no list logic).
+   `formatPublishedAt`
    shared with `PostCard`. The leading `# <title>` line is stripped from every
    post's MDX (the frontmatter title is the title). Dual light/dark
    syntax-highlighting themes are a follow-up.
