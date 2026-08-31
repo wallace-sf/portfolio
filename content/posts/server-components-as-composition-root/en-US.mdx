@@ -3,8 +3,6 @@ title: "Server Components Are the Composition Root"
 description: Why this site calls use cases directly from Server Components at build time, passes plain data down as props, and never fetches from a useEffect.
 ---
 
-# Server Components Are the Composition Root
-
 A classic React app has a data-fetching problem: components mount, fire a `useEffect`, show a
 spinner, then re-render. The App Router removes the problem instead of managing it better.
 

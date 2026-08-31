@@ -3,8 +3,6 @@ title: "One Validator, One Left"
 description: How chaining domain rules through a single Validator — and returning exactly one Left per validation flow — keeps entity factories readable and error handling predictable.
 ---
 
-# One Validator, One Left
-
 Entity `create()` methods attract guard clauses. One rule, one `if`, one `throw` or `return`.
 Five rules later the factory is a wall of early returns and the reader has to trace every branch
 to know which errors are even possible.
