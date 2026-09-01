@@ -171,9 +171,17 @@ Ordered for safe incremental delivery. Each is a PR against `develop`.
    §7.4). Chirpy-style post cards: thumbnail, title, locale-formatted date,
    description, tag badges; empty state; responsive grid. Existing
    `@repo/tailwind-config` tokens only.
-8. **Style the blog post page** (carried from §7.4). Cover-image hero, styled
-   header (title / date / tags), MDX prose typography (works with the existing
-   `rehype-pretty-code`), prev/next post navigation from `ListBlogPosts` order.
+8. **Style the blog post page** (carried from §7.4). New `~features/blog`
+   components: `PostCover` (cover hero, only when the post has one), `PostHeader`
+   (title / date / tags), `PostBody` (MDX prose via arbitrary-variant classes —
+   no `@tailwindcss/typography`; fenced blocks arrive fully styled from
+   `rehype-pretty-code`'s single `github-dark` theme + `keepBackground`),
+   `PrevNextNav` (newer / older from a `GetAdjacentBlogPosts` use case that owns
+   the publication ordering + adjacency — the page does no list logic).
+   `formatPublishedAt`
+   shared with `PostCard`. The leading `# <title>` line is stripped from every
+   post's MDX (the frontmatter title is the title). Dual light/dark
+   syntax-highlighting themes are a follow-up.
 9. **Docs + smoke test.** Update `docs/INDEX.md`, `02-ARCHITECTURE.md`,
    `CLAUDE.md` monorepo structure, `07-I18N.md`. Manual smoke test: `/blog`,
    `/blog/<locale>`, a post, `/blog/<locale>/rss.xml`, the per-post
