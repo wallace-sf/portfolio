@@ -65,6 +65,7 @@
 - **[ROADMAP.md](./ROADMAP.md)** — Product roadmap and sprint planning
 - **[ISSUES-FOLLOWUP.md](./ISSUES-FOLLOWUP.md)** — Snapshot of GitHub issues still open after the latest triage audit, pending follow-up
 - **[SEO-BACKLINK-STRATEGY.md](./SEO-BACKLINK-STRATEGY.md)** — Backlink/content strategy notes from benchmarking against paulie.dev
+- **[BLOG-V2-FEATURE-CURATION.md](./BLOG-V2-FEATURE-CURATION.md)** — Curated feature ideas for Blog v2, benchmarked against loiane.com, vinniciusgomes.dev, paulie.dev
 
 ---
 
