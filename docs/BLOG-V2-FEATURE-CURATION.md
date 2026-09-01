@@ -133,6 +133,47 @@ tracking, geo-IP, rollups, visualization) is too large to embed in Blog v2.
 
 ---
 
+## Prerequisites — open issues to handle first
+
+Blog v2 rewrites the entire blog data layer (mocked MDX → Supabase). Some open
+issues touch the same ground and are cheaper to resolve before v2 than to work
+around. Assessed against the [phases](#suggested-delivery-split-for-blog-v2) below.
+
+### 🔴 True prerequisites
+
+| Issue | What | When | Why it blocks |
+|-------|------|------|---------------|
+| [#1021](https://github.com/wallace-sf/portfolio/issues/1021) | `@repo/infra` Prisma tests fail the suite without a live DB and are excluded from CI | **Before Phase 3** | v2 adds `PrismaBlogPostRepository`, `PrismaTagRepository` + mappers. Today `test:ci` drops `@repo/infra` entirely, so the new mapper/repo unit tests would not run in CI. Needs env-gating + unit/integration split first |
+| [#1062](https://github.com/wallace-sf/portfolio/issues/1062) | Blog test-hardening: cut over-mocking, dedupe builders, add page integration tests | **Alongside Phases 1–4** (structural parts first) | The `BlogPost` aggregate changes in v2 (new fields: `author`, `featured`, `publishedAt`, tags). Consolidate the one shared `BlogPostBuilder` / `makeBlogPostRepository` now — better to update one than the ~6 scattered `makeBlogPost` copies. The integration-test harness (real use case → DTO → component) is exactly what validates the mocked→Supabase migration. De-mocking `[slug]/page.test.tsx` can wait for Phase 4/5 (those tests get rewritten anyway) |
+
+### 🟡 Resolve the decision, then proceed
+
+| Issue | What | When | Note |
+|-------|------|------|------|
+| [#980](https://github.com/wallace-sf/portfolio/issues/980) | Audit error-handling structure across layers | Read the findings **before Phase 1** | The audit itself is cheap (findings only). v2 adds ~10 new error codes (`BlogPost` invariants, use cases, Supabase failures) — the audit says whether new codes follow ad-hoc `static readonly ERROR_CODE` or a centralized enum. Its follow-ups can be scheduled separately |
+
+### 🔵 Absorb into v2 — do not do separately
+
+| Issue | What | Where it lands |
+|-------|------|----------------|
+| [#1063](https://github.com/wallace-sf/portfolio/issues/1063) | Dual light/dark syntax-highlighting themes | Same file + same `rehype-pretty-code` config as the Phase 5 "diff highlighting" task. Fold in there |
+| [#1058](https://github.com/wallace-sf/portfolio/issues/1058) | Extract a shared `Prose` primitive in `@repo/ui` | Not a blocker for Phases 0–4. Collides with Phase 5 (heavy `PostBody` changes). Ideally the full extraction lands **just before Phase 5** — but it touches `TextRich` (shipped portfolio code), so its own PR with visual-regression check, never inside a blog PR |
+
+### ⚪ Out of the v2 path
+
+- [#612](https://github.com/wallace-sf/portfolio/issues/612), [#627](https://github.com/wallace-sf/portfolio/issues/627) (*Launch Readiness*) — closing the MVP before opening v2 is hygiene, not a technical blocker.
+- [#661](https://github.com/wallace-sf/portfolio/issues/661) (shadcn RFC) — **must not run concurrently with Phase 5**; it would collide across every blog UI component.
+- [#1035](https://github.com/wallace-sf/portfolio/issues/1035) (task-master crash) — not code, but expect friction running `parse-prd` for the v2 PRD; use `./scripts/tm`.
+- #931, #665, #664, #524 — independent, ignore for now. (#931 IndexNow touches the sitemap, which v2 changes — minimal coordination, not a blocker.)
+
+### Revised order
+
+Close #612 / #627 (MVP) → #1021 → produce the #980 audit → start **Phase 0** of
+v2, with #1062 running alongside Phases 1–4, and #1063 / #1058 handled inside
+Phase 5.
+
+---
+
 ## Suggested delivery split for Blog v2
 
 1. **Core v2** (no social features): posts in Supabase + reading time + author
