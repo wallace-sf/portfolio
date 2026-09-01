@@ -41,8 +41,8 @@ It is also a **technical reference** for applying Clean Architecture, Domain-Dri
 
 ```text
 apps/
-  site/         → Public portfolio (Next.js 16+ App Router)
-  blog/         → Blog (future, post-MVP)
+  site/         → Public portfolio + blog (Next.js 16+ App Router)
+                  blog: src/app/[locale]/blog/** (native routes, no multi-zone)
   admin/        → Dedicated admin app (future, post-MVP)
 
 packages/

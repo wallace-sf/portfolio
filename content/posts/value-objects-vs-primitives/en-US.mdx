@@ -1,0 +1,44 @@
+---
+title: "Value Objects vs Primitives: Where to Draw the Line"
+description: Not every field deserves its own class. A concrete rule for deciding when a value is rich enough to become a Value Object and when a validated primitive is the honest choice.
+---
+
+Domain-Driven Design pushes you toward wrapping values in types — `Slug` instead of `string`,
+`DateRange` instead of two `Date`s. Taken literally, that ends with a class for every field and
+a codebase that is all ceremony and no signal.
+
+## The rule this project uses
+
+A property becomes a **Value Object** when the concept is **rich or reused**:
+
+- It carries invariants that travel with the value everywhere it goes (`Slug` is always
+  lowercase, kebab-case, 3–100 chars).
+- It has behaviour, not just shape (`DateRange.overlaps(other)`).
+- The same concept appears in more than one aggregate (`LocalizedText`, `Url`).
+
+A property stays a **primitive or enum** when the value is **simple and entity-local**:
+
+- A stable enum (`ProjectStatus`), a boolean, or a single simple rule.
+- Nothing else in the codebase needs to know about it.
+
+```ts
+// VO — rich, reused concept
+public readonly slug: Slug;          // Slug.create(props.slug)
+public readonly period: DateRange;   // DateRange.create(start, end)
+
+// primitive + Validator — stable enum, entity-local
+public readonly status: ProjectStatus;
+// validated in create():
+const { isValid } = Validator.of(props.status)
+  .in(Object.values(ProjectStatus))
+  .validate();
+if (!isValid) return left(new ValidationError({ code: Project.ERROR_CODE }));
+```
+
+## Why not "VO everything"
+
+A dedicated `Status` VO that only wraps one `.in([...])` check adds a file, a constructor, a
+factory, and a test — to express a rule that one line of `Validator` already expresses at the
+point it matters. The VO earns its weight when the rule is non-trivial or when duplicating it
+across entities would be a real drift risk. Below that bar, a validated primitive is not a
+shortcut — it is the accurate description of what the value is.

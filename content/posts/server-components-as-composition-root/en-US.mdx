@@ -1,0 +1,43 @@
+---
+title: "Server Components Are the Composition Root"
+description: Why this site calls use cases directly from Server Components at build time, passes plain data down as props, and never fetches from a useEffect.
+---
+
+A classic React app has a data-fetching problem: components mount, fire a `useEffect`, show a
+spinner, then re-render. The App Router removes the problem instead of managing it better.
+
+## The rule
+
+- **Server Components** import `@repo/application` and call use cases directly. This runs at
+  build time (SSG) or on the server — the code never reaches the browser.
+- **`'use client'` components** never import `@repo/application`. They receive data as props
+  from a Server Component.
+- There is no `useEffect` for data. If a client component needs server data, a Server Component
+  fetches it and passes it down.
+
+```tsx
+// Server Component — the composition root for this page
+export default async function ProjectsPage({ params }: Props) {
+  const { locale } = await params;
+
+  const result = await new GetPublishedProjects(
+    getServerContainer().projectRepository,
+    getServerContainer().skillRepository,
+  ).execute({ locale });
+
+  const projects = result.isRight() ? result.value : [];
+
+  return <ProjectList projects={projects} />; // plain data, down as props
+}
+```
+
+## Why this is Clean Architecture, not a shortcut
+
+The dependency rule is `core ← application ← infra ← apps`. The Server Component sits at the
+outermost ring: it is allowed to know about `application` and to wire the container. It is the
+**composition root** — the one place that assembles concrete dependencies — and the App Router
+gives you one per route, for free, running before any HTML is sent.
+
+The client bundle only ever sees the DTO. It cannot import a use case even by accident, because
+the import would pull server-only code into the browser build and fail. The architecture
+boundary is enforced by the bundler, not by discipline.

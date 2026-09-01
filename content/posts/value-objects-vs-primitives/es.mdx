@@ -1,0 +1,45 @@
+---
+title: "Value Objects vs primitivos: dónde trazar la línea"
+description: No todo campo merece su propia clase. Una regla concreta para decidir cuándo un valor es lo bastante rico para convertirse en un Value Object y cuándo un primitivo validado es la opción honesta.
+---
+
+El Domain-Driven Design te empuja a envolver valores en tipos — `Slug` en vez de `string`,
+`DateRange` en vez de dos `Date`. Tomado al pie de la letra, eso termina con una clase por cada
+campo y un codebase que es pura ceremonia y ninguna señal.
+
+## La regla que usa este proyecto
+
+Una propiedad se convierte en **Value Object** cuando el concepto es **rico o reutilizado**:
+
+- Lleva invariantes que viajan con el valor a todas partes (`Slug` siempre es minúscula,
+  kebab-case, 3–100 caracteres).
+- Tiene comportamiento, no solo forma (`DateRange.overlaps(other)`).
+- El mismo concepto aparece en más de un agregado (`LocalizedText`, `Url`).
+
+Una propiedad sigue siendo **primitivo o enum** cuando el valor es **simple y local a la
+entidad**:
+
+- Un enum estable (`ProjectStatus`), un booleano, o una única regla simple.
+- Nada más en el codebase necesita saber de él.
+
+```ts
+// VO — concepto rico, reutilizado
+public readonly slug: Slug;          // Slug.create(props.slug)
+public readonly period: DateRange;   // DateRange.create(start, end)
+
+// primitivo + Validator — enum estable, local a la entidad
+public readonly status: ProjectStatus;
+// validado en create():
+const { isValid } = Validator.of(props.status)
+  .in(Object.values(ProjectStatus))
+  .validate();
+if (!isValid) return left(new ValidationError({ code: Project.ERROR_CODE }));
+```
+
+## Por qué no "VO para todo"
+
+Un VO `Status` dedicado que solo envuelve una comprobación `.in([...])` añade un archivo, un
+constructor, una factory y un test — para expresar una regla que una línea de `Validator` ya
+expresa en el punto en que importa. El VO justifica su peso cuando la regla no es trivial o
+cuando duplicarla entre entidades sería un riesgo real de divergencia. Por debajo de ese
+umbral, un primitivo validado no es un atajo — es la descripción exacta de lo que el valor es.

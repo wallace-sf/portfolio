@@ -8061,7 +8061,7 @@
           "5",
           "16"
         ],
-        "status": "pending",
+        "status": "cancelled",
         "subtasks": [
           {
             "id": 1,
@@ -8139,7 +8139,8 @@
         ],
         "complexity": 7,
         "recommendedSubtasks": 6,
-        "expansionPrompt": "Break down the E2E testing into: (1) create comprehensive manual test plan document covering all 6 cross-zone navigation scenarios (site → blog and blog → site for each of 3 locales: en-US, pt-BR, es) on both mobile and desktop viewports, (2) execute manual tests verifying locale preservation in URL segments, (3) verify NEXT_LOCALE cookie scoping (site: Path=/, blog: Path=/blog) is never shared between zones, (4) test direct /blog links without locale redirect to default or current locale (middleware behavior), (5) optionally create Playwright E2E tests automating these flows with assertions on URL locale segments and cookie state, (6) document all test results in a report or GitHub issue comment as acceptance criteria for PRD completion. All locale-crossing navigation must preserve the user's locale without loss."
+        "expansionPrompt": "Break down the E2E testing into: (1) create comprehensive manual test plan document covering all 6 cross-zone navigation scenarios (site → blog and blog → site for each of 3 locales: en-US, pt-BR, es) on both mobile and desktop viewports, (2) execute manual tests verifying locale preservation in URL segments, (3) verify NEXT_LOCALE cookie scoping (site: Path=/, blog: Path=/blog) is never shared between zones, (4) test direct /blog links without locale redirect to default or current locale (middleware behavior), (5) optionally create Playwright E2E tests automating these flows with assertions on URL locale segments and cookie state, (6) document all test results in a report or GitHub issue comment as acceptance criteria for PRD completion. All locale-crossing navigation must preserve the user's locale without loss.",
+        "updatedAt": "2026-08-30T01:05:39.667Z"
       },
       {
         "id": 11,
@@ -8218,8 +8219,9 @@
         "dependencies": [
           "15"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "cancelled",
+        "subtasks": [],
+        "updatedAt": "2026-08-30T01:05:39.696Z"
       },
       {
         "id": 17,
@@ -8232,8 +8234,9 @@
           "13",
           "15"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "cancelled",
+        "subtasks": [],
+        "updatedAt": "2026-08-30T01:05:39.725Z"
       },
       {
         "id": 18,
@@ -8246,13 +8249,14 @@
           "13",
           "15"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "cancelled",
+        "subtasks": [],
+        "updatedAt": "2026-08-30T01:05:39.748Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-08-29T02:24:37.108Z",
+      "lastModified": "2026-08-30T01:05:39.748Z",
       "taskCount": 18,
       "completedCount": 13,
       "tags": [
@@ -8260,6 +8264,130 @@
       ],
       "created": "2026-08-29T01:23:51.505Z",
       "description": "Tasks for feature-blog-shared-layout context"
+    }
+  },
+  "feature-blog-single-app": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Merge blog routes and infrastructure into apps/site",
+        "description": "Move all blog routes, RSS handler, OG image generation, and sitemap/robots logic from apps/blog into apps/site/src/app/[locale]/blog/*, and wire IBlogPostRepository into apps/site's server container",
+        "details": "1. Create apps/site/src/app/[locale]/blog/ directory structure\n2. Move apps/blog/src/app/[locale]/page.tsx → apps/site/src/app/[locale]/blog/page.tsx (blog listing)\n3. Move apps/blog/src/app/[locale]/[slug]/page.tsx → apps/site/src/app/[locale]/blog/[slug]/page.tsx\n4. Move apps/blog/src/app/[locale]/[slug]/opengraph-image.tsx → apps/site/src/app/[locale]/blog/[slug]/opengraph-image.tsx\n5. Move apps/blog/src/app/[locale]/rss.xml/route.ts → apps/site/src/app/[locale]/blog/rss.xml/route.ts\n6. Merge apps/blog/src/app/sitemap.ts and apps/blog/src/app/robots.ts logic into apps/site's corresponding files\n7. Update apps/site/src/lib/server/container.ts to instantiate FileSystemBlogPostRepository (reading content/posts/) alongside existing repositories\n8. Add blog server-only deps to apps/site/package.json: next-mdx-remote@^6.0.0, gray-matter@^4.0.3, rehype-pretty-code@^0.14.1, shiki@^1.29.2\n9. Copy apps/blog/src/mdx-components.tsx → apps/site/src/mdx-components.tsx if not already present\n10. Update import paths in moved files to reference apps/site container and i18n config\n11. Delete apps/blog/src/{i18n,proxy.ts,config,next.config.mjs}\n12. Verify blog pages render with current (unstyled) markup in apps/site dev server",
+        "testStrategy": "Unit tests: apps/site/test/app/[locale]/blog/page.test.tsx, [slug]/page.test.tsx, rss.xml/route.test.tsx, [slug]/opengraph-image.test.tsx (copy from apps/blog/test/, adjust container mock). Integration: pnpm dev in apps/site, navigate to /blog and /blog/[locale]/the-either-pattern-in-typescript, verify pages render, RSS feed returns XML, OG image generates. Verify sitemap includes blog URLs, robots.txt unchanged.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Merge blog i18n messages into apps/site",
+        "description": "Consolidate apps/blog/messages/*.json into apps/site/messages/*.json under a Blog.* namespace, update all blog page/component message keys to reference the new namespace",
+        "details": "1. Read apps/blog/messages/en-US.json, es.json, pt-BR.json\n2. Wrap each blog locale file's content in a \"Blog\" key: { \"Blog\": { \"Metadata\": {...}, \"Header\": {...}, \"SideNavigation\": {...}, \"Footer\": {...} } }\n3. Deep-merge the Blog.* structure into apps/site/messages/en-US.json, es.json, pt-BR.json (preserve existing keys like ContactForm, Home, SideNavigation, etc.)\n4. Update all useTranslations() calls in blog pages/components: useTranslations('Metadata') → useTranslations('Blog.Metadata'), etc.\n5. Verify apps/site middleware next-intl config picks up Blog.* keys\n6. Delete apps/blog/messages/ directory\n7. Run type check to ensure no missing translation keys",
+        "testStrategy": "Unit tests: verify blog page tests still pass with new message keys. Integration: pnpm dev in apps/site, check blog listing page title/description render correctly in en-US, es, pt-BR; verify locale switcher on blog pages preserves locale; confirm no missing translation warnings in console.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Remove multi-zone plumbing and delete apps/blog",
+        "description": "Delete all Vercel multi-zone rewrites, BLOG_APP_URL environment variable references, blog exclusion from apps/site middleware, apps/blog/ directory entirely, and update workspace config",
+        "details": "1. Remove async rewrites() function from apps/site/next.config.mjs (lines 13-22)\n2. Remove BLOG_APP_URL from apps/site/.env.example\n3. Update apps/site/src/proxy.ts matcher config: remove |blog from exclusion pattern (line 15: change '/((?!api|og|blog|_next|_vercel|.*\\\\..*).*)', to '/((?!api|og|_next|_vercel|.*\\\\..*).*)',) — WAIT, the file shows no blog exclusion currently, verify this is already done or not needed\n4. Remove BLOG_APP_URL from turbo.json globalEnv (line 14)\n5. Remove apps/blog#build task from turbo.json (lines 30-33)\n6. Delete entire apps/blog/ directory (rm -rf apps/blog)\n7. Update pnpm-workspace.yaml if blog is explicitly listed (currently uses apps/* glob, so no change needed)\n8. Update root tsconfig.json references: remove { \"path\": \"apps/blog/tsconfig.json\" } if present (currently only references packages/, so verify)\n9. Run pnpm install to update lockfile after workspace change\n10. Verify apps/blog/vercel.json (basePath: /blog) is deleted with the directory",
+        "testStrategy": "Build test: pnpm build in apps/site succeeds without BLOG_APP_URL env var. Dev test: pnpm dev in apps/site, /blog routes work natively (no rewrite). Workspace test: pnpm install succeeds, no dangling references to apps/blog. Type check: pnpm types:ci passes.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Inline packages/layout into apps/site",
+        "description": "Move all SiteHeader, SiteFooter, SiteLogo, ThemeToggle, LanguageSelector, SideNav components and hooks from packages/layout into apps/site/src/components/Layout/, delete buildCrossZoneHref utility and package, update imports",
+        "details": "1. Create apps/site/src/components/Layout/ directory\n2. Move packages/layout/src/SiteHeader/index.tsx → apps/site/src/components/Layout/SiteHeader.tsx\n3. Move packages/layout/src/SiteFooter/index.tsx → apps/site/src/components/Layout/SiteFooter.tsx\n4. Move packages/layout/src/SiteLogo/index.tsx → apps/site/src/components/Layout/SiteLogo.tsx\n5. Move packages/layout/src/ThemeToggle/index.tsx → apps/site/src/components/Layout/ThemeToggle.tsx (+ useDarkMode.ts, useTheme.ts, constants.ts)\n6. Move packages/layout/src/LanguageSelector/index.tsx → apps/site/src/components/Layout/LanguageSelector.tsx (+ constants.ts)\n7. Move packages/layout/src/SideNav/index.tsx → apps/site/src/components/Layout/SideNav.tsx (+ context.ts, useNavLink.ts)\n8. Create apps/site/src/hooks/ and move ThemeToggle/useDarkMode.ts, useTheme.ts, SideNav/useNavLink.ts there\n9. Delete packages/layout/src/buildCrossZoneHref.ts and its test (no longer needed — single zone)\n10. Update all import statements in apps/site to use local paths: '@repo/layout/SiteHeader' → '@/components/Layout/SiteHeader'\n11. Remove @repo/layout dependency from apps/site/package.json\n12. Delete packages/layout/ directory entirely\n13. Update root tsconfig.json references: remove packages/layout if listed",
+        "testStrategy": "Unit tests: Move packages/layout/test/* to apps/site/test/components/Layout/, update imports, verify all tests pass. Delete buildCrossZoneHref.test.ts. Integration: pnpm dev in apps/site, verify SideNav renders, theme toggle works, language selector switches locales, logo/header/footer render correctly on all pages (portfolio + blog).",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Unify SideNavigation with real active states for blog routes",
+        "description": "Consolidate SideNavigation into a single component serving both portfolio and blog items, with proper active state detection for /blog routes using locale-aware Link/useNavLink, remove cross-zone special cases",
+        "details": "1. Update apps/site/src/components/Layout/SideNav.tsx to include all navigation items: Home, Projects, About, Blog, Resume (already exists in apps/site messages under SideNavigation namespace)\n2. Ensure each nav item uses useNavLink hook for active state detection (pathname.startsWith(href) logic)\n3. Remove any 'never active' logic previously needed for cross-zone blog link (was in buildCrossZoneHref pattern)\n4. Verify Blog nav item uses locale-aware href: /[locale]/blog (constructed via next-intl Link or usePathname)\n5. Confirm SideNavigation, Theme, Language message namespaces in apps/site/messages/*.json have all required keys (already verified in task 2)\n6. Update SideNav test to verify all items render and /blog shows active state when on blog route\n7. Verify drawer closes on item click (existing behavior, ensure not broken)",
+        "testStrategy": "Unit test: apps/site/test/components/Layout/SideNav.test.tsx — render with mock router on /en-US/blog, verify Blog nav item has active class; render on /en-US/projects, verify Projects active. Integration: Navigate to /blog in dev, verify Blog nav item highlighted; navigate to /projects, verify Projects highlighted. Test locale switch from blog page, verify stays on blog with new locale.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Add blast-radius mitigations and CI build job",
+        "description": "Implement error.tsx boundary on blog route segment, make generateStaticParams resilient to malformed posts (skip with warning instead of throwing), add turbo run build job to CI workflow",
+        "details": "1. Create apps/site/src/app/[locale]/blog/error.tsx with 'use client' directive, rendering Error boundary UI (reuse existing Error message keys from apps/site/messages)\n2. Update apps/site/src/app/[locale]/blog/[slug]/page.tsx generateStaticParams: wrap post-fetching logic in try-catch, log console.warn('Skipping malformed post: [slug]', error) on failure, continue to next post instead of throwing\n3. Validate error.tsx catches errors from blog listing/post pages (simulate by temporarily throwing in page component)\n4. Add build job to .github/workflows/ci.yml after test job:\n   - name: Build\n     run: pnpm turbo run build\n5. Verify CI build job fails fast if blog pages break during build (test by temporarily introducing build error)\n6. Document blast-radius mitigations in task commit message",
+        "testStrategy": "Unit test: apps/site/test/app/[locale]/blog/error.test.tsx — render error boundary, verify Error.title and Error.retry render. Integration: Temporarily add malformed frontmatter to a test post in content/posts/, run pnpm build, verify build succeeds with warning logged, malformed post skipped from static params. CI test: Open PR with test commit, verify build job runs and passes.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Style blog listing page with Chirpy-inspired design",
+        "description": "Implement styled blog listing page with post cards showing thumbnail, title, locale-formatted date, description, tag badges; empty state; responsive grid using @repo/tailwind-config tokens",
+        "details": "1. Update apps/site/src/app/[locale]/blog/page.tsx to render styled post cards\n2. Post card structure (Chirpy-inspired):\n   - Thumbnail image (BlogPost.thumbnail via next/image, aspect-ratio 16:9)\n   - Title (BlogPost.title, font-bold text-xl)\n   - Published date (BlogPost.publishedAt, locale-formatted via next-intl)\n   - Description (BlogPost.description, text-muted-foreground, line-clamp-2)\n   - Tag badges (BlogPost.tags array, small pill badges with @repo/ui Badge component if available, else inline spans)\n3. Layout: Responsive grid (grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6)\n4. Empty state: No posts published message using Blog.Listing.emptyState key (add to messages in task 2 if missing)\n5. Use existing @repo/tailwind-config tokens: text-foreground, text-muted-foreground, bg-card, border, rounded-lg\n6. Hover effects: scale-105 transition on card hover\n7. Verify responsive behavior on mobile/tablet/desktop viewports",
+        "testStrategy": "Unit test: apps/site/test/app/[locale]/blog/page.test.tsx — render with mock posts, verify cards render with title, date, description, tags; render with empty array, verify empty state. Visual test: pnpm dev, navigate to /blog, verify grid layout, hover effects, responsive breakpoints. Test all locales (en-US, es, pt-BR) for date formatting.",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Style blog post page with cover hero and MDX prose typography",
+        "description": "Implement styled blog post page with cover-image hero, post header (title/date/tags), MDX prose typography (compatible with rehype-pretty-code), and prev/next post navigation",
+        "details": "1. Update apps/site/src/app/[locale]/blog/[slug]/page.tsx layout:\n2. Cover hero section:\n   - Full-width cover image (BlogPost.cover via next/image, h-64 md:h-96 object-cover)\n   - Overlay gradient for text contrast if needed\n3. Post header (below hero):\n   - Title (BlogPost.title, text-3xl md:text-4xl font-bold)\n   - Meta row: Published date (locale-formatted) + reading time (if available) + tags (Badge components)\n4. MDX content area:\n   - Wrap <MDXRemote /> in prose class from @tailwindcss/typography or custom prose styles\n   - Ensure code blocks styled by rehype-pretty-code render correctly (shiki syntax highlighting)\n   - Typography: headings hierarchy, paragraphs spacing, lists, blockquotes, inline code\n5. Prev/Next navigation (bottom of post):\n   - Fetch prev/next posts from ListBlogPosts use case (ordered by publishedAt)\n   - Render prev/next links: ← Previous: [title] | Next: [title] →\n   - Use Link component for locale-aware navigation\n6. Use @repo/tailwind-config tokens: max-w-prose, mx-auto for content container\n7. Verify Shiki code highlighting themes work in light/dark mode (may need theme toggle integration)",
+        "testStrategy": "Unit test: apps/site/test/app/[locale]/blog/[slug]/page.test.tsx — render with mock post, verify cover, title, date, tags, MDX content, prev/next links. Visual test: pnpm dev, open /blog/en-US/the-either-pattern-in-typescript, verify cover hero, styled header, code blocks with syntax highlighting, prev/next navigation. Test light/dark theme toggle affects code block theme.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Update documentation and perform smoke tests",
+        "description": "Update docs/INDEX.md, 02-ARCHITECTURE.md, CLAUDE.md monorepo structure, 07-I18N.md to reflect single-app blog architecture; perform manual smoke test checklist",
+        "details": "1. Update docs/INDEX.md:\n   - Remove apps/blog from monorepo structure diagram\n   - Update blog description: 'Blog routes under apps/site/src/app/[locale]/blog (native Next.js routes, no multi-zone)'\n2. Update docs/02-ARCHITECTURE.md:\n   - Remove multi-zone rewrite explanation\n   - Clarify blog is a bounded context (packages/core|application|infra) delivered via apps/site routes\n   - Update dependency rule diagram if apps/blog was shown\n3. Update CLAUDE.md:\n   - Monorepo Structure section: remove apps/blog entry, note blog is in apps/site/src/app/[locale]/blog\n   - Remove any packages/layout references\n4. Update docs/07-I18N.md:\n   - Single next-intl config serving portfolio + blog\n   - Blog.* message namespace convention\n   - Remove cross-zone locale coordination notes\n5. Add supersession notes to docs/prd-blog-shared-layout.md and docs/prd-blog-mdx-design.md if not already present\n6. Smoke test checklist:\n   - [ ] /blog listing page renders in all locales (en-US, es, pt-BR)\n   - [ ] /blog/[locale]/the-either-pattern-in-typescript post page renders with cover, title, MDX content, prev/next\n   - [ ] /blog/[locale]/rss.xml returns valid RSS XML\n   - [ ] /blog/[slug]/opengraph-image generates PNG (check browser network tab)\n   - [ ] sitemap.xml includes blog URLs\n   - [ ] robots.txt unchanged (allows blog indexing)\n   - [ ] Locale switch on blog page preserves /blog route with new locale\n   - [ ] SideNav Blog item shows active state on blog routes\n   - [ ] Theme toggle affects code block highlighting in blog posts\n   - [ ] pnpm build succeeds without BLOG_APP_URL env var",
+        "testStrategy": "Documentation review: verify all docs updated, no stale apps/blog or packages/layout references. Smoke test: manually execute checklist in dev and build modes. Regression test: pnpm test:ci passes all existing tests. Type check: pnpm types:ci passes.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "done",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-08-30T02:27:58.641Z",
+      "updated": "2026-08-30T02:27:58.641Z",
+      "description": "Tasks for feature-blog-single-app context"
     }
   }
 }

@@ -1,5 +1,24 @@
 # Task Master AI - Agent Integration Guide
 
+> **Run AI-powered commands through `scripts/tm`, not `task-master` directly.**
+> With `provider: "claude-code"` (see `config.json`), commands that call the
+> model — `parse-prd`, `expand`, `add-task`, `update-task`, `update-subtask`,
+> `analyze-complexity` — intermittently crash with a stack overflow in
+> task-master's bundled `@anthropic-ai/claude-agent-sdk`
+> (`RangeError: Maximum call stack size exceeded` / `exited with code 7`).
+> `scripts/tm` is a thin retry wrapper that re-runs only on that signature.
+> Prefer it over the `mcp__task-master-ai__*` tools for anything AI-powered —
+> the MCP path has no retry and its `parse_prd` tends to hit the client idle
+> timeout on large PRDs. Non-AI commands (`list`, `show`, `set-status`, …) can
+> use either the MCP tools or `task-master` directly. Tracked in issue #1035;
+> remove the wrapper once upstream is fixed or the provider moves to
+> `@ai-sdk/anthropic`.
+>
+> ```bash
+> ./scripts/tm parse-prd .taskmaster/docs/prd.md --tag my-tag --num-tasks 9
+> ./scripts/tm expand --id=3
+> ```
+
 ## Essential Commands
 
 ### Core Workflow Commands
@@ -368,6 +387,16 @@ task-master models
 # Test with different model
 task-master models --set-fallback gpt-4o-mini
 ```
+
+**`RangeError: Maximum call stack size exceeded` / `Claude Code process exited
+with code 7`** — the known intermittent crash in the bundled
+`@anthropic-ai/claude-agent-sdk` under the `claude-code` provider (issue #1035).
+Run the command through `./scripts/tm` (auto-retries), or just re-run it — a
+fresh invocation almost always succeeds. `parse-prd` is also simply *slow* via
+this provider (10–15 min for a large PRD); run it detached and poll, don't
+assume a hang is a crash. A durable fix is `task-master models --set-main
+sonnet` with an `ANTHROPIC_API_KEY` in `.env` to use `@ai-sdk/anthropic`
+instead (bypasses the buggy SDK; costs API tokens).
 
 ### MCP Connection Issues
 

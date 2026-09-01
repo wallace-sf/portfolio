@@ -1,10 +1,26 @@
 # Blog/Site Shared Layout & Cross-Zone Integration
 
-> Status: sections 1–6 largely delivered (tasks 1–5, 8, 9). Sections 7–9 added 2026-08-29
-> to scope the blog's visual layout (task 6 and follow-ups).
+> ## ⚠️ SUPERSEDED — 2026-08-29
+>
+> The multi-zone split this PRD is built on was reversed. Decision:
+> [RFC-blog-multizone-vs-single-app.md](../../docs/RFC-blog-multizone-vs-single-app.md).
+> Migration PRD: [prd-blog-single-app-migration.md](./prd-blog-single-app-migration.md).
+>
+> **Kept as a historical record** — tasks 1–14 of the `feature-blog-shared-layout`
+> tag were delivered and most of that work survives the migration
+> (`@repo/config`, `@repo/seo`, the OG-image helper, the `BlogPost` imagery
+> model). What does not survive: `buildCrossZoneHref`, the cross-zone locale
+> discipline (§2), Task 10, and `@repo/layout` as a shared package boundary.
+>
+> Still-valid design intent carried into the migration PRD: §7.4 (styled
+> listing + post pages) and §7.5 (post imagery aligned with `Project`).
+>
+> ---
+>
+> Status (at supersession): sections 1–6 delivered (tasks 1–5, 8, 9); §7.5 →
+> tasks 11–14 delivered; §7.2 → task 15 delivered; §7.3 (task 16) in progress
+> on PR #1030, now cancelled; §7.4 (tasks 17–18) not started, migrated forward.
 > Related: [prd-blog-mdx-design.md](./prd-blog-mdx-design.md), [02-ARCHITECTURE.md](../../docs/02-ARCHITECTURE.md).
-> Precedent: `packages/seo` (issue #960, PR #961) — framework-agnostic logic extracted once a
-> second app needed it, depending only on `@repo/core`.
 
 ## Goal
 

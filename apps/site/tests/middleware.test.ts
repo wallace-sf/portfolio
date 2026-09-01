@@ -27,14 +27,26 @@ describe('middleware', () => {
     expect(response.status).not.toBe(307);
   });
 
-  it('should exclude /blog paths when matching the second matcher pattern', async () => {
+  it('should route /blog paths through the intl middleware (native blog routes)', async () => {
     const { config } = await import('~/proxy');
-    const blogPattern = config.matcher.find(
+    const negLookaheadPattern = config.matcher.find(
       (pattern) => typeof pattern === 'string' && pattern.includes('?!'),
     ) as string;
-    const regex = new RegExp(`^${blogPattern}$`);
+    const regex = new RegExp(`^${negLookaheadPattern}$`);
 
-    expect(regex.test('/blog')).toBe(false);
-    expect(regex.test('/blog/en-US')).toBe(false);
+    expect(regex.test('/blog')).toBe(true);
+    expect(regex.test('/blog/the-either-pattern-in-typescript')).toBe(true);
+  });
+
+  it('should still exclude infra paths from the matcher', async () => {
+    const { config } = await import('~/proxy');
+    const negLookaheadPattern = config.matcher.find(
+      (pattern) => typeof pattern === 'string' && pattern.includes('?!'),
+    ) as string;
+    const regex = new RegExp(`^${negLookaheadPattern}$`);
+
+    expect(regex.test('/api/v1/contact')).toBe(false);
+    expect(regex.test('/_next/static/chunk.js')).toBe(false);
+    expect(regex.test('/og')).toBe(false);
   });
 });

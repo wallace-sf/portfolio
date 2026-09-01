@@ -14,13 +14,35 @@ const META_FILENAME = 'meta.json';
 export class FileSystemBlogPostRepository implements IBlogPostRepository {
   constructor(private readonly contentDir: string) {}
 
+  /**
+   * Reads every post directory. A single malformed post (bad `meta.json`,
+   * broken frontmatter, missing locale file) is skipped with a warning rather
+   * than failing the whole read — one bad post must not take down the entire
+   * blog listing or the site build.
+   */
   async findAll(): Promise<BlogPost[]> {
     const entries = await fs.readdir(this.contentDir, { withFileTypes: true });
     const slugs = entries.filter((e) => e.isDirectory()).map((e) => e.name);
 
-    const posts = await Promise.all(slugs.map((slug) => this.readPost(slug)));
+    const results = await Promise.allSettled(
+      slugs.map((slug) => this.readPost(slug)),
+    );
 
-    return posts.sort((a, b) => b.publishedAt.ms - a.publishedAt.ms);
+    const posts = results.flatMap((result, index) => {
+      if (result.status === 'fulfilled') return [result.value];
+
+      const reason =
+        result.reason instanceof Error
+          ? result.reason.message
+          : String(result.reason);
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[blog] skipping malformed post "${slugs[index]}": ${reason}`,
+      );
+      return [];
+    });
+
+    return posts.sort((a, b) => BlogPost.compareByPublication(b, a));
   }
 
   async findBySlug(slug: Slug): Promise<BlogPost | null> {

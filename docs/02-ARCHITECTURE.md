@@ -80,6 +80,11 @@ Allowed: plain TypeScript, `@repo/utils`, `uuid`.
 - **No auth vendor in the UI:** `apps/site` must **not** import `@supabase/*`, `next-auth/*`, or other IdP SDKs from pages, layouts, client components, or `middleware.ts`. Authentication is **pluggable** behind `IAuthenticationGateway` (see [11-IDENTITY](./11-IDENTITY.md)).
 - Never import concrete repositories from presentation code.
 - React components must contain no business logic.
+- **Blog** is a bounded context (`packages/core|application|infra`), not a
+  separate app. `apps/site` delivers it as a native route tree under
+  `src/app/[locale]/blog/**` — no `apps/blog`, no Vercel multi-zone rewrite.
+  Server Components call `ListBlogPosts` / `GetBlogPostBySlug` /
+  `GetAdjacentBlogPosts` through `getServerContainer()`, same as Portfolio.
 
 ---
 

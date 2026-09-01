@@ -118,4 +118,13 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       ),
     );
   }
+
+  /**
+   * Chronological order of publication: the post published earlier sorts first.
+   * This is the domain's definition of "before/after" for posts; callers pick
+   * the direction they present it in.
+   */
+  static compareByPublication(a: BlogPost, b: BlogPost): number {
+    return a.publishedAt.ms - b.publishedAt.ms;
+  }
 }

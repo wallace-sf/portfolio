@@ -253,4 +253,40 @@ describe('BlogPost', () => {
       expect((result.value as ValidationError).code).toBe(Image.ERROR_CODE_URL);
     });
   });
+
+  describe('compareByPublication', () => {
+    const post = (publishedAt: string): BlogPost =>
+      BlogPostBuilder.build().withPublishedAt(publishedAt).now();
+
+    it('should sort the earlier-published post before the later one', () => {
+      const earlier = post('2026-01-01T00:00:00.000Z');
+      const later = post('2026-06-01T00:00:00.000Z');
+
+      expect(BlogPost.compareByPublication(earlier, later)).toBeLessThan(0);
+      expect(BlogPost.compareByPublication(later, earlier)).toBeGreaterThan(0);
+    });
+
+    it('should treat posts published at the same instant as equal', () => {
+      const a = post('2026-03-01T12:00:00.000Z');
+      const b = post('2026-03-01T12:00:00.000Z');
+
+      expect(BlogPost.compareByPublication(a, b)).toBe(0);
+    });
+
+    it('should order a list chronologically when used as an Array.sort comparator', () => {
+      const posts = [
+        post('2026-06-01T00:00:00.000Z'),
+        post('2026-01-01T00:00:00.000Z'),
+        post('2026-03-01T00:00:00.000Z'),
+      ];
+
+      const ordered = [...posts].sort(BlogPost.compareByPublication);
+
+      expect(ordered.map((p) => p.publishedAt.value)).toEqual([
+        '2026-01-01T00:00:00.000Z',
+        '2026-03-01T00:00:00.000Z',
+        '2026-06-01T00:00:00.000Z',
+      ]);
+    });
+  });
 });

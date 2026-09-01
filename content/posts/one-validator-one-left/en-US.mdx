@@ -1,0 +1,45 @@
+---
+title: "One Validator, One Left"
+description: How chaining domain rules through a single Validator — and returning exactly one Left per validation flow — keeps entity factories readable and error handling predictable.
+---
+
+Entity `create()` methods attract guard clauses. One rule, one `if`, one `throw` or `return`.
+Five rules later the factory is a wall of early returns and the reader has to trace every branch
+to know which errors are even possible.
+
+## The convention
+
+Express every rule with `Validator`, chain them, and end with **one** check:
+
+```ts
+static create(raw?: string): Either<ValidationError, Slug> {
+  const normalized = raw?.trim().toLowerCase() ?? '';
+
+  const { isValid } = Validator.of(normalized)
+    .length(3, 100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+    .validate();
+
+  if (!isValid) return left(new ValidationError({ code: Slug.ERROR_CODE }));
+  return right(new Slug(normalized));
+}
+```
+
+`.validate()` runs the chain as a chain of responsibility and returns the **first** failure.
+The factory has exactly one `left` and one `right`. There is nothing to trace.
+
+## Two details that matter
+
+**No message strings in the domain.** Rule methods take an optional `error` message — omit it.
+`ValidationError` carries only a `code`; the user-facing text is resolved later at the
+application layer, keyed by that code. The domain does not own copy.
+
+**Never rename `error` / `isValid`.** They come straight off `.validate()`. If a surrounding
+scope already binds those names, wrap the validation in its own block — do not alias the
+destructured properties, because every reader expects those two names to mean exactly this.
+
+## When guards are still right
+
+Cross-field rules that a single `Validator.of(oneValue)` can't express, or propagating a `Left`
+from a nested VO's own `create()`, still use an `if`. The convention is about *single-value
+field rules*, not about banning control flow.

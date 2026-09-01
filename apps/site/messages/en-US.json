@@ -22,6 +22,14 @@
     "github": "GitHub",
     "rss": "RSS Feed"
   },
+  "Blog": {
+    "title": "Blog",
+    "subtitle": "Notes on TypeScript, DDD, and the Next.js ecosystem — from the trenches of building this project.",
+    "empty": "No posts published yet.",
+    "newerPost": "Newer post",
+    "olderPost": "Older post",
+    "postNavigation": "Post navigation"
+  },
   "Clipboard": {
     "copy": "Copy to clipboard"
   },
@@ -157,6 +165,12 @@
       "title": "About",
       "ogSubtitle": "6+ years building modern web products with React, Next.js, and TypeScript.",
       "ogPage": "ABOUT"
+    },
+    "BlogPage": {
+      "title": "Blog",
+      "description": "Technical articles by Wallace Ferreira.",
+      "ogSubtitle": "Technical articles on TypeScript, DDD, and the Next.js ecosystem.",
+      "ogPage": "BLOG"
     },
     "ProjectsPage": {
       "title": "Projects",
