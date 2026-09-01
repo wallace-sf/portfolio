@@ -9,7 +9,7 @@
 | Context | Responsibility | Key models | Status |
 |---------|----------------|------------|--------|
 | **Portfolio** | Projects, experience, skills, profile, values | Project, Experience, Skill, ProfessionalValue, Language, SocialNetwork | Active |
-| **Blog** | Posts, tags, publication | BlogPost, Tag | Active (domain + application + infra; delivered via `apps/site` `/[locale]/blog` routes, content as MDX-in-Git) |
+| **Blog** | Posts, tags, publication | BlogPost, Tag | Active (domain + application + infra; delivered via `apps/site` `/[locale]/blog` routes). Content is MDX-in-Git today; [Blog v2](./superpowers/specs/2026-09-01-blog-v2-phase-0-design.md) moves it to Postgres `Json` localized columns |
 | **Contact** | Contact form capture and delivery | `SendContactMessage`, `IEmailService` | Application + infra (API route pending) |
 | **Identity** | Authentication, authorization, roles | User, Role, `IUserRepository`, use cases in application | Active (domain + use cases; HTTP API in place) |
 | **Shared Kernel** | Cross-context primitives | Id, Text, DateTime, Name, Url, enums, Either, errors | Active |
@@ -131,11 +131,16 @@ src/
 - **Profile** — main aggregate; owns `featuredProjectSlugs` (max 6)
 - **Project** — aggregate root with slug, cover image, period, status, and localized fields
 - **Experience** — aggregate root that owns `ExperienceSkill[]`, `DateRange`, logo, and description
-- **BlogPost** — aggregate root; `Tag` as a VO inside Blog context. Content is
-  authored as MDX-in-Git (`content/posts/<slug>/<locale>.mdx`), read by
-  `FileSystemBlogPostRepository` in `packages/infra`, rendered by `apps/site`
-  Server Components. Publication order is a domain rule
-  (`BlogPost.compareByPublication`).
+- **BlogPost** — aggregate root; `Tag` as a VO inside Blog context. Publication
+  order is a domain rule (`BlogPost.compareByPublication`).
+  - **MVP:** content authored as MDX-in-Git (`content/posts/<slug>/<locale>.mdx`),
+    read by `FileSystemBlogPostRepository`, rendered by `apps/site` Server
+    Components.
+  - **Blog v2 (planned):** `status` (`DRAFT | PUBLISHED | ARCHIVED`), `featured`,
+    and an `Author` VO; invariant — a post may be `PUBLISHED` only with **≥ 1
+    tag**. Content moves to Postgres `Json` localized columns via
+    `PrismaBlogPostRepository`. See
+    [blog-v2-phase-0-design](./superpowers/specs/2026-09-01-blog-v2-phase-0-design.md).
 
 ---
 
