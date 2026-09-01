@@ -38,6 +38,8 @@ moderation/abuse surface.
 | **Post metadata grid** (date · reading time · category/language) | Vinnicius | Scannable; adds information density to listings | Layout only; align with the design system |
 | **Curated listing page** (title + subtitle + "Featured articles" band, then the full list) | Vinnicius | Lifts the blog landing page above a flat list | Needs a `featured` flag on the post (Supabase) — mirrors the existing `Project.weight` pattern |
 | **TOC with scrollspy** ("On this page" — nested h2/h3, active section highlighted) | Loiane, Paul | Essential for long technical posts | Generate from MDX at build; `IntersectionObserver` on the client. Paul's *nested* version is the layout reference |
+| **Breadcrumbs** (`Home › Blog › Post title` on the post page, `Home › Blog` on the listing) | Loiane, Paul | Missing in the MVP. Improves orientation on deep pages and feeds `BreadcrumbList` structured data | Derive from the route segments. Emit JSON-LD via `@repo/seo` (breadcrumb builder) so it doubles as an SEO win |
+| **Date-based post URLs** (`/blog/{year}/{month}/{slug}`) + archive pages | Loiane | Chronological grouping, natural archive pages, avoids slug collisions across years | Architectural decision with migration cost — see [§ Post URL structure](#post-url-structure) below |
 | **Share to socials** (X, LinkedIn, Telegram, copy link) | all three | Distribution; trivial | Static `share` URLs + copy button. No third-party SDK |
 | **"Further Reading" / related posts** | Loiane | Retains the reader; improves internal linking | By shared tag/category, ordered by recency. Simple Supabase query |
 | **Older / Newer post navigation** (post footer) | Loiane | Reading continuity | Query by adjacent date |
@@ -45,6 +47,44 @@ moderation/abuse surface.
 | **Search** | Loiane, Paul | Expected once there are >10 posts | Client-side over a build-time static index (Pagefind / FlexSearch). No service needed |
 | **Diff highlighting in code blocks** (`+`/`-` lines colored green/red) | Paul | Very useful for "before/after" technical posts | Pipeline config only — Shiki / `rehype-pretty-code` with `// [!code ++]` / `// [!code --]`. Low cost |
 | **Content count badges** (`Posts x81`, `Content ▾ 19`) | Paul | Small, satisfying detail | Trivial `count` from Supabase |
+
+---
+
+## Post URL structure
+
+Loiane groups posts by publish date in the URL:
+`https://loiane.com/2026/08/ai-loop-engineering-github-pr-claude-code/`.
+The MVP uses a flat `/[locale]/blog/{slug}`. For v2 the candidate is
+`/[locale]/blog/{year}/{month}/{slug}` (keeps the `blog` and `locale`
+segments this app needs; Loiane's blog owns the whole domain, we don't).
+
+**In favour**
+
+- Chronological grouping; enables clean archive routes
+  (`/blog/{year}`, `/blog/{year}/{month}`) that pair naturally with breadcrumbs.
+- Slugs only need to be unique *within a month*, not forever.
+- Matches a familiar pattern for a dated, article-style blog.
+
+**Against**
+
+- A date in the URL is a mild negative-to-neutral SEO signal (can read as
+  "old content"); most modern engineering blogs use flat `/blog/{slug}`.
+- The publish date becomes effectively immutable once indexed — moving a post
+  to a new month means a redirect.
+- More route params and more static params to generate.
+
+**Migration cost**
+
+- MVP posts are mocked, so few (if any) real URLs are live yet. Still, whatever
+  is published before v2 needs `301` redirects from `/blog/{slug}` to the new
+  path. Plan a redirect map (Next.js `redirects()` or middleware) as part of v2.
+
+**Recommendation:** adopt `/blog/{year}/{month}/{slug}` **only if** we also
+build the archive pages — the date segments earn their place through the
+`/blog/{year}[/{month}]` routes and breadcrumb trail. If archive pages are cut
+from scope, keep the flat `/blog/{slug}` and expose chronology through the
+listing and tag pages instead. Decide this early: it drives the route tree,
+the Supabase query shape, the sitemap, and the redirect map.
 
 ---
 
@@ -95,10 +135,12 @@ tracking, geo-IP, rollups, visualization) is too large to embed in Blog v2.
 ## Suggested delivery split for Blog v2
 
 1. **Core v2** (no social features): posts in Supabase + reading time + progress
-   bar + metadata grid + scrollspy TOC + curated/featured listing + related
-   posts + Older/Newer + tags & tag pages + search + code-block diff
+   bar + metadata grid + scrollspy TOC + breadcrumbs + curated/featured listing
+   + related posts + Older/Newer + tags & tag pages + search + code-block diff
    highlighting + count badges. All content, layout, and simple queries — no
-   external services, no moderation surface.
+   external services, no moderation surface. **Settle the [post URL
+   structure](#post-url-structure) before this lot starts** — it drives the
+   route tree, sitemap, and redirect map.
 2. **Social lot** (later): comments (giscus), anonymous reactions (Paul's
    model), view counts. Each carries operational cost (spam, moderation,
    dedupe) disproportionate to an MVP.
