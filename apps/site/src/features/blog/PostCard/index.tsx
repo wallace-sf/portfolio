@@ -4,21 +4,11 @@ import { Badge } from '@repo/ui/View';
 import Image from 'next/image';
 
 import { Link } from '~/i18n/routing';
+import { formatPublishedAt } from '~features/blog/formatPublishedAt';
 
 export interface IPostCardProps {
   post: BlogPostSummaryDTO;
   locale: string;
-}
-
-function formatPublishedAt(iso: string, locale: string): string {
-  // `publishedAt` is a date-only string (`YYYY-MM-DD`) — pin the formatter to
-  // UTC so it isn't shifted to the previous day in negative-offset timezones.
-  return new Intl.DateTimeFormat(locale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(iso));
 }
 
 export function PostCard({ post, locale }: IPostCardProps) {
@@ -49,7 +39,7 @@ export function PostCard({ post, locale }: IPostCardProps) {
 
           <h2 className="text-heading-h5 text-content-primary">{title}</h2>
 
-          <p className="line-clamp-2 text-body-sm text-content-secondary">
+          <p className="text-body-sm line-clamp-2 text-content-secondary">
             {description}
           </p>
 

@@ -25,7 +25,10 @@
   "Blog": {
     "title": "Blog",
     "subtitle": "Notes on TypeScript, DDD, and the Next.js ecosystem — from the trenches of building this project.",
-    "empty": "No posts published yet."
+    "empty": "No posts published yet.",
+    "newerPost": "Newer post",
+    "olderPost": "Older post",
+    "postNavigation": "Post navigation"
   },
   "Clipboard": {
     "copy": "Copy to clipboard"

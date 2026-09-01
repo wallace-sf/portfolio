@@ -1,28 +1,22 @@
-import { GetBlogPostBySlug, ListBlogPosts } from '@repo/application/blog';
+import {
+  GetAdjacentBlogPosts,
+  GetBlogPostBySlug,
+  ListBlogPosts,
+} from '@repo/application/blog';
 import { type Locale, LOCALES } from '@repo/core/shared';
-import { Badge } from '@repo/ui/View';
+import { Divider } from '@repo/ui/View';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import { notFound } from 'next/navigation';
-import rehypePrettyCode from 'rehype-pretty-code';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
-import { mdxComponents } from '~/mdx-components';
-
-const rehypePrettyCodePlugin: [
-  typeof rehypePrettyCode,
-  { theme: string; keepBackground: boolean },
-] = [rehypePrettyCode, { theme: 'github-dark', keepBackground: true }];
-
-const MDX_OPTIONS = {
-  mdxOptions: {
-    rehypePlugins: [rehypePrettyCodePlugin],
-  },
-};
+import { PostBody } from '~features/blog/PostBody';
+import { PostCover } from '~features/blog/PostCover';
+import { PostHeader } from '~features/blog/PostHeader';
+import { PrevNextNav } from '~features/blog/PrevNextNav';
 
 export async function generateStaticParams() {
   const result = await new ListBlogPosts(
@@ -75,31 +69,46 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const result = await new GetBlogPostBySlug(
-    getServerContainer().blogPostRepository,
-  ).execute({ slug, locale: locale as Locale });
+  const { blogPostRepository } = getServerContainer();
 
-  if (result.isLeft()) notFound();
+  const [postResult, navResult] = await Promise.all([
+    new GetBlogPostBySlug(blogPostRepository).execute({
+      slug,
+      locale: locale as Locale,
+    }),
+    new GetAdjacentBlogPosts(blogPostRepository).execute({
+      slug,
+      locale: locale as Locale,
+    }),
+  ]);
 
-  const { title, description, publishedAt, tags, content } = result.value;
+  if (postResult.isLeft()) notFound();
+
+  const post = postResult.value;
+  const { newer, older } = navResult.isRight() ? navResult.value : {};
 
   return (
-    <main>
-      <h1>{title}</h1>
-      <p>{description}</p>
-      <time dateTime={publishedAt}>{publishedAt}</time>
-      <div>
-        {tags.map((tag) => (
-          <Badge.Text key={tag} label={tag} />
-        ))}
-      </div>
-      <article>
-        <MDXRemote
-          source={content}
-          components={mdxComponents}
-          options={MDX_OPTIONS}
-        />
-      </article>
-    </main>
+    <article className="mx-auto flex max-w-3xl flex-col gap-8 py-4 lg:py-8">
+      {post.coverImage && <PostCover image={post.coverImage} />}
+
+      <PostHeader
+        title={post.title}
+        description={post.description}
+        publishedAt={post.publishedAt}
+        tags={post.tags}
+        locale={locale}
+      />
+
+      <Divider />
+
+      <PostBody content={post.content} />
+
+      {(newer || older) && (
+        <>
+          <Divider />
+          <PrevNextNav newer={newer} older={older} locale={locale} />
+        </>
+      )}
+    </article>
   );
 }

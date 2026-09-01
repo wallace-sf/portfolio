@@ -1,8 +1,9 @@
 import type { MDXRemoteProps } from 'next-mdx-remote/rsc';
 
 /**
- * No blog UI design decision exists yet — this intentionally maps MDX
- * elements to plain HTML with no custom styling/components. Revisit once a
- * design pass happens (tasks 7–8 of the blog single-app migration).
+ * MDX elements render as native HTML — the `.blog-prose` container in
+ * `globals.css` styles them, and fenced code blocks are styled by
+ * `rehype-pretty-code`. Add an entry here only for a genuinely custom element
+ * (e.g. a `<Callout>`), not for restyling native tags.
  */
 export const mdxComponents: NonNullable<MDXRemoteProps['components']> = {};
