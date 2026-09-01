@@ -34,6 +34,7 @@ moderation/abuse surface.
 | Feature | Source | Rationale | Implementation notes |
 |---------|--------|-----------|----------------------|
 | **Reading time per post** | all three | Expected signal on a dev blog | Derived at build from the MDX/body (~200 wpm). Derived field, not stored in Supabase |
+| **Author byline on the post** ("By …" / "Written by …", near the date/reading-time line) | all three | Missing in the MVP; standard for an article page, and feeds `article:author` / JSON-LD `author` | Single-author blog: a static site-owner value (name + avatar + short bio/link) is enough. Add an `author` field on the post only if guest posts are ever expected |
 | **Reading progress bar** | Vinnicius | Cheap microinteraction, high polish | Client component only (scroll listener + `scrollHeight`). No backend |
 | **Post metadata grid** (date · reading time · category/language) | Vinnicius | Scannable; adds information density to listings | Layout only; align with the design system |
 | **Curated listing page** (title + subtitle + "Featured articles" band, then the full list) | Vinnicius | Lifts the blog landing page above a flat list | Needs a `featured` flag on the post (Supabase) — mirrors the existing `Project.weight` pattern |
@@ -134,8 +135,9 @@ tracking, geo-IP, rollups, visualization) is too large to embed in Blog v2.
 
 ## Suggested delivery split for Blog v2
 
-1. **Core v2** (no social features): posts in Supabase + reading time + progress
-   bar + metadata grid + scrollspy TOC + breadcrumbs + curated/featured listing
+1. **Core v2** (no social features): posts in Supabase + reading time + author
+   byline + progress bar + metadata grid + scrollspy TOC + breadcrumbs +
+   curated/featured listing
    + related posts + Older/Newer + tags & tag pages + search + code-block diff
    highlighting + count badges. All content, layout, and simple queries — no
    external services, no moderation surface. **Settle the [post URL
