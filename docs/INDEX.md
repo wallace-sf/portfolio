@@ -66,6 +66,7 @@
 - **[ISSUES-FOLLOWUP.md](./ISSUES-FOLLOWUP.md)** — Snapshot of GitHub issues still open after the latest triage audit, pending follow-up
 - **[SEO-BACKLINK-STRATEGY.md](./SEO-BACKLINK-STRATEGY.md)** — Backlink/content strategy notes from benchmarking against paulie.dev
 - **[BLOG-V2-FEATURE-CURATION.md](./BLOG-V2-FEATURE-CURATION.md)** — Curated feature ideas for Blog v2, benchmarked against loiane.com, vinniciusgomes.dev, paulie.dev
+- **[superpowers/specs/2026-09-01-blog-v2-phase-0-design.md](./superpowers/specs/2026-09-01-blog-v2-phase-0-design.md)** — Blog v2 Phase 0: foundational decisions, data model, and the phase → PRD breakdown
 
 ---
 
