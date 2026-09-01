@@ -9,7 +9,7 @@
 | Context | Responsibility | Key models | Status |
 |---------|----------------|------------|--------|
 | **Portfolio** | Projects, experience, skills, profile, values | Project, Experience, Skill, ProfessionalValue, Language, SocialNetwork | Active |
-| **Blog** | Posts, tags, publication | BlogPost, Tag | Stub (future) |
+| **Blog** | Posts, tags, publication | BlogPost, Tag | Active (domain + application + infra; delivered via `apps/site` `/[locale]/blog` routes, content as MDX-in-Git) |
 | **Contact** | Contact form capture and delivery | `SendContactMessage`, `IEmailService` | Application + infra (API route pending) |
 | **Identity** | Authentication, authorization, roles | User, Role, `IUserRepository`, use cases in application | Active (domain + use cases; HTTP API in place) |
 | **Shared Kernel** | Cross-context primitives | Id, Text, DateTime, Name, Url, enums, Either, errors | Active |
@@ -119,7 +119,7 @@ src/
       skill/factory/            → SkillFactory.ts
       */repositories/           → IExperienceRepository.ts, IProfileRepository.ts, etc.
 
-  blog/                         → Stub (future)
+  blog/                         → BlogPost aggregate root, Tag VO, IBlogPostRepository
   identity/                     → User, Role, IUserRepository
   contact/                      → Stub at core; application use case + infra email
 ```
@@ -131,7 +131,11 @@ src/
 - **Profile** — main aggregate; owns `featuredProjectSlugs` (max 6)
 - **Project** — aggregate root with slug, cover image, period, status, and localized fields
 - **Experience** — aggregate root that owns `ExperienceSkill[]`, `DateRange`, logo, and description
-- **BlogPost** (planned) — aggregate root; `Tag` as a VO inside Blog context
+- **BlogPost** — aggregate root; `Tag` as a VO inside Blog context. Content is
+  authored as MDX-in-Git (`content/posts/<slug>/<locale>.mdx`), read by
+  `FileSystemBlogPostRepository` in `packages/infra`, rendered by `apps/site`
+  Server Components. Publication order is a domain rule
+  (`BlogPost.compareByPublication`).
 
 ---
 

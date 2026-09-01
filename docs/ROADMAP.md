@@ -77,11 +77,14 @@ Items required before MVP launch, using [Paul Scanlon's portfolio](https://www.p
 
 ## Post-MVP
 
-- [ ] **Blog** (`apps/blog`) — `BlogPost`, `Tag`, public API, listing and detail pages
-  ([design spec](../.taskmaster/docs/prd-blog-mdx-design.md)). Post-MVP items deferred from the
-  initial launch:
+- [x] **Blog** — `BlogPost`, `Tag`, MDX-in-Git content, listing + post pages with
+  prev/next, per-post OG images, per-locale RSS. Delivered as a `/[locale]/blog`
+  route tree inside `apps/site` (not a separate `apps/blog` — see
+  [RFC-blog-multizone-vs-single-app.md](./RFC-blog-multizone-vs-single-app.md)).
+  Design spec: [prd-blog-mdx-design.md](../.taskmaster/docs/prd-blog-mdx-design.md).
+  Post-MVP items still deferred:
   - [ ] `/archives` page — reverse-chronological listing grouped by year
-  - [ ] Tag index pages (`/blog/[locale]/tag/[tag]`)
+  - [ ] Tag index pages (`/[locale]/blog/tag/[tag]`)
   - [ ] "Recently updated" and "Trending tags" sidebar widgets
   - [ ] Sticky table of contents on post pages (heading extraction + scroll-spy)
   - [ ] Reading-time estimate on post pages

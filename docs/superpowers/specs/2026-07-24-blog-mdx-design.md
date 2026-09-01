@@ -1,5 +1,13 @@
 # Blog (`apps/blog`) — MDX-in-Git Design
 
+> ## ⚠️ SUPERSEDED — delivery topology changed
+> The `apps/blog` multi-zone split described here was reversed. The blog is now a
+> `/[locale]/blog/...` route tree **inside `apps/site`**. The MDX-in-Git content
+> model, domain/application/infra design, and SEO goals below still hold; ignore
+> the "separate app" and "Vercel multi-zone rewrite" parts.
+> See [RFC-blog-multizone-vs-single-app.md](../../RFC-blog-multizone-vs-single-app.md)
+> and [prd-blog-single-app-migration.md](../../../.taskmaster/docs/prd-blog-single-app-migration.md).
+
 > Status: approved design, pending implementation plan.
 > Related: [ROADMAP.md](../../ROADMAP.md), [03-BOUNDED-CONTEXTS.md](../../03-BOUNDED-CONTEXTS.md),
 > [SEO-BACKLINK-STRATEGY.md](../../SEO-BACKLINK-STRATEGY.md), [12-DESIGN-SYSTEM.md](../../12-DESIGN-SYSTEM.md).

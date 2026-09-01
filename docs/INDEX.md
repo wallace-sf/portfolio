@@ -39,7 +39,7 @@
 - **[04-APPLICATION-LAYER](./04-APPLICATION-LAYER.md)** — Use cases, ports, DTOs, orchestration
 - **[05-API-CONTRACTS](./05-API-CONTRACTS.md)** — API envelope, error codes, HTTP mapping
 - **[06-VALIDATION](./06-VALIDATION.md)** — Edge validation (Zod) vs domain invariants (Either)
-- **[07-I18N](./07-I18N.md)** — UI translations, domain content localization, locale routing
+- **[07-I18N](./07-I18N.md)** — UI translations, domain content localization, locale routing, blog i18n (MDX-in-Git)
 
 ### Quality & Patterns (08–10)
 

@@ -182,11 +182,16 @@ Ordered for safe incremental delivery. Each is a PR against `develop`.
    shared with `PostCard`. The leading `# <title>` line is stripped from every
    post's MDX (the frontmatter title is the title). Dual light/dark
    syntax-highlighting themes are a follow-up.
-9. **Docs + smoke test.** Update `docs/INDEX.md`, `02-ARCHITECTURE.md`,
-   `CLAUDE.md` monorepo structure, `07-I18N.md`. Manual smoke test: `/blog`,
-   `/blog/<locale>`, a post, `/blog/<locale>/rss.xml`, the per-post
-   `opengraph-image`, the sitemap includes blog URLs, locale switch on a blog
-   page keeps you on the blog, nav active state on `/blog`.
+9. **Docs + smoke test. — DONE (issue #1059).** Removed `apps/blog` from the
+   monorepo structure in `CLAUDE.md` + `docs/00-INTRODUCTION.md`; marked the Blog
+   bounded context `Active` in `docs/03-BOUNDED-CONTEXTS.md`; added a single-app
+   delivery note to `docs/02-ARCHITECTURE.md`; added a "Blog i18n" section to
+   `docs/07-I18N.md`; updated `docs/ROADMAP.md` and the `INDEX.md` blurb; added a
+   SUPERSEDED banner to the old `superpowers/specs` blog spec. Smoke test run:
+   `/blog`, `/<locale>/blog`, a post (cover / title / MDX / prev-next),
+   `/<locale>/blog/rss.xml`, the per-post `opengraph-image`, sitemap includes
+   blog URLs, locale switch keeps the `/blog` path, nav active state on `/blog`,
+   `pnpm build` with no `BLOG_APP_URL`.
 
 ## 5. Testing
 
