@@ -8263,7 +8263,8 @@
         "feature-blog-shared-layout"
       ],
       "created": "2026-08-29T01:23:51.505Z",
-      "description": "Tasks for feature-blog-shared-layout context"
+      "description": "Tasks for feature-blog-shared-layout context",
+      "updated": "2026-08-29T01:23:51.505Z"
     }
   },
   "feature-blog-single-app": {
@@ -8388,6 +8389,110 @@
       "created": "2026-08-30T02:27:58.641Z",
       "updated": "2026-08-30T02:27:58.641Z",
       "description": "Tasks for feature-blog-single-app context"
+    }
+  },
+  "blog-v2-phase-1": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Create BlogPostStatus enum",
+        "description": "Add BlogPostStatus enum with DRAFT, PUBLISHED, and ARCHIVED values, following the same pattern as ProjectStatus",
+        "details": "Create `packages/core/src/blog/entities/BlogPostStatus.ts` (co-located with BlogPost like ProjectStatus is with Project).\n\nImplementation:\n```typescript\nexport enum BlogPostStatus {\n  DRAFT = 'DRAFT',\n  PUBLISHED = 'PUBLISHED',\n  ARCHIVED = 'ARCHIVED',\n}\n```\n\nUpdate barrel export in `packages/core/src/blog/index.ts`:\n```typescript\nexport * from './entities/BlogPostStatus';\n```\n\nThis is a simple enum definition with no complex logic, following the exact structure of ProjectStatus. The file will be under 10 lines, well within the 200-line limit.",
+        "testStrategy": "No dedicated test file needed for a simple enum literal. Status validation will be tested as part of BlogPost.test.ts when testing the `create()` method's status validation.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Create Author value object",
+        "description": "Implement Author VO with name, avatarUrl, optional url, and optional bio fields, using collect pattern and Validator for domain rules",
+        "details": "Create `packages/core/src/blog/value-objects/Author.ts`.\n\nInterface:\n```typescript\nexport interface IAuthorProps {\n  name: string;\n  avatarUrl: string;\n  url?: string;\n  bio?: ILocalizedTextInput;\n}\n```\n\nImplementation approach:\n1. Extend ValueObject base class (like Url, Slug)\n2. Use `collect([...])` to build inner VOs (Url for avatarUrl, Url for optional url, LocalizedText for optional bio)\n3. Single Validator chain for name validation (trim, non-empty, length 2-100)\n4. One `left` per validation failure path\n5. Private constructor, static `create()` method\n6. ERROR_CODE = 'INVALID_AUTHOR'\n\nPseudo-code:\n```typescript\nstatic create(props: IAuthorProps): Either<ValidationError, Author> {\n  // Validate name first\n  const normalized = props.name?.trim() ?? '';\n  const { isValid } = Validator.of(normalized)\n    .notEmpty()\n    .length(2, 100)\n    .validate();\n  if (!isValid) return left(new ValidationError({ code: Author.ERROR_CODE }));\n\n  // Build VOs with collect\n  const fieldsResult = collect([\n    Url.create(props.avatarUrl),\n    props.url ? Url.create(props.url) : right<ValidationError, Url | undefined>(undefined),\n    props.bio ? LocalizedText.create(props.bio) : right<ValidationError, LocalizedText | undefined>(undefined),\n  ]);\n  if (fieldsResult.isLeft()) return left(fieldsResult.value);\n\n  const [avatarUrl, url, bio] = fieldsResult.value;\n  return right(new Author({ name: normalized, avatarUrl, url, bio }));\n}\n```\n\nExposed readonly properties: name (string), avatarUrl (Url), url (Url | undefined), bio (LocalizedText | undefined).\n\nUpdate `packages/core/src/blog/index.ts` to export Author and IAuthorProps.\n\nFile should be ~80-100 lines, well under the 200-line limit.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/Author.test.ts`:\n- should create an author when name, avatarUrl are valid and url/bio are omitted\n- should create an author when url and bio are provided and valid\n- should return left when name is empty / whitespace\n- should return left when name is shorter than 2 / longer than 100\n- should return left when avatarUrl is not a valid URL\n- should return left when url is present but invalid\n- should return left when bio is present but not a valid LocalizedText\n- should return a single left when multiple fields are invalid\n- should treat two authors with the same props as equal (ValueObject equality)",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Extend BlogPost entity with new fields (status, featured, author)",
+        "description": "Add status, featured, and author fields to BlogPost interface and entity, with validation in create() method",
+        "details": "Update `packages/core/src/blog/entities/BlogPost.ts`.\n\n1. Extend IBlogPostProps:\n```typescript\nexport interface IBlogPostProps extends IEntityProps {\n  // ...existing fields...\n  status: BlogPostStatus;\n  featured: boolean;\n  author: IAuthorProps;\n}\n```\n\n2. Add readonly properties to BlogPost class:\n```typescript\npublic status: BlogPostStatus;  // mutable for transitions, like Project\npublic readonly featured: boolean;\npublic readonly author: Author;\n```\n\n3. Update constructor signature and body to accept and assign the new fields.\n\n4. In `create()` method:\n   a. Validate status with Validator (in a scoped block to avoid naming collision with existing usage):\n   ```typescript\n   {\n     const { isValid } = Validator.of(props.status)\n       .in(Object.values(BlogPostStatus))\n       .validate();\n     if (!isValid)\n       return left(new ValidationError({ code: BlogPost.ERROR_CODE }));\n   }\n   ```\n   \n   b. Add Author.create to the collect block:\n   ```typescript\n   const fieldsResult = collect([\n     // ...existing VOs...\n     Author.create(props.author),\n   ]);\n   ```\n   \n   c. After tags are parsed, add invariant check for PUBLISHED + zero tags:\n   ```typescript\n   {\n     const { isValid } = Validator.of(props.status)\n       .refine(\n         (s) => s !== BlogPostStatus.PUBLISHED || tags.length > 0\n       )\n       .validate();\n     if (!isValid)\n       return left(new ValidationError({ code: BlogPost.ERROR_CODE }));\n   }\n   ```\n   \n   d. Pass status, featured, author to constructor.\n\n5. Update constructor call in `return right(new BlogPost(...))`.\n\nNote: BlogPost.ts is currently ~130 lines. Adding these fields + validation will bring it to ~180 lines, under the 200-line limit. If it exceeds 200, extract validation logic to a helper.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/BlogPost.test.ts`:\n- should create a post when status is DRAFT and there are no tags\n- should create a post when status is PUBLISHED and there is at least one tag\n- should return left when status is not a BlogPostStatus value\n- should return left when status is PUBLISHED and tags is empty\n- should expose status, featured, and author on the created post\n- existing locale-completeness tests should still pass",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement publish() business method",
+        "description": "Add publish() method to BlogPost that transitions status to PUBLISHED with business rule validation",
+        "details": "Add to `packages/core/src/blog/entities/BlogPost.ts`.\n\nImplementation:\n```typescript\npublish(): Either<ValidationError, void> {\n  const { isValid } = Validator.of(this.status)\n    .refine((s) => s !== BlogPostStatus.PUBLISHED)\n    .refine(() => this.tags.length > 0)\n    .validate();\n  if (!isValid)\n    return left(new ValidationError({ code: BlogPost.ERROR_CODE }));\n  \n  this.status = BlogPostStatus.PUBLISHED;\n  return right(undefined);\n}\n```\n\nBusiness rules:\n1. Cannot publish if already PUBLISHED\n2. Cannot publish if tags is empty (the R4 invariant at transition time)\n3. Publishing from DRAFT or ARCHIVED is allowed (re-publishing)\n\nFollows the exact pattern of Project.publish() — single Validator chain, one left, mutates status on success.\n\nAdds ~10 lines to BlogPost.ts.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/BlogPost.test.ts`:\n- should set status to PUBLISHED when called on a DRAFT post with tags\n- should set status to PUBLISHED when called on an ARCHIVED post with tags\n- should return left when the post is already PUBLISHED\n- should return left when the post has no tags\n- should not change status when publish() returns left",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement archive() business method",
+        "description": "Add archive() method to BlogPost that transitions status to ARCHIVED with validation",
+        "details": "Add to `packages/core/src/blog/entities/BlogPost.ts`.\n\nImplementation:\n```typescript\narchive(): Either<ValidationError, void> {\n  const { isValid } = Validator.of(this.status)\n    .refine((s) => s !== BlogPostStatus.ARCHIVED)\n    .validate();\n  if (!isValid)\n    return left(new ValidationError({ code: BlogPost.ERROR_CODE }));\n  \n  this.status = BlogPostStatus.ARCHIVED;\n  return right(undefined);\n}\n```\n\nBusiness rule:\n- Cannot archive if already ARCHIVED\n- Archiving from DRAFT or PUBLISHED is allowed\n\nFollows the exact pattern of Project.archive() — single Validator chain, one left, mutates status on success.\n\nAdds ~8 lines to BlogPost.ts.\n\nTotal BlogPost.ts size after tasks 3-5: ~198 lines, just under the 200-line limit.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/BlogPost.test.ts`:\n- should set status to ARCHIVED when called on a DRAFT post\n- should set status to ARCHIVED when called on a PUBLISHED post\n- should return left when the post is already ARCHIVED\n- should not change status when archive() returns left",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Update BlogPostBuilder for new fields",
+        "description": "Extend BlogPostBuilder with new fields (status, featured, author) and sensible defaults",
+        "details": "Update `packages/core/test/helpers/builders/BlogPostBuilder.ts`.\n\n1. Update default props in `build()` method:\n```typescript\nstatic build(): BlogPostBuilder {\n  return new BlogPostBuilder({\n    // ...existing defaults...\n    status: BlogPostStatus.PUBLISHED,  // default to valid PUBLISHED post\n    featured: false,\n    author: {\n      name: 'Wallace Ferreira',\n      avatarUrl: 'https://github.com/wallace-sf.png',  // real, stable URL\n    },\n  });\n}\n```\n\n2. Add fluent methods:\n```typescript\npublic withStatus(status: BlogPostStatus): BlogPostBuilder {\n  this._props.status = status;\n  return this;\n}\n\npublic withFeatured(featured: boolean): BlogPostBuilder {\n  this._props.featured = featured;\n  return this;\n}\n\npublic withAuthor(author: IAuthorProps): BlogPostBuilder {\n  this._props.author = author;\n  return this;\n}\n```\n\nRationale for defaults:\n- status: PUBLISHED (so existing tests that don't care about status get a valid post)\n- featured: false (neutral default)\n- author: stable fixture (Wallace Ferreira) so snapshots/assertions stay readable\n\nAdds ~20 lines to BlogPostBuilder.ts (~107 lines total).\n\nUpdate existing test files that fail type-check due to new required props. Based on codebase scan, only BlogPost.test.ts uses BlogPostBuilder directly, and it already uses the builder pattern, so it should work with the new defaults with no changes needed.",
+        "testStrategy": "No new tests needed for the builder itself. Verify that:\n1. All existing BlogPost.test.ts tests pass with the new defaults\n2. Builder fluent methods work by using them in the new BlogPost tests (tasks 3-5)\n3. `pnpm --filter @repo/core test` is green",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Write comprehensive unit tests and verify acceptance criteria",
+        "description": "Create Author.test.ts and extend BlogPost.test.ts with all new test cases for status, transitions, and invariants",
+        "details": "1. Create `packages/core/test/blog/Author.test.ts` with all test cases from task 2's test strategy (9 test cases).\n\n2. Extend `packages/core/test/blog/BlogPost.test.ts` with new test suites:\n   - \"when created with status field\" (5 test cases from task 3)\n   - \"publish() method\" (5 test cases from task 4)\n   - \"archive() method\" (3 test cases from task 5)\n   - Verify existing tests (compareByPublication, locale validation) still pass\n\n3. Run full test suite:\n```bash\npnpm --filter @repo/core test\npnpm --filter @repo/core lint\npnpm --filter @repo/core types\n```\n\n4. Verify all 9 acceptance criteria from the PRD:\n   - [ ] BlogPostStatus enum exists and is exported\n   - [ ] Author VO validates all fields correctly\n   - [ ] BlogPost.create() requires status, featured, author\n   - [ ] BlogPost.create() with DRAFT + zero tags succeeds\n   - [ ] publish() transitions correctly with invariants\n   - [ ] archive() transitions correctly\n   - [ ] Both methods mutate only via method (no public setter)\n   - [ ] BlogPostBuilder supports new fields with defaults\n   - [ ] All tests green, no files exceed 200 lines\n\n5. Verify no changes outside packages/core (check git diff).\n\nTotal new test cases: ~17 (9 Author + 8 BlogPost new), plus regression verification of ~15 existing BlogPost tests.\n\nTest files will be behavior-focused, following the \"should <expected behavior> when <context>\" naming pattern from docs/08-TESTING.md.",
+        "testStrategy": "Meta-test: the test suite itself validates the implementation. Success criteria:\n- All unit tests pass (green)\n- 100% coverage of new domain logic (Author VO, status validation, publish/archive methods, invariant)\n- Existing tests unchanged in intent (regression)\n- `pnpm --filter @repo/core test` completes with 0 failures\n- TypeScript compilation clean\n- ESLint clean",
+        "priority": "high",
+        "dependencies": [
+          2,
+          4,
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-09-03T03:04:49.282Z",
+      "updated": "2026-09-03T03:04:49.282Z",
+      "description": "Tasks for blog-v2-phase-1 context"
     }
   }
 }
