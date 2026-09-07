@@ -10,7 +10,15 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
       message:
         'Slug must be kebab-case (lowercase letters, digits, and hyphens only), between 3 and 100 characters.',
     },
-    INVALID_NAME: { message: 'Name must be between 3 and 100 characters.' },
+    INVALID_NAME: { message: 'Name is required.' },
+    INVALID_ALPHA_NAME: {
+      message:
+        'Name must contain only letters and spaces, 3 to 100 characters.',
+    },
+    INVALID_PERSON_NAME: {
+      message:
+        "Name must start with a letter and use only letters, spaces and ' - . , 2 to 100 characters.",
+    },
     INVALID_TEXT: {
       message: 'Text does not meet the required length constraints.',
     },
@@ -88,7 +96,15 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
       message:
         'Slug deve estar em kebab-case (letras minúsculas, dígitos e hífens), com 3 a 100 caracteres.',
     },
-    INVALID_NAME: { message: 'O nome deve ter entre 3 e 100 caracteres.' },
+    INVALID_NAME: { message: 'O nome é obrigatório.' },
+    INVALID_ALPHA_NAME: {
+      message:
+        'O nome deve conter apenas letras e espaços, de 3 a 100 caracteres.',
+    },
+    INVALID_PERSON_NAME: {
+      message:
+        "O nome deve começar com letra e usar apenas letras, espaços e ' - . , de 2 a 100 caracteres.",
+    },
     INVALID_TEXT: {
       message: 'O texto não atende às restrições de tamanho exigidas.',
     },
@@ -179,7 +195,15 @@ export const ERROR_MESSAGE: Record<Locale, ErrorMessageMap> = {
       message:
         'El slug debe estar en kebab-case (letras minúsculas, dígitos y guiones), entre 3 y 100 caracteres.',
     },
-    INVALID_NAME: { message: 'El nombre debe tener entre 3 y 100 caracteres.' },
+    INVALID_NAME: { message: 'El nombre es obligatorio.' },
+    INVALID_ALPHA_NAME: {
+      message:
+        'El nombre debe contener solo letras y espacios, de 3 a 100 caracteres.',
+    },
+    INVALID_PERSON_NAME: {
+      message:
+        "El nombre debe empezar con una letra y usar solo letras, espacios y ' - . , de 2 a 100 caracteres.",
+    },
     INVALID_TEXT: {
       message:
         'El texto no cumple con las restricciones de longitud requeridas.',

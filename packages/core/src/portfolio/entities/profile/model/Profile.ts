@@ -5,7 +5,7 @@ import {
   IEntityProps,
   Image,
   left,
-  Name,
+  PersonName,
   right,
   ValidationError,
 } from '../../../../shared';
@@ -24,7 +24,7 @@ export interface IProfileProps extends IEntityProps {
 }
 
 export class Profile extends AggregateRoot<Profile, IProfileProps> {
-  public readonly name: Name;
+  public readonly name: PersonName;
   public readonly headline: LocalizedText;
   public readonly bio: LocalizedText;
   public readonly photo: Image;
@@ -32,7 +32,7 @@ export class Profile extends AggregateRoot<Profile, IProfileProps> {
 
   private constructor(
     props: IProfileProps,
-    name: Name,
+    name: PersonName,
     headline: LocalizedText,
     bio: LocalizedText,
     photo: Image,
@@ -48,7 +48,7 @@ export class Profile extends AggregateRoot<Profile, IProfileProps> {
 
   static create(props: IProfileProps): Either<ValidationError, Profile> {
     const requiredResult = collect([
-      Name.create(props.name),
+      PersonName.create(props.name),
       LocalizedText.create(props.headline),
       LocalizedText.create(props.bio),
       Image.create(props.photo.url, props.photo.alt),

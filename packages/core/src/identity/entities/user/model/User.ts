@@ -4,7 +4,7 @@ import { ValidationError } from '../../../../shared/errors';
 import { validateEnum } from '../../../../shared/validateEnum';
 import { Email } from '../../../../shared/vo/Email';
 import { Id } from '../../../../shared/vo/Id';
-import { Name } from '../../../../shared/vo/Name';
+import { PersonName } from '../../../../shared/vo/name';
 import { Role } from './Role';
 
 export interface IUserProps extends IEntityProps {
@@ -18,7 +18,7 @@ export interface IUserProps extends IEntityProps {
 export class User extends AggregateRoot<User, IUserProps> {
   static readonly ERROR_CODE = 'INVALID_USER';
 
-  public readonly name: Name;
+  public readonly name: PersonName;
   public readonly email: Email;
   public readonly role: Role;
   public readonly authSubject: Id | null;
@@ -26,7 +26,7 @@ export class User extends AggregateRoot<User, IUserProps> {
   private constructor(
     props: IUserProps,
     role: Role,
-    name: Name,
+    name: PersonName,
     email: Email,
     authSubject: Id | null,
   ) {
@@ -40,7 +40,7 @@ export class User extends AggregateRoot<User, IUserProps> {
   static create(props: IUserProps): Either<ValidationError, User> {
     const result = collect([
       validateEnum(props.role, Object.values(Role), User.ERROR_CODE),
-      Name.create(props.name),
+      PersonName.create(props.name),
       Email.create(props.email),
       User._createAuthSubject(props.authSubject),
     ]);

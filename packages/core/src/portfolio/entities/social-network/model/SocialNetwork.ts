@@ -4,7 +4,7 @@ import {
   Entity,
   IEntityProps,
   left,
-  Name,
+  AlphaName,
   right,
   Text,
   Url,
@@ -20,13 +20,13 @@ export interface ISocialNetworkProps extends IEntityProps {
 export class SocialNetwork extends Entity<SocialNetwork, ISocialNetworkProps> {
   static readonly ERROR_CODE = 'INVALID_SOCIAL_NETWORK';
 
-  public readonly name: Name;
+  public readonly name: AlphaName;
   public readonly icon: Text;
   public readonly url: Url;
 
   private constructor(
     props: ISocialNetworkProps,
-    name: Name,
+    name: AlphaName,
     icon: Text,
     url: Url,
   ) {
@@ -40,7 +40,7 @@ export class SocialNetwork extends Entity<SocialNetwork, ISocialNetworkProps> {
     props: ISocialNetworkProps,
   ): Either<ValidationError, SocialNetwork> {
     const result = collect([
-      Name.create(props.name),
+      AlphaName.create(props.name),
       Text.create(props.icon, { min: 2, max: 50 }),
       Url.create(props.url),
     ]);

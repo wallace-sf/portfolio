@@ -1,4 +1,4 @@
-import { LocalizedText, Name, ValidationError } from '~/index';
+import { LocalizedText, PersonName, ValidationError } from '~/index';
 import { Profile } from '~/portfolio/entities/profile/model/Profile';
 import { ProfileStat } from '~/portfolio/entities/profile/model/ProfileStat';
 
@@ -38,7 +38,7 @@ describe('Profile', () => {
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value.name).toBeInstanceOf(Name);
+      expect(result.value.name).toBeInstanceOf(PersonName);
       expect(result.value.headline).toBeInstanceOf(LocalizedText);
       expect(result.value.bio).toBeInstanceOf(LocalizedText);
       expect(result.value.stats).toHaveLength(1);
@@ -59,7 +59,7 @@ describe('Profile', () => {
       const result = Profile.create({ ...validProps, name: '' });
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(PersonName.ERROR_CODE);
     });
 
     it('should return Left when headline en-US is empty', () => {
