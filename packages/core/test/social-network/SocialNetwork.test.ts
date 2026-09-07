@@ -1,4 +1,4 @@
-import { Name, SocialNetwork, Text, Url, ValidationError } from '~/index';
+import { AlphaName, SocialNetwork, Text, Url, ValidationError } from '~/index';
 
 import { SocialNetworkBuilder } from '../helpers';
 
@@ -41,7 +41,7 @@ describe('SocialNetwork', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(AlphaName.ERROR_CODE);
     });
 
     it('should return Left when icon is invalid', () => {

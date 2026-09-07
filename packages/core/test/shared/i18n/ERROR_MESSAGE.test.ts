@@ -41,6 +41,8 @@ function findDomainErrorCodesInUse(): Set<string> {
 const ALL_CODES = [
   'INVALID_SLUG',
   'INVALID_NAME',
+  'INVALID_ALPHA_NAME',
+  'INVALID_PERSON_NAME',
   'INVALID_TEXT',
   'INVALID_EMAIL',
   'INVALID_MESSAGE',

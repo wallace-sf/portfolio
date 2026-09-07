@@ -3,7 +3,7 @@ export * from './DateTime';
 export * from './Email';
 export * from './Id';
 export * from './Image';
-export * from './Name';
+export * from './name';
 export * from './Slug';
 export * from './Text';
 export * from './Url';
