@@ -102,19 +102,20 @@ Exported from `packages/core/src/blog/index.ts`.
 
 | Prop | Type | Rule |
 |------|------|------|
-| `name` | `string` | trimmed, non-empty, length 2–100 |
+| `name` | `string` | valid `PersonName` — reuse the shared `PersonName` VO (issue #1076) |
 | `avatarUrl` | `string` | valid URL — reuse the shared `Url` VO |
 | `url` | `string \| undefined` | when present, valid URL (`Url` VO) |
 | `bio` | `ILocalizedTextInput \| undefined` | when present, valid `LocalizedText`; **not** required to have all locales (unlike post body) |
 
-**Exposed** (readonly): `name: string`, `avatarUrl: Url`, `url: Url | undefined`,
+**Exposed** (readonly): `name: PersonName`, `avatarUrl: Url`, `url: Url | undefined`,
 `bio: LocalizedText | undefined`.
 
 - `static readonly ERROR_CODE = 'INVALID_AUTHOR'`.
 - `static create(props: IAuthorProps): Either<ValidationError, Author>`.
-- Build the inner VOs with `collect([...])` (like `BlogPost.create`), then a
-  single `Validator` chain for `name` and the optional-field presence rules, then
-  one `left` on failure.
+- Build every inner VO — `PersonName`, `Url`(s), `LocalizedText` — with
+  `collect([...])` (like `BlogPost.create`); the first inner `left` is
+  propagated (an invalid name surfaces as `INVALID_PERSON_NAME`, matching how
+  `Image` propagates `INVALID_URL`).
 - Private constructor; equality via the `ValueObject` base (structural on the
   serialized props).
 - Exported from `packages/core/src/blog/index.ts`.
@@ -210,7 +211,7 @@ No change. Called out only so the implementer does not touch it.
 ## 4. Acceptance criteria
 
 - [ ] `BlogPostStatus` enum exists and is exported from `@repo/core/blog`.
-- [ ] `Author` VO exists, validates `name` (2–100, non-empty), `avatarUrl` (URL),
+- [ ] `Author` VO exists, validates `name` (`PersonName`), `avatarUrl` (URL),
       optional `url` (URL when present), optional `bio` (`LocalizedText` when
       present); returns exactly one `left` per invalid input; is exported.
 - [ ] `BlogPost.create()` requires `status`, `featured`, `author`; rejects an

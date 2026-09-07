@@ -1,4 +1,4 @@
-import { Author, LocalizedText, Url, ValidationError } from '~/index';
+import { Author, LocalizedText, PersonName, Url, ValidationError } from '~/index';
 
 const validProps = {
   name: 'Wallace Ferreira',
@@ -7,7 +7,7 @@ const validProps = {
 
 const expectLeft = (
   result: ReturnType<typeof Author.create>,
-  code: string = Author.ERROR_CODE,
+  code: string,
 ): void => {
   expect(result.isLeft()).toBe(true);
   expect(result.value).toBeInstanceOf(ValidationError);
@@ -21,7 +21,8 @@ describe('Author', () => {
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value.name).toBe('Wallace Ferreira');
+      expect(result.value.name).toBeInstanceOf(PersonName);
+      expect(result.value.name.value).toBe('Wallace Ferreira');
       expect(result.value.avatarUrl).toBeInstanceOf(Url);
       expect(result.value.url).toBeUndefined();
       expect(result.value.bio).toBeUndefined();
@@ -35,7 +36,13 @@ describe('Author', () => {
 
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
-      expect(result.value.name).toBe('Wallace Ferreira');
+      expect(result.value.name.value).toBe('Wallace Ferreira');
+    });
+
+    it('should accept a name with common punctuation', () => {
+      const result = Author.create({ ...validProps, name: "J. R. R. O'Brien" });
+
+      expect(result.isRight()).toBe(true);
     });
 
     it('should return Right when url and bio are provided and valid', () => {
@@ -63,19 +70,38 @@ describe('Author', () => {
 
   describe('when created from invalid props', () => {
     it('should return Left when name is empty', () => {
-      expectLeft(Author.create({ ...validProps, name: '' }));
+      expectLeft(
+        Author.create({ ...validProps, name: '' }),
+        PersonName.ERROR_CODE,
+      );
     });
 
     it('should return Left when name is whitespace only', () => {
-      expectLeft(Author.create({ ...validProps, name: '   ' }));
+      expectLeft(
+        Author.create({ ...validProps, name: '   ' }),
+        PersonName.ERROR_CODE,
+      );
     });
 
     it('should return Left when name is shorter than 2 characters', () => {
-      expectLeft(Author.create({ ...validProps, name: 'a' }));
+      expectLeft(
+        Author.create({ ...validProps, name: 'a' }),
+        PersonName.ERROR_CODE,
+      );
     });
 
     it('should return Left when name is longer than 100 characters', () => {
-      expectLeft(Author.create({ ...validProps, name: 'a'.repeat(101) }));
+      expectLeft(
+        Author.create({ ...validProps, name: 'a'.repeat(101) }),
+        PersonName.ERROR_CODE,
+      );
+    });
+
+    it('should return Left when name contains digits', () => {
+      expectLeft(
+        Author.create({ ...validProps, name: '50 Cent' }),
+        PersonName.ERROR_CODE,
+      );
     });
 
     it('should return Left when avatarUrl is not a valid URL', () => {
@@ -108,7 +134,7 @@ describe('Author', () => {
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(ValidationError);
-      expect((result.value as ValidationError).code).toBe(Author.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(PersonName.ERROR_CODE);
     });
   });
 

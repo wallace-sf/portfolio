@@ -1,10 +1,9 @@
-import { Validator } from '@repo/utils/validator';
-
 import {
   collect,
   Either,
   ILocalizedTextInput,
   LocalizedText,
+  PersonName,
   Url,
   ValidationError,
   ValueObject,
@@ -20,14 +19,11 @@ export interface IAuthorProps {
 }
 
 interface IAuthorValue {
-  name: string;
+  name: PersonName;
   avatarUrl: Url;
   url: Url | undefined;
   bio: LocalizedText | undefined;
 }
-
-const NAME_MIN_LENGTH = 2;
-const NAME_MAX_LENGTH = 100;
 
 export class Author extends ValueObject<IAuthorValue> {
   static readonly ERROR_CODE = 'INVALID_AUTHOR';
@@ -37,14 +33,8 @@ export class Author extends ValueObject<IAuthorValue> {
   }
 
   static create(props: IAuthorProps): Either<ValidationError, Author> {
-    const name = props.name?.trim() ?? '';
-
-    const { isValid } = Validator.of(name)
-      .length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
-      .validate();
-    if (!isValid) return left(new ValidationError({ code: Author.ERROR_CODE }));
-
     const fieldsResult = collect([
+      PersonName.create(props.name),
       Url.create(props.avatarUrl),
       props.url
         ? Url.create(props.url)
@@ -55,19 +45,19 @@ export class Author extends ValueObject<IAuthorValue> {
     ]);
     if (fieldsResult.isLeft()) return left(fieldsResult.value);
 
-    const [avatarUrl, url, bio] = fieldsResult.value;
+    const [name, avatarUrl, url, bio] = fieldsResult.value;
 
     return right(
       new Author({
-        name,
-        avatarUrl,
+        name: name as PersonName,
+        avatarUrl: avatarUrl as Url,
         url: url as Url | undefined,
         bio: bio as LocalizedText | undefined,
       }),
     );
   }
 
-  get name(): string {
+  get name(): PersonName {
     return this.value.name;
   }
 
