@@ -2,6 +2,8 @@
 export type BlogPostLinkDTO = {
   slug: string;
   title: string;
+  /** ISO timestamp — the delivery layer builds the dated href from it. */
+  publishedAt: string;
 };
 
 /** The posts adjacent to a given post in publication order. */

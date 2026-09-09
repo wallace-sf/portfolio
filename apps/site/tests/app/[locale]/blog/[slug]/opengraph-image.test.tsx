@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { BlogPost } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 
 import Image, {
   alt,
@@ -51,6 +51,7 @@ function makePost(slug: string): BlogPost {
     content: { 'en-US': '# Body', 'pt-BR': '# Corpo', es: '# Cuerpo' },
     tags: ['nextjs'],
     publishedAt: '2026-08-01',
+    status: BlogPostStatus.PUBLISHED,
   });
   if (result.isLeft()) throw result.value;
   return result.value;

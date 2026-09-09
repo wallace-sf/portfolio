@@ -1,4 +1,4 @@
-import { BlogPost } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 import {
   DomainError,
   Either,
@@ -48,7 +48,7 @@ export class GetBlogPostBySlug extends UseCase<
       );
     }
 
-    if (!post) {
+    if (!post || post.status !== BlogPostStatus.PUBLISHED) {
       return left(new NotFoundError({ slug: input.slug }));
     }
 
@@ -61,6 +61,7 @@ export class GetBlogPostBySlug extends UseCase<
       title: post.title.get(locale),
       description: post.description.get(locale),
       publishedAt: post.publishedAt.value,
+      featured: post.featured,
       tags: post.tags.map((tag) => tag.value),
       coverImage: post.coverImage
         ? {
