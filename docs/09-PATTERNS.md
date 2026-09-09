@@ -186,6 +186,44 @@ Interfaces live in `@repo/core`. Implementations live in `@repo/infra`.
 
 ---
 
+## Domain Service
+
+For a **stateless domain operation that spans aggregates** — it belongs to no
+single entity or value object — use a domain service: a class with a private
+constructor and `static` methods, in `packages/core/src/<context>/services/`.
+
+```typescript
+// packages/core/src/blog/services/BlogPostSequence.ts
+export class BlogPostSequence {
+  private constructor() {}
+
+  static neighboursOf(
+    posts: BlogPost[],
+    target: Slug,
+  ): IBlogPostNeighbours | null {
+    const ascending = [...posts].sort(BlogPost.compareByPublication);
+    const index = ascending.findIndex((post) => post.slug.equals(target));
+    if (index === -1) return null;
+    return {
+      older: index > 0 ? ascending[index - 1] : undefined,
+      newer: index < ascending.length - 1 ? ascending[index + 1] : undefined,
+    };
+  }
+}
+```
+
+- **Pure:** domain objects in, domain objects (or a plain result) out. No DTO,
+  no locale, no I/O, no framework.
+- **Named for the concept,** not the caller (`BlogPostSequence`, not
+  `AdjacencyHelper`) — it groups cohesive operations on one domain concept.
+- A comparison/ordering rule that *does* belong to one aggregate stays a `static`
+  on that aggregate (`BlogPost.compareByPublication`). The service composes such
+  rules across many instances.
+- Use cases call the service and map its result; they never re-implement the
+  domain logic inline.
+
+---
+
 ## GoF Design Patterns
 
 Apply only when solving a real problem. Comment with `// Pattern: <Name>`.
