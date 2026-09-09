@@ -330,6 +330,67 @@ describe('BlogPost', () => {
     });
   });
 
+  describe('publish()', () => {
+    it('should set status to PUBLISHED from DRAFT when the post has tags', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags(['nextjs'])
+        .now();
+
+      const result = post.publish();
+
+      expect(result.isRight()).toBe(true);
+      expect(post.status).toBe(BlogPostStatus.PUBLISHED);
+    });
+
+    it('should set status to PUBLISHED from ARCHIVED when the post has tags', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.ARCHIVED)
+        .withTags(['nextjs'])
+        .now();
+
+      const result = post.publish();
+
+      expect(result.isRight()).toBe(true);
+      expect(post.status).toBe(BlogPostStatus.PUBLISHED);
+    });
+
+    it('should return Left when the post is already PUBLISHED', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.PUBLISHED)
+        .withTags(['nextjs'])
+        .now();
+
+      const result = post.publish();
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(BlogPost.ERROR_CODE);
+    });
+
+    it('should return Left when the post has no tags', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags([])
+        .now();
+
+      const result = post.publish();
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(BlogPost.ERROR_CODE);
+    });
+
+    it('should not change status when publish() returns Left', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags([])
+        .now();
+
+      post.publish();
+
+      expect(post.status).toBe(BlogPostStatus.DRAFT);
+    });
+  });
+
   describe('compareByPublication', () => {
     const post = (publishedAt: string): BlogPost =>
       BlogPostBuilder.build().withPublishedAt(publishedAt).now();

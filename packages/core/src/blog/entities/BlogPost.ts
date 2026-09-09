@@ -144,6 +144,22 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
   }
 
   /**
+   * Publish the post. Allowed from `DRAFT` or `ARCHIVED`; rejected when already
+   * `PUBLISHED` or when the post has no tags (the "PUBLISHED needs >= 1 tag"
+   * invariant, enforced again at transition time). Mirrors `Project.publish()`.
+   */
+  publish(): Either<ValidationError, void> {
+    const { isValid } = Validator.of(this.status)
+      .refine((s) => s !== BlogPostStatus.PUBLISHED)
+      .refine(() => this.tags.length > 0)
+      .validate();
+    if (!isValid)
+      return left(new ValidationError({ code: BlogPost.ERROR_CODE }));
+    this.status = BlogPostStatus.PUBLISHED;
+    return right(undefined);
+  }
+
+  /**
    * Chronological order of publication: the post published earlier sorts first.
    * This is the domain's definition of "before/after" for posts; callers pick
    * the direction they present it in.
