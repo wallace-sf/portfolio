@@ -391,6 +391,43 @@ describe('BlogPost', () => {
     });
   });
 
+  describe('archive()', () => {
+    it('should set status to ARCHIVED from DRAFT', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .now();
+
+      const result = post.archive();
+
+      expect(result.isRight()).toBe(true);
+      expect(post.status).toBe(BlogPostStatus.ARCHIVED);
+    });
+
+    it('should set status to ARCHIVED from PUBLISHED', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.PUBLISHED)
+        .withTags(['nextjs'])
+        .now();
+
+      const result = post.archive();
+
+      expect(result.isRight()).toBe(true);
+      expect(post.status).toBe(BlogPostStatus.ARCHIVED);
+    });
+
+    it('should return Left when the post is already ARCHIVED', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.ARCHIVED)
+        .now();
+
+      const result = post.archive();
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(BlogPost.ERROR_CODE);
+      expect(post.status).toBe(BlogPostStatus.ARCHIVED);
+    });
+  });
+
   describe('compareByPublication', () => {
     const post = (publishedAt: string): BlogPost =>
       BlogPostBuilder.build().withPublishedAt(publishedAt).now();

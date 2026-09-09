@@ -160,6 +160,20 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
   }
 
   /**
+   * Archive the post. Allowed from `DRAFT` or `PUBLISHED`; rejected when already
+   * `ARCHIVED`. Mirrors `Project.archive()`.
+   */
+  archive(): Either<ValidationError, void> {
+    const { isValid } = Validator.of(this.status)
+      .refine((s) => s !== BlogPostStatus.ARCHIVED)
+      .validate();
+    if (!isValid)
+      return left(new ValidationError({ code: BlogPost.ERROR_CODE }));
+    this.status = BlogPostStatus.ARCHIVED;
+    return right(undefined);
+  }
+
+  /**
    * Chronological order of publication: the post published earlier sorts first.
    * This is the domain's definition of "before/after" for posts; callers pick
    * the direction they present it in.
