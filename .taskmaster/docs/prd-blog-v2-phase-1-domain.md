@@ -5,6 +5,18 @@
 > Tracked by #1069. Depends on #1067 (Phase 0, merged via #1068).
 > Related: [03-BOUNDED-CONTEXTS.md](../../docs/03-BOUNDED-CONTEXTS.md), [06-VALIDATION.md](../../docs/06-VALIDATION.md), [09-PATTERNS.md](../../docs/09-PATTERNS.md).
 
+> **Revision 2026-09-09 (during implementation):**
+> - The `Author` VO (R2) shipped (#1074), but **embedding `author` on `BlogPost`
+>   moves to PRD 3**. Making `author` a required prop is a breaking change to a
+>   contract consumed by `packages/infra/BlogPostMapper` and `apps/site`, and the
+>   value only ever comes from the future Prisma `author` column — schema, mapper
+>   and seeder are one honest slice, and they are PRD 3. The `Author` VO stays in
+>   place, unused, until then.
+> - `status` and `featured` land as **optional props with a default applied in
+>   `create()`** (`status ?? DRAFT`, `featured ?? false`) rather than required.
+>   This keeps the change `packages/core`-only and non-breaking. PRD 3 tightens
+>   them to required (full `Project` mirror) once the columns exist.
+
 ## Goal
 
 Evolve the `BlogPost` aggregate from its MVP shape (slug, localized title /
@@ -24,21 +36,22 @@ PRDs 2–5.
 
 - New enum `BlogPostStatus` (`DRAFT | PUBLISHED | ARCHIVED`).
 - New value object `Author` (`packages/core/src/blog/value-objects/Author.ts`).
-- `BlogPost` gains three fields: `status: BlogPostStatus`, `featured: boolean`,
-  `author: Author`.
+- `BlogPost` gains two optional fields: `status?: BlogPostStatus` (defaults to
+  `DRAFT` in `create()`) and `featured?: boolean` (defaults to `false`).
+  `author` embedding is deferred to PRD 3 (see revision note).
 - `BlogPost` gains business methods `publish()` and `archive()` returning
   `Either<ValidationError, void>`, mirroring `Project`'s transitions.
 - Invariant: a post may be `PUBLISHED` only with `tags.length >= 1`. Enforced in
-  `BlogPost.create()` (when the incoming `status` is `PUBLISHED`) and in
+  `BlogPost.create()` (when the resolved `status` is `PUBLISHED`) and in
   `publish()`.
-- `BlogPost.create()` validates `status` with `Validator … .in(Object.values(BlogPostStatus))`,
-  like `Project`.
+- `BlogPost.create()` validates the resolved `status` with
+  `Validator … .in(Object.values(BlogPostStatus))`, like `Project`.
 - Barrel exports (`packages/core/src/blog/index.ts`) updated for the new symbols.
 - New `ERROR_MESSAGE` entries only if review adopts a distinct code (see R4); the
   default reuses `BlogPost.ERROR_CODE`, which already has entries.
 - `BlogPostBuilder` (`packages/core/test/helpers/builders/BlogPostBuilder.ts`)
-  extended with `withStatus`, `withFeatured`, `withAuthor`, sensible defaults, and
-  the existing tests updated for the new required props.
+  extended with `withStatus`, `withFeatured`, and defaults
+  (`status: DRAFT`, `featured: false`).
 - Unit tests for `Author`, `BlogPostStatus` handling, the invariant, and the
   transition methods.
 
@@ -47,6 +60,9 @@ PRDs 2–5.
 - `IBlogPostRepository` / use-case / DTO changes (PRD 2).
 - Prisma model, migration, RLS, `PrismaBlogPostRepository`, `BlogPostMapper`,
   seeder (PRD 3).
+- Embedding `author` on `BlogPost` (the field, its `create()` wiring, the
+  `withAuthor` builder method, making `status`/`featured` required) — PRD 3,
+  alongside the Prisma `author` column it reads from.
 - URL restructure, archive pages, redirects, `generateStaticParams` (PRD 4).
 - Reading time, author byline UI, any presentation concern (PRD 5).
 - A normalized `Author` table / author pages — explicitly deferred in Phase 0 §2.
@@ -127,30 +143,32 @@ Extend `IBlogPostProps`:
 ```ts
 export interface IBlogPostProps extends IEntityProps {
   // …existing…
-  status: BlogPostStatus;
-  featured: boolean;
-  author: IAuthorProps;
+  status?: BlogPostStatus; // defaults to DRAFT in create()
+  featured?: boolean; // defaults to false in create()
+  // author: IAuthorProps — deferred to PRD 3 (see revision note)
 }
 ```
 
-`BlogPost` exposes `public readonly status: BlogPostStatus` (mutable internally
-for transitions — see R5; model it like `Project.status`, which is `public status`
-with no external setter but reassigned by `publish()` / `archive()`),
-`public readonly featured: boolean`, `public readonly author: Author`.
+`BlogPost` exposes `public status: BlogPostStatus` (mutable internally for
+transitions — see R5; model it like `Project.status`, which is `public status`
+with no external setter but reassigned by `publish()` / `archive()`) and
+`public readonly featured: boolean`.
 
 In `create()`:
 
-- Add `Author.create(props.author)` to the `collect([...])` block.
-- After the existing locale checks, validate `status` with
-  `Validator.of(props.status).in(Object.values(BlogPostStatus)).validate()` → one
-  `left` with `BlogPost.ERROR_CODE` on failure.
-- `featured` is assigned as-is (no rule).
+- Resolve `const status = props.status ?? BlogPostStatus.DRAFT` and
+  `const featured = props.featured ?? false`.
+- After tags are parsed, in a scoped block (avoids the `isValid` name clash with
+  the locale check), one `Validator` chain covering R3 + R4:
+  `Validator.of(status).in(Object.values(BlogPostStatus)).refine((s) => s !== BlogPostStatus.PUBLISHED || tags.length > 0).validate()`
+  → one `left` with `BlogPost.ERROR_CODE` on failure.
+- `featured` is passed through with no rule.
 
 ### R4 — "PUBLISHED requires ≥ 1 tag" invariant
 
-- In `create()`: after tags are parsed, if `props.status === BlogPostStatus.PUBLISHED`
-  and `tags.length === 0`, return `left(new ValidationError({ code: BlogPost.PUBLISHED_WITHOUT_TAGS }))`
-  — expressed through a `Validator .refine()` in the same flow, not a bare `if`.
+- In `create()`: after tags are parsed, if the resolved `status` is `PUBLISHED`
+  and `tags.length === 0`, return `left(new ValidationError({ code: BlogPost.ERROR_CODE }))`
+  — expressed through the same `Validator .refine()` chain as R3, not a bare `if`.
 - **Established precedent:** `Project.create()`, `Project.publish()` and
   `Project.archive()` all return a single `Project.ERROR_CODE` (`'INVALID_PROJECT'`)
   for every failure path — no per-rule codes. Matching that, the default here is
@@ -193,13 +211,12 @@ No change. Called out only so the implementer does not touch it.
 
 ### R7 — `BlogPostBuilder` + existing test updates
 
-- `BlogPostBuilder.build()` defaults: `status: BlogPostStatus.PUBLISHED`,
-  `featured: false`, `author: { name: 'Wallace Ferreira', avatarUrl: <valid url> }`
-  (keep the default a valid PUBLISHED post so existing `packages/core` and, later,
-  `packages/application` builder consumers keep working with no churn).
-- Add `withStatus(status)`, `withFeatured(flag)`, `withAuthor(props)`.
-- Update any existing `BlogPost` test / builder call that now fails type-check for
-  the new required props.
+- `BlogPostBuilder.build()` defaults: `status: BlogPostStatus.DRAFT`,
+  `featured: false`. `DRAFT` (not `PUBLISHED`) so a freshly-built post with any
+  tag list — including the empty-tags cases already in `BlogPost.test.ts` — stays
+  valid; the invariant is exercised explicitly with `.withStatus(PUBLISHED)`.
+- Add `withStatus(status)`, `withFeatured(flag)`. (`withAuthor` → PRD 3.)
+- No existing test needs editing — the new props are optional.
 
 ### R8 — Barrel + docs
 
@@ -214,10 +231,10 @@ No change. Called out only so the implementer does not touch it.
 - [ ] `Author` VO exists, validates `name` (`PersonName`), `avatarUrl` (URL),
       optional `url` (URL when present), optional `bio` (`LocalizedText` when
       present); returns exactly one `left` per invalid input; is exported.
-- [ ] `BlogPost.create()` requires `status`, `featured`, `author`; rejects an
-      invalid `status` value; rejects `PUBLISHED` + zero tags with a
-      `ValidationError`.
-- [ ] `BlogPost.create()` with `status: DRAFT` and zero tags succeeds.
+- [ ] `BlogPost.create()` accepts optional `status` / `featured`, defaulting to
+      `DRAFT` / `false`; rejects an invalid `status` value; rejects `PUBLISHED` +
+      zero tags — both with `BlogPost.ERROR_CODE`.
+- [ ] `BlogPost.create()` with `status: DRAFT` (or default) and zero tags succeeds.
 - [ ] `publish()` sets `status` to `PUBLISHED` from `DRAFT`/`ARCHIVED` when the
       post has ≥ 1 tag; returns `left` when already `PUBLISHED`; returns `left`
       when the post has no tags.
@@ -226,8 +243,8 @@ No change. Called out only so the implementer does not touch it.
 - [ ] Both methods mutate only via the method (no public setter added).
 - [ ] Failure paths reuse `BlogPost.ERROR_CODE` (default), or, if review adopts a
       distinct code, it has `pt-BR` + `en-US` entries in `ERROR_MESSAGE`.
-- [ ] `BlogPostBuilder` supports the new fields with valid defaults; all existing
-      `packages/core` blog tests pass unchanged in intent.
+- [ ] `BlogPostBuilder` supports `withStatus` / `withFeatured` with valid
+      defaults; all existing `packages/core` blog tests pass unchanged.
 - [ ] `pnpm --filter @repo/core test` green; `pnpm --filter @repo/core lint` and
       `types` clean.
 - [ ] No file in `packages/core/src/blog` exceeds 200 lines.

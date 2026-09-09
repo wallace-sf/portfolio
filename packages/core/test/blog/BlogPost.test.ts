@@ -1,5 +1,6 @@
 import {
   BlogPost,
+  BlogPostStatus,
   DateTime,
   Image,
   ILocalizedTextInput,
@@ -251,6 +252,81 @@ describe('BlogPost', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Image.ERROR_CODE_URL);
+    });
+  });
+
+  describe('status and featured', () => {
+    it('should default status to DRAFT and featured to false when omitted', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withStatus(undefined as unknown as BlogPostStatus)
+          .withFeatured(undefined as unknown as boolean)
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.status).toBe(BlogPostStatus.DRAFT);
+      expect(result.value.featured).toBe(false);
+    });
+
+    it('should expose the provided status and featured flag', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withStatus(BlogPostStatus.PUBLISHED)
+          .withFeatured(true)
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.status).toBe(BlogPostStatus.PUBLISHED);
+      expect(result.value.featured).toBe(true);
+    });
+
+    it('should create a DRAFT post with no tags', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withStatus(BlogPostStatus.DRAFT)
+          .withTags([])
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+    });
+
+    it('should create a PUBLISHED post that has at least one tag', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withStatus(BlogPostStatus.PUBLISHED)
+          .withTags(['nextjs'])
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+    });
+
+    it('should return Left when status is not a BlogPostStatus value', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withStatus('SCHEDULED' as BlogPostStatus)
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(BlogPost.ERROR_CODE);
+    });
+
+    it('should return Left when a PUBLISHED post has no tags', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withStatus(BlogPostStatus.PUBLISHED)
+          .withTags([])
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(BlogPost.ERROR_CODE);
     });
   });
 
