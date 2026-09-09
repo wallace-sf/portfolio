@@ -15,6 +15,7 @@ import {
   right,
 } from '../../shared';
 import { Tag } from '../value-objects/Tag';
+import { BlogPostStatus } from './BlogPostStatus';
 
 export interface IBlogPostImage {
   url: string;
@@ -28,6 +29,8 @@ export interface IBlogPostProps extends IEntityProps {
   content: ILocalizedTextInput;
   tags: string[];
   publishedAt: string;
+  status?: BlogPostStatus;
+  featured?: boolean;
   coverImage?: IBlogPostImage;
   thumbnailImage?: IBlogPostImage;
 }
@@ -41,6 +44,9 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
   public readonly content: LocalizedText;
   public readonly tags: Tag[];
   public readonly publishedAt: DateTime;
+  /** Mutable only through `publish()` / `archive()` — no external setter, like `Project.status`. */
+  public status: BlogPostStatus;
+  public readonly featured: boolean;
   public readonly coverImage: Image | undefined;
   public readonly thumbnailImage: Image | undefined;
 
@@ -52,6 +58,8 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     content: LocalizedText,
     tags: Tag[],
     publishedAt: DateTime,
+    status: BlogPostStatus,
+    featured: boolean,
     coverImage: Image | undefined,
     thumbnailImage: Image | undefined,
   ) {
@@ -62,6 +70,8 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     this.content = content;
     this.tags = tags;
     this.publishedAt = publishedAt;
+    this.status = status;
+    this.featured = featured;
     this.coverImage = coverImage;
     this.thumbnailImage = thumbnailImage;
   }
@@ -104,6 +114,18 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     if (tagsResult.isLeft()) return left(tagsResult.value);
     const tags = tagsResult.value as Tag[];
 
+    const status = props.status ?? BlogPostStatus.DRAFT;
+    const featured = props.featured ?? false;
+
+    {
+      const { isValid } = Validator.of(status)
+        .in(Object.values(BlogPostStatus))
+        .refine((s) => s !== BlogPostStatus.PUBLISHED || tags.length > 0)
+        .validate();
+      if (!isValid)
+        return left(new ValidationError({ code: BlogPost.ERROR_CODE }));
+    }
+
     return right(
       new BlogPost(
         props,
@@ -113,6 +135,8 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
         content,
         tags,
         publishedAt,
+        status,
+        featured,
         coverImage as Image | undefined,
         thumbnailImage as Image | undefined,
       ),

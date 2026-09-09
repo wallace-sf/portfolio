@@ -1,4 +1,9 @@
-import { BlogPost, IBlogPostProps, ILocalizedTextInput } from '~/index';
+import {
+  BlogPost,
+  BlogPostStatus,
+  IBlogPostProps,
+  ILocalizedTextInput,
+} from '~/index';
 
 import { Data } from '../generators';
 import { EntityBuilder } from './EntityBuilder';
@@ -28,6 +33,8 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
       },
       tags: ['nextjs', 'architecture'],
       publishedAt: '2026-08-01T00:00:00.000Z',
+      status: BlogPostStatus.DRAFT,
+      featured: false,
     });
   }
 
@@ -68,6 +75,16 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
 
   public withPublishedAt(publishedAt: string): BlogPostBuilder {
     this._props.publishedAt = publishedAt;
+    return this;
+  }
+
+  public withStatus(status: BlogPostStatus): BlogPostBuilder {
+    this._props.status = status;
+    return this;
+  }
+
+  public withFeatured(featured: boolean): BlogPostBuilder {
+    this._props.featured = featured;
     return this;
   }
 
