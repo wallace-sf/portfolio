@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { BlogPost, type IBlogPostProps } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus, type IBlogPostProps } from '@repo/core/blog';
 
 import BlogListingPage, { generateMetadata } from '~/app/[locale]/blog/page';
 
@@ -53,6 +53,7 @@ function makePost(overrides: Partial<IBlogPostProps> = {}): BlogPost {
     content: { 'en-US': '# Body', 'pt-BR': '# Corpo', es: '# Cuerpo' },
     tags: ['nextjs'],
     publishedAt: '2026-08-01',
+    status: BlogPostStatus.PUBLISHED,
     ...overrides,
   });
   if (result.isLeft()) throw result.value;

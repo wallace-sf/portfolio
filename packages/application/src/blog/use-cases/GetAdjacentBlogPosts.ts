@@ -18,6 +18,7 @@ import {
 } from '../dtos/BlogPostNavigationDTO';
 import { IBlogPostRepository } from '../ports';
 import { newestFirst } from './newest-first';
+import { publishedOnly } from './published-only';
 
 export type GetAdjacentBlogPostsInput = {
   slug: string;
@@ -58,7 +59,7 @@ export class GetAdjacentBlogPosts extends UseCase<
       );
     }
 
-    const ordered = newestFirst(posts);
+    const ordered = newestFirst(publishedOnly(posts));
     const index = ordered.findIndex(
       (post) => post.slug.value === slugResult.value.value,
     );
@@ -75,6 +76,10 @@ export class GetAdjacentBlogPosts extends UseCase<
   }
 
   private toLink(post: BlogPost, locale: Locale): BlogPostLinkDTO {
-    return { slug: post.slug.value, title: post.title.get(locale) };
+    return {
+      slug: post.slug.value,
+      title: post.title.get(locale),
+      publishedAt: post.publishedAt.value,
+    };
   }
 }

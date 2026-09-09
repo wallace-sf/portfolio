@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { BlogPost, IBlogPostProps } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
 import { NotFoundError } from '@repo/core/shared';
 
 import { IBlogPostRepository } from '~/blog/ports';
@@ -17,13 +17,19 @@ const BASE: IBlogPostProps = {
   content: { 'en-US': 'C', 'pt-BR': 'C', es: 'C' },
   tags: ['nextjs'],
   publishedAt: '2026-08-01T00:00:00.000Z',
+  status: BlogPostStatus.PUBLISHED,
 };
 
-function makePost(slug: string, publishedAt: string): BlogPost {
+function makePost(
+  slug: string,
+  publishedAt: string,
+  status: BlogPostStatus = BlogPostStatus.PUBLISHED,
+): BlogPost {
   const result = BlogPost.create({
     ...BASE,
     slug,
     publishedAt,
+    status,
     title: {
       'en-US': `Title ${slug}`,
       'pt-BR': `Título ${slug}`,
@@ -61,8 +67,16 @@ describe('GetAdjacentBlogPosts', () => {
     expect(result.isRight()).toBe(true);
     if (!result.isRight()) return;
     expect(result.value).toEqual({
-      newer: { slug: 'newest', title: 'Título newest' },
-      older: { slug: 'oldest', title: 'Título oldest' },
+      newer: {
+        slug: 'newest',
+        title: 'Título newest',
+        publishedAt: '2026-08-22T00:00:00.000Z',
+      },
+      older: {
+        slug: 'oldest',
+        title: 'Título oldest',
+        publishedAt: '2026-08-08T00:00:00.000Z',
+      },
     });
   });
 
@@ -78,7 +92,11 @@ describe('GetAdjacentBlogPosts', () => {
 
     expect(result.isRight() && result.value).toEqual({
       newer: undefined,
-      older: { slug: 'middle', title: 'Title middle' },
+      older: {
+        slug: 'middle',
+        title: 'Title middle',
+        publishedAt: '2026-08-15T00:00:00.000Z',
+      },
     });
   });
 
@@ -93,7 +111,11 @@ describe('GetAdjacentBlogPosts', () => {
     });
 
     expect(result.isRight() && result.value).toEqual({
-      newer: { slug: 'middle', title: 'Title middle' },
+      newer: {
+        slug: 'middle',
+        title: 'Title middle',
+        publishedAt: '2026-08-15T00:00:00.000Z',
+      },
       older: undefined,
     });
   });
@@ -112,6 +134,52 @@ describe('GetAdjacentBlogPosts', () => {
       newer: undefined,
       older: undefined,
     });
+  });
+
+  it('should skip a DRAFT post sitting between two published posts', async () => {
+    const repo = makeRepository({
+      findAll: vi
+        .fn()
+        .mockResolvedValue([
+          makePost('older-published', '2026-08-01T00:00:00.000Z'),
+          makePost(
+            'hidden-draft',
+            '2026-08-10T00:00:00.000Z',
+            BlogPostStatus.DRAFT,
+          ),
+          makePost('newer-published', '2026-08-20T00:00:00.000Z'),
+        ]),
+    });
+
+    const result = await new GetAdjacentBlogPosts(repo).execute({
+      slug: 'older-published',
+      locale: 'en-US',
+    });
+
+    expect(result.isRight()).toBe(true);
+    if (!result.isRight()) return;
+    expect(result.value.newer?.slug).toBe('newer-published');
+    expect(result.value.older).toBeUndefined();
+  });
+
+  it('should return NotFoundError when the requested slug is a DRAFT post', async () => {
+    const repo = makeRepository({
+      findAll: vi
+        .fn()
+        .mockResolvedValue([
+          makePost('published', '2026-08-01T00:00:00.000Z'),
+          makePost('secret', '2026-08-10T00:00:00.000Z', BlogPostStatus.DRAFT),
+        ]),
+    });
+
+    const result = await new GetAdjacentBlogPosts(repo).execute({
+      slug: 'secret',
+      locale: 'en-US',
+    });
+
+    expect(result.isLeft()).toBe(true);
+    if (!result.isLeft()) return;
+    expect(result.value).toBeInstanceOf(NotFoundError);
   });
 
   it('should return NotFoundError when the slug is not among the posts', async () => {

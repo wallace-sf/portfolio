@@ -9,6 +9,7 @@ export type BlogPostSummaryDTO = {
   title: string;
   description: string;
   publishedAt: string;
+  featured: boolean;
   tags: string[];
   coverImage?: BlogPostImageDTO;
   thumbnailImage?: BlogPostImageDTO;

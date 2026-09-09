@@ -8516,7 +8516,7 @@
         "testStrategy": "No dedicated test file for DTO type definitions. Verification occurs through use-case tests (ListBlogPosts, GetBlogPostBySlug) which will assert the featured field is present in the mapped DTOs. TypeScript compilation ensures type safety.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -8527,7 +8527,7 @@
         "testStrategy": "No dedicated test for DTO types. Verification through GetAdjacentBlogPosts test suite, which will assert the publishedAt field is present on the link DTOs. TypeScript compilation ensures type safety.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -8542,7 +8542,7 @@
           2,
           3
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {

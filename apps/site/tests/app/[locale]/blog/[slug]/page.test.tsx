@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { BlogPost } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 
 import BlogPostPage, {
   generateMetadata,
@@ -87,6 +87,7 @@ function makePost(slug: string, publishedAt = '2026-08-01') {
     },
     tags: ['nextjs'],
     publishedAt,
+    status: BlogPostStatus.PUBLISHED,
   });
   if (result.isLeft()) throw result.value;
   return result.value;
@@ -152,8 +153,9 @@ describe('BlogPostPage', () => {
           title: { 'en-US': 'T', 'pt-BR': 'T', es: 'T' },
           description: { 'en-US': 'D', 'pt-BR': 'D', es: 'D' },
           content: { 'en-US': 'B', 'pt-BR': 'B', es: 'B' },
-          tags: [],
+          tags: ['nextjs'],
           publishedAt: '2026-08-01',
+          status: BlogPostStatus.PUBLISHED,
           coverImage: {
             url: 'https://cdn/cover.webp',
             alt: { 'en-US': 'Cover', 'pt-BR': 'Capa', es: 'Portada' },
