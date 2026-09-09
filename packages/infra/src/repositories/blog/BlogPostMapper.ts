@@ -1,4 +1,4 @@
-import { BlogPost, IBlogPostProps } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
 import { ILocalizedTextInput, Locale } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
@@ -32,6 +32,10 @@ export class BlogPostMapper {
       content: toLocalizedInput(locales, 'content'),
       tags: meta.tags,
       publishedAt: meta.publishedAt,
+      // File-backed posts are all live. This repository — and this line — is
+      // removed in Blog v2 PRD 3, when content moves to Postgres with an
+      // explicit `status` column.
+      status: BlogPostStatus.PUBLISHED,
       coverImage: meta.coverImage,
       thumbnailImage: meta.thumbnailImage,
     };
