@@ -1,4 +1,4 @@
-import { BlogPost } from '@repo/core/blog';
+import { BlogPost, BlogPostSequence } from '@repo/core/blog';
 import {
   DomainError,
   Either,
@@ -17,7 +17,6 @@ import {
   BlogPostNavigationDTO,
 } from '../dtos/BlogPostNavigationDTO';
 import { IBlogPostRepository } from '../ports';
-import { newestFirst } from './newest-first';
 import { publishedOnly } from './published-only';
 
 export type GetAdjacentBlogPostsInput = {
@@ -27,9 +26,8 @@ export type GetAdjacentBlogPostsInput = {
 
 /**
  * Resolves the posts immediately newer and older than `slug` in publication
- * order. Composes the domain's publication order (`BlogPost.compareByPublication`,
- * applied newest-first) with the adjacency lookup, so the delivery layer only
- * renders the result.
+ * order. Delegates the adjacency lookup to the `BlogPostSequence` domain
+ * service and only maps the result to DTOs — the delivery layer just renders.
  */
 export class GetAdjacentBlogPosts extends UseCase<
   GetAdjacentBlogPostsInput,
@@ -59,19 +57,20 @@ export class GetAdjacentBlogPosts extends UseCase<
       );
     }
 
-    const ordered = newestFirst(publishedOnly(posts));
-    const index = ordered.findIndex(
-      (post) => post.slug.value === slugResult.value.value,
+    const neighbours = BlogPostSequence.neighboursOf(
+      publishedOnly(posts),
+      slugResult.value,
     );
 
-    if (index === -1) return left(new NotFoundError({ slug: input.slug }));
-
-    const newer = index > 0 ? ordered[index - 1] : undefined;
-    const older = index < ordered.length - 1 ? ordered[index + 1] : undefined;
+    if (!neighbours) return left(new NotFoundError({ slug: input.slug }));
 
     return right({
-      newer: newer ? this.toLink(newer, input.locale) : undefined,
-      older: older ? this.toLink(older, input.locale) : undefined,
+      newer: neighbours.newer
+        ? this.toLink(neighbours.newer, input.locale)
+        : undefined,
+      older: neighbours.older
+        ? this.toLink(neighbours.older, input.locale)
+        : undefined,
     });
   }
 

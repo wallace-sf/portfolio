@@ -119,7 +119,7 @@ src/
       skill/factory/            → SkillFactory.ts
       */repositories/           → IExperienceRepository.ts, IProfileRepository.ts, etc.
 
-  blog/                         → BlogPost aggregate root, Tag VO, IBlogPostRepository
+  blog/                         → BlogPost aggregate root, Tag VO, BlogPostSequence service, IBlogPostRepository
   identity/                     → User, Role, IUserRepository
   contact/                      → Stub at core; application use case + infra email
 ```
@@ -132,7 +132,9 @@ src/
 - **Project** — aggregate root with slug, cover image, period, status, and localized fields
 - **Experience** — aggregate root that owns `ExperienceSkill[]`, `DateRange`, logo, and description
 - **BlogPost** — aggregate root; `Tag` as a VO inside Blog context. Publication
-  order is a domain rule (`BlogPost.compareByPublication`).
+  order is a domain rule (`BlogPost.compareByPublication`); chronological
+  adjacency (newer/older post) is a domain service (`BlogPostSequence`) — see
+  [09-PATTERNS § Domain Service](./09-PATTERNS.md#domain-service).
   - **MVP:** content authored as MDX-in-Git (`content/posts/<slug>/<locale>.mdx`),
     read by `FileSystemBlogPostRepository`, rendered by `apps/site` Server
     Components.
