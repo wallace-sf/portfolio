@@ -10,7 +10,7 @@
     "format:check": "turbo format:check",
     "types": "turbo types",
     "test": "turbo test",
-    "test:ci": "pnpm -r --filter=!@repo/infra test",
+    "test:ci": "pnpm -r test",
     "types:ci": "pnpm -r types",
     "seed": "pnpm --filter @repo/infra db:seed"
   },

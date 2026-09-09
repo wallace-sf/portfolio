@@ -11,6 +11,7 @@ Concrete implementations of the ports defined in `packages/core` and `packages/a
 - [DI Container](#di-container)
 - [Email Adapter](#email-adapter)
 - [Environment Variables](#environment-variables)
+- [Testing](#testing)
 - [Structure](#structure)
 
 ---
@@ -66,6 +67,36 @@ const result = await container.getProjectBySlug.execute({ slug });
 | `SUPABASE_URL` | When using Supabase Auth | Supabase project URL |
 | `SUPABASE_ANON_KEY` | When using Supabase Auth | Anonymous key (server/edge only) |
 | `SUPABASE_SERVICE_ROLE_KEY` | When using Supabase Auth | Service role key — **never expose to the browser** |
+
+---
+
+## Testing
+
+This package has two tiers of tests:
+
+| Tier | Files | Needs a database? | Command |
+|------|-------|-------------------|---------|
+| **Unit** | `*.test.ts` (mappers, `FileSystemBlogPostRepository`, `ResendEmailService`, `container`, …) | No | `pnpm --filter @repo/infra test` |
+| **Integration** | `*.integration.test.ts` (`PrismaProjectRepository`, `PrismaProfileRepository`, `PrismaExperienceRepository`, `PrismaUserRepository`, `SupabaseAuthenticationGateway`) | Yes — a reachable Postgres / Supabase project | `pnpm --filter @repo/infra test:integration` |
+
+- The default `test` script **excludes** the integration suites, so a fresh
+  clone (or a paused dev database) never fails `@repo/infra`'s tests. The
+  root-level `pnpm test:ci` (run by the lefthook `pre-commit` hook) picks up the
+  infra **unit** tests this way.
+- Each integration suite is also individually guarded — it self-skips (hooks
+  included) when its env is absent — so `test:integration` degrades to "0 tests"
+  rather than erroring on a machine with no database.
+- **Env for integration tests** — copy `.env.example` to `.env.test.local` and
+  fill in:
+  - `DIRECT_URL` — a **session-mode** (port 5432) connection string to the
+    **dev** Supabase project. The Prisma suites connect through it (bypasses
+    PgBouncer). **Never point it at production** — the suites truncate tables.
+  - `SUPABASE_TEST_URL` / `SUPABASE_TEST_ANON_KEY` /
+    `SUPABASE_TEST_SERVICE_ROLE_KEY` — only for the auth-gateway suite; it
+    creates and deletes a throw-away user.
+- There is **no hosted CI** for this repo (GitHub Actions is disabled — no
+  billing). Running the integration suites is manual. A CI job with a Postgres
+  service is deferred until Actions is re-enabled.
 
 ---
 

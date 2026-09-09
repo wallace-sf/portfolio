@@ -27,10 +27,11 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx --env-file=.env prisma/seed.ts",
     "db:backup": "tsx --env-file=.env scripts/backup-db.ts",
-    "test": "vitest run",
+    "test": "vitest run --exclude '**/*.integration.test.ts'",
+    "test:integration": "vitest run integration.test.ts",
     "send:email:manual": "tsx --env-file=.env scripts/send-email-manual.ts",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:watch": "vitest --exclude '**/*.integration.test.ts'",
+    "test:coverage": "vitest run --coverage --exclude '**/*.integration.test.ts'"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
