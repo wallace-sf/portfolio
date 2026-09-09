@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { BlogPostStatus } from '@repo/core/blog';
+
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
 import {
   BlogPostMapper,
@@ -64,6 +66,7 @@ describe('BlogPostMapper', () => {
       expect(post.content.get('en-US')).toContain('English body.');
       expect(post.tags.map((t) => t.value)).toEqual(['nextjs', 'architecture']);
       expect(post.publishedAt.value).toBe('2026-08-01');
+      expect(post.status).toBe(BlogPostStatus.PUBLISHED);
       expect(post.coverImage?.url.value).toBe(coverImage.url);
       expect(post.coverImage?.alt.get('pt-BR')).toBe('Capa');
       expect(post.thumbnailImage?.url.value).toBe(thumbnailImage.url);
