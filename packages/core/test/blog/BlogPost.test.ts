@@ -295,6 +295,18 @@ describe('BlogPost', () => {
       expect(result.isRight()).toBe(true);
     });
 
+    it('should create a post with no tags when status is omitted', () => {
+      const { status: _status, ...propsWithoutStatus } = BlogPostBuilder.build()
+        .withTags([])
+        .toProps();
+
+      const result = BlogPost.create(propsWithoutStatus);
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.status).toBe(BlogPostStatus.DRAFT);
+    });
+
     it('should create a PUBLISHED post that has at least one tag', () => {
       const result = BlogPost.create(
         BlogPostBuilder.build()
@@ -425,6 +437,35 @@ describe('BlogPost', () => {
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(BlogPost.ERROR_CODE);
       expect(post.status).toBe(BlogPostStatus.ARCHIVED);
+    });
+  });
+
+  describe('status lifecycle', () => {
+    it('should move through DRAFT -> PUBLISHED -> ARCHIVED -> PUBLISHED', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags(['nextjs'])
+        .now();
+
+      expect(post.publish().isRight()).toBe(true);
+      expect(post.status).toBe(BlogPostStatus.PUBLISHED);
+
+      expect(post.archive().isRight()).toBe(true);
+      expect(post.status).toBe(BlogPostStatus.ARCHIVED);
+
+      expect(post.publish().isRight()).toBe(true);
+      expect(post.status).toBe(BlogPostStatus.PUBLISHED);
+    });
+
+    it('should reject a redundant transition without changing status', () => {
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags(['nextjs'])
+        .now();
+
+      expect(post.publish().isRight()).toBe(true);
+      expect(post.publish().isLeft()).toBe(true);
+      expect(post.status).toBe(BlogPostStatus.PUBLISHED);
     });
   });
 
