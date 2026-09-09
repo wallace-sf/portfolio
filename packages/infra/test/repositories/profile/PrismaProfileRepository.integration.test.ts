@@ -12,20 +12,28 @@ const db = new PrismaClient({
 });
 const repo = new PrismaProfileRepository(db);
 
+// Skipped as a whole (hooks included) when there is no reachable database —
+// a fresh clone or a paused dev project must not fail the @repo/infra suite.
+// Run explicitly with `pnpm --filter @repo/infra test:integration`.
+const missingDbEnv = !process.env.DIRECT_URL;
+
 beforeAll(async () => {
+  if (missingDbEnv) return;
   await db.profile.deleteMany({});
 });
 
 afterEach(async () => {
+  if (missingDbEnv) return;
   await db.profile.deleteMany({});
 });
 
 afterAll(async () => {
+  if (missingDbEnv) return;
   await seedProfile(db);
   await db.$disconnect();
 });
 
-describe('PrismaProfileRepository', () => {
+describe.skipIf(missingDbEnv)('PrismaProfileRepository (integration)', () => {
   describe('find', () => {
     it('should return null when no profile exists', async () => {
       const profile = await repo.find();

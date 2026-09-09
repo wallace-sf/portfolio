@@ -1,3 +1,11 @@
+# GitHub Actions is currently disabled for this account (no billing), so this
+# workflow does not run on push/PR. The real enforcement point is the local
+# lefthook `pre-commit` hook (`pnpm format:check` / `lint:check` / `types:ci` /
+# `test:ci`) and `pre-push` (`pnpm build`). `test:ci` runs every package's
+# `test`, including `@repo/infra`'s unit tests; the infra *integration* suites
+# (`*.integration.test.ts`) are opt-in via `pnpm --filter @repo/infra
+# test:integration` and need a reachable database — see packages/infra/README.md.
+# Kept here (dispatch-only) so CI is one billing toggle away from working.
 name: CI
 
 on:
