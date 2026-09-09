@@ -8494,5 +8494,92 @@
       "updated": "2026-09-03T03:04:49.282Z",
       "description": "Tasks for blog-v2-phase-1 context"
     }
+  },
+  "blog-v2-phase-2": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Create publishedOnly filtering helper",
+        "description": "Implement a module-local helper function that filters blog posts to include only those with PUBLISHED status, mirroring the structure of the existing newestFirst helper.",
+        "details": "Create `packages/application/src/blog/use-cases/published-only.ts` with a function that filters posts by `BlogPostStatus.PUBLISHED`. Import `BlogPost` and `BlogPostStatus` from `@repo/core/blog`. The helper should:\n\n```typescript\nimport { BlogPost, BlogPostStatus } from '@repo/core/blog';\n\nexport function publishedOnly(posts: BlogPost[]): BlogPost[] {\n  return posts.filter((post) => post.status === BlogPostStatus.PUBLISHED);\n}\n```\n\nThe function returns a new array (non-mutating) and serves as the public-audience filter at the application layer. Keep it module-local (not exported from `use-cases/index.ts`), matching the pattern of `newest-first.ts`.\n\nCreate corresponding test file `packages/application/test/blog/published-only.test.ts` with test cases:\n- should keep PUBLISHED posts and drop DRAFT posts\n- should drop ARCHIVED posts\n- should return empty array for empty input\n- should return a new array (input not mutated)\n\nFollow the existing test structure from `newest-first.test.ts` using vitest, the `BASE` props pattern, and `makePost` helper.",
+        "testStrategy": "Unit tests verifying: (1) PUBLISHED posts are kept, (2) DRAFT and ARCHIVED posts are filtered out, (3) empty input returns empty output, (4) original array is not mutated. Use vitest with the existing test helper patterns (makeBlogPost with status overrides).",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Add featured field to BlogPostSummaryDTO",
+        "description": "Extend BlogPostSummaryDTO type definition to include the featured boolean field, which will be populated from the domain BlogPost.featured property.",
+        "details": "Update `packages/application/src/blog/dtos/BlogPostSummaryDTO.ts` to add:\n\n```typescript\nexport type BlogPostSummaryDTO = {\n  slug: string;\n  title: string;\n  description: string;\n  publishedAt: string;\n  featured: boolean;  // ← new required field\n  tags: string[];\n  coverImage?: BlogPostImageDTO;\n  thumbnailImage?: BlogPostImageDTO;\n};\n```\n\nNo changes needed to `BlogPostDetailDTO` as it already inherits `featured` through the intersection with `BlogPostSummaryDTO`. No barrel export changes needed since the type is already exported from `dtos/index.ts`.\n\nThe `featured` field is a required field (not optional) — every published post has a `featured` flag from the domain (defaults to `false`).",
+        "testStrategy": "No dedicated test file for DTO type definitions. Verification occurs through use-case tests (ListBlogPosts, GetBlogPostBySlug) which will assert the featured field is present in the mapped DTOs. TypeScript compilation ensures type safety.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Add publishedAt field to BlogPostLinkDTO",
+        "description": "Extend BlogPostLinkDTO type definition to include the publishedAt string field, needed for dated hrefs in future PRDs.",
+        "details": "Update `packages/application/src/blog/dtos/BlogPostNavigationDTO.ts` to modify `BlogPostLinkDTO`:\n\n```typescript\nexport type BlogPostLinkDTO = {\n  slug: string;\n  title: string;\n  publishedAt: string;  // ← new required field\n};\n```\n\nThis field will be populated from `post.publishedAt.value` in the `GetAdjacentBlogPosts.toLink()` mapper. The field is required (not optional) as every post has a publishedAt.\n\n`BlogPostNavigationDTO` remains unchanged — it already references `BlogPostLinkDTO` for `newer` and `older`.",
+        "testStrategy": "No dedicated test for DTO types. Verification through GetAdjacentBlogPosts test suite, which will assert the publishedAt field is present on the link DTOs. TypeScript compilation ensures type safety.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Update use cases with status filtering and DTO mappers",
+        "description": "Integrate publishedOnly filter into ListBlogPosts, GetAdjacentBlogPosts, and GetBlogPostBySlug use cases, and update their DTO mappers to populate the new featured and publishedAt fields.",
+        "details": "**ListBlogPosts** (`packages/application/src/blog/use-cases/ListBlogPosts.ts`):\n- Import `publishedOnly` from `'./published-only'`\n- In `execute()`, change line 26 to: `const posts = newestFirst(publishedOnly(await this.repository.findAll()));`\n- In `toDTO()` method (line 37), add: `featured: post.featured,` to the returned DTO\n\n**GetAdjacentBlogPosts** (`packages/application/src/blog/use-cases/GetAdjacentBlogPosts.ts`):\n- Import `publishedOnly` from `'./published-only'`\n- Import `BlogPostStatus` from `'@repo/core/blog'`\n- In `execute()`, change line 61 to: `const ordered = newestFirst(publishedOnly(posts));`\n- In `toLink()` method (line 77), add: `publishedAt: post.publishedAt.value,` to the returned DTO\n- Adjacency now skips non-published posts; a draft slug returns NotFoundError automatically (index === -1)\n\n**GetBlogPostBySlug** (`packages/application/src/blog/use-cases/GetBlogPostBySlug.ts`):\n- Import `BlogPostStatus` from `'@repo/core/blog'`\n- After the `!post` null check (line 51), before `return right(...)`, add:\n```typescript\nif (post.status !== BlogPostStatus.PUBLISHED) {\n  return left(new NotFoundError({ slug: input.slug }));\n}\n```\n- In `toDTO()` method (line 58), add: `featured: post.featured,` to the returned DTO\n\nNo new error codes; reuses existing `NotFoundError` and `DomainError(FETCH_FAILED)`.",
+        "testStrategy": "Update existing test suites: (1) ListBlogPosts.test.ts — add test for filtering mixed statuses, assert featured field present; (2) GetAdjacentBlogPosts.test.ts — add test for skipping DRAFT between published posts, assert publishedAt on links, test requesting DRAFT slug returns NotFoundError; (3) GetBlogPostBySlug.test.ts — add tests for DRAFT/ARCHIVED slug returning NotFoundError, assert featured field present. All existing tests must pass.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Update FileSystemBlogPostRepository mapper to default status to PUBLISHED",
+        "description": "Modify BlogPostMapper.toDomain to explicitly set status as PUBLISHED for file-backed posts, ensuring they remain visible until PRD 3 replaces this repository.",
+        "details": "Update `packages/infra/src/repositories/blog/BlogPostMapper.ts`:\n\nIn the `toDomain` method (line 27), modify the `props` object construction to include:\n```typescript\nconst props: IBlogPostProps = {\n  slug: meta.slug,\n  title: toLocalizedInput(locales, 'title'),\n  description: toLocalizedInput(locales, 'description'),\n  content: toLocalizedInput(locales, 'content'),\n  tags: meta.tags,\n  publishedAt: meta.publishedAt,\n  status: BlogPostStatus.PUBLISHED,  // ← new line\n  coverImage: meta.coverImage,\n  thumbnailImage: meta.thumbnailImage,\n};\n```\n\nImport `BlogPostStatus` from `@repo/core/blog` at the top of the file.\n\nAdd a comment explaining this is temporary until PRD 3 replaces file-backed posts with Postgres. Without this, the domain's default (`DRAFT`) would empty the blog under the new `publishedOnly` filter.\n\nDo NOT extend `MetaJsonSchema` — not worth it for a repository being deleted in the next PRD. Leave `featured` to the domain default (`false`).",
+        "testStrategy": "Update `packages/infra/test/repositories/blog/BlogPostMapper.test.ts`: add assertion in the main mapping test that `post.status === BlogPostStatus.PUBLISHED`. Import `BlogPostStatus` from `@repo/core/blog`. Verify existing tests still pass (particularly the invalid slug InfrastructureError test).",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Verify integration and acceptance criteria",
+        "description": "Run full test suite, build verification, and manual checks to ensure all acceptance criteria are met and the blog remains functional with status filtering in place.",
+        "details": "Execute the following verification steps:\n\n1. **Unit tests**: Run `pnpm --filter @repo/application test` — all tests green, including new published-only tests and updated use-case tests\n2. **Infra tests**: Run `pnpm --filter @repo/infra test` — mapper test passes with status assertion\n3. **Type checking**: Run `pnpm --filter @repo/application types` and `pnpm --filter @repo/infra types` — no errors\n4. **Linting**: Run `pnpm --filter @repo/application lint` — no violations\n5. **Build verification**: Run `pnpm --filter @repo/site build` — succeeds without errors\n6. **Blog content check**: After build, verify the site's blog listing (`/blog`) shows all 4 existing file-backed posts (they should all be PUBLISHED via the mapper)\n7. **RSS/sitemap**: Verify generated RSS feed and sitemap still include all posts (they call the same use cases)\n\n**Acceptance criteria checklist**:\n- [ ] `publishedOnly(posts)` returns only PUBLISHED posts as new array\n- [ ] `ListBlogPosts` omits DRAFT/ARCHIVED from results\n- [ ] `GetAdjacentBlogPosts` computes prev/next over published posts only; non-published slug → NotFoundError\n- [ ] `GetBlogPostBySlug` returns NotFoundError for DRAFT/ARCHIVED posts\n- [ ] `GetBlogPostBySlug` / `ListBlogPosts` return published posts unchanged otherwise\n- [ ] `BlogPostSummaryDTO.featured` and `BlogPostLinkDTO.publishedAt` populated from domain\n- [ ] File-backed posts load as PUBLISHED; existing blog listing/RSS/sitemap show all 4 posts\n- [ ] No changes to `IBlogPostRepository`; no new error code; no new use case\n\nIf any test fails or build breaks, investigate and fix before considering the task complete. Document any deviations from the PRD.",
+        "testStrategy": "Integration verification through: automated test suite execution (unit + integration tests), TypeScript compilation, linting, production build, and manual inspection of generated blog routes. Success criteria: all automated tests pass, build succeeds, blog content remains visible.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-09-09T14:02:19.341Z",
+      "updated": "2026-09-09T14:02:19.341Z",
+      "description": "Tasks for blog-v2-phase-2 context"
+    }
   }
 }
