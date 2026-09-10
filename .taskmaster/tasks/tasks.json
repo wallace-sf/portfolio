@@ -8585,73 +8585,78 @@
   "blog-v2-phase-3": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Add Prisma schema and migration for BlogPost table",
         "description": "Create BlogPost model with BlogPostStatus enum in schema.prisma and generate migration",
         "details": "Add BlogPostStatus enum (DRAFT, PUBLISHED, ARCHIVED) and BlogPost model to packages/infra/prisma/schema.prisma with:\n- id (uuid), slug (unique string)\n- title, description, content, coverImageAlt, thumbnailImageAlt (Json for localization)\n- author (Json), tags (String[])\n- coverImageUrl, thumbnailImageUrl (nullable String)\n- publishedAt (DateTime), status (BlogPostStatus default DRAFT), featured (Boolean default false)\n- createdAt, updatedAt (DateTime), deletedAt (nullable DateTime)\n- Indexes: [publishedAt], [status, publishedAt]\n\nRun `prisma migrate dev --name add_blog_post_table` to generate migration.\nRun `prisma generate` to update Prisma client with db.blogPost.\n\nMirror the Project table conventions (localized Json fields, nullable images, soft delete).\nConfirm DATABASE_URL/DIRECT_URL point to portfolio-dev before running migration.",
         "testStrategy": "Verify migration file created in packages/infra/prisma/migrations/*_add_blog_post_table/migration.sql. Run `prisma migrate status` to confirm clean state. Check that BlogPost table, BlogPostStatus enum, and indexes exist in portfolio-dev database. Verify Prisma client regenerated (db.blogPost available in TypeScript).",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-09-10T15:09:40.698Z"
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Add author field to BlogPost domain entity and update core layer",
         "description": "Make author required on IBlogPostProps, wire Author.create in BlogPost.create(), update BlogPostBuilder",
         "details": "In packages/core/src/blog/entities/BlogPost.ts:\n- Add `author: IAuthorProps` (required) to IBlogPostProps\n- Import Author from '../value-objects/Author'\n- Add `Author.create(props.author)` to the collect([...]) array in create() (propagates left on invalid author)\n- Add `public readonly author: Author` property and assign in constructor\n- Keep status/featured optional with defaults unchanged\n\nIn packages/core/test/helpers/builders/BlogPostBuilder.ts:\n- Add withAuthor(props: IAuthorProps) method\n- Default author to stable fixture: { name: 'Wallace Ferreira', avatarUrl: 'https://[supabase-url]/storage/v1/object/public/avatars/wallace.jpg', url: 'https://wallaceferreira.dev' }\n- Existing build() defaults (status: DRAFT, featured: false) unchanged\n\nUpdate packages/core/test/blog/BlogPost.test.ts:\n- Add author key to all BlogPost.create() calls or switch to builder\n- Add tests: creates post when author valid, returns left when author.name/avatarUrl invalid, exposes author on created post\n- Existing status/invariant/transition tests still pass\n\nUse Validator chain pattern; no hardcoded messages in domain code.",
         "testStrategy": "Run `pnpm --filter @repo/core test`. All existing BlogPost tests pass. New tests verify: (1) creates post when author is valid, (2) returns single left when author.name invalid (INVALID_PERSON_NAME), (3) returns single left when author.avatarUrl invalid (INVALID_URL), (4) exposes author property on created BlogPost. Builder test verifies withAuthor() and default author fixture work.",
         "priority": "high",
         "dependencies": [
-          1
+          "1"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Implement PrismaBlogPostRepository and rewrite BlogPostMapper for Postgres",
         "description": "Create Prisma-backed repository, rewrite mapper to read real Prisma columns, delete FileSystem repository",
         "details": "Create packages/infra/src/repositories/blog/PrismaBlogPostRepository.ts:\n- Implement IBlogPostRepository with constructor(private db: PrismaClient)\n- findAll(): findMany({ where: { deletedAt: null }, orderBy: { publishedAt: 'desc' } }), map via BlogPostMapper.toDomain\n- findBySlug(slug): findFirst({ where: { slug: slug.value, deletedAt: null } }), return mapped or null\n\nRewrite packages/infra/src/repositories/blog/BlogPostMapper.ts:\n- Replace toDomain(meta, locales) with toDomain(raw: PrismaBlogPost): BlogPost\n- Map localized Json → ILocalizedTextInput (cast like ProjectMapper)\n- author Json → IAuthorProps (cast), status: raw.status as BlogPostStatus, featured: raw.featured\n- Images: raw.coverImageUrl ? { url: raw.coverImageUrl, alt: raw.coverImageAlt as ILocalizedTextInput } : undefined (same for thumbnail)\n- publishedAt: raw.publishedAt.toISOString(), created_at/updated_at/deleted_at from row\n- Left → throw InfrastructureError\n- Delete old toLocalizedInput/ParsedLocaleFiles machinery, keep file <200 lines\n\nDelete:\n- packages/infra/src/repositories/blog/FileSystemBlogPostRepository.ts\n- packages/infra/src/repositories/blog/schemas.ts\n- packages/infra/test/repositories/blog/FileSystemBlogPostRepository.test.ts\n- packages/infra/test/fixtures/posts/** (entire directory)\n\nUpdate packages/infra/src/repositories/blog/index.ts: export PrismaBlogPostRepository, remove FileSystemBlogPostRepository export\n\nUpdate packages/infra/src/index.ts: export PrismaBlogPostRepository, drop FileSystemBlogPostRepository + schemas types (MetaJson, MdxFrontmatter, IParsedLocaleFile, ParsedLocaleFiles)\n\nCreate packages/infra/test/factories/prisma-blog-post.factory.ts mirroring buildPrismaProject structure\n\nCreate packages/infra/test/repositories/blog/PrismaBlogPostRepository.integration.test.ts (gated per #1021, *.integration.test.ts suffix):\n- Tests: findAll returns non-deleted posts any status ordered publishedAt desc, findAll excludes soft-deleted, findBySlug returns post/null for missing/null for soft-deleted\n\nRewrite packages/infra/test/repositories/blog/BlogPostMapper.test.ts as unit test (no DB):\n- Maps Prisma row → BlogPost with row's status (not hardcoded PUBLISHED), maps author Json → Author, maps bio when present, maps null cover/thumbnail → undefined, throws InfrastructureError when row violates domain rule (PUBLISHED + empty tags)",
         "testStrategy": "Run `pnpm --filter @repo/infra test` (unit tests) and integration tests (if gated env check passes). Unit: BlogPostMapper maps all fields correctly, throws on domain violation. Integration: PrismaBlogPostRepository.findAll excludes deleted rows, orders desc, findBySlug returns correct post or null. No dangling imports from deleted files verified by `pnpm -w lint` and `pnpm -w types`.",
         "priority": "high",
         "dependencies": [
-          2
+          "2"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Create seedBlogPosts seeder and wire into DI container",
         "description": "Migrate 4 MDX posts to TS seeder, wire blogPostRepository into infra container, update apps/site container",
         "details": "In packages/infra/prisma/seeders.ts:\n- Add ID.blogPosts object with 4 stable uuids (one-validator-one-left, server-components-as-composition-root, the-either-pattern-in-typescript, value-objects-vs-primitives)\n- Create export async function seedBlogPosts(db: PrismaClient)\n- Upsert 4 posts in loop (mirror seedProjects structure):\n  * content: MDX body from content/posts/*/[locale].mdx (frontmatter stripped) as Json { 'en-US': '...', 'pt-BR': '...', es: '...' }\n  * title/description: from each locale file's frontmatter as Json\n  * tags, publishedAt: from meta.json\n  * author: site owner fixture { name: 'Wallace Ferreira', avatarUrl: '[supabase url]', url: 'https://wallaceferreira.dev' } as Json\n  * status: 'PUBLISHED', featured: true for the-either-pattern-in-typescript + value-objects-vs-primitives, false for others\n  * no cover/thumbnail (current posts have none)\n- Wire await seedBlogPosts(prisma) into packages/infra/prisma/seed.ts main()\n\nIn packages/infra/src/container.ts:\n- Add blogPostRepository: IBlogPostRepository to Container type\n- Add blogPostRepository: new PrismaBlogPostRepository(prisma) to makeContainer()\n- Import IBlogPostRepository from @repo/application/blog\n\nIn apps/site/src/lib/server/container.ts:\n- Delete BLOG_CONTENT_DIR const, FileSystemBlogPostRepository import/instantiation, blogPostRepository type extension\n- Change getServerContainer() to return getInfraContainer() directly (now includes blogPostRepository)\n- If nothing else app-specific remains, collapse to re-export\n\nIn apps/site/src/app/[locale]/blog/[slug]/opengraph-image.tsx:\n- Remove stale comment about edge runtime + FileSystemBlogPostRepository\n\nRun `pnpm --filter @repo/infra db:seed` against portfolio-dev to verify 4 posts inserted as PUBLISHED\n\nDelete content/posts/** only AFTER dev seed run confirms posts render identically",
         "testStrategy": "Run `pnpm --filter @repo/infra db:seed` against portfolio-dev. Query database to verify 4 BlogPost rows exist with status=PUBLISHED, correct slugs, localized content, author Json, featured flags. Verify content/posts/ deletion doesn't break build. Run `pnpm --filter @repo/site build` to confirm no filesystem dependency errors. Check /blog listing renders 4 posts from Postgres.",
         "priority": "medium",
         "dependencies": [
-          3
+          "3"
         ],
         "status": "pending",
         "subtasks": []
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Update application DTOs and use cases, verify site build and rendering",
         "description": "Add author to BlogPostSummaryDTO, updatedAt + author.bio to BlogPostDetailDTO, update use-case mappers, verify full site build",
         "details": "Create packages/application/src/blog/dtos/BlogPostAuthorDTO.ts (or inline in BlogPostSummaryDTO.ts):\nexport type BlogPostAuthorDTO = {\n  name: string;\n  avatarUrl: string;\n  url?: string;\n  bio?: string; // only on detail view\n};\n\nUpdate packages/application/src/blog/dtos/BlogPostSummaryDTO.ts:\n- Add author: BlogPostAuthorDTO (without bio)\n\nUpdate packages/application/src/blog/dtos/BlogPostDetailDTO.ts:\n- Change to: BlogPostSummaryDTO & { content: string; updatedAt?: string; author: BlogPostAuthorDTO & { bio?: string } }\n\nUpdate packages/application/src/blog/dtos/index.ts: export BlogPostAuthorDTO\n\nIn packages/application/src/blog/use-cases/ListBlogPosts.ts:\n- Update toDTO to add author: { name: post.author.name.value, avatarUrl: post.author.avatarUrl.value, url: post.author.url?.value }\n\nIn packages/application/src/blog/use-cases/GetBlogPostBySlug.ts:\n- Update toDTO to add author with bio: post.author.bio?.get(locale)\n- Add updatedAt: post.updated_at?.value (if present)\n\nGetAdjacentBlogPosts.toLink unchanged (link DTO has no author)\n\nUpdate packages/application/test/blog/ListBlogPosts.test.ts:\n- Verify author present on every summary DTO\n\nUpdate packages/application/test/blog/GetBlogPostBySlug.test.ts:\n- Verify updatedAt and author.bio (locale-resolved) present on detail DTO\n- Existing published-only/ordering/not-found tests unchanged\n\nManual verification:\n- Run `pnpm --filter @repo/site build` (should be green)\n- Check /en-US/blog, /pt-BR/blog render with DB posts\n- Open one post page, verify content renders\n- Check rss.xml, sitemap.xml, an OG image URL all render",
         "testStrategy": "Run `pnpm --filter @repo/application test`. All use-case + DTO tests pass. New assertions verify: (1) ListBlogPosts returns author on every summary, (2) GetBlogPostBySlug returns updatedAt + author.bio locale-resolved. Manual: `pnpm --filter @repo/site build` succeeds. Visit /blog in browser, verify listing + post page + RSS + sitemap + OG image all render from Postgres. Verify no 404s or build errors. Check AC checklist: all 9 acceptance criteria met.",
         "priority": "medium",
         "dependencies": [
-          4
+          "4"
         ],
         "status": "pending",
         "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2026-09-09T22:44:43.409Z",
-      "updated": "2026-09-09T22:44:43.409Z",
-      "description": "Tasks for blog-v2-phase-3 context"
+      "version": "1.0.0",
+      "lastModified": "2026-09-10T15:09:40.698Z",
+      "taskCount": 5,
+      "completedCount": 0,
+      "tags": [
+        "blog-v2-phase-3"
+      ]
     }
   }
 }
