@@ -86,6 +86,11 @@ function makePost(slug: string, publishedAt = '2026-08-01') {
       es: 'Cuerpo del post.',
     },
     tags: ['nextjs'],
+    author: {
+      name: 'Wallace Ferreira',
+      avatarUrl:
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
+    },
     publishedAt,
     status: BlogPostStatus.PUBLISHED,
   });
@@ -154,6 +159,11 @@ describe('BlogPostPage', () => {
           description: { 'en-US': 'D', 'pt-BR': 'D', es: 'D' },
           content: { 'en-US': 'B', 'pt-BR': 'B', es: 'B' },
           tags: ['nextjs'],
+          author: {
+            name: 'Wallace Ferreira',
+            avatarUrl:
+              'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
+          },
           publishedAt: '2026-08-01',
           status: BlogPostStatus.PUBLISHED,
           coverImage: {
