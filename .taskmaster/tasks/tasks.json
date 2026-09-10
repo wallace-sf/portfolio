@@ -8592,9 +8592,9 @@
         "testStrategy": "Verify migration file created in packages/infra/prisma/migrations/*_add_blog_post_table/migration.sql. Run `prisma migrate status` to confirm clean state. Check that BlogPost table, BlogPostStatus enum, and indexes exist in portfolio-dev database. Verify Prisma client regenerated (db.blogPost available in TypeScript).",
         "priority": "high",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [],
-        "updatedAt": "2026-09-10T15:09:40.698Z"
+        "updatedAt": "2026-09-10T19:44:16.368Z"
       },
       {
         "id": "2",
@@ -8606,8 +8606,9 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [],
+        "updatedAt": "2026-09-10T19:45:10.764Z"
       },
       {
         "id": "3",
@@ -8651,9 +8652,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-09-10T15:09:40.698Z",
+      "lastModified": "2026-09-10T19:45:10.764Z",
       "taskCount": 5,
-      "completedCount": 0,
+      "completedCount": 1,
       "tags": [
         "blog-v2-phase-3"
       ]
