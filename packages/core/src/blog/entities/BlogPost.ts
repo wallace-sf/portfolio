@@ -14,6 +14,7 @@ import {
   left,
   right,
 } from '../../shared';
+import { Author, IAuthorProps } from '../value-objects/Author';
 import { Tag } from '../value-objects/Tag';
 import { BlogPostStatus } from './BlogPostStatus';
 
@@ -28,6 +29,7 @@ export interface IBlogPostProps extends IEntityProps {
   description: ILocalizedTextInput;
   content: ILocalizedTextInput;
   tags: string[];
+  author: IAuthorProps;
   publishedAt: string;
   status?: BlogPostStatus;
   featured?: boolean;
@@ -43,6 +45,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
   public readonly description: LocalizedText;
   public readonly content: LocalizedText;
   public readonly tags: Tag[];
+  public readonly author: Author;
   public readonly publishedAt: DateTime;
   /** Mutable only through `publish()` / `archive()` — no external setter, like `Project.status`. */
   public status: BlogPostStatus;
@@ -57,6 +60,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     description: LocalizedText,
     content: LocalizedText,
     tags: Tag[],
+    author: Author,
     publishedAt: DateTime,
     status: BlogPostStatus,
     featured: boolean,
@@ -69,6 +73,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     this.description = description;
     this.content = content;
     this.tags = tags;
+    this.author = author;
     this.publishedAt = publishedAt;
     this.status = status;
     this.featured = featured;
@@ -82,6 +87,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       LocalizedText.create(props.title ?? { 'en-US': '' }),
       LocalizedText.create(props.description ?? { 'en-US': '' }),
       LocalizedText.create(props.content ?? { 'en-US': '' }),
+      Author.create(props.author),
       DateTime.create(props.publishedAt),
       props.coverImage
         ? Image.create(props.coverImage.url, props.coverImage.alt)
@@ -97,6 +103,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       title,
       description,
       content,
+      author,
       publishedAt,
       coverImage,
       thumbnailImage,
@@ -134,6 +141,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
         description,
         content,
         tags,
+        author as Author,
         publishedAt,
         status,
         featured,

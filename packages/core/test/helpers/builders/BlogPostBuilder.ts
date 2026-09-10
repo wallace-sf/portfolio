@@ -1,6 +1,7 @@
 import {
   BlogPost,
   BlogPostStatus,
+  IAuthorProps,
   IBlogPostProps,
   ILocalizedTextInput,
 } from '~/index';
@@ -32,6 +33,12 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
         es: Data.text.text(),
       },
       tags: ['nextjs', 'architecture'],
+      author: {
+        name: 'Wallace Ferreira',
+        avatarUrl:
+          'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
+        url: 'https://wallaceferreira.dev',
+      },
       publishedAt: '2026-08-01T00:00:00.000Z',
       status: BlogPostStatus.DRAFT,
       featured: false,
@@ -70,6 +77,11 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
 
   public withTags(tags: string[]): BlogPostBuilder {
     this._props.tags = tags;
+    return this;
+  }
+
+  public withAuthor(author: IAuthorProps): BlogPostBuilder {
+    this._props.author = author;
     return this;
   }
 
