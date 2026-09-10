@@ -50,6 +50,11 @@ function makePost(slug: string): BlogPost {
     description: localized('Description'),
     content: { 'en-US': '# Body', 'pt-BR': '# Corpo', es: '# Cuerpo' },
     tags: ['nextjs'],
+    author: {
+      name: 'Wallace Ferreira',
+      avatarUrl:
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
+    },
     publishedAt: '2026-08-01',
     status: BlogPostStatus.PUBLISHED,
   });

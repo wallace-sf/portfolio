@@ -29,6 +29,11 @@ function makePost(slug: string, title: string, publishedAt: string): BlogPost {
     description: localized(`${title} description`),
     content: { 'en-US': '# Body', 'pt-BR': '# Corpo', es: '# Cuerpo' },
     tags: ['nextjs'],
+    author: {
+      name: 'Wallace Ferreira',
+      avatarUrl:
+        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
+    },
     publishedAt,
     status: BlogPostStatus.PUBLISHED,
   });

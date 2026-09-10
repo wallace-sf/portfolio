@@ -1,12 +1,15 @@
 import {
+  Author,
   BlogPost,
   BlogPostStatus,
   DateTime,
   Image,
   ILocalizedTextInput,
   LocalizedText,
+  PersonName,
   Slug,
   Tag,
+  Url,
   ValidationError,
 } from '~/index';
 
@@ -116,6 +119,35 @@ describe('BlogPost', () => {
       expect(result.isRight()).toBe(true);
       if (!result.isRight()) return;
       expect(result.value.tags).toHaveLength(0);
+    });
+
+    it('should create BlogPost with author as an Author VO', () => {
+      const result = BlogPost.create(BlogPostBuilder.build().toProps());
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.author).toBeInstanceOf(Author);
+      expect(result.value.author.name.value).toBe('Wallace Ferreira');
+    });
+
+    it('should create BlogPost with custom author', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withAuthor({
+            name: 'John Doe',
+            avatarUrl: 'https://example.com/avatar.jpg',
+            url: 'https://johndoe.dev',
+          })
+          .toProps(),
+      );
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.author.name.value).toBe('John Doe');
+      expect(result.value.author.avatarUrl.value).toBe(
+        'https://example.com/avatar.jpg',
+      );
+      expect(result.value.author.url?.value).toBe('https://johndoe.dev');
     });
   });
 
@@ -252,6 +284,51 @@ describe('BlogPost', () => {
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as ValidationError).code).toBe(Image.ERROR_CODE_URL);
+    });
+
+    it('should return Left when author name is invalid', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withAuthor({
+            name: '',
+            avatarUrl: 'https://example.com/avatar.jpg',
+          })
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(
+        PersonName.ERROR_CODE,
+      );
+    });
+
+    it('should return Left when author avatarUrl is invalid', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withAuthor({
+            name: 'John Doe',
+            avatarUrl: 'not-a-url',
+          })
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Url.ERROR_CODE);
+    });
+
+    it('should return Left when author url is invalid', () => {
+      const result = BlogPost.create(
+        BlogPostBuilder.build()
+          .withAuthor({
+            name: 'John Doe',
+            avatarUrl: 'https://example.com/avatar.jpg',
+            url: 'not-a-url',
+          })
+          .toProps(),
+      );
+
+      expect(result.isLeft()).toBe(true);
+      expect((result.value as ValidationError).code).toBe(Url.ERROR_CODE);
     });
   });
 

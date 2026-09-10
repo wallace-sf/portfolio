@@ -31,6 +31,14 @@ export class BlogPostMapper {
       description: toLocalizedInput(locales, 'description'),
       content: toLocalizedInput(locales, 'content'),
       tags: meta.tags,
+      // Temporary author until migration to Postgres (Task #3). All file-backed
+      // posts are authored by the site owner.
+      author: {
+        name: 'Wallace Ferreira',
+        avatarUrl:
+          'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
+        url: 'https://wallaceferreira.dev',
+      },
       publishedAt: meta.publishedAt,
       // File-backed posts are all live. This repository — and this line — is
       // removed in Blog v2 PRD 3, when content moves to Postgres with an
