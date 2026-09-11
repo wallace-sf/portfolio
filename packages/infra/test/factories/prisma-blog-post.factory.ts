@@ -1,4 +1,4 @@
-import type { BlogPost as PrismaBlogPost, BlogPostStatus } from '@prisma/client';
+import type { BlogPost as PrismaBlogPost, BlogPostStatus, Prisma } from '@prisma/client';
 
 export function buildPrismaBlogPost(
   overrides: Partial<PrismaBlogPost> = {},
@@ -12,23 +12,23 @@ export function buildPrismaBlogPost(
       'en-US': 'Test Post',
       'pt-BR': 'Post de Teste',
       es: 'Publicación de Prueba',
-    },
+    } as Prisma.JsonObject,
     description: {
       'en-US': 'Test description',
       'pt-BR': 'Descrição de teste',
       es: 'Descripción de prueba',
-    },
+    } as Prisma.JsonObject,
     content: {
       'en-US': '# Test content',
       'pt-BR': '# Conteúdo de teste',
       es: '# Contenido de prueba',
-    },
+    } as Prisma.JsonObject,
     tags: ['test', 'unit'],
     author: {
       name: 'Test Author',
       avatarUrl: 'https://example.com/avatar.jpg',
       url: 'https://example.com',
-    },
+    } as Prisma.JsonObject,
     coverImageUrl: null,
     coverImageAlt: null,
     thumbnailImageUrl: null,

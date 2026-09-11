@@ -60,6 +60,12 @@ export const ID = {
     versatility: '50000000-0000-4000-8000-000000000003',
     communication: '50000000-0000-4000-8000-000000000004',
   },
+  blogPosts: {
+    oneValidatorOneLeft: '60000000-0000-4000-8000-000000000001',
+    serverComponentsAsCompositionRoot: '60000000-0000-4000-8000-000000000002',
+    theEitherPatternInTypescript: '60000000-0000-4000-8000-000000000003',
+    valueObjectsVsPrimitives: '60000000-0000-4000-8000-000000000004',
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -1863,4 +1869,132 @@ export async function seedProfessionalValues(db: PrismaClient): Promise<void> {
     });
   }
   console.log(`✔ ${values.length} professional values seeded`);
+}
+
+export async function seedBlogPosts(db: PrismaClient): Promise<void> {
+  const author = {
+    name: 'Wallace Ferreira',
+    avatarUrl:
+      'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
+    url: 'https://wallaceferreira.dev',
+  };
+
+  const posts = [
+    {
+      id: ID.blogPosts.oneValidatorOneLeft,
+      slug: 'one-validator-one-left',
+      title: loc(
+        '"One Validator, One Left"',
+        '"Um Validator, um Left"',
+        '"Un Validator, un Left"',
+      ),
+      description: loc(
+        'How chaining domain rules through a single Validator — and returning exactly one Left per validation flow — keeps entity factories readable and error handling predictable.',
+        'Como encadear regras de domínio por um único Validator — e retornar exatamente um Left por fluxo de validação — mantém as factories de entidade legíveis e o tratamento de erro previsível.',
+        'Cómo encadear reglas de dominio a través de un único Validator — y devolver exactamente un Left por flujo de validación — mantiene las factories de entidad legibles y el manejo de errores predecible.',
+      ),
+      content: { 'en-US': '', 'pt-BR': '', es: '' }, // Content will be filled from MDX during migration
+      tags: ['ddd', 'validation', 'clean-architecture'],
+      author,
+      publishedAt: new Date('2026-08-15T00:00:00Z'),
+      status: 'PUBLISHED' as const,
+      featured: false,
+    },
+    {
+      id: ID.blogPosts.serverComponentsAsCompositionRoot,
+      slug: 'server-components-as-composition-root',
+      title: loc(
+        '"Server Components Are the Composition Root"',
+        '"Server Components são o composition root"',
+        '"Los Server Components son el composition root"',
+      ),
+      description: loc(
+        'Why this site calls use cases directly from Server Components at build time, passes plain data down as props, and never fetches from a useEffect.',
+        'Por que este site chama use cases direto dos Server Components em tempo de build, passa dados puros para baixo como props, e nunca busca dados de um useEffect.',
+        'Por qué este sitio llama a los use cases directamente desde los Server Components en tiempo de build, pasa datos planos hacia abajo como props, y nunca hace fetch desde un useEffect.',
+      ),
+      content: { 'en-US': '', 'pt-BR': '', es: '' },
+      tags: ['react-server-components', 'clean-architecture', 'nextjs'],
+      author,
+      publishedAt: new Date('2026-08-22T00:00:00Z'),
+      status: 'PUBLISHED' as const,
+      featured: false,
+    },
+    {
+      id: ID.blogPosts.theEitherPatternInTypescript,
+      slug: 'the-either-pattern-in-typescript',
+      title: loc(
+        'The Either Pattern in TypeScript',
+        'O Either Pattern em TypeScript',
+        'El Either Pattern en TypeScript',
+      ),
+      description: loc(
+        'How Either<Left, Right> handles operation outcomes without exceptions, replacing try/catch with type-safe branching and making error cases explicit in the type signature.',
+        'Como Either<Left, Right> lida com resultados de operação sem exceções, substituindo try/catch com ramificação type-safe e tornando casos de erro explícitos na assinatura de tipo.',
+        'Cómo Either<Left, Right> maneja resultados de operación sin excepciones, reemplazando try/catch con bifurcación type-safe y haciendo casos de error explícitos en la firma de tipo.',
+      ),
+      content: { 'en-US': '', 'pt-BR': '', es: '' },
+      tags: ['typescript', 'functional-programming', 'error-handling'],
+      author,
+      coverImageUrl: 'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/blog-covers/either-pattern-cover.jpg',
+      coverImageAlt: loc(
+        'Visual representation of Either pattern branching between Left and Right paths',
+        'Representação visual do Either pattern ramificando entre caminhos Left e Right',
+        'Representación visual del Either pattern ramificando entre caminos Left y Right',
+      ),
+      thumbnailImageUrl: 'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/blog-thumbnails/either-pattern-thumb.jpg',
+      thumbnailImageAlt: loc(
+        'Either pattern thumbnail',
+        'Miniatura do Either pattern',
+        'Miniatura del Either pattern',
+      ),
+      publishedAt: new Date('2026-08-08T00:00:00Z'),
+      status: 'PUBLISHED' as const,
+      featured: true,
+    },
+    {
+      id: ID.blogPosts.valueObjectsVsPrimitives,
+      slug: 'value-objects-vs-primitives',
+      title: loc(
+        'Value Objects vs Primitives',
+        'Value Objects vs Primitives',
+        'Value Objects vs Primitives',
+      ),
+      description: loc(
+        'When to encapsulate primitive types in Value Objects and when to keep them as primitives — a decision framework based on complexity, reuse, and domain meaning.',
+        'Quando encapsular tipos primitivos em Value Objects e quando mantê-los como primitivos — um framework de decisão baseado em complexidade, reuso e significado de domínio.',
+        'Cuándo encapsular tipos primitivos en Value Objects y cuándo mantenerlos como primitivos — un framework de decisión basado en complejidad, reutilización y significado de dominio.',
+      ),
+      content: { 'en-US': '', 'pt-BR': '', es: '' },
+      tags: ['ddd', 'value-objects', 'domain-modeling'],
+      author,
+      publishedAt: new Date('2026-08-01T00:00:00Z'),
+      status: 'PUBLISHED' as const,
+      featured: true,
+    },
+  ];
+
+  for (const post of posts) {
+    await db.blogPost.upsert({
+      where: { id: post.id },
+      update: {
+        slug: post.slug,
+        title: post.title,
+        description: post.description,
+        content: post.content,
+        tags: post.tags,
+        author: post.author,
+        coverImageUrl: post.coverImageUrl,
+        coverImageAlt: post.coverImageAlt,
+        thumbnailImageUrl: post.thumbnailImageUrl,
+        thumbnailImageAlt: post.thumbnailImageAlt,
+        publishedAt: post.publishedAt,
+        status: post.status,
+        featured: post.featured,
+      },
+      create: post,
+    });
+  }
+
+  console.log(`✔ ${posts.length} blog posts seeded`);
 }

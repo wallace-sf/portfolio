@@ -27,6 +27,11 @@ const BASE_PROPS: IBlogPostProps = {
     es: 'Contenido completo.',
   },
   tags: ['nextjs', 'architecture'],
+  author: {
+    name: 'Test Author',
+    avatarUrl: 'https://example.com/avatar.jpg',
+    url: 'https://example.com',
+  },
   publishedAt: '2026-08-01T00:00:00.000Z',
   status: BlogPostStatus.PUBLISHED,
 };
