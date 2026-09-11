@@ -7,10 +7,16 @@ const infraContainer = {
 
 vi.mock('@repo/infra', () => ({
   getContainer: () => infraContainer,
-  FileSystemBlogPostRepository: class {
+  PrismaBlogPostRepository: class {
     findAll = vi.fn();
     findBySlug = vi.fn();
-    constructor(public readonly dir: string) {}
+    constructor(public readonly db: unknown) {}
+  },
+  prisma: {
+    blogPost: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+    },
   },
 }));
 
@@ -30,13 +36,5 @@ describe('getServerContainer', () => {
     expect(getServerContainer().blogPostRepository).toBe(
       getServerContainer().blogPostRepository,
     );
-  });
-
-  it('should point the blog repository at the repo-root content/posts directory', () => {
-    const repo = getServerContainer().blogPostRepository as unknown as {
-      dir: string;
-    };
-
-    expect(repo.dir).toContain('content/posts');
   });
 });

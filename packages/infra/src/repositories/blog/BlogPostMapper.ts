@@ -1,57 +1,50 @@
-import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
-import { ILocalizedTextInput, Locale } from '@repo/core/shared';
+import { Prisma } from '@prisma/client';
+import {
+  BlogPost,
+  BlogPostStatus,
+  IAuthorProps,
+  IBlogPostProps,
+} from '@repo/core/blog';
+import { ILocalizedTextInput } from '@repo/core/shared';
 
 import { InfrastructureError } from '../../errors/InfrastructureError';
-import { MetaJson } from './schemas';
 
-export interface IParsedLocaleFile {
-  title: string;
-  description: string;
-  content: string;
-}
-
-export type ParsedLocaleFiles = Record<Locale, IParsedLocaleFile>;
-
-function toLocalizedInput(
-  locales: ParsedLocaleFiles,
-  field: keyof IParsedLocaleFile,
-): ILocalizedTextInput {
-  return {
-    'en-US': locales['en-US'][field],
-    'pt-BR': locales['pt-BR'][field],
-    es: locales.es[field],
-  };
-}
+type PrismaBlogPost = Prisma.BlogPostGetPayload<Record<string, never>>;
 
 export class BlogPostMapper {
-  static toDomain(meta: MetaJson, locales: ParsedLocaleFiles): BlogPost {
+  static toDomain(raw: PrismaBlogPost): BlogPost {
+    const asLocalized = (v: unknown) => v as ILocalizedTextInput;
+
     const props: IBlogPostProps = {
-      slug: meta.slug,
-      title: toLocalizedInput(locales, 'title'),
-      description: toLocalizedInput(locales, 'description'),
-      content: toLocalizedInput(locales, 'content'),
-      tags: meta.tags,
-      // Temporary author until migration to Postgres (Task #3). All file-backed
-      // posts are authored by the site owner.
-      author: {
-        name: 'Wallace Ferreira',
-        avatarUrl:
-          'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
-        url: 'https://wallaceferreira.dev',
-      },
-      publishedAt: meta.publishedAt,
-      // File-backed posts are all live. This repository — and this line — is
-      // removed in Blog v2 PRD 3, when content moves to Postgres with an
-      // explicit `status` column.
-      status: BlogPostStatus.PUBLISHED,
-      coverImage: meta.coverImage,
-      thumbnailImage: meta.thumbnailImage,
+      slug: raw.slug,
+      title: asLocalized(raw.title),
+      description: asLocalized(raw.description),
+      content: asLocalized(raw.content),
+      tags: raw.tags,
+      author: raw.author as unknown as IAuthorProps,
+      publishedAt: raw.publishedAt.toISOString(),
+      status: raw.status as BlogPostStatus,
+      featured: raw.featured,
+      coverImage:
+        raw.coverImageUrl && raw.coverImageAlt
+          ? {
+              url: raw.coverImageUrl,
+              alt: asLocalized(raw.coverImageAlt),
+            }
+          : undefined,
+      thumbnailImage:
+        raw.thumbnailImageUrl && raw.thumbnailImageAlt
+          ? {
+              url: raw.thumbnailImageUrl,
+              alt: asLocalized(raw.thumbnailImageAlt),
+            }
+          : undefined,
     };
 
     const result = BlogPost.create(props);
     if (result.isLeft()) {
       throw new InfrastructureError(
-        `Failed to map blog post ${meta.slug} to domain: ${result.value.message}`,
+        `Failed to map blog post ${raw.slug} to domain: ${result.value.message}`,
         result.value,
       );
     }
