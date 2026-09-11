@@ -10,6 +10,11 @@ const BASE: IBlogPostProps = {
   description: { 'en-US': 'D', 'pt-BR': 'D', es: 'D' },
   content: { 'en-US': 'C', 'pt-BR': 'C', es: 'C' },
   tags: ['nextjs'],
+  author: {
+    name: 'Test Author',
+    avatarUrl: 'https://example.com/avatar.jpg',
+    url: 'https://example.com',
+  },
   publishedAt: '2026-08-01T00:00:00.000Z',
 };
 

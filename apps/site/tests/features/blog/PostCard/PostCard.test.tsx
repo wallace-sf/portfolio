@@ -36,6 +36,7 @@ const BASE: BlogPostSummaryDTO = {
   title: 'The Either Pattern',
   description: 'Why this codebase never throws for domain errors.',
   publishedAt: '2026-08-01',
+  featured: false,
   tags: ['typescript', 'ddd'],
 };
 

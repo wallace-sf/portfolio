@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { BlogPost, IBlogPostProps } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
 
 import { IBlogPostRepository } from '~/blog/ports';
 import { ListBlogPosts } from '~/blog/use-cases/ListBlogPosts';
@@ -27,7 +27,13 @@ const BASE_PROPS: IBlogPostProps = {
     es: 'Contenido completo.',
   },
   tags: ['nextjs', 'architecture'],
+  author: {
+    name: 'Test Author',
+    avatarUrl: 'https://example.com/avatar.jpg',
+    url: 'https://example.com',
+  },
   publishedAt: '2026-08-01T00:00:00.000Z',
+  status: BlogPostStatus.PUBLISHED,
 };
 
 function makeBlogPost(overrides: Partial<IBlogPostProps> = {}): BlogPost {
@@ -70,6 +76,7 @@ describe('ListBlogPosts', () => {
           title: 'Meu Primeiro Post',
           description: 'Uma descrição curta.',
           publishedAt: '2026-08-01T00:00:00.000Z',
+          featured: false,
           tags: ['nextjs', 'architecture'],
           coverImage: undefined,
         },
@@ -144,6 +151,38 @@ describe('ListBlogPosts', () => {
         url: 'https://example.com/thumb.png',
         alt: 'Miniatura',
       });
+    });
+
+    it('should omit DRAFT and ARCHIVED posts from the result', async () => {
+      const repo = makeRepository({
+        findAll: vi.fn().mockResolvedValue([
+          makeBlogPost({ slug: 'published', status: BlogPostStatus.PUBLISHED }),
+          makeBlogPost({
+            slug: 'draft',
+            status: BlogPostStatus.DRAFT,
+            tags: [],
+          }),
+          makeBlogPost({ slug: 'archived', status: BlogPostStatus.ARCHIVED }),
+        ]),
+      });
+
+      const result = await new ListBlogPosts(repo).execute({ locale: 'en-US' });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.map((p) => p.slug)).toEqual(['published']);
+    });
+
+    it('should expose the featured flag from the domain object', async () => {
+      const repo = makeRepository({
+        findAll: vi.fn().mockResolvedValue([makeBlogPost({ featured: true })]),
+      });
+
+      const result = await new ListBlogPosts(repo).execute({ locale: 'en-US' });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value[0]?.featured).toBe(true);
     });
 
     it('should return Left(DomainError) when the repository throws', async () => {

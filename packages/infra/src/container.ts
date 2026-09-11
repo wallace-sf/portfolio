@@ -1,3 +1,4 @@
+import { IBlogPostRepository } from '@repo/application/blog';
 import { IEmailService } from '@repo/application/contact';
 import { IAuthenticationGateway } from '@repo/application/identity';
 import { IUserRepository } from '@repo/core/identity';
@@ -14,6 +15,7 @@ import { Resend } from 'resend';
 import { env } from './env';
 import { SupabaseAuthenticationGateway } from './identity/SupabaseAuthenticationGateway';
 import { prisma } from './prisma/client';
+import { PrismaBlogPostRepository } from './repositories/blog/PrismaBlogPostRepository';
 import { PrismaExperienceRepository } from './repositories/experience/PrismaExperienceRepository';
 import { PrismaProfessionalValueRepository } from './repositories/professional-value/PrismaProfessionalValueRepository';
 import { PrismaProfileRepository } from './repositories/profile/PrismaProfileRepository';
@@ -28,6 +30,7 @@ export type Container = {
   experienceRepository: IExperienceRepository;
   professionalValueRepository: IProfessionalValueRepository;
   profileRepository: IProfileRepository;
+  blogPostRepository: IBlogPostRepository;
   emailService: IEmailService;
   userRepository: IUserRepository;
   authGateway: IAuthenticationGateway;
@@ -44,6 +47,7 @@ export function makeContainer(): Container {
     experienceRepository: new PrismaExperienceRepository(prisma),
     professionalValueRepository: new PrismaProfessionalValueRepository(prisma),
     profileRepository: new PrismaProfileRepository(prisma),
+    blogPostRepository: new PrismaBlogPostRepository(prisma),
     emailService: new ResendEmailService(resend, {
       recipientEmail: env.CONTACT_EMAIL_TO,
       senderEmail: env.CONTACT_EMAIL_FROM,

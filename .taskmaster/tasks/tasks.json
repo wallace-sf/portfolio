@@ -8263,7 +8263,8 @@
         "feature-blog-shared-layout"
       ],
       "created": "2026-08-29T01:23:51.505Z",
-      "description": "Tasks for feature-blog-shared-layout context"
+      "description": "Tasks for feature-blog-shared-layout context",
+      "updated": "2026-08-29T01:23:51.505Z"
     }
   },
   "feature-blog-single-app": {
@@ -8388,6 +8389,276 @@
       "created": "2026-08-30T02:27:58.641Z",
       "updated": "2026-08-30T02:27:58.641Z",
       "description": "Tasks for feature-blog-single-app context"
+    }
+  },
+  "blog-v2-phase-1": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Create BlogPostStatus enum",
+        "description": "Add BlogPostStatus enum with DRAFT, PUBLISHED, and ARCHIVED values, following the same pattern as ProjectStatus",
+        "details": "Create `packages/core/src/blog/entities/BlogPostStatus.ts` (co-located with BlogPost like ProjectStatus is with Project).\n\nImplementation:\n```typescript\nexport enum BlogPostStatus {\n  DRAFT = 'DRAFT',\n  PUBLISHED = 'PUBLISHED',\n  ARCHIVED = 'ARCHIVED',\n}\n```\n\nUpdate barrel export in `packages/core/src/blog/index.ts`:\n```typescript\nexport * from './entities/BlogPostStatus';\n```\n\nThis is a simple enum definition with no complex logic, following the exact structure of ProjectStatus. The file will be under 10 lines, well within the 200-line limit.",
+        "testStrategy": "No dedicated test file needed for a simple enum literal. Status validation will be tested as part of BlogPost.test.ts when testing the `create()` method's status validation.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Create Author value object",
+        "description": "Implement Author VO with name, avatarUrl, optional url, and optional bio fields, using collect pattern and Validator for domain rules",
+        "details": "Create `packages/core/src/blog/value-objects/Author.ts`.\n\nInterface:\n```typescript\nexport interface IAuthorProps {\n  name: string;\n  avatarUrl: string;\n  url?: string;\n  bio?: ILocalizedTextInput;\n}\n```\n\nImplementation approach:\n1. Extend ValueObject base class (like Url, Slug)\n2. Use `collect([...])` to build inner VOs (Url for avatarUrl, Url for optional url, LocalizedText for optional bio)\n3. Single Validator chain for name validation (trim, non-empty, length 2-100)\n4. One `left` per validation failure path\n5. Private constructor, static `create()` method\n6. ERROR_CODE = 'INVALID_AUTHOR'\n\nPseudo-code:\n```typescript\nstatic create(props: IAuthorProps): Either<ValidationError, Author> {\n  // Validate name first\n  const normalized = props.name?.trim() ?? '';\n  const { isValid } = Validator.of(normalized)\n    .notEmpty()\n    .length(2, 100)\n    .validate();\n  if (!isValid) return left(new ValidationError({ code: Author.ERROR_CODE }));\n\n  // Build VOs with collect\n  const fieldsResult = collect([\n    Url.create(props.avatarUrl),\n    props.url ? Url.create(props.url) : right<ValidationError, Url | undefined>(undefined),\n    props.bio ? LocalizedText.create(props.bio) : right<ValidationError, LocalizedText | undefined>(undefined),\n  ]);\n  if (fieldsResult.isLeft()) return left(fieldsResult.value);\n\n  const [avatarUrl, url, bio] = fieldsResult.value;\n  return right(new Author({ name: normalized, avatarUrl, url, bio }));\n}\n```\n\nExposed readonly properties: name (string), avatarUrl (Url), url (Url | undefined), bio (LocalizedText | undefined).\n\nUpdate `packages/core/src/blog/index.ts` to export Author and IAuthorProps.\n\nFile should be ~80-100 lines, well under the 200-line limit.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/Author.test.ts`:\n- should create an author when name, avatarUrl are valid and url/bio are omitted\n- should create an author when url and bio are provided and valid\n- should return left when name is empty / whitespace\n- should return left when name is shorter than 2 / longer than 100\n- should return left when avatarUrl is not a valid URL\n- should return left when url is present but invalid\n- should return left when bio is present but not a valid LocalizedText\n- should return a single left when multiple fields are invalid\n- should treat two authors with the same props as equal (ValueObject equality)",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Extend BlogPost entity with new fields (status, featured, author)",
+        "description": "Add status, featured, and author fields to BlogPost interface and entity, with validation in create() method",
+        "details": "Update `packages/core/src/blog/entities/BlogPost.ts`.\n\n1. Extend IBlogPostProps:\n```typescript\nexport interface IBlogPostProps extends IEntityProps {\n  // ...existing fields...\n  status: BlogPostStatus;\n  featured: boolean;\n  author: IAuthorProps;\n}\n```\n\n2. Add readonly properties to BlogPost class:\n```typescript\npublic status: BlogPostStatus;  // mutable for transitions, like Project\npublic readonly featured: boolean;\npublic readonly author: Author;\n```\n\n3. Update constructor signature and body to accept and assign the new fields.\n\n4. In `create()` method:\n   a. Validate status with Validator (in a scoped block to avoid naming collision with existing usage):\n   ```typescript\n   {\n     const { isValid } = Validator.of(props.status)\n       .in(Object.values(BlogPostStatus))\n       .validate();\n     if (!isValid)\n       return left(new ValidationError({ code: BlogPost.ERROR_CODE }));\n   }\n   ```\n   \n   b. Add Author.create to the collect block:\n   ```typescript\n   const fieldsResult = collect([\n     // ...existing VOs...\n     Author.create(props.author),\n   ]);\n   ```\n   \n   c. After tags are parsed, add invariant check for PUBLISHED + zero tags:\n   ```typescript\n   {\n     const { isValid } = Validator.of(props.status)\n       .refine(\n         (s) => s !== BlogPostStatus.PUBLISHED || tags.length > 0\n       )\n       .validate();\n     if (!isValid)\n       return left(new ValidationError({ code: BlogPost.ERROR_CODE }));\n   }\n   ```\n   \n   d. Pass status, featured, author to constructor.\n\n5. Update constructor call in `return right(new BlogPost(...))`.\n\nNote: BlogPost.ts is currently ~130 lines. Adding these fields + validation will bring it to ~180 lines, under the 200-line limit. If it exceeds 200, extract validation logic to a helper.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/BlogPost.test.ts`:\n- should create a post when status is DRAFT and there are no tags\n- should create a post when status is PUBLISHED and there is at least one tag\n- should return left when status is not a BlogPostStatus value\n- should return left when status is PUBLISHED and tags is empty\n- should expose status, featured, and author on the created post\n- existing locale-completeness tests should still pass",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement publish() business method",
+        "description": "Add publish() method to BlogPost that transitions status to PUBLISHED with business rule validation",
+        "details": "Add to `packages/core/src/blog/entities/BlogPost.ts`.\n\nImplementation:\n```typescript\npublish(): Either<ValidationError, void> {\n  const { isValid } = Validator.of(this.status)\n    .refine((s) => s !== BlogPostStatus.PUBLISHED)\n    .refine(() => this.tags.length > 0)\n    .validate();\n  if (!isValid)\n    return left(new ValidationError({ code: BlogPost.ERROR_CODE }));\n  \n  this.status = BlogPostStatus.PUBLISHED;\n  return right(undefined);\n}\n```\n\nBusiness rules:\n1. Cannot publish if already PUBLISHED\n2. Cannot publish if tags is empty (the R4 invariant at transition time)\n3. Publishing from DRAFT or ARCHIVED is allowed (re-publishing)\n\nFollows the exact pattern of Project.publish() — single Validator chain, one left, mutates status on success.\n\nAdds ~10 lines to BlogPost.ts.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/BlogPost.test.ts`:\n- should set status to PUBLISHED when called on a DRAFT post with tags\n- should set status to PUBLISHED when called on an ARCHIVED post with tags\n- should return left when the post is already PUBLISHED\n- should return left when the post has no tags\n- should not change status when publish() returns left",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement archive() business method",
+        "description": "Add archive() method to BlogPost that transitions status to ARCHIVED with validation",
+        "details": "Add to `packages/core/src/blog/entities/BlogPost.ts`.\n\nImplementation:\n```typescript\narchive(): Either<ValidationError, void> {\n  const { isValid } = Validator.of(this.status)\n    .refine((s) => s !== BlogPostStatus.ARCHIVED)\n    .validate();\n  if (!isValid)\n    return left(new ValidationError({ code: BlogPost.ERROR_CODE }));\n  \n  this.status = BlogPostStatus.ARCHIVED;\n  return right(undefined);\n}\n```\n\nBusiness rule:\n- Cannot archive if already ARCHIVED\n- Archiving from DRAFT or PUBLISHED is allowed\n\nFollows the exact pattern of Project.archive() — single Validator chain, one left, mutates status on success.\n\nAdds ~8 lines to BlogPost.ts.\n\nTotal BlogPost.ts size after tasks 3-5: ~198 lines, just under the 200-line limit.",
+        "testStrategy": "Unit tests in `packages/core/test/blog/BlogPost.test.ts`:\n- should set status to ARCHIVED when called on a DRAFT post\n- should set status to ARCHIVED when called on a PUBLISHED post\n- should return left when the post is already ARCHIVED\n- should not change status when archive() returns left",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Update BlogPostBuilder for new fields",
+        "description": "Extend BlogPostBuilder with new fields (status, featured, author) and sensible defaults",
+        "details": "Update `packages/core/test/helpers/builders/BlogPostBuilder.ts`.\n\n1. Update default props in `build()` method:\n```typescript\nstatic build(): BlogPostBuilder {\n  return new BlogPostBuilder({\n    // ...existing defaults...\n    status: BlogPostStatus.PUBLISHED,  // default to valid PUBLISHED post\n    featured: false,\n    author: {\n      name: 'Wallace Ferreira',\n      avatarUrl: 'https://github.com/wallace-sf.png',  // real, stable URL\n    },\n  });\n}\n```\n\n2. Add fluent methods:\n```typescript\npublic withStatus(status: BlogPostStatus): BlogPostBuilder {\n  this._props.status = status;\n  return this;\n}\n\npublic withFeatured(featured: boolean): BlogPostBuilder {\n  this._props.featured = featured;\n  return this;\n}\n\npublic withAuthor(author: IAuthorProps): BlogPostBuilder {\n  this._props.author = author;\n  return this;\n}\n```\n\nRationale for defaults:\n- status: PUBLISHED (so existing tests that don't care about status get a valid post)\n- featured: false (neutral default)\n- author: stable fixture (Wallace Ferreira) so snapshots/assertions stay readable\n\nAdds ~20 lines to BlogPostBuilder.ts (~107 lines total).\n\nUpdate existing test files that fail type-check due to new required props. Based on codebase scan, only BlogPost.test.ts uses BlogPostBuilder directly, and it already uses the builder pattern, so it should work with the new defaults with no changes needed.",
+        "testStrategy": "No new tests needed for the builder itself. Verify that:\n1. All existing BlogPost.test.ts tests pass with the new defaults\n2. Builder fluent methods work by using them in the new BlogPost tests (tasks 3-5)\n3. `pnpm --filter @repo/core test` is green",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Write comprehensive unit tests and verify acceptance criteria",
+        "description": "Create Author.test.ts and extend BlogPost.test.ts with all new test cases for status, transitions, and invariants",
+        "details": "1. Create `packages/core/test/blog/Author.test.ts` with all test cases from task 2's test strategy (9 test cases).\n\n2. Extend `packages/core/test/blog/BlogPost.test.ts` with new test suites:\n   - \"when created with status field\" (5 test cases from task 3)\n   - \"publish() method\" (5 test cases from task 4)\n   - \"archive() method\" (3 test cases from task 5)\n   - Verify existing tests (compareByPublication, locale validation) still pass\n\n3. Run full test suite:\n```bash\npnpm --filter @repo/core test\npnpm --filter @repo/core lint\npnpm --filter @repo/core types\n```\n\n4. Verify all 9 acceptance criteria from the PRD:\n   - [ ] BlogPostStatus enum exists and is exported\n   - [ ] Author VO validates all fields correctly\n   - [ ] BlogPost.create() requires status, featured, author\n   - [ ] BlogPost.create() with DRAFT + zero tags succeeds\n   - [ ] publish() transitions correctly with invariants\n   - [ ] archive() transitions correctly\n   - [ ] Both methods mutate only via method (no public setter)\n   - [ ] BlogPostBuilder supports new fields with defaults\n   - [ ] All tests green, no files exceed 200 lines\n\n5. Verify no changes outside packages/core (check git diff).\n\nTotal new test cases: ~17 (9 Author + 8 BlogPost new), plus regression verification of ~15 existing BlogPost tests.\n\nTest files will be behavior-focused, following the \"should <expected behavior> when <context>\" naming pattern from docs/08-TESTING.md.",
+        "testStrategy": "Meta-test: the test suite itself validates the implementation. Success criteria:\n- All unit tests pass (green)\n- 100% coverage of new domain logic (Author VO, status validation, publish/archive methods, invariant)\n- Existing tests unchanged in intent (regression)\n- `pnpm --filter @repo/core test` completes with 0 failures\n- TypeScript compilation clean\n- ESLint clean",
+        "priority": "high",
+        "dependencies": [
+          2,
+          4,
+          5,
+          6
+        ],
+        "status": "done",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-09-03T03:04:49.282Z",
+      "updated": "2026-09-03T03:04:49.282Z",
+      "description": "Tasks for blog-v2-phase-1 context"
+    }
+  },
+  "blog-v2-phase-2": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Create publishedOnly filtering helper",
+        "description": "Implement a module-local helper function that filters blog posts to include only those with PUBLISHED status, mirroring the structure of the existing newestFirst helper.",
+        "details": "Create `packages/application/src/blog/use-cases/published-only.ts` with a function that filters posts by `BlogPostStatus.PUBLISHED`. Import `BlogPost` and `BlogPostStatus` from `@repo/core/blog`. The helper should:\n\n```typescript\nimport { BlogPost, BlogPostStatus } from '@repo/core/blog';\n\nexport function publishedOnly(posts: BlogPost[]): BlogPost[] {\n  return posts.filter((post) => post.status === BlogPostStatus.PUBLISHED);\n}\n```\n\nThe function returns a new array (non-mutating) and serves as the public-audience filter at the application layer. Keep it module-local (not exported from `use-cases/index.ts`), matching the pattern of `newest-first.ts`.\n\nCreate corresponding test file `packages/application/test/blog/published-only.test.ts` with test cases:\n- should keep PUBLISHED posts and drop DRAFT posts\n- should drop ARCHIVED posts\n- should return empty array for empty input\n- should return a new array (input not mutated)\n\nFollow the existing test structure from `newest-first.test.ts` using vitest, the `BASE` props pattern, and `makePost` helper.",
+        "testStrategy": "Unit tests verifying: (1) PUBLISHED posts are kept, (2) DRAFT and ARCHIVED posts are filtered out, (3) empty input returns empty output, (4) original array is not mutated. Use vitest with the existing test helper patterns (makeBlogPost with status overrides).",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Add featured field to BlogPostSummaryDTO",
+        "description": "Extend BlogPostSummaryDTO type definition to include the featured boolean field, which will be populated from the domain BlogPost.featured property.",
+        "details": "Update `packages/application/src/blog/dtos/BlogPostSummaryDTO.ts` to add:\n\n```typescript\nexport type BlogPostSummaryDTO = {\n  slug: string;\n  title: string;\n  description: string;\n  publishedAt: string;\n  featured: boolean;  // ← new required field\n  tags: string[];\n  coverImage?: BlogPostImageDTO;\n  thumbnailImage?: BlogPostImageDTO;\n};\n```\n\nNo changes needed to `BlogPostDetailDTO` as it already inherits `featured` through the intersection with `BlogPostSummaryDTO`. No barrel export changes needed since the type is already exported from `dtos/index.ts`.\n\nThe `featured` field is a required field (not optional) — every published post has a `featured` flag from the domain (defaults to `false`).",
+        "testStrategy": "No dedicated test file for DTO type definitions. Verification occurs through use-case tests (ListBlogPosts, GetBlogPostBySlug) which will assert the featured field is present in the mapped DTOs. TypeScript compilation ensures type safety.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Add publishedAt field to BlogPostLinkDTO",
+        "description": "Extend BlogPostLinkDTO type definition to include the publishedAt string field, needed for dated hrefs in future PRDs.",
+        "details": "Update `packages/application/src/blog/dtos/BlogPostNavigationDTO.ts` to modify `BlogPostLinkDTO`:\n\n```typescript\nexport type BlogPostLinkDTO = {\n  slug: string;\n  title: string;\n  publishedAt: string;  // ← new required field\n};\n```\n\nThis field will be populated from `post.publishedAt.value` in the `GetAdjacentBlogPosts.toLink()` mapper. The field is required (not optional) as every post has a publishedAt.\n\n`BlogPostNavigationDTO` remains unchanged — it already references `BlogPostLinkDTO` for `newer` and `older`.",
+        "testStrategy": "No dedicated test for DTO types. Verification through GetAdjacentBlogPosts test suite, which will assert the publishedAt field is present on the link DTOs. TypeScript compilation ensures type safety.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Update use cases with status filtering and DTO mappers",
+        "description": "Integrate publishedOnly filter into ListBlogPosts, GetAdjacentBlogPosts, and GetBlogPostBySlug use cases, and update their DTO mappers to populate the new featured and publishedAt fields.",
+        "details": "**ListBlogPosts** (`packages/application/src/blog/use-cases/ListBlogPosts.ts`):\n- Import `publishedOnly` from `'./published-only'`\n- In `execute()`, change line 26 to: `const posts = newestFirst(publishedOnly(await this.repository.findAll()));`\n- In `toDTO()` method (line 37), add: `featured: post.featured,` to the returned DTO\n\n**GetAdjacentBlogPosts** (`packages/application/src/blog/use-cases/GetAdjacentBlogPosts.ts`):\n- Import `publishedOnly` from `'./published-only'`\n- Import `BlogPostStatus` from `'@repo/core/blog'`\n- In `execute()`, change line 61 to: `const ordered = newestFirst(publishedOnly(posts));`\n- In `toLink()` method (line 77), add: `publishedAt: post.publishedAt.value,` to the returned DTO\n- Adjacency now skips non-published posts; a draft slug returns NotFoundError automatically (index === -1)\n\n**GetBlogPostBySlug** (`packages/application/src/blog/use-cases/GetBlogPostBySlug.ts`):\n- Import `BlogPostStatus` from `'@repo/core/blog'`\n- After the `!post` null check (line 51), before `return right(...)`, add:\n```typescript\nif (post.status !== BlogPostStatus.PUBLISHED) {\n  return left(new NotFoundError({ slug: input.slug }));\n}\n```\n- In `toDTO()` method (line 58), add: `featured: post.featured,` to the returned DTO\n\nNo new error codes; reuses existing `NotFoundError` and `DomainError(FETCH_FAILED)`.",
+        "testStrategy": "Update existing test suites: (1) ListBlogPosts.test.ts — add test for filtering mixed statuses, assert featured field present; (2) GetAdjacentBlogPosts.test.ts — add test for skipping DRAFT between published posts, assert publishedAt on links, test requesting DRAFT slug returns NotFoundError; (3) GetBlogPostBySlug.test.ts — add tests for DRAFT/ARCHIVED slug returning NotFoundError, assert featured field present. All existing tests must pass.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Update FileSystemBlogPostRepository mapper to default status to PUBLISHED",
+        "description": "Modify BlogPostMapper.toDomain to explicitly set status as PUBLISHED for file-backed posts, ensuring they remain visible until PRD 3 replaces this repository.",
+        "details": "Update `packages/infra/src/repositories/blog/BlogPostMapper.ts`:\n\nIn the `toDomain` method (line 27), modify the `props` object construction to include:\n```typescript\nconst props: IBlogPostProps = {\n  slug: meta.slug,\n  title: toLocalizedInput(locales, 'title'),\n  description: toLocalizedInput(locales, 'description'),\n  content: toLocalizedInput(locales, 'content'),\n  tags: meta.tags,\n  publishedAt: meta.publishedAt,\n  status: BlogPostStatus.PUBLISHED,  // ← new line\n  coverImage: meta.coverImage,\n  thumbnailImage: meta.thumbnailImage,\n};\n```\n\nImport `BlogPostStatus` from `@repo/core/blog` at the top of the file.\n\nAdd a comment explaining this is temporary until PRD 3 replaces file-backed posts with Postgres. Without this, the domain's default (`DRAFT`) would empty the blog under the new `publishedOnly` filter.\n\nDo NOT extend `MetaJsonSchema` — not worth it for a repository being deleted in the next PRD. Leave `featured` to the domain default (`false`).",
+        "testStrategy": "Update `packages/infra/test/repositories/blog/BlogPostMapper.test.ts`: add assertion in the main mapping test that `post.status === BlogPostStatus.PUBLISHED`. Import `BlogPostStatus` from `@repo/core/blog`. Verify existing tests still pass (particularly the invalid slug InfrastructureError test).",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Verify integration and acceptance criteria",
+        "description": "Run full test suite, build verification, and manual checks to ensure all acceptance criteria are met and the blog remains functional with status filtering in place.",
+        "details": "Execute the following verification steps:\n\n1. **Unit tests**: Run `pnpm --filter @repo/application test` — all tests green, including new published-only tests and updated use-case tests\n2. **Infra tests**: Run `pnpm --filter @repo/infra test` — mapper test passes with status assertion\n3. **Type checking**: Run `pnpm --filter @repo/application types` and `pnpm --filter @repo/infra types` — no errors\n4. **Linting**: Run `pnpm --filter @repo/application lint` — no violations\n5. **Build verification**: Run `pnpm --filter @repo/site build` — succeeds without errors\n6. **Blog content check**: After build, verify the site's blog listing (`/blog`) shows all 4 existing file-backed posts (they should all be PUBLISHED via the mapper)\n7. **RSS/sitemap**: Verify generated RSS feed and sitemap still include all posts (they call the same use cases)\n\n**Acceptance criteria checklist**:\n- [ ] `publishedOnly(posts)` returns only PUBLISHED posts as new array\n- [ ] `ListBlogPosts` omits DRAFT/ARCHIVED from results\n- [ ] `GetAdjacentBlogPosts` computes prev/next over published posts only; non-published slug → NotFoundError\n- [ ] `GetBlogPostBySlug` returns NotFoundError for DRAFT/ARCHIVED posts\n- [ ] `GetBlogPostBySlug` / `ListBlogPosts` return published posts unchanged otherwise\n- [ ] `BlogPostSummaryDTO.featured` and `BlogPostLinkDTO.publishedAt` populated from domain\n- [ ] File-backed posts load as PUBLISHED; existing blog listing/RSS/sitemap show all 4 posts\n- [ ] No changes to `IBlogPostRepository`; no new error code; no new use case\n\nIf any test fails or build breaks, investigate and fix before considering the task complete. Document any deviations from the PRD.",
+        "testStrategy": "Integration verification through: automated test suite execution (unit + integration tests), TypeScript compilation, linting, production build, and manual inspection of generated blog routes. Success criteria: all automated tests pass, build succeeds, blog content remains visible.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-09-09T14:02:19.341Z",
+      "updated": "2026-09-09T14:02:19.341Z",
+      "description": "Tasks for blog-v2-phase-2 context"
+    }
+  },
+  "blog-v2-phase-3": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Add Prisma schema and migration for BlogPost table",
+        "description": "Create BlogPost model with BlogPostStatus enum in schema.prisma and generate migration",
+        "details": "Add BlogPostStatus enum (DRAFT, PUBLISHED, ARCHIVED) and BlogPost model to packages/infra/prisma/schema.prisma with:\n- id (uuid), slug (unique string)\n- title, description, content, coverImageAlt, thumbnailImageAlt (Json for localization)\n- author (Json), tags (String[])\n- coverImageUrl, thumbnailImageUrl (nullable String)\n- publishedAt (DateTime), status (BlogPostStatus default DRAFT), featured (Boolean default false)\n- createdAt, updatedAt (DateTime), deletedAt (nullable DateTime)\n- Indexes: [publishedAt], [status, publishedAt]\n\nRun `prisma migrate dev --name add_blog_post_table` to generate migration.\nRun `prisma generate` to update Prisma client with db.blogPost.\n\nMirror the Project table conventions (localized Json fields, nullable images, soft delete).\nConfirm DATABASE_URL/DIRECT_URL point to portfolio-dev before running migration.",
+        "testStrategy": "Verify migration file created in packages/infra/prisma/migrations/*_add_blog_post_table/migration.sql. Run `prisma migrate status` to confirm clean state. Check that BlogPost table, BlogPostStatus enum, and indexes exist in portfolio-dev database. Verify Prisma client regenerated (db.blogPost available in TypeScript).",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-09-10T19:44:16.368Z"
+      },
+      {
+        "id": "2",
+        "title": "Add author field to BlogPost domain entity and update core layer",
+        "description": "Make author required on IBlogPostProps, wire Author.create in BlogPost.create(), update BlogPostBuilder",
+        "details": "In packages/core/src/blog/entities/BlogPost.ts:\n- Add `author: IAuthorProps` (required) to IBlogPostProps\n- Import Author from '../value-objects/Author'\n- Add `Author.create(props.author)` to the collect([...]) array in create() (propagates left on invalid author)\n- Add `public readonly author: Author` property and assign in constructor\n- Keep status/featured optional with defaults unchanged\n\nIn packages/core/test/helpers/builders/BlogPostBuilder.ts:\n- Add withAuthor(props: IAuthorProps) method\n- Default author to stable fixture: { name: 'Wallace Ferreira', avatarUrl: 'https://[supabase-url]/storage/v1/object/public/avatars/wallace.jpg', url: 'https://wallaceferreira.dev' }\n- Existing build() defaults (status: DRAFT, featured: false) unchanged\n\nUpdate packages/core/test/blog/BlogPost.test.ts:\n- Add author key to all BlogPost.create() calls or switch to builder\n- Add tests: creates post when author valid, returns left when author.name/avatarUrl invalid, exposes author on created post\n- Existing status/invariant/transition tests still pass\n\nUse Validator chain pattern; no hardcoded messages in domain code.",
+        "testStrategy": "Run `pnpm --filter @repo/core test`. All existing BlogPost tests pass. New tests verify: (1) creates post when author is valid, (2) returns single left when author.name invalid (INVALID_PERSON_NAME), (3) returns single left when author.avatarUrl invalid (INVALID_URL), (4) exposes author property on created BlogPost. Builder test verifies withAuthor() and default author fixture work.",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-09-10T20:09:29.319Z"
+      },
+      {
+        "id": "3",
+        "title": "Implement PrismaBlogPostRepository and rewrite BlogPostMapper for Postgres",
+        "description": "Create Prisma-backed repository, rewrite mapper to read real Prisma columns, delete FileSystem repository",
+        "details": "Create packages/infra/src/repositories/blog/PrismaBlogPostRepository.ts:\n- Implement IBlogPostRepository with constructor(private db: PrismaClient)\n- findAll(): findMany({ where: { deletedAt: null }, orderBy: { publishedAt: 'desc' } }), map via BlogPostMapper.toDomain\n- findBySlug(slug): findFirst({ where: { slug: slug.value, deletedAt: null } }), return mapped or null\n\nRewrite packages/infra/src/repositories/blog/BlogPostMapper.ts:\n- Replace toDomain(meta, locales) with toDomain(raw: PrismaBlogPost): BlogPost\n- Map localized Json → ILocalizedTextInput (cast like ProjectMapper)\n- author Json → IAuthorProps (cast), status: raw.status as BlogPostStatus, featured: raw.featured\n- Images: raw.coverImageUrl ? { url: raw.coverImageUrl, alt: raw.coverImageAlt as ILocalizedTextInput } : undefined (same for thumbnail)\n- publishedAt: raw.publishedAt.toISOString(), created_at/updated_at/deleted_at from row\n- Left → throw InfrastructureError\n- Delete old toLocalizedInput/ParsedLocaleFiles machinery, keep file <200 lines\n\nDelete:\n- packages/infra/src/repositories/blog/FileSystemBlogPostRepository.ts\n- packages/infra/src/repositories/blog/schemas.ts\n- packages/infra/test/repositories/blog/FileSystemBlogPostRepository.test.ts\n- packages/infra/test/fixtures/posts/** (entire directory)\n\nUpdate packages/infra/src/repositories/blog/index.ts: export PrismaBlogPostRepository, remove FileSystemBlogPostRepository export\n\nUpdate packages/infra/src/index.ts: export PrismaBlogPostRepository, drop FileSystemBlogPostRepository + schemas types (MetaJson, MdxFrontmatter, IParsedLocaleFile, ParsedLocaleFiles)\n\nCreate packages/infra/test/factories/prisma-blog-post.factory.ts mirroring buildPrismaProject structure\n\nCreate packages/infra/test/repositories/blog/PrismaBlogPostRepository.integration.test.ts (gated per #1021, *.integration.test.ts suffix):\n- Tests: findAll returns non-deleted posts any status ordered publishedAt desc, findAll excludes soft-deleted, findBySlug returns post/null for missing/null for soft-deleted\n\nRewrite packages/infra/test/repositories/blog/BlogPostMapper.test.ts as unit test (no DB):\n- Maps Prisma row → BlogPost with row's status (not hardcoded PUBLISHED), maps author Json → Author, maps bio when present, maps null cover/thumbnail → undefined, throws InfrastructureError when row violates domain rule (PUBLISHED + empty tags)",
+        "testStrategy": "Run `pnpm --filter @repo/infra test` (unit tests) and integration tests (if gated env check passes). Unit: BlogPostMapper maps all fields correctly, throws on domain violation. Integration: PrismaBlogPostRepository.findAll excludes deleted rows, orders desc, findBySlug returns correct post or null. No dangling imports from deleted files verified by `pnpm -w lint` and `pnpm -w types`.",
+        "priority": "high",
+        "dependencies": [
+          "2"
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": "4",
+        "title": "Create seedBlogPosts seeder and wire into DI container",
+        "description": "Migrate 4 MDX posts to TS seeder, wire blogPostRepository into infra container, update apps/site container",
+        "details": "In packages/infra/prisma/seeders.ts:\n- Add ID.blogPosts object with 4 stable uuids (one-validator-one-left, server-components-as-composition-root, the-either-pattern-in-typescript, value-objects-vs-primitives)\n- Create export async function seedBlogPosts(db: PrismaClient)\n- Upsert 4 posts in loop (mirror seedProjects structure):\n  * content: MDX body from content/posts/*/[locale].mdx (frontmatter stripped) as Json { 'en-US': '...', 'pt-BR': '...', es: '...' }\n  * title/description: from each locale file's frontmatter as Json\n  * tags, publishedAt: from meta.json\n  * author: site owner fixture { name: 'Wallace Ferreira', avatarUrl: '[supabase url]', url: 'https://wallaceferreira.dev' } as Json\n  * status: 'PUBLISHED', featured: true for the-either-pattern-in-typescript + value-objects-vs-primitives, false for others\n  * no cover/thumbnail (current posts have none)\n- Wire await seedBlogPosts(prisma) into packages/infra/prisma/seed.ts main()\n\nIn packages/infra/src/container.ts:\n- Add blogPostRepository: IBlogPostRepository to Container type\n- Add blogPostRepository: new PrismaBlogPostRepository(prisma) to makeContainer()\n- Import IBlogPostRepository from @repo/application/blog\n\nIn apps/site/src/lib/server/container.ts:\n- Delete BLOG_CONTENT_DIR const, FileSystemBlogPostRepository import/instantiation, blogPostRepository type extension\n- Change getServerContainer() to return getInfraContainer() directly (now includes blogPostRepository)\n- If nothing else app-specific remains, collapse to re-export\n\nIn apps/site/src/app/[locale]/blog/[slug]/opengraph-image.tsx:\n- Remove stale comment about edge runtime + FileSystemBlogPostRepository\n\nRun `pnpm --filter @repo/infra db:seed` against portfolio-dev to verify 4 posts inserted as PUBLISHED\n\nDelete content/posts/** only AFTER dev seed run confirms posts render identically",
+        "testStrategy": "Run `pnpm --filter @repo/infra db:seed` against portfolio-dev. Query database to verify 4 BlogPost rows exist with status=PUBLISHED, correct slugs, localized content, author Json, featured flags. Verify content/posts/ deletion doesn't break build. Run `pnpm --filter @repo/site build` to confirm no filesystem dependency errors. Check /blog listing renders 4 posts from Postgres.",
+        "priority": "medium",
+        "dependencies": [
+          "3"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-09-11T16:25:39.302Z"
+      },
+      {
+        "id": "5",
+        "title": "Update application DTOs and use cases, verify site build and rendering",
+        "description": "Add author to BlogPostSummaryDTO, updatedAt + author.bio to BlogPostDetailDTO, update use-case mappers, verify full site build",
+        "details": "Create packages/application/src/blog/dtos/BlogPostAuthorDTO.ts (or inline in BlogPostSummaryDTO.ts):\nexport type BlogPostAuthorDTO = {\n  name: string;\n  avatarUrl: string;\n  url?: string;\n  bio?: string; // only on detail view\n};\n\nUpdate packages/application/src/blog/dtos/BlogPostSummaryDTO.ts:\n- Add author: BlogPostAuthorDTO (without bio)\n\nUpdate packages/application/src/blog/dtos/BlogPostDetailDTO.ts:\n- Change to: BlogPostSummaryDTO & { content: string; updatedAt?: string; author: BlogPostAuthorDTO & { bio?: string } }\n\nUpdate packages/application/src/blog/dtos/index.ts: export BlogPostAuthorDTO\n\nIn packages/application/src/blog/use-cases/ListBlogPosts.ts:\n- Update toDTO to add author: { name: post.author.name.value, avatarUrl: post.author.avatarUrl.value, url: post.author.url?.value }\n\nIn packages/application/src/blog/use-cases/GetBlogPostBySlug.ts:\n- Update toDTO to add author with bio: post.author.bio?.get(locale)\n- Add updatedAt: post.updated_at?.value (if present)\n\nGetAdjacentBlogPosts.toLink unchanged (link DTO has no author)\n\nUpdate packages/application/test/blog/ListBlogPosts.test.ts:\n- Verify author present on every summary DTO\n\nUpdate packages/application/test/blog/GetBlogPostBySlug.test.ts:\n- Verify updatedAt and author.bio (locale-resolved) present on detail DTO\n- Existing published-only/ordering/not-found tests unchanged\n\nManual verification:\n- Run `pnpm --filter @repo/site build` (should be green)\n- Check /en-US/blog, /pt-BR/blog render with DB posts\n- Open one post page, verify content renders\n- Check rss.xml, sitemap.xml, an OG image URL all render",
+        "testStrategy": "Run `pnpm --filter @repo/application test`. All use-case + DTO tests pass. New assertions verify: (1) ListBlogPosts returns author on every summary, (2) GetBlogPostBySlug returns updatedAt + author.bio locale-resolved. Manual: `pnpm --filter @repo/site build` succeeds. Visit /blog in browser, verify listing + post page + RSS + sitemap + OG image all render from Postgres. Verify no 404s or build errors. Check AC checklist: all 9 acceptance criteria met.",
+        "priority": "medium",
+        "dependencies": [
+          "4"
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-09-11T16:25:39.303Z",
+      "taskCount": 5,
+      "completedCount": 4,
+      "tags": [
+        "blog-v2-phase-3"
+      ]
     }
   }
 }

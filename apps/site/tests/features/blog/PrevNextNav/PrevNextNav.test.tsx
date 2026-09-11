@@ -31,8 +31,16 @@ vi.mock('~/i18n/routing', () => ({
   ),
 }));
 
-const NEWER = { slug: 'newest-post', title: 'The Newest Post' };
-const OLDER = { slug: 'oldest-post', title: 'The Oldest Post' };
+const NEWER = {
+  slug: 'newest-post',
+  title: 'The Newest Post',
+  publishedAt: '2026-08-22',
+};
+const OLDER = {
+  slug: 'oldest-post',
+  title: 'The Oldest Post',
+  publishedAt: '2026-08-08',
+};
 
 describe('PrevNextNav', () => {
   it('should render nothing when there is neither a newer nor an older post', async () => {

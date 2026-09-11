@@ -53,6 +53,13 @@ enum LocationType {
   REMOTE
 }
 
+// BlogPostStatus mirrors BlogPostStatus enum in core/blog
+enum BlogPostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 // ---------------------------------------------------------------------------
 // Skill
 // ---------------------------------------------------------------------------
@@ -192,4 +199,31 @@ model User {
 
   @@index([email])
   @@index([authSubject])
+}
+
+// ---------------------------------------------------------------------------
+// BlogPost
+// ---------------------------------------------------------------------------
+
+model BlogPost {
+  id                String         @id @default(uuid()) @db.Uuid
+  slug              String         @unique
+  title             Json
+  description       Json
+  content           Json
+  tags              String[]
+  author            Json
+  coverImageUrl     String?
+  coverImageAlt     Json?
+  thumbnailImageUrl String?
+  thumbnailImageAlt Json?
+  publishedAt       DateTime
+  status            BlogPostStatus @default(DRAFT)
+  featured          Boolean        @default(false)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  deletedAt         DateTime?
+
+  @@index([publishedAt])
+  @@index([status, publishedAt])
 }

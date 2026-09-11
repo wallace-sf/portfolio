@@ -7,9 +7,6 @@ import { notFound } from 'next/navigation';
 import { env } from '~/config/env';
 import { getServerContainer } from '~/lib/server/container';
 
-// Node runtime (the default): the post is read through
-// FileSystemBlogPostRepository, which the edge runtime can't do.
-
 export const size = OG_IMAGE_SIZE;
 export const contentType = 'image/png';
 export const alt = 'Wallace Ferreira — Blog';

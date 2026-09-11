@@ -1,4 +1,4 @@
-import { Fluency, Language, Name, ValidationError } from '~/index';
+import { Fluency, Language, AlphaName, ValidationError } from '~/index';
 
 import { LanguageBuilder } from '../helpers';
 
@@ -39,7 +39,7 @@ describe('Language', () => {
       );
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(Name.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(AlphaName.ERROR_CODE);
     });
 
     it('should return Left when fluency is invalid', () => {

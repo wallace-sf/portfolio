@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 import {
+  seedBlogPosts,
   seedExperiences,
   seedProfile,
   seedProjects,
@@ -26,6 +27,7 @@ async function main() {
   await seedProjects(prisma);
   await seedExperiences(prisma);
   await seedProfessionalValues(prisma);
+  await seedBlogPosts(prisma);
 }
 
 main()

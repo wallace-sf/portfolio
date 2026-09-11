@@ -37,20 +37,28 @@ async function seedUser(overrides?: Partial<ReturnType<typeof buildPrismaUser>>)
   return raw;
 }
 
+// Skipped as a whole (hooks included) when there is no reachable database —
+// a fresh clone or a paused dev project must not fail the @repo/infra suite.
+// Run explicitly with `pnpm --filter @repo/infra test:integration`.
+const missingDbEnv = !process.env.DIRECT_URL;
+
 beforeAll(async () => {
+  if (missingDbEnv) return;
   await db.$connect();
 });
 
 afterAll(async () => {
+  if (missingDbEnv) return;
   await db.user.deleteMany({ where: { email: { startsWith: TEST_EMAIL_PREFIX } } });
   await db.$disconnect();
 });
 
 afterEach(async () => {
+  if (missingDbEnv) return;
   await db.user.deleteMany({ where: { email: { startsWith: TEST_EMAIL_PREFIX } } });
 });
 
-describe('PrismaUserRepository', () => {
+describe.skipIf(missingDbEnv)('PrismaUserRepository (integration)', () => {
   describe('findById', () => {
     it('should return the user when found', async () => {
       const seeded = await seedUser();

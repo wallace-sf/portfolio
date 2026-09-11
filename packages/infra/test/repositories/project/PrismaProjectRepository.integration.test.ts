@@ -56,20 +56,28 @@ async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProj
   return raw;
 }
 
+// Skipped as a whole (hooks included) when there is no reachable database —
+// a fresh clone or a paused dev project must not fail the @repo/infra suite.
+// Run explicitly with `pnpm --filter @repo/infra test:integration`.
+const missingDbEnv = !process.env.DIRECT_URL;
+
 beforeAll(async () => {
+  if (missingDbEnv) return;
   await db.$connect();
 });
 
 afterAll(async () => {
+  if (missingDbEnv) return;
   await db.project.deleteMany({ where: { slug: { startsWith: TEST_SLUG_PREFIX } } });
   await db.$disconnect();
 });
 
 afterEach(async () => {
+  if (missingDbEnv) return;
   await db.project.deleteMany({ where: { slug: { startsWith: TEST_SLUG_PREFIX } } });
 });
 
-describe('PrismaProjectRepository', () => {
+describe.skipIf(missingDbEnv)('PrismaProjectRepository (integration)', () => {
   describe('findAll', () => {
     it('should return all non-deleted projects', async () => {
       await seedProject({ status: 'DRAFT' });

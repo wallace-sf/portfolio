@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { BlogPost, IBlogPostProps } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
 import { NotFoundError } from '@repo/core/shared';
 
 import { IBlogPostRepository } from '~/blog/ports';
@@ -28,7 +28,13 @@ const BASE_PROPS: IBlogPostProps = {
     es: 'Contenido completo.',
   },
   tags: ['nextjs', 'architecture'],
+  author: {
+    name: 'Test Author',
+    avatarUrl: 'https://example.com/avatar.jpg',
+    url: 'https://example.com',
+  },
   publishedAt: '2026-08-01T00:00:00.000Z',
+  status: BlogPostStatus.PUBLISHED,
 };
 
 function makeBlogPost(overrides: Partial<IBlogPostProps> = {}): BlogPost {
@@ -73,6 +79,7 @@ describe('GetBlogPostBySlug', () => {
         title: 'Meu Primeiro Post',
         description: 'Uma descrição curta.',
         publishedAt: '2026-08-01T00:00:00.000Z',
+        featured: false,
         tags: ['nextjs', 'architecture'],
         coverImage: undefined,
         content: 'Conteúdo completo.',
@@ -87,6 +94,38 @@ describe('GetBlogPostBySlug', () => {
 
       const result = await useCase.execute({
         slug: 'missing-post',
+        locale: 'en-US',
+      });
+
+      expect(result.isLeft()).toBe(true);
+      if (!result.isLeft()) return;
+      expect(result.value).toBeInstanceOf(NotFoundError);
+    });
+
+    it('should return Left(NotFoundError) when the found post is DRAFT', async () => {
+      const post = makeBlogPost({ status: BlogPostStatus.DRAFT, tags: [] });
+      const repo = makeRepository({
+        findBySlug: vi.fn().mockResolvedValue(post),
+      });
+
+      const result = await new GetBlogPostBySlug(repo).execute({
+        slug: 'my-first-post',
+        locale: 'en-US',
+      });
+
+      expect(result.isLeft()).toBe(true);
+      if (!result.isLeft()) return;
+      expect(result.value).toBeInstanceOf(NotFoundError);
+    });
+
+    it('should return Left(NotFoundError) when the found post is ARCHIVED', async () => {
+      const post = makeBlogPost({ status: BlogPostStatus.ARCHIVED });
+      const repo = makeRepository({
+        findBySlug: vi.fn().mockResolvedValue(post),
+      });
+
+      const result = await new GetBlogPostBySlug(repo).execute({
+        slug: 'my-first-post',
         locale: 'en-US',
       });
 

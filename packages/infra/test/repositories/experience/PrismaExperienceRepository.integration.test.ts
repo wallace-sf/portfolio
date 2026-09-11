@@ -44,21 +44,29 @@ async function seedExperience(
   return raw;
 }
 
+// Skipped as a whole (hooks included) when there is no reachable database —
+// a fresh clone or a paused dev project must not fail the @repo/infra suite.
+// Run explicitly with `pnpm --filter @repo/infra test:integration`.
+const missingDbEnv = !process.env.DIRECT_URL;
+
 beforeAll(async () => {
+  if (missingDbEnv) return;
   await db.$connect();
   await db.experience.deleteMany({});
 });
 
 afterAll(async () => {
+  if (missingDbEnv) return;
   await seedExperiences(db);
   await db.$disconnect();
 });
 
 afterEach(async () => {
+  if (missingDbEnv) return;
   await db.experience.deleteMany({});
 });
 
-describe('PrismaExperienceRepository', () => {
+describe.skipIf(missingDbEnv)('PrismaExperienceRepository (integration)', () => {
   describe('findAll', () => {
     it('should return all experiences ordered by startAt desc', async () => {
       await seedExperience({ startAt: new Date('2022-01-01') });

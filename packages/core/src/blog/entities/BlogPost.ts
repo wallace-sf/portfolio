@@ -14,7 +14,9 @@ import {
   left,
   right,
 } from '../../shared';
+import { Author, IAuthorProps } from '../value-objects/Author';
 import { Tag } from '../value-objects/Tag';
+import { BlogPostStatus } from './BlogPostStatus';
 
 export interface IBlogPostImage {
   url: string;
@@ -27,7 +29,10 @@ export interface IBlogPostProps extends IEntityProps {
   description: ILocalizedTextInput;
   content: ILocalizedTextInput;
   tags: string[];
+  author: IAuthorProps;
   publishedAt: string;
+  status?: BlogPostStatus;
+  featured?: boolean;
   coverImage?: IBlogPostImage;
   thumbnailImage?: IBlogPostImage;
 }
@@ -40,7 +45,11 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
   public readonly description: LocalizedText;
   public readonly content: LocalizedText;
   public readonly tags: Tag[];
+  public readonly author: Author;
   public readonly publishedAt: DateTime;
+  /** Mutable only through `publish()` / `archive()` — no external setter, like `Project.status`. */
+  public status: BlogPostStatus;
+  public readonly featured: boolean;
   public readonly coverImage: Image | undefined;
   public readonly thumbnailImage: Image | undefined;
 
@@ -51,7 +60,10 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     description: LocalizedText,
     content: LocalizedText,
     tags: Tag[],
+    author: Author,
     publishedAt: DateTime,
+    status: BlogPostStatus,
+    featured: boolean,
     coverImage: Image | undefined,
     thumbnailImage: Image | undefined,
   ) {
@@ -61,7 +73,10 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     this.description = description;
     this.content = content;
     this.tags = tags;
+    this.author = author;
     this.publishedAt = publishedAt;
+    this.status = status;
+    this.featured = featured;
     this.coverImage = coverImage;
     this.thumbnailImage = thumbnailImage;
   }
@@ -72,6 +87,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       LocalizedText.create(props.title ?? { 'en-US': '' }),
       LocalizedText.create(props.description ?? { 'en-US': '' }),
       LocalizedText.create(props.content ?? { 'en-US': '' }),
+      Author.create(props.author),
       DateTime.create(props.publishedAt),
       props.coverImage
         ? Image.create(props.coverImage.url, props.coverImage.alt)
@@ -87,6 +103,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       title,
       description,
       content,
+      author,
       publishedAt,
       coverImage,
       thumbnailImage,
@@ -104,6 +121,18 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     if (tagsResult.isLeft()) return left(tagsResult.value);
     const tags = tagsResult.value as Tag[];
 
+    const status = props.status ?? BlogPostStatus.DRAFT;
+    const featured = props.featured ?? false;
+
+    {
+      const { isValid } = Validator.of(status)
+        .in(Object.values(BlogPostStatus))
+        .refine((s) => s !== BlogPostStatus.PUBLISHED || tags.length > 0)
+        .validate();
+      if (!isValid)
+        return left(new ValidationError({ code: BlogPost.ERROR_CODE }));
+    }
+
     return right(
       new BlogPost(
         props,
@@ -112,11 +141,44 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
         description,
         content,
         tags,
+        author as Author,
         publishedAt,
+        status,
+        featured,
         coverImage as Image | undefined,
         thumbnailImage as Image | undefined,
       ),
     );
+  }
+
+  /**
+   * Publish the post. Allowed from `DRAFT` or `ARCHIVED`; rejected when already
+   * `PUBLISHED` or when the post has no tags (the "PUBLISHED needs >= 1 tag"
+   * invariant, enforced again at transition time). Mirrors `Project.publish()`.
+   */
+  publish(): Either<ValidationError, void> {
+    const { isValid } = Validator.of(this.status)
+      .refine((s) => s !== BlogPostStatus.PUBLISHED)
+      .refine(() => this.tags.length > 0)
+      .validate();
+    if (!isValid)
+      return left(new ValidationError({ code: BlogPost.ERROR_CODE }));
+    this.status = BlogPostStatus.PUBLISHED;
+    return right(undefined);
+  }
+
+  /**
+   * Archive the post. Allowed from `DRAFT` or `PUBLISHED`; rejected when already
+   * `ARCHIVED`. Mirrors `Project.archive()`.
+   */
+  archive(): Either<ValidationError, void> {
+    const { isValid } = Validator.of(this.status)
+      .refine((s) => s !== BlogPostStatus.ARCHIVED)
+      .validate();
+    if (!isValid)
+      return left(new ValidationError({ code: BlogPost.ERROR_CODE }));
+    this.status = BlogPostStatus.ARCHIVED;
+    return right(undefined);
   }
 
   /**

@@ -8,7 +8,7 @@ import {
   isLocale,
   left,
   Locale,
-  Name,
+  AlphaName,
   right,
   ValidationError,
   validateEnum,
@@ -25,14 +25,14 @@ export class Language extends Entity<Language, ILanguageProps> {
   static readonly ERROR_CODE = 'INVALID_LANGUAGE';
   static readonly LOCALE_ERROR_CODE = 'INVALID_LOCALE';
 
-  public readonly name: Name;
+  public readonly name: AlphaName;
   public readonly fluency: Fluency;
   public readonly locale: Locale;
 
   private constructor(
     props: ILanguageProps,
     fluency: Fluency,
-    name: Name,
+    name: AlphaName,
     locale: Locale,
   ) {
     super(props);
@@ -44,7 +44,7 @@ export class Language extends Entity<Language, ILanguageProps> {
   static create(props: ILanguageProps): Either<ValidationError, Language> {
     const result = collect([
       validateEnum(props.fluency, Object.values(Fluency), Language.ERROR_CODE),
-      Name.create(props.name),
+      AlphaName.create(props.name),
       Language._createLocale(props.locale),
     ]);
     if (result.isLeft()) return left(result.value);
