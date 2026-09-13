@@ -43,6 +43,14 @@ export class BlogPostMapper {
 
     const result = BlogPost.create(props);
     if (result.isLeft()) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `[BlogPostMapper] Failed to map blog post "${raw.slug}" to domain`,
+        '\nProps:',
+        JSON.stringify(props, null, 2),
+        '\nValidation error:',
+        result.value,
+      );
       throw new InfrastructureError(
         `Failed to map blog post ${raw.slug} to domain: ${result.value.message}`,
         result.value,

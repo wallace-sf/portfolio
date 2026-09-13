@@ -26,7 +26,9 @@ export class ListBlogPosts extends UseCase<
     try {
       const posts = newestFirst(publishedOnly(await this.repository.findAll()));
       return right(posts.map((post) => this.toDTO(post, input.locale)));
-    } catch {
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('[ListBlogPosts] Failed to fetch blog posts:', error);
       return left(
         new DomainError(ApplicationErrorCode.FETCH_FAILED, {
           message: 'Failed to fetch blog posts',
