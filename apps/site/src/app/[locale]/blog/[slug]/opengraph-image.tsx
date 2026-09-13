@@ -20,8 +20,10 @@ export async function generateStaticParams() {
 
   if (result.isLeft()) {
     // eslint-disable-next-line no-console
-    console.warn(
+    console.error(
       '[blog] could not list posts for OG image static params — no cards will be prerendered',
+      'Error:',
+      result.value,
     );
   }
 

@@ -46,6 +46,11 @@ export default async function BlogListingPage({
     getServerContainer().blogPostRepository,
   ).execute({ locale: locale as Locale });
 
+  if (result.isLeft()) {
+    // eslint-disable-next-line no-console
+    console.error('[blog] Failed to list blog posts:', result.value);
+  }
+
   const posts = result.isRight() ? result.value : [];
 
   return (
