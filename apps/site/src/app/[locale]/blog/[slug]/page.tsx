@@ -25,8 +25,10 @@ export async function generateStaticParams() {
 
   if (result.isLeft()) {
     // eslint-disable-next-line no-console
-    console.warn(
+    console.error(
       '[blog] could not list posts for static params — no post pages will be prerendered',
+      'Error:',
+      result.value,
     );
   }
 
