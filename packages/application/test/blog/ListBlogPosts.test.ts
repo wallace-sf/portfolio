@@ -78,7 +78,13 @@ describe('ListBlogPosts', () => {
           publishedAt: '2026-08-01T00:00:00.000Z',
           featured: false,
           tags: ['nextjs', 'architecture'],
+          author: {
+            name: 'Test Author',
+            avatarUrl: 'https://example.com/avatar.jpg',
+            url: 'https://example.com',
+          },
           coverImage: undefined,
+          thumbnailImage: undefined,
         },
       ]);
     });

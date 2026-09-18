@@ -31,6 +31,7 @@ export interface IBlogPostProps extends IEntityProps {
   tags: string[];
   author: IAuthorProps;
   publishedAt: string;
+  updatedAt?: string;
   status?: BlogPostStatus;
   featured?: boolean;
   coverImage?: IBlogPostImage;
@@ -47,6 +48,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
   public readonly tags: Tag[];
   public readonly author: Author;
   public readonly publishedAt: DateTime;
+  public readonly updatedAt: DateTime | undefined;
   /** Mutable only through `publish()` / `archive()` — no external setter, like `Project.status`. */
   public status: BlogPostStatus;
   public readonly featured: boolean;
@@ -62,6 +64,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     tags: Tag[],
     author: Author,
     publishedAt: DateTime,
+    updatedAt: DateTime | undefined,
     status: BlogPostStatus,
     featured: boolean,
     coverImage: Image | undefined,
@@ -75,6 +78,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
     this.tags = tags;
     this.author = author;
     this.publishedAt = publishedAt;
+    this.updatedAt = updatedAt;
     this.status = status;
     this.featured = featured;
     this.coverImage = coverImage;
@@ -89,6 +93,9 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       LocalizedText.create(props.content ?? { 'en-US': '' }),
       Author.create(props.author),
       DateTime.create(props.publishedAt),
+      props.updatedAt
+        ? DateTime.create(props.updatedAt)
+        : right<ValidationError, DateTime | undefined>(undefined),
       props.coverImage
         ? Image.create(props.coverImage.url, props.coverImage.alt)
         : right<ValidationError, Image | undefined>(undefined),
@@ -105,6 +112,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
       content,
       author,
       publishedAt,
+      updatedAt,
       coverImage,
       thumbnailImage,
     ] = fieldsResult.value;
@@ -143,6 +151,7 @@ export class BlogPost extends AggregateRoot<BlogPost, IBlogPostProps> {
         tags,
         author as Author,
         publishedAt,
+        updatedAt as DateTime | undefined,
         status,
         featured,
         coverImage as Image | undefined,
