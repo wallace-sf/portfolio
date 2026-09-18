@@ -81,9 +81,46 @@ describe('GetBlogPostBySlug', () => {
         publishedAt: '2026-08-01T00:00:00.000Z',
         featured: false,
         tags: ['nextjs', 'architecture'],
+        author: {
+          name: 'Test Author',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          url: 'https://example.com',
+          bio: undefined,
+        },
         coverImage: undefined,
+        thumbnailImage: undefined,
         content: 'Conteúdo completo.',
+        updatedAt: undefined,
       });
+    });
+
+    it('should include author bio resolved to the locale and updatedAt when present', async () => {
+      const post = makeBlogPost({
+        author: {
+          name: 'Test Author',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          url: 'https://example.com',
+          bio: {
+            'en-US': 'An author bio.',
+            'pt-BR': 'Uma biografia do autor.',
+            es: 'Una biografía del autor.',
+          },
+        },
+        updatedAt: '2026-08-15T00:00:00.000Z',
+      });
+      const repo = makeRepository({
+        findBySlug: vi.fn().mockResolvedValue(post),
+      });
+
+      const result = await new GetBlogPostBySlug(repo).execute({
+        slug: 'my-first-post',
+        locale: 'pt-BR',
+      });
+
+      expect(result.isRight()).toBe(true);
+      if (!result.isRight()) return;
+      expect(result.value.author.bio).toBe('Uma biografia do autor.');
+      expect(result.value.updatedAt).toBe('2026-08-15T00:00:00.000Z');
     });
 
     it('should return Left(NotFoundError) when the post does not exist', async () => {

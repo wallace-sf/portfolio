@@ -45,6 +45,11 @@ export class ListBlogPosts extends UseCase<
       publishedAt: post.publishedAt.value,
       featured: post.featured,
       tags: post.tags.map((tag) => tag.value),
+      author: {
+        name: post.author.name.value,
+        avatarUrl: post.author.avatarUrl.value,
+        url: post.author.url?.value,
+      },
       coverImage: post.coverImage
         ? {
             url: post.coverImage.url.value,
