@@ -38,6 +38,11 @@ const BASE: BlogPostSummaryDTO = {
   publishedAt: '2026-08-01',
   featured: false,
   tags: ['typescript', 'ddd'],
+  author: {
+    name: 'Test Author',
+    avatarUrl: 'https://example.com/avatar.jpg',
+    url: 'https://example.com',
+  },
 };
 
 describe('PostCard', () => {

@@ -63,6 +63,12 @@ export class GetBlogPostBySlug extends UseCase<
       publishedAt: post.publishedAt.value,
       featured: post.featured,
       tags: post.tags.map((tag) => tag.value),
+      author: {
+        name: post.author.name.value,
+        avatarUrl: post.author.avatarUrl.value,
+        url: post.author.url?.value,
+        bio: post.author.bio?.get(locale),
+      },
       coverImage: post.coverImage
         ? {
             url: post.coverImage.url.value,
@@ -76,6 +82,7 @@ export class GetBlogPostBySlug extends UseCase<
           }
         : undefined,
       content: post.content.get(locale),
+      updatedAt: post.updatedAt?.value,
     };
   }
 }
