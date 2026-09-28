@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
+import { seedBlogPosts } from './seed-data/blog-posts/seedBlogPosts';
 import {
-  seedBlogPosts,
   seedExperiences,
   seedProfile,
   seedProjects,

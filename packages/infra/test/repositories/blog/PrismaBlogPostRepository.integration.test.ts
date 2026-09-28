@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { BlogPostStatus } from '@repo/core/blog';
@@ -11,6 +12,23 @@ if (!process.env.DATABASE_URL) {
   throw new Error(
     'DATABASE_URL not set — integration tests require a live database',
   );
+}
+
+type PrismaBlogPostRow = ReturnType<typeof buildPrismaBlogPost>;
+
+function toCreateInput(row: PrismaBlogPostRow): Prisma.BlogPostCreateManyInput {
+  return {
+    ...row,
+    title: row.title as Prisma.InputJsonValue,
+    description: row.description as Prisma.InputJsonValue,
+    content: row.content as Prisma.InputJsonValue,
+    author: row.author as Prisma.InputJsonValue,
+    coverImageAlt:
+      (row.coverImageAlt as Prisma.InputJsonValue | null) ?? Prisma.JsonNull,
+    thumbnailImageAlt:
+      (row.thumbnailImageAlt as Prisma.InputJsonValue | null) ??
+      Prisma.JsonNull,
+  };
 }
 
 describe('PrismaBlogPostRepository (integration)', () => {
@@ -38,7 +56,9 @@ describe('PrismaBlogPostRepository (integration)', () => {
         publishedAt: new Date('2026-01-10'),
       });
 
-      await prisma.blogPost.createMany({ data: [post1, post2, post3] });
+      await prisma.blogPost.createMany({
+        data: [post1, post2, post3].map(toCreateInput),
+      });
 
       const posts = await repo.findAll();
 
@@ -60,7 +80,9 @@ describe('PrismaBlogPostRepository (integration)', () => {
         deletedAt: new Date(),
       });
 
-      await prisma.blogPost.createMany({ data: [activePost, deletedPost] });
+      await prisma.blogPost.createMany({
+        data: [activePost, deletedPost].map(toCreateInput),
+      });
 
       const posts = await repo.findAll();
 
@@ -86,7 +108,9 @@ describe('PrismaBlogPostRepository (integration)', () => {
         status: 'ARCHIVED',
       });
 
-      await prisma.blogPost.createMany({ data: [draft, published, archived] });
+      await prisma.blogPost.createMany({
+        data: [draft, published, archived].map(toCreateInput),
+      });
 
       const posts = await repo.findAll();
 
@@ -115,7 +139,7 @@ describe('PrismaBlogPostRepository (integration)', () => {
         deletedAt: null,
       });
 
-      await prisma.blogPost.create({ data: row });
+      await prisma.blogPost.create({ data: toCreateInput(row) });
 
       const result = Slug.create('existing-post');
       expect(result.isRight()).toBe(true);
@@ -144,7 +168,7 @@ describe('PrismaBlogPostRepository (integration)', () => {
         deletedAt: new Date(),
       });
 
-      await prisma.blogPost.create({ data: row });
+      await prisma.blogPost.create({ data: toCreateInput(row) });
 
       const result = Slug.create('deleted-post');
       expect(result.isRight()).toBe(true);

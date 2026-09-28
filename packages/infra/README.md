@@ -59,14 +59,45 @@ const result = await container.getProjectBySlug.execute({ slug });
 
 ## Environment Variables
 
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `DATABASE_URL` | Yes | Prisma database connection string |
-| `RESEND_API_KEY` | Yes | Resend API key for sending emails |
-| `RESEND_FROM_EMAIL` | Yes | Sender address for contact emails |
-| `SUPABASE_URL` | When using Supabase Auth | Supabase project URL |
-| `SUPABASE_ANON_KEY` | When using Supabase Auth | Anonymous key (server/edge only) |
-| `SUPABASE_SERVICE_ROLE_KEY` | When using Supabase Auth | Service role key — **never expose to the browser** |
+### Files
+
+| File | Loaded by | Supabase project |
+|------|-----------|------------------|
+| `.env` | Prisma CLI (`db:migrate`, `db:migrate:deploy`, `db:studio`), `scripts/assert-safe-db.mjs`, and `tsx --env-file=.env` (`db:seed`, `db:seed:blog`, `db:backup`, `send:email:manual`) | **dev — always** |
+| `.env.production.local` | Nothing automatically (see below) | prod |
+| `.env.test.local` | Vitest (`mode=test`) | dev |
+
+**`.env` must never point at production.** `db:migrate` runs
+`prisma migrate dev`, which can reset the database. Set `DB_SAFE_REMOTE_REF`
+to the **dev** project ref (the `<ref>` in `https://<ref>.supabase.co`). The
+`assert-safe-db` guard only lets destructive operations through against that
+ref or localhost.
+
+To run a script against production once, export the prod file into the shell
+first. Values already present in the environment win over `.env`, both for
+Prisma and for `tsx --env-file`:
+
+```bash
+set -a; . ./.env.production.local; set +a; pnpm db:backup
+```
+
+`db:migrate` stays blocked this way because the prod `DIRECT_URL` doesn't match
+`DB_SAFE_REMOTE_REF`. Production migrations run on deploy (`db:migrate:deploy`
+in `apps/site/vercel.json`).
+
+### Variables
+
+| Variable | Used by | Purpose |
+|----------|---------|---------|
+| `DATABASE_URL` | Prisma (runtime queries) | Pooled ("Transaction", port 6543) connection string |
+| `DIRECT_URL` | Prisma migrations, `db:seed`, `db:seed:blog`, `db:backup`, `assert-safe-db` | Direct ("Session", port 5432) connection string |
+| `ADMIN_EMAIL` / `ADMIN_NAME` | `db:seed` | Admin user created by the seed (`ADMIN_NAME` defaults to `Admin`) |
+| `DB_SAFE_REMOTE_REF` | `assert-safe-db` | Dev project ref treated as safe for destructive operations |
+| `DB_ALLOW_DESTRUCTIVE` | `assert-safe-db` | Set to `1` on the command line to override the guard. Never put it in a file |
+| `RESEND_API_KEY` | `ResendEmailService`, `send:email:manual` | Resend API key |
+| `CONTACT_EMAIL_TO` / `CONTACT_EMAIL_FROM` | `ResendEmailService`, `send:email:manual` | Recipient and sender of contact emails |
+| `SUPABASE_URL` / `SUPABASE_ANON_KEY` | `SupabaseAuthenticationGateway`, `send:email:manual` | Supabase project URL and anon key (server only) |
+| `SUPABASE_TEST_*` | Auth-gateway integration test | See [Testing](#testing) |
 
 ---
 
