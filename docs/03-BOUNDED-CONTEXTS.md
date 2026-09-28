@@ -135,13 +135,13 @@ src/
   order is a domain rule (`BlogPost.compareByPublication`); chronological
   adjacency (newer/older post) is a domain service (`BlogPostSequence`) — see
   [09-PATTERNS § Domain Service](./09-PATTERNS.md#domain-service).
-  - **MVP:** content authored as MDX-in-Git (`content/posts/<slug>/<locale>.mdx`),
-    read by `FileSystemBlogPostRepository`, rendered by `apps/site` Server
-    Components.
-  - **Blog v2 (planned):** `status` (`DRAFT | PUBLISHED | ARCHIVED`), `featured`,
-    and an `Author` VO; invariant — a post may be `PUBLISHED` only with **≥ 1
-    tag**. Content moves to Postgres `Json` localized columns via
-    `PrismaBlogPostRepository`. See
+  - `status` (`DRAFT | PUBLISHED | ARCHIVED`), `featured`, and an `Author` VO;
+    invariant: a post may be `PUBLISHED` only with **≥ 1 tag**.
+  - Persisted in Postgres (`BlogPost` table, localized `Json` columns for
+    `title` / `description` / `content`) and read through
+    `PrismaBlogPostRepository`, like portfolio content. Posts are authored as
+    Markdown in the seed (`packages/infra/prisma/seed-data/blog-posts/`) and
+    rendered at build time by `apps/site` Server Components. See
     [blog-v2-phase-0-design](./superpowers/specs/2026-09-01-blog-v2-phase-0-design.md).
 
 ---

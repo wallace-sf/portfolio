@@ -26,6 +26,7 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:seed": "tsx --env-file=.env prisma/seed.ts",
+    "db:seed:blog": "tsx --env-file=.env prisma/seed-blog.ts",
     "db:backup": "tsx --env-file=.env scripts/backup-db.ts",
     "test": "vitest run --exclude '**/*.integration.test.ts'",
     "test:integration": "vitest run integration.test.ts",
@@ -40,7 +41,6 @@
     "@repo/utils": "workspace:*",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.0",
-    "gray-matter": "^4.0.3",
     "resend": "^6.9.4",
     "zod": "^4.3.6"
   },
