@@ -32,8 +32,7 @@ listing its keys.
 
 | File | Loaded by | Supabase project |
 |------|-----------|------------------|
-| `apps/site/.env.development.local` | `next dev` | dev |
-| `apps/site/.env.production.local` | `next build` / `next start` (local only) | prod |
+| `apps/site/.env.local` | `next dev` **and** `next build` / `next start` (including the lefthook `pre-push` build) | dev |
 | `packages/infra/.env` | Prisma CLI (`db:migrate`, `db:studio`, …) and `tsx --env-file=.env` (`db:seed`, `db:backup`, `send:email:manual`) | **dev** |
 | `packages/infra/.env.production.local` | Nothing automatically; see [Running an infra script against production](#running-an-infra-script-against-production) | prod |
 | `packages/infra/.env.test.local` | Vitest (`mode=test`) — integration tests | dev |
@@ -44,6 +43,11 @@ listing its keys.
 > `<ref>` in `https://<ref>.supabase.co`). With the prod ref there, the
 > `assert-safe-db` guard lets destructive operations through against production.
 
+> **Don't create `apps/site/.env.production.local`.** `next build` always runs
+> in production mode and gives that file priority over `.env.local`. Every local
+> build, including the one `git push` triggers, would then need production
+> credentials. Production values for the site live only in Vercel.
+
 Deployed environments don't read these files. On Vercel, set variables in the
 project settings. Production migrations already run on every production deploy
 (`apps/site/vercel.json` → `db:migrate:deploy`).
@@ -53,15 +57,15 @@ project settings. Production migrations already run on every production deploy
 **1. Create the env files**
 
 ```bash
-cp apps/site/.env.example apps/site/.env.development.local
+cp apps/site/.env.example apps/site/.env.local
 cp packages/infra/.env.example packages/infra/.env
 cp packages/infra/.env.example packages/infra/.env.test.local
 ```
 
 Fill them with credentials from the **Supabase dev project**
-(supabase.com → Project Settings → Database and API). Create the
-`.env.production.local` files only if you need to run something against prod
-from your machine.
+(supabase.com → Project Settings → Database and API). Create
+`packages/infra/.env.production.local` only if you need to run an infra script
+against prod from your machine.
 
 **2. Build the internal packages**
 

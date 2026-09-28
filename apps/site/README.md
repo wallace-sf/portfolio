@@ -39,15 +39,12 @@ Ou só o web (a partir da raiz, após `pnpm install`):
 Copie o exemplo e preencha com as credenciais do projeto Supabase de **dev**:
 
 ```bash
-cp apps/site/.env.example apps/site/.env.development.local
+cp apps/site/.env.example apps/site/.env.local
 ```
 
-| Arquivo | Carregado por | Projeto Supabase |
-|---------|---------------|------------------|
-| `.env.development.local` | `next dev` | dev |
-| `.env.production.local` | `next build` / `next start` (só local) | prod |
+O `.env.local` é carregado tanto pelo `next dev` quanto pelo `next build` / `next start`. Assim, todo build local (inclusive o do hook `pre-push`) usa o projeto de **dev**. **Não crie** `apps/site/.env.production.local`: no `next build` ele tem prioridade sobre o `.env.local` e faria o build local exigir credenciais de produção.
 
-Em produção (Vercel), as variáveis são configuradas no painel do projeto. Mapa completo de arquivos por pacote em [docs/01-GETTING-STARTED.md](../../docs/01-GETTING-STARTED.md#environment-variables).
+Produção existe só na Vercel, com as variáveis configuradas no painel do projeto. Mapa completo de arquivos por pacote em [docs/01-GETTING-STARTED.md](../../docs/01-GETTING-STARTED.md#environment-variables).
 
 | Variável | Obrigatória | Uso |
 |----------|-------------|-----|

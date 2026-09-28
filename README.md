@@ -106,7 +106,7 @@ pnpm install
 Each workspace has its own env files; there is none at the repo root. Create them from the examples and fill in credentials from the **Supabase dev project**:
 
 ```bash
-cp apps/site/.env.example apps/site/.env.development.local
+cp apps/site/.env.example apps/site/.env.local
 cp packages/infra/.env.example packages/infra/.env
 ```
 
