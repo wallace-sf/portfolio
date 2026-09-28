@@ -36,11 +36,18 @@ Ou só o web (a partir da raiz, após `pnpm install`):
 
 ## Variáveis de ambiente
 
-Copie o exemplo e edite conforme necessário:
+Copie o exemplo e preencha com as credenciais do projeto Supabase de **dev**:
 
 ```bash
-cp apps/web/.env.example apps/web/.env.local
+cp apps/site/.env.example apps/site/.env.development.local
 ```
+
+| Arquivo | Carregado por | Projeto Supabase |
+|---------|---------------|------------------|
+| `.env.development.local` | `next dev` | dev |
+| `.env.production.local` | `next build` / `next start` (só local) | prod |
+
+Em produção (Vercel), as variáveis são configuradas no painel do projeto. Mapa completo de arquivos por pacote em [docs/01-GETTING-STARTED.md](../../docs/01-GETTING-STARTED.md#environment-variables).
 
 | Variável | Obrigatória | Uso |
 |----------|-------------|-----|
@@ -51,9 +58,9 @@ cp apps/web/.env.example apps/web/.env.local
 | `NEXT_PUBLIC_RESUME_URL` | Não | Link do currículo |
 | `NEXT_PUBLIC_WHATSAPP_URL` | Não | Link WhatsApp |
 
-O app funciona sem elas; links e contatos ficam vazios. **Não commitar** `.env` ou `.env.local`.
+O app funciona sem elas; links e contatos ficam vazios. **Não commitar** nenhum `.env*` (exceto o `.env.example`).
 
-Para Supabase (quando implementado), ver [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md) e [packages/infra/README.md](../../packages/infra/README.md).
+Para banco e Supabase, ver [docs/02-ARCHITECTURE.md](../../docs/02-ARCHITECTURE.md) e [packages/infra/README.md](../../packages/infra/README.md).
 
 ---
 

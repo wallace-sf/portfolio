@@ -103,10 +103,21 @@ pnpm install
 
 ### Environment variables
 
-Create your local environment file from the example file and fill in the required values.
+Each workspace has its own env files; there is none at the repo root. Create them from the examples and fill in credentials from the **Supabase dev project**:
 
 ```bash
-cp .env.example .env.local
+cp apps/site/.env.example apps/site/.env.development.local
+cp packages/infra/.env.example packages/infra/.env
+```
+
+`packages/infra/.env` must always point at the dev project. See [docs/01-GETTING-STARTED.md](./docs/01-GETTING-STARTED.md#environment-variables) for the full file map and how to run an infra script against production.
+
+### Build internal packages
+
+`apps/site` imports the compiled output of internal packages, so build them once before the first `pnpm dev`:
+
+```bash
+pnpm exec turbo run build --filter='site^...'
 ```
 
 ### Database setup
