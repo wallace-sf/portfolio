@@ -33,7 +33,7 @@ listing its keys.
 | File | Loaded by | Supabase project |
 |------|-----------|------------------|
 | `apps/site/.env.local` | `next dev` **and** `next build` / `next start` (including the lefthook `pre-push` build) | dev |
-| `packages/infra/.env` | Prisma CLI (`db:migrate`, `db:studio`, …) and `tsx --env-file=.env` (`db:seed`, `db:backup`, `send:email:manual`) | **dev** |
+| `packages/infra/.env` | Prisma CLI (`db:migrate`, `db:studio`, …) and `tsx --env-file=.env` (`db:seed`, `db:seed:blog`, `db:backup`, `send:email:manual`) | **dev** |
 | `packages/infra/.env.production.local` | Nothing automatically; see [Running an infra script against production](#running-an-infra-script-against-production) | prod |
 | `packages/infra/.env.test.local` | Vitest (`mode=test`) — integration tests | dev |
 
@@ -93,6 +93,13 @@ environment take precedence over `.env`, both for Prisma and for
 ```bash
 cd packages/infra
 set -a; . ./.env.production.local; set +a; pnpm db:backup
+```
+
+To publish blog post changes to production, run `db:seed:blog` the same way.
+It upserts only the `BlogPost` rows and leaves every other table untouched:
+
+```bash
+set -a; . ./.env.production.local; set +a; pnpm db:seed:blog
 ```
 
 `db:migrate` stays blocked in this mode because the production `DIRECT_URL`

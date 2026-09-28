@@ -63,7 +63,7 @@ const result = await container.getProjectBySlug.execute({ slug });
 
 | File | Loaded by | Supabase project |
 |------|-----------|------------------|
-| `.env` | Prisma CLI (`db:migrate`, `db:migrate:deploy`, `db:studio`), `scripts/assert-safe-db.mjs`, and `tsx --env-file=.env` (`db:seed`, `db:backup`, `send:email:manual`) | **dev — always** |
+| `.env` | Prisma CLI (`db:migrate`, `db:migrate:deploy`, `db:studio`), `scripts/assert-safe-db.mjs`, and `tsx --env-file=.env` (`db:seed`, `db:seed:blog`, `db:backup`, `send:email:manual`) | **dev — always** |
 | `.env.production.local` | Nothing automatically (see below) | prod |
 | `.env.test.local` | Vitest (`mode=test`) | dev |
 
@@ -90,7 +90,7 @@ in `apps/site/vercel.json`).
 | Variable | Used by | Purpose |
 |----------|---------|---------|
 | `DATABASE_URL` | Prisma (runtime queries) | Pooled ("Transaction", port 6543) connection string |
-| `DIRECT_URL` | Prisma migrations, `db:seed`, `db:backup`, `assert-safe-db` | Direct ("Session", port 5432) connection string |
+| `DIRECT_URL` | Prisma migrations, `db:seed`, `db:seed:blog`, `db:backup`, `assert-safe-db` | Direct ("Session", port 5432) connection string |
 | `ADMIN_EMAIL` / `ADMIN_NAME` | `db:seed` | Admin user created by the seed (`ADMIN_NAME` defaults to `Admin`) |
 | `DB_SAFE_REMOTE_REF` | `assert-safe-db` | Dev project ref treated as safe for destructive operations |
 | `DB_ALLOW_DESTRUCTIVE` | `assert-safe-db` | Set to `1` on the command line to override the guard. Never put it in a file |
