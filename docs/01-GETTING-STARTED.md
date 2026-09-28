@@ -25,41 +25,78 @@ pnpm install
 
 ## Environment Variables
 
-Three gitignored env files, each with a different scope:
+There is **no env file at the repo root**. Each workspace loads its own files
+from its own directory. There are two Supabase projects, **dev** and **prod**.
+All env files are gitignored; each workspace has a committed `.env.example`
+listing its keys.
 
-| File | Loaded by | Purpose |
-|------|-----------|---------|
-| `.env` (root) | — | Production credentials — never use for local work |
-| `.env.local` (root) | Next.js (`next dev`) | Local dev server (Supabase dev project) |
-| `packages/infra/.env.test.local` | Vitest (`mode=test`) | Integration tests (Supabase dev project) |
+| File | Loaded by | Supabase project |
+|------|-----------|------------------|
+| `apps/site/.env.local` | `next dev` **and** `next build` / `next start` (including the lefthook `pre-push` build) | dev |
+| `packages/infra/.env` | Prisma CLI (`db:migrate`, `db:studio`, …) and `tsx --env-file=.env` (`db:seed`, `db:backup`, `send:email:manual`) | **dev** |
+| `packages/infra/.env.production.local` | Nothing automatically; see [Running an infra script against production](#running-an-infra-script-against-production) | prod |
+| `packages/infra/.env.test.local` | Vitest (`mode=test`) — integration tests | dev |
 
-None of these files is committed to git.
+> **`packages/infra/.env` must always point at the dev project.** Every `db:*`
+> script reads it, and `db:migrate` runs `prisma migrate dev`, which can reset
+> the database. `DB_SAFE_REMOTE_REF` must be the **dev** project ref (the
+> `<ref>` in `https://<ref>.supabase.co`). With the prod ref there, the
+> `assert-safe-db` guard lets destructive operations through against production.
+
+> **Don't create `apps/site/.env.production.local`.** `next build` always runs
+> in production mode and gives that file priority over `.env.local`. Every local
+> build, including the one `git push` triggers, would then need production
+> credentials. Production values for the site live only in Vercel.
+
+Deployed environments don't read these files. On Vercel, set variables in the
+project settings. Production migrations already run on every production deploy
+(`apps/site/vercel.json` → `db:migrate:deploy`).
 
 ### Setup
 
-**1. Create the dev env file**
+**1. Create the env files**
 
 ```bash
-cp .env.example .env.local
+cp apps/site/.env.example apps/site/.env.local
+cp packages/infra/.env.example packages/infra/.env
+cp packages/infra/.env.example packages/infra/.env.test.local
 ```
 
-Fill in the credentials from your **Supabase dev project**
-(supabase.com → Project Settings → Database and API).
+Fill them with credentials from the **Supabase dev project**
+(supabase.com → Project Settings → Database and API). Create
+`packages/infra/.env.production.local` only if you need to run an infra script
+against prod from your machine.
 
-**2. Create the test env file**
+**2. Build the internal packages**
+
+`apps/site` imports compiled output (`dist/`) from internal packages such as
+`@repo/config`. On a fresh clone, `next dev` fails with
+`Cannot find module .../@repo/config/dist/index.mjs` until they are built:
 
 ```bash
-cp .env.local packages/infra/.env.test.local
+pnpm exec turbo run build --filter='site^...'
 ```
-
-Vitest loads `packages/infra/.env.test.local` automatically in test mode — no
-extra configuration needed.
 
 **3. Apply migrations**
 
 ```bash
 pnpm --filter @repo/infra db:migrate
 ```
+
+### Running an infra script against production
+
+There are no `:prod` script variants. Export the production file into the shell
+before running the normal script. Values that are already set in the
+environment take precedence over `.env`, both for Prisma and for
+`tsx --env-file`:
+
+```bash
+cd packages/infra
+set -a; . ./.env.production.local; set +a; pnpm db:backup
+```
+
+`db:migrate` stays blocked in this mode because the production `DIRECT_URL`
+doesn't match `DB_SAFE_REMOTE_REF`. Use `db:migrate:deploy` for production.
 
 ---
 
