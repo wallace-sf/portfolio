@@ -163,6 +163,7 @@
     },
     "AboutPage": {
       "title": "Sobre",
+      "description": "Engenheiro Frontend com mais de 6 anos em React, Next.js, TypeScript e arquitetura frontend, construindo aplicações web sustentáveis e acessíveis.",
       "ogSubtitle": "6+ anos construindo produtos web modernos com React, Next.js e TypeScript.",
       "ogPage": "SOBRE"
     },
