@@ -1,4 +1,3 @@
-import { GetProfile } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
 import { Divider } from '@repo/ui/View';
 import type { Metadata } from 'next';
@@ -8,7 +7,6 @@ import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildOgImageUrl } from '~/lib/og';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
-import { getServerContainer } from '~/lib/server/container';
 import { BioSection } from '~features/about/BioSection';
 import { CurriculumCTA } from '~features/about/CurriculumCTA';
 import { ExperiencesSection } from '~features/about/ExperiencesSection';
@@ -31,24 +29,16 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'Metadata' });
 
   const title = t('AboutPage.title');
-
-  const profileResult = await new GetProfile(
-    getServerContainer().profileRepository,
-  ).execute({ locale });
-
-  if (profileResult.isLeft())
-    return { title, alternates: buildAlternates('/about', locale) };
-
-  const { bio } = profileResult.value;
+  const description = t('AboutPage.description');
 
   return {
     title,
-    description: bio,
+    description,
     alternates: buildAlternates('/about', locale),
     openGraph: {
       ...buildOpenGraph(locale, '/about'),
       title,
-      description: bio,
+      description,
       images: [
         {
           url: buildOgImageUrl({
