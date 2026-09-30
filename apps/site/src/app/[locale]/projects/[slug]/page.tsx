@@ -8,6 +8,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import { DEFAULT_LOCALE } from '~/i18n/routing';
+import { buildOgImageUrl } from '~/lib/og';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { buildProjectJsonLd } from '~/lib/seo/structuredData';
@@ -44,7 +45,8 @@ export async function generateMetadata({
 
   if (result.isLeft()) return {};
 
-  const { title, caption, coverImage } = result.value;
+  const { title, caption } = result.value;
+  const t = await getTranslations({ locale, namespace: 'Metadata' });
 
   return {
     title,
@@ -54,7 +56,22 @@ export async function generateMetadata({
       ...buildOpenGraph(locale as Locale, `/projects/${slug}`, 'article'),
       title,
       description: caption,
-      images: [{ url: coverImage.url, alt: coverImage.alt }],
+      // Generated card rather than the cover: covers are banner art (some
+      // are SVG, which social platforms reject, or not 1.91:1).
+      images: [
+        {
+          url: buildOgImageUrl({
+            title,
+            subtitle: caption,
+            locale,
+            page: t('ProjectsPage.ogPage'),
+            jobTitle: t('OgCard.jobTitle'),
+          }),
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
   };
 }
