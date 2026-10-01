@@ -2,9 +2,9 @@ import {
   ILocalizedTextInput,
   IProfessionalValueProps,
   ProfessionalValue,
-} from '~/index';
-
+} from '../../index';
 import { Data } from '../generators';
+import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
 
 const DEFAULT_CONTENT: ILocalizedTextInput = {
@@ -25,11 +25,9 @@ export class ProfessionalValueBuilder extends EntityBuilder<IProfessionalValuePr
   }
 
   public now(): ProfessionalValue {
-    const result = ProfessionalValue.create(
-      this._props as IProfessionalValueProps,
+    return unwrap(
+      ProfessionalValue.create(this._props as IProfessionalValueProps),
     );
-    if (result.isLeft()) throw result.value;
-    return result.value;
   }
 
   static list(count: number): ProfessionalValue[] {

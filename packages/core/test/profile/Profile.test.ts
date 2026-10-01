@@ -2,7 +2,7 @@ import { LocalizedText, PersonName, ValidationError } from '~/index';
 import { Profile } from '~/portfolio/entities/profile/model/Profile';
 import { ProfileStat } from '~/portfolio/entities/profile/model/ProfileStat';
 
-import { Data } from '../helpers/generators';
+import { Data } from '~/testing';
 
 const validStat = {
   label: { 'en-US': 'Years of experience', 'pt-BR': 'Anos de experiência' },

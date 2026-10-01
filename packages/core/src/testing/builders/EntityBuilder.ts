@@ -1,4 +1,4 @@
-import { IEntityProps } from '~/index';
+import { IEntityProps } from '../../index';
 
 export abstract class EntityBuilder<TProps extends IEntityProps> {
   protected readonly _props: Partial<TProps>;
@@ -7,49 +7,49 @@ export abstract class EntityBuilder<TProps extends IEntityProps> {
     this._props = props;
   }
 
-  public withId(id: string): EntityBuilder<TProps> {
+  public withId(id: string): this {
     this._props.id = id;
 
     return this;
   }
 
-  public withCreatedAt(createdAt: string): EntityBuilder<TProps> {
+  public withCreatedAt(createdAt: string): this {
     this._props.created_at = createdAt;
 
     return this;
   }
 
-  public withUpdatedAt(updatedAt: string): EntityBuilder<TProps> {
+  public withUpdatedAt(updatedAt: string): this {
     this._props.updated_at = updatedAt;
 
     return this;
   }
 
-  public withDeletedAt(deletedAt: string): EntityBuilder<TProps> {
+  public withDeletedAt(deletedAt: string): this {
     this._props.deleted_at = deletedAt;
 
     return this;
   }
 
-  public withoutId(): EntityBuilder<TProps> {
+  public withoutId(): this {
     this._props.id = undefined;
 
     return this;
   }
 
-  public withoutCreatedAt(): EntityBuilder<TProps> {
+  public withoutCreatedAt(): this {
     this._props.created_at = undefined;
 
     return this;
   }
 
-  public withoutUpdatedAt(): EntityBuilder<TProps> {
+  public withoutUpdatedAt(): this {
     this._props.updated_at = undefined;
 
     return this;
   }
 
-  public withoutDeletedAt(): EntityBuilder<TProps> {
+  public withoutDeletedAt(): this {
     this._props.deleted_at = undefined;
 
     return this;

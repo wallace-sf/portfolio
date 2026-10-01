@@ -1,6 +1,6 @@
-import { ISocialNetworkProps, SocialNetwork } from '~/index';
-
+import { ISocialNetworkProps, SocialNetwork } from '../../index';
 import { Data } from '../generators';
+import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
 
 export class SocialNetworkBuilder extends EntityBuilder<ISocialNetworkProps> {
@@ -17,9 +17,7 @@ export class SocialNetworkBuilder extends EntityBuilder<ISocialNetworkProps> {
   }
 
   public now(): SocialNetwork {
-    const result = SocialNetwork.create(this._props as ISocialNetworkProps);
-    if (result.isLeft()) throw result.value;
-    return result.value;
+    return unwrap(SocialNetwork.create(this._props as ISocialNetworkProps));
   }
 
   static list(count: number): SocialNetwork[] {

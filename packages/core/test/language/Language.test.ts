@@ -1,6 +1,6 @@
 import { Fluency, Language, AlphaName, ValidationError } from '~/index';
 
-import { LanguageBuilder } from '../helpers';
+import { LanguageBuilder } from '~/testing';
 
 describe('Language', () => {
   describe('when created from valid props', () => {

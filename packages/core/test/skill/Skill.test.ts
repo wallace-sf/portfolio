@@ -1,6 +1,6 @@
 import { Skill, Text, ValidationError } from '~/index';
 
-import { SkillBuilder } from '../helpers';
+import { SkillBuilder } from '~/testing';
 
 describe('Skill', () => {
   describe('when created from valid props', () => {

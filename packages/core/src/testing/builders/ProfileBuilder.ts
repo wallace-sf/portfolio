@@ -1,7 +1,7 @@
-import { IProfileProps, Profile } from '~/index';
-import { IProfileStatProps } from '~/portfolio/entities/profile/model/ProfileStat';
-
+import { IProfileProps, Profile } from '../../index';
+import { IProfileStatProps } from '../../portfolio/entities/profile/model/ProfileStat';
 import { Data } from '../generators';
+import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
 
 export class ProfileBuilder extends EntityBuilder<IProfileProps> {
@@ -35,9 +35,7 @@ export class ProfileBuilder extends EntityBuilder<IProfileProps> {
   }
 
   public now(): Profile {
-    const result = Profile.create(this._props as IProfileProps);
-    if (result.isLeft()) throw result.value;
-    return result.value;
+    return unwrap(Profile.create(this._props as IProfileProps));
   }
 
   public withName(name: string): ProfileBuilder {

@@ -15,6 +15,7 @@ export default defineConfig({
         'src/**/index.ts',
         'src/**/repositories/**',
         'src/shared/base/IRepository.ts',
+        'src/testing/**',
       ],
       thresholds: {
         lines: 100,

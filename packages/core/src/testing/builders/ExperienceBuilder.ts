@@ -4,9 +4,9 @@ import {
   EmploymentType,
   ILocalizedTextInput,
   LocationType,
-} from '~/index';
-
+} from '../../index';
 import { Data } from '../generators';
+import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
 
 export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
@@ -40,9 +40,7 @@ export class ExperienceBuilder extends EntityBuilder<IExperienceProps> {
   }
 
   public now(): Experience {
-    const result = Experience.create(this._props as IExperienceProps);
-    if (result.isLeft()) throw result.value;
-    return result.value;
+    return unwrap(Experience.create(this._props as IExperienceProps));
   }
 
   public withCompany(company: ILocalizedTextInput): ExperienceBuilder {
