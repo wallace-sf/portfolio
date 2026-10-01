@@ -1,28 +1,31 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-
-import { seedExperiences } from '../../../prisma/seeders';
-
 import { LocationType } from '@repo/core/portfolio';
 import { Id } from '@repo/core/shared';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
 import { ExperienceMapper } from '../../../src/repositories/experience/ExperienceMapper';
 import { PrismaExperienceRepository } from '../../../src/repositories/experience/PrismaExperienceRepository';
 import { buildPrismaExperience } from '../../factories/prisma-experience.factory';
+import { withRollback } from '../../support/withRollback';
 
 // Use DIRECT_URL to bypass PgBouncer — prepared statements don't work with the pooler
 const db = new PrismaClient({
   datasourceUrl: process.env.DIRECT_URL,
 });
-const repo = new PrismaExperienceRepository(db);
+
+// Skipped as a whole (hooks included) when there is no reachable database —
+// a fresh clone or a paused dev project must not fail the @repo/infra suite.
+// Run explicitly with `pnpm --filter @repo/infra test:integration`.
+const missingDbEnv = !process.env.DIRECT_URL;
 
 async function seedExperience(
+  tx: PrismaClient,
   overrides?: Partial<ReturnType<typeof buildPrismaExperience>>,
 ) {
   const raw = buildPrismaExperience(overrides);
 
-  await db.experience.create({
+  await tx.experience.create({
     data: {
       id: raw.id,
       company: raw.company as Prisma.InputJsonValue,
@@ -44,132 +47,154 @@ async function seedExperience(
   return raw;
 }
 
-// Skipped as a whole (hooks included) when there is no reachable database —
-// a fresh clone or a paused dev project must not fail the @repo/infra suite.
-// Run explicitly with `pnpm --filter @repo/infra test:integration`.
-const missingDbEnv = !process.env.DIRECT_URL;
+function idOf(raw: string): Id {
+  const result = Id.create(raw);
+  if (result.isLeft()) throw result.value;
+  return result.value;
+}
+
+type Ctx = { tx: PrismaClient; repo: PrismaExperienceRepository };
+
+/**
+ * Runs a test against an empty `Experience` table inside a rolled-back
+ * transaction: the dev experiences are hidden from the test, never deleted.
+ */
+function inEmptyTable(fn: (ctx: Ctx) => Promise<void>) {
+  return () =>
+    withRollback(db, async (tx) => {
+      await tx.experience.deleteMany({});
+      await fn({ tx, repo: new PrismaExperienceRepository(tx) });
+    });
+}
 
 beforeAll(async () => {
   if (missingDbEnv) return;
   await db.$connect();
-  await db.experience.deleteMany({});
 });
 
 afterAll(async () => {
   if (missingDbEnv) return;
-  await seedExperiences(db);
   await db.$disconnect();
 });
 
-afterEach(async () => {
-  if (missingDbEnv) return;
-  await db.experience.deleteMany({});
-});
+describe.skipIf(missingDbEnv)(
+  'PrismaExperienceRepository (integration)',
+  () => {
+    describe('findAll', () => {
+      it(
+        'should return all experiences ordered by startAt desc',
+        inEmptyTable(async ({ tx, repo }) => {
+          await seedExperience(tx, { startAt: new Date('2022-01-01') });
+          await seedExperience(tx, { startAt: new Date('2024-01-01') });
 
-describe.skipIf(missingDbEnv)('PrismaExperienceRepository (integration)', () => {
-  describe('findAll', () => {
-    it('should return all experiences ordered by startAt desc', async () => {
-      await seedExperience({ startAt: new Date('2022-01-01') });
-      await seedExperience({ startAt: new Date('2024-01-01') });
+          const experiences = await repo.findAll();
 
-      const experiences = await repo.findAll();
+          expect(experiences).toHaveLength(2);
+          expect(experiences[0]!.period.startAt.value).toContain('2024');
+          expect(experiences[1]!.period.startAt.value).toContain('2022');
+        }),
+      );
 
-      expect(experiences).toHaveLength(2);
-      expect(experiences[0]!.period.startAt.value).toContain('2024');
-      expect(experiences[1]!.period.startAt.value).toContain('2022');
+      it(
+        'should return empty array when no experiences exist',
+        inEmptyTable(async ({ repo }) => {
+          const experiences = await repo.findAll();
+          expect(experiences).toHaveLength(0);
+        }),
+      );
+
+      it(
+        'should include skill IDs',
+        inEmptyTable(async ({ tx, repo }) => {
+          const skillId = crypto.randomUUID();
+          await seedExperience(tx, { skillIds: [skillId] });
+
+          const experiences = await repo.findAll();
+
+          expect(experiences[0]!.skills).toHaveLength(1);
+          expect(experiences[0]!.skills[0]!.value).toBe(skillId);
+        }),
+      );
     });
 
-    it('should return empty array when no experiences exist', async () => {
-      const experiences = await repo.findAll();
-      expect(experiences).toHaveLength(0);
+    describe('findById', () => {
+      it(
+        'should return the experience when found',
+        inEmptyTable(async ({ tx, repo }) => {
+          const seeded = await seedExperience(tx);
+
+          const experience = await repo.findById(idOf(seeded.id));
+
+          expect(experience).not.toBeNull();
+          expect(experience!.id.value).toBe(seeded.id);
+        }),
+      );
+
+      it(
+        'should return null when not found',
+        inEmptyTable(async ({ repo }) => {
+          const experience = await repo.findById(idOf(crypto.randomUUID()));
+
+          expect(experience).toBeNull();
+        }),
+      );
     });
 
-    it('should include skill IDs', async () => {
-      const skillId = crypto.randomUUID();
-      await seedExperience({ skillIds: [skillId] });
+    describe('save', () => {
+      it(
+        'should persist a new experience and retrieve it',
+        inEmptyTable(async ({ repo }) => {
+          const skillId = crypto.randomUUID();
+          const raw = buildPrismaExperience({ skillIds: [skillId] });
 
-      const experiences = await repo.findAll();
+          await repo.save(ExperienceMapper.toDomain(raw));
 
-      expect(experiences[0]!.skills).toHaveLength(1);
-      expect(experiences[0]!.skills[0]!.value).toBe(skillId);
-    });
-  });
+          const found = await repo.findById(idOf(raw.id));
+          expect(found).not.toBeNull();
+          expect(found!.id.value).toBe(raw.id);
+          expect(found!.skills).toHaveLength(1);
+          expect(found!.skills[0]!.value).toBe(skillId);
+        }),
+      );
 
-  describe('findById', () => {
-    it('should return the experience when found', async () => {
-      const seeded = await seedExperience();
+      it(
+        'should update an existing experience on upsert',
+        inEmptyTable(async ({ tx, repo }) => {
+          const seeded = await seedExperience(tx, { locationType: 'REMOTE' });
 
-      const idResult = Id.create(seeded.id);
-      if (idResult.isLeft()) throw idResult.value;
+          const updatedRaw = buildPrismaExperience({
+            ...seeded,
+            locationType: 'HYBRID',
+          });
+          await repo.save(ExperienceMapper.toDomain(updatedRaw));
 
-      const experience = await repo.findById(idResult.value);
-
-      expect(experience).not.toBeNull();
-      expect(experience!.id.value).toBe(seeded.id);
-    });
-
-    it('should return null when not found', async () => {
-      const idResult = Id.create(crypto.randomUUID());
-      if (idResult.isLeft()) throw idResult.value;
-
-      const experience = await repo.findById(idResult.value);
-
-      expect(experience).toBeNull();
-    });
-  });
-
-  describe('save', () => {
-    it('should persist a new experience and retrieve it', async () => {
-      const skillId = crypto.randomUUID();
-      const raw = buildPrismaExperience({ skillIds: [skillId] });
-      const experience = ExperienceMapper.toDomain(raw);
-
-      await repo.save(experience);
-
-      const idResult = Id.create(raw.id);
-      if (idResult.isLeft()) throw idResult.value;
-      const found = await repo.findById(idResult.value);
-
-      expect(found).not.toBeNull();
-      expect(found!.id.value).toBe(raw.id);
-      expect(found!.skills).toHaveLength(1);
-      expect(found!.skills[0]!.value).toBe(skillId);
+          const found = await repo.findById(idOf(seeded.id));
+          expect(found!.location_type).toBe(LocationType.HYBRID);
+        }),
+      );
     });
 
-    it('should update an existing experience on upsert', async () => {
-      const seeded = await seedExperience({ locationType: 'REMOTE' });
+    describe('delete', () => {
+      it(
+        'should hard-delete an experience',
+        inEmptyTable(async ({ tx, repo }) => {
+          const seeded = await seedExperience(tx);
 
-      const idResult = Id.create(seeded.id);
-      if (idResult.isLeft()) throw idResult.value;
+          await repo.delete(idOf(seeded.id));
 
-      const updatedRaw = buildPrismaExperience({ ...seeded, locationType: 'HYBRID' });
-      const updated = ExperienceMapper.toDomain(updatedRaw);
+          const found = await repo.findById(idOf(seeded.id));
+          expect(found).toBeNull();
+        }),
+      );
 
-      await repo.save(updated);
-
-      const found = await repo.findById(idResult.value);
-      expect(found!.location_type).toBe(LocationType.HYBRID);
+      it(
+        'should throw InfrastructureError when experience does not exist',
+        inEmptyTable(async ({ repo }) => {
+          await expect(repo.delete(idOf(crypto.randomUUID()))).rejects.toThrow(
+            InfrastructureError,
+          );
+        }),
+      );
     });
-  });
-
-  describe('delete', () => {
-    it('should hard-delete an experience', async () => {
-      const seeded = await seedExperience();
-
-      const idResult = Id.create(seeded.id);
-      if (idResult.isLeft()) throw idResult.value;
-
-      await repo.delete(idResult.value);
-
-      const found = await repo.findById(idResult.value);
-      expect(found).toBeNull();
-    });
-
-    it('should throw InfrastructureError when experience does not exist', async () => {
-      const idResult = Id.create(crypto.randomUUID());
-      if (idResult.isLeft()) throw idResult.value;
-
-      await expect(repo.delete(idResult.value)).rejects.toThrow(InfrastructureError);
-    });
-  });
-});
+  },
+);

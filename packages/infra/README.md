@@ -108,7 +108,7 @@ This package has two tiers of tests:
 | Tier | Files | Needs a database? | Command |
 |------|-------|-------------------|---------|
 | **Unit** | `*.test.ts` (mappers, `FileSystemBlogPostRepository`, `ResendEmailService`, `container`, …) | No | `pnpm --filter @repo/infra test` |
-| **Integration** | `*.integration.test.ts` (`PrismaProjectRepository`, `PrismaProfileRepository`, `PrismaExperienceRepository`, `PrismaUserRepository`, `SupabaseAuthenticationGateway`) | Yes — a reachable Postgres / Supabase project | `pnpm --filter @repo/infra test:integration` |
+| **Integration** | `*.integration.test.ts` (`PrismaProjectRepository`, `PrismaBlogPostRepository`, `PrismaProfileRepository`, `PrismaExperienceRepository`, `PrismaUserRepository`, `SupabaseAuthenticationGateway`) | Yes — a reachable Postgres / Supabase project | `pnpm --filter @repo/infra test:integration` |
 
 - The default `test` script **excludes** the integration suites, so a fresh
   clone (or a paused dev database) never fails `@repo/infra`'s tests. The
@@ -121,10 +121,24 @@ This package has two tiers of tests:
   fill in:
   - `DIRECT_URL` — a **session-mode** (port 5432) connection string to the
     **dev** Supabase project. The Prisma suites connect through it (bypasses
-    PgBouncer). **Never point it at production** — the suites truncate tables.
+    PgBouncer). **Never point it at production.**
   - `SUPABASE_TEST_URL` / `SUPABASE_TEST_ANON_KEY` /
     `SUPABASE_TEST_SERVICE_ROLE_KEY` — only for the auth-gateway suite; it
     creates and deletes a throw-away user.
+- **The suites leave the dev data untouched.** The dev project is not
+  disposable — `pnpm --filter site dev` renders its content — so no suite may
+  commit a delete it did not create:
+  - `PrismaBlogPostRepository`, `PrismaExperienceRepository` and
+    `PrismaProfileRepository` run every test through `withRollback`
+    (`test/support/withRollback.ts`): an interactive transaction that is always
+    rolled back. Inside it a test can empty the table (so row counts and the
+    singleton profile are deterministic) and inject the transaction client into
+    the repository; nothing is committed, even if the run is interrupted.
+  - `PrismaProjectRepository` and `PrismaUserRepository` create rows with a
+    test prefix (`test-` slug / email) and delete only those.
+  - New suites should use `withRollback`. It requires the repository under test
+    not to open its own `$transaction` (nested interactive transactions are not
+    supported).
 - There is **no hosted CI** for this repo (GitHub Actions is disabled — no
   billing). Running the integration suites is manual. A CI job with a Postgres
   service is deferred until Actions is re-enabled.
