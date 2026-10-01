@@ -37,6 +37,11 @@ listing its keys.
 | `packages/infra/.env.production.local` | Nothing automatically; see [Running an infra script against production](#running-an-infra-script-against-production) | prod |
 | `packages/infra/.env.test.local` | Vitest (`mode=test`) — integration tests | dev |
 
+> **The integration tests don't change the dev data.** Each Prisma suite either
+> runs its tests in a rolled-back transaction or deletes only the rows it
+> created, so running `pnpm --filter @repo/infra test:integration` against the
+> dev project is safe. See [`packages/infra` → Testing](../packages/infra/README.md#testing).
+
 > **`packages/infra/.env` must always point at the dev project.** Every `db:*`
 > script reads it, and `db:migrate` runs `prisma migrate dev`, which can reset
 > the database. `DB_SAFE_REMOTE_REF` must be the **dev** project ref (the
