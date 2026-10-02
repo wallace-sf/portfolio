@@ -1,7 +1,7 @@
+import { BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-
-import { BlogPost, BlogPostStatus, type IBlogPostProps } from '@repo/core/blog';
 
 import BlogListingPage, { generateMetadata } from '~/app/[locale]/blog/page';
 
@@ -39,30 +39,17 @@ vi.mock('next-intl/server', () => ({
     })[key],
 }));
 
-function makePost(overrides: Partial<IBlogPostProps> = {}): BlogPost {
-  const slug = overrides.slug ?? 'hello-blog';
+function publishedPost(slug = 'hello-blog'): BlogPostBuilder {
   const localized = (prefix: string) => ({
     'en-US': `${prefix} ${slug}`,
     'pt-BR': `${prefix} ${slug}`,
     es: `${prefix} ${slug}`,
   });
-  const result = BlogPost.create({
-    slug,
-    title: localized('Title'),
-    description: localized('Description'),
-    content: { 'en-US': '# Body', 'pt-BR': '# Corpo', es: '# Cuerpo' },
-    tags: ['nextjs'],
-    author: {
-      name: 'Wallace Ferreira',
-      avatarUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
-    },
-    publishedAt: '2026-08-01',
-    status: BlogPostStatus.PUBLISHED,
-    ...overrides,
-  });
-  if (result.isLeft()) throw result.value;
-  return result.value;
+  return BlogPostBuilder.build()
+    .withSlug(slug)
+    .withTitle(localized('Title'))
+    .withDescription(localized('Description'))
+    .withStatus(BlogPostStatus.PUBLISHED);
 }
 
 const findAll = vi.fn();
@@ -79,7 +66,7 @@ async function renderPage(locale = 'en-US') {
 
 describe('BlogListingPage', () => {
   it('should render a card per post with title, description and tags', async () => {
-    findAll.mockResolvedValue([makePost()]);
+    findAll.mockResolvedValue([publishedPost().now()]);
 
     await renderPage();
 
@@ -89,7 +76,7 @@ describe('BlogListingPage', () => {
   });
 
   it('should link each card to its locale-prefixed post route', async () => {
-    findAll.mockResolvedValue([makePost()]);
+    findAll.mockResolvedValue([publishedPost().now()]);
 
     await renderPage();
 
@@ -99,7 +86,9 @@ describe('BlogListingPage', () => {
   });
 
   it('should format the published date for the active locale', async () => {
-    findAll.mockResolvedValue([makePost()]);
+    findAll.mockResolvedValue([
+      publishedPost().withPublishedAt('2026-08-01').now(),
+    ]);
 
     const { container } = await renderPage('pt-BR');
     const time = container.querySelector('time');
@@ -117,12 +106,12 @@ describe('BlogListingPage', () => {
 
   it('should render the thumbnail when the post has one', async () => {
     findAll.mockResolvedValue([
-      makePost({
-        thumbnailImage: {
+      publishedPost()
+        .withThumbnailImage({
           url: 'https://cdn/thumb.webp',
           alt: { 'en-US': 'Thumb', 'pt-BR': 'Miniatura', es: 'Miniatura' },
-        },
-      }),
+        })
+        .now(),
     ]);
 
     await renderPage();
@@ -134,7 +123,7 @@ describe('BlogListingPage', () => {
   });
 
   it('should not render an image when the post has no thumbnail', async () => {
-    findAll.mockResolvedValue([makePost()]);
+    findAll.mockResolvedValue([publishedPost().now()]);
 
     await renderPage();
 

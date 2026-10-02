@@ -1,7 +1,7 @@
+import { BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-
-import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 
 import BlogPostPage, {
   generateMetadata,
@@ -70,32 +70,21 @@ vi.mock('next/navigation', async (importOriginal) => ({
   notFound: () => notFound(),
 }));
 
-function makePost(slug: string, publishedAt = '2026-08-01') {
+function publishedPost(
+  slug: string,
+  publishedAt = '2026-08-01',
+): BlogPostBuilder {
   const localized = (prefix: string) => ({
     'en-US': `${prefix} ${slug}`,
     'pt-BR': `${prefix} ${slug}`,
     es: `${prefix} ${slug}`,
   });
-  const result = BlogPost.create({
-    slug,
-    title: localized('Title'),
-    description: localized('Description'),
-    content: {
-      'en-US': 'Body of the post.',
-      'pt-BR': 'Corpo do post.',
-      es: 'Cuerpo del post.',
-    },
-    tags: ['nextjs'],
-    author: {
-      name: 'Wallace Ferreira',
-      avatarUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
-    },
-    publishedAt,
-    status: BlogPostStatus.PUBLISHED,
-  });
-  if (result.isLeft()) throw result.value;
-  return result.value;
+  return BlogPostBuilder.build()
+    .withSlug(slug)
+    .withTitle(localized('Title'))
+    .withDescription(localized('Description'))
+    .withPublishedAt(publishedAt)
+    .withStatus(BlogPostStatus.PUBLISHED);
 }
 
 const findBySlug = vi.fn();
@@ -118,8 +107,15 @@ async function renderPage(slug: string, locale = 'en-US') {
 
 describe('BlogPostPage', () => {
   it('should render the header, MDX content and (no) navigation for a lone post', async () => {
-    findBySlug.mockResolvedValue(makePost('hello-blog'));
-    findAll.mockResolvedValue([makePost('hello-blog')]);
+    const post = publishedPost('hello-blog')
+      .withContent({
+        'en-US': 'Body of the post.',
+        'pt-BR': 'Corpo do post.',
+        es: 'Cuerpo del post.',
+      })
+      .now();
+    findBySlug.mockResolvedValue(post);
+    findAll.mockResolvedValue([post]);
 
     await renderPage('hello-blog');
 
@@ -132,11 +128,11 @@ describe('BlogPostPage', () => {
   });
 
   it('should render newer and older links for a post in the middle of the list', async () => {
-    findBySlug.mockResolvedValue(makePost('middle', '2026-08-15'));
+    findBySlug.mockResolvedValue(publishedPost('middle', '2026-08-15').now());
     findAll.mockResolvedValue([
-      makePost('newest', '2026-08-22'),
-      makePost('middle', '2026-08-15'),
-      makePost('oldest', '2026-08-08'),
+      publishedPost('newest', '2026-08-22').now(),
+      publishedPost('middle', '2026-08-15').now(),
+      publishedPost('oldest', '2026-08-08').now(),
     ]);
 
     await renderPage('middle');
@@ -152,28 +148,12 @@ describe('BlogPostPage', () => {
 
   it('should render the cover hero only when the post has a cover image', async () => {
     findBySlug.mockResolvedValue(
-      (() => {
-        const r = BlogPost.create({
-          slug: 'with-cover',
-          title: { 'en-US': 'T', 'pt-BR': 'T', es: 'T' },
-          description: { 'en-US': 'D', 'pt-BR': 'D', es: 'D' },
-          content: { 'en-US': 'B', 'pt-BR': 'B', es: 'B' },
-          tags: ['nextjs'],
-          author: {
-            name: 'Wallace Ferreira',
-            avatarUrl:
-              'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
-          },
-          publishedAt: '2026-08-01',
-          status: BlogPostStatus.PUBLISHED,
-          coverImage: {
-            url: 'https://cdn/cover.webp',
-            alt: { 'en-US': 'Cover', 'pt-BR': 'Capa', es: 'Portada' },
-          },
-        });
-        if (r.isLeft()) throw r.value;
-        return r.value;
-      })(),
+      publishedPost('with-cover')
+        .withCoverImage({
+          url: 'https://cdn/cover.webp',
+          alt: { 'en-US': 'Cover', 'pt-BR': 'Capa', es: 'Portada' },
+        })
+        .now(),
     );
     findAll.mockResolvedValue([]);
 
@@ -195,7 +175,7 @@ describe('BlogPostPage', () => {
 
 describe('generateMetadata', () => {
   it('should return title/description/canonical for an existing post', async () => {
-    findBySlug.mockResolvedValue(makePost('hello-blog'));
+    findBySlug.mockResolvedValue(publishedPost('hello-blog').now());
 
     const metadata = await generateMetadata({
       params: Promise.resolve({ locale: 'en-US', slug: 'hello-blog' }),

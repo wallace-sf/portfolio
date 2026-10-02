@@ -1,6 +1,6 @@
+import { BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 
 import Image, {
   alt,
@@ -38,28 +38,17 @@ vi.mock('~/lib/server/container', () => ({
   }),
 }));
 
-function makePost(slug: string): BlogPost {
+function publishedPost(slug: string): BlogPostBuilder {
   const localized = (prefix: string) => ({
     'en-US': `${prefix} ${slug}`,
     'pt-BR': `${prefix} ${slug}`,
     es: `${prefix} ${slug}`,
   });
-  const result = BlogPost.create({
-    slug,
-    title: localized('Title'),
-    description: localized('Description'),
-    content: { 'en-US': '# Body', 'pt-BR': '# Corpo', es: '# Cuerpo' },
-    tags: ['nextjs'],
-    author: {
-      name: 'Wallace Ferreira',
-      avatarUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
-    },
-    publishedAt: '2026-08-01',
-    status: BlogPostStatus.PUBLISHED,
-  });
-  if (result.isLeft()) throw result.value;
-  return result.value;
+  return BlogPostBuilder.build()
+    .withSlug(slug)
+    .withTitle(localized('Title'))
+    .withDescription(localized('Description'))
+    .withStatus(BlogPostStatus.PUBLISHED);
 }
 
 beforeEach(() => {
@@ -74,7 +63,10 @@ describe('blog post opengraph-image', () => {
   });
 
   it('should generate params for every locale and slug combination', async () => {
-    findAll.mockResolvedValue([makePost('post-a'), makePost('post-b')]);
+    findAll.mockResolvedValue([
+      publishedPost('post-a').now(),
+      publishedPost('post-b').now(),
+    ]);
 
     const params = await generateStaticParams();
 
@@ -83,7 +75,7 @@ describe('blog post opengraph-image', () => {
   });
 
   it('should render the card for the requested post with its title and description', async () => {
-    findBySlug.mockResolvedValue(makePost('hello-post'));
+    findBySlug.mockResolvedValue(publishedPost('hello-post').now());
 
     await Image({
       params: Promise.resolve({ locale: 'es', slug: 'hello-post' }),

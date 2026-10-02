@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import { BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { GET } from '~/app/[locale]/blog/rss.xml/route';
 
@@ -23,22 +23,13 @@ function makePost(slug: string, title: string, publishedAt: string): BlogPost {
     'pt-BR': value,
     es: value,
   });
-  const result = BlogPost.create({
-    slug,
-    title: localized(title),
-    description: localized(`${title} description`),
-    content: { 'en-US': '# Body', 'pt-BR': '# Corpo', es: '# Cuerpo' },
-    tags: ['nextjs'],
-    author: {
-      name: 'Wallace Ferreira',
-      avatarUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
-    },
-    publishedAt,
-    status: BlogPostStatus.PUBLISHED,
-  });
-  if (result.isLeft()) throw result.value;
-  return result.value;
+  return BlogPostBuilder.build()
+    .withSlug(slug)
+    .withTitle(localized(title))
+    .withDescription(localized(`${title} description`))
+    .withPublishedAt(publishedAt)
+    .withStatus(BlogPostStatus.PUBLISHED)
+    .now();
 }
 
 function makeRequest(locale: string): {
