@@ -1,10 +1,10 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { BlogPostStatus } from '@repo/core/blog';
 import { Slug } from '@repo/core/shared';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { PrismaBlogPostRepository } from '../../../src/repositories/blog/PrismaBlogPostRepository';
-import { buildPrismaBlogPost } from '../../factories/prisma-blog-post.factory';
+import { buildPrismaBlogPostCreateInput } from '../../factories/prisma-blog-post.factory';
 import { withRollback } from '../../support/withRollback';
 
 // Use DIRECT_URL to bypass PgBouncer — prepared statements don't work with the pooler
@@ -16,27 +16,6 @@ const db = new PrismaClient({
 // a fresh clone or a paused dev project must not fail the @repo/infra suite.
 // Run explicitly with `pnpm --filter @repo/infra test:integration`.
 const missingDbEnv = !process.env.DIRECT_URL;
-
-type PrismaBlogPostRow = ReturnType<typeof buildPrismaBlogPost>;
-
-function toCreateInput(row: PrismaBlogPostRow): Prisma.BlogPostCreateManyInput {
-  return {
-    ...row,
-    title: row.title as Prisma.InputJsonValue,
-    description: row.description as Prisma.InputJsonValue,
-    content: row.content as Prisma.InputJsonValue,
-    author: row.author as Prisma.InputJsonValue,
-    coverImageAlt:
-      (row.coverImageAlt as Prisma.InputJsonValue | null) ?? Prisma.JsonNull,
-    thumbnailImageAlt:
-      (row.thumbnailImageAlt as Prisma.InputJsonValue | null) ??
-      Prisma.JsonNull,
-  };
-}
-
-function buildRow(overrides: Partial<PrismaBlogPostRow>) {
-  return buildPrismaBlogPost({ id: crypto.randomUUID(), ...overrides });
-}
 
 function slugOf(raw: string): Slug {
   const result = Slug.create(raw);
@@ -75,10 +54,19 @@ describe.skipIf(missingDbEnv)('PrismaBlogPostRepository (integration)', () => {
       inEmptyTable(async ({ tx, repo }) => {
         await tx.blogPost.createMany({
           data: [
-            buildRow({ slug: 'post-1', publishedAt: new Date('2026-01-01') }),
-            buildRow({ slug: 'post-2', publishedAt: new Date('2026-01-15') }),
-            buildRow({ slug: 'post-3', publishedAt: new Date('2026-01-10') }),
-          ].map(toCreateInput),
+            buildPrismaBlogPostCreateInput({
+              slug: 'post-1',
+              publishedAt: new Date('2026-01-01'),
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'post-2',
+              publishedAt: new Date('2026-01-15'),
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'post-3',
+              publishedAt: new Date('2026-01-10'),
+            }),
+          ],
         });
 
         const posts = await repo.findAll();
@@ -96,9 +84,15 @@ describe.skipIf(missingDbEnv)('PrismaBlogPostRepository (integration)', () => {
       inEmptyTable(async ({ tx, repo }) => {
         await tx.blogPost.createMany({
           data: [
-            buildRow({ slug: 'active-post', deletedAt: null }),
-            buildRow({ slug: 'deleted-post', deletedAt: new Date() }),
-          ].map(toCreateInput),
+            buildPrismaBlogPostCreateInput({
+              slug: 'active-post',
+              deletedAt: null,
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'deleted-post',
+              deletedAt: new Date(),
+            }),
+          ],
         });
 
         const posts = await repo.findAll();
@@ -113,10 +107,20 @@ describe.skipIf(missingDbEnv)('PrismaBlogPostRepository (integration)', () => {
       inEmptyTable(async ({ tx, repo }) => {
         await tx.blogPost.createMany({
           data: [
-            buildRow({ slug: 'draft-post', status: 'DRAFT', tags: [] }),
-            buildRow({ slug: 'published-post', status: 'PUBLISHED' }),
-            buildRow({ slug: 'archived-post', status: 'ARCHIVED' }),
-          ].map(toCreateInput),
+            buildPrismaBlogPostCreateInput({
+              slug: 'draft-post',
+              status: 'DRAFT',
+              tags: [],
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'published-post',
+              status: 'PUBLISHED',
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'archived-post',
+              status: 'ARCHIVED',
+            }),
+          ],
         });
 
         const posts = await repo.findAll();
@@ -146,9 +150,10 @@ describe.skipIf(missingDbEnv)('PrismaBlogPostRepository (integration)', () => {
       'should return BlogPost when slug exists and post is not deleted',
       inEmptyTable(async ({ tx, repo }) => {
         await tx.blogPost.create({
-          data: toCreateInput(
-            buildRow({ slug: 'existing-post', deletedAt: null }),
-          ),
+          data: buildPrismaBlogPostCreateInput({
+            slug: 'existing-post',
+            deletedAt: null,
+          }),
         });
 
         const post = await repo.findBySlug(slugOf('existing-post'));
@@ -171,9 +176,10 @@ describe.skipIf(missingDbEnv)('PrismaBlogPostRepository (integration)', () => {
       'should return null when post with slug is soft-deleted',
       inEmptyTable(async ({ tx, repo }) => {
         await tx.blogPost.create({
-          data: toCreateInput(
-            buildRow({ slug: 'deleted-post', deletedAt: new Date() }),
-          ),
+          data: buildPrismaBlogPostCreateInput({
+            slug: 'deleted-post',
+            deletedAt: new Date(),
+          }),
         });
 
         const post = await repo.findBySlug(slugOf('deleted-post'));

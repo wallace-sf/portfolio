@@ -1,8 +1,10 @@
-import { Role, User as PrismaUser } from '@prisma/client';
+import { Prisma, Role, User as PrismaUser } from '@prisma/client';
 
 export type PrismaUserData = Omit<PrismaUser, never>;
 
-export function buildPrismaUser(overrides?: Partial<PrismaUserData>): PrismaUserData {
+export function buildPrismaUser(
+  overrides?: Partial<PrismaUserData>,
+): PrismaUserData {
   const id = overrides?.id ?? crypto.randomUUID();
 
   return {
@@ -15,4 +17,11 @@ export function buildPrismaUser(overrides?: Partial<PrismaUserData>): PrismaUser
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
     ...overrides,
   };
+}
+
+/** A factory row as a `create`/`createMany` input. */
+export function buildPrismaUserCreateInput(
+  overrides?: Partial<PrismaUserData>,
+): Prisma.UserCreateManyInput & Pick<PrismaUserData, 'id' | 'email'> {
+  return buildPrismaUser(overrides);
 }

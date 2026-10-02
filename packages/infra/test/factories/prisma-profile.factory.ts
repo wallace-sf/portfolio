@@ -86,3 +86,31 @@ export function buildPrismaProfile(
     ...overrides,
   };
 }
+
+/**
+ * A factory row as a `create` input; `stats` and `socialNetworks` become
+ * nested creates (their `profileId` is implied by the parent).
+ */
+export function buildPrismaProfileCreateInput(
+  overrides?: Partial<PrismaProfileWithRelations>,
+): Prisma.ProfileCreateInput & Pick<PrismaProfileWithRelations, 'id'> {
+  const { stats, socialNetworks, ...row } = buildPrismaProfile(overrides);
+
+  return {
+    ...row,
+    headline: row.headline as Prisma.InputJsonValue,
+    bio: row.bio as Prisma.InputJsonValue,
+    photoAlt: row.photoAlt as Prisma.InputJsonValue,
+    stats: {
+      create: stats.map(({ profileId: _profileId, ...stat }) => ({
+        ...stat,
+        label: stat.label as Prisma.InputJsonValue,
+      })),
+    },
+    socialNetworks: {
+      create: socialNetworks.map(
+        ({ profileId: _profileId, ...network }) => network,
+      ),
+    },
+  };
+}

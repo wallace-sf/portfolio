@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { LocationType } from '@repo/core/portfolio';
 import { Id } from '@repo/core/shared';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -6,7 +6,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
 import { ExperienceMapper } from '../../../src/repositories/experience/ExperienceMapper';
 import { PrismaExperienceRepository } from '../../../src/repositories/experience/PrismaExperienceRepository';
-import { buildPrismaExperience } from '../../factories/prisma-experience.factory';
+import {
+  buildPrismaExperience,
+  buildPrismaExperienceCreateInput,
+  PrismaExperience,
+} from '../../factories/prisma-experience.factory';
 import { withRollback } from '../../support/withRollback';
 
 // Use DIRECT_URL to bypass PgBouncer — prepared statements don't work with the pooler
@@ -19,32 +23,14 @@ const db = new PrismaClient({
 // Run explicitly with `pnpm --filter @repo/infra test:integration`.
 const missingDbEnv = !process.env.DIRECT_URL;
 
-async function seedExperience(
+/** Persists a factory experience inside the test's transaction. */
+function seedExperience(
   tx: PrismaClient,
-  overrides?: Partial<ReturnType<typeof buildPrismaExperience>>,
+  overrides?: Partial<PrismaExperience>,
 ) {
-  const raw = buildPrismaExperience(overrides);
-
-  await tx.experience.create({
-    data: {
-      id: raw.id,
-      company: raw.company as Prisma.InputJsonValue,
-      position: raw.position as Prisma.InputJsonValue,
-      location: raw.location as Prisma.InputJsonValue,
-      description: raw.description as Prisma.InputJsonValue,
-      logoUrl: raw.logoUrl,
-      logoAlt: raw.logoAlt as Prisma.InputJsonValue,
-      employmentType: raw.employmentType,
-      locationType: raw.locationType,
-      skillIds: raw.skillIds,
-      startAt: raw.startAt,
-      endAt: raw.endAt,
-      createdAt: raw.createdAt,
-      updatedAt: raw.updatedAt,
-    },
+  return tx.experience.create({
+    data: buildPrismaExperienceCreateInput(overrides),
   });
-
-  return raw;
 }
 
 function idOf(raw: string): Id {
