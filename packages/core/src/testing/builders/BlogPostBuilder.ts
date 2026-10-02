@@ -88,6 +88,15 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
     return this;
   }
 
+  /**
+   * Sets the post's own `updatedAt` (when the article was revised), not the
+   * entity's `updated_at` audit timestamp — that one is `withUpdatedAt()`.
+   */
+  public withPostUpdatedAt(updatedAt: string): BlogPostBuilder {
+    this._props.updatedAt = updatedAt;
+    return this;
+  }
+
   public withStatus(status: BlogPostStatus): BlogPostBuilder {
     this._props.status = status;
     return this;

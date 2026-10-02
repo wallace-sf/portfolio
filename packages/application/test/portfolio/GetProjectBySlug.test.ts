@@ -1,13 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import {
-  IProjectProps,
   IProjectRepository,
   ISkillRepository,
-  Project,
   ProjectStatus,
 } from '@repo/core/portfolio';
 import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
+import { ProjectBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ProjectDetailDTO } from '~/portfolio/dtos/ProjectDetailDTO';
 import { GetProjectBySlug } from '~/portfolio/use-cases/GetProjectBySlug';
@@ -16,32 +14,9 @@ import { GetProjectBySlug } from '~/portfolio/use-cases/GetProjectBySlug';
 // Helpers
 // ---------------------------------------------------------------------------
 
-const BASE_PROPS: IProjectProps = {
-  slug: 'my-project',
-  coverImage: {
-    url: 'https://example.com/cover.jpg',
-    alt: { 'pt-BR': 'Capa do projeto', 'en-US': 'Project cover' },
-  },
-  thumbnailImage: {
-    url: 'https://example.com/thumbnail.webp',
-    alt: { 'pt-BR': 'Thumbnail do projeto', 'en-US': 'Project thumbnail' },
-  },
-  title: { 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' },
-  caption: { 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' },
-  content: { 'en-US': 'Detailed project content here.', 'pt-BR': 'Conteúdo detalhado do projeto aqui.' },
-  skills: [],
-  period: { start: '2023-01-01T00:00:00.000Z' },
-  featured: false,
-  status: ProjectStatus.PUBLISHED,
-};
-
-function makeProject(overrides: Partial<IProjectProps> = {}): Project {
-  const result = Project.create({ ...BASE_PROPS, ...overrides });
-  if (result.isLeft()) throw new Error(`makeProject failed: ${result.value.message}`);
-  return result.value;
-}
-
-function makeRepository(overrides: Partial<IProjectRepository> = {}): IProjectRepository {
+function makeRepository(
+  overrides: Partial<IProjectRepository> = {},
+): IProjectRepository {
   return {
     findAll: vi.fn(),
     findPublished: vi.fn(),
@@ -63,6 +38,30 @@ function makeSkillRepository(
   };
 }
 
+/** Every field the DTO maps, set explicitly — for the mapping tests. */
+function projectWithAllFields() {
+  return ProjectBuilder.build()
+    .withSlug('my-project')
+    .withCoverImage({
+      url: 'https://example.com/cover.jpg',
+      alt: { 'pt-BR': 'Capa do projeto', 'en-US': 'Project cover' },
+    })
+    .withThumbnailImage({
+      url: 'https://example.com/thumbnail.webp',
+      alt: { 'pt-BR': 'Thumbnail do projeto', 'en-US': 'Project thumbnail' },
+    })
+    .withTitle({ 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' })
+    .withCaption({ 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' })
+    .withContent({
+      'en-US': 'Detailed project content here.',
+      'pt-BR': 'Conteúdo detalhado do projeto aqui.',
+    })
+    .withSkills([])
+    .withPeriod({ start: '2023-01-01T00:00:00.000Z' })
+    .withFeatured(false)
+    .withStatus(ProjectStatus.PUBLISHED);
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -70,33 +69,42 @@ function makeSkillRepository(
 describe('GetProjectBySlug', () => {
   describe('execute()', () => {
     it('should return Right with ProjectDetailDTO when project is found', async () => {
-      const project = makeProject();
+      const project = ProjectBuilder.build().now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([]),
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
+      const result = await useCase.execute({
+        slug: 'my-project',
+        locale: 'pt-BR',
+      });
 
       expect(result.isRight()).toBe(true);
     });
 
     it('should map all ProjectDetailDTO fields correctly', async () => {
-      const project = makeProject({
-        summary: { 'pt-BR': 'Resumo PT', 'en-US': 'Summary EN' },
-        objectives: { 'pt-BR': 'Objetivos PT', 'en-US': 'Objectives EN' },
-        role: { 'pt-BR': 'Papel PT', 'en-US': 'Role EN' },
-        period: { start: '2023-01-01T00:00:00.000Z', end: '2023-12-31T00:00:00.000Z' },
-        projectUrl: 'https://tcrepresentacoes.com.br',
-      });
+      const project = projectWithAllFields()
+        .withSummary({ 'pt-BR': 'Resumo PT', 'en-US': 'Summary EN' })
+        .withObjectives({ 'pt-BR': 'Objetivos PT', 'en-US': 'Objectives EN' })
+        .withRole({ 'pt-BR': 'Papel PT', 'en-US': 'Role EN' })
+        .withPeriod({
+          start: '2023-01-01T00:00:00.000Z',
+          end: '2023-12-31T00:00:00.000Z',
+        })
+        .withProjectUrl('https://tcrepresentacoes.com.br')
+        .now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([]),
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
+      const result = await useCase.execute({
+        slug: 'my-project',
+        locale: 'pt-BR',
+      });
 
       expect(result.isRight()).toBe(true);
       const dto = result.value as ProjectDetailDTO;
@@ -118,14 +126,17 @@ describe('GetProjectBySlug', () => {
     });
 
     it('should leave optional fields undefined when not set', async () => {
-      const project = makeProject();
+      const project = ProjectBuilder.build().now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([]),
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
+      const result = await useCase.execute({
+        slug: 'my-project',
+        locale: 'pt-BR',
+      });
 
       expect(result.isRight()).toBe(true);
       const dto = result.value as ProjectDetailDTO;
@@ -138,16 +149,19 @@ describe('GetProjectBySlug', () => {
     });
 
     it('should use the requested locale for all localized fields', async () => {
-      const project = makeProject({
-        theme: { 'pt-BR': 'Tema PT', 'en-US': 'Theme EN' },
-      });
+      const project = projectWithAllFields()
+        .withTheme({ 'pt-BR': 'Tema PT', 'en-US': 'Theme EN' })
+        .now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([]),
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const enResult = await useCase.execute({ slug: 'my-project', locale: 'en-US' });
+      const enResult = await useCase.execute({
+        slug: 'my-project',
+        locale: 'en-US',
+      });
 
       expect(enResult.isRight()).toBe(true);
       const dto = enResult.value as ProjectDetailDTO;
@@ -158,15 +172,18 @@ describe('GetProjectBySlug', () => {
     });
 
     it('should include related projects as ProjectSummaryDTO', async () => {
-      const project = makeProject();
-      const related = makeProject({ slug: 'related-project' });
+      const project = projectWithAllFields().now();
+      const related = projectWithAllFields().withSlug('related-project').now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([related]),
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
+      const result = await useCase.execute({
+        slug: 'my-project',
+        locale: 'pt-BR',
+      });
 
       expect(result.isRight()).toBe(true);
       const dto = result.value as ProjectDetailDTO;
@@ -176,7 +193,7 @@ describe('GetProjectBySlug', () => {
     });
 
     it('should call findRelated with project id and limit 3', async () => {
-      const project = makeProject();
+      const project = ProjectBuilder.build().now();
       const findRelated = vi.fn().mockResolvedValue([]);
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
@@ -196,7 +213,10 @@ describe('GetProjectBySlug', () => {
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const result = await useCase.execute({ slug: 'non-existent', locale: 'pt-BR' });
+      const result = await useCase.execute({
+        slug: 'non-existent',
+        locale: 'pt-BR',
+      });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(NotFoundError);
@@ -228,7 +248,10 @@ describe('GetProjectBySlug', () => {
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
+      const result = await useCase.execute({
+        slug: 'my-project',
+        locale: 'pt-BR',
+      });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(DomainError);
@@ -236,33 +259,41 @@ describe('GetProjectBySlug', () => {
     });
 
     it('should map repositoryUrl in related projects when they are public', async () => {
-      const project = makeProject();
-      const related = makeProject({
-        slug: 'related-project',
-        repositoryUrl: 'https://github.com/user/related',
-      });
+      const project = ProjectBuilder.build().now();
+      const related = ProjectBuilder.build()
+        .withSlug('related-project')
+        .withRepositoryUrl('https://github.com/user/related')
+        .now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockResolvedValue([related]),
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const result = await useCase.execute({ slug: 'my-project', locale: 'en-US' });
+      const result = await useCase.execute({
+        slug: 'my-project',
+        locale: 'en-US',
+      });
 
       expect(result.isRight()).toBe(true);
       const dto = result.value as ProjectDetailDTO;
-      expect(dto.relatedProjects[0]!.repositoryUrl).toBe('https://github.com/user/related');
+      expect(dto.relatedProjects[0]!.repositoryUrl).toBe(
+        'https://github.com/user/related',
+      );
     });
 
     it('should return Right with empty relatedProjects when findRelated throws', async () => {
-      const project = makeProject();
+      const project = ProjectBuilder.build().now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(project),
         findRelated: vi.fn().mockRejectedValue(new Error('DB error')),
       });
       const useCase = new GetProjectBySlug(repo, makeSkillRepository());
 
-      const result = await useCase.execute({ slug: 'my-project', locale: 'pt-BR' });
+      const result = await useCase.execute({
+        slug: 'my-project',
+        locale: 'pt-BR',
+      });
 
       expect(result.isRight()).toBe(true);
       const dto = result.value as ProjectDetailDTO;

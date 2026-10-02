@@ -53,6 +53,11 @@ export class ProfileBuilder extends EntityBuilder<IProfileProps> {
     return this;
   }
 
+  public withPhoto(photo: IProfileProps['photo']): ProfileBuilder {
+    this._props.photo = photo;
+    return this;
+  }
+
   public withStats(stats: IProfileStatProps[]): ProfileBuilder {
     this._props.stats = stats;
     return this;

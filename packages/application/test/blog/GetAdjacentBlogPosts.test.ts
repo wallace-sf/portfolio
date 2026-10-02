@@ -1,48 +1,26 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 import { NotFoundError } from '@repo/core/shared';
+import { BlogPostBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { IBlogPostRepository } from '~/blog/ports';
 import { GetAdjacentBlogPosts } from '~/blog/use-cases/GetAdjacentBlogPosts';
-
-const BASE: IBlogPostProps = {
-  slug: 'a-post',
-  title: {
-    'en-US': 'A Post',
-    'pt-BR': 'Um Post',
-    es: 'Una Publicación',
-  },
-  description: { 'en-US': 'D', 'pt-BR': 'D', es: 'D' },
-  content: { 'en-US': 'C', 'pt-BR': 'C', es: 'C' },
-  tags: ['nextjs'],
-  author: {
-    name: 'Test Author',
-    avatarUrl: 'https://example.com/avatar.jpg',
-    url: 'https://example.com',
-  },
-  publishedAt: '2026-08-01T00:00:00.000Z',
-  status: BlogPostStatus.PUBLISHED,
-};
 
 function makePost(
   slug: string,
   publishedAt: string,
   status: BlogPostStatus = BlogPostStatus.PUBLISHED,
 ): BlogPost {
-  const result = BlogPost.create({
-    ...BASE,
-    slug,
-    publishedAt,
-    status,
-    title: {
+  return BlogPostBuilder.build()
+    .withSlug(slug)
+    .withPublishedAt(publishedAt)
+    .withStatus(status)
+    .withTitle({
       'en-US': `Title ${slug}`,
       'pt-BR': `Título ${slug}`,
       es: `Título ${slug}`,
-    },
-  });
-  if (result.isLeft()) throw result.value;
-  return result.value;
+    })
+    .now();
 }
 
 function makeRepository(

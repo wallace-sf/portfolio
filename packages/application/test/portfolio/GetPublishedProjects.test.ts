@@ -1,13 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import {
-  IProjectProps,
   IProjectRepository,
   ISkillRepository,
-  Project,
   ProjectStatus,
 } from '@repo/core/portfolio';
 import { DomainError } from '@repo/core/shared';
+import { ProjectBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ProjectSummaryDTO } from '~/portfolio/dtos/ProjectSummaryDTO';
 import { GetPublishedProjects } from '~/portfolio/use-cases/GetPublishedProjects';
@@ -15,32 +13,6 @@ import { GetPublishedProjects } from '~/portfolio/use-cases/GetPublishedProjects
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-const BASE_PROPS: IProjectProps = {
-  slug: 'my-project',
-  coverImage: {
-    url: 'https://example.com/cover.jpg',
-    alt: { 'pt-BR': 'Capa do projeto', 'en-US': 'Project cover' },
-  },
-  thumbnailImage: {
-    url: 'https://example.com/thumbnail.webp',
-    alt: { 'pt-BR': 'Thumbnail do projeto', 'en-US': 'Project thumbnail' },
-  },
-  title: { 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' },
-  caption: { 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' },
-  content: { 'en-US': 'Detailed project content here.', 'pt-BR': 'Conteúdo detalhado do projeto aqui.' },
-  skills: [],
-  period: { start: '2023-01-01T00:00:00.000Z' },
-  featured: false,
-  status: ProjectStatus.PUBLISHED,
-};
-
-function makeProject(overrides: Partial<IProjectProps> = {}): Project {
-  const result = Project.create({ ...BASE_PROPS, ...overrides });
-  if (result.isLeft())
-    throw new Error(`makeProject failed: ${result.value.message}`);
-  return result.value;
-}
 
 function makeRepository(
   overrides: Partial<IProjectRepository> = {},
@@ -66,6 +38,30 @@ function makeSkillRepository(
   };
 }
 
+/** Every field the DTO maps, set explicitly — for the mapping tests. */
+function projectWithAllFields() {
+  return ProjectBuilder.build()
+    .withSlug('my-project')
+    .withCoverImage({
+      url: 'https://example.com/cover.jpg',
+      alt: { 'pt-BR': 'Capa do projeto', 'en-US': 'Project cover' },
+    })
+    .withThumbnailImage({
+      url: 'https://example.com/thumbnail.webp',
+      alt: { 'pt-BR': 'Thumbnail do projeto', 'en-US': 'Project thumbnail' },
+    })
+    .withTitle({ 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' })
+    .withCaption({ 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' })
+    .withContent({
+      'en-US': 'Detailed project content here.',
+      'pt-BR': 'Conteúdo detalhado do projeto aqui.',
+    })
+    .withSkills([])
+    .withPeriod({ start: '2023-01-01T00:00:00.000Z' })
+    .withFeatured(false)
+    .withStatus(ProjectStatus.PUBLISHED);
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -85,7 +81,7 @@ describe('GetPublishedProjects', () => {
     });
 
     it('should return Right with mapped DTOs when repository returns projects', async () => {
-      const project = makeProject();
+      const project = ProjectBuilder.build().now();
       const repo = makeRepository({
         findPublished: vi.fn().mockResolvedValue([project]),
       });
@@ -98,9 +94,9 @@ describe('GetPublishedProjects', () => {
     });
 
     it('should preserve the order returned by the repository', async () => {
-      const first = makeProject({ slug: 'first' });
-      const second = makeProject({ slug: 'second' });
-      const third = makeProject({ slug: 'third' });
+      const first = ProjectBuilder.build().withSlug('first').now();
+      const second = ProjectBuilder.build().withSlug('second').now();
+      const third = ProjectBuilder.build().withSlug('third').now();
 
       const repo = makeRepository({
         findPublished: vi.fn().mockResolvedValue([first, second, third]),
@@ -117,7 +113,7 @@ describe('GetPublishedProjects', () => {
     });
 
     it('should map all DTO fields correctly for pt-BR locale', async () => {
-      const project = makeProject();
+      const project = projectWithAllFields().now();
       const repo = makeRepository({
         findPublished: vi.fn().mockResolvedValue([project]),
       });
@@ -142,9 +138,9 @@ describe('GetPublishedProjects', () => {
     });
 
     it('should map localized fields using the requested locale', async () => {
-      const project = makeProject({
-        theme: { 'pt-BR': 'Tema PT', 'en-US': 'Theme EN' },
-      });
+      const project = projectWithAllFields()
+        .withTheme({ 'pt-BR': 'Tema PT', 'en-US': 'Theme EN' })
+        .now();
       const repo = makeRepository({
         findPublished: vi.fn().mockResolvedValue([project]),
       });
@@ -168,7 +164,9 @@ describe('GetPublishedProjects', () => {
     it('should include resolved skill names in DTO', async () => {
       const skillId1 = 'a0000000-0000-4000-8000-000000000001';
       const skillId2 = 'a0000000-0000-4000-8000-000000000002';
-      const project = makeProject({ skills: [skillId1, skillId2] });
+      const project = ProjectBuilder.build()
+        .withSkills([skillId1, skillId2])
+        .now();
       const repo = makeRepository({
         findPublished: vi.fn().mockResolvedValue([project]),
       });
@@ -206,9 +204,9 @@ describe('GetPublishedProjects', () => {
     });
 
     it('should map repositoryUrl when project is public', async () => {
-      const project = makeProject({
-        repositoryUrl: 'https://github.com/user/repo',
-      });
+      const project = ProjectBuilder.build()
+        .withRepositoryUrl('https://github.com/user/repo')
+        .now();
       const repo = makeRepository({
         findPublished: vi.fn().mockResolvedValue([project]),
       });
@@ -222,7 +220,7 @@ describe('GetPublishedProjects', () => {
     });
 
     it('should omit repositoryUrl when project has no repository', async () => {
-      const project = makeProject();
+      const project = ProjectBuilder.build().now();
       const repo = makeRepository({
         findPublished: vi.fn().mockResolvedValue([project]),
       });

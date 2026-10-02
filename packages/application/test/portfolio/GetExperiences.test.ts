@@ -1,14 +1,12 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import {
   EmploymentType,
-  Experience,
-  IExperienceProps,
   IExperienceRepository,
   ISkillRepository,
   LocationType,
 } from '@repo/core/portfolio';
 import { DomainError } from '@repo/core/shared';
+import { ExperienceBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ExperienceDTO } from '~/portfolio/dtos/ExperienceDTO';
 import { GetExperiences } from '~/portfolio/use-cases/GetExperiences';
@@ -19,29 +17,6 @@ import { GetExperiences } from '~/portfolio/use-cases/GetExperiences';
 
 const SKILL_ID_1 = 'a0000000-0000-4000-8000-000000000001';
 const SKILL_ID_2 = 'a0000000-0000-4000-8000-000000000002';
-
-const BASE_PROPS: IExperienceProps = {
-  company: { 'pt-BR': 'Empresa Exemplo', 'en-US': 'Example Company' },
-  position: { 'pt-BR': 'Engenheiro de Software', 'en-US': 'Software Engineer' },
-  location: { 'pt-BR': 'São Paulo, Brasil', 'en-US': 'São Paulo, Brazil' },
-  description: { 'pt-BR': 'Descrição do trabalho', 'en-US': 'Job description' },
-  logo: {
-    url: 'https://example.com/logo.png',
-    alt: { 'pt-BR': 'Logo da empresa', 'en-US': 'Company logo' },
-  },
-  employment_type: EmploymentType.FULL_TIME,
-  location_type: LocationType.HYBRID,
-  start_at: '2022-01-01T00:00:00.000Z',
-  end_at: '2023-01-01T00:00:00.000Z',
-  skills: [SKILL_ID_1, SKILL_ID_2],
-};
-
-function makeExperience(overrides: Partial<IExperienceProps> = {}): Experience {
-  const result = Experience.create({ ...BASE_PROPS, ...overrides });
-  if (result.isLeft())
-    throw new Error(`makeExperience failed: ${result.value.message}`);
-  return result.value;
-}
 
 function makeRepository(
   overrides: Partial<IExperienceRepository> = {},
@@ -63,6 +38,33 @@ function makeSkillRepository(
   };
 }
 
+/** Every field the DTO maps, set explicitly — for the mapping tests. */
+function experienceWithAllFields() {
+  return ExperienceBuilder.build()
+    .withCompany({ 'pt-BR': 'Empresa Exemplo', 'en-US': 'Example Company' })
+    .withPosition({
+      'pt-BR': 'Engenheiro de Software',
+      'en-US': 'Software Engineer',
+    })
+    .withLocation({
+      'pt-BR': 'São Paulo, Brasil',
+      'en-US': 'São Paulo, Brazil',
+    })
+    .withDescription({
+      'pt-BR': 'Descrição do trabalho',
+      'en-US': 'Job description',
+    })
+    .withLogo('https://example.com/logo.png', {
+      'pt-BR': 'Logo da empresa',
+      'en-US': 'Company logo',
+    })
+    .withEmploymentType(EmploymentType.FULL_TIME)
+    .withLocationType(LocationType.HYBRID)
+    .withStartAt('2022-01-01T00:00:00.000Z')
+    .withEndAt('2023-01-01T00:00:00.000Z')
+    .withSkills([SKILL_ID_1, SKILL_ID_2]);
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -80,7 +82,7 @@ describe('GetExperiences', () => {
     });
 
     it('should return Right with mapped DTOs when repository returns experiences', async () => {
-      const experience = makeExperience();
+      const experience = ExperienceBuilder.build().now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
@@ -93,21 +95,21 @@ describe('GetExperiences', () => {
     });
 
     it('should sort experiences by startAt descending (newest first)', async () => {
-      const oldest = makeExperience({
-        start_at: '2020-01-01T00:00:00.000Z',
-        end_at: '2021-01-01T00:00:00.000Z',
-        company: { 'en-US': 'oldest', 'pt-BR': 'oldest' },
-      });
-      const middle = makeExperience({
-        start_at: '2021-06-01T00:00:00.000Z',
-        end_at: '2022-06-01T00:00:00.000Z',
-        company: { 'en-US': 'middle', 'pt-BR': 'middle' },
-      });
-      const newest = makeExperience({
-        start_at: '2023-01-01T00:00:00.000Z',
-        end_at: '2024-01-01T00:00:00.000Z',
-        company: { 'en-US': 'newest', 'pt-BR': 'newest' },
-      });
+      const oldest = ExperienceBuilder.build()
+        .withStartAt('2020-01-01T00:00:00.000Z')
+        .withEndAt('2021-01-01T00:00:00.000Z')
+        .withCompany({ 'en-US': 'oldest', 'pt-BR': 'oldest' })
+        .now();
+      const middle = ExperienceBuilder.build()
+        .withStartAt('2021-06-01T00:00:00.000Z')
+        .withEndAt('2022-06-01T00:00:00.000Z')
+        .withCompany({ 'en-US': 'middle', 'pt-BR': 'middle' })
+        .now();
+      const newest = ExperienceBuilder.build()
+        .withStartAt('2023-01-01T00:00:00.000Z')
+        .withEndAt('2024-01-01T00:00:00.000Z')
+        .withCompany({ 'en-US': 'newest', 'pt-BR': 'newest' })
+        .now();
 
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([oldest, newest, middle]),
@@ -124,14 +126,14 @@ describe('GetExperiences', () => {
     });
 
     it('should not mutate the original array from the repository', async () => {
-      const oldest = makeExperience({
-        start_at: '2020-01-01T00:00:00.000Z',
-        end_at: '2021-01-01T00:00:00.000Z',
-      });
-      const newest = makeExperience({
-        start_at: '2023-01-01T00:00:00.000Z',
-        end_at: '2024-01-01T00:00:00.000Z',
-      });
+      const oldest = ExperienceBuilder.build()
+        .withStartAt('2020-01-01T00:00:00.000Z')
+        .withEndAt('2021-01-01T00:00:00.000Z')
+        .now();
+      const newest = ExperienceBuilder.build()
+        .withStartAt('2023-01-01T00:00:00.000Z')
+        .withEndAt('2024-01-01T00:00:00.000Z')
+        .now();
       const original = [oldest, newest];
 
       const repo = makeRepository({
@@ -150,7 +152,7 @@ describe('GetExperiences', () => {
     });
 
     it('should map all DTO fields correctly for pt-BR locale', async () => {
-      const experience = makeExperience();
+      const experience = experienceWithAllFields().now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
@@ -177,7 +179,7 @@ describe('GetExperiences', () => {
     });
 
     it('should map localized fields using the requested locale', async () => {
-      const experience = makeExperience();
+      const experience = experienceWithAllFields().now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
@@ -199,9 +201,9 @@ describe('GetExperiences', () => {
     });
 
     it('should resolve skill names from the skill repository', async () => {
-      const experience = makeExperience({
-        skills: [SKILL_ID_1, SKILL_ID_2],
-      });
+      const experience = ExperienceBuilder.build()
+        .withSkills([SKILL_ID_1, SKILL_ID_2])
+        .now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
@@ -224,7 +226,7 @@ describe('GetExperiences', () => {
     });
 
     it('should map skills as empty array when experience has no skills', async () => {
-      const experience = makeExperience({ skills: [] });
+      const experience = ExperienceBuilder.build().withSkills([]).now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });
@@ -238,7 +240,7 @@ describe('GetExperiences', () => {
     });
 
     it('should include endAt as undefined when experience has no end date', async () => {
-      const experience = makeExperience({ end_at: undefined });
+      const experience = ExperienceBuilder.build().withoutEndAt().now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([experience]),
       });

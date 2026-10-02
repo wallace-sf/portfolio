@@ -1,12 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import {
-  IProfileProps,
-  IProfileRepository,
-  IProfileStatProps,
-  Profile,
-} from '@repo/core/portfolio';
+import { IProfileRepository } from '@repo/core/portfolio';
 import { DomainError, NotFoundError } from '@repo/core/shared';
+import { ProfileBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ProfileDTO } from '~/portfolio/dtos/ProfileDTO';
 import { GetProfile } from '~/portfolio/use-cases/GetProfile';
@@ -15,35 +10,42 @@ import { GetProfile } from '~/portfolio/use-cases/GetProfile';
 // Helpers
 // ---------------------------------------------------------------------------
 
-const BASE_STAT: IProfileStatProps = {
-  label: { 'pt-BR': 'Anos de experiência', 'en-US': 'Years of experience' },
-  value: '5+',
-  icon: 'calendar',
-};
-
-const BASE_PROPS: IProfileProps = {
-  name: 'Wallace Ferreira',
-  headline: { 'pt-BR': 'Engenheiro de Software', 'en-US': 'Software Engineer' },
-  bio: { 'pt-BR': 'Desenvolvedor apaixonado por código.', 'en-US': 'Developer passionate about code.' },
-  photo: {
-    url: 'https://example.com/photo.jpg',
-    alt: { 'pt-BR': 'Foto do perfil', 'en-US': 'Profile photo' },
-  },
-  stats: [BASE_STAT],
-};
-
-function makeProfile(overrides: Partial<IProfileProps> = {}): Profile {
-  const result = Profile.create({ ...BASE_PROPS, ...overrides });
-  if (result.isLeft()) throw new Error(`makeProfile failed: ${result.value.message}`);
-  return result.value;
-}
-
-function makeRepository(overrides: Partial<IProfileRepository> = {}): IProfileRepository {
+function makeRepository(
+  overrides: Partial<IProfileRepository> = {},
+): IProfileRepository {
   return {
     find: vi.fn(),
     save: vi.fn(),
     ...overrides,
   };
+}
+
+/** Every field the DTO maps, set explicitly — for the mapping tests. */
+function profileWithAllFields() {
+  return ProfileBuilder.build()
+    .withName('Wallace Ferreira')
+    .withHeadline({
+      'pt-BR': 'Engenheiro de Software',
+      'en-US': 'Software Engineer',
+    })
+    .withBio({
+      'pt-BR': 'Desenvolvedor apaixonado por código.',
+      'en-US': 'Developer passionate about code.',
+    })
+    .withPhoto({
+      url: 'https://example.com/photo.jpg',
+      alt: { 'pt-BR': 'Foto do perfil', 'en-US': 'Profile photo' },
+    })
+    .withStats([
+      {
+        label: {
+          'pt-BR': 'Anos de experiência',
+          'en-US': 'Years of experience',
+        },
+        value: '5+',
+        icon: 'calendar',
+      },
+    ]);
 }
 
 // ---------------------------------------------------------------------------
@@ -53,7 +55,7 @@ function makeRepository(overrides: Partial<IProfileRepository> = {}): IProfileRe
 describe('GetProfile', () => {
   describe('execute()', () => {
     it('should return Right with ProfileDTO when profile exists', async () => {
-      const profile = makeProfile();
+      const profile = ProfileBuilder.build().now();
       const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
       const useCase = new GetProfile(repo);
 
@@ -87,7 +89,7 @@ describe('GetProfile', () => {
     });
 
     it('should map all top-level DTO fields correctly for pt-BR locale', async () => {
-      const profile = makeProfile();
+      const profile = profileWithAllFields().now();
       const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
       const useCase = new GetProfile(repo);
 
@@ -100,11 +102,14 @@ describe('GetProfile', () => {
       expect(dto.name).toBe('Wallace Ferreira');
       expect(dto.headline).toBe('Engenheiro de Software');
       expect(dto.bio).toBe('Desenvolvedor apaixonado por código.');
-      expect(dto.photo).toEqual({ url: 'https://example.com/photo.jpg', alt: 'Foto do perfil' });
+      expect(dto.photo).toEqual({
+        url: 'https://example.com/photo.jpg',
+        alt: 'Foto do perfil',
+      });
     });
 
     it('should map localized fields using the requested locale', async () => {
-      const profile = makeProfile();
+      const profile = profileWithAllFields().now();
       const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
       const useCase = new GetProfile(repo);
 
@@ -123,12 +128,20 @@ describe('GetProfile', () => {
     });
 
     it('should map stats array with localized label and non-localized value/icon', async () => {
-      const profile = makeProfile({
-        stats: [
-          { label: { 'pt-BR': 'Anos', 'en-US': 'Years' }, value: '5+', icon: 'calendar' },
-          { label: { 'pt-BR': 'Projetos', 'en-US': 'Projects' }, value: '20+', icon: 'code' },
-        ],
-      });
+      const profile = ProfileBuilder.build()
+        .withStats([
+          {
+            label: { 'pt-BR': 'Anos', 'en-US': 'Years' },
+            value: '5+',
+            icon: 'calendar',
+          },
+          {
+            label: { 'pt-BR': 'Projetos', 'en-US': 'Projects' },
+            value: '20+',
+            icon: 'code',
+          },
+        ])
+        .now();
       const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
       const useCase = new GetProfile(repo);
 
@@ -136,14 +149,28 @@ describe('GetProfile', () => {
 
       const dto = result.value as ProfileDTO;
       expect(dto.stats).toHaveLength(2);
-      expect(dto.stats[0]).toEqual({ label: 'Anos', value: '5+', icon: 'calendar' });
-      expect(dto.stats[1]).toEqual({ label: 'Projetos', value: '20+', icon: 'code' });
+      expect(dto.stats[0]).toEqual({
+        label: 'Anos',
+        value: '5+',
+        icon: 'calendar',
+      });
+      expect(dto.stats[1]).toEqual({
+        label: 'Projetos',
+        value: '20+',
+        icon: 'code',
+      });
     });
 
     it('should map stat label using the requested locale', async () => {
-      const profile = makeProfile({
-        stats: [{ label: { 'pt-BR': 'Anos', 'en-US': 'Years' }, value: '5+', icon: 'calendar' }],
-      });
+      const profile = ProfileBuilder.build()
+        .withStats([
+          {
+            label: { 'pt-BR': 'Anos', 'en-US': 'Years' },
+            value: '5+',
+            icon: 'calendar',
+          },
+        ])
+        .now();
       const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
       const useCase = new GetProfile(repo);
 
@@ -155,7 +182,7 @@ describe('GetProfile', () => {
     });
 
     it('should return empty arrays when stats are empty', async () => {
-      const profile = makeProfile({ stats: [] });
+      const profile = ProfileBuilder.build().withStats([]).now();
       const repo = makeRepository({ find: vi.fn().mockResolvedValue(profile) });
       const useCase = new GetProfile(repo);
 

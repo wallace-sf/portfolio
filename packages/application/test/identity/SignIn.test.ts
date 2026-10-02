@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { IUserProps, IUserRepository, Role, User } from '@repo/core/identity';
+import { IUserRepository } from '@repo/core/identity';
 import { DomainError } from '@repo/core/shared';
+import { UserBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { AuthPrincipal } from '../../src/identity/dtos/AuthPrincipal';
 import { SignIn } from '../../src/identity/use-cases/SignIn';
@@ -21,20 +21,9 @@ const PRINCIPAL: AuthPrincipal = {
   role: 'ADMIN',
 };
 
-const BASE_USER_PROPS: IUserProps = {
-  name: 'Admin User',
-  email: VALID_EMAIL,
-  role: Role.ADMIN,
-  authSubject: VALID_UUID,
-};
-
-function makeUser(overrides: Partial<IUserProps> = {}): User {
-  const result = User.create({ ...BASE_USER_PROPS, ...overrides });
-  if (result.isLeft()) throw new Error(`makeUser failed: ${result.value.message}`);
-  return result.value;
-}
-
-function makeRepository(overrides: Partial<IUserRepository> = {}): IUserRepository {
+function makeRepository(
+  overrides: Partial<IUserRepository> = {},
+): IUserRepository {
   return {
     findById: vi.fn(),
     findByEmail: vi.fn().mockResolvedValue(null),
@@ -62,7 +51,10 @@ describe('SignIn', () => {
       const repo = makeRepository();
       const useCase = new SignIn(gateway, repo);
 
-      const result = await useCase.execute({ email: VALID_EMAIL, password: VALID_PASSWORD });
+      const result = await useCase.execute({
+        email: VALID_EMAIL,
+        password: VALID_PASSWORD,
+      });
 
       expect(result.isRight()).toBe(true);
       expect(result.value).toMatchObject({
@@ -76,7 +68,10 @@ describe('SignIn', () => {
       const repo = makeRepository();
       const useCase = new SignIn(gateway, repo);
 
-      const result = await useCase.execute({ email: VALID_EMAIL, password: 'wrong' });
+      const result = await useCase.execute({
+        email: VALID_EMAIL,
+        password: 'wrong',
+      });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(DomainError);
@@ -86,12 +81,17 @@ describe('SignIn', () => {
     it('should return Left when getPrincipalFromSession fails', async () => {
       const gateway = makeGateway();
       gateway.simulateError(
-        new DomainError('INVALID_ACCESS_TOKEN', { message: 'Token validation failed.' }),
+        new DomainError('INVALID_ACCESS_TOKEN', {
+          message: 'Token validation failed.',
+        }),
       );
       const repo = makeRepository();
       const useCase = new SignIn(gateway, repo);
 
-      const result = await useCase.execute({ email: VALID_EMAIL, password: VALID_PASSWORD });
+      const result = await useCase.execute({
+        email: VALID_EMAIL,
+        password: VALID_PASSWORD,
+      });
 
       expect(result.isLeft()).toBe(true);
       expect((result.value as DomainError).code).toBe('INVALID_ACCESS_TOKEN');
@@ -105,7 +105,10 @@ describe('SignIn', () => {
       });
       const useCase = new SignIn(gateway, repo);
 
-      const result = await useCase.execute({ email: VALID_EMAIL, password: VALID_PASSWORD });
+      const result = await useCase.execute({
+        email: VALID_EMAIL,
+        password: VALID_PASSWORD,
+      });
 
       expect(result.isLeft()).toBe(true);
       expect(result.value).toBeInstanceOf(DomainError);
@@ -124,7 +127,10 @@ describe('SignIn', () => {
 
     it('should not call save when user already exists', async () => {
       const gateway = makeGateway();
-      const existingUser = makeUser();
+      const existingUser = UserBuilder.build()
+        .withEmail(VALID_EMAIL)
+        .withAuthSubject(VALID_UUID)
+        .now();
       const save = vi.fn();
       const repo = makeRepository({
         findByAuthSubject: vi.fn().mockResolvedValue(existingUser),
@@ -132,7 +138,10 @@ describe('SignIn', () => {
       });
       const useCase = new SignIn(gateway, repo);
 
-      const result = await useCase.execute({ email: VALID_EMAIL, password: VALID_PASSWORD });
+      const result = await useCase.execute({
+        email: VALID_EMAIL,
+        password: VALID_PASSWORD,
+      });
 
       expect(result.isRight()).toBe(true);
       expect(save).not.toHaveBeenCalled();

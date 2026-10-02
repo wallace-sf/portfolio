@@ -1,8 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { IUserProps, IUserRepository, Role, User } from '@repo/core/identity';
+import { IUserRepository, Role, UnauthorizedError } from '@repo/core/identity';
 import { DomainError, NotFoundError } from '@repo/core/shared';
-import { UnauthorizedError } from '@repo/core/identity';
+import { UserBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { EnsureAdmin } from '../../src/identity/use-cases/EnsureAdmin';
 
@@ -12,19 +11,9 @@ import { EnsureAdmin } from '../../src/identity/use-cases/EnsureAdmin';
 
 const VALID_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 
-const BASE_USER_PROPS: IUserProps = {
-  name: 'Admin User',
-  email: 'admin@example.com',
-  role: Role.ADMIN,
-};
-
-function makeUser(overrides: Partial<IUserProps> = {}): User {
-  const result = User.create({ ...BASE_USER_PROPS, ...overrides });
-  if (result.isLeft()) throw new Error(`makeUser failed: ${result.value.message}`);
-  return result.value;
-}
-
-function makeRepository(overrides: Partial<IUserRepository> = {}): IUserRepository {
+function makeRepository(
+  overrides: Partial<IUserRepository> = {},
+): IUserRepository {
   return {
     findById: vi.fn(),
     findByEmail: vi.fn(),
@@ -42,8 +31,10 @@ function makeRepository(overrides: Partial<IUserRepository> = {}): IUserReposito
 describe('EnsureAdmin', () => {
   describe('execute()', () => {
     it('should return Right(void) when user is admin', async () => {
-      const adminUser = makeUser({ role: Role.ADMIN });
-      const repo = makeRepository({ findById: vi.fn().mockResolvedValue(adminUser) });
+      const adminUser = UserBuilder.build().withRole(Role.ADMIN).now();
+      const repo = makeRepository({
+        findById: vi.fn().mockResolvedValue(adminUser),
+      });
       const useCase = new EnsureAdmin(repo);
 
       const result = await useCase.execute({ userId: VALID_UUID });
@@ -53,8 +44,10 @@ describe('EnsureAdmin', () => {
     });
 
     it('should return Left with UnauthorizedError when user is not admin', async () => {
-      const visitorUser = makeUser({ role: Role.VISITOR });
-      const repo = makeRepository({ findById: vi.fn().mockResolvedValue(visitorUser) });
+      const visitorUser = UserBuilder.build().withRole(Role.VISITOR).now();
+      const repo = makeRepository({
+        findById: vi.fn().mockResolvedValue(visitorUser),
+      });
       const useCase = new EnsureAdmin(repo);
 
       const result = await useCase.execute({ userId: VALID_UUID });
@@ -64,7 +57,9 @@ describe('EnsureAdmin', () => {
     });
 
     it('should return Left with NotFoundError when user does not exist', async () => {
-      const repo = makeRepository({ findById: vi.fn().mockResolvedValue(null) });
+      const repo = makeRepository({
+        findById: vi.fn().mockResolvedValue(null),
+      });
       const useCase = new EnsureAdmin(repo);
 
       const result = await useCase.execute({ userId: VALID_UUID });
@@ -111,7 +106,7 @@ describe('EnsureAdmin', () => {
 
     it('should not call findByEmail or any write operation', async () => {
       const findByEmail = vi.fn();
-      const adminUser = makeUser({ role: Role.ADMIN });
+      const adminUser = UserBuilder.build().withRole(Role.ADMIN).now();
       const repo = makeRepository({
         findById: vi.fn().mockResolvedValue(adminUser),
         findByEmail,
