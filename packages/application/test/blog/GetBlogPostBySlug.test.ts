@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
+import { BlogPostStatus } from '@repo/core/blog';
 import { NotFoundError } from '@repo/core/shared';
+import { BlogPostBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { IBlogPostRepository } from '~/blog/ports';
 import { GetBlogPostBySlug } from '~/blog/use-cases/GetBlogPostBySlug';
@@ -10,39 +10,14 @@ import { GetBlogPostBySlug } from '~/blog/use-cases/GetBlogPostBySlug';
 // Helpers
 // ---------------------------------------------------------------------------
 
-const BASE_PROPS: IBlogPostProps = {
-  slug: 'my-first-post',
-  title: {
-    'en-US': 'My First Post',
-    'pt-BR': 'Meu Primeiro Post',
-    es: 'Mi Primer Post',
-  },
-  description: {
-    'en-US': 'A short description.',
-    'pt-BR': 'Uma descrição curta.',
-    es: 'Una descripción corta.',
-  },
-  content: {
-    'en-US': 'Full content.',
-    'pt-BR': 'Conteúdo completo.',
-    es: 'Contenido completo.',
-  },
-  tags: ['nextjs', 'architecture'],
-  author: {
-    name: 'Test Author',
-    avatarUrl: 'https://example.com/avatar.jpg',
-    url: 'https://example.com',
-  },
-  publishedAt: '2026-08-01T00:00:00.000Z',
-  status: BlogPostStatus.PUBLISHED,
+const AUTHOR = {
+  name: 'Test Author',
+  avatarUrl: 'https://example.com/avatar.jpg',
+  url: 'https://example.com',
 };
 
-function makeBlogPost(overrides: Partial<IBlogPostProps> = {}): BlogPost {
-  const result = BlogPost.create({ ...BASE_PROPS, ...overrides });
-  if (result.isLeft())
-    throw new Error(`makeBlogPost failed: ${result.value.message}`);
-  return result.value;
-}
+const published = () =>
+  BlogPostBuilder.build().withStatus(BlogPostStatus.PUBLISHED);
 
 function makeRepository(
   overrides: Partial<IBlogPostRepository> = {},
@@ -61,7 +36,27 @@ function makeRepository(
 describe('GetBlogPostBySlug', () => {
   describe('execute()', () => {
     it('should return Right with BlogPostDetailDTO when the post is found', async () => {
-      const post = makeBlogPost();
+      const post = published()
+        .withSlug('my-first-post')
+        .withTitle({
+          'en-US': 'My First Post',
+          'pt-BR': 'Meu Primeiro Post',
+          es: 'Mi Primer Post',
+        })
+        .withDescription({
+          'en-US': 'A short description.',
+          'pt-BR': 'Uma descrição curta.',
+          es: 'Una descripción corta.',
+        })
+        .withContent({
+          'en-US': 'Full content.',
+          'pt-BR': 'Conteúdo completo.',
+          es: 'Contenido completo.',
+        })
+        .withTags(['nextjs', 'architecture'])
+        .withAuthor(AUTHOR)
+        .withPublishedAt('2026-08-01T00:00:00.000Z')
+        .now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });
@@ -95,19 +90,17 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should include author bio resolved to the locale and updatedAt when present', async () => {
-      const post = makeBlogPost({
-        author: {
-          name: 'Test Author',
-          avatarUrl: 'https://example.com/avatar.jpg',
-          url: 'https://example.com',
+      const post = published()
+        .withAuthor({
+          ...AUTHOR,
           bio: {
             'en-US': 'An author bio.',
             'pt-BR': 'Uma biografia do autor.',
             es: 'Una biografía del autor.',
           },
-        },
-        updatedAt: '2026-08-15T00:00:00.000Z',
-      });
+        })
+        .withPostUpdatedAt('2026-08-15T00:00:00.000Z')
+        .now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });
@@ -140,7 +133,10 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should return Left(NotFoundError) when the found post is DRAFT', async () => {
-      const post = makeBlogPost({ status: BlogPostStatus.DRAFT, tags: [] });
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags([])
+        .now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });
@@ -156,7 +152,9 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should return Left(NotFoundError) when the found post is ARCHIVED', async () => {
-      const post = makeBlogPost({ status: BlogPostStatus.ARCHIVED });
+      const post = BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.ARCHIVED)
+        .now();
       const repo = makeRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });

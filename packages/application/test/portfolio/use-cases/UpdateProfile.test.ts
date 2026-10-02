@@ -1,8 +1,13 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { IUserRepository, Role, UnauthorizedError, User } from '@repo/core/identity';
+import {
+  IUserRepository,
+  Role,
+  UnauthorizedError,
+  User,
+} from '@repo/core/identity';
 import { IProfileProps, IProfileRepository } from '@repo/core/portfolio';
 import { DomainError, NotFoundError } from '@repo/core/shared';
+import { ProfileBuilder, UserBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { EnsureAdmin } from '~/identity/use-cases/EnsureAdmin';
 import { UpdateProfile } from '~/portfolio/use-cases/UpdateProfile';
@@ -14,27 +19,7 @@ import { UpdateProfile } from '~/portfolio/use-cases/UpdateProfile';
 const ADMIN_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const VISITOR_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d470';
 
-const VALID_PROFILE_PROPS: IProfileProps = {
-  name: 'Wallace',
-  headline: { 'en-US': 'Software Engineer', 'pt-BR': 'Engenheiro de Software' },
-  bio: {
-    'en-US': 'Developer passionate about DDD.',
-    'pt-BR': 'Desenvolvedor apaixonado por DDD.',
-  },
-  photo: {
-    url: 'https://example.com/photo.png',
-    alt: { 'en-US': 'Photo', 'pt-BR': 'Foto' },
-  },
-  stats: [
-    { label: { 'en-US': 'Years', 'pt-BR': 'Anos' }, value: '5+', icon: 'briefcase' },
-  ],
-};
-
-function makeUser(role: Role): User {
-  const result = User.create({ name: 'Test User', email: 'test@example.com', role });
-  if (result.isLeft()) throw result.value;
-  return result.value;
-}
+const VALID_PROFILE_PROPS: IProfileProps = ProfileBuilder.build().toProps();
 
 function makeUserRepo(user: User | null): IUserRepository {
   return {
@@ -56,7 +41,10 @@ function makeProfileRepo(
   };
 }
 
-function makeUseCase(user: User | null, profileRepo?: Partial<IProfileRepository>) {
+function makeUseCase(
+  user: User | null,
+  profileRepo?: Partial<IProfileRepository>,
+) {
   const userRepo = makeUserRepo(user);
   const ensureAdmin = new EnsureAdmin(userRepo);
   const pRepo = makeProfileRepo(profileRepo);
@@ -70,7 +58,7 @@ function makeUseCase(user: User | null, profileRepo?: Partial<IProfileRepository
 describe('UpdateProfile', () => {
   describe('when user is admin', () => {
     it('should save profile and return Right', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase, profileRepo } = makeUseCase(admin);
 
       const result = await useCase.execute({
@@ -83,7 +71,7 @@ describe('UpdateProfile', () => {
     });
 
     it('should return Left(DomainError) when repository throws', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin, {
         save: vi.fn().mockRejectedValue(new Error('DB error')),
       });
@@ -100,7 +88,7 @@ describe('UpdateProfile', () => {
 
   describe('when user is not admin', () => {
     it('should return Left(UnauthorizedError)', async () => {
-      const visitor = makeUser(Role.VISITOR);
+      const visitor = UserBuilder.build().withRole(Role.VISITOR).now();
       const { useCase } = makeUseCase(visitor);
 
       const result = await useCase.execute({

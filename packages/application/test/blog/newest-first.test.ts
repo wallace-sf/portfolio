@@ -1,27 +1,14 @@
+import { BlogPost } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it } from 'vitest';
-
-import { BlogPost, IBlogPostProps } from '@repo/core/blog';
 
 import { newestFirst } from '~/blog/use-cases/newest-first';
 
-const BASE: IBlogPostProps = {
-  slug: 'a-post',
-  title: { 'en-US': 'T', 'pt-BR': 'T', es: 'T' },
-  description: { 'en-US': 'D', 'pt-BR': 'D', es: 'D' },
-  content: { 'en-US': 'C', 'pt-BR': 'C', es: 'C' },
-  tags: ['nextjs'],
-  author: {
-    name: 'Test Author',
-    avatarUrl: 'https://example.com/avatar.jpg',
-    url: 'https://example.com',
-  },
-  publishedAt: '2026-08-01T00:00:00.000Z',
-};
-
 function makePost(slug: string, publishedAt: string): BlogPost {
-  const result = BlogPost.create({ ...BASE, slug, publishedAt });
-  if (result.isLeft()) throw result.value;
-  return result.value;
+  return BlogPostBuilder.build()
+    .withSlug(slug)
+    .withPublishedAt(publishedAt)
+    .now();
 }
 
 describe('newestFirst', () => {

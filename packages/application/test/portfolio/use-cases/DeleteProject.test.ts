@@ -1,5 +1,3 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import {
   IUserRepository,
   Role,
@@ -8,6 +6,8 @@ import {
 } from '@repo/core/identity';
 import { IProjectRepository } from '@repo/core/portfolio';
 import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
+import { UserBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { EnsureAdmin } from '~/identity/use-cases/EnsureAdmin';
 import { DeleteProject } from '~/portfolio/use-cases/DeleteProject';
@@ -15,16 +15,6 @@ import { DeleteProject } from '~/portfolio/use-cases/DeleteProject';
 const ADMIN_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const VISITOR_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d470';
 const PROJECT_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d471';
-
-function makeUser(role: Role): User {
-  const result = User.create({
-    name: 'Test User',
-    email: 'test@example.com',
-    role,
-  });
-  if (result.isLeft()) throw result.value;
-  return result.value;
-}
 
 function makeUserRepo(user: User | null): IUserRepository {
   return {
@@ -65,7 +55,7 @@ function makeUseCase(
 describe('DeleteProject', () => {
   describe('when user is admin', () => {
     it('should delete a project and return Right', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase, projectRepo } = makeUseCase(admin);
 
       const result = await useCase.execute({
@@ -78,7 +68,7 @@ describe('DeleteProject', () => {
     });
 
     it('should return Left(ValidationError) when projectId is not a valid UUID', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin);
 
       const result = await useCase.execute({
@@ -91,7 +81,7 @@ describe('DeleteProject', () => {
     });
 
     it('should return Left(DomainError) when repository delete throws', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin, {
         delete: vi.fn().mockRejectedValue(new Error('DB error')),
       });
@@ -108,7 +98,7 @@ describe('DeleteProject', () => {
 
   describe('when user is not admin', () => {
     it('should return Left(UnauthorizedError)', async () => {
-      const visitor = makeUser(Role.VISITOR);
+      const visitor = UserBuilder.build().withRole(Role.VISITOR).now();
       const { useCase } = makeUseCase(visitor);
 
       const result = await useCase.execute({

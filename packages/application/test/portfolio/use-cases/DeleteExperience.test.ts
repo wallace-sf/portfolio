@@ -1,8 +1,13 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { IUserRepository, Role, UnauthorizedError, User } from '@repo/core/identity';
+import {
+  IUserRepository,
+  Role,
+  UnauthorizedError,
+  User,
+} from '@repo/core/identity';
 import { IExperienceRepository } from '@repo/core/portfolio';
 import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
+import { UserBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { EnsureAdmin } from '~/identity/use-cases/EnsureAdmin';
 import { DeleteExperience } from '~/portfolio/use-cases/DeleteExperience';
@@ -14,12 +19,6 @@ import { DeleteExperience } from '~/portfolio/use-cases/DeleteExperience';
 const ADMIN_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const VISITOR_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d470';
 const EXPERIENCE_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d471';
-
-function makeUser(role: Role): User {
-  const result = User.create({ name: 'Test User', email: 'test@example.com', role });
-  if (result.isLeft()) throw result.value;
-  return result.value;
-}
 
 function makeUserRepo(user: User | null): IUserRepository {
   return {
@@ -43,11 +42,17 @@ function makeExperienceRepo(
   };
 }
 
-function makeUseCase(user: User | null, experienceRepo?: Partial<IExperienceRepository>) {
+function makeUseCase(
+  user: User | null,
+  experienceRepo?: Partial<IExperienceRepository>,
+) {
   const userRepo = makeUserRepo(user);
   const ensureAdmin = new EnsureAdmin(userRepo);
   const eRepo = makeExperienceRepo(experienceRepo);
-  return { useCase: new DeleteExperience(eRepo, ensureAdmin), experienceRepo: eRepo };
+  return {
+    useCase: new DeleteExperience(eRepo, ensureAdmin),
+    experienceRepo: eRepo,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -57,7 +62,7 @@ function makeUseCase(user: User | null, experienceRepo?: Partial<IExperienceRepo
 describe('DeleteExperience', () => {
   describe('when user is admin', () => {
     it('should delete experience and return Right', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase, experienceRepo } = makeUseCase(admin);
 
       const result = await useCase.execute({
@@ -70,7 +75,7 @@ describe('DeleteExperience', () => {
     });
 
     it('should return Left(ValidationError) when experienceId is not a valid UUID', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin);
 
       const result = await useCase.execute({
@@ -83,7 +88,7 @@ describe('DeleteExperience', () => {
     });
 
     it('should return Left(DomainError) when repository throws', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin, {
         delete: vi.fn().mockRejectedValue(new Error('DB error')),
       });
@@ -100,7 +105,7 @@ describe('DeleteExperience', () => {
 
   describe('when user is not admin', () => {
     it('should return Left(UnauthorizedError)', async () => {
-      const visitor = makeUser(Role.VISITOR);
+      const visitor = UserBuilder.build().withRole(Role.VISITOR).now();
       const { useCase } = makeUseCase(visitor);
 
       const result = await useCase.execute({

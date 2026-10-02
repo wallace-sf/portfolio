@@ -1,13 +1,13 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { IUserRepository, Role, UnauthorizedError, User } from '@repo/core/identity';
 import {
-  IProjectProps,
-  IProjectRepository,
-  Project,
-  ProjectStatus,
-} from '@repo/core/portfolio';
+  IUserRepository,
+  Role,
+  UnauthorizedError,
+  User,
+} from '@repo/core/identity';
+import { IProjectRepository, ProjectStatus } from '@repo/core/portfolio';
 import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
+import { ProjectBuilder, UserBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { EnsureAdmin } from '~/identity/use-cases/EnsureAdmin';
 import { PublishProject } from '~/portfolio/use-cases/PublishProject';
@@ -19,38 +19,6 @@ import { PublishProject } from '~/portfolio/use-cases/PublishProject';
 const ADMIN_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const VISITOR_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d470';
 const PROJECT_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d471';
-
-const BASE_PROJECT_PROPS: IProjectProps = {
-  slug: 'my-project',
-  coverImage: {
-    url: 'https://example.com/cover.png',
-    alt: { 'en-US': 'Cover', 'pt-BR': 'Capa' },
-  },
-  thumbnailImage: {
-    url: 'https://example.com/thumbnail.webp',
-    alt: { 'en-US': 'Thumbnail', 'pt-BR': 'Thumbnail' },
-  },
-  title: { 'en-US': 'My Project', 'pt-BR': 'Meu Projeto' },
-  caption: { 'en-US': 'A caption.', 'pt-BR': 'Uma legenda.' },
-  content: { 'en-US': 'Lorem ipsum dolor sit amet.', 'pt-BR': 'Lorem ipsum dolor sit amet.' },
-  skills: ['a0000000-0000-4000-8000-000000000001'],
-  period: { start: '2024-01-01' },
-  featured: false,
-  status: ProjectStatus.DRAFT,
-  relatedProjects: [],
-};
-
-function makeProject(status: ProjectStatus): Project {
-  const result = Project.create({ ...BASE_PROJECT_PROPS, status });
-  if (result.isLeft()) throw result.value;
-  return result.value;
-}
-
-function makeUser(role: Role): User {
-  const result = User.create({ name: 'Test User', email: 'test@example.com', role });
-  if (result.isLeft()) throw result.value;
-  return result.value;
-}
 
 function makeUserRepo(user: User | null): IUserRepository {
   return {
@@ -78,11 +46,17 @@ function makeProjectRepo(
   };
 }
 
-function makeUseCase(user: User | null, projectRepo?: Partial<IProjectRepository>) {
+function makeUseCase(
+  user: User | null,
+  projectRepo?: Partial<IProjectRepository>,
+) {
   const userRepo = makeUserRepo(user);
   const ensureAdmin = new EnsureAdmin(userRepo);
   const pRepo = makeProjectRepo(projectRepo);
-  return { useCase: new PublishProject(pRepo, ensureAdmin), projectRepo: pRepo };
+  return {
+    useCase: new PublishProject(pRepo, ensureAdmin),
+    projectRepo: pRepo,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -92,8 +66,10 @@ function makeUseCase(user: User | null, projectRepo?: Partial<IProjectRepository
 describe('PublishProject', () => {
   describe('when user is admin', () => {
     it('should publish a DRAFT project and return Right', async () => {
-      const admin = makeUser(Role.ADMIN);
-      const project = makeProject(ProjectStatus.DRAFT);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
+      const project = ProjectBuilder.build()
+        .withStatus(ProjectStatus.DRAFT)
+        .now();
       const { useCase, projectRepo } = makeUseCase(admin, {
         findById: vi.fn().mockResolvedValue(project),
       });
@@ -109,8 +85,10 @@ describe('PublishProject', () => {
     });
 
     it('should return Left(ValidationError) when project is already published', async () => {
-      const admin = makeUser(Role.ADMIN);
-      const project = makeProject(ProjectStatus.PUBLISHED);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
+      const project = ProjectBuilder.build()
+        .withStatus(ProjectStatus.PUBLISHED)
+        .now();
       const { useCase } = makeUseCase(admin, {
         findById: vi.fn().mockResolvedValue(project),
       });
@@ -125,7 +103,7 @@ describe('PublishProject', () => {
     });
 
     it('should return Left(NotFoundError) when project does not exist', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin, {
         findById: vi.fn().mockResolvedValue(null),
       });
@@ -140,7 +118,7 @@ describe('PublishProject', () => {
     });
 
     it('should return Left(ValidationError) when projectId is not a valid UUID', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin);
 
       const result = await useCase.execute({
@@ -153,7 +131,7 @@ describe('PublishProject', () => {
     });
 
     it('should return Left(DomainError) when repository fetch throws', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin, {
         findById: vi.fn().mockRejectedValue(new Error('DB error')),
       });
@@ -168,8 +146,10 @@ describe('PublishProject', () => {
     });
 
     it('should return Left(DomainError) when repository save throws', async () => {
-      const admin = makeUser(Role.ADMIN);
-      const project = makeProject(ProjectStatus.DRAFT);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
+      const project = ProjectBuilder.build()
+        .withStatus(ProjectStatus.DRAFT)
+        .now();
       const { useCase } = makeUseCase(admin, {
         findById: vi.fn().mockResolvedValue(project),
         save: vi.fn().mockRejectedValue(new Error('DB error')),
@@ -187,7 +167,7 @@ describe('PublishProject', () => {
 
   describe('when user is not admin', () => {
     it('should return Left(UnauthorizedError)', async () => {
-      const visitor = makeUser(Role.VISITOR);
+      const visitor = UserBuilder.build().withRole(Role.VISITOR).now();
       const { useCase } = makeUseCase(visitor);
 
       const result = await useCase.execute({
