@@ -1,7 +1,7 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { buildPrismaBlogPost } from '../factories/prisma-blog-post.factory';
+import { buildPrismaBlogPostCreateInput } from '../factories/prisma-blog-post.factory';
 import { withRollback } from './withRollback';
 
 // Use DIRECT_URL to bypass PgBouncer — prepared statements don't work with the pooler
@@ -12,23 +12,6 @@ const db = new PrismaClient({
 // Skipped as a whole (hooks included) when there is no reachable database.
 // Run explicitly with `pnpm --filter @repo/infra test:integration`.
 const missingDbEnv = !process.env.DIRECT_URL;
-
-function buildRow() {
-  const row = buildPrismaBlogPost({
-    id: crypto.randomUUID(),
-    slug: `test-${crypto.randomUUID()}`,
-  });
-
-  return {
-    ...row,
-    title: row.title as Prisma.InputJsonValue,
-    description: row.description as Prisma.InputJsonValue,
-    content: row.content as Prisma.InputJsonValue,
-    author: row.author as Prisma.InputJsonValue,
-    coverImageAlt: Prisma.JsonNull,
-    thumbnailImageAlt: Prisma.JsonNull,
-  };
-}
 
 beforeAll(async () => {
   if (missingDbEnv) return;
@@ -42,7 +25,7 @@ afterAll(async () => {
 
 describe.skipIf(missingDbEnv)('withRollback (integration)', () => {
   it('should discard rows written inside the callback when it completes', async () => {
-    const row = buildRow();
+    const row = buildPrismaBlogPostCreateInput();
 
     await withRollback(db, async (tx) => {
       await tx.blogPost.create({ data: row });
@@ -66,7 +49,7 @@ describe.skipIf(missingDbEnv)('withRollback (integration)', () => {
   });
 
   it('should rethrow the error and discard writes when the callback throws', async () => {
-    const row = buildRow();
+    const row = buildPrismaBlogPostCreateInput();
     const failure = new Error('assertion failed');
 
     await expect(

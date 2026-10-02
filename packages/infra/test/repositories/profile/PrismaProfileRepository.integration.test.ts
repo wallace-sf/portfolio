@@ -1,9 +1,12 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { PrismaProfileRepository } from '../../../src/repositories/profile/PrismaProfileRepository';
 import { ProfileMapper } from '../../../src/repositories/profile/ProfileMapper';
-import { buildPrismaProfile } from '../../factories/prisma-profile.factory';
+import {
+  buildPrismaProfile,
+  buildPrismaProfileCreateInput,
+} from '../../factories/prisma-profile.factory';
 import { withRollback } from '../../support/withRollback';
 
 // Use DIRECT_URL to bypass PgBouncer — prepared statements don't work with the pooler
@@ -54,38 +57,31 @@ describe.skipIf(missingDbEnv)('PrismaProfileRepository (integration)', () => {
     it(
       'should return the profile with stats ordered by order ASC',
       withoutProfile(async ({ tx, repo }) => {
-        const raw = buildPrismaProfile();
-        await tx.profile.create({
-          data: {
-            id: raw.id,
-            name: raw.name,
-            headline: raw.headline as Prisma.InputJsonValue,
-            bio: raw.bio as Prisma.InputJsonValue,
-            photoUrl: raw.photoUrl,
-            photoAlt: raw.photoAlt as Prisma.InputJsonValue,
-            stats: {
-              create: [
-                {
-                  label: { 'en-US': 'B', 'pt-BR': 'B' },
-                  value: '2',
-                  icon: 'b-icon',
-                  order: 1,
-                },
-                {
-                  label: { 'en-US': 'A', 'pt-BR': 'A' },
-                  value: '1',
-                  icon: 'a-icon',
-                  order: 0,
-                },
-              ],
-            },
+        const data = {
+          ...buildPrismaProfileCreateInput(),
+          stats: {
+            create: [
+              {
+                label: { 'en-US': 'B', 'pt-BR': 'B' },
+                value: '2',
+                icon: 'b-icon',
+                order: 1,
+              },
+              {
+                label: { 'en-US': 'A', 'pt-BR': 'A' },
+                value: '1',
+                icon: 'a-icon',
+                order: 0,
+              },
+            ],
           },
-        });
+        };
+        await tx.profile.create({ data });
 
         const profile = await repo.find();
 
         expect(profile).not.toBeNull();
-        expect(profile!.id.value).toBe(raw.id);
+        expect(profile!.id.value).toBe(data.id);
         expect(profile!.stats[0]!.label.value).toEqual({
           'en-US': 'A',
           'pt-BR': 'A',

@@ -1,15 +1,16 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { ProjectStatus } from '@repo/core/portfolio';
+import { Id, Slug, ConflictError } from '@repo/core/shared';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import { ProjectStatus } from '@repo/core/portfolio';
-import { Id, Slug } from '@repo/core/shared';
-
-import { ConflictError } from '@repo/core/shared';
-
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
-import { ProjectMapper } from '../../../src/repositories/project/ProjectMapper';
 import { PrismaProjectRepository } from '../../../src/repositories/project/PrismaProjectRepository';
-import { buildPrismaProject } from '../../factories/prisma-project.factory';
+import { ProjectMapper } from '../../../src/repositories/project/ProjectMapper';
+import {
+  buildPrismaProject,
+  buildPrismaProjectCreateInput,
+  PrismaProject,
+} from '../../factories/prisma-project.factory';
 
 // Use DIRECT_URL to bypass PgBouncer — prepared statements don't work with the pooler
 const db = new PrismaClient({
@@ -19,41 +20,14 @@ const repo = new PrismaProjectRepository(db);
 
 const TEST_SLUG_PREFIX = 'test-';
 
-async function seedProject(overrides?: Partial<ReturnType<typeof buildPrismaProject>>) {
-  const raw = buildPrismaProject({
-    slug: `${TEST_SLUG_PREFIX}${crypto.randomUUID()}`,
-    ...overrides,
+/** Persists a factory project whose slug carries the cleanup prefix. */
+function seedProject(overrides?: Partial<PrismaProject>) {
+  return db.project.create({
+    data: buildPrismaProjectCreateInput({
+      slug: `${TEST_SLUG_PREFIX}${crypto.randomUUID()}`,
+      ...overrides,
+    }),
   });
-
-  await db.project.create({
-    data: {
-      id: raw.id,
-      slug: raw.slug,
-      coverImageUrl: raw.coverImageUrl,
-      coverImageAlt: raw.coverImageAlt as Prisma.InputJsonValue,
-      thumbnailImageUrl: raw.thumbnailImageUrl,
-      thumbnailImageAlt: raw.thumbnailImageAlt as Prisma.InputJsonValue,
-      title: raw.title as Prisma.InputJsonValue,
-      caption: raw.caption as Prisma.InputJsonValue,
-      content: raw.content as Prisma.InputJsonValue,
-      theme: (raw.theme as Prisma.InputJsonValue | null) ?? undefined,
-      summary: (raw.summary as Prisma.InputJsonValue | null) ?? undefined,
-      objectives: (raw.objectives as Prisma.InputJsonValue | null) ?? undefined,
-      role: (raw.role as Prisma.InputJsonValue | null) ?? undefined,
-      periodStart: raw.periodStart,
-      periodEnd: raw.periodEnd,
-      featured: raw.featured,
-      status: raw.status,
-      weight: raw.weight,
-      relatedProjectSlugs: raw.relatedProjectSlugs,
-      skillIds: raw.skillIds,
-      createdAt: raw.createdAt,
-      updatedAt: raw.updatedAt,
-      deletedAt: raw.deletedAt,
-    },
-  });
-
-  return raw;
 }
 
 // Skipped as a whole (hooks included) when there is no reachable database —
@@ -68,13 +42,17 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (missingDbEnv) return;
-  await db.project.deleteMany({ where: { slug: { startsWith: TEST_SLUG_PREFIX } } });
+  await db.project.deleteMany({
+    where: { slug: { startsWith: TEST_SLUG_PREFIX } },
+  });
   await db.$disconnect();
 });
 
 afterEach(async () => {
   if (missingDbEnv) return;
-  await db.project.deleteMany({ where: { slug: { startsWith: TEST_SLUG_PREFIX } } });
+  await db.project.deleteMany({
+    where: { slug: { startsWith: TEST_SLUG_PREFIX } },
+  });
 });
 
 describe.skipIf(missingDbEnv)('PrismaProjectRepository (integration)', () => {
@@ -129,7 +107,9 @@ describe.skipIf(missingDbEnv)('PrismaProjectRepository (integration)', () => {
       await seedProject({ status: 'DRAFT' });
 
       const projects = await repo.findPublished();
-      const testProjects = projects.filter((p) => p.slug.value.startsWith(TEST_SLUG_PREFIX));
+      const testProjects = projects.filter((p) =>
+        p.slug.value.startsWith(TEST_SLUG_PREFIX),
+      );
 
       expect(testProjects).toHaveLength(1);
       expect(testProjects[0]!.slug.value).toBe(published.slug);
@@ -159,12 +139,17 @@ describe.skipIf(missingDbEnv)('PrismaProjectRepository (integration)', () => {
 
   describe('findFeatured', () => {
     it('should return only featured published projects', async () => {
-      const featured = await seedProject({ status: 'PUBLISHED', featured: true });
+      const featured = await seedProject({
+        status: 'PUBLISHED',
+        featured: true,
+      });
       await seedProject({ status: 'PUBLISHED', featured: false });
       await seedProject({ status: 'DRAFT', featured: true });
 
       const projects = await repo.findFeatured();
-      const testProjects = projects.filter((p) => p.slug.value.startsWith(TEST_SLUG_PREFIX));
+      const testProjects = projects.filter((p) =>
+        p.slug.value.startsWith(TEST_SLUG_PREFIX),
+      );
 
       expect(testProjects).toHaveLength(1);
       expect(testProjects[0]!.slug.value).toBe(featured.slug);
@@ -200,7 +185,9 @@ describe.skipIf(missingDbEnv)('PrismaProjectRepository (integration)', () => {
       await seedProject({ status: 'PUBLISHED', featured: true, weight: 1003 });
 
       const projects = await repo.findFeatured(2);
-      const testProjects = projects.filter((p) => p.slug.value.startsWith(TEST_SLUG_PREFIX));
+      const testProjects = projects.filter((p) =>
+        p.slug.value.startsWith(TEST_SLUG_PREFIX),
+      );
 
       expect(testProjects).toHaveLength(2);
     });
@@ -208,11 +195,17 @@ describe.skipIf(missingDbEnv)('PrismaProjectRepository (integration)', () => {
     it('should default the limit to 6', async () => {
       // High weights guarantee these outrank any other seeded/real featured projects.
       for (let i = 0; i < 7; i++) {
-        await seedProject({ status: 'PUBLISHED', featured: true, weight: 1000 + i });
+        await seedProject({
+          status: 'PUBLISHED',
+          featured: true,
+          weight: 1000 + i,
+        });
       }
 
       const projects = await repo.findFeatured();
-      const testProjects = projects.filter((p) => p.slug.value.startsWith(TEST_SLUG_PREFIX));
+      const testProjects = projects.filter((p) =>
+        p.slug.value.startsWith(TEST_SLUG_PREFIX),
+      );
 
       expect(testProjects).toHaveLength(6);
     });
@@ -354,7 +347,9 @@ describe.skipIf(missingDbEnv)('PrismaProjectRepository (integration)', () => {
       const idResult = Id.create(crypto.randomUUID());
       if (idResult.isLeft()) throw idResult.value;
 
-      await expect(repo.delete(idResult.value)).rejects.toThrow(InfrastructureError);
+      await expect(repo.delete(idResult.value)).rejects.toThrow(
+        InfrastructureError,
+      );
     });
   });
 });

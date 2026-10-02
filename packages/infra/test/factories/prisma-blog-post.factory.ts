@@ -1,4 +1,8 @@
-import type { BlogPost as PrismaBlogPost, BlogPostStatus, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import type {
+  BlogPost as PrismaBlogPost,
+  BlogPostStatus,
+} from '@prisma/client';
 
 export function buildPrismaBlogPost(
   overrides: Partial<PrismaBlogPost> = {},
@@ -6,7 +10,7 @@ export function buildPrismaBlogPost(
   const now = new Date();
 
   return {
-    id: '550e8400-e29b-41d4-a716-446655440000',
+    id: crypto.randomUUID(),
     slug: 'test-post',
     title: {
       'en-US': 'Test Post',
@@ -40,5 +44,28 @@ export function buildPrismaBlogPost(
     updatedAt: now,
     deletedAt: null,
     ...overrides,
+  };
+}
+
+/**
+ * A factory row as a `create`/`createMany` input: JSON columns cast to
+ * `InputJsonValue`, absent image alts as `Prisma.JsonNull`.
+ */
+export function buildPrismaBlogPostCreateInput(
+  overrides: Partial<PrismaBlogPost> = {},
+): Prisma.BlogPostCreateManyInput & Pick<PrismaBlogPost, 'id' | 'slug'> {
+  const row = buildPrismaBlogPost(overrides);
+
+  return {
+    ...row,
+    title: row.title as Prisma.InputJsonValue,
+    description: row.description as Prisma.InputJsonValue,
+    content: row.content as Prisma.InputJsonValue,
+    author: row.author as Prisma.InputJsonValue,
+    coverImageAlt:
+      (row.coverImageAlt as Prisma.InputJsonValue | null) ?? Prisma.JsonNull,
+    thumbnailImageAlt:
+      (row.thumbnailImageAlt as Prisma.InputJsonValue | null) ??
+      Prisma.JsonNull,
   };
 }
