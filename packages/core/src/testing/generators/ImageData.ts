@@ -1,4 +1,4 @@
-import { ILocalizedTextInput } from '~/shared/i18n/LocalizedText';
+import { ILocalizedTextInput } from '../../shared/i18n/LocalizedText';
 
 export class ImageData {
   static url(): string {

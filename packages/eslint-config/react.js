@@ -1,5 +1,9 @@
 const { resolve } = require("node:path");
 
+const { SRC_PATHS, restrictImports } = require("./restricted-imports");
+
+const restricted = restrictImports([SRC_PATHS]);
+
 const project = resolve(process.cwd(), "tsconfig.json");
 
 /** @type {import("eslint").Linter.Config} */
@@ -100,21 +104,7 @@ module.exports = {
       "error",
       { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
     ],
-    "no-restricted-imports": [
-      "error",
-      {
-        "patterns": [
-          "@repo/core/src",
-          "@repo/core/src/*",
-          "@repo/utils/src",
-          "@repo/utils/src/*",
-          "**/packages/core/src",
-          "**/packages/core/src/*",
-          "**/packages/utils/src",
-          "**/packages/utils/src/*",
-        ],
-      },
-    ],
+    "no-restricted-imports": restricted.rule,
   },
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -147,5 +137,5 @@ module.exports = {
     ".*.js",
     "node_modules/",
   ],
-  overrides: [{ files: ["*.js?(x)", "*.ts?(x)"] }],
+  overrides: [{ files: ["*.js?(x)", "*.ts?(x)"] }, restricted.testOverride],
 };

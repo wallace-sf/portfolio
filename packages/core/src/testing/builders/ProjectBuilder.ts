@@ -5,9 +5,9 @@ import {
   IProjectProps,
   Project,
   ProjectStatus,
-} from '~/index';
-
+} from '../../index';
 import { Data } from '../generators';
+import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
 
 export class ProjectBuilder extends EntityBuilder<IProjectProps> {
@@ -40,9 +40,7 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
   }
 
   public now(): Project {
-    const result = Project.create(this._props as IProjectProps);
-    if (result.isLeft()) throw result.value;
-    return result.value;
+    return unwrap(Project.create(this._props as IProjectProps));
   }
 
   public withSlug(slug: string): ProjectBuilder {
@@ -55,7 +53,9 @@ export class ProjectBuilder extends EntityBuilder<IProjectProps> {
     return this;
   }
 
-  public withThumbnailImage(thumbnailImage: IProjectCoverImage): ProjectBuilder {
+  public withThumbnailImage(
+    thumbnailImage: IProjectCoverImage,
+  ): ProjectBuilder {
     this._props.thumbnailImage = thumbnailImage;
     return this;
   }

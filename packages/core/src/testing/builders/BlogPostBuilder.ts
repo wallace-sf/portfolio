@@ -4,9 +4,9 @@ import {
   IAuthorProps,
   IBlogPostProps,
   ILocalizedTextInput,
-} from '~/index';
-
+} from '../../index';
 import { Data } from '../generators';
+import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
 
 export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
@@ -50,9 +50,7 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
   }
 
   public now(): BlogPost {
-    const result = BlogPost.create(this._props as IBlogPostProps);
-    if (result.isLeft()) throw result.value;
-    return result.value;
+    return unwrap(BlogPost.create(this._props as IBlogPostProps));
   }
 
   public withSlug(slug: string): BlogPostBuilder {

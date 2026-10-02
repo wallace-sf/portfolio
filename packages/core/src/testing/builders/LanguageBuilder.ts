@@ -1,6 +1,6 @@
-import { Language, ILanguageProps, Fluency } from '~/index';
-
+import { Language, ILanguageProps, Fluency } from '../../index';
 import { Data } from '../generators';
+import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
 
 export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
@@ -17,9 +17,7 @@ export class LanguageBuilder extends EntityBuilder<ILanguageProps> {
   }
 
   public now(): Language {
-    const result = Language.create(this._props as ILanguageProps);
-    if (result.isLeft()) throw result.value;
-    return result.value;
+    return unwrap(Language.create(this._props as ILanguageProps));
   }
 
   static list(count: number): Language[] {

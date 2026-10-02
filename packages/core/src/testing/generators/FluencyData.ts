@@ -1,4 +1,4 @@
-import { Fluency } from '~/index';
+import { Fluency } from '../../index';
 
 export class FluencyData {
   static valid(): Fluency {

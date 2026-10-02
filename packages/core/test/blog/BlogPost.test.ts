@@ -13,7 +13,7 @@ import {
   ValidationError,
 } from '~/index';
 
-import { BlogPostBuilder } from '../helpers';
+import { BlogPostBuilder } from '~/testing';
 
 const validAlt = {
   'en-US': 'Cover',

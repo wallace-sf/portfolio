@@ -1,5 +1,5 @@
-import { ISkillProps, Skill, SkillType } from '~/index';
-
+import { ISkillProps, Skill, SkillType } from '../../index';
+import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
 
 export class SkillBuilder extends EntityBuilder<ISkillProps> {
@@ -31,9 +31,7 @@ export class SkillBuilder extends EntityBuilder<ISkillProps> {
 
   static list(count: number): Skill[] {
     return [...Array(count)].map((_, index) => {
-      const result = Skill.create(SkillBuilder.propsAt(index));
-      if (result.isLeft()) throw result.value;
-      return result.value;
+      return unwrap(Skill.create(SkillBuilder.propsAt(index)));
     });
   }
 
@@ -48,9 +46,7 @@ export class SkillBuilder extends EntityBuilder<ISkillProps> {
   }
 
   public now(): Skill {
-    const result = Skill.create(this._props as ISkillProps);
-    if (result.isLeft()) throw result.value;
-    return result.value;
+    return unwrap(Skill.create(this._props as ISkillProps));
   }
 
   public withDescription(description: string): SkillBuilder {

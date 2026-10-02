@@ -6,7 +6,7 @@ import {
   ValidationError,
 } from '~/index';
 
-import { ExperienceBuilder } from '../helpers';
+import { ExperienceBuilder } from '~/testing';
 
 describe('Experience', () => {
   describe('when created from valid props', () => {

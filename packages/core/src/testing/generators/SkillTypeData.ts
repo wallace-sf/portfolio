@@ -1,4 +1,4 @@
-import { SkillType } from '~/index';
+import { SkillType } from '../../index';
 
 export class SkillTypeData {
   static valid(): SkillType {
