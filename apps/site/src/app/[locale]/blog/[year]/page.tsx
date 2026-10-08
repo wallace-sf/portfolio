@@ -1,4 +1,8 @@
-import { type Locale } from '@repo/core/shared';
+import {
+  type BlogArchiveYearDTO,
+  GetBlogArchiveYear,
+} from '@repo/application/blog';
+import { type Locale, NotFoundError } from '@repo/core/shared';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -6,11 +10,12 @@ import { notFound } from 'next/navigation';
 import { Link } from '~/i18n/routing';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
+import { getServerContainer } from '~/lib/server/container';
 import { formatArchiveMonth } from '~features/blog/formatArchiveMonth';
 import { blogArchivePath } from '~features/blog/paths';
 import { PostCard } from '~features/blog/PostCard';
 
-import { archiveYearParams, findArchiveYear, loadBlogArchive } from './archive';
+import { archiveYearParams, parseYearSegment } from './archive';
 
 export const dynamicParams = false;
 
@@ -20,14 +25,32 @@ interface BlogYearArchivePageProps {
   params: Promise<{ locale: string; year: string }>;
 }
 
+/** The archive year, or `undefined` for a malformed or empty year (→ 404). */
+async function findArchiveYear(
+  locale: string,
+  yearSegment: string,
+): Promise<BlogArchiveYearDTO | undefined> {
+  const year = parseYearSegment(yearSegment);
+  if (year === undefined) return undefined;
+
+  const result = await new GetBlogArchiveYear(
+    getServerContainer().blogPostRepository,
+  ).execute({ locale: locale as Locale, year });
+
+  if (result.isRight()) return result.value;
+
+  if (!(result.value instanceof NotFoundError)) {
+    // eslint-disable-next-line no-console
+    console.error('[blog] could not load the year archive:', result.value);
+  }
+  return undefined;
+}
+
 export async function generateMetadata({
   params,
 }: BlogYearArchivePageProps): Promise<Metadata> {
   const { locale, year } = await params;
-  const archiveYear = findArchiveYear(
-    await loadBlogArchive(locale as Locale),
-    year,
-  );
+  const archiveYear = await findArchiveYear(locale, year);
 
   if (!archiveYear) return {};
 
@@ -57,10 +80,7 @@ export default async function BlogYearArchivePage({
   const { locale, year } = await params;
   setRequestLocale(locale);
 
-  const archiveYear = findArchiveYear(
-    await loadBlogArchive(locale as Locale),
-    year,
-  );
+  const archiveYear = await findArchiveYear(locale, year);
 
   if (!archiveYear) notFound();
 
