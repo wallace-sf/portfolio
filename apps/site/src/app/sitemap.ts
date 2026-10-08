@@ -6,6 +6,7 @@ import type { MetadataRoute } from 'next';
 import { env } from '~/config/env';
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
+import { blogPostPath } from '~features/blog/paths';
 
 export const dynamic = 'force-static';
 
@@ -49,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const blogEntries: MetadataRoute.Sitemap = LOCALES.flatMap((locale) =>
       blogPosts.map((post) => ({
-        url: `${env.siteUrl}/${locale}/blog/${post.slug}`,
+        url: `${env.siteUrl}/${locale}${blogPostPath(post.publishedAt, post.slug)}`,
         lastModified: BUILD_DATE,
         changeFrequency: 'monthly' as const,
         priority: 0.6,

@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 import { Link } from '~/i18n/routing';
 import { formatPublishedAt } from '~features/blog/formatPublishedAt';
+import { blogPostPath } from '~features/blog/paths';
 
 export interface IPostCardProps {
   post: BlogPostSummaryDTO;
@@ -15,7 +16,7 @@ export function PostCard({ post, locale }: IPostCardProps) {
   const { slug, title, description, publishedAt, tags, thumbnailImage } = post;
 
   return (
-    <Link href={`/blog/${slug}`} className="group block">
+    <Link href={blogPostPath(publishedAt, slug)} className="group block">
       <article className="flex flex-col overflow-hidden rounded-card bg-surface shadow-drop-sm transition-shadow group-hover:shadow-drop-md sm:flex-row">
         {thumbnailImage && (
           <div className="relative aspect-[16/9] shrink-0 overflow-hidden bg-surface-sunken sm:aspect-auto sm:w-56">

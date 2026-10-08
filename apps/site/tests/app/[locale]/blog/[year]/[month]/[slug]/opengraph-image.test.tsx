@@ -5,9 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Image, {
   alt,
   contentType,
+  dynamicParams,
   generateStaticParams,
   size,
-} from '~/app/[locale]/blog/[slug]/opengraph-image';
+} from '~/app/[locale]/blog/[year]/[month]/[slug]/opengraph-image';
 
 const imageResponseCtor = vi.fn();
 
@@ -38,7 +39,10 @@ vi.mock('~/lib/server/container', () => ({
   }),
 }));
 
-function publishedPost(slug: string): BlogPostBuilder {
+function publishedPost(
+  slug: string,
+  publishedAt = '2026-08-01T10:00:00.000Z',
+): BlogPostBuilder {
   const localized = (prefix: string) => ({
     'en-US': `${prefix} ${slug}`,
     'pt-BR': `${prefix} ${slug}`,
@@ -48,6 +52,7 @@ function publishedPost(slug: string): BlogPostBuilder {
     .withSlug(slug)
     .withTitle(localized('Title'))
     .withDescription(localized('Description'))
+    .withPublishedAt(publishedAt)
     .withStatus(BlogPostStatus.PUBLISHED);
 }
 
@@ -62,23 +67,37 @@ describe('blog post opengraph-image', () => {
     expect(alt).toBeTruthy();
   });
 
-  it('should generate params for every locale and slug combination', async () => {
+  it('should only serve prerendered params when an unknown path is requested', () => {
+    expect(dynamicParams).toBe(false);
+  });
+
+  it('should generate dated params for every locale and published post', async () => {
     findAll.mockResolvedValue([
-      publishedPost('post-a').now(),
-      publishedPost('post-b').now(),
+      publishedPost('post-a', '2026-08-01T10:00:00.000Z').now(),
+      publishedPost('post-b', '2025-12-24T10:00:00.000Z').now(),
     ]);
 
     const params = await generateStaticParams();
 
     expect(params).toHaveLength(6);
-    expect(params).toContainEqual({ locale: 'pt-BR', slug: 'post-b' });
+    expect(params).toContainEqual({
+      locale: 'pt-BR',
+      year: '2025',
+      month: '12',
+      slug: 'post-b',
+    });
   });
 
   it('should render the card for the requested post with its title and description', async () => {
     findBySlug.mockResolvedValue(publishedPost('hello-post').now());
 
     await Image({
-      params: Promise.resolve({ locale: 'es', slug: 'hello-post' }),
+      params: Promise.resolve({
+        locale: 'es',
+        year: '2026',
+        month: '08',
+        slug: 'hello-post',
+      }),
     });
 
     expect(findBySlug).toHaveBeenCalledOnce();
@@ -95,7 +114,14 @@ describe('blog post opengraph-image', () => {
     findBySlug.mockResolvedValue(null);
 
     await expect(
-      Image({ params: Promise.resolve({ locale: 'en-US', slug: 'missing' }) }),
+      Image({
+        params: Promise.resolve({
+          locale: 'en-US',
+          year: '2026',
+          month: '08',
+          slug: 'missing',
+        }),
+      }),
     ).rejects.toThrow('NEXT_NOT_FOUND');
     expect(imageResponseCtor).not.toHaveBeenCalled();
   });

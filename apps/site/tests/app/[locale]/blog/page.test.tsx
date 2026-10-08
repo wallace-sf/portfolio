@@ -75,14 +75,16 @@ describe('BlogListingPage', () => {
     expect(screen.getByText('nextjs')).toBeInTheDocument();
   });
 
-  it('should link each card to its locale-prefixed post route', async () => {
-    findAll.mockResolvedValue([publishedPost().now()]);
+  it('should link each card to its dated post route', async () => {
+    findAll.mockResolvedValue([
+      publishedPost().withPublishedAt('2026-08-01').now(),
+    ]);
 
     await renderPage();
 
     expect(
       screen.getByRole('link', { name: /Title hello-blog/ }),
-    ).toHaveAttribute('href', '/blog/hello-blog');
+    ).toHaveAttribute('href', '/blog/2026/08/hello-blog');
   });
 
   it('should format the published date for the active locale', async () => {
