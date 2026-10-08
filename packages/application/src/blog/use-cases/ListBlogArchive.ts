@@ -1,4 +1,5 @@
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
+import { groupBy } from '@repo/utils/collections';
 
 import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
@@ -18,16 +19,6 @@ const yearOf = (post: BlogPostSummaryDTO) =>
 
 const monthOf = (post: BlogPostSummaryDTO) =>
   new Date(post.publishedAt).getUTCMonth() + 1;
-
-/**
- * Groups items by key, keeping keys in first-seen order (a `Set` preserves
- * insertion order). Fed newest-first posts, groups come out newest first too.
- */
-const groupBy = <T, K>(items: T[], keyOf: (item: T) => K): [K, T[]][] =>
-  [...new Set(items.map(keyOf))].map((key) => [
-    key,
-    items.filter((item) => keyOf(item) === key),
-  ]);
 
 const groupByPeriod = (posts: BlogPostSummaryDTO[]): BlogArchiveYearDTO[] =>
   groupBy(posts, yearOf).map(([year, yearPosts]) => ({
