@@ -8672,7 +8672,50 @@
         "priority": "high",
         "dependencies": [],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Extract toBlogPostSummaryDTO helper from ListBlogPosts.toDTO",
+            "description": "Create packages/application/src/blog/use-cases/to-summary-dto.ts by extracting the mapping logic from ListBlogPosts.toDTO (lines 40-65), then refactor ListBlogPosts to use the extracted helper instead of its private toDTO method.",
+            "dependencies": [],
+            "details": "1. Read packages/application/src/blog/use-cases/ListBlogPosts.ts lines 40-65 to understand the exact mapping logic\n2. Create packages/application/src/blog/use-cases/to-summary-dto.ts:\n   - Export function toBlogPostSummaryDTO(post: BlogPost, locale: Locale): BlogPostSummaryDTO\n   - Copy the exact mapping logic from ListBlogPosts.toDTO preserving all field mappings (slug, title, excerpt, publishedAt, tags, cover)\n3. Update ListBlogPosts.ts:\n   - Import toBlogPostSummaryDTO from './to-summary-dto'\n   - Replace this.toDTO(post, input.locale) with toBlogPostSummaryDTO(post, input.locale) in the execute method\n   - Remove the private toDTO method entirely\n4. Verify existing ListBlogPosts tests still pass without modification (output unchanged)\n5. Create unit tests in packages/application/test/blog/toBlogPostSummaryDTO.test.ts:\n   - should map all BlogPost fields to BlogPostSummaryDTO correctly\n   - should extract localized title/excerpt/slug from LocalizedText value objects\n   - should format publishedAt as ISO string\n   - should map cover ImageData to CoverDTO when present\n   - should handle missing cover gracefully",
+            "status": "pending",
+            "testStrategy": "Unit tests for toBlogPostSummaryDTO helper following existing test patterns in packages/application/test/blog/. Verify ListBlogPosts.test.ts continues to pass unchanged, confirming behavior preservation."
+          },
+          {
+            "id": 2,
+            "title": "Create BlogArchiveDTO interfaces and ListBlogArchive use case skeleton",
+            "description": "Define BlogArchiveMonthDTO and BlogArchiveYearDTO in packages/application/src/blog/dtos/, create the ListBlogArchive use case class with repository dependency injection, and implement the basic execute method structure with error handling matching ListBlogPosts pattern.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Create packages/application/src/blog/dtos/BlogArchiveDTO.ts:\n   - Define BlogArchiveMonthDTO interface with month (1-12), count, posts (BlogPostSummaryDTO[])\n   - Define BlogArchiveYearDTO interface with year, count, months (BlogArchiveMonthDTO[])\n2. Update packages/application/src/blog/dtos/index.ts to export both new DTO types\n3. Create packages/application/src/blog/use-cases/ListBlogArchive.ts:\n   - Constructor: inject IBlogPostRepository\n   - Input type: { locale: Locale }\n   - Output type: Promise<Either<DomainError, BlogArchiveYearDTO[]>>\n   - Implement execute method skeleton:\n     a. Try/catch block wrapping repository.findAll()\n     b. On error: log with logger and return left(DomainError(FETCH_FAILED))\n     c. Filter with publishedOnly and newestFirst utilities (same as ListBlogPosts)\n     d. Placeholder return right([]) for now (grouping logic in next subtask)\n4. Update packages/application/src/blog/use-cases/index.ts to export ListBlogArchive\n5. Create basic test file packages/application/test/blog/ListBlogArchive.test.ts with infrastructure setup (mock repository, test fixtures) but no actual test cases yet",
+            "status": "pending",
+            "testStrategy": "Create test file structure and mock infrastructure. Basic smoke test that execute returns Either type. Full test cases added in subtask 3."
+          },
+          {
+            "id": 3,
+            "title": "Implement UTC-based year/month grouping logic in ListBlogArchive",
+            "description": "Complete the ListBlogArchive.execute method with the nested Map-based grouping algorithm that organizes published posts by UTC year and month, sorts newest-first at all levels, and maps posts to DTOs using toBlogPostSummaryDTO.",
+            "dependencies": [
+              2
+            ],
+            "details": "1. Implement the grouping algorithm in ListBlogArchive.execute:\n   - Create yearMap: Map<number, Map<number, BlogPost[]>>\n   - Iterate filtered posts and group by:\n     * year = new Date(post.publishedAt.value).getUTCFullYear()\n     * month = new Date(post.publishedAt.value).getUTCMonth() + 1\n   - Initialize nested Maps as needed during iteration\n2. Convert Map structure to BlogArchiveYearDTO[]:\n   - Extract years, sort descending (newest first)\n   - For each year:\n     * Extract months, sort descending (newest first)\n     * For each month:\n       - Map posts array to BlogPostSummaryDTO[] using toBlogPostSummaryDTO(post, input.locale)\n       - Build BlogArchiveMonthDTO with month number, count, posts\n     * Build BlogArchiveYearDTO with year number, total count (sum of month counts), months array\n3. Return right(years)\n4. Edge case handling: empty months/years are never emitted (natural behavior from Map iteration)\n5. Verify UTC handling: test with posts having negative UTC offsets to ensure correct year/month assignment",
+            "status": "pending",
+            "testStrategy": "Comprehensive unit tests in packages/application/test/blog/ListBlogArchive.test.ts following ListBlogPosts.test.ts patterns:\n- should group published posts by year and month when posts span two years\n- should order years, months and posts newest first\n- should exclude drafts and only include published posts\n- should return empty array when no published posts exist\n- should count posts correctly at month and year levels\n- should handle posts with UTC-negative offsets correctly\n- should return left(DomainError) when repository throws\n- should map posts to BlogPostSummaryDTO using toBlogPostSummaryDTO helper"
+          },
+          {
+            "id": 4,
+            "title": "Add comprehensive unit tests for toBlogPostSummaryDTO and ListBlogArchive",
+            "description": "Create complete test coverage for the extracted toBlogPostSummaryDTO helper and the ListBlogArchive use case, ensuring all edge cases, error paths, and UTC date handling are verified following existing test patterns in packages/application/test/blog/.",
+            "dependencies": [
+              3
+            ],
+            "details": "1. Complete packages/application/test/blog/toBlogPostSummaryDTO.test.ts:\n   - Test all BlogPost field mappings to BlogPostSummaryDTO\n   - Test LocalizedText extraction for title/excerpt/slug in multiple locales\n   - Test publishedAt Date to ISO string conversion\n   - Test cover ImageData to CoverDTO mapping (both present and null cases)\n   - Use test fixtures from existing blog tests for BlogPost creation\n2. Complete packages/application/test/blog/ListBlogArchive.test.ts:\n   - Mock IBlogPostRepository with jest.fn() for findAll\n   - Create test fixtures: posts spanning 2025-2026 with known UTC dates\n   - Test grouping across years (verify year boundaries)\n   - Test grouping within year across months (verify month boundaries)\n   - Test newest-first ordering at all three levels (year, month, post)\n   - Test draft exclusion (mix published and draft posts)\n   - Test empty result when no published posts\n   - Test count accuracy at month and year levels\n   - Test UTC edge case: post at 2026-01-01T02:00:00-03:00 should group into 2026-01-01 UTC\n   - Test error path: repository.findAll() throws → left(DomainError(FETCH_FAILED))\n   - Verify toBlogPostSummaryDTO is called for each post with correct locale\n3. Run all blog application tests: npm test packages/application/test/blog/\n4. Verify 100% coverage for both toBlogPostSummaryDTO.ts and ListBlogArchive.ts",
+            "status": "pending",
+            "testStrategy": "Full unit test suite with minimum 8 test cases for ListBlogArchive and 5 for toBlogPostSummaryDTO. All tests follow describe/it pattern from ListBlogPosts.test.ts. Achieve 100% line/branch coverage measured via jest --coverage."
+          }
+        ]
       },
       {
         "id": 2,
@@ -8685,7 +8728,61 @@
           1
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create blogPostPath and blogArchivePath helpers with UTC date extraction",
+            "description": "Implement path helper functions in apps/site/src/features/blog/paths.ts that generate dated blog URLs using UTC date parsing and zero-padded month formatting.",
+            "dependencies": [],
+            "details": "Create `apps/site/src/features/blog/paths.ts` with two exported functions:\n\n1. `blogPostPath(publishedAt: string, slug: string): string` - parses publishedAt as UTC Date, extracts 4-digit year and zero-padded 2-digit month (getUTCFullYear, getUTCMonth), returns `/blog/${year}/${month}/${slug}`\n\n2. `blogArchivePath(year: number, month?: number): string` - if month provided, zero-pads it and returns `/blog/${year}/${paddedMonth}`; otherwise returns `/blog/${year}`\n\nThe helpers are pure functions with no external dependencies beyond Date and String APIs. They form the foundation for all subsequent URL generation across the blog feature.",
+            "status": "pending",
+            "testStrategy": "Unit tests in `apps/site/tests/features/blog/paths.test.ts`:\n\n- blogPostPath: should format path with 4-digit year and zero-padded month (test `2026-01-15` → `/blog/2026/01/slug`)\n- blogPostPath: should use UTC when publishedAt has negative offset (test `2026-08-31T23:30:00-03:00` → `/blog/2026/09/slug` due to UTC rollover)\n- blogArchivePath: should format year-only path (test `2026` → `/blog/2026`)\n- blogArchivePath: should format year-month path with zero-padding (test `2026, 3` → `/blog/2026/03`)"
+          },
+          {
+            "id": 2,
+            "title": "Move [slug] route files to [year]/[month]/[slug] via git mv",
+            "description": "Relocate the existing blog post route files from [slug] to the new dated URL structure [year]/[month]/[slug] using git mv, preserving file history.",
+            "dependencies": [
+              1
+            ],
+            "details": "Execute git mv commands to move route files while preserving git history:\n\n1. `git mv apps/site/src/app/[locale]/blog/[slug]/page.tsx apps/site/src/app/[locale]/blog/[year]/[month]/[slug]/page.tsx`\n2. `git mv apps/site/src/app/[locale]/blog/[slug]/opengraph-image.tsx apps/site/src/app/[locale]/blog/[year]/[month]/[slug]/opengraph-image.tsx`\n\nCreate the intermediate directories if needed. After the move, the old `[slug]` directory should be empty and ready for deletion. This step must use git mv (not regular mv) to maintain version control history for these critical route files.",
+            "status": "pending",
+            "testStrategy": "Manual verification:\n\n- Run `git log --follow apps/site/src/app/[locale]/blog/[year]/[month]/[slug]/page.tsx` and verify history traces back through the [slug] location\n- Confirm `apps/site/src/app/[locale]/blog/[slug]/` directory is empty after move\n- Run `git status` and verify moves are staged as renames, not delete+add"
+          },
+          {
+            "id": 3,
+            "title": "Update page and opengraph-image params, add dynamicParams=false, and implement year/month validation",
+            "description": "Update the moved route files to accept year/month/slug params, export dynamicParams=false, modify generateStaticParams to emit year/month/slug combinations, and add validation logic to call notFound() when URL params don't match post dates.",
+            "dependencies": [
+              2
+            ],
+            "details": "Update `apps/site/src/app/[locale]/blog/[year]/[month]/[slug]/page.tsx`:\n\n1. Change params type to `{ locale: string; year: string; month: string; slug: string }`\n2. Add `export const dynamicParams = false` at module level\n3. Update `generateStaticParams`: import blogPostPath, map each post to extract year/month from `blogPostPath(post.publishedAt, post.slug).split('/')` (indices 2 and 3), emit `{ locale, year, month, slug }`\n4. In the page component: after fetching the post, parse the canonical path with blogPostPath, extract year/month, compare to params.year/params.month, call `notFound()` if mismatch\n5. Update `generateMetadata`: pass `blogPostPath(post.publishedAt, slug)` to buildAlternates and buildOpenGraph\n\nUpdate `opengraph-image.tsx` similarly:\n1. Add params type with year/month/slug\n2. Add `export const dynamicParams = false`\n3. Update `generateStaticParams` to emit year/month/slug (reuse same logic as page.tsx)",
+            "status": "pending",
+            "testStrategy": "Integration tests in `apps/site/tests/app/[locale]/blog/[year]/[month]/[slug]/page.test.tsx` (extends existing page.test.tsx):\n\n- should call notFound when year in URL doesn't match post publishedAt\n- should call notFound when month in URL doesn't match post publishedAt\n- should render successfully when year and month match post publishedAt\n- generateStaticParams should emit year/month/slug for all published posts\n- generateMetadata should use blogPostPath for canonical URL\n\nManual verification:\n- Run `pnpm build` and verify no dynamic route warnings for [year]/[month]/[slug]"
+          },
+          {
+            "id": 4,
+            "title": "Update all href call sites to use blogPostPath helper",
+            "description": "Replace all hand-built blog post URLs across PostCard, PrevNextNav, RSS route, and sitemap with calls to the blogPostPath helper function.",
+            "dependencies": [
+              3
+            ],
+            "details": "Update each call site to import and use blogPostPath:\n\n1. `apps/site/src/features/blog/PostCard/index.tsx`: change `href={\\`/blog/${slug}\\`}` to `href={blogPostPath(publishedAt, slug)}` (publishedAt already available in BlogPostSummaryDTO)\n\n2. `apps/site/src/features/blog/PrevNextNav/index.tsx`: update both links to use `blogPostPath(newer.publishedAt, newer.slug)` and `blogPostPath(older.publishedAt, older.slug)`\n\n3. `apps/site/src/app/[locale]/blog/rss.xml/route.ts`: construct `<link>` and `<guid>` as `${siteUrl}/${locale}${blogPostPath(post.publishedAt, post.slug)}`\n\n4. `apps/site/src/app/sitemap.ts`: for blog post entries, use `url: \\`/${locale}${blogPostPath(post.publishedAt, post.slug)}\\``\n\n5. Delete the now-empty `apps/site/src/app/[locale]/blog/[slug]/` directory\n\nAfter all changes, run `grep -rn \"/blog/\\${\" apps/site/src` to verify no hand-built post URLs remain.",
+            "status": "pending",
+            "testStrategy": "Manual verification:\n\n- Run `grep -rn \"/blog/\\${\" apps/site/src` and verify output is empty (no hand-built URLs)\n- Run `pnpm build` and verify RSS and sitemap generate without errors\n- Inspect `out/en-US/blog/rss.xml` and `out/sitemap.xml` to verify dated URLs are present\n\nUnit tests:\n- Existing PostCard, PrevNextNav, RSS route, and sitemap tests should pass without modification (they test behavior, not implementation)\n\nIntegration verification:\n- Navigate to a blog post in dev server, verify URL format is `/blog/YYYY/MM/slug`\n- Verify PostCard links and PrevNextNav links use dated format"
+          },
+          {
+            "id": 5,
+            "title": "Add comprehensive integration tests for the moved route with BlogPostBuilder fixtures",
+            "description": "Create integration tests for the [year]/[month]/[slug] route using in-memory repository, real BlogPostBuilder fixtures, and async Server Component rendering to verify dated URL behavior end-to-end.",
+            "dependencies": [
+              4
+            ],
+            "details": "Extend `apps/site/tests/app/[locale]/blog/[year]/[month]/[slug]/page.test.tsx` (or create if not exists) with new integration test cases:\n\n1. Use the existing async Server Component rendering pattern (see current page.test.tsx lines 102-106)\n2. Mock getServerContainer with in-memory BlogPostRepository containing fixtures built with BlogPostBuilder\n3. Test scenarios:\n   - should render post content when year/month/slug all match publishedAt\n   - should call notFound when year doesn't match (e.g., post from 2025-06-15, URL has /2026/06/slug)\n   - should call notFound when month doesn't match (e.g., post from 2025-06-15, URL has /2025/07/slug)\n   - should handle UTC edge cases (post published at 2026-08-31T23:59:00+03:00 should render at /blog/2026/08/slug, not /09)\n   - should render PrevNextNav with dated URLs (de-mock PrevNextNav, verify href attributes use blogPostPath)\n   - generateStaticParams should emit correct year/month/slug combinations for all published posts\n   - generateMetadata should include dated canonical URL in alternates\n\n4. Verify all tests pass with `pnpm test apps/site`\n<info added on 2026-10-08T02:36:10.554Z>\n**CORRECTION ACCEPTED. Redefining subtask 2.5:**\n\nThis subtask creates a new test helper `apps/site/tests/helpers/renderServerComponent.tsx` that recursively resolves nested async Server Components before calling `render()`. The helper allows de-mocking real components (PostCard, PrevNextNav, etc.) in integration tests, which is required to verify the full Server Component tree behavior including data flow and async boundaries.\n\nThe subtask then rewrites `apps/site/tests/app/[locale]/blog/[year]/[month]/[slug]/page.test.tsx` to:\n\n1. **Remove all vi.mock() calls for `~features/blog/*` components** (PostCard, PrevNextNav, BlogPostHeader, MarkdownRenderer, etc.). Keep only minimal framework stubs:\n   - `next/image` → `<img data-testid=\"next-image\" />`\n   - `next-intl/server` → `{ getTranslations: vi.fn(() => (key: string) => key) }`\n   - `next/navigation` → `{ notFound: vi.fn() }`\n   - `next-mdx-remote/rsc` → `{ MDXRemote: ({ source }: { source: string }) => <div data-testid=\"mdx-content\">{source}</div> }`\n   - `getServerContainer` → in-memory BlogPostRepository with BlogPostBuilder fixtures\n\n2. **Use the new renderServerComponent helper** to render the real page function, which will recursively resolve all async child components (PrevNextNav, BlogPostHeader, etc.) before the final render snapshot.\n\n3. **Test scenarios (PRD slice b, R7):**\n   - should render post content when year/month/slug all match publishedAt (verify BlogPostHeader title, MarkdownRenderer content)\n   - should call notFound when year doesn't match (post from 2025-06-15, URL /2026/06/slug)\n   - should call notFound when month doesn't match (post from 2025-06-15, URL /2025/07/slug)\n   - should handle UTC edge cases (post published `2026-08-31T23:59:00+03:00` → `/blog/2026/08/slug`, not `/09`)\n   - should render PrevNextNav with dated URLs: verify `href` attributes on newer/older links use `blogPostPath(publishedAt, slug)` format `/blog/YYYY/MM/slug`, verify locale prefix `/${locale}`, verify direction (newer = published AFTER, older = published BEFORE)\n   - generateStaticParams should emit correct year/month/slug combinations for all published posts (3 posts → 3 param objects with year, month, slug)\n   - generateMetadata should include dated canonical URL in alternates (verify `alternates.canonical` matches `/blog/YYYY/MM/slug`)\n\n4. **next-intl Link handling:** If the real next-intl `Link` component cannot run under jsdom (e.g., requires Next.js router context), stub it as:\n   ```typescript\n   vi.mock('next-intl/link', () => ({\n     default: ({ href, locale, children }: { href: string; locale: string; children: React.ReactNode }) => (\n       <a href={`/${locale}${href}`}>{children}</a>\n     )\n   }));\n   ```\n   Add a comment explaining: \"Thin stub reproducing locale prefix behavior because real next-intl Link requires Next.js router context unavailable in jsdom.\"\n\n5. **Verify all tests pass:** Run `pnpm test apps/site` and ensure the de-mocked integration tests pass, confirming the full Server Component tree (including PrevNextNav, BlogPostHeader, etc.) renders correctly with dated URLs.\n</info added on 2026-10-08T02:36:10.554Z>",
+            "status": "pending",
+            "testStrategy": "Test execution:\n\n- Run `pnpm test apps/site` and verify all new integration tests pass (7 test cases)\n- Verify existing page.test.tsx tests remain green (backward compatibility)\n- Run full test suite `pnpm test` to ensure no regressions in application or infra layers\n\nAcceptance criteria validation:\n- Integration tests cover notFound behavior for year/month mismatches\n- Integration tests verify dated URL generation in PrevNextNav\n- Integration tests validate generateStaticParams emits correct param combinations\n- All tests use real domain objects (BlogPostBuilder) and in-memory repository (no prop-echo mocks)"
+          }
+        ]
       },
       {
         "id": 3,
@@ -8698,7 +8795,61 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create formatArchiveMonth helper with Intl.DateTimeFormat",
+            "description": "Implement the formatArchiveMonth helper function in apps/site/src/features/blog/formatArchiveMonth.ts using Intl.DateTimeFormat with UTC timezone to format month names in different locales.",
+            "dependencies": [],
+            "details": "Create apps/site/src/features/blog/formatArchiveMonth.ts with a function that accepts year (number), month (number 1-12), and locale (string). Convert month to 0-indexed for Date constructor, create a UTC date, and format using Intl.DateTimeFormat with { month: 'long', timeZone: 'UTC' }. Export the function for use in archive pages.",
+            "status": "pending",
+            "testStrategy": "Unit tests in apps/site/tests/features/blog/formatArchiveMonth.test.ts: verify 'September' for en-US, 'setembro' for pt-BR, 'septiembre' for es with input (2026, 9, locale); test edge cases for January (month=1) and December (month=12); verify UTC timezone handling prevents locale date shifting."
+          },
+          {
+            "id": 2,
+            "title": "Add Blog.Archive i18n keys to all locale message files",
+            "description": "Add the Blog.Archive.yearTitle, monthTitle, and description keys with ICU parameter support to all three locale message files (en-US, pt-BR, es).",
+            "dependencies": [
+              1
+            ],
+            "details": "Update apps/site/messages/en-US.json, apps/site/messages/pt-BR.json, and apps/site/messages/es.json. Add nested Archive object under existing Blog key with: yearTitle ('{year}'), monthTitle ('{month} {year}'), and description ('Archive of blog posts from {month} {year}' for month archives, 'Archive of blog posts from {year}' for year-only). Ensure ICU MessageFormat parameter syntax is correct for next-intl.\n<info added on 2026-10-08T02:38:12.473Z>\nI need to analyze the codebase to understand the current message file structure and test setup before providing the correction.Based on the analysis, I can see the message file structure clearly. The PRD correction requires adding keys under `Metadata.BlogArchive` (not `Blog.Archive`), plus a `Blog.breadcrumbHome` key. The test validates that all locales have identical key structures.\n\nHere's the corrected implementation note:\n\nCORRECTED SCOPE — Add four new keys across three message files (en-US.json, pt-BR.json, es.json): (1) Metadata.BlogArchive.yearTitle with ICU parameter {year}, (2) Metadata.BlogArchive.monthTitle with ICU parameters {month} and {year} (month is the already-localized month name from formatArchiveMonth helper), (3) Metadata.BlogArchive.description with ICU parameters {month} and {year} (message wording differs for year-only vs month archives; description key must handle both by omitting {month} reference when month is not present in the route), (4) Blog.breadcrumbHome (used by task 4's breadcrumb system). All keys follow next-intl's ICU MessageFormat. Ensure messages.test.ts remains green (symmetry check across all three locales; new keys must exist in all three files with identical paths).\n</info added on 2026-10-08T02:38:12.473Z>",
+            "status": "pending",
+            "testStrategy": "Manual verification in each locale file for correct JSON structure and ICU parameter syntax. Integration tests in subtask 3 and 4 will verify runtime message formatting with actual year/month values."
+          },
+          {
+            "id": 3,
+            "title": "Implement [year]/page.tsx for year archive listing",
+            "description": "Create apps/site/src/app/[locale]/blog/[year]/page.tsx with generateStaticParams, generateMetadata, and component that calls ListBlogArchive and renders year archive with month sections.",
+            "dependencies": [
+              2
+            ],
+            "details": "Export dynamicParams=false. generateStaticParams: call ListBlogArchive with DEFAULT_LOCALE, emit { locale, year: String(year.year) } for all locales × all years. generateMetadata: use useTranslations('Blog.Archive'), format yearTitle and description with ICU {year} param, call buildAlternates(blogArchivePath(year)) and buildOpenGraph. Component: await ListBlogArchive, handle left/not-found with notFound(), render h1 with year, map year.months (newest first) to sections with h2 link to month archive using formatArchiveMonth, post count, and PostCard for each post.",
+            "status": "pending",
+            "testStrategy": "Unit tests in apps/site/tests/app/[locale]/blog/[year]/page.test.tsx: verify generateStaticParams emits correct year strings for all locales; verify generateMetadata calls buildAlternates and buildOpenGraph with correct paths; test component renders h1, month sections with formatArchiveMonth headings, post counts, and PostCard components; verify notFound() called when year not in ListBlogArchive result."
+          },
+          {
+            "id": 4,
+            "title": "Implement [year]/[month]/page.tsx for month archive listing",
+            "description": "Create apps/site/src/app/[locale]/blog/[year]/[month]/page.tsx with generateStaticParams, generateMetadata, and component that renders month archive with filtered posts.",
+            "dependencies": [
+              3
+            ],
+            "details": "Export dynamicParams=false. generateStaticParams: from ListBlogArchive, emit { locale, year: String(year.year), month: String(month.month).padStart(2, '0') } for all locales × all year.months. generateMetadata: use Blog.Archive.monthTitle with ICU {month, year} where month=formatArchiveMonth(...), plus alternates and openGraph. Component: parse params.month to number, await ListBlogArchive, find year then month in nested structure, call notFound() if not found, render h1 with 'formatArchiveMonth(year, monthNum, locale) year', map month.posts to PostCard components.",
+            "status": "pending",
+            "testStrategy": "Unit tests in apps/site/tests/app/[locale]/blog/[year]/[month]/page.test.tsx: verify generateStaticParams emits zero-padded month strings (01-12) for all locale/year/month combos; verify generateMetadata uses formatArchiveMonth in title and description; test component renders h1 with formatted month + year, correct PostCard list; verify notFound() when month not found in year or year not found."
+          },
+          {
+            "id": 5,
+            "title": "Update sitemap.ts to include year and month archive URLs",
+            "description": "Modify apps/site/src/app/sitemap.ts to call ListBlogArchive with DEFAULT_LOCALE and emit sitemap entries for all year and month archive URLs across all locales.",
+            "dependencies": [
+              4
+            ],
+            "details": "In sitemap.ts, after calling ListBlogPosts, add ListBlogArchive call with DEFAULT_LOCALE. If result.isRight(), iterate years and emit { url: `${ABSOLUTE_URL}/${locale}${blogArchivePath(year.year)}`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 } for all locales. Then iterate year.months and emit same structure with blogArchivePath(year.year, month.month). If result.isLeft(), log error (existing try/catch handles fallback). Ensure blogArchivePath import is present.",
+            "status": "pending",
+            "testStrategy": "Unit tests in apps/site/tests/app/sitemap.test.ts: mock ListBlogArchive to return 2 years with 3 months each; verify sitemap output includes 2 year URLs × 3 locales (6 entries) and 6 month URLs × 3 locales (18 entries); verify priority=0.5 and changeFrequency='monthly' for all archive entries; verify blogArchivePath called with correct year and month params; test error case returns empty array when ListBlogArchive returns left."
+          }
+        ]
       },
       {
         "id": 4,
@@ -8711,7 +8862,63 @@
           3
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create buildBreadcrumbListJsonLd in packages/seo with interfaces and export",
+            "description": "Implement the buildBreadcrumbListJsonLd function in packages/seo/src/breadcrumbs.ts with IBreadcrumbListItem and IBreadcrumbListNode interfaces, following Schema.org BreadcrumbList structure, and export from packages/seo/src/index.ts.",
+            "dependencies": [],
+            "details": "Create packages/seo/src/breadcrumbs.ts with:\n- IBreadcrumbListItem interface (name: string, url: string)\n- IBreadcrumbListNode interface ('@type': 'BreadcrumbList', itemListElement with ListItem structure)\n- buildBreadcrumbListJsonLd function that maps items array to Schema.org structure with 1-based positions\n- Export all interfaces and function from packages/seo/src/index.ts\n\nImplementation:\n```typescript\nexport interface IBreadcrumbListItem {\n  name: string;\n  url: string; // absolute URL\n}\n\nexport interface IBreadcrumbListNode {\n  '@type': 'BreadcrumbList';\n  itemListElement: {\n    '@type': 'ListItem';\n    position: number; // 1-based\n    name: string;\n    item: string;\n  }[];\n}\n\nexport function buildBreadcrumbListJsonLd(items: IBreadcrumbListItem[]): IBreadcrumbListNode {\n  return {\n    '@type': 'BreadcrumbList',\n    itemListElement: items.map((item, index) => ({\n      '@type': 'ListItem',\n      position: index + 1,\n      name: item.name,\n      item: item.url,\n    })),\n  };\n}\n```",
+            "status": "pending",
+            "testStrategy": "Unit tests in packages/seo/test/breadcrumbs.test.ts:\n- should number items from 1 in input order (test 3 items, verify positions 1, 2, 3)\n- should map name/url to ListItem.name/ListItem.item (verify exact mapping)\n- should handle empty array (verify empty itemListElement)\n- should preserve item order (verify first item is position 1, last is position N)"
+          },
+          {
+            "id": 2,
+            "title": "Refactor buildProjectJsonLd to use buildBreadcrumbListJsonLd while maintaining byte-identical output",
+            "description": "Update apps/site/src/lib/seo/structuredData.ts to import and use buildBreadcrumbListJsonLd from @repo/seo, replacing the hardcoded BreadcrumbList construction in buildProjectJsonLd while ensuring existing tests pass unchanged.",
+            "dependencies": [
+              1
+            ],
+            "details": "Refactor apps/site/src/lib/seo/structuredData.ts:\n1. Import buildBreadcrumbListJsonLd and IBreadcrumbListItem from '@repo/seo'\n2. In buildProjectJsonLd, replace the inline breadcrumb construction with:\n   ```typescript\n   const breadcrumbItems: IBreadcrumbListItem[] = [\n     { name: homeLabel, url: homeUrl },\n     { name: projectsLabel, url: projectsUrl },\n     { name: title, url: projectUrl },\n   ];\n   const breadcrumbNode = buildBreadcrumbListJsonLd(breadcrumbItems);\n   ```\n3. Return { '@context': 'https://schema.org', '@graph': [creativeWorkNode, breadcrumbNode] }\n4. Verify output is byte-identical by ensuring all existing structuredData.test.ts assertions pass without modification\n\nCritical constraint: The refactor must produce exactly the same JSON output structure to maintain SEO consistency and keep regression tests green.",
+            "status": "pending",
+            "testStrategy": "Regression tests:\n- Run existing apps/site/tests/lib/seo/structuredData.test.ts without modifications\n- Verify all assertions pass (byte-identical JSON output)\n- No new tests needed for this subtask - existing tests validate the refactor\n- If tests fail, the refactor is incorrect and must be adjusted"
+          },
+          {
+            "id": 3,
+            "title": "Create buildBlogBreadcrumbs helper with visible and JSON-LD trail construction",
+            "description": "Implement buildBlogBreadcrumbs in apps/site/src/features/blog/buildBlogBreadcrumbs.ts that constructs parallel visible (BreadcrumbItem[]) and JSON-LD (IBreadcrumbListItem[]) breadcrumb trails based on year/month/post context, handling 4 cases (blog root, year archive, month archive, post page).",
+            "dependencies": [
+              1
+            ],
+            "details": "Create apps/site/src/features/blog/buildBlogBreadcrumbs.ts:\n1. Import env, BreadcrumbItem, IBreadcrumbListItem, blogArchivePath, blogPostPath, formatArchiveMonth\n2. Define BuildBlogBreadcrumbsParams interface (locale, labels: { home, blog }, year?, month?, post?: { title, publishedAt, slug })\n3. Implement buildBlogBreadcrumbs function:\n   - Always start with home and blog breadcrumbs in both arrays\n   - If year: add year breadcrumb with blogArchivePath(year)\n   - If month && year: add formatted month breadcrumb with blogArchivePath(year, month)\n   - If post: add post title breadcrumb with blogPostPath(post.publishedAt, post.slug)\n   - Mark current page breadcrumb with href: undefined in visible array\n   - Return { visible: BreadcrumbItem[], jsonLd: IBreadcrumbListItem[] }\n\nHandles 4 cases:\n- Post page: home → blog → year → month → post (current, no href)\n- Month archive: home → blog → year → month (current, no href)\n- Year archive: home → blog → year (current, no href)\n- Blog root: home → blog (current, no href)",
+            "status": "pending",
+            "testStrategy": "Unit tests in apps/site/tests/features/blog/buildBlogBreadcrumbs.test.ts:\n- should build post breadcrumbs with 5 items (home → blog → year → month → post)\n- should mark post as current (no href) in visible trail\n- should build month archive breadcrumbs with 4 items and mark month as current\n- should build year archive breadcrumbs with 3 items and mark year as current\n- should use absolute URLs in JSON-LD trail (verify env.siteUrl concatenation)\n- should format month using formatArchiveMonth with correct locale\n- should construct correct paths using blogArchivePath and blogPostPath helpers"
+          },
+          {
+            "id": 4,
+            "title": "Integrate breadcrumbs into post and archive pages with Breadcrumb component and JSON-LD",
+            "description": "Update post page ([year]/[month]/[slug]/page.tsx), year archive page ([year]/page.tsx), and month archive page ([year]/[month]/page.tsx) to render visible breadcrumbs using the Breadcrumb component and inject JSON-LD structured data using buildBlogBreadcrumbs and buildBreadcrumbListJsonLd.",
+            "dependencies": [
+              3
+            ],
+            "details": "Update three blog pages to integrate breadcrumbs:\n\n1. Post page (apps/site/src/app/[locale]/blog/[year]/[month]/[slug]/page.tsx):\n   - Import Breadcrumb, buildBlogBreadcrumbs, buildBreadcrumbListJsonLd, JsonLd\n   - Get i18n labels: home: t('Blog.breadcrumbHome'), blog: t('Blog.title')\n   - Parse year/month from params (Number(params.year), Number(params.month))\n   - Call buildBlogBreadcrumbs({ locale, labels, year, month, post: { title, publishedAt, slug } })\n   - Render <Breadcrumb items={visible} /> above article\n   - Render <JsonLd data={{ '@context': 'https://schema.org', ...buildBreadcrumbListJsonLd(jsonLd) }} />\n\n2. Year archive page (apps/site/src/app/[locale]/blog/[year]/page.tsx):\n   - Same imports and label setup\n   - Call buildBlogBreadcrumbs({ locale, labels, year })\n   - Render Breadcrumb and JsonLd components\n\n3. Month archive page (apps/site/src/app/[locale]/blog/[year]/[month]/page.tsx):\n   - Same imports and label setup\n   - Call buildBlogBreadcrumbs({ locale, labels, year, month })\n   - Render Breadcrumb and JsonLd components",
+            "status": "pending",
+            "testStrategy": "Integration tests (covered by task 5):\n- Post page integration test verifies Breadcrumb component renders with 5 items\n- Year archive integration test verifies Breadcrumb renders with 3 items\n- Month archive integration test verifies Breadcrumb renders with 4 items\n- All tests verify JSON-LD script tag contains BreadcrumbList with correct itemListElement\n- Visual smoke test: navigate to a post/archive page and verify breadcrumb trail displays correctly"
+          },
+          {
+            "id": 5,
+            "title": "Add unit tests for breadcrumb builder, regression test for buildProjectJsonLd, and integration tests",
+            "description": "Create comprehensive test coverage: unit tests for buildBreadcrumbListJsonLd and buildBlogBreadcrumbs, regression test to verify buildProjectJsonLd refactor produces byte-identical output, and integration tests verifying breadcrumb rendering in post and archive pages.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Implement three test suites:\n\n1. packages/seo/test/breadcrumbs.test.ts:\n   - Test buildBreadcrumbListJsonLd with 3 items, verify positions 1, 2, 3\n   - Verify name/url mapping to ListItem.name/ListItem.item\n   - Test empty array handling\n   - Test item order preservation\n\n2. apps/site/tests/lib/seo/structuredData.test.ts (regression):\n   - Existing tests must pass unchanged after buildProjectJsonLd refactor\n   - Verify byte-identical JSON output (existing assertions cover this)\n\n3. apps/site/tests/features/blog/buildBlogBreadcrumbs.test.ts:\n   - Test post breadcrumbs (5 items, current marked)\n   - Test month archive breadcrumbs (4 items, current marked)\n   - Test year archive breadcrumbs (3 items, current marked)\n   - Test absolute URLs in JSON-LD trail\n   - Test month formatting with correct locale\n   - Test path construction using helpers\n\n4. Integration tests (in task 5 of parent):\n   - Post page: verify Breadcrumb renders, JSON-LD present\n   - Year archive: verify breadcrumb trail\n   - Month archive: verify breadcrumb trail",
+            "status": "pending",
+            "testStrategy": "Test validation checklist:\n- All unit tests pass (breadcrumbs.test.ts, buildBlogBreadcrumbs.test.ts)\n- Regression test passes (structuredData.test.ts unchanged, all green)\n- Integration tests pass (covered by parent task 5)\n- Code coverage: 100% for buildBreadcrumbListJsonLd and buildBlogBreadcrumbs functions\n- Visual verification: breadcrumbs display correctly on post/archive pages in dev environment"
+          }
+        ]
       },
       {
         "id": 5,
@@ -8724,7 +8931,73 @@
           4
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create renderAsync helper and blog listing integration tests",
+            "description": "Create the renderAsync.tsx helper for testing async Server Components in apps/site/tests/, then create apps/site/tests/app/[locale]/blog/page.test.tsx with 4 integration tests: published-only filtering, newest-first ordering, dated hrefs via blogPostPath, and empty state when no published posts.",
+            "dependencies": [],
+            "details": "1. Create apps/site/tests/renderAsync.tsx (if not exists) with render wrapper for Promise<ReactElement>.\n2. Create apps/site/tests/app/[locale]/blog/page.test.tsx:\n   - Mock getServerContainer with in-memory IBlogPostRepository\n   - Seed BlogPostBuilder posts with mixed statuses (PUBLISHED, DRAFT, ARCHIVED) and dates spanning 2 months/years\n   - Test: should render published posts newest first (verify order by publishedAt)\n   - Test: should not render DRAFT or ARCHIVED posts (verify only PUBLISHED visible)\n   - Test: should render PostCard with dated href (assert href includes /blog/2026/09/slug)\n   - Test: should render empty state when no published posts (seed only drafts, assert empty state message)\n3. Use BlogPostBuilder for fixtures, verify PostCard rendering without mocking it.\n<info added on 2026-10-08T02:37:17.857Z>\nI need to analyze the codebase first to understand the current test structure and locate the renderServerComponent helper mentioned in the correction.Now I can see subtask 2.5 creates `apps/site/tests/helpers/renderServerComponent.tsx`. Let me check if this helper actually exists:Perfect! I can see that the current test file (lines 63-65) has a `renderPage` helper that calls `render(await BlogListingPage(...))`. This is the pattern that subtask 2.5 is meant to extract into a reusable `renderServerComponent` helper.\n\nBased on the user's correction and the codebase analysis:\n\nCORRECTION: Do NOT create apps/site/tests/renderAsync.tsx. This subtask only creates the blog listing integration tests in apps/site/tests/app/[locale]/blog/page.test.tsx. The async Server Component render helper (apps/site/tests/helpers/renderServerComponent.tsx) is created in subtask 2.5, not here. Reuse that helper when it exists.\n\nUpdated test implementation:\n1. Import renderServerComponent from apps/site/tests/helpers/renderServerComponent.tsx (created in subtask 2.5)\n2. Create apps/site/tests/app/[locale]/blog/page.test.tsx (or extend if exists):\n   - Mock getServerContainer with in-memory IBlogPostRepository\n   - Seed BlogPostBuilder posts with mixed statuses (PUBLISHED, DRAFT, ARCHIVED) and dates spanning 2 months/years\n   - Test: should render published posts newest first (verify order by publishedAt)\n   - Test: should not render DRAFT or ARCHIVED posts (verify only PUBLISHED visible)\n   - Test: should render PostCard with dated href (assert href includes /blog/YYYY/MM/slug pattern via blogPostPath)\n   - Test: should render empty state when no published posts (seed only drafts, assert empty state message)\n3. Use BlogPostBuilder for fixtures, verify PostCard rendering without mocking it.\n4. Use renderServerComponent helper for all async Server Component rendering.\n</info added on 2026-10-08T02:37:17.857Z>",
+            "status": "pending",
+            "testStrategy": "All 4 tests in page.test.tsx pass. Run pnpm --filter @repo/site test and verify listing page tests green."
+          },
+          {
+            "id": 2,
+            "title": "Enhance post page integration test by removing PrevNextNav mock",
+            "description": "Update apps/site/tests/app/[locale]/blog/[year]/[month]/[slug]/page.test.tsx to remove the PrevNextNav mock, render the real async Server Component using renderAsync, and add 7 comprehensive tests including breadcrumb, prev/next links with dated hrefs and locale prefix, and notFound scenarios.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Remove any existing mock of PrevNextNav component.\n2. Use renderAsync helper to render the real PrevNextNav async Server Component.\n3. Mock getServerContainer with in-memory repository and seed 3+ posts (prev, current, next) with publishedAt spanning months.\n4. Tests:\n   - should render post title, description, and body (verify h1, meta, MDX content)\n   - should render breadcrumb with correct trail (Home › Blog › Year › Month › Title)\n   - should render prev/next links with dated hrefs and correct direction (newer.publishedAt < current < older.publishedAt)\n   - should include locale prefix in prev/next hrefs (verify /en-US/blog/...)\n   - should call notFound for missing slug (seed post A, request slug B)\n   - should call notFound for non-published post (seed DRAFT, request it)\n   - should call notFound when year/month params don't match post.publishedAt (seed post at 2026/09, request /2026/08/slug)\n5. If next-intl Link fails under jsdom, stub as ({ href, locale, children }) => <a href={`/${locale}${href}`}>{children}</a> with explanatory comment.\n<info added on 2026-10-08T02:37:39.769Z>\nBased on the user's correction, here is the new text that should be appended to this subtask's details:\n\nCORRECTION: This subtask does NOT remove any mock or re-render PrevNextNav — that de-mocking happens in subtask 2.5 (task 2). This subtask ONLY adds new assertions to the existing de-mocked post-page test:\n\n1. Breadcrumb trail: verify rendered trail is \"Home › Blog › yyyy › Month › title\" with current item (title) as plain text without href, and other items as links.\n\n2. BreadcrumbList JSON-LD: verify the page includes a script tag with type=\"application/ld+json\" containing a BreadcrumbList structured data object with position-ordered items matching the visual trail.\n\n3. Prev/next direction CORRECTED: newer = published AFTER current post (newer.publishedAt > current.publishedAt), older = published BEFORE current post (older.publishedAt < current.publishedAt). The rendered \"prev\" link points to the NEWER post, \"next\" link points to the OLDER post. Verify direction logic and that hrefs use the dated format /blog/yyyy/mm/slug with correct locale prefix.\n\nAll other assertions (title, description, body, notFound scenarios) remain in the de-mocked test from subtask 2.5; this subtask only extends it with breadcrumb + structured data + corrected prev/next direction.\n</info added on 2026-10-08T02:37:39.769Z>",
+            "status": "pending",
+            "testStrategy": "All 7 tests in page.test.tsx pass, including notFound scenarios. Run pnpm --filter @repo/site test and verify post page integration tests green."
+          },
+          {
+            "id": 3,
+            "title": "Create year archive integration tests",
+            "description": "Create apps/site/tests/app/[locale]/blog/[year]/page.test.tsx with 5 integration tests for the year archive page: filtering by year, newest-first ordering of months, month heading links via blogArchivePath, PostCard rendering with dated hrefs, and notFound when year has no posts.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Create apps/site/tests/app/[locale]/blog/[year]/page.test.tsx.\n2. Mock getServerContainer with in-memory repository.\n3. Seed posts across Jan 2026, Sep 2026, Dec 2025 using BlogPostBuilder.\n4. Tests:\n   - should render only the requested year's posts (request 2026, verify 2025 posts absent)\n   - should render months newest first (verify Sep before Jan)\n   - should render month headings linking to blogArchivePath(year, month)\n   - should render PostCard for each post with dated href (verify blogPostPath usage)\n   - should call notFound when year has no posts (seed 2025 only, request 2026)\n5. Verify ListBlogArchive use case is called with correct year param.\n6. No mocking of PostCard component.",
+            "status": "pending",
+            "testStrategy": "All 5 tests in page.test.tsx pass. Run pnpm --filter @repo/site test and verify year archive tests green."
+          },
+          {
+            "id": 4,
+            "title": "Create month archive integration tests",
+            "description": "Create apps/site/tests/app/[locale]/blog/[year]/[month]/page.test.tsx with 4 integration tests for the month archive page: filtering by single month, newest-first ordering within month, localized month name in heading via formatArchiveMonth, and notFound when month has no posts.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Create apps/site/tests/app/[locale]/blog/[year]/[month]/page.test.tsx.\n2. Mock getServerContainer with in-memory repository.\n3. Seed posts in Sep 2026 and Oct 2026 using BlogPostBuilder.\n4. Tests:\n   - should render only the requested month's posts (request 2026/09, verify Oct posts absent)\n   - should render posts newest first within the month (verify publishedAt descending order)\n   - should render localized month name in heading (verify formatArchiveMonth output, test en-US and pt-BR)\n   - should call notFound when month has no posts (seed Sep only, request Oct)\n5. Verify ListBlogArchive use case is called with correct year and month params.\n6. No mocking of PostCard component.",
+            "status": "pending",
+            "testStrategy": "All 4 tests in page.test.tsx pass. Run pnpm --filter @repo/site test and verify month archive tests green."
+          },
+          {
+            "id": 5,
+            "title": "Delete PostCover test file and remove prop-echo tests from PostHeader",
+            "description": "Delete the entire apps/site/tests/features/blog/PostCover/PostCover.test.tsx file (prop-echo test), and edit apps/site/tests/features/blog/PostHeader/PostHeader.test.tsx to remove prop-echo tests (title={title}, description={description}) while keeping date formatting and empty-tag-row logic tests.",
+            "dependencies": [],
+            "details": "1. Delete apps/site/tests/features/blog/PostCover/PostCover.test.tsx entirely.\n2. Open apps/site/tests/features/blog/PostHeader/PostHeader.test.tsx.\n3. Remove tests that only assert title={title} and description={description} (prop-echo pattern).\n4. Keep tests for:\n   - date formatting (formatPublishedAt logic)\n   - empty-tag-row logic (when tags array is empty)\n5. Run pnpm --filter @repo/site test to verify remaining PostHeader tests still pass.\n6. Verify no other tests depend on deleted PostCover test file.",
+            "status": "pending",
+            "testStrategy": "PostCover test file deleted. PostHeader tests reduced to only behavior tests (date formatting, empty tags). Run pnpm --filter @repo/site test and verify no failures from deletions."
+          },
+          {
+            "id": 6,
+            "title": "Run full acceptance criteria verification and close #1062",
+            "description": "Execute all acceptance criteria from #1062: run test, lint, types, and build commands; perform manual browser checks in 2+ locales; validate sitemap.xml, RSS feed, and 404 for old URLs; verify i18n keys and file line limits; confirm no changes to core/infra; and close #1062 in final commit message.",
+            "dependencies": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "1. Run pnpm --filter @repo/application test (verify all use case tests pass)\n2. Run pnpm --filter @repo/seo test (verify breadcrumb/SEO tests pass)\n3. Run pnpm --filter @repo/site test (verify all 20+ new integration tests pass)\n4. Run pnpm -w lint and pnpm -w types (verify no errors)\n5. Run pnpm --filter @repo/site build (verify dated post pages, archive pages, OG images prerender successfully)\n6. Manual browser checks:\n   - Navigate listing → post → breadcrumb → month → year in en-US locale\n   - Navigate listing → post → breadcrumb → month → year in pt-BR locale\n   - Verify dated URLs in address bar (/blog/2026/09/slug)\n   - Verify breadcrumb links work correctly\n7. Verify sitemap.xml includes dated post URLs and archive URLs (year and month)\n8. Verify /blog/rss.xml uses dated URLs in <link> tags\n9. Verify old /blog/{slug} URLs return 404\n10. Verify i18n keys exist in all 3 locales (messages.test.ts green)\n11. Verify no file over 200 lines (check all new/modified files)\n12. Verify no changes to packages/core or packages/infra\n13. Run Google Rich Results validator on blog post page\n14. Close #1062 in final PR commit message with 'Closes #1062' trailer",
+            "status": "pending",
+            "testStrategy": "All commands pass (test, lint, types, build). Manual browser checks in 2+ locales confirm dated URLs, breadcrumbs, archives work. Sitemap/RSS validated. Old URLs 404. Rich Results validator passes. Issue #1062 closed."
+          }
+        ]
       }
     ],
     "metadata": {
