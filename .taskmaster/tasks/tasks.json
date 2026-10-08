@@ -8735,7 +8735,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -8798,7 +8798,8 @@
         ],
         "complexity": 7,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break down into: (1) creating blogPostPath and blogArchivePath helpers with UTC date extraction and zero-padding, (2) moving [slug] route files to [year]/[month]/[slug] via git mv and updating params/generateStaticParams to emit year/month/slug combinations, (3) adding dynamicParams=false and year/month validation in page components to call notFound() on mismatch, (4) updating all href call sites in PostCard, PrevNextNav, RSS, and sitemap to use the helpers, and (5) comprehensive integration tests for the moved route with real BlogPostBuilder fixtures and async Server Component rendering."
+        "expansionPrompt": "Break down into: (1) creating blogPostPath and blogArchivePath helpers with UTC date extraction and zero-padding, (2) moving [slug] route files to [year]/[month]/[slug] via git mv and updating params/generateStaticParams to emit year/month/slug combinations, (3) adding dynamicParams=false and year/month validation in page components to call notFound() on mismatch, (4) updating all href call sites in PostCard, PrevNextNav, RSS, and sitemap to use the helpers, and (5) comprehensive integration tests for the moved route with real BlogPostBuilder fixtures and async Server Component rendering.",
+        "updatedAt": "2026-10-08T03:49:53.615Z"
       },
       {
         "id": "3",
@@ -9043,9 +9044,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-08T03:11:43.541Z",
+      "lastModified": "2026-10-08T03:49:53.615Z",
       "taskCount": 5,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "blog-v2-phase-4"
       ]
