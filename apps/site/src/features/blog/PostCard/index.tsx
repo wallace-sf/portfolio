@@ -10,9 +10,15 @@ import { blogPostPath } from '~features/blog/paths';
 export interface IPostCardProps {
   post: BlogPostSummaryDTO;
   locale: string;
+  /** `h3` when the card sits under a section heading (e.g. a month). */
+  headingLevel?: 'h2' | 'h3';
 }
 
-export function PostCard({ post, locale }: IPostCardProps) {
+export function PostCard({
+  post,
+  locale,
+  headingLevel: Heading = 'h2',
+}: IPostCardProps) {
   const { slug, title, description, publishedAt, tags, thumbnailImage } = post;
 
   return (
@@ -38,7 +44,9 @@ export function PostCard({ post, locale }: IPostCardProps) {
             {formatPublishedAt(publishedAt, locale)}
           </time>
 
-          <h2 className="text-heading-h5 text-content-primary">{title}</h2>
+          <Heading className="text-heading-h5 text-content-primary">
+            {title}
+          </Heading>
 
           <p className="text-body-sm line-clamp-2 text-content-secondary">
             {description}

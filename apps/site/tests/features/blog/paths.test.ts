@@ -3,8 +3,16 @@ import { describe, expect, it } from 'vitest';
 import {
   blogArchivePath,
   blogPostPath,
+  monthSegment,
   publicationSegments,
 } from '~features/blog/paths';
+
+describe('monthSegment', () => {
+  it('should zero-pad single-digit months and keep two-digit months', () => {
+    expect(monthSegment(9)).toBe('09');
+    expect(monthSegment(12)).toBe('12');
+  });
+});
 
 describe('publicationSegments', () => {
   it('should return a 4-digit year and a zero-padded month when the month is single-digit', () => {
