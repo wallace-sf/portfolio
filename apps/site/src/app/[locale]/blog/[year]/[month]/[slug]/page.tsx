@@ -1,66 +1,80 @@
 import {
+  type BlogPostDetailDTO,
   GetAdjacentBlogPosts,
   GetBlogPostBySlug,
-  ListBlogPosts,
 } from '@repo/application/blog';
-import { type Locale, LOCALES } from '@repo/core/shared';
+import { type Locale } from '@repo/core/shared';
 import { Divider } from '@repo/ui/View';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
+import { blogPostPath, publicationSegments } from '~features/blog/paths';
 import { PostBody } from '~features/blog/PostBody';
 import { PostCover } from '~features/blog/PostCover';
 import { PostHeader } from '~features/blog/PostHeader';
 import { PrevNextNav } from '~features/blog/PrevNextNav';
 
-export async function generateStaticParams() {
-  const result = await new ListBlogPosts(
-    getServerContainer().blogPostRepository,
-  ).execute({ locale: DEFAULT_LOCALE });
+import {
+  type BlogPostRouteParams,
+  blogPostStaticParams,
+} from './static-params';
 
-  if (result.isLeft()) {
-    // eslint-disable-next-line no-console
-    console.error(
-      '[blog] could not list posts for static params — no post pages will be prerendered',
-      'Error:',
-      result.value,
-    );
-  }
+export const dynamicParams = false;
 
-  const slugs = result.isRight() ? result.value.map((p) => p.slug) : [];
-  return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
-}
+export const generateStaticParams = blogPostStaticParams;
 
 interface BlogPostPageProps {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<BlogPostRouteParams>;
+}
+
+/**
+ * The post, or `undefined` when the slug is unknown / unpublished or the URL's
+ * year/month don't match its publication date. `dynamicParams = false` already
+ * rejects such URLs in a production build; this covers `next dev`, which
+ * renders any params on demand.
+ */
+async function findPostAt({
+  locale,
+  year,
+  month,
+  slug,
+}: BlogPostRouteParams): Promise<BlogPostDetailDTO | undefined> {
+  const result = await new GetBlogPostBySlug(
+    getServerContainer().blogPostRepository,
+  ).execute({ slug, locale: locale as Locale });
+
+  if (result.isLeft()) return undefined;
+
+  const segments = publicationSegments(result.value.publishedAt);
+  const atPeriod = segments.year === year && segments.month === month;
+
+  return atPeriod ? result.value : undefined;
 }
 
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
-  const { locale, slug } = await params;
+  const routeParams = await params;
+  const post = await findPostAt(routeParams);
 
-  const result = await new GetBlogPostBySlug(
-    getServerContainer().blogPostRepository,
-  ).execute({ slug, locale: locale as Locale });
+  if (!post) return {};
 
-  if (result.isLeft()) return {};
-
-  const { title, description } = result.value;
+  const locale = routeParams.locale as Locale;
+  const path = blogPostPath(post.publishedAt, post.slug);
+  const { title, description } = post;
 
   return {
     title,
     description,
-    alternates: buildAlternates(`/blog/${slug}`, locale as Locale),
+    alternates: buildAlternates(path, locale),
     // `og:image` comes from the sibling `opengraph-image.tsx` (Next file
     // convention) — a per-post rendered card via @repo/seo's renderOgImage.
     openGraph: {
-      ...buildOpenGraph(locale as Locale, `/blog/${slug}`, 'article'),
+      ...buildOpenGraph(locale, path, 'article'),
       title,
       description,
     },
@@ -68,25 +82,20 @@ export async function generateMetadata({
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { locale, slug } = await params;
+  const routeParams = await params;
+  const { locale, slug } = routeParams;
   setRequestLocale(locale);
 
-  const { blogPostRepository } = getServerContainer();
-
-  const [postResult, navResult] = await Promise.all([
-    new GetBlogPostBySlug(blogPostRepository).execute({
-      slug,
-      locale: locale as Locale,
-    }),
-    new GetAdjacentBlogPosts(blogPostRepository).execute({
+  const [post, navResult] = await Promise.all([
+    findPostAt(routeParams),
+    new GetAdjacentBlogPosts(getServerContainer().blogPostRepository).execute({
       slug,
       locale: locale as Locale,
     }),
   ]);
 
-  if (postResult.isLeft()) notFound();
+  if (!post) notFound();
 
-  const post = postResult.value;
   const { newer, older } = navResult.isRight() ? navResult.value : {};
 
   return (

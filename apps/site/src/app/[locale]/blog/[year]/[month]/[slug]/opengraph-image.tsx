@@ -1,38 +1,29 @@
-import { GetBlogPostBySlug, ListBlogPosts } from '@repo/application/blog';
-import { DEFAULT_LOCALE, type Locale, LOCALES } from '@repo/core/shared';
+import { GetBlogPostBySlug } from '@repo/application/blog';
+import { type Locale } from '@repo/core/shared';
 import { OG_IMAGE_SIZE, renderOgImage } from '@repo/seo/renderOgImage';
-import { ImageResponse } from 'next/og';
 import { notFound } from 'next/navigation';
+import { ImageResponse } from 'next/og';
 
 import { env } from '~/config/env';
 import { getServerContainer } from '~/lib/server/container';
+
+import {
+  type BlogPostRouteParams,
+  blogPostStaticParams,
+} from './static-params';
 
 export const size = OG_IMAGE_SIZE;
 export const contentType = 'image/png';
 export const alt = 'Wallace Ferreira — Blog';
 
+export const dynamicParams = false;
+
+export const generateStaticParams = blogPostStaticParams;
+
 const siteHost = new URL(env.siteUrl).host;
 
-export async function generateStaticParams() {
-  const result = await new ListBlogPosts(
-    getServerContainer().blogPostRepository,
-  ).execute({ locale: DEFAULT_LOCALE });
-
-  if (result.isLeft()) {
-    // eslint-disable-next-line no-console
-    console.error(
-      '[blog] could not list posts for OG image static params — no cards will be prerendered',
-      'Error:',
-      result.value,
-    );
-  }
-
-  const slugs = result.isRight() ? result.value.map((post) => post.slug) : [];
-  return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
-}
-
 interface OgImageProps {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<BlogPostRouteParams>;
 }
 
 export default async function Image({ params }: OgImageProps) {

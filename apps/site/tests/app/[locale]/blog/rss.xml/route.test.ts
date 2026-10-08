@@ -56,7 +56,10 @@ describe('GET /[locale]/blog/rss.xml', () => {
     expect(xml).toContain('<rss version="2.0"');
     expect(xml).toContain('<title>Hello</title>');
     expect(xml).toContain(
-      '<link>http://localhost:3000/en-US/blog/hello</link>',
+      '<link>http://localhost:3000/en-US/blog/2026/08/hello</link>',
+    );
+    expect(xml).toContain(
+      '<guid isPermaLink="true">http://localhost:3000/en-US/blog/2026/08/hello</guid>',
     );
     expect(xml).toContain('<pubDate>');
   });
@@ -70,7 +73,7 @@ describe('GET /[locale]/blog/rss.xml', () => {
 
     expect(xml).toContain('<language>pt-BR</language>');
     expect(xml).toContain(
-      '<link>http://localhost:3000/pt-BR/blog/only-en</link>',
+      '<link>http://localhost:3000/pt-BR/blog/2026/08/only-en</link>',
     );
   });
 

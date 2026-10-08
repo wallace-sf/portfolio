@@ -1,28 +1,14 @@
 /**
  * @vitest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlogPostSummaryDTO } from '@repo/application/blog';
 
 import { PostCard } from '~features/blog/PostCard';
 
-vi.mock('~/i18n/routing', () => ({
-  Link: ({
-    href,
-    children,
-    className,
-  }: {
-    href: string;
-    children: React.ReactNode;
-    className?: string;
-  }) => (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  ),
-}));
+import { renderWithIntl as render } from '../../../helpers/renderServerComponent';
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
@@ -46,12 +32,12 @@ const BASE: BlogPostSummaryDTO = {
 };
 
 describe('PostCard', () => {
-  it('should link the whole card to the locale-aware post route', () => {
-    render(<PostCard post={BASE} locale="en-US" />);
+  it('should link the whole card to the dated, locale-prefixed post URL', () => {
+    render(<PostCard post={BASE} locale="pt-BR" />, { locale: 'pt-BR' });
 
     expect(screen.getByRole('link')).toHaveAttribute(
       'href',
-      '/blog/the-either-pattern',
+      '/pt-BR/blog/2026/08/the-either-pattern',
     );
   });
 

@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { env } from '~/config/env';
 import { getServerContainer } from '~/lib/server/container';
+import { blogPostPath } from '~features/blog/paths';
 
 export const dynamic = 'force-static';
 
@@ -39,16 +40,19 @@ export async function GET(
   const posts = result.value;
 
   const items = posts
-    .map(
-      (post) => `
+    .map((post) => {
+      const url = escapeXml(
+        `${env.siteUrl}/${locale}${blogPostPath(post.publishedAt, post.slug)}`,
+      );
+      return `
     <item>
       <title>${escapeXml(post.title)}</title>
-      <link>${env.siteUrl}/${locale}/blog/${escapeXml(post.slug)}</link>
+      <link>${url}</link>
       <description>${escapeXml(post.description)}</description>
-      <guid isPermaLink="true">${env.siteUrl}/${locale}/blog/${escapeXml(post.slug)}</guid>
+      <guid isPermaLink="true">${url}</guid>
       <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
-    </item>`,
-    )
+    </item>`;
+    })
     .join('');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
