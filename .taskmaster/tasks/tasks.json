@@ -8811,7 +8811,7 @@
         "dependencies": [
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -8874,7 +8874,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break down into: (1) creating formatArchiveMonth helper using Intl.DateTimeFormat with UTC timezone, (2) adding i18n keys (Blog.Archive.yearTitle, monthTitle, description) to all 3 locale message files, (3) implementing [year]/page.tsx with generateStaticParams, generateMetadata, and component rendering year archive with month sections, (4) implementing [year]/[month]/page.tsx with same structure for month archive, and (5) updating sitemap.ts to call ListBlogArchive and emit year/month URLs plus comprehensive unit/integration tests."
+        "expansionPrompt": "Break down into: (1) creating formatArchiveMonth helper using Intl.DateTimeFormat with UTC timezone, (2) adding i18n keys (Blog.Archive.yearTitle, monthTitle, description) to all 3 locale message files, (3) implementing [year]/page.tsx with generateStaticParams, generateMetadata, and component rendering year archive with month sections, (4) implementing [year]/[month]/page.tsx with same structure for month archive, and (5) updating sitemap.ts to call ListBlogArchive and emit year/month URLs plus comprehensive unit/integration tests.",
+        "updatedAt": "2026-10-08T04:34:42.843Z"
       },
       {
         "id": "4",
@@ -9044,9 +9045,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-08T03:49:53.615Z",
+      "lastModified": "2026-10-08T04:34:42.843Z",
       "taskCount": 5,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "blog-v2-phase-4"
       ]
