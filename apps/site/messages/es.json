@@ -28,7 +28,11 @@
     "empty": "Aún no hay publicaciones.",
     "newerPost": "Publicación más reciente",
     "olderPost": "Publicación más antigua",
-    "postNavigation": "Navegación de publicaciones"
+    "postNavigation": "Navegación de publicaciones",
+    "breadcrumbHome": "Inicio",
+    "archiveYearHeading": "Publicaciones de {year}",
+    "archiveMonthHeading": "Publicaciones de {month} de {year}",
+    "archivePostCount": "{count, plural, one {# publicación} other {# publicaciones}}"
   },
   "Clipboard": {
     "copy": "Copiar al portapapeles"
@@ -172,6 +176,12 @@
       "description": "Artículos técnicos de Wallace Ferreira.",
       "ogSubtitle": "Artículos técnicos sobre TypeScript, DDD y el ecosistema Next.js.",
       "ogPage": "BLOG"
+    },
+    "BlogArchive": {
+      "yearTitle": "Publicaciones de {year}",
+      "monthTitle": "Publicaciones de {month} de {year}",
+      "yearDescription": "Artículos técnicos de Wallace Ferreira publicados en {year}.",
+      "monthDescription": "Artículos técnicos de Wallace Ferreira publicados en {month} de {year}."
     },
     "ProjectsPage": {
       "title": "Proyectos",

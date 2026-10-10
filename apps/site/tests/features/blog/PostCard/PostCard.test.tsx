@@ -93,4 +93,12 @@ describe('PostCard', () => {
 
     expect(screen.queryByText('typescript')).not.toBeInTheDocument();
   });
+
+  it('should render the title at the requested heading level when nested under a section', () => {
+    render(<PostCard post={BASE} locale="en-US" headingLevel="h3" />);
+
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'The Either Pattern' }),
+    ).toBeInTheDocument();
+  });
 });
