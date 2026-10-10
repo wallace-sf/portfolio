@@ -11,8 +11,8 @@ import { useBoolean } from 'usehooks-ts';
 
 import { SkillGroup } from '~features/shared/SkillGroup';
 import { useBreakpoint } from '@repo/utils/hooks';
-import { formatDuration } from '~utils';
 
+import { formatDuration } from '../formatDuration';
 import {
   EMPLOYMENT_TYPE_ICONS,
   LOCATION_ICON,
