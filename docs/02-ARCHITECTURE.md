@@ -86,6 +86,31 @@ Allowed: plain TypeScript, `@repo/utils`, `uuid`.
   Server Components call `ListBlogPosts` / `GetBlogPostBySlug` /
   `GetAdjacentBlogPosts` through `getServerContainer()`, same as Portfolio.
 
+### `apps/site` source layout
+
+Code is placed by **what it is**, not by who happens to use it today, so a file
+doesn't have to move when a component starts using something only a page used
+before.
+
+| Folder | Holds | Examples |
+|--------|-------|----------|
+| `src/app/<route>/` (non-route files colocated with a route) | **Route glue**: parsing/validating params, calling use cases, deciding `notFound()`, `generateStaticParams` | `blog/[year]/[month]/[slug]/static-params.ts` |
+| `src/features/<context>/` | The feature's **components** and the **presentation helpers** they or its pages use: formatting, URL building, assembling UI items | `features/blog/PostCard`, `features/blog/paths.ts`, `features/blog/formatPublishedAt.ts`, `features/about/formatDuration.ts` |
+| `src/features/shared/` | Components shared by several features | `Breadcrumb`, `ErrorView` |
+| `src/components/` | App shell (layout, navigation) and app-wide primitives | `Layout`, `JsonLd` |
+| `src/lib/` | App infrastructure | `lib/server/container.ts`, `lib/seo/*` |
+| `src/utils/` | Generic, domain-free helpers | `pxToNumber`, `breakpoints` |
+
+- **Dependencies go one way:** `app → features → lib / utils`. A feature never
+  imports from `app/`. Shared code goes into `features/` or `lib/` instead.
+  `apps/site/.eslintrc.js` flags this with `no-restricted-imports` (a warning,
+  like every rule under the repo-wide `only-warn` policy).
+- **Preferred data flow:** the page (route) calls the use cases and passes DTOs
+  to feature components as props, so components can be tested with props alone.
+  This is how the blog works. A few `about` / `home` sections are async Server
+  Components that fetch their own data. That is allowed (see above), but
+  prefer the props flow for new code and when those sections are touched.
+
 ---
 
 ## ESLint Architecture Enforcement
