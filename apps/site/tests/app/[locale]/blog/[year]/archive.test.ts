@@ -1,11 +1,27 @@
-import { describe, expect, it, vi } from 'vitest';
+import type { IBlogPostRepository } from '@repo/application/blog';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  findArchiveMonth,
+  findArchiveYear,
   parseMonthSegment,
   parseYearSegment,
 } from '~/app/[locale]/blog/[year]/archive';
 
-vi.mock('~/lib/server/container', () => ({ getServerContainer: vi.fn() }));
+import { blogPost } from '../../../../helpers/blogPosts';
+
+const repository: IBlogPostRepository = {
+  findAll: vi.fn(),
+  findBySlug: vi.fn(),
+};
+
+vi.mock('~/lib/server/container', () => ({
+  getServerContainer: () => ({ blogPostRepository: repository }),
+}));
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('parseYearSegment', () => {
   it('should return the year when the segment is a 4-digit year', () => {
@@ -35,4 +51,39 @@ describe('parseMonthSegment', () => {
       expect(parseMonthSegment(segment)).toBeUndefined();
     },
   );
+});
+
+describe('findArchiveYear / findArchiveMonth', () => {
+  it('should return the period with its year when it has published posts', async () => {
+    vi.mocked(repository.findAll).mockResolvedValue([
+      blogPost('hello-blog', '2026-09-02T10:00:00.000Z').now(),
+    ]);
+
+    expect((await findArchiveYear('en-US', '2026'))?.count).toBe(1);
+    expect(await findArchiveMonth('en-US', '2026', '09')).toMatchObject({
+      year: 2026,
+      month: 9,
+      count: 1,
+    });
+  });
+
+  it('should return undefined without logging when the period is empty or malformed', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.mocked(repository.findAll).mockResolvedValue([]);
+
+    expect(await findArchiveYear('en-US', '2026')).toBeUndefined();
+    expect(await findArchiveMonth('en-US', '2026', '9')).toBeUndefined();
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('should return undefined and log the failure when the repository fails', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.mocked(repository.findAll).mockRejectedValue(new Error('db down'));
+
+    expect(await findArchiveMonth('en-US', '2026', '09')).toBeUndefined();
+    expect(error).toHaveBeenCalledWith(
+      '[blog] could not load the month archive:',
+      expect.objectContaining({ code: 'FETCH_FAILED' }),
+    );
+  });
 });
