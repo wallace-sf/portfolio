@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
-
 import { BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { GET } from '~/app/[locale]/blog/rss.xml/route';
 
@@ -23,22 +23,13 @@ function makePost(slug: string, title: string, publishedAt: string): BlogPost {
     'pt-BR': value,
     es: value,
   });
-  const result = BlogPost.create({
-    slug,
-    title: localized(title),
-    description: localized(`${title} description`),
-    content: { 'en-US': '# Body', 'pt-BR': '# Corpo', es: '# Cuerpo' },
-    tags: ['nextjs'],
-    author: {
-      name: 'Wallace Ferreira',
-      avatarUrl:
-        'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
-    },
-    publishedAt,
-    status: BlogPostStatus.PUBLISHED,
-  });
-  if (result.isLeft()) throw result.value;
-  return result.value;
+  return BlogPostBuilder.build()
+    .withSlug(slug)
+    .withTitle(localized(title))
+    .withDescription(localized(`${title} description`))
+    .withPublishedAt(publishedAt)
+    .withStatus(BlogPostStatus.PUBLISHED)
+    .now();
 }
 
 function makeRequest(locale: string): {
@@ -65,7 +56,10 @@ describe('GET /[locale]/blog/rss.xml', () => {
     expect(xml).toContain('<rss version="2.0"');
     expect(xml).toContain('<title>Hello</title>');
     expect(xml).toContain(
-      '<link>http://localhost:3000/en-US/blog/hello</link>',
+      '<link>http://localhost:3000/en-US/blog/2026/08/hello</link>',
+    );
+    expect(xml).toContain(
+      '<guid isPermaLink="true">http://localhost:3000/en-US/blog/2026/08/hello</guid>',
     );
     expect(xml).toContain('<pubDate>');
   });
@@ -79,7 +73,7 @@ describe('GET /[locale]/blog/rss.xml', () => {
 
     expect(xml).toContain('<language>pt-BR</language>');
     expect(xml).toContain(
-      '<link>http://localhost:3000/pt-BR/blog/only-en</link>',
+      '<link>http://localhost:3000/pt-BR/blog/2026/08/only-en</link>',
     );
   });
 

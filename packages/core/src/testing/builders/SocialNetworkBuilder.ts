@@ -1,0 +1,62 @@
+import { ISocialNetworkProps, SocialNetwork } from '../../index';
+import { Data } from '../generators';
+import { unwrap } from '../unwrap';
+import { EntityBuilder } from './EntityBuilder';
+
+export class SocialNetworkBuilder extends EntityBuilder<ISocialNetworkProps> {
+  private constructor(props: ISocialNetworkProps) {
+    super(props);
+  }
+
+  static build(): SocialNetworkBuilder {
+    return new SocialNetworkBuilder({
+      name: Data.text.socialNetwork(),
+      icon: Data.text.icon(),
+      url: Data.text.url(),
+    });
+  }
+
+  public now(): SocialNetwork {
+    return unwrap(SocialNetwork.create(this._props as ISocialNetworkProps));
+  }
+
+  static list(count: number): SocialNetwork[] {
+    return [...Array(count)].map(() => SocialNetworkBuilder.build().now());
+  }
+
+  public withName(name: string): SocialNetworkBuilder {
+    this._props.name = name;
+
+    return this;
+  }
+
+  public withIcon(icon: string): SocialNetworkBuilder {
+    this._props.icon = icon;
+
+    return this;
+  }
+
+  public withUrl(url: string): SocialNetworkBuilder {
+    this._props.url = url;
+
+    return this;
+  }
+
+  public withoutName(): SocialNetworkBuilder {
+    this._props.name = undefined;
+
+    return this;
+  }
+
+  public withoutIcon(): SocialNetworkBuilder {
+    this._props.icon = undefined;
+
+    return this;
+  }
+
+  public withoutUrl(): SocialNetworkBuilder {
+    this._props.url = undefined;
+
+    return this;
+  }
+}

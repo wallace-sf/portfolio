@@ -1,3 +1,9 @@
+export { buildBreadcrumbListJsonLd } from './breadcrumbs';
+export type {
+  IBreadcrumbListElement,
+  IBreadcrumbListItem,
+  IBreadcrumbListNode,
+} from './breadcrumbs';
 export { createSeoBuilders } from './createSeoBuilders';
 export type {
   IAlternatesResult,

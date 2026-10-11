@@ -2,6 +2,7 @@ import type { BlogPostLinkDTO } from '@repo/application/blog';
 import { getTranslations } from 'next-intl/server';
 
 import { Link } from '~/i18n/routing';
+import { blogPostPath } from '~features/blog/paths';
 
 export interface IPrevNextNavProps {
   /** The chronologically newer post, if any. */
@@ -23,7 +24,7 @@ export async function PrevNextNav({ newer, older, locale }: IPrevNextNavProps) {
     >
       {newer ? (
         <Link
-          href={`/blog/${newer.slug}`}
+          href={blogPostPath(newer.publishedAt, newer.slug)}
           className="group flex flex-1 flex-col gap-1 rounded-card bg-surface p-4 shadow-drop-sm transition-shadow hover:shadow-drop-md"
         >
           <span className="text-body-xs text-content-muted">
@@ -39,7 +40,7 @@ export async function PrevNextNav({ newer, older, locale }: IPrevNextNavProps) {
 
       {older ? (
         <Link
-          href={`/blog/${older.slug}`}
+          href={blogPostPath(older.publishedAt, older.slug)}
           className="group flex flex-1 flex-col items-end gap-1 rounded-card bg-surface p-4 text-right shadow-drop-sm transition-shadow hover:shadow-drop-md"
         >
           <span className="text-body-xs text-content-muted">

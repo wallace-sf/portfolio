@@ -1,12 +1,15 @@
 import { PrismaClient } from '@prisma/client';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-
 import { Id } from '@repo/core/shared';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { InfrastructureError } from '../../../src/errors/InfrastructureError';
 import { PrismaUserRepository } from '../../../src/repositories/user/PrismaUserRepository';
 import { UserMapper } from '../../../src/repositories/user/UserMapper';
-import { buildPrismaUser } from '../../factories/prisma-user.factory';
+import {
+  buildPrismaUser,
+  buildPrismaUserCreateInput,
+  PrismaUserData,
+} from '../../factories/prisma-user.factory';
 
 // Use DIRECT_URL to bypass PgBouncer — prepared statements don't work with the pooler
 const db = new PrismaClient({
@@ -16,25 +19,14 @@ const repo = new PrismaUserRepository(db);
 
 const TEST_EMAIL_PREFIX = 'infra-test-';
 
-async function seedUser(overrides?: Partial<ReturnType<typeof buildPrismaUser>>) {
-  const raw = buildPrismaUser({
-    email: `${TEST_EMAIL_PREFIX}${crypto.randomUUID()}@example.com`,
-    ...overrides,
+/** Persists a factory user whose e-mail carries the cleanup prefix. */
+function seedUser(overrides?: Partial<PrismaUserData>) {
+  return db.user.create({
+    data: buildPrismaUserCreateInput({
+      email: `${TEST_EMAIL_PREFIX}${crypto.randomUUID()}@example.com`,
+      ...overrides,
+    }),
   });
-
-  await db.user.create({
-    data: {
-      id: raw.id,
-      name: raw.name,
-      email: raw.email,
-      role: raw.role,
-      authSubject: raw.authSubject ?? undefined,
-      createdAt: raw.createdAt,
-      updatedAt: raw.updatedAt,
-    },
-  });
-
-  return raw;
 }
 
 // Skipped as a whole (hooks included) when there is no reachable database —
@@ -49,13 +41,17 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (missingDbEnv) return;
-  await db.user.deleteMany({ where: { email: { startsWith: TEST_EMAIL_PREFIX } } });
+  await db.user.deleteMany({
+    where: { email: { startsWith: TEST_EMAIL_PREFIX } },
+  });
   await db.$disconnect();
 });
 
 afterEach(async () => {
   if (missingDbEnv) return;
-  await db.user.deleteMany({ where: { email: { startsWith: TEST_EMAIL_PREFIX } } });
+  await db.user.deleteMany({
+    where: { email: { startsWith: TEST_EMAIL_PREFIX } },
+  });
 });
 
 describe.skipIf(missingDbEnv)('PrismaUserRepository (integration)', () => {
@@ -98,7 +94,9 @@ describe.skipIf(missingDbEnv)('PrismaUserRepository (integration)', () => {
 
     it('should return null when email does not exist', async () => {
       const { Email } = await import('@repo/core/shared');
-      const emailResult = Email.create(`${TEST_EMAIL_PREFIX}nonexistent@example.com`);
+      const emailResult = Email.create(
+        `${TEST_EMAIL_PREFIX}nonexistent@example.com`,
+      );
       if (emailResult.isLeft()) throw emailResult.value;
 
       const user = await repo.findByEmail(emailResult.value);
@@ -177,7 +175,10 @@ describe.skipIf(missingDbEnv)('PrismaUserRepository (integration)', () => {
       const seeded = await seedUser({ authSubject: null });
       const newAuthSubject = crypto.randomUUID();
 
-      const updatedRaw = buildPrismaUser({ ...seeded, authSubject: newAuthSubject });
+      const updatedRaw = buildPrismaUser({
+        ...seeded,
+        authSubject: newAuthSubject,
+      });
       const updatedUser = UserMapper.toDomain(updatedRaw);
 
       await repo.save(updatedUser);

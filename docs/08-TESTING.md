@@ -38,6 +38,8 @@ Write a failing test first, make it pass with the minimum code, then refactor.
 
 ```text
 packages/core/test/             → Domain unit tests
+packages/core/src/testing/      → Shared test-data builders (@repo/core/testing)
+packages/infra/test/factories/  → Prisma row / create-input factories
 packages/utils/test/node/       → Node-environment utils
 packages/utils/test/browser/    → Browser-environment utils
 apps/site/tests/                → Site application tests
@@ -93,14 +95,49 @@ This reduces brittleness when error wording changes without changing the busines
 
 ---
 
-## Builders and Fixtures
+## Builders and Factories
 
-Builders are allowed for ergonomics, but with strict rules:
+Test data comes from two kinds of helpers. Don't hand-roll `BASE_PROPS` +
+`makeX()` in a test file; extend the shared helper instead.
 
-- **Must** have deterministic, semantically clear defaults
-- **Must not** use random data
-- Should improve readability of the scenario, not hide it
-- In important domain tests, prefer declaring relevant data explicitly inside the test
+| | **Builders** | **Factories** |
+|---|---|---|
+| Produce | **Domain entities** (`BlogPost`, `Project`, `User`, …) | **Persistence shapes**: Prisma rows and create inputs |
+| Go through | `Entity.create()`, so invalid data throws at setup | Nothing: plain objects |
+| Live in | `packages/core/src/testing/builders/`, imported as `@repo/core/testing` | `packages/infra/test/factories/` |
+| Naming | `XBuilder.build().withY(…).now()` | `buildPrismaX(overrides)` / `buildPrismaXCreateInput(overrides)` |
+| Used by | `core`, `application`, `apps/*` tests | `infra` mapper and repository tests |
+
+```typescript
+import { BlogPostBuilder, unwrap, UserBuilder } from '@repo/core/testing';
+
+const post = BlogPostBuilder.build().withSlug('hello-world').now();
+const admin = UserBuilder.build().now();
+const slug = unwrap(Slug.create('hello-world')); // throws if the fixture is invalid
+```
+
+### Rules
+
+- **Test code only.** `@repo/core/testing` ships inside `@repo/core` (a subpath
+  export, so `core` tests use it without a package cycle). Production code must
+  never import it: ESLint `no-restricted-imports` rejects it in every `src/`, and
+  inside `core` it also rejects relative imports of `src/testing` from domain
+  code (`packages/eslint-config/restricted-imports.js`).
+- **Deterministic, meaningful defaults.** Builders and factories must produce
+  the same values every run, chosen so the scenario reads clearly.
+- **Random only for opaque identifiers.** A generated value (`crypto.randomUUID()`)
+  is allowed only where the test never reads the value and it only has to be
+  unique: ids, and the unique suffix of a slug or e-mail in integration tests
+  that share a database. Never randomize a value the test asserts on, and never
+  pick a random enum value.
+- **Readability over brevity.** In important domain tests, still declare the
+  data that matters to the scenario explicitly (`.withStatus(...)`), even if
+  it equals the default.
+- **One create-input mapping per model.** Integration suites persist rows with
+  the factory's `buildPrismaXCreateInput`, never a per-suite conversion.
+- **`unwrap(result)`** replaces `if (result.isLeft()) throw …` in test setup.
+- **Test doubles** for `application` ports (repository stubs, fakes) are not
+  covered here yet: see #1136.
 
 ```typescript
 // ✅ Good
@@ -108,6 +145,10 @@ ProjectBuilder.build().withSlug('my-project').withSkills([])
 
 // ❌ Bad — random enum, hides the scenario
 ProjectBuilder.buildRandom()
+
+// ❌ Bad — per-file copy of what the builder already does
+const BASE_PROPS: IBlogPostProps = { /* … */ };
+function makeBlogPost(overrides = {}) { /* … */ }
 ```
 
 ---

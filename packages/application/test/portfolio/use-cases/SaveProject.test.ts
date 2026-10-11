@@ -1,17 +1,18 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { IUserRepository, Role, UnauthorizedError, User } from '@repo/core/identity';
 import {
-  IProjectProps,
-  IProjectRepository,
-  ProjectStatus,
-} from '@repo/core/portfolio';
+  IUserRepository,
+  Role,
+  UnauthorizedError,
+  User,
+} from '@repo/core/identity';
+import { IProjectProps, IProjectRepository } from '@repo/core/portfolio';
 import {
   ConflictError,
   DomainError,
   NotFoundError,
   ValidationError,
 } from '@repo/core/shared';
+import { ProjectBuilder, UserBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { EnsureAdmin } from '~/identity/use-cases/EnsureAdmin';
 import { SaveProject } from '~/portfolio/use-cases/SaveProject';
@@ -23,31 +24,7 @@ import { SaveProject } from '~/portfolio/use-cases/SaveProject';
 const ADMIN_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const VISITOR_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d470';
 
-const VALID_PROJECT_PROPS: IProjectProps = {
-  slug: 'my-project',
-  coverImage: {
-    url: 'https://example.com/cover.png',
-    alt: { 'en-US': 'Cover', 'pt-BR': 'Capa' },
-  },
-  thumbnailImage: {
-    url: 'https://example.com/thumbnail.webp',
-    alt: { 'en-US': 'Thumbnail', 'pt-BR': 'Thumbnail' },
-  },
-  title: { 'en-US': 'My Project', 'pt-BR': 'Meu Projeto' },
-  caption: { 'en-US': 'A caption.', 'pt-BR': 'Uma legenda.' },
-  content: { 'en-US': 'Lorem ipsum dolor sit amet.', 'pt-BR': 'Lorem ipsum dolor sit amet.' },
-  skills: ['a0000000-0000-4000-8000-000000000001'],
-  period: { start: '2024-01-01' },
-  featured: false,
-  status: ProjectStatus.DRAFT,
-  relatedProjects: [],
-};
-
-function makeUser(role: Role): User {
-  const result = User.create({ name: 'Test User', email: 'test@example.com', role });
-  if (result.isLeft()) throw result.value;
-  return result.value;
-}
+const VALID_PROJECT_PROPS: IProjectProps = ProjectBuilder.build().toProps();
 
 function makeUserRepo(user: User | null): IUserRepository {
   return {
@@ -75,7 +52,10 @@ function makeProjectRepo(
   };
 }
 
-function makeUseCase(user: User | null, projectRepo?: Partial<IProjectRepository>) {
+function makeUseCase(
+  user: User | null,
+  projectRepo?: Partial<IProjectRepository>,
+) {
   const userRepo = makeUserRepo(user);
   const ensureAdmin = new EnsureAdmin(userRepo);
   const pRepo = makeProjectRepo(projectRepo);
@@ -89,7 +69,7 @@ function makeUseCase(user: User | null, projectRepo?: Partial<IProjectRepository
 describe('SaveProject', () => {
   describe('when user is admin', () => {
     it('should save project and return Right', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase, projectRepo } = makeUseCase(admin);
 
       const result = await useCase.execute({
@@ -102,7 +82,7 @@ describe('SaveProject', () => {
     });
 
     it('should return Left(ValidationError) when project props are invalid', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin);
 
       const result = await useCase.execute({
@@ -115,7 +95,7 @@ describe('SaveProject', () => {
     });
 
     it('should return Left(DomainError) when repository throws a generic error', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin, {
         save: vi.fn().mockRejectedValue(new Error('DB error')),
       });
@@ -130,7 +110,7 @@ describe('SaveProject', () => {
     });
 
     it('should return Left(ConflictError) when repository throws a ConflictError (e.g. duplicate slug)', async () => {
-      const admin = makeUser(Role.ADMIN);
+      const admin = UserBuilder.build().withRole(Role.ADMIN).now();
       const { useCase } = makeUseCase(admin, {
         save: vi.fn().mockRejectedValue(new ConflictError()),
       });
@@ -147,7 +127,7 @@ describe('SaveProject', () => {
 
   describe('when user is not admin', () => {
     it('should return Left(UnauthorizedError)', async () => {
-      const visitor = makeUser(Role.VISITOR);
+      const visitor = UserBuilder.build().withRole(Role.VISITOR).now();
       const { useCase } = makeUseCase(visitor);
 
       const result = await useCase.execute({

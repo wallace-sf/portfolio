@@ -1,0 +1,53 @@
+{
+	"meta": {
+		"generatedAt": "2026-10-08T02:26:11.886Z",
+		"tasksAnalyzed": 5,
+		"totalTasks": 5,
+		"analysisCount": 5,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": true
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Implement ListBlogArchive use case and extract toBlogPostSummaryDTO helper",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the implementation into: (1) extracting toBlogPostSummaryDTO from ListBlogPosts.toDTO with all existing logic preserved, (2) refactoring ListBlogPosts to use the extracted helper, (3) implementing ListBlogArchive use case with UTC-based year/month grouping logic and newest-first ordering, and (4) creating comprehensive unit tests for both the helper and new use case following the existing test patterns in packages/application/test/blog/ListBlogPosts.test.ts.",
+			"reasoning": "Medium complexity. The extraction is straightforward - moving 26 lines from ListBlogPosts.toDTO (lines 40-65) to a standalone function. The new ListBlogArchive use case follows the exact same pattern as ListBlogPosts (same error handling, repository calls, filtering via publishedOnly/newestFirst). The grouping logic requires careful UTC date handling and nested Map structure, but is algorithmic. Tests follow established patterns. All work is in packages/application with no framework dependencies."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Create blog path helpers and migrate post routes to dated URLs",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down into: (1) creating blogPostPath and blogArchivePath helpers with UTC date extraction and zero-padding, (2) moving [slug] route files to [year]/[month]/[slug] via git mv and updating params/generateStaticParams to emit year/month/slug combinations, (3) adding dynamicParams=false and year/month validation in page components to call notFound() on mismatch, (4) updating all href call sites in PostCard, PrevNextNav, RSS, and sitemap to use the helpers, and (5) comprehensive integration tests for the moved route with real BlogPostBuilder fixtures and async Server Component rendering.",
+			"reasoning": "Medium-high complexity. Path helpers are simple (UTC date parsing + string formatting). The route migration requires careful file moves, updating generateStaticParams to emit 3-part params, adding validation logic to reject mismatched year/month, and updating 5+ call sites (PostCard, PrevNextNav, RSS route, sitemap). Integration tests require mocking getServerContainer with in-memory repository, handling async Server Components (the existing test already does this - see page.test.tsx lines 102-106), and verifying notFound behavior. The task touches apps/site at multiple layers but follows existing patterns."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Implement year and month archive pages with formatArchiveMonth helper",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down into: (1) creating formatArchiveMonth helper using Intl.DateTimeFormat with UTC timezone, (2) adding i18n keys (Blog.Archive.yearTitle, monthTitle, description) to all 3 locale message files, (3) implementing [year]/page.tsx with generateStaticParams, generateMetadata, and component rendering year archive with month sections, (4) implementing [year]/[month]/page.tsx with same structure for month archive, and (5) updating sitemap.ts to call ListBlogArchive and emit year/month URLs plus comprehensive unit/integration tests.",
+			"reasoning": "Medium complexity. The helper is trivial (Intl.DateTimeFormat with correct month offset). The archive pages follow the exact pattern of the existing blog listing page (apps/site/src/app/[locale]/blog/page.tsx) - same Server Component structure, generateStaticParams, metadata builders. The main work is: (a) calling ListBlogArchive and handling the nested year/month structure, (b) rendering PostCard for each post, (c) locale-aware metadata with ICU params. Sitemap update adds 2 new loops. Tests follow existing patterns but need to verify nested grouping and locale formatting. No novel architectural decisions required."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Implement breadcrumb infrastructure with buildBreadcrumbListJsonLd in @repo/seo",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down into: (1) creating buildBreadcrumbListJsonLd in packages/seo/src/breadcrumbs.ts with interfaces (IBreadcrumbListItem, IBreadcrumbListNode) and export from index.ts, (2) refactoring buildProjectJsonLd in apps/site to use the new shared function while keeping output byte-identical, (3) creating buildBlogBreadcrumbs helper in apps/site that constructs both visible (BreadcrumbItem[]) and JSON-LD (IBreadcrumbListItem[]) trails based on year/month/post context, (4) integrating breadcrumbs into post and archive pages (rendering Breadcrumb component + JsonLd script), and (5) unit tests for breadcrumb builder, regression test for buildProjectJsonLd, and integration tests verifying breadcrumb rendering.",
+			"reasoning": "Medium complexity. Creating buildBreadcrumbListJsonLd is simple (10-15 lines mapping items to Schema.org structure). Refactoring buildProjectJsonLd requires careful extraction to keep tests passing (the existing structuredData.test.ts has byte-identical assertions). buildBlogBreadcrumbs is moderately complex - needs to handle 4 cases (post/month/year/blog root), construct parallel visible/JSON-LD arrays, conditionally mark current item as no-href. Integration into 3 pages (post/year/month) is repetitive but straightforward. The task spans packages/seo and apps/site, requires cross-package interface alignment, and has strict regression constraints."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Add comprehensive integration tests and clean up test suite per #1062",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break down into: (1) creating renderAsync helper for async Server Components and blog listing integration tests (4 tests verifying published-only, newest-first, dated hrefs, empty state), (2) enhancing post page integration test by removing PrevNextNav mock and testing real component with dated hrefs and locale prefix, (3) creating year archive integration tests (5 tests for filtering, ordering, month links, PostCard rendering, notFound), (4) creating month archive integration tests (4 tests for single-month filtering, ordering, localized names, notFound), (5) deleting PostCover test file and removing prop-echo tests from PostHeader, and (6) running full acceptance criteria verification (build, manual browser checks in 2+ locales, sitemap/RSS validation, 404 checks, Rich Results validator).",
+			"reasoning": "Medium-high complexity. The renderAsync helper is trivial (already exists in the current test suite - see page.test.tsx line 102-106). Creating 4 new integration test files requires understanding Next.js Server Component testing patterns, mocking getServerContainer with in-memory BlogPostBuilder fixtures, and verifying real component rendering (not prop-echo). Removing the PrevNextNav mock means testing an async Server Component that calls getServerContainer - doable but requires careful setup. The year/month archive tests are repetitive (same pattern, different data). Deleting tests is trivial. The acceptance criteria verification is the complex part - requires full build against real DB, manual browser checks across 3 locales, RSS/sitemap/OG validation, 404 verification, Rich Results validator. High test count (20+ new tests) but follows established patterns."
+		}
+	]
+}

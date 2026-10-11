@@ -1,6 +1,6 @@
+import { BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
-
-import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
 
 import { IBlogPostRepository } from '~/blog/ports';
 import { ListBlogPosts } from '~/blog/use-cases/ListBlogPosts';
@@ -9,39 +9,14 @@ import { ListBlogPosts } from '~/blog/use-cases/ListBlogPosts';
 // Helpers
 // ---------------------------------------------------------------------------
 
-const BASE_PROPS: IBlogPostProps = {
-  slug: 'my-first-post',
-  title: {
-    'en-US': 'My First Post',
-    'pt-BR': 'Meu Primeiro Post',
-    es: 'Mi Primer Post',
-  },
-  description: {
-    'en-US': 'A short description.',
-    'pt-BR': 'Uma descrição curta.',
-    es: 'Una descripción corta.',
-  },
-  content: {
-    'en-US': 'Full content.',
-    'pt-BR': 'Conteúdo completo.',
-    es: 'Contenido completo.',
-  },
-  tags: ['nextjs', 'architecture'],
-  author: {
-    name: 'Test Author',
-    avatarUrl: 'https://example.com/avatar.jpg',
-    url: 'https://example.com',
-  },
-  publishedAt: '2026-08-01T00:00:00.000Z',
-  status: BlogPostStatus.PUBLISHED,
+const AUTHOR = {
+  name: 'Test Author',
+  avatarUrl: 'https://example.com/avatar.jpg',
+  url: 'https://example.com',
 };
 
-function makeBlogPost(overrides: Partial<IBlogPostProps> = {}): BlogPost {
-  const result = BlogPost.create({ ...BASE_PROPS, ...overrides });
-  if (result.isLeft())
-    throw new Error(`makeBlogPost failed: ${result.value.message}`);
-  return result.value;
-}
+const published = () =>
+  BlogPostBuilder.build().withStatus(BlogPostStatus.PUBLISHED);
 
 function makeRepository(
   overrides: Partial<IBlogPostRepository> = {},
@@ -60,7 +35,22 @@ function makeRepository(
 describe('ListBlogPosts', () => {
   describe('execute()', () => {
     it('should return Right with BlogPostSummaryDTO[] mapped to the requested locale', async () => {
-      const post = makeBlogPost();
+      const post = published()
+        .withSlug('my-first-post')
+        .withTitle({
+          'en-US': 'My First Post',
+          'pt-BR': 'Meu Primeiro Post',
+          es: 'Mi Primer Post',
+        })
+        .withDescription({
+          'en-US': 'A short description.',
+          'pt-BR': 'Uma descrição curta.',
+          es: 'Una descripción corta.',
+        })
+        .withTags(['nextjs', 'architecture'])
+        .withAuthor(AUTHOR)
+        .withPublishedAt('2026-08-01T00:00:00.000Z')
+        .now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([post]),
       });
@@ -102,20 +92,22 @@ describe('ListBlogPosts', () => {
 
     it('should order posts newest-first regardless of the repository order', async () => {
       const repo = makeRepository({
-        findAll: vi.fn().mockResolvedValue([
-          makeBlogPost({
-            slug: 'older',
-            publishedAt: '2026-01-01T00:00:00.000Z',
-          }),
-          makeBlogPost({
-            slug: 'newest',
-            publishedAt: '2026-12-01T00:00:00.000Z',
-          }),
-          makeBlogPost({
-            slug: 'middle',
-            publishedAt: '2026-06-01T00:00:00.000Z',
-          }),
-        ]),
+        findAll: vi
+          .fn()
+          .mockResolvedValue([
+            published()
+              .withSlug('older')
+              .withPublishedAt('2026-01-01T00:00:00.000Z')
+              .now(),
+            published()
+              .withSlug('newest')
+              .withPublishedAt('2026-12-01T00:00:00.000Z')
+              .now(),
+            published()
+              .withSlug('middle')
+              .withPublishedAt('2026-06-01T00:00:00.000Z')
+              .now(),
+          ]),
       });
 
       const result = await new ListBlogPosts(repo).execute({ locale: 'en-US' });
@@ -130,16 +122,16 @@ describe('ListBlogPosts', () => {
     });
 
     it('should include cover and thumbnail images with alt resolved to the locale', async () => {
-      const post = makeBlogPost({
-        coverImage: {
+      const post = published()
+        .withCoverImage({
           url: 'https://example.com/cover.png',
           alt: { 'en-US': 'Cover', 'pt-BR': 'Capa', es: 'Portada' },
-        },
-        thumbnailImage: {
+        })
+        .withThumbnailImage({
           url: 'https://example.com/thumb.png',
           alt: { 'en-US': 'Thumb', 'pt-BR': 'Miniatura', es: 'Miniatura' },
-        },
-      });
+        })
+        .now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([post]),
       });
@@ -161,15 +153,20 @@ describe('ListBlogPosts', () => {
 
     it('should omit DRAFT and ARCHIVED posts from the result', async () => {
       const repo = makeRepository({
-        findAll: vi.fn().mockResolvedValue([
-          makeBlogPost({ slug: 'published', status: BlogPostStatus.PUBLISHED }),
-          makeBlogPost({
-            slug: 'draft',
-            status: BlogPostStatus.DRAFT,
-            tags: [],
-          }),
-          makeBlogPost({ slug: 'archived', status: BlogPostStatus.ARCHIVED }),
-        ]),
+        findAll: vi
+          .fn()
+          .mockResolvedValue([
+            published().withSlug('published').now(),
+            BlogPostBuilder.build()
+              .withSlug('draft')
+              .withStatus(BlogPostStatus.DRAFT)
+              .withTags([])
+              .now(),
+            BlogPostBuilder.build()
+              .withSlug('archived')
+              .withStatus(BlogPostStatus.ARCHIVED)
+              .now(),
+          ]),
       });
 
       const result = await new ListBlogPosts(repo).execute({ locale: 'en-US' });
@@ -181,7 +178,9 @@ describe('ListBlogPosts', () => {
 
     it('should expose the featured flag from the domain object', async () => {
       const repo = makeRepository({
-        findAll: vi.fn().mockResolvedValue([makeBlogPost({ featured: true })]),
+        findAll: vi
+          .fn()
+          .mockResolvedValue([published().withFeatured(true).now()]),
       });
 
       const result = await new ListBlogPosts(repo).execute({ locale: 'en-US' });

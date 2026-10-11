@@ -5,17 +5,24 @@ import Image from 'next/image';
 
 import { Link } from '~/i18n/routing';
 import { formatPublishedAt } from '~features/blog/formatPublishedAt';
+import { blogPostPath } from '~features/blog/paths';
 
 export interface IPostCardProps {
   post: BlogPostSummaryDTO;
   locale: string;
+  /** `h3` when the card sits under a section heading (e.g. a month). */
+  headingLevel?: 'h2' | 'h3';
 }
 
-export function PostCard({ post, locale }: IPostCardProps) {
+export function PostCard({
+  post,
+  locale,
+  headingLevel: Heading = 'h2',
+}: IPostCardProps) {
   const { slug, title, description, publishedAt, tags, thumbnailImage } = post;
 
   return (
-    <Link href={`/blog/${slug}`} className="group block">
+    <Link href={blogPostPath(publishedAt, slug)} className="group block">
       <article className="flex flex-col overflow-hidden rounded-card bg-surface shadow-drop-sm transition-shadow group-hover:shadow-drop-md sm:flex-row">
         {thumbnailImage && (
           <div className="relative aspect-[16/9] shrink-0 overflow-hidden bg-surface-sunken sm:aspect-auto sm:w-56">
@@ -37,7 +44,9 @@ export function PostCard({ post, locale }: IPostCardProps) {
             {formatPublishedAt(publishedAt, locale)}
           </time>
 
-          <h2 className="text-heading-h5 text-content-primary">{title}</h2>
+          <Heading className="text-heading-h5 text-content-primary">
+            {title}
+          </Heading>
 
           <p className="text-body-sm line-clamp-2 text-content-secondary">
             {description}

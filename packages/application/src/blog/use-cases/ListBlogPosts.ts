@@ -1,4 +1,3 @@
-import { BlogPost } from '@repo/core/blog';
 import { DomainError, Either, Locale, left, right } from '@repo/core/shared';
 
 import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
@@ -7,6 +6,7 @@ import { BlogPostSummaryDTO } from '../dtos/BlogPostSummaryDTO';
 import { IBlogPostRepository } from '../ports';
 import { newestFirst } from './newest-first';
 import { publishedOnly } from './published-only';
+import { toBlogPostSummaryDTO } from './to-summary-dto';
 
 export type ListBlogPostsInput = {
   locale: Locale;
@@ -25,7 +25,9 @@ export class ListBlogPosts extends UseCase<
   ): Promise<Either<DomainError, BlogPostSummaryDTO[]>> {
     try {
       const posts = newestFirst(publishedOnly(await this.repository.findAll()));
-      return right(posts.map((post) => this.toDTO(post, input.locale)));
+      return right(
+        posts.map((post) => toBlogPostSummaryDTO(post, input.locale)),
+      );
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('[ListBlogPosts] Failed to fetch blog posts:', error);
@@ -35,33 +37,5 @@ export class ListBlogPosts extends UseCase<
         }),
       );
     }
-  }
-
-  private toDTO(post: BlogPost, locale: Locale): BlogPostSummaryDTO {
-    return {
-      slug: post.slug.value,
-      title: post.title.get(locale),
-      description: post.description.get(locale),
-      publishedAt: post.publishedAt.value,
-      featured: post.featured,
-      tags: post.tags.map((tag) => tag.value),
-      author: {
-        name: post.author.name.value,
-        avatarUrl: post.author.avatarUrl.value,
-        url: post.author.url?.value,
-      },
-      coverImage: post.coverImage
-        ? {
-            url: post.coverImage.url.value,
-            alt: post.coverImage.alt.get(locale),
-          }
-        : undefined,
-      thumbnailImage: post.thumbnailImage
-        ? {
-            url: post.thumbnailImage.url.value,
-            alt: post.thumbnailImage.alt.get(locale),
-          }
-        : undefined,
-    };
   }
 }

@@ -1,10 +1,12 @@
 /**
  * @vitest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { PrevNextNav } from '~features/blog/PrevNextNav';
+
+import { renderServerComponent } from '../../../helpers/renderServerComponent';
 
 vi.mock('next-intl/server', () => ({
   getTranslations: async () => (key: string) =>
@@ -13,22 +15,6 @@ vi.mock('next-intl/server', () => ({
       olderPost: 'Older post',
       postNavigation: 'Post navigation',
     })[key],
-}));
-
-vi.mock('~/i18n/routing', () => ({
-  Link: ({
-    href,
-    children,
-    className,
-  }: {
-    href: string;
-    children: React.ReactNode;
-    className?: string;
-  }) => (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  ),
 }));
 
 const NEWER = {
@@ -44,31 +30,36 @@ const OLDER = {
 
 describe('PrevNextNav', () => {
   it('should render nothing when there is neither a newer nor an older post', async () => {
-    const { container } = render(await PrevNextNav({ locale: 'en-US' }));
+    const { container } = await renderServerComponent(
+      PrevNextNav({ locale: 'en-US' }),
+    );
 
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('should link to the newer and older posts with locale-aware hrefs', async () => {
-    render(await PrevNextNav({ newer: NEWER, older: OLDER, locale: 'en-US' }));
+  it('should link to the newer and older posts with dated, locale-prefixed hrefs', async () => {
+    await renderServerComponent(
+      PrevNextNav({ newer: NEWER, older: OLDER, locale: 'es' }),
+      { locale: 'es' },
+    );
 
     const nav = screen.getByRole('navigation', { name: 'Post navigation' });
     expect(nav).toBeInTheDocument();
 
     expect(screen.getByText('The Newest Post').closest('a')).toHaveAttribute(
       'href',
-      '/blog/newest-post',
+      '/es/blog/2026/08/newest-post',
     );
     expect(screen.getByText('The Oldest Post').closest('a')).toHaveAttribute(
       'href',
-      '/blog/oldest-post',
+      '/es/blog/2026/08/oldest-post',
     );
     expect(screen.getByText('Newer post')).toBeInTheDocument();
     expect(screen.getByText('Older post')).toBeInTheDocument();
   });
 
   it('should render only the older link when there is no newer post', async () => {
-    render(await PrevNextNav({ older: OLDER, locale: 'en-US' }));
+    await renderServerComponent(PrevNextNav({ older: OLDER, locale: 'en-US' }));
 
     expect(screen.getByText('The Oldest Post')).toBeInTheDocument();
     expect(screen.queryByText('Newer post')).not.toBeInTheDocument();

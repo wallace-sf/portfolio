@@ -1,182 +1,191 @@
-import { Prisma } from '@prisma/client';
-import { beforeEach, describe, expect, it } from 'vitest';
-
+import { PrismaClient } from '@prisma/client';
 import { BlogPostStatus } from '@repo/core/blog';
 import { Slug } from '@repo/core/shared';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { prisma } from '../../../src/prisma/client';
 import { PrismaBlogPostRepository } from '../../../src/repositories/blog/PrismaBlogPostRepository';
-import { buildPrismaBlogPost } from '../../factories/prisma-blog-post.factory';
+import { buildPrismaBlogPostCreateInput } from '../../factories/prisma-blog-post.factory';
+import { withRollback } from '../../support/withRollback';
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    'DATABASE_URL not set — integration tests require a live database',
-  );
+// Use DIRECT_URL to bypass PgBouncer — prepared statements don't work with the pooler
+const db = new PrismaClient({
+  datasourceUrl: process.env.DIRECT_URL,
+});
+
+// Skipped as a whole (hooks included) when there is no reachable database —
+// a fresh clone or a paused dev project must not fail the @repo/infra suite.
+// Run explicitly with `pnpm --filter @repo/infra test:integration`.
+const missingDbEnv = !process.env.DIRECT_URL;
+
+function slugOf(raw: string): Slug {
+  const result = Slug.create(raw);
+  if (result.isLeft()) throw result.value;
+  return result.value;
 }
 
-type PrismaBlogPostRow = ReturnType<typeof buildPrismaBlogPost>;
+type Ctx = { tx: PrismaClient; repo: PrismaBlogPostRepository };
 
-function toCreateInput(row: PrismaBlogPostRow): Prisma.BlogPostCreateManyInput {
-  return {
-    ...row,
-    title: row.title as Prisma.InputJsonValue,
-    description: row.description as Prisma.InputJsonValue,
-    content: row.content as Prisma.InputJsonValue,
-    author: row.author as Prisma.InputJsonValue,
-    coverImageAlt:
-      (row.coverImageAlt as Prisma.InputJsonValue | null) ?? Prisma.JsonNull,
-    thumbnailImageAlt:
-      (row.thumbnailImageAlt as Prisma.InputJsonValue | null) ??
-      Prisma.JsonNull,
-  };
+/**
+ * Runs a test against an empty `BlogPost` table inside a rolled-back
+ * transaction: the dev posts are hidden from the test, never deleted.
+ */
+function inEmptyTable(fn: (ctx: Ctx) => Promise<void>) {
+  return () =>
+    withRollback(db, async (tx) => {
+      await tx.blogPost.deleteMany({});
+      await fn({ tx, repo: new PrismaBlogPostRepository(tx) });
+    });
 }
 
-describe('PrismaBlogPostRepository (integration)', () => {
-  const repo = new PrismaBlogPostRepository(prisma);
+beforeAll(async () => {
+  if (missingDbEnv) return;
+  await db.$connect();
+});
 
-  beforeEach(async () => {
-    await prisma.blogPost.deleteMany({});
-  });
+afterAll(async () => {
+  if (missingDbEnv) return;
+  await db.$disconnect();
+});
 
+describe.skipIf(missingDbEnv)('PrismaBlogPostRepository (integration)', () => {
   describe('findAll', () => {
-    it('should return all non-deleted posts ordered by publishedAt desc', async () => {
-      const post1 = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000001',
-        slug: 'post-1',
-        publishedAt: new Date('2026-01-01'),
-      });
-      const post2 = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000002',
-        slug: 'post-2',
-        publishedAt: new Date('2026-01-15'),
-      });
-      const post3 = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000003',
-        slug: 'post-3',
-        publishedAt: new Date('2026-01-10'),
-      });
+    it(
+      'should return all non-deleted posts ordered by publishedAt desc',
+      inEmptyTable(async ({ tx, repo }) => {
+        await tx.blogPost.createMany({
+          data: [
+            buildPrismaBlogPostCreateInput({
+              slug: 'post-1',
+              publishedAt: new Date('2026-01-01'),
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'post-2',
+              publishedAt: new Date('2026-01-15'),
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'post-3',
+              publishedAt: new Date('2026-01-10'),
+            }),
+          ],
+        });
 
-      await prisma.blogPost.createMany({
-        data: [post1, post2, post3].map(toCreateInput),
-      });
+        const posts = await repo.findAll();
 
-      const posts = await repo.findAll();
+        expect(posts.map((p) => p.slug.value)).toEqual([
+          'post-2',
+          'post-3',
+          'post-1',
+        ]);
+      }),
+    );
 
-      expect(posts).toHaveLength(3);
-      expect(posts[0]!.slug.value).toBe('post-2');
-      expect(posts[1]!.slug.value).toBe('post-3');
-      expect(posts[2]!.slug.value).toBe('post-1');
-    });
+    it(
+      'should exclude soft-deleted posts from results',
+      inEmptyTable(async ({ tx, repo }) => {
+        await tx.blogPost.createMany({
+          data: [
+            buildPrismaBlogPostCreateInput({
+              slug: 'active-post',
+              deletedAt: null,
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'deleted-post',
+              deletedAt: new Date(),
+            }),
+          ],
+        });
 
-    it('should exclude soft-deleted posts from results', async () => {
-      const activePost = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000001',
-        slug: 'active-post',
-        deletedAt: null,
-      });
-      const deletedPost = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000002',
-        slug: 'deleted-post',
-        deletedAt: new Date(),
-      });
+        const posts = await repo.findAll();
 
-      await prisma.blogPost.createMany({
-        data: [activePost, deletedPost].map(toCreateInput),
-      });
+        expect(posts).toHaveLength(1);
+        expect(posts[0]!.slug.value).toBe('active-post');
+      }),
+    );
 
-      const posts = await repo.findAll();
+    it(
+      'should return posts with any status (DRAFT, PUBLISHED, ARCHIVED)',
+      inEmptyTable(async ({ tx, repo }) => {
+        await tx.blogPost.createMany({
+          data: [
+            buildPrismaBlogPostCreateInput({
+              slug: 'draft-post',
+              status: 'DRAFT',
+              tags: [],
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'published-post',
+              status: 'PUBLISHED',
+            }),
+            buildPrismaBlogPostCreateInput({
+              slug: 'archived-post',
+              status: 'ARCHIVED',
+            }),
+          ],
+        });
 
-      expect(posts).toHaveLength(1);
-      expect(posts[0]!.slug.value).toBe('active-post');
-    });
+        const posts = await repo.findAll();
 
-    it('should return posts with any status (DRAFT, PUBLISHED, ARCHIVED)', async () => {
-      const draft = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000001',
-        slug: 'draft-post',
-        status: 'DRAFT',
-        tags: [],
-      });
-      const published = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000002',
-        slug: 'published-post',
-        status: 'PUBLISHED',
-      });
-      const archived = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000003',
-        slug: 'archived-post',
-        status: 'ARCHIVED',
-      });
+        expect(posts.map((p) => p.status).sort()).toEqual(
+          [
+            BlogPostStatus.ARCHIVED,
+            BlogPostStatus.DRAFT,
+            BlogPostStatus.PUBLISHED,
+          ].sort(),
+        );
+      }),
+    );
 
-      await prisma.blogPost.createMany({
-        data: [draft, published, archived].map(toCreateInput),
-      });
+    it(
+      'should return empty array when no posts exist',
+      inEmptyTable(async ({ repo }) => {
+        const posts = await repo.findAll();
 
-      const posts = await repo.findAll();
-
-      expect(posts).toHaveLength(3);
-      expect(posts.some((p) => p.status === BlogPostStatus.DRAFT)).toBe(true);
-      expect(posts.some((p) => p.status === BlogPostStatus.PUBLISHED)).toBe(
-        true,
-      );
-      expect(posts.some((p) => p.status === BlogPostStatus.ARCHIVED)).toBe(
-        true,
-      );
-    });
-
-    it('should return empty array when no posts exist', async () => {
-      const posts = await repo.findAll();
-
-      expect(posts).toEqual([]);
-    });
+        expect(posts).toEqual([]);
+      }),
+    );
   });
 
   describe('findBySlug', () => {
-    it('should return BlogPost when slug exists and post is not deleted', async () => {
-      const row = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000001',
-        slug: 'existing-post',
-        deletedAt: null,
-      });
+    it(
+      'should return BlogPost when slug exists and post is not deleted',
+      inEmptyTable(async ({ tx, repo }) => {
+        await tx.blogPost.create({
+          data: buildPrismaBlogPostCreateInput({
+            slug: 'existing-post',
+            deletedAt: null,
+          }),
+        });
 
-      await prisma.blogPost.create({ data: toCreateInput(row) });
+        const post = await repo.findBySlug(slugOf('existing-post'));
 
-      const result = Slug.create('existing-post');
-      expect(result.isRight()).toBe(true);
-      const slug = result.value as Slug;
+        expect(post).not.toBeNull();
+        expect(post!.slug.value).toBe('existing-post');
+      }),
+    );
 
-      const post = await repo.findBySlug(slug);
+    it(
+      'should return null when slug does not exist',
+      inEmptyTable(async ({ repo }) => {
+        const post = await repo.findBySlug(slugOf('non-existent'));
 
-      expect(post).not.toBeNull();
-      expect(post!.slug.value).toBe('existing-post');
-    });
+        expect(post).toBeNull();
+      }),
+    );
 
-    it('should return null when slug does not exist', async () => {
-      const result = Slug.create('non-existent');
-      expect(result.isRight()).toBe(true);
-      const slug = result.value as Slug;
+    it(
+      'should return null when post with slug is soft-deleted',
+      inEmptyTable(async ({ tx, repo }) => {
+        await tx.blogPost.create({
+          data: buildPrismaBlogPostCreateInput({
+            slug: 'deleted-post',
+            deletedAt: new Date(),
+          }),
+        });
 
-      const post = await repo.findBySlug(slug);
+        const post = await repo.findBySlug(slugOf('deleted-post'));
 
-      expect(post).toBeNull();
-    });
-
-    it('should return null when post with slug is soft-deleted', async () => {
-      const row = buildPrismaBlogPost({
-        id: '00000000-0000-0000-0000-000000000001',
-        slug: 'deleted-post',
-        deletedAt: new Date(),
-      });
-
-      await prisma.blogPost.create({ data: toCreateInput(row) });
-
-      const result = Slug.create('deleted-post');
-      expect(result.isRight()).toBe(true);
-      const slug = result.value as Slug;
-
-      const post = await repo.findBySlug(slug);
-
-      expect(post).toBeNull();
-    });
+        expect(post).toBeNull();
+      }),
+    );
   });
 });

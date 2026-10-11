@@ -5,7 +5,7 @@ import {
   ValidationError,
 } from '~/index';
 
-import { ProfessionalValueBuilder } from '../helpers';
+import { ProfessionalValueBuilder } from '~/testing';
 
 describe('ProfessionalValue', () => {
   describe('when created from valid props', () => {

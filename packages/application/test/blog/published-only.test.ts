@@ -1,27 +1,11 @@
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it } from 'vitest';
-
-import { BlogPost, BlogPostStatus, IBlogPostProps } from '@repo/core/blog';
 
 import { publishedOnly } from '~/blog/use-cases/published-only';
 
-const BASE: IBlogPostProps = {
-  slug: 'a-post',
-  title: { 'en-US': 'T', 'pt-BR': 'T', es: 'T' },
-  description: { 'en-US': 'D', 'pt-BR': 'D', es: 'D' },
-  content: { 'en-US': 'C', 'pt-BR': 'C', es: 'C' },
-  tags: ['nextjs'],
-  author: {
-    name: 'Test Author',
-    avatarUrl: 'https://example.com/avatar.jpg',
-    url: 'https://example.com',
-  },
-  publishedAt: '2026-08-01T00:00:00.000Z',
-};
-
 function makePost(slug: string, status: BlogPostStatus): BlogPost {
-  const result = BlogPost.create({ ...BASE, slug, status });
-  if (result.isLeft()) throw result.value;
-  return result.value;
+  return BlogPostBuilder.build().withSlug(slug).withStatus(status).now();
 }
 
 describe('publishedOnly', () => {

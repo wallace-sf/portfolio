@@ -28,7 +28,9 @@ export type PrismaProject = {
   deletedAt: Date | null;
 };
 
-export function buildPrismaProject(overrides?: Partial<PrismaProject>): PrismaProject {
+export function buildPrismaProject(
+  overrides?: Partial<PrismaProject>,
+): PrismaProject {
   const id = overrides?.id ?? crypto.randomUUID();
 
   return {
@@ -37,10 +39,16 @@ export function buildPrismaProject(overrides?: Partial<PrismaProject>): PrismaPr
     coverImageUrl: 'https://example.com/cover.jpg',
     coverImageAlt: { 'en-US': 'Project cover', 'pt-BR': 'Capa do projeto' },
     thumbnailImageUrl: 'https://example.com/thumbnail.webp',
-    thumbnailImageAlt: { 'en-US': 'Project thumbnail', 'pt-BR': 'Thumbnail do projeto' },
+    thumbnailImageAlt: {
+      'en-US': 'Project thumbnail',
+      'pt-BR': 'Thumbnail do projeto',
+    },
     title: { 'en-US': 'My Project', 'pt-BR': 'Meu Projeto' },
     caption: { 'en-US': 'A brief description', 'pt-BR': 'Uma breve descrição' },
-    content: { 'en-US': 'Detailed project content.', 'pt-BR': 'Conteúdo detalhado do projeto.' },
+    content: {
+      'en-US': 'Detailed project content.',
+      'pt-BR': 'Conteúdo detalhado do projeto.',
+    },
     theme: null,
     summary: null,
     objectives: null,
@@ -58,5 +66,30 @@ export function buildPrismaProject(overrides?: Partial<PrismaProject>): PrismaPr
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
     deletedAt: null,
     ...overrides,
+  };
+}
+
+/**
+ * A factory row as a `create`/`createMany` input: JSON columns cast to
+ * `InputJsonValue`, absent optional JSON as `Prisma.JsonNull` (as
+ * `ProjectMapper` writes it).
+ */
+export function buildPrismaProjectCreateInput(
+  overrides?: Partial<PrismaProject>,
+): Prisma.ProjectCreateManyInput & Pick<PrismaProject, 'id' | 'slug'> {
+  const row = buildPrismaProject(overrides);
+
+  return {
+    ...row,
+    coverImageAlt: row.coverImageAlt as Prisma.InputJsonValue,
+    thumbnailImageAlt: row.thumbnailImageAlt as Prisma.InputJsonValue,
+    title: row.title as Prisma.InputJsonValue,
+    caption: row.caption as Prisma.InputJsonValue,
+    content: row.content as Prisma.InputJsonValue,
+    theme: (row.theme as Prisma.InputJsonValue | null) ?? Prisma.JsonNull,
+    summary: (row.summary as Prisma.InputJsonValue | null) ?? Prisma.JsonNull,
+    objectives:
+      (row.objectives as Prisma.InputJsonValue | null) ?? Prisma.JsonNull,
+    role: (row.role as Prisma.InputJsonValue | null) ?? Prisma.JsonNull,
   };
 }

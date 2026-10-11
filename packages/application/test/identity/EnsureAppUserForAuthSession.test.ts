@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import { IUserProps, IUserRepository, Role, User } from '@repo/core/identity';
+import { IUserRepository, Role, User } from '@repo/core/identity';
 import { DomainError } from '@repo/core/shared';
+import { UserBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { EnsureAppUserForAuthSession } from '../../src/identity/use-cases/EnsureAppUserForAuthSession';
 
@@ -13,20 +13,9 @@ const VALID_AUTH_SUBJECT = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const ANOTHER_AUTH_SUBJECT = '550e8400-e29b-41d4-a716-446655440000';
 const VALID_EMAIL = 'user@example.com';
 
-const BASE_USER_PROPS: IUserProps = {
-  name: 'Test User',
-  email: VALID_EMAIL,
-  role: Role.VISITOR,
-  authSubject: VALID_AUTH_SUBJECT,
-};
-
-function makeUser(overrides: Partial<IUserProps> = {}): User {
-  const result = User.create({ ...BASE_USER_PROPS, ...overrides });
-  if (result.isLeft()) throw new Error(`makeUser failed: ${result.value.message}`);
-  return result.value;
-}
-
-function makeRepository(overrides: Partial<IUserRepository> = {}): IUserRepository {
+function makeRepository(
+  overrides: Partial<IUserRepository> = {},
+): IUserRepository {
   return {
     findById: vi.fn(),
     findByEmail: vi.fn(),
@@ -43,7 +32,10 @@ function makeRepository(overrides: Partial<IUserRepository> = {}): IUserReposito
 
 describe('EnsureAppUserForAuthSession — branch 1: found by authSubject', () => {
   it('should return Right(userId) without touching email or save', async () => {
-    const user = makeUser();
+    const user = UserBuilder.build()
+      .withEmail(VALID_EMAIL)
+      .withAuthSubject(VALID_AUTH_SUBJECT)
+      .now();
     const repo = makeRepository({
       findByAuthSubject: vi.fn().mockResolvedValue(user),
     });
@@ -67,7 +59,10 @@ describe('EnsureAppUserForAuthSession — branch 1: found by authSubject', () =>
 
 describe('EnsureAppUserForAuthSession — branch 2: link authSubject to existing user', () => {
   it('should call linkAuthSubject and return Right(userId)', async () => {
-    const user = makeUser({ authSubject: null });
+    const user = UserBuilder.build()
+      .withEmail(VALID_EMAIL)
+      .withAuthSubject(null)
+      .now();
     const repo = makeRepository({
       findByAuthSubject: vi.fn().mockResolvedValue(null),
       findByEmail: vi.fn().mockResolvedValue(user),
@@ -82,7 +77,9 @@ describe('EnsureAppUserForAuthSession — branch 2: link authSubject to existing
     expect(result.isRight()).toBe(true);
     expect(result.value).toBe(user.id.value);
     expect(repo.linkAuthSubject).toHaveBeenCalledOnce();
-    const [calledUserId, calledSubject] = (repo.linkAuthSubject as ReturnType<typeof vi.fn>).mock.calls[0]!;
+    const [calledUserId, calledSubject] = (
+      repo.linkAuthSubject as ReturnType<typeof vi.fn>
+    ).mock.calls[0]!;
     expect(calledUserId.value).toBe(user.id.value);
     expect(calledSubject.value).toBe(VALID_AUTH_SUBJECT);
     expect(repo.save).not.toHaveBeenCalled();
@@ -95,7 +92,10 @@ describe('EnsureAppUserForAuthSession — branch 2: link authSubject to existing
 
 describe('EnsureAppUserForAuthSession — branch 3: auth subject conflict', () => {
   it('should return Left(AUTH_SUBJECT_CONFLICT) when email is linked to a different authSubject', async () => {
-    const user = makeUser({ authSubject: ANOTHER_AUTH_SUBJECT });
+    const user = UserBuilder.build()
+      .withEmail(VALID_EMAIL)
+      .withAuthSubject(ANOTHER_AUTH_SUBJECT)
+      .now();
     const repo = makeRepository({
       findByAuthSubject: vi.fn().mockResolvedValue(null),
       findByEmail: vi.fn().mockResolvedValue(user),
@@ -134,7 +134,8 @@ describe('EnsureAppUserForAuthSession — branch 4: create new VISITOR user', ()
     expect(result.isRight()).toBe(true);
     expect(typeof result.value).toBe('string');
     expect(repo.save).toHaveBeenCalledOnce();
-    const saved = (repo.save as ReturnType<typeof vi.fn>).mock.calls[0]![0] as User;
+    const saved = (repo.save as ReturnType<typeof vi.fn>).mock
+      .calls[0]![0] as User;
     expect(saved.name.value).toBe('New User');
     expect(saved.email.value).toBe(VALID_EMAIL);
     expect(saved.role).toBe(Role.VISITOR);
@@ -153,7 +154,8 @@ describe('EnsureAppUserForAuthSession — branch 4: create new VISITOR user', ()
       email: 'johndoe@example.com',
     });
 
-    const saved = (repo.save as ReturnType<typeof vi.fn>).mock.calls[0]![0] as User;
+    const saved = (repo.save as ReturnType<typeof vi.fn>).mock
+      .calls[0]![0] as User;
     expect(saved.name.value).toBe('johndoe');
   });
 });

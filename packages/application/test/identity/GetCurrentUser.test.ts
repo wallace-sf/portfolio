@@ -1,10 +1,10 @@
+import { IUserRepository, Role } from '@repo/core/identity';
+import { DomainError, NotFoundError } from '@repo/core/shared';
+import { UserBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
-import { IUserProps, IUserRepository, Role, User } from '@repo/core/identity';
-import { DomainError, NotFoundError } from '@repo/core/shared';
-
-import { GetCurrentUser } from '../../src/identity/use-cases/GetCurrentUser';
 import { UserDTO } from '../../src/identity/dtos/UserDTO';
+import { GetCurrentUser } from '../../src/identity/use-cases/GetCurrentUser';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -12,19 +12,9 @@ import { UserDTO } from '../../src/identity/dtos/UserDTO';
 
 const VALID_UUID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 
-const BASE_USER_PROPS: IUserProps = {
-  name: 'Admin User',
-  email: 'admin@example.com',
-  role: Role.ADMIN,
-};
-
-function makeUser(overrides: Partial<IUserProps> = {}): User {
-  const result = User.create({ ...BASE_USER_PROPS, ...overrides });
-  if (result.isLeft()) throw new Error(`makeUser failed: ${result.value.message}`);
-  return result.value;
-}
-
-function makeRepository(overrides: Partial<IUserRepository> = {}): IUserRepository {
+function makeRepository(
+  overrides: Partial<IUserRepository> = {},
+): IUserRepository {
   return {
     findById: vi.fn(),
     findByEmail: vi.fn(),
@@ -42,8 +32,10 @@ function makeRepository(overrides: Partial<IUserRepository> = {}): IUserReposito
 describe('GetCurrentUser', () => {
   describe('execute()', () => {
     it('should return Right with UserDTO when user exists', async () => {
-      const user = makeUser();
-      const repo = makeRepository({ findById: vi.fn().mockResolvedValue(user) });
+      const user = UserBuilder.build().now();
+      const repo = makeRepository({
+        findById: vi.fn().mockResolvedValue(user),
+      });
       const useCase = new GetCurrentUser(repo);
 
       const result = await useCase.execute({ userId: VALID_UUID });
@@ -53,7 +45,9 @@ describe('GetCurrentUser', () => {
     });
 
     it('should return Left with NotFoundError when user does not exist', async () => {
-      const repo = makeRepository({ findById: vi.fn().mockResolvedValue(null) });
+      const repo = makeRepository({
+        findById: vi.fn().mockResolvedValue(null),
+      });
       const useCase = new GetCurrentUser(repo);
 
       const result = await useCase.execute({ userId: VALID_UUID });
@@ -87,8 +81,14 @@ describe('GetCurrentUser', () => {
     });
 
     it('should map all DTO fields correctly', async () => {
-      const user = makeUser({ name: 'Test User', email: 'test@example.com', role: Role.VISITOR });
-      const repo = makeRepository({ findById: vi.fn().mockResolvedValue(user) });
+      const user = UserBuilder.build()
+        .withName('Test User')
+        .withEmail('test@example.com')
+        .withRole(Role.VISITOR)
+        .now();
+      const repo = makeRepository({
+        findById: vi.fn().mockResolvedValue(user),
+      });
       const useCase = new GetCurrentUser(repo);
 
       const result = await useCase.execute({ userId: VALID_UUID });

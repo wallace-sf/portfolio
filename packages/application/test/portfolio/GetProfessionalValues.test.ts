@@ -1,31 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
-
-import {
-  IProfessionalValueRepository,
-  IProfessionalValueProps,
-  ProfessionalValue,
-} from '@repo/core/portfolio';
+import { IProfessionalValueRepository } from '@repo/core/portfolio';
 import { DomainError } from '@repo/core/shared';
+import { ProfessionalValueBuilder } from '@repo/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ProfessionalValueDTO } from '~/portfolio/dtos/ProfessionalValueDTO';
 import { GetProfessionalValues } from '~/portfolio/use-cases/GetProfessionalValues';
-
-const BASE_PROPS: IProfessionalValueProps = {
-  icon: 'material-symbols:diamond',
-  content: {
-    'en-US': 'Delivering high quality products',
-    'pt-BR': 'Entrega de produtos de alta qualidade',
-  },
-};
-
-function makeValue(
-  overrides: Partial<IProfessionalValueProps> = {},
-): ProfessionalValue {
-  const result = ProfessionalValue.create({ ...BASE_PROPS, ...overrides });
-  if (result.isLeft())
-    throw new Error(`makeValue failed: ${result.value.message}`);
-  return result.value;
-}
 
 function makeRepository(
   overrides: Partial<IProfessionalValueRepository> = {},
@@ -37,6 +16,16 @@ function makeRepository(
     delete: vi.fn(),
     ...overrides,
   };
+}
+
+/** Every field the DTO maps, set explicitly — for the mapping tests. */
+function valueWithAllFields() {
+  return ProfessionalValueBuilder.build()
+    .withIcon('material-symbols:diamond')
+    .withContent({
+      'en-US': 'Delivering high quality products',
+      'pt-BR': 'Entrega de produtos de alta qualidade',
+    });
 }
 
 describe('GetProfessionalValues', () => {
@@ -52,7 +41,7 @@ describe('GetProfessionalValues', () => {
     });
 
     it('should return Right with mapped DTOs when repository returns values', async () => {
-      const value = makeValue();
+      const value = ProfessionalValueBuilder.build().now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([value]),
       });
@@ -65,7 +54,7 @@ describe('GetProfessionalValues', () => {
     });
 
     it('should map content using the requested locale', async () => {
-      const value = makeValue();
+      const value = valueWithAllFields().now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([value]),
       });
@@ -82,9 +71,9 @@ describe('GetProfessionalValues', () => {
     });
 
     it('should fall back to en-US when locale translation is missing', async () => {
-      const value = makeValue({
-        content: { 'en-US': 'English only content' },
-      });
+      const value = ProfessionalValueBuilder.build()
+        .withContent({ 'en-US': 'English only content' })
+        .now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([value]),
       });
@@ -97,7 +86,7 @@ describe('GetProfessionalValues', () => {
     });
 
     it('should map icon and id fields correctly', async () => {
-      const value = makeValue();
+      const value = valueWithAllFields().now();
       const repo = makeRepository({
         findAll: vi.fn().mockResolvedValue([value]),
       });

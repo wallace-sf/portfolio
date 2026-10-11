@@ -1,6 +1,6 @@
 import { Skill, SkillFactory, SkillType, ValidationError } from '~/index';
 
-import { SkillBuilder } from '../helpers';
+import { SkillBuilder } from '~/testing';
 
 describe('SkillFactory', () => {
   describe('bulk()', () => {

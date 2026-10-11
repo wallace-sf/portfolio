@@ -9,7 +9,7 @@ import {
   ValidationError,
 } from '~/index';
 
-import { ProjectBuilder } from '../helpers';
+import { ProjectBuilder } from '~/testing';
 
 describe('Project', () => {
   describe('when created from valid props', () => {
