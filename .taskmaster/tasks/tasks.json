@@ -8887,7 +8887,7 @@
         "dependencies": [
           "3"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -8952,7 +8952,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Break down into: (1) creating buildBreadcrumbListJsonLd in packages/seo/src/breadcrumbs.ts with interfaces (IBreadcrumbListItem, IBreadcrumbListNode) and export from index.ts, (2) refactoring buildProjectJsonLd in apps/site to use the new shared function while keeping output byte-identical, (3) creating buildBlogBreadcrumbs helper in apps/site that constructs both visible (BreadcrumbItem[]) and JSON-LD (IBreadcrumbListItem[]) trails based on year/month/post context, (4) integrating breadcrumbs into post and archive pages (rendering Breadcrumb component + JsonLd script), and (5) unit tests for breadcrumb builder, regression test for buildProjectJsonLd, and integration tests verifying breadcrumb rendering."
+        "expansionPrompt": "Break down into: (1) creating buildBreadcrumbListJsonLd in packages/seo/src/breadcrumbs.ts with interfaces (IBreadcrumbListItem, IBreadcrumbListNode) and export from index.ts, (2) refactoring buildProjectJsonLd in apps/site to use the new shared function while keeping output byte-identical, (3) creating buildBlogBreadcrumbs helper in apps/site that constructs both visible (BreadcrumbItem[]) and JSON-LD (IBreadcrumbListItem[]) trails based on year/month/post context, (4) integrating breadcrumbs into post and archive pages (rendering Breadcrumb component + JsonLd script), and (5) unit tests for breadcrumb builder, regression test for buildProjectJsonLd, and integration tests verifying breadcrumb rendering.",
+        "updatedAt": "2026-10-11T01:05:39.479Z"
       },
       {
         "id": "5",
@@ -9045,7 +9046,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-08T04:34:42.843Z",
+      "lastModified": "2026-10-11T01:05:39.479Z",
       "taskCount": 5,
       "completedCount": 3,
       "tags": [
