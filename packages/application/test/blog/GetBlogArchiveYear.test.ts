@@ -6,6 +6,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { IBlogPostRepository } from '~/blog/ports';
 import { GetBlogArchiveYear } from '~/blog/use-cases/GetBlogArchiveYear';
 
+import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -31,15 +33,11 @@ const POSTS = [
   post('old-draft', '2024-03-01T10:00:00.000Z', BlogPostStatus.DRAFT),
 ];
 
-function makeRepository(
-  overrides: Partial<IBlogPostRepository> = {},
-): IBlogPostRepository {
-  return {
+const makeRepository = (overrides: Partial<IBlogPostRepository> = {}) =>
+  makeBlogPostRepository({
     findAll: vi.fn().mockResolvedValue(POSTS),
-    findBySlug: vi.fn(),
     ...overrides,
-  };
-}
+  });
 
 const failingRepository = () =>
   makeRepository({ findAll: vi.fn().mockRejectedValue(new Error('db down')) });

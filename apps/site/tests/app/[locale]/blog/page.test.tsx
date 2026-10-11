@@ -1,25 +1,20 @@
-import { BlogPostStatus } from '@repo/core/blog';
-import { BlogPostBuilder } from '@repo/core/testing';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import type { IBlogPostRepository } from '@repo/application/blog';
+import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { screen, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import BlogListingPage, { generateMetadata } from '~/app/[locale]/blog/page';
 
-vi.mock('~/i18n/routing', () => ({
-  Link: ({
-    href,
-    children,
-    className,
-  }: {
-    href: string;
-    children: React.ReactNode;
-    className?: string;
-  }) => (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  ),
-}));
+import { blogPost } from '../../../helpers/blogPosts';
+import { renderServerComponent } from '../../../helpers/renderServerComponent';
+
+// Real components, real message catalogues and the real next-intl `Link`;
+// only boundaries (next-intl server APIs, next/image, the container) are mocked.
+
+vi.mock(
+  'next-intl/server',
+  async () => (await import('../../../helpers/intlServerMock')).intlServerMock,
+);
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
@@ -28,120 +23,121 @@ vi.mock('next/image', () => ({
   ),
 }));
 
-vi.mock('next-intl/server', () => ({
-  setRequestLocale: vi.fn(),
-  getTranslations: async () => (key: string) =>
-    ({
-      title: 'Blog',
-      subtitle: 'Notes on TypeScript.',
-      empty: 'No posts published yet.',
-      description: 'Technical articles.',
-    })[key],
-}));
+let posts: BlogPost[] = [];
+let failure: Error | null = null;
 
-function publishedPost(slug = 'hello-blog'): BlogPostBuilder {
-  const localized = (prefix: string) => ({
-    'en-US': `${prefix} ${slug}`,
-    'pt-BR': `${prefix} ${slug}`,
-    es: `${prefix} ${slug}`,
-  });
-  return BlogPostBuilder.build()
-    .withSlug(slug)
-    .withTitle(localized('Title'))
-    .withDescription(localized('Description'))
-    .withStatus(BlogPostStatus.PUBLISHED);
-}
-
-const findAll = vi.fn();
+const inMemoryRepository: IBlogPostRepository = {
+  findAll: async () => {
+    if (failure) throw failure;
+    return posts;
+  },
+  findBySlug: async () => null,
+};
 
 vi.mock('~/lib/server/container', () => ({
-  getServerContainer: () => ({
-    blogPostRepository: { findAll: () => findAll(), findBySlug: vi.fn() },
-  }),
+  getServerContainer: () => ({ blogPostRepository: inMemoryRepository }),
 }));
 
-async function renderPage(locale = 'en-US') {
-  return render(await BlogListingPage({ params: Promise.resolve({ locale }) }));
-}
+const renderPage = (locale = 'en-US') =>
+  renderServerComponent(
+    BlogListingPage({ params: Promise.resolve({ locale }) }),
+    { locale },
+  );
+
+const renderedCardLinks = () =>
+  within(screen.getByRole('list'))
+    .getAllByRole('link')
+    .map((link) => link.getAttribute('href'));
+
+beforeEach(() => {
+  failure = null;
+  posts = [
+    blogPost('older-post', '2026-08-01T10:00:00.000Z').now(),
+    blogPost(
+      'draft-post',
+      '2026-09-20T10:00:00.000Z',
+      BlogPostStatus.DRAFT,
+    ).now(),
+    blogPost('newest-post', '2026-09-28T10:00:00.000Z').now(),
+    blogPost(
+      'archived-post',
+      '2026-09-10T10:00:00.000Z',
+      BlogPostStatus.ARCHIVED,
+    ).now(),
+  ];
+});
 
 describe('BlogListingPage', () => {
-  it('should render a card per post with title, description and tags', async () => {
-    findAll.mockResolvedValue([publishedPost().now()]);
-
-    await renderPage();
-
-    expect(screen.getByText('Title hello-blog')).toBeInTheDocument();
-    expect(screen.getByText('Description hello-blog')).toBeInTheDocument();
-    expect(screen.getByText('nextjs')).toBeInTheDocument();
-  });
-
-  it('should link each card to its dated post route', async () => {
-    findAll.mockResolvedValue([
-      publishedPost().withPublishedAt('2026-08-01').now(),
-    ]);
-
+  it('should list only published posts, newest first, when posts have mixed statuses', async () => {
     await renderPage();
 
     expect(
-      screen.getByRole('link', { name: /Title hello-blog/ }),
-    ).toHaveAttribute('href', '/blog/2026/08/hello-blog');
+      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+    ).toEqual(['Title newest-post', 'Title older-post']);
+    expect(screen.queryByText(/draft-post|archived-post/)).toBeNull();
+  });
+
+  it('should link each card to its dated, locale-prefixed post route when a locale is active', async () => {
+    await renderPage('pt-BR');
+
+    expect(renderedCardLinks()).toEqual([
+      '/pt-BR/blog/2026/09/newest-post',
+      '/pt-BR/blog/2026/08/older-post',
+    ]);
+    expect(screen.getByText('Title newest-post (pt)')).toBeInTheDocument();
   });
 
   it('should format the published date for the active locale', async () => {
-    findAll.mockResolvedValue([
-      publishedPost().withPublishedAt('2026-08-01').now(),
-    ]);
+    posts = [blogPost('only-post', '2026-08-01T10:00:00.000Z').now()];
 
-    const { container } = await renderPage('pt-BR');
+    const { container } = await renderPage('es');
     const time = container.querySelector('time');
 
-    expect(time).toHaveAttribute('datetime', '2026-08-01');
+    expect(time).toHaveAttribute('datetime', '2026-08-01T10:00:00.000Z');
     expect(time?.textContent).toBe(
-      new Intl.DateTimeFormat('pt-BR', {
+      new Intl.DateTimeFormat('es', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
         timeZone: 'UTC',
-      }).format(new Date('2026-08-01')),
+      }).format(new Date('2026-08-01T10:00:00.000Z')),
     );
   });
 
-  it('should render the thumbnail when the post has one', async () => {
-    findAll.mockResolvedValue([
-      publishedPost()
+  it('should render the thumbnail only for posts that have one', async () => {
+    posts = [
+      blogPost('with-thumb', '2026-09-01T10:00:00.000Z')
         .withThumbnailImage({
           url: 'https://cdn/thumb.webp',
           alt: { 'en-US': 'Thumb', 'pt-BR': 'Miniatura', es: 'Miniatura' },
         })
         .now(),
-    ]);
+      blogPost('without-thumb', '2026-08-01T10:00:00.000Z').now(),
+    ];
 
     await renderPage();
 
+    expect(screen.getAllByRole('img')).toHaveLength(1);
     expect(screen.getByRole('img', { name: 'Thumb' })).toHaveAttribute(
       'src',
       'https://cdn/thumb.webp',
     );
   });
 
-  it('should not render an image when the post has no thumbnail', async () => {
-    findAll.mockResolvedValue([publishedPost().now()]);
+  it('should render the empty state when no post is published', async () => {
+    posts = posts.filter((post) => post.status !== BlogPostStatus.PUBLISHED);
 
-    await renderPage();
+    await renderPage('pt-BR');
 
-    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(
+      screen.getByText('Nenhum post publicado ainda.'),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('list')).toBeNull();
   });
 
-  it('should render the empty state when there are no posts', async () => {
-    findAll.mockResolvedValue([]);
-
-    await renderPage();
-
-    expect(screen.getByText('No posts published yet.')).toBeInTheDocument();
-  });
-
-  it('should render the empty state when the repository throws', async () => {
-    findAll.mockRejectedValue(new Error('fs error'));
+  it('should render the empty state when the repository fails', async () => {
+    failure = new Error('fs error');
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     await renderPage();
 
