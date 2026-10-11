@@ -7,7 +7,9 @@
  * `ListBlogArchive` groups by, so a post's URL and its archive page agree.
  */
 
-const pad = (month: number) => String(month).padStart(2, '0');
+/** The zero-padded URL segment of a month (1–12): `9` → `'09'`. */
+export const monthSegment = (month: number): string =>
+  String(month).padStart(2, '0');
 
 /** `{ year: '2026', month: '09' }` — the URL segments of a publication date. */
 export function publicationSegments(publishedAt: string): {
@@ -17,7 +19,7 @@ export function publicationSegments(publishedAt: string): {
   const date = new Date(publishedAt);
   return {
     year: String(date.getUTCFullYear()),
-    month: pad(date.getUTCMonth() + 1),
+    month: monthSegment(date.getUTCMonth() + 1),
   };
 }
 
@@ -29,5 +31,7 @@ export function blogPostPath(publishedAt: string, slug: string): string {
 
 /** `/blog/{yyyy}` or `/blog/{yyyy}/{MM}`; `month` is 1–12. */
 export function blogArchivePath(year: number, month?: number): string {
-  return month === undefined ? `/blog/${year}` : `/blog/${year}/${pad(month)}`;
+  return month === undefined
+    ? `/blog/${year}`
+    : `/blog/${year}/${monthSegment(month)}`;
 }

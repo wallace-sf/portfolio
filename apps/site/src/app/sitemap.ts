@@ -1,4 +1,4 @@
-import { ListBlogPosts } from '@repo/application/blog';
+import { ListBlogArchive, ListBlogPosts } from '@repo/application/blog';
 import { GetPublishedProjects } from '@repo/application/portfolio';
 import { LOCALES } from '@repo/core/shared';
 import type { MetadataRoute } from 'next';
@@ -6,7 +6,7 @@ import type { MetadataRoute } from 'next';
 import { env } from '~/config/env';
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
-import { blogPostPath } from '~features/blog/paths';
+import { blogArchivePath, blogPostPath } from '~features/blog/paths';
 
 export const dynamic = 'force-static';
 
@@ -57,7 +57,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
     );
 
-    return [...staticEntries, ...projectEntries, ...blogEntries];
+    const archiveResult = await new ListBlogArchive(
+      getServerContainer().blogPostRepository,
+    ).execute({ locale: DEFAULT_LOCALE });
+
+    const archive = archiveResult.isRight() ? archiveResult.value : [];
+
+    const archivePaths = archive.flatMap(({ year, months }) => [
+      blogArchivePath(year),
+      ...months.map(({ month }) => blogArchivePath(year, month)),
+    ]);
+
+    const archiveEntries: MetadataRoute.Sitemap = LOCALES.flatMap((locale) =>
+      archivePaths.map((path) => ({
+        url: `${env.siteUrl}/${locale}${path}`,
+        lastModified: BUILD_DATE,
+        changeFrequency: 'monthly' as const,
+        priority: 0.5,
+      })),
+    );
+
+    return [
+      ...staticEntries,
+      ...projectEntries,
+      ...blogEntries,
+      ...archiveEntries,
+    ];
   } catch {
     return staticEntries;
   }

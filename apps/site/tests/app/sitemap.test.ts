@@ -27,7 +27,12 @@ const post = (slug: string, publishedAt: string, status: BlogPostStatus) =>
 const blogUrls = async () =>
   (await sitemap())
     .map(({ url }) => url)
-    .filter((url) => /\/blog\/\d{4}\//.test(url));
+    .filter((url) => /\/blog\/\d{4}\/\d{2}\/[a-z]/.test(url));
+
+const archiveUrls = async () =>
+  (await sitemap())
+    .map(({ url }) => url)
+    .filter((url) => /\/blog\/\d{4}(\/\d{2})?$/.test(url));
 
 beforeEach(() => {
   posts = [];
@@ -64,5 +69,23 @@ describe('sitemap', () => {
     const urls = (await sitemap()).map(({ url }) => url);
 
     expect(urls.some((url) => url.endsWith('/blog/hello-blog'))).toBe(false);
+  });
+
+  it('should list the year and month archives of published posts in every locale', async () => {
+    posts = [
+      post('september', '2026-09-02T10:00:00.000Z', BlogPostStatus.PUBLISHED),
+      post('december', '2025-12-24T10:00:00.000Z', BlogPostStatus.PUBLISHED),
+      post('a-draft', '2024-03-01T10:00:00.000Z', BlogPostStatus.DRAFT),
+    ];
+
+    const urls = (await archiveUrls()).map((url) => new URL(url).pathname);
+
+    expect(urls.filter((url) => url.startsWith('/pt-BR/'))).toEqual([
+      '/pt-BR/blog/2026',
+      '/pt-BR/blog/2026/09',
+      '/pt-BR/blog/2025',
+      '/pt-BR/blog/2025/12',
+    ]);
+    expect(urls).toHaveLength(12);
   });
 });
