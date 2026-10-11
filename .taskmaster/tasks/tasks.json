@@ -8965,7 +8965,7 @@
         "dependencies": [
           "4"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9041,14 +9041,15 @@
         ],
         "complexity": 8,
         "recommendedSubtasks": 6,
-        "expansionPrompt": "Break down into: (1) creating renderAsync helper for async Server Components and blog listing integration tests (4 tests verifying published-only, newest-first, dated hrefs, empty state), (2) enhancing post page integration test by removing PrevNextNav mock and testing real component with dated hrefs and locale prefix, (3) creating year archive integration tests (5 tests for filtering, ordering, month links, PostCard rendering, notFound), (4) creating month archive integration tests (4 tests for single-month filtering, ordering, localized names, notFound), (5) deleting PostCover test file and removing prop-echo tests from PostHeader, and (6) running full acceptance criteria verification (build, manual browser checks in 2+ locales, sitemap/RSS validation, 404 checks, Rich Results validator)."
+        "expansionPrompt": "Break down into: (1) creating renderAsync helper for async Server Components and blog listing integration tests (4 tests verifying published-only, newest-first, dated hrefs, empty state), (2) enhancing post page integration test by removing PrevNextNav mock and testing real component with dated hrefs and locale prefix, (3) creating year archive integration tests (5 tests for filtering, ordering, month links, PostCard rendering, notFound), (4) creating month archive integration tests (4 tests for single-month filtering, ordering, localized names, notFound), (5) deleting PostCover test file and removing prop-echo tests from PostHeader, and (6) running full acceptance criteria verification (build, manual browser checks in 2+ locales, sitemap/RSS validation, 404 checks, Rich Results validator).",
+        "updatedAt": "2026-10-11T21:42:41.806Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-11T05:56:03.068Z",
+      "lastModified": "2026-10-11T21:42:41.807Z",
       "taskCount": 5,
-      "completedCount": 4,
+      "completedCount": 5,
       "tags": [
         "blog-v2-phase-4"
       ]
