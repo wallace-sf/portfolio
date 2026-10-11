@@ -12,6 +12,7 @@ import { notFound } from 'next/navigation';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
+import { BlogBreadcrumbs } from '~features/blog/BlogBreadcrumbs';
 import { blogPostPath, publicationSegments } from '~features/blog/paths';
 import { PostBody } from '~features/blog/PostBody';
 import { PostCover } from '~features/blog/PostCover';
@@ -100,6 +101,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-8 py-4 lg:py-8">
+      <BlogBreadcrumbs locale={locale} target={post} />
+
       {post.coverImage && <PostCover image={post.coverImage} />}
 
       <PostHeader

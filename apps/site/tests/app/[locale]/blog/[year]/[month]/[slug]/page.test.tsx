@@ -6,21 +6,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import BlogPostPage from '~/app/[locale]/blog/[year]/[month]/[slug]/page';
 
 import { blogPost } from '../../../../../../helpers/blogPosts';
+import { expectBreadcrumbTrail } from '../../../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../../../helpers/renderServerComponent';
 
 // Only true boundaries are mocked: Next/next-intl server APIs, the MDX
 // compiler, next/image and the container. Every blog component and the
 // next-intl `Link` are real.
 
-vi.mock('next-intl/server', () => ({
-  setRequestLocale: vi.fn(),
-  getTranslations: async () => (key: string) =>
-    ({
-      newerPost: 'Newer post',
-      olderPost: 'Older post',
-      postNavigation: 'Post navigation',
-    })[key],
-}));
+vi.mock(
+  'next-intl/server',
+  async () =>
+    (await import('../../../../../../helpers/intlServerMock')).intlServerMock,
+);
 
 vi.mock('next-mdx-remote/rsc', () => ({
   MDXRemote: ({ source }: { source: string }) => <pre>{source}</pre>,
@@ -91,7 +88,9 @@ describe('BlogPostPage', () => {
       screen.getByRole('heading', { level: 1, name: 'Title hello-blog' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Body of the post.')).toBeInTheDocument();
-    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('navigation', { name: 'Post navigation' }),
+    ).not.toBeInTheDocument();
   });
 
   it('should link the newer and older posts with dated, locale-prefixed hrefs when the post is in the middle', async () => {
@@ -103,9 +102,9 @@ describe('BlogPostPage', () => {
 
     await renderPage('middle', '2026', '09', 'pt-BR');
 
-    const nav = screen.getByRole('navigation', { name: 'Post navigation' });
-    const newer = within(nav).getByText('Newer post').closest('a');
-    const older = within(nav).getByText('Older post').closest('a');
+    const nav = screen.getByRole('navigation', { name: 'Navegação de posts' });
+    const newer = within(nav).getByText('Post mais recente').closest('a');
+    const older = within(nav).getByText('Post mais antigo').closest('a');
 
     expect(newer).toHaveAttribute('href', '/pt-BR/blog/2026/10/newest');
     expect(newer).toHaveTextContent('Title newest (pt)');
@@ -127,6 +126,24 @@ describe('BlogPostPage', () => {
     expect(within(nav).getByText('Older post').closest('a')).toHaveAttribute(
       'href',
       '/en-US/blog/2026/09/older',
+    );
+  });
+
+  it('should render the dated breadcrumb trail and its JSON-LD when the post is shown', async () => {
+    posts = [blogPost('hello-blog', '2026-09-02T10:00:00.000Z').now()];
+
+    const { container } = await renderPage('hello-blog', '2026', '09', 'pt-BR');
+
+    expectBreadcrumbTrail(
+      container,
+      [
+        { label: 'Início', href: '/pt-BR' },
+        { label: 'Blog', href: '/pt-BR/blog' },
+        { label: '2026', href: '/pt-BR/blog/2026' },
+        { label: 'Setembro', href: '/pt-BR/blog/2026/09' },
+        { label: 'Title hello-blog (pt)', href: undefined },
+      ],
+      '/pt-BR/blog/2026/09/hello-blog',
     );
   });
 

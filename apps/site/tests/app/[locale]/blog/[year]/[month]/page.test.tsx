@@ -1,6 +1,6 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
 import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import BlogMonthArchivePage, {
@@ -10,6 +10,7 @@ import BlogMonthArchivePage, {
 } from '~/app/[locale]/blog/[year]/[month]/page';
 
 import { blogPost } from '../../../../../helpers/blogPosts';
+import { expectBreadcrumbTrail } from '../../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../../helpers/renderServerComponent';
 
 // Real components, real message catalogues; only boundaries are mocked.
@@ -83,8 +84,12 @@ describe('BlogMonthArchivePage', () => {
   it("should list only the month's published posts, newest first, with dated links", async () => {
     await renderPage('2026', '09');
 
+    const postList = screen.getAllByRole('list').at(-1) as HTMLElement;
+
     expect(
-      screen.getAllByRole('link').map((link) => link.getAttribute('href')),
+      within(postList)
+        .getAllByRole('link')
+        .map((link) => link.getAttribute('href')),
     ).toEqual([
       '/en-US/blog/2026/09/september-late',
       '/en-US/blog/2026/09/september-early',
@@ -95,6 +100,21 @@ describe('BlogMonthArchivePage', () => {
     await renderPage('2026', '08', 'es');
 
     expect(screen.getByText('1 publicación')).toBeInTheDocument();
+  });
+
+  it('should end the breadcrumb at the current month, with matching JSON-LD', async () => {
+    const { container } = await renderPage('2026', '09', 'es');
+
+    expectBreadcrumbTrail(
+      container,
+      [
+        { label: 'Inicio', href: '/es' },
+        { label: 'Blog', href: '/es/blog' },
+        { label: '2026', href: '/es/blog/2026' },
+        { label: 'Septiembre', href: undefined },
+      ],
+      '/es/blog/2026/09',
+    );
   });
 
   it('should call notFound when the month has no published posts', async () => {

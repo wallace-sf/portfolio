@@ -1,4 +1,5 @@
 import type { Locale } from '@repo/core/shared';
+import { buildBreadcrumbListJsonLd, type IBreadcrumbListNode } from '@repo/seo';
 
 import { env } from '~/config/env';
 
@@ -75,21 +76,9 @@ interface CreativeWorkNode {
   url: string;
 }
 
-interface BreadcrumbItem {
-  '@type': 'ListItem';
-  position: number;
-  name: string;
-  item: string;
-}
-
-interface BreadcrumbListNode {
-  '@type': 'BreadcrumbList';
-  itemListElement: [BreadcrumbItem, BreadcrumbItem, BreadcrumbItem];
-}
-
 export interface ProjectJsonLd {
   '@context': 'https://schema.org';
-  '@graph': [CreativeWorkNode, BreadcrumbListNode];
+  '@graph': [CreativeWorkNode, IBreadcrumbListNode];
 }
 
 export function buildProjectJsonLd({
@@ -115,29 +104,11 @@ export function buildProjectJsonLd({
         image: coverImage.url,
         url: projectUrl,
       },
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          {
-            '@type': 'ListItem',
-            position: 1,
-            name: homeLabel,
-            item: homeUrl,
-          },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: projectsLabel,
-            item: projectsUrl,
-          },
-          {
-            '@type': 'ListItem',
-            position: 3,
-            name: title,
-            item: projectUrl,
-          },
-        ],
-      },
+      buildBreadcrumbListJsonLd([
+        { name: homeLabel, url: homeUrl },
+        { name: projectsLabel, url: projectsUrl },
+        { name: title, url: projectUrl },
+      ]),
     ],
   };
 }

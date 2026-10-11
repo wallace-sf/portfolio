@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
+import { BlogBreadcrumbs } from '~features/blog/BlogBreadcrumbs';
 import { formatArchiveMonth } from '~features/blog/formatArchiveMonth';
 import { blogArchivePath } from '~features/blog/paths';
 import { PostCard } from '~features/blog/PostCard';
@@ -70,7 +71,9 @@ export default async function BlogMonthArchivePage({
 
   return (
     <section className="mx-auto w-full max-w-3xl py-4 lg:py-8">
-      <header className="mb-8 flex flex-col gap-3 lg:mb-12">
+      <BlogBreadcrumbs locale={locale} target={archiveMonth} />
+
+      <header className="mb-8 mt-6 flex flex-col gap-3 lg:mb-12">
         <h1 className="text-heading-h2">
           {t('archiveMonthHeading', {
             month: monthName,
