@@ -10,6 +10,7 @@ import BlogYearArchivePage, {
 } from '~/app/[locale]/blog/[year]/page';
 
 import { blogPost } from '../../../../helpers/blogPosts';
+import { expectBreadcrumbTrail } from '../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../helpers/renderServerComponent';
 
 // Real components, real message catalogues; only boundaries are mocked.
@@ -107,6 +108,20 @@ describe('BlogYearArchivePage', () => {
       '/en-US/blog/2026/09/september-late',
       '/en-US/blog/2026/09/september-early',
     ]);
+  });
+
+  it('should end the breadcrumb at the current year, with matching JSON-LD', async () => {
+    const { container } = await renderPage('2026');
+
+    expectBreadcrumbTrail(
+      container,
+      [
+        { label: 'Home', href: '/en-US' },
+        { label: 'Blog', href: '/en-US/blog' },
+        { label: '2026', href: undefined },
+      ],
+      '/en-US/blog/2026',
+    );
   });
 
   it('should call notFound when the year has no published posts', async () => {

@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { Link } from '~/i18n/routing';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
+import { BlogBreadcrumbs } from '~features/blog/BlogBreadcrumbs';
 import { formatArchiveMonth } from '~features/blog/formatArchiveMonth';
 import { blogArchivePath } from '~features/blog/paths';
 import { PostCard } from '~features/blog/PostCard';
@@ -62,7 +63,9 @@ export default async function BlogYearArchivePage({
 
   return (
     <section className="mx-auto w-full max-w-3xl py-4 lg:py-8">
-      <header className="mb-8 lg:mb-12">
+      <BlogBreadcrumbs locale={locale} target={archiveYear} />
+
+      <header className="mb-8 mt-6 lg:mb-12">
         <h1 className="text-heading-h2">{t('archiveYearHeading', { year })}</h1>
       </header>
 
