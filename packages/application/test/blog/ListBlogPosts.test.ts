@@ -2,8 +2,9 @@ import { BlogPostStatus } from '@repo/core/blog';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
-import { IBlogPostRepository } from '~/blog/ports';
 import { ListBlogPosts } from '~/blog/use-cases/ListBlogPosts';
+
+import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -17,16 +18,6 @@ const AUTHOR = {
 
 const published = () =>
   BlogPostBuilder.build().withStatus(BlogPostStatus.PUBLISHED);
-
-function makeRepository(
-  overrides: Partial<IBlogPostRepository> = {},
-): IBlogPostRepository {
-  return {
-    findAll: vi.fn(),
-    findBySlug: vi.fn(),
-    ...overrides,
-  };
-}
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -51,7 +42,7 @@ describe('ListBlogPosts', () => {
         .withAuthor(AUTHOR)
         .withPublishedAt('2026-08-01T00:00:00.000Z')
         .now();
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findAll: vi.fn().mockResolvedValue([post]),
       });
       const useCase = new ListBlogPosts(repo);
@@ -80,7 +71,9 @@ describe('ListBlogPosts', () => {
     });
 
     it('should return an empty array when there are no posts', async () => {
-      const repo = makeRepository({ findAll: vi.fn().mockResolvedValue([]) });
+      const repo = makeBlogPostRepository({
+        findAll: vi.fn().mockResolvedValue([]),
+      });
       const useCase = new ListBlogPosts(repo);
 
       const result = await useCase.execute({ locale: 'en-US' });
@@ -91,7 +84,7 @@ describe('ListBlogPosts', () => {
     });
 
     it('should order posts newest-first regardless of the repository order', async () => {
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findAll: vi
           .fn()
           .mockResolvedValue([
@@ -132,7 +125,7 @@ describe('ListBlogPosts', () => {
           alt: { 'en-US': 'Thumb', 'pt-BR': 'Miniatura', es: 'Miniatura' },
         })
         .now();
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findAll: vi.fn().mockResolvedValue([post]),
       });
       const useCase = new ListBlogPosts(repo);
@@ -152,7 +145,7 @@ describe('ListBlogPosts', () => {
     });
 
     it('should omit DRAFT and ARCHIVED posts from the result', async () => {
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findAll: vi
           .fn()
           .mockResolvedValue([
@@ -177,7 +170,7 @@ describe('ListBlogPosts', () => {
     });
 
     it('should expose the featured flag from the domain object', async () => {
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findAll: vi
           .fn()
           .mockResolvedValue([published().withFeatured(true).now()]),
@@ -191,7 +184,7 @@ describe('ListBlogPosts', () => {
     });
 
     it('should return Left(DomainError) when the repository throws', async () => {
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findAll: vi.fn().mockRejectedValue(new Error('db down')),
       });
       const useCase = new ListBlogPosts(repo);

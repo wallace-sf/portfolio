@@ -176,6 +176,10 @@ rss.xml/route.ts                          → existing; item links become dated 
 
 ## 6. Redirects — MVP URLs
 
+> **Superseded by PRD 4 §8:** the blog was never announced or indexed, so no
+> redirects ship. Old `/[locale]/blog/[slug]` URLs return 404. The plan below is
+> kept for the record.
+
 - `/[locale]/blog/[slug]` → the dated URL, **`301` permanent**.
 - **Mechanism:** a build-time map. `next.config.ts` `redirects()` is async and
   reads the published-post list (`slug → publishedAt`) at config-eval time,
@@ -212,7 +216,7 @@ Each PRD gets its own spec → `parse-prd` → issues cycle.
 | **1 — Domain** | `BlogPost` v2 (`status`, `featured`, `author`, `publish()` / `archive()`, tag invariant), `Author` VO, `BlogPostStatus` enum. Tests. | `packages/core` | Phase 0 |
 | **2 — Application** | `PUBLISHED` filtering in `ListBlogPosts` / `GetAdjacentBlogPosts` / `GetBlogPostBySlug`; DTO changes (`author`, `featured`, `publishedAt` on the link DTO). Tests. | `packages/application` | PRD 1 |
 | **3 — Infra + migration** | Prisma `BlogPost` model + migration + RLS, `PrismaBlogPostRepository` + `BlogPostMapper`, `seedBlogPosts` migrating the 4 posts MDX → TS, remove `FileSystemBlogPostRepository` + fixtures, swap the container. Tests. | `packages/infra`, `apps/site` | **#1021**, PRD 2 |
-| **4 — Routes + redirects** | New `[year]/[month]/[slug]` tree, year/month archive pages, `generateStaticParams`, redirect map, dated sitemap + RSS, breadcrumbs + `BreadcrumbList` JSON-LD via `@repo/seo`. | `apps/site` | PRD 3 |
+| **4 — Routes + archive** | New `[year]/[month]/[slug]` tree, year/month archive pages, `generateStaticParams`, dated sitemap + RSS, breadcrumbs + `BreadcrumbList` JSON-LD via `@repo/seo`. | `apps/site` | PRD 3 |
 | **5 — Presentation** | Metadata grid, reading time, author byline, TOC + scrollspy, progress bar, code-block diff + dual theme (**#1063**), related posts, prev/next polish, featured band, tag pages + trending, count badges, search. `Prose` primitive (**#1058**) lands just before. | `apps/site` | PRD 4 |
 | **6 — Social (deferred)** | Comments (giscus), anonymous reactions, view counts. | `apps/site` | after PRD 5 is stable |
 

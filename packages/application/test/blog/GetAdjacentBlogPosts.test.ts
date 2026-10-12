@@ -3,8 +3,9 @@ import { NotFoundError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
-import { IBlogPostRepository } from '~/blog/ports';
 import { GetAdjacentBlogPosts } from '~/blog/use-cases/GetAdjacentBlogPosts';
+
+import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
 function makePost(
   slug: string,
@@ -23,12 +24,6 @@ function makePost(
     .now();
 }
 
-function makeRepository(
-  overrides: Partial<IBlogPostRepository> = {},
-): IBlogPostRepository {
-  return { findAll: vi.fn(), findBySlug: vi.fn(), ...overrides };
-}
-
 // Returned deliberately out of order — the use case owns the ordering.
 const POSTS = [
   makePost('middle', '2026-08-15T00:00:00.000Z'),
@@ -36,11 +31,12 @@ const POSTS = [
   makePost('newest', '2026-08-22T00:00:00.000Z'),
 ];
 
+const repositoryWith = (posts: BlogPost[]) =>
+  makeBlogPostRepository({ findAll: vi.fn().mockResolvedValue(posts) });
+
 describe('GetAdjacentBlogPosts', () => {
   it('should return the newer and older neighbours for a post in the middle', async () => {
-    const repo = makeRepository({
-      findAll: vi.fn().mockResolvedValue(POSTS),
-    });
+    const repo = repositoryWith(POSTS);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'middle',
@@ -64,9 +60,7 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should return only an older neighbour for the newest post', async () => {
-    const repo = makeRepository({
-      findAll: vi.fn().mockResolvedValue(POSTS),
-    });
+    const repo = repositoryWith(POSTS);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'newest',
@@ -84,9 +78,7 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should return only a newer neighbour for the oldest post', async () => {
-    const repo = makeRepository({
-      findAll: vi.fn().mockResolvedValue(POSTS),
-    });
+    const repo = repositoryWith(POSTS);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'oldest',
@@ -104,9 +96,7 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should return no neighbours when the post is the only one', async () => {
-    const repo = makeRepository({
-      findAll: vi.fn().mockResolvedValue([makePost('lonely', '2026-08-01')]),
-    });
+    const repo = repositoryWith([makePost('lonely', '2026-08-01')]);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'lonely',
@@ -120,19 +110,15 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should skip a DRAFT post sitting between two published posts', async () => {
-    const repo = makeRepository({
-      findAll: vi
-        .fn()
-        .mockResolvedValue([
-          makePost('older-published', '2026-08-01T00:00:00.000Z'),
-          makePost(
-            'hidden-draft',
-            '2026-08-10T00:00:00.000Z',
-            BlogPostStatus.DRAFT,
-          ),
-          makePost('newer-published', '2026-08-20T00:00:00.000Z'),
-        ]),
-    });
+    const repo = repositoryWith([
+      makePost('older-published', '2026-08-01T00:00:00.000Z'),
+      makePost(
+        'hidden-draft',
+        '2026-08-10T00:00:00.000Z',
+        BlogPostStatus.DRAFT,
+      ),
+      makePost('newer-published', '2026-08-20T00:00:00.000Z'),
+    ]);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'older-published',
@@ -146,14 +132,10 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should return NotFoundError when the requested slug is a DRAFT post', async () => {
-    const repo = makeRepository({
-      findAll: vi
-        .fn()
-        .mockResolvedValue([
-          makePost('published', '2026-08-01T00:00:00.000Z'),
-          makePost('secret', '2026-08-10T00:00:00.000Z', BlogPostStatus.DRAFT),
-        ]),
-    });
+    const repo = repositoryWith([
+      makePost('published', '2026-08-01T00:00:00.000Z'),
+      makePost('secret', '2026-08-10T00:00:00.000Z', BlogPostStatus.DRAFT),
+    ]);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'secret',
@@ -166,9 +148,7 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should return NotFoundError when the slug is not among the posts', async () => {
-    const repo = makeRepository({
-      findAll: vi.fn().mockResolvedValue(POSTS),
-    });
+    const repo = repositoryWith(POSTS);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'ghost-post',
@@ -181,7 +161,7 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should return Left(ValidationError) for a malformed slug', async () => {
-    const repo = makeRepository();
+    const repo = makeBlogPostRepository();
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'Not A Slug!',
@@ -195,7 +175,7 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should return Left(FETCH_FAILED) when the repository throws', async () => {
-    const repo = makeRepository({
+    const repo = makeBlogPostRepository({
       findAll: vi.fn().mockRejectedValue(new Error('fs down')),
     });
 
