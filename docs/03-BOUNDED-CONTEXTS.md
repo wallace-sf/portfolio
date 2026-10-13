@@ -9,7 +9,7 @@
 | Context | Responsibility | Key models | Status |
 |---------|----------------|------------|--------|
 | **Portfolio** | Projects, experience, skills, profile, values | Project, Experience, Skill, ProfessionalValue, Language, SocialNetwork | Active |
-| **Blog** | Posts, tags, publication | BlogPost, Tag | Active (domain + application + infra; delivered via `apps/site` `/[locale]/blog` routes). Content is MDX-in-Git today; [Blog v2](./superpowers/specs/2026-09-01-blog-v2-phase-0-design.md) moves it to Postgres `Json` localized columns |
+| **Blog** | Posts, tags, publication | BlogPost, Tag | Active (domain + application + infra; delivered via `apps/site` `/[locale]/blog` routes). Content lives in Postgres `Json` localized columns, with the body as a Markdown (GFM) string per locale ([Blog v2](./superpowers/specs/2026-09-01-blog-v2-phase-0-design.md)) |
 | **Contact** | Contact form capture and delivery | `SendContactMessage`, `IEmailService` | Application + infra (API route pending) |
 | **Identity** | Authentication, authorization, roles | User, Role, `IUserRepository`, use cases in application | Active (domain + use cases; HTTP API in place) |
 | **Shared Kernel** | Cross-context primitives | Id, Text, DateTime, Name, Url, enums, Either, errors | Active |
