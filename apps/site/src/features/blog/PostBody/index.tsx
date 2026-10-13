@@ -1,22 +1,13 @@
+import { Fragment } from 'react';
+
 import classNames from 'classnames';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import rehypePrettyCode from 'rehype-pretty-code';
+import { toJsxRuntime } from 'hast-util-to-jsx-runtime';
+import { jsx, jsxs } from 'react/jsx-runtime';
 
-import { mdxComponents } from '~/mdx-components';
-
-const rehypePrettyCodePlugin: [
-  typeof rehypePrettyCode,
-  { theme: string; keepBackground: boolean },
-] = [rehypePrettyCode, { theme: 'github-dark', keepBackground: true }];
-
-const MDX_OPTIONS = {
-  mdxOptions: {
-    rehypePlugins: [rehypePrettyCodePlugin],
-  },
-};
+import { markdownToHast } from './pipeline';
 
 /**
- * Typography for the rendered MDX. The MDX compiles to native elements, styled
+ * Typography for the rendered Markdown. It compiles to native elements, styled
  * here with arbitrary-variant selectors; fenced code blocks arrive fully
  * styled from `rehype-pretty-code` (`keepBackground` gives each its own dark
  * surface), so they only need spacing + horizontal scroll.
@@ -39,14 +30,12 @@ export interface IPostBodyProps {
   content: string;
 }
 
-export function PostBody({ content }: IPostBodyProps) {
-  return (
-    <div className={PROSE}>
-      <MDXRemote
-        source={content}
-        components={mdxComponents}
-        options={MDX_OPTIONS}
-      />
-    </div>
-  );
+export async function PostBody({ content }: IPostBodyProps) {
+  const body = toJsxRuntime(await markdownToHast(content), {
+    Fragment,
+    jsx,
+    jsxs,
+  });
+
+  return <div className={PROSE}>{body}</div>;
 }

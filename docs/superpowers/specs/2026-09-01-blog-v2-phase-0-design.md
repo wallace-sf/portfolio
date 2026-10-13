@@ -35,7 +35,7 @@ document; it produces **no code**.
 | 3 | **Tags: `tags String[]` column** on `BlogPost`. | Denormalized, like `Project.skillIds` / `relatedProjectSlugs`. `Tag` VO (kebab-case) stays. Tag pages, trending, and counts are computed at build by aggregating the arrays (few posts). No per-tag metadata. |
 | 4 | **Lifecycle mirrors `Project`:** `status DRAFT \| PUBLISHED \| ARCHIVED` + `deletedAt` soft delete. | Public listings, adjacency, RSS, sitemap and static route generation include **`PUBLISHED` only**. |
 | 5 | **`author` column** on `BlogPost`. | Guest posts are on the horizon. Embedded as `Json` (not a table) — see §2. |
-| 6 | **`content` = MDX string per locale** inside a `Json` column. | Same shape as `Project.content` (Markdown-in-`Json`); the renderer differs (`next-mdx-remote/rsc`, server, Shiki). |
+| 6 | ~~**`content` = MDX string per locale** inside a `Json` column.~~ **Superseded (#1163): `content` = Markdown (GFM) string per locale.** | Same shape as `Project.content` (Markdown-in-`Json`); the renderer differs (server-side unified pipeline with sanitization + Shiki). See the note under §2. |
 | 7 | **Reading time is derived, not stored.** No `weight` column. | Ordering: `publishedAt DESC`, with `featured` surfaced separately on the listing. |
 | 8 | **Phase 0 is doc-only.** Phases 1–5 are separate PRDs. | More checkpoints, smaller PRs. |
 
@@ -58,7 +58,7 @@ model BlogPost {
   slug              String         @unique          // lookup key; year/month come from publishedAt
   title             Json                            // { locale: text }
   description       Json
-  content           Json                            // { locale: "<MDX string>" }
+  content           Json                            // { locale: "<Markdown string>" }
   tags              String[]
   author            Json                            // { name, avatarUrl, url?, bio?: { locale: text } }
   coverImageUrl     String?
@@ -79,9 +79,15 @@ model BlogPost {
 
 **Notes**
 
-- **`content`** — the MDX body as a string per locale. `PostBody` already compiles
-  a raw string via `next-mdx-remote/rsc`, and `BlogPostDetailDTO.content` is already
-  `string`, so the delivery layer's body rendering does not change.
+- **`content`** — the post body as a string per locale. `BlogPostDetailDTO.content`
+  is already `string`, so the delivery layer's body rendering does not change.
+
+  > **Superseded by #1163:** the body is **Markdown (GFM)**, not MDX. None of the
+  > seeded posts used JSX, and MDX is executable: JSX and `{expressions}` run at
+  > compile time, which a DB-backed admin would have to sandbox. `PostBody` renders
+  > it server-side through `remark-parse → remark-gfm → remark-rehype →
+  > rehype-sanitize → rehype-pretty-code`, with no raw HTML. MDX can come back if a
+  > custom component is ever needed.
 - **`author`** — embedded `Json`, not a table. Domain VO `Author`:
   `name` + `Url` (avatar) + optional `url` + optional `bio` (`LocalizedText`).
   Each post names its author, which fits guest posts. **Alternative for later:**
@@ -199,7 +205,8 @@ rss.xml/route.ts                          → existing; item links become dated 
 | `docs/03-BOUNDED-CONTEXTS.md` | Line 12: "content as MDX-in-Git" → "content in Postgres (`Json` localized columns)". Add `BlogPost` to the aggregates table with its invariants (`PUBLISHED` requires ≥ 1 tag; status transitions). |
 | `docs/INDEX.md` | Link this design doc. |
 
-**Trusted-content note.** Today the MDX body is "fully trusted" (repo files).
+**Trusted-content note.** *(Resolved by #1163: bodies are sanitized Markdown, so
+the admin concern below no longer applies.)* Today the MDX body is "fully trusted" (repo files).
 With content in the DB and a future admin, the MDX body could carry arbitrary
 JSX / expressions that `next-mdx-remote` evaluates. For v2 (seeded, trusted)
 this stays as-is; **the future `apps/admin` needs a constrained MDX subset or
