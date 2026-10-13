@@ -9083,17 +9083,32 @@
         "testStrategy": "",
         "status": "pending",
         "dependencies": [
-          "1"
+          "1",
+          "3"
         ],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": "3",
+        "title": "Unify Markdown rendering into a single server-side Markdown component in @repo/ui",
+        "description": "Replace TextRich (client, react-markdown) and the blog PostBody pipeline with one async Server Component in @repo/ui: GFM, ==mark==, sanitize, Shiki, mermaid as a client island. Client consumers receive the rendered content as a slot.",
+        "details": "Markdown renders content only (no wrapper); consumers keep their markdown-body / PROSE wrapper so the DOM is unchanged until Prose (#1058). MermaidBlock ships as its own tsup entry with a 'use client' banner. Drop react-markdown and rehype-raw.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2026-10-13T07:51:58.838Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-13T07:17:36.575Z",
-      "taskCount": 2,
-      "completedCount": 1,
+      "lastModified": "2026-10-13T07:51:58.838Z",
+      "taskCount": 3,
+      "completedCount": 2,
       "tags": [
         "blog-v2-phase-5-prep"
       ]
