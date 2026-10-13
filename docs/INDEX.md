@@ -53,7 +53,7 @@
 
 ### Design System
 
-- **[12-DESIGN-SYSTEM](./12-DESIGN-SYSTEM.md)** — `@repo/ui` components, TextRich/Mermaid, usage patterns
+- **[12-DESIGN-SYSTEM](./12-DESIGN-SYSTEM.md)** — `@repo/ui` components, Markdown/Mermaid, usage patterns
 
 ---
 
