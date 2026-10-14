@@ -30,5 +30,11 @@ export const MermaidBlock = ({ chart }: IMermaidBlockProps) => {
     };
   }, [chart, id]);
 
-  return <div ref={ref} className="my-4 flex justify-center overflow-x-auto" />;
+  return (
+    <div
+      ref={ref}
+      data-mermaid
+      className="my-4 flex justify-center overflow-x-auto"
+    />
+  );
 };

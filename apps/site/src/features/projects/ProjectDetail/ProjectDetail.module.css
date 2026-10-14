@@ -1,10 +1,10 @@
-.editorial:global(.markdown-body) > p:first-of-type {
+.editorial > :global(.markdown-body) > p:first-of-type {
   font-size: 1.125rem;
   color: rgb(var(--tw-content-secondary));
   line-height: 1.8;
 }
 
-.editorial:global(.markdown-body) > p:first-of-type::first-letter {
+.editorial > :global(.markdown-body) > p:first-of-type::first-letter {
   float: left;
   font-size: 3.75rem;
   font-weight: 700;

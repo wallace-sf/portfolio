@@ -2,8 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 
 import { Markdown } from '~/View/Markdown';
 
-async function renderMarkdown(content: string) {
-  return render(<div>{await Markdown({ content })}</div>);
+async function renderMarkdown(content: string, className?: string) {
+  return render(<>{await Markdown({ content, className })}</>);
 }
 
 afterEach(() => {
@@ -11,6 +11,13 @@ afterEach(() => {
 });
 
 describe('Markdown', () => {
+  it('should render inside the markdown-body container with the given classes', async () => {
+    await renderMarkdown('Some *text*.', 'text-content-disabled');
+
+    const container = screen.getByText('text').closest('.markdown-body');
+    expect(container).toHaveClass('text-content-disabled');
+  });
+
   it('should render GFM headings, lists, tables and links when the content is Markdown', async () => {
     await renderMarkdown(
       [
@@ -67,6 +74,9 @@ describe('Markdown', () => {
     );
 
     expect(await screen.findByTestId('diagram')).toBeInTheDocument();
+    expect(
+      screen.getByTestId('diagram').closest('pre > [data-mermaid]'),
+    ).toBeInTheDocument();
     expect(render).toHaveBeenCalledWith(expect.any(String), 'graph TD; A-->B');
     expect(
       container.querySelector('figure[data-rehype-pretty-code-figure]'),

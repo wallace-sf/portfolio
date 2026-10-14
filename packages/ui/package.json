@@ -38,7 +38,8 @@
   ],
   "files": [
     "dist/",
-    "globals.css"
+    "globals.css",
+    "markdown-theme.css"
   ],
   "scripts": {
     "build": "tsup",
@@ -51,7 +52,8 @@
     "types": "tsc --build tsconfig.build.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "generate:markdown-theme": "node scripts/generate-markdown-theme.mts"
   },
   "peerDependencies": {
     "react": "^18",

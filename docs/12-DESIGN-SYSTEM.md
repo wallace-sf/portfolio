@@ -116,14 +116,17 @@ Markdown, `==highlight==` (`<mark>`), Shiki syntax highlighting and **Mermaid
 diagrams**. It is the single Markdown renderer for portfolio content and blog posts.
 
 ```tsx
-<div className="markdown-body">
-  <Markdown content={markdownString} />
-</div>
+<Markdown content={markdownString} className="text-content-disabled" />
 ```
 
-It emits the content only, with no wrapper: the caller owns the typography
-container. A Client Component cannot render it, so its Server Component parent
-renders it and passes the result down as `children`:
+It renders inside `.markdown-body`, the site's **single** Markdown typography:
+GitHub's stylesheet (`github-markdown-css`) plus design-token overrides in
+`globals.css`. `className` adds classes to that container. There is no second,
+hand-written typography layer; a different style gets designed only when a real
+case needs it.
+
+A Client Component cannot render it, so its Server Component parent renders it
+and passes the result down as `children`:
 
 ```tsx
 // Server Component
@@ -131,6 +134,13 @@ renders it and passes the result down as `children`:
   {description && <Markdown content={description} />}
 </ExperienceCard>
 ```
+
+**Light / dark:** `github-markdown.css` styles everything through CSS variables
+but switches its palettes on `prefers-color-scheme`. `markdown-theme.css`
+re-keys GitHub's dark palette to `.markdown-body` (the default) and its light
+palette to `.light .markdown-body`, so it follows the site's theme toggle. The
+file is generated from the installed package (`pnpm --filter @repo/ui
+generate:markdown-theme`), and a test fails if it drifts after an upgrade.
 
 **Pipeline:** `remark-parse → remark-gfm → remark-mark-highlight → remark-rehype →
 rehype-sanitize → mermaid → rehype-pretty-code`. Raw HTML is never rendered, and

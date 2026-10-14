@@ -19,7 +19,7 @@ export const ProfessionalValueCard: FC<IProfessionalValueCardProps> = ({
         icon={icon}
         className="flex-shrink-0 !text-[48px] text-brand-accent"
       />
-      <div className="markdown-body flex-1 text-base text-content-primary [&_p]:m-0 [&_p]:line-clamp-4 [&_p]:text-base [&_p]:leading-[1.4] [&_p]:text-content-primary [&_strong]:font-bold [&_strong]:text-brand-accent">
+      <div className="flex-1 text-base text-content-primary [&_p]:m-0 [&_p]:line-clamp-4 [&_p]:text-base [&_p]:leading-[1.4] [&_p]:text-content-primary [&_strong]:font-bold [&_strong]:text-brand-accent">
         {children}
       </div>
     </article>

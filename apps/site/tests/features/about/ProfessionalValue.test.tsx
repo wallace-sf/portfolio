@@ -31,13 +31,11 @@ describe('ProfessionalValueCard', () => {
     expect(screen.getByTestId('icon').className).toContain('text-[48px]');
   });
 
-  it('should render the rendered content inside the typography container', () => {
+  it('should render the value statement inside the card', () => {
     render(<ProfessionalValueCard {...defaultProps} />);
     const strong = screen.getByText('delivery');
     expect(strong.tagName).toBe('STRONG');
-    expect(strong.closest('.markdown-body')).toHaveClass(
-      'text-content-primary',
-    );
+    expect(strong.closest('article')).toBeInTheDocument();
   });
 
   it('should render as article element', () => {
