@@ -227,5 +227,11 @@ Each PRD gets its own spec → `parse-prd` → issues cycle.
 | **5 — Presentation** | Metadata grid, reading time, author byline, TOC + scrollspy, progress bar, code-block diff + dual theme (**#1063**), related posts, prev/next polish, featured band, tag pages + trending, count badges, search. `Prose` primitive (**#1058**) lands just before. | `apps/site` | PRD 4 |
 | **6 — Social (deferred)** | Comments (giscus), anonymous reactions, view counts. | `apps/site` | after PRD 5 is stable |
 
+> **Superseded (#1173):** PRD 5 is split into **5A** (post page: reading time,
+> metadata grid, byline, TOC, progress bar, code themes + diff, `BlogPosting`
+> JSON-LD), **5B** (discovery: tags, related, featured band, prev/next polish,
+> archive nav) and **5C** (search). `Prose` (#1058) was superseded by the
+> single `.markdown-body` typography (#1169).
+
 **Overall order:** close #612 / #627 (MVP) → #1021 → Phase 0 (this doc) →
 PRD 1 → 2 → 3 → 4 → 5. #1062 runs alongside PRDs 1–4.
