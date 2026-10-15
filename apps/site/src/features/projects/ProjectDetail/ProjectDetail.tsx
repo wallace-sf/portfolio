@@ -4,7 +4,6 @@ import { FC, type ReactNode, useMemo } from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
 import { Divider } from '@repo/ui/View';
-import classNames from 'classnames';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
@@ -125,11 +124,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
 
         <Divider />
 
-        {children && (
-          <div className={classNames('markdown-body', styles.editorial)}>
-            {children}
-          </div>
-        )}
+        {children && <div className={styles.editorial}>{children}</div>}
 
         {relatedProjects.length > 0 && (
           <section className="flex flex-col gap-y-6">

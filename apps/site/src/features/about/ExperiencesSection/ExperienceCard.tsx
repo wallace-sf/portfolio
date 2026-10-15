@@ -113,12 +113,7 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
 
         {children && (
           <div className="flex flex-col gap-y-1">
-            <div
-              className={classNames(
-                'markdown-body text-base text-content-disabled',
-                { 'line-clamp-3': !expanded },
-              )}
-            >
+            <div className={classNames({ 'line-clamp-3': !expanded })}>
               {children}
             </div>
             <button

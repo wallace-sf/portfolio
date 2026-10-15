@@ -14,7 +14,6 @@ import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
 import { BlogBreadcrumbs } from '~features/blog/BlogBreadcrumbs';
 import { blogPostPath, publicationSegments } from '~features/blog/paths';
-import { PostBody } from '~features/blog/PostBody';
 import { PostCover } from '~features/blog/PostCover';
 import { PostHeader } from '~features/blog/PostHeader';
 import { PrevNextNav } from '~features/blog/PrevNextNav';
@@ -115,9 +114,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <Divider />
 
-      <PostBody>
-        <Markdown content={post.content} />
-      </PostBody>
+      <Markdown content={post.content} />
 
       {(newer || older) && (
         <>

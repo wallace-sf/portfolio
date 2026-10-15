@@ -82,22 +82,13 @@ describe('projects/ProjectDetail', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should render the body inside the typography container when content is given', async () => {
+  it('should render the body inside the article when one is given', async () => {
     const { ProjectDetail } = await import('~features/projects/ProjectDetail');
 
     render(<ProjectDetail {...BASE_PROPS} />);
 
     expect(
-      screen.getByRole('heading', { name: 'Hello' }).closest('.markdown-body'),
+      screen.getByRole('heading', { name: 'Hello' }).closest('article'),
     ).toBeInTheDocument();
-  });
-
-  it('should not render the typography container when there is no body', async () => {
-    const { ProjectDetail } = await import('~features/projects/ProjectDetail');
-    const { children: _, ...props } = BASE_PROPS;
-
-    const { container } = render(<ProjectDetail {...props} />);
-
-    expect(container.querySelector('.markdown-body')).toBeNull();
   });
 });

@@ -39,7 +39,12 @@ export async function ExperiencesSection({ locale }: { locale: Locale }) {
             )}
           >
             <ExperienceCard {...experience}>
-              {description && <Markdown content={description} />}
+              {description && (
+                <Markdown
+                  content={description}
+                  className="text-base text-content-disabled"
+                />
+              )}
             </ExperienceCard>
           </li>
         ))}
