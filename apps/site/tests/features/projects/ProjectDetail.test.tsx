@@ -6,7 +6,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('next-intl', () => ({
-  useTranslations: (namespace: string) => (key: string) => `${namespace}.${key}`,
+  useTranslations: (namespace: string) => (key: string) =>
+    `${namespace}.${key}`,
 }));
 
 vi.mock('next/image', () => ({
@@ -25,7 +26,6 @@ vi.mock('@repo/ui/Imagery', () => ({
 
 vi.mock('@repo/ui/View', () => ({
   Divider: () => <hr />,
-  TextRich: ({ content }: { content: string }) => <div>{content}</div>,
 }));
 
 vi.mock('~features/home/ProjectsSection/ProjectList', () => ({
@@ -51,7 +51,7 @@ const BASE_PROPS = {
   coverImage: { url: 'https://example.com/cover.jpg', alt: 'Cover' },
   skills: [],
   period: { startAt: '2024-01-01' },
-  content: '# Hello',
+  children: <h1>Hello</h1>,
   relatedProjects: [],
 };
 
@@ -80,5 +80,15 @@ describe('projects/ProjectDetail', () => {
     expect(
       screen.queryByText('ProjectDetail.project_url_label'),
     ).not.toBeInTheDocument();
+  });
+
+  it('should render the body inside the article when one is given', async () => {
+    const { ProjectDetail } = await import('~features/projects/ProjectDetail');
+
+    render(<ProjectDetail {...BASE_PROPS} />);
+
+    expect(
+      screen.getByRole('heading', { name: 'Hello' }).closest('article'),
+    ).toBeInTheDocument();
   });
 });

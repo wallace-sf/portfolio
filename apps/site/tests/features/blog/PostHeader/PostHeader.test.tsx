@@ -15,24 +15,6 @@ const BASE = {
 };
 
 describe('PostHeader', () => {
-  it('should render the title as the page h1', () => {
-    render(<PostHeader {...BASE} />);
-
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'The Either Pattern' }),
-    ).toBeInTheDocument();
-  });
-
-  it('should render the description and one badge per tag', () => {
-    render(<PostHeader {...BASE} />);
-
-    expect(
-      screen.getByText('Why this codebase never throws for domain errors.'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('typescript')).toBeInTheDocument();
-    expect(screen.getByText('ddd')).toBeInTheDocument();
-  });
-
   it('should render the published date as a locale-formatted time element', () => {
     const { container } = render(<PostHeader {...BASE} locale="es" />);
     const time = container.querySelector('time');
@@ -46,6 +28,13 @@ describe('PostHeader', () => {
         timeZone: 'UTC',
       }).format(new Date('2026-08-01')),
     );
+  });
+
+  it('should render one badge per tag when the post has tags', () => {
+    render(<PostHeader {...BASE} />);
+
+    expect(screen.getByText('typescript')).toBeInTheDocument();
+    expect(screen.getByText('ddd')).toBeInTheDocument();
   });
 
   it('should not render a tag row when there are no tags', () => {

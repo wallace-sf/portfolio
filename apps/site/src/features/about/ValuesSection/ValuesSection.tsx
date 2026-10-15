@@ -1,13 +1,11 @@
 import { GetProfessionalValues } from '@repo/application/portfolio';
 import { type Locale } from '@repo/core/shared';
+import { Markdown } from '@repo/ui/View';
 import { getTranslations } from 'next-intl/server';
 
 import { getServerContainer } from '~/lib/server/container';
 
-import {
-  IProfessionalValueCardProps,
-  ProfessionalValueCard,
-} from './ProfessionalValueCard';
+import { ProfessionalValueCard } from './ProfessionalValueCard';
 
 export async function ValuesSection({ locale }: { locale: Locale }) {
   const [t, valuesResult] = await Promise.all([
@@ -17,16 +15,17 @@ export async function ValuesSection({ locale }: { locale: Locale }) {
     ).execute({ locale }),
   ]);
 
-  const professionalValues: IProfessionalValueCardProps[] =
-    valuesResult.isRight() ? valuesResult.value : [];
+  const professionalValues = valuesResult.isRight() ? valuesResult.value : [];
 
   return (
     <section className="mt-10 flex flex-col gap-y-4 xl:mt-16 2xl:mt-20">
       <h2 className="text-heading-h4 text-left">{t('values_title')}</h2>
       <ul className="grid grid-cols-2 items-stretch gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {professionalValues.map((professionalValue) => (
+        {professionalValues.map(({ content, ...professionalValue }) => (
           <li key={professionalValue.id}>
-            <ProfessionalValueCard {...professionalValue} />
+            <ProfessionalValueCard {...professionalValue}>
+              <Markdown content={content} />
+            </ProfessionalValueCard>
           </li>
         ))}
       </ul>

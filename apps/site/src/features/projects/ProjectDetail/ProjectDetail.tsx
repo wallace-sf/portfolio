@@ -1,9 +1,9 @@
 'use client';
 
-import { FC, useMemo } from 'react';
+import { FC, type ReactNode, useMemo } from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
-import { Divider, TextRich } from '@repo/ui/View';
+import { Divider } from '@repo/ui/View';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
@@ -30,7 +30,8 @@ export interface IProjectDetailProps {
   period: { startAt: string; endAt?: string };
   repositoryUrl?: string;
   projectUrl?: string;
-  content: string;
+  /** The rendered project body (a server-rendered `Markdown`). */
+  children?: ReactNode;
   relatedProjects: ProjectSummary[];
 }
 
@@ -42,7 +43,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
   role,
   repositoryUrl,
   projectUrl,
-  content,
+  children,
   relatedProjects,
 }) => {
   const t = useTranslations('ProjectDetail');
@@ -123,7 +124,7 @@ export const ProjectDetail: FC<IProjectDetailProps> = ({
 
         <Divider />
 
-        {content && <TextRich content={content} className={styles.editorial} />}
+        {children && <div className={styles.editorial}>{children}</div>}
 
         {relatedProjects.length > 0 && (
           <section className="flex flex-col gap-y-6">

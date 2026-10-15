@@ -9,8 +9,8 @@ import { blogPost } from '../../../../../../helpers/blogPosts';
 import { expectBreadcrumbTrail } from '../../../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../../../helpers/renderServerComponent';
 
-// Only true boundaries are mocked: Next/next-intl server APIs, the MDX
-// compiler, next/image and the container. Every blog component and the
+// Only true boundaries are mocked: Next/next-intl server APIs, next/image and
+// the container. Every blog component (including the Markdown body) and the
 // next-intl `Link` are real.
 
 vi.mock(
@@ -18,10 +18,6 @@ vi.mock(
   async () =>
     (await import('../../../../../../helpers/intlServerMock')).intlServerMock,
 );
-
-vi.mock('next-mdx-remote/rsc', () => ({
-  MDXRemote: ({ source }: { source: string }) => <pre>{source}</pre>,
-}));
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
@@ -71,7 +67,7 @@ beforeEach(() => {
 });
 
 describe('BlogPostPage', () => {
-  it('should render the header and MDX body without navigation when the post is the only one', async () => {
+  it('should render the header and Markdown body without navigation when the post is the only one', async () => {
     posts = [
       blogPost('hello-blog', '2026-09-02T10:00:00.000Z')
         .withContent({

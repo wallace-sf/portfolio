@@ -33,12 +33,12 @@ moderation/abuse surface.
 
 | Feature | Source | Rationale | Implementation notes |
 |---------|--------|-----------|----------------------|
-| **Reading time per post** | all three | Expected signal on a dev blog | Derived at build from the MDX/body (~200 wpm). Derived field, not stored in Supabase |
+| **Reading time per post** | all three | Expected signal on a dev blog | Derived at build from the Markdown body (~200 wpm). Derived field, not stored in Supabase |
 | **Author byline on the post** ("By …" / "Written by …", near the date/reading-time line) | all three | Missing in the MVP; standard for an article page, and feeds `article:author` / JSON-LD `author` | Single-author blog: a static site-owner value (name + avatar + short bio/link) is enough. Add an `author` field on the post only if guest posts are ever expected |
 | **Reading progress bar** | Vinnicius | Cheap microinteraction, high polish | Client component only (scroll listener + `scrollHeight`). No backend |
 | **Post metadata grid** (date · reading time · category/language) | Vinnicius | Scannable; adds information density to listings | Layout only; align with the design system |
 | **Curated listing page** (title + subtitle + "Featured articles" band, then the full list) | Vinnicius | Lifts the blog landing page above a flat list | Needs a `featured` flag on the post (Supabase) — mirrors the existing `Project.weight` pattern |
-| **TOC with scrollspy** ("On this page" — nested h2/h3, active section highlighted) | Loiane, Paul | Essential for long technical posts | Generate from MDX at build; `IntersectionObserver` on the client. Paul's *nested* version is the layout reference |
+| **TOC with scrollspy** ("On this page" — nested h2/h3, active section highlighted) | Loiane, Paul | Essential for long technical posts | Generate from the Markdown headings at build (rehype plugin); `IntersectionObserver` on the client. Paul's *nested* version is the layout reference |
 | **Breadcrumbs** (`Home › Blog › Post title` on the post page, `Home › Blog` on the listing) | Loiane, Paul | Missing in the MVP. Improves orientation on deep pages and feeds `BreadcrumbList` structured data | Derive from the route segments. Emit JSON-LD via `@repo/seo` (breadcrumb builder) so it doubles as an SEO win |
 | **Date-based post URLs** (`/blog/{year}/{month}/{slug}`) + archive pages | Loiane | Chronological grouping, natural archive pages, avoids slug collisions across years | Architectural decision with migration cost — see [§ Post URL structure](#post-url-structure) below |
 | **Share to socials** (X, LinkedIn, Telegram, copy link) | all three | Distribution; trivial | Static `share` URLs + copy button. No third-party SDK |
@@ -109,7 +109,7 @@ the Supabase query shape, the sitemap, and the redirect map.
 |---------|--------|----------|
 | **Chirpy-style fixed sidebar** (avatar + vertical menu + YouTube counter + ad block) | Loiane | It's *her* blog's identity. Our blog lives inside the portfolio and must follow the portfolio design |
 | **Per-post CC BY 4.0 license notice** | Loiane, Vinnicius | An editorial licensing decision, not a feature — adopt only if we actually want that license |
-| **Per-post language toggle** (PT/EN badge) | Vinnicius | Only if we genuinely publish bilingual content; otherwise it's noise. (Note: blog i18n strategy is MDX-in-Git per `docs/07-I18N.md`) |
+| **Per-post language toggle** (PT/EN badge) | Vinnicius | Only if we genuinely publish bilingual content; otherwise it's noise. (Note: blog i18n strategy is Postgres `Json` localized columns per `docs/07-I18N.md`) |
 | **Grid view / List view toggle** on the listing | Vinnicius | Doubles layout maintenance for marginal gain. Pick one layout |
 | **Cross-post source attribution** (`paulie.dev •`, "publishers" list) | Paul | Only relevant if we cross-post to dev.to / Medium / etc. |
 | **GitHub Activity feed** | Paul | Noise; the GitHub events API changes |
@@ -157,7 +157,7 @@ around. Assessed against the [phases](#suggested-delivery-split-for-blog-v2) bel
 | Issue | What | Where it lands |
 |-------|------|----------------|
 | [#1063](https://github.com/wallace-sf/portfolio/issues/1063) | Dual light/dark syntax-highlighting themes | Same file + same `rehype-pretty-code` config as the Phase 5 "diff highlighting" task. Fold in there |
-| [#1058](https://github.com/wallace-sf/portfolio/issues/1058) | Extract a shared `Prose` primitive in `@repo/ui` | Not a blocker for Phases 0–4. Collides with Phase 5 (heavy `PostBody` changes). Ideally the full extraction lands **just before Phase 5** — but it touches `TextRich` (shipped portfolio code), so its own PR with visual-regression check, never inside a blog PR |
+| [#1058](https://github.com/wallace-sf/portfolio/issues/1058) | ~~Extract a shared `Prose` primitive in `@repo/ui`~~ | **Closed, superseded.** The renderers were unified into one server-side `Markdown` (#1166), and `.markdown-body` (GitHub's stylesheet, light/dark re-keyed to the site theme) became the single typography for the portfolio and the blog (#1169). No hand-written Prose |
 
 ### ⚪ Out of the v2 path
 
@@ -193,5 +193,5 @@ Phase 5.
 ## Related docs
 
 - [SEO-BACKLINK-STRATEGY.md](./SEO-BACKLINK-STRATEGY.md) — earlier benchmarking against paulie.dev
-- [07-I18N.md](./07-I18N.md) — blog i18n strategy (MDX-in-Git)
+- [07-I18N.md](./07-I18N.md) — blog i18n strategy (Postgres `Json` localized columns)
 - [03-BOUNDED-CONTEXTS.md](./03-BOUNDED-CONTEXTS.md) — Blog bounded context

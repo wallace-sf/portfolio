@@ -3,8 +3,9 @@ import { NotFoundError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
-import { IBlogPostRepository } from '~/blog/ports';
 import { GetBlogPostBySlug } from '~/blog/use-cases/GetBlogPostBySlug';
+
+import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -18,16 +19,6 @@ const AUTHOR = {
 
 const published = () =>
   BlogPostBuilder.build().withStatus(BlogPostStatus.PUBLISHED);
-
-function makeRepository(
-  overrides: Partial<IBlogPostRepository> = {},
-): IBlogPostRepository {
-  return {
-    findAll: vi.fn(),
-    findBySlug: vi.fn(),
-    ...overrides,
-  };
-}
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -57,7 +48,7 @@ describe('GetBlogPostBySlug', () => {
         .withAuthor(AUTHOR)
         .withPublishedAt('2026-08-01T00:00:00.000Z')
         .now();
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });
       const useCase = new GetBlogPostBySlug(repo);
@@ -101,7 +92,7 @@ describe('GetBlogPostBySlug', () => {
         })
         .withPostUpdatedAt('2026-08-15T00:00:00.000Z')
         .now();
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });
 
@@ -117,7 +108,7 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should return Left(NotFoundError) when the post does not exist', async () => {
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findBySlug: vi.fn().mockResolvedValue(null),
       });
       const useCase = new GetBlogPostBySlug(repo);
@@ -137,7 +128,7 @@ describe('GetBlogPostBySlug', () => {
         .withStatus(BlogPostStatus.DRAFT)
         .withTags([])
         .now();
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });
 
@@ -155,7 +146,7 @@ describe('GetBlogPostBySlug', () => {
       const post = BlogPostBuilder.build()
         .withStatus(BlogPostStatus.ARCHIVED)
         .now();
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });
 
@@ -170,7 +161,7 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should return Left(ValidationError) for an invalid slug', async () => {
-      const repo = makeRepository();
+      const repo = makeBlogPostRepository();
       const useCase = new GetBlogPostBySlug(repo);
 
       const result = await useCase.execute({
@@ -183,7 +174,7 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should return Left(DomainError) when the repository throws', async () => {
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findBySlug: vi.fn().mockRejectedValue(new Error('db down')),
       });
       const useCase = new GetBlogPostBySlug(repo);

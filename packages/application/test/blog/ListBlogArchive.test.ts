@@ -2,9 +2,10 @@ import { BlogPostStatus } from '@repo/core/blog';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
-import { IBlogPostRepository } from '~/blog/ports';
 import { ListBlogArchive } from '~/blog/use-cases/ListBlogArchive';
 import { ListBlogPosts } from '~/blog/use-cases/ListBlogPosts';
+
+import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -22,18 +23,10 @@ function post(
     .now();
 }
 
-function makeRepository(
-  overrides: Partial<IBlogPostRepository> = {},
-): IBlogPostRepository {
-  return {
-    findAll: vi.fn(),
-    findBySlug: vi.fn(),
-    ...overrides,
-  };
-}
-
 async function archiveOf(posts: ReturnType<typeof post>[]) {
-  const repo = makeRepository({ findAll: vi.fn().mockResolvedValue(posts) });
+  const repo = makeBlogPostRepository({
+    findAll: vi.fn().mockResolvedValue(posts),
+  });
   const result = await new ListBlogArchive(repo).execute({ locale: 'en-US' });
   if (result.isLeft()) throw new Error('expected Right');
   return result.value;
@@ -111,7 +104,7 @@ describe('ListBlogArchive', () => {
 
     it('should map posts to the same summary DTO as ListBlogPosts when grouping', async () => {
       const posts = [post('same-shape', '2026-09-02T10:00:00.000Z')];
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findAll: vi.fn().mockResolvedValue(posts),
       });
 
@@ -133,7 +126,7 @@ describe('ListBlogArchive', () => {
     });
 
     it('should return Left(DomainError) with FETCH_FAILED when the repository throws', async () => {
-      const repo = makeRepository({
+      const repo = makeBlogPostRepository({
         findAll: vi.fn().mockRejectedValue(new Error('db down')),
       });
 
