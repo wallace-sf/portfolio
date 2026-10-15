@@ -3,6 +3,7 @@ import {
   GetPublishedProjects,
 } from '@repo/application/portfolio';
 import { type Locale, LOCALES } from '@repo/core/shared';
+import { Markdown } from '@repo/ui/View';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -91,7 +92,8 @@ export default async function ProjectDetailPage({
   if (result.isLeft()) notFound();
 
   const t = await getTranslations({ locale, namespace: 'SideNavigation' });
-  const { title, caption, coverImage } = result.value;
+  const { content, ...project } = result.value;
+  const { title, caption, coverImage } = project;
   const projectJsonLd = buildProjectJsonLd({
     title,
     caption,
@@ -105,7 +107,9 @@ export default async function ProjectDetailPage({
   return (
     <>
       <JsonLd data={projectJsonLd} />
-      <ProjectDetail {...result.value} />
+      <ProjectDetail {...project}>
+        {content && <Markdown content={content} />}
+      </ProjectDetail>
     </>
   );
 }

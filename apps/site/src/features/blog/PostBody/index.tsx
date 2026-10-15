@@ -1,10 +1,6 @@
-import { Fragment } from 'react';
+import type { ReactNode } from 'react';
 
 import classNames from 'classnames';
-import { toJsxRuntime } from 'hast-util-to-jsx-runtime';
-import { jsx, jsxs } from 'react/jsx-runtime';
-
-import { markdownToHast } from './pipeline';
 
 /**
  * Typography for the rendered Markdown. It compiles to native elements, styled
@@ -27,15 +23,10 @@ const PROSE = classNames(
 );
 
 export interface IPostBodyProps {
-  content: string;
+  /** The rendered post body (a server-rendered `Markdown`). */
+  children: ReactNode;
 }
 
-export async function PostBody({ content }: IPostBodyProps) {
-  const body = toJsxRuntime(await markdownToHast(content), {
-    Fragment,
-    jsx,
-    jsxs,
-  });
-
-  return <div className={PROSE}>{body}</div>;
+export function PostBody({ children }: IPostBodyProps) {
+  return <div className={PROSE}>{children}</div>;
 }

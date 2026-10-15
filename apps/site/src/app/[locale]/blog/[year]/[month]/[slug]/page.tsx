@@ -4,7 +4,7 @@ import {
   GetBlogPostBySlug,
 } from '@repo/application/blog';
 import { type Locale } from '@repo/core/shared';
-import { Divider } from '@repo/ui/View';
+import { Divider, Markdown } from '@repo/ui/View';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -115,7 +115,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <Divider />
 
-      <PostBody content={post.content} />
+      <PostBody>
+        <Markdown content={post.content} />
+      </PostBody>
 
       {(newer || older) && (
         <>

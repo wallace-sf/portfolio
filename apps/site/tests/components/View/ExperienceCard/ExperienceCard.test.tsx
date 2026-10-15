@@ -33,13 +33,6 @@ vi.mock('next/image', () => ({
 }));
 
 vi.mock('@repo/ui/View', () => ({
-  TextRich: ({
-    content,
-    className,
-  }: {
-    content: string;
-    className?: string;
-  }) => <p className={className}>{content}</p>,
   Badge: {
     WithIcon: ({ label }: { label: string; icon: string }) => (
       <span>{label}</span>
@@ -72,7 +65,7 @@ const defaultProps = {
   company: 'Acme Corp',
   position: 'Senior Developer',
   location: 'São Paulo, Brazil',
-  description: 'Full-stack development.',
+  children: <p>Full-stack development.</p>,
   logo: { url: 'https://example.com/logo.png', alt: 'Acme logo' },
   employmentType: 'FULL_TIME',
   locationType: 'REMOTE',
@@ -83,6 +76,10 @@ const defaultProps = {
     { name: 'TypeScript', icon: '' },
   ],
 };
+
+/** The container that wraps (and clamps) the rendered description. */
+const description = () =>
+  screen.getByText('Full-stack development.').parentElement;
 
 describe('ExperienceCard', () => {
   it('should render position as h3', () => {
@@ -125,24 +122,25 @@ describe('ExperienceCard', () => {
     expect(icons[2]).toHaveTextContent('mdi:home-outline');
   });
 
-  it('should render description when provided', () => {
+  it('should render the description when provided', () => {
     render(<ExperienceCard {...defaultProps} />);
     expect(screen.getByText('Full-stack development.')).toBeInTheDocument();
   });
 
-  it('should not render description when not provided', () => {
-    const { description: _, ...props } = defaultProps;
+  it('should render neither the description nor the toggle when not provided', () => {
+    const { children: _, ...props } = defaultProps;
     render(<ExperienceCard {...props} />);
     expect(
       screen.queryByText('Full-stack development.'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'see_more' }),
     ).not.toBeInTheDocument();
   });
 
   it('should clamp description by default and show see_more button', () => {
     render(<ExperienceCard {...defaultProps} />);
-    expect(screen.getByText('Full-stack development.')).toHaveClass(
-      'line-clamp-3',
-    );
+    expect(description()).toHaveClass('line-clamp-3');
     expect(
       screen.getByRole('button', { name: 'see_more' }),
     ).toBeInTheDocument();
@@ -151,9 +149,7 @@ describe('ExperienceCard', () => {
   it('should expand description when see_more is clicked', () => {
     render(<ExperienceCard {...defaultProps} />);
     fireEvent.click(screen.getByRole('button', { name: 'see_more' }));
-    expect(screen.getByText('Full-stack development.')).not.toHaveClass(
-      'line-clamp-3',
-    );
+    expect(description()).not.toHaveClass('line-clamp-3');
     expect(
       screen.getByRole('button', { name: 'see_less' }),
     ).toBeInTheDocument();
@@ -163,9 +159,7 @@ describe('ExperienceCard', () => {
     render(<ExperienceCard {...defaultProps} />);
     fireEvent.click(screen.getByRole('button', { name: 'see_more' }));
     fireEvent.click(screen.getByRole('button', { name: 'see_less' }));
-    expect(screen.getByText('Full-stack development.')).toHaveClass(
-      'line-clamp-3',
-    );
+    expect(description()).toHaveClass('line-clamp-3');
   });
 
   it('should render up to 2 skill badges on mobile', () => {

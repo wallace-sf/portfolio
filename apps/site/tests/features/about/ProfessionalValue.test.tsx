@@ -6,22 +6,16 @@ vi.mock('@repo/ui/Imagery', () => ({
   ),
 }));
 
-vi.mock('@repo/ui/View', () => ({
-  TextRich: ({
-    content,
-    className,
-  }: {
-    content: string;
-    className?: string;
-  }) => <p className={className}>{content}</p>,
-}));
-
 import { ProfessionalValueCard } from '~features/about/ValuesSection/ProfessionalValueCard';
 
 const defaultProps = {
   id: '1',
   icon: 'material-symbols:diamond',
-  content: 'High quality <strong>delivery</strong>',
+  children: (
+    <p>
+      High quality <strong>delivery</strong>
+    </p>
+  ),
 };
 
 describe('ProfessionalValueCard', () => {
@@ -37,18 +31,13 @@ describe('ProfessionalValueCard', () => {
     expect(screen.getByTestId('icon').className).toContain('text-[48px]');
   });
 
-  it('should render the content text', () => {
+  it('should render the rendered content inside the typography container', () => {
     render(<ProfessionalValueCard {...defaultProps} />);
-    expect(
-      screen.getByText('High quality <strong>delivery</strong>'),
-    ).toBeInTheDocument();
-  });
-
-  it('should apply text-content-primary to the text', () => {
-    render(<ProfessionalValueCard {...defaultProps} />);
-    expect(
-      screen.getByText('High quality <strong>delivery</strong>').className,
-    ).toContain('text-content-primary');
+    const strong = screen.getByText('delivery');
+    expect(strong.tagName).toBe('STRONG');
+    expect(strong.closest('.markdown-body')).toHaveClass(
+      'text-content-primary',
+    );
   });
 
   it('should render as article element', () => {

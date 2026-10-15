@@ -1,6 +1,6 @@
 import { GetProfile } from '@repo/application/portfolio';
 import { type Locale } from '@repo/core/shared';
-import { TextRich } from '@repo/ui/View';
+import { Markdown } from '@repo/ui/View';
 import { getTranslations } from 'next-intl/server';
 
 import { getServerContainer } from '~/lib/server/container';
@@ -18,7 +18,9 @@ export async function BioSection({ locale }: { locale: Locale }) {
   return (
     <section className="mt-10 flex flex-col gap-y-4 xl:mt-16 2xl:mt-20">
       <h2 className="text-heading-h4 text-left">{t('bio_title')}</h2>
-      <TextRich content={bio} className="text-base text-content-disabled" />
+      <div className="markdown-body text-base text-content-disabled">
+        <Markdown content={bio} />
+      </div>
     </section>
   );
 }

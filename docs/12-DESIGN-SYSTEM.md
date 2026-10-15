@@ -12,7 +12,7 @@
 |-----------|-------------|------------|
 | **Control** | `@repo/ui/Control` | Accordion, Button, Input, Label, Modal, Radio, RadioGroup, TextArea, Text, ToggleGroup |
 | **Imagery** | `@repo/ui/Imagery` | Icon |
-| **View** | `@repo/ui/View` | Badge, Divider, SectionHeader, TextRich |
+| **View** | `@repo/ui/View` | Badge, Divider, Markdown, SectionHeader |
 
 ---
 
@@ -21,10 +21,10 @@
 ```typescript
 import { Button } from '@repo/ui/Control';
 import { Icon } from '@repo/ui/Imagery';
-import { Badge, TextRich } from '@repo/ui/View';
+import { Badge, Markdown } from '@repo/ui/View';
 ```
 
-Components with hooks (e.g. `TextRich`, `Modal`, interactive controls) are safe to use inside `'use client'` boundaries. Server Components may import them; the `'use client'` directive propagates correctly.
+Components with hooks (e.g. `Modal`, interactive controls) are safe to use inside `'use client'` boundaries. `Markdown` is the opposite: an async Server Component that only Server Components can render (see below).
 
 ---
 
@@ -109,15 +109,36 @@ Page/section heading with optional overline and description. Accepts an `as` pro
 />
 ```
 
-### TextRich
+### Markdown
 
-Renders rich Markdown content with full GitHub-Flavored Markdown support and **Mermaid diagram rendering**.
+An **async Server Component** that renders Markdown at build time: GitHub-Flavored
+Markdown, `==highlight==` (`<mark>`), Shiki syntax highlighting and **Mermaid
+diagrams**. It is the single Markdown renderer for portfolio content and blog posts.
 
 ```tsx
-<TextRich content={markdownString} className="prose" />
+<div className="markdown-body">
+  <Markdown content={markdownString} />
+</div>
 ```
 
-**Mermaid support:** code blocks tagged ` ```mermaid ` are rendered as SVG diagrams on the client side. Uses `React.lazy` + `Suspense` to isolate the Mermaid runtime into a separate bundle chunk — the main `View/index.mjs` stays hook-free and is safe to import from Server Component context.
+It emits the content only, with no wrapper: the caller owns the typography
+container. A Client Component cannot render it, so its Server Component parent
+renders it and passes the result down as `children`:
+
+```tsx
+// Server Component
+<ExperienceCard {...experience}>
+  {description && <Markdown content={description} />}
+</ExperienceCard>
+```
+
+**Pipeline:** `remark-parse → remark-gfm → remark-mark-highlight → remark-rehype →
+rehype-sanitize → mermaid → rehype-pretty-code`. Raw HTML is never rendered, and
+input is sanitized before the trusted transforms (whose inline styles the sanitizer
+would otherwise strip).
+
+**Mermaid:** ` ```mermaid ` fences become `MermaidBlock`, the only client island. It
+loads the Mermaid runtime from a CDN on mount and renders the SVG.
 
 ```markdown
 ```mermaid
@@ -128,24 +149,24 @@ flowchart TD
 ```
 ```
 
-Plugins enabled:
-- `remark-gfm` — tables, strikethrough, task lists
-- `rehype-raw` — raw HTML in Markdown
-- `rehype-sanitize` — XSS protection
-
 ---
 
 ## Bundle structure
 
-tsup produces one chunk per namespace plus a lazy chunk for Mermaid:
+tsup produces one chunk per namespace, plus one entry per client island:
 
 ```text
 dist/
-  Control/index.mjs    → interactive form/control components
-  Imagery/index.mjs    → Icon
-  View/index.mjs       → Badge, Divider, SectionHeader, TextRich (no hooks at module level)
-  MermaidBlock-*.mjs   → lazy chunk; only loaded when a mermaid block is rendered
+  Control/index.mjs           → interactive form/control components
+  Imagery/index.mjs           → Icon
+  View/index.mjs              → Badge, Divider, Markdown, SectionHeader
+  View/MermaidBlock/index.mjs → 'use client' island, imported by Markdown
 ```
+
+esbuild drops module directives when bundling, so a client island that a Server
+Component imports gets its own tsup entry with a `'use client'` banner, and is
+imported through its package path (`@repo/ui/View/MermaidBlock`, kept external)
+so the boundary survives the bundle.
 
 ---
 

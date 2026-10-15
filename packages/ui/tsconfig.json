@@ -4,6 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"],
+      "@repo/ui/View/MermaidBlock": ["./src/View/Markdown/MermaidBlock.tsx"],
       "~control": ["./src/Control/index.ts"],
       "~control/*": ["./src/Control/*"],
       "~hocs": ["./src/hocs/index.ts"],

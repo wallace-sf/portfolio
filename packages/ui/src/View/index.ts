@@ -1,4 +1,4 @@
 export * from './Badge';
 export * from './Divider';
+export * from './Markdown';
 export * from './SectionHeader';
-export * from './TextRich';

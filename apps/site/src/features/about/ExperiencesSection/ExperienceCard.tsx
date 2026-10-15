@@ -1,9 +1,8 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, type ReactNode } from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
-import { TextRich } from '@repo/ui/View';
 import classNames from 'classnames';
 import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -30,13 +29,14 @@ export interface IExperienceCardProps {
   company: string;
   position: string;
   location: string;
-  description?: string;
   logo?: { url: string; alt: string };
   employmentType: string;
   locationType: string;
   startAt: string;
   endAt?: string;
   skills: IExperienceCardSkill[];
+  /** The rendered description (a server-rendered `Markdown`), clamped until expanded. */
+  children?: ReactNode;
 }
 
 function formatDate(dateStr: string, locale: string): string {
@@ -50,7 +50,7 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
   company,
   position,
   location,
-  description,
+  children,
   logo,
   employmentType,
   locationType,
@@ -111,14 +111,16 @@ export const ExperienceCard: FC<IExperienceCardProps> = ({
           </span>
         </div>
 
-        {description && (
+        {children && (
           <div className="flex flex-col gap-y-1">
-            <TextRich
-              content={description}
-              className={classNames('text-base text-content-disabled', {
-                'line-clamp-3': !expanded,
-              })}
-            />
+            <div
+              className={classNames(
+                'markdown-body text-base text-content-disabled',
+                { 'line-clamp-3': !expanded },
+              )}
+            >
+              {children}
+            </div>
             <button
               type="button"
               className="self-start text-sm text-content-disabled underline"

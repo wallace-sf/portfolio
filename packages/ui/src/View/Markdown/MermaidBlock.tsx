@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef } from 'react';
 
-import { loadMermaid } from '../lib/loadMermaid';
+import { loadMermaid } from './loadMermaid';
 
 interface IMermaidBlockProps {
   chart: string;
