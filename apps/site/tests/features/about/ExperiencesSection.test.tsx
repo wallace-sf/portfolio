@@ -5,25 +5,26 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 
+import { renderServerComponent } from '../../helpers/renderServerComponent';
+
 vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => `t.${key}`),
-}));
-
-vi.mock('@repo/ui/View', () => ({
-  Divider: () => <hr />,
 }));
 
 vi.mock('~features/about/ExperiencesSection/ExperienceCard', () => ({
   ExperienceCard: ({
     company,
     position,
+    children,
   }: {
     company: string;
     position: string;
+    children?: React.ReactNode;
   }) => (
     <div data-testid="experience-card">
       <span>{position}</span>
       <span>{company}</span>
+      {children}
     </div>
   ),
 }));
@@ -75,9 +76,8 @@ describe('about/ExperiencesSection', () => {
   it('should render section title from i18n', async () => {
     mockExecute.mockResolvedValue(right(EXPERIENCES));
 
-    const { ExperiencesSection } = await import(
-      '~features/about/ExperiencesSection'
-    );
+    const { ExperiencesSection } =
+      await import('~features/about/ExperiencesSection');
     render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.getByText('t.experience_title')).toBeInTheDocument();
@@ -86,9 +86,8 @@ describe('about/ExperiencesSection', () => {
   it('should not render the section when there are no experiences', async () => {
     mockExecute.mockResolvedValue(right([]));
 
-    const { ExperiencesSection } = await import(
-      '~features/about/ExperiencesSection'
-    );
+    const { ExperiencesSection } =
+      await import('~features/about/ExperiencesSection');
     const { container } = render(
       (await ExperiencesSection({ locale: 'en-US' })) ?? <></>,
     );
@@ -99,9 +98,8 @@ describe('about/ExperiencesSection', () => {
   it('should render experience cards from use case response', async () => {
     mockExecute.mockResolvedValue(right(EXPERIENCES));
 
-    const { ExperiencesSection } = await import(
-      '~features/about/ExperiencesSection'
-    );
+    const { ExperiencesSection } =
+      await import('~features/about/ExperiencesSection');
     render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.getByText('Senior Developer')).toBeInTheDocument();
@@ -111,9 +109,8 @@ describe('about/ExperiencesSection', () => {
   it('should render no cards when use case returns empty', async () => {
     mockExecute.mockResolvedValue(right([]));
 
-    const { ExperiencesSection } = await import(
-      '~features/about/ExperiencesSection'
-    );
+    const { ExperiencesSection } =
+      await import('~features/about/ExperiencesSection');
     render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.queryByTestId('experience-card')).not.toBeInTheDocument();
@@ -122,11 +119,22 @@ describe('about/ExperiencesSection', () => {
   it('should render no cards when use case fails', async () => {
     mockExecute.mockResolvedValue(left());
 
-    const { ExperiencesSection } = await import(
-      '~features/about/ExperiencesSection'
-    );
+    const { ExperiencesSection } =
+      await import('~features/about/ExperiencesSection');
     render(await ExperiencesSection({ locale: 'en-US' }));
 
     expect(screen.queryByTestId('experience-card')).not.toBeInTheDocument();
+  });
+
+  it('should pass the description to the card as rendered Markdown', async () => {
+    mockExecute.mockResolvedValue(
+      right([{ ...EXPERIENCES[0], description: 'Led the **platform** team.' }]),
+    );
+
+    const { ExperiencesSection } =
+      await import('~features/about/ExperiencesSection');
+    await renderServerComponent(ExperiencesSection({ locale: 'en-US' }));
+
+    expect(screen.getByText('platform').tagName).toBe('STRONG');
   });
 });

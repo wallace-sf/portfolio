@@ -1,4 +1,4 @@
-import type { MermaidAPI } from './src/View/TextRich/lib/loadMermaid';
+import type { MermaidAPI } from './src/View/Markdown/loadMermaid';
 
 declare global {
   interface Window {

@@ -5,13 +5,15 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 
+import { renderServerComponent } from '../../helpers/renderServerComponent';
+
 vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => `t.${key}`),
 }));
 
 vi.mock('~features/about/ValuesSection/ProfessionalValueCard', () => ({
-  ProfessionalValueCard: ({ content }: { content: string }) => (
-    <div data-testid="professional-value">{content}</div>
+  ProfessionalValueCard: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="professional-value">{children}</div>
   ),
 }));
 
@@ -30,7 +32,11 @@ vi.mock('~/lib/server/container', () => ({
 }));
 
 const PROFESSIONAL_VALUES = [
-  { id: '1', icon: 'material-symbols:diamond', content: 'High quality delivery' },
+  {
+    id: '1',
+    icon: 'material-symbols:diamond',
+    content: 'High quality **delivery**',
+  },
   { id: '2', icon: 'material-symbols:code', content: 'Clean code' },
 ];
 
@@ -51,16 +57,15 @@ describe('about/ValuesSection', () => {
     expect(screen.getByText('t.values_title')).toBeInTheDocument();
   });
 
-  it('should render professional values from use case response', async () => {
+  it('should render each professional value as Markdown from the use case response', async () => {
     mockExecute.mockResolvedValue(right(PROFESSIONAL_VALUES));
 
     const { ValuesSection } = await import('~features/about/ValuesSection');
-    render(await ValuesSection({ locale: 'en-US' }));
+    await renderServerComponent(ValuesSection({ locale: 'en-US' }));
 
-    expect(
-      screen.getAllByTestId('professional-value').length,
-    ).toBeGreaterThan(0);
-    expect(screen.getByText('High quality delivery')).toBeInTheDocument();
+    expect(screen.getAllByTestId('professional-value')).toHaveLength(2);
+    expect(screen.getByText('delivery').tagName).toBe('STRONG');
+    expect(screen.getByText('Clean code')).toBeInTheDocument();
   });
 
   it('should render no values when use case returns empty', async () => {
@@ -69,9 +74,7 @@ describe('about/ValuesSection', () => {
     const { ValuesSection } = await import('~features/about/ValuesSection');
     render(await ValuesSection({ locale: 'en-US' }));
 
-    expect(
-      screen.queryByTestId('professional-value'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('professional-value')).not.toBeInTheDocument();
   });
 
   it('should render no values when use case fails', async () => {
@@ -80,8 +83,6 @@ describe('about/ValuesSection', () => {
     const { ValuesSection } = await import('~features/about/ValuesSection');
     render(await ValuesSection({ locale: 'en-US' }));
 
-    expect(
-      screen.queryByTestId('professional-value'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('professional-value')).not.toBeInTheDocument();
   });
 });

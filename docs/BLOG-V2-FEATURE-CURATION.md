@@ -157,7 +157,7 @@ around. Assessed against the [phases](#suggested-delivery-split-for-blog-v2) bel
 | Issue | What | Where it lands |
 |-------|------|----------------|
 | [#1063](https://github.com/wallace-sf/portfolio/issues/1063) | Dual light/dark syntax-highlighting themes | Same file + same `rehype-pretty-code` config as the Phase 5 "diff highlighting" task. Fold in there |
-| [#1058](https://github.com/wallace-sf/portfolio/issues/1058) | Extract a shared `Prose` primitive in `@repo/ui` | Not a blocker for Phases 0–4. Collides with Phase 5 (heavy `PostBody` changes). Ideally the full extraction lands **just before Phase 5** — but it touches `TextRich` (shipped portfolio code), so its own PR with visual-regression check, never inside a blog PR |
+| [#1058](https://github.com/wallace-sf/portfolio/issues/1058) | ~~Extract a shared `Prose` primitive in `@repo/ui`~~ | **Closed, superseded.** The renderers were unified into one server-side `Markdown` (#1166), and `.markdown-body` (GitHub's stylesheet, light/dark re-keyed to the site theme) became the single typography for the portfolio and the blog (#1169). No hand-written Prose |
 
 ### ⚪ Out of the v2 path
 

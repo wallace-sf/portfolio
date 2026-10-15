@@ -1,11 +1,12 @@
 import { GetExperiences } from '@repo/application/portfolio';
 import { type Locale } from '@repo/core/shared';
+import { Markdown } from '@repo/ui/View';
 import classNames from 'classnames';
 import { getTranslations } from 'next-intl/server';
 
 import { getServerContainer } from '~/lib/server/container';
 
-import { ExperienceCard, IExperienceCardProps } from './ExperienceCard';
+import { ExperienceCard } from './ExperienceCard';
 
 export async function ExperiencesSection({ locale }: { locale: Locale }) {
   const { experienceRepository, skillRepository } = getServerContainer();
@@ -16,7 +17,7 @@ export async function ExperiencesSection({ locale }: { locale: Locale }) {
     }),
   ]);
 
-  const experiences: IExperienceCardProps[] = experiencesResult.isRight()
+  const experiences = experiencesResult.isRight()
     ? experiencesResult.value
     : [];
 
@@ -26,7 +27,7 @@ export async function ExperiencesSection({ locale }: { locale: Locale }) {
     <section className="mt-10 flex flex-col gap-y-4 xl:mt-16 2xl:mt-20">
       <h2 className="text-heading-h4 text-left">{t('experience_title')}</h2>
       <ul className="flex flex-col">
-        {experiences.map((experience, i) => (
+        {experiences.map(({ description, ...experience }, i) => (
           <li
             key={experience.id}
             className={classNames(
@@ -37,7 +38,14 @@ export async function ExperiencesSection({ locale }: { locale: Locale }) {
               },
             )}
           >
-            <ExperienceCard {...experience} />
+            <ExperienceCard {...experience}>
+              {description && (
+                <Markdown
+                  content={description}
+                  className="text-base text-content-disabled"
+                />
+              )}
+            </ExperienceCard>
           </li>
         ))}
       </ul>

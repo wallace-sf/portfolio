@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef } from 'react';
 
-import { loadMermaid } from '../lib/loadMermaid';
+import { loadMermaid } from './loadMermaid';
 
 interface IMermaidBlockProps {
   chart: string;
@@ -30,5 +30,11 @@ export const MermaidBlock = ({ chart }: IMermaidBlockProps) => {
     };
   }, [chart, id]);
 
-  return <div ref={ref} className="my-4 flex justify-center overflow-x-auto" />;
+  return (
+    <div
+      ref={ref}
+      data-mermaid
+      className="my-4 flex justify-center overflow-x-auto"
+    />
+  );
 };
