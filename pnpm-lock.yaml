@@ -535,6 +535,9 @@ importers:
       '@repo/utils':
         specifier: workspace:*
         version: link:../utils
+      '@shikijs/transformers':
+        specifier: ~1.29.2
+        version: 1.29.2
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -2834,6 +2837,13 @@ packages:
   /@shikijs/themes@1.29.2:
     resolution: {integrity: sha512-i9TNZlsq4uoyqSbluIcZkmPL9Bfi3djVxRnofUHwvx/h6SRW3cwgBC5SML7vsDcWyukY0eCzVN980rqP6qNl9g==}
     dependencies:
+      '@shikijs/types': 1.29.2
+    dev: false
+
+  /@shikijs/transformers@1.29.2:
+    resolution: {integrity: sha512-NHQuA+gM7zGuxGWP9/Ub4vpbwrYCrho9nQCLcCPfOe3Yc7LOYwmSuhElI688oiqIXk9dlZwDiyAG9vPBTuPJMA==}
+    dependencies:
+      '@shikijs/core': 1.29.2
       '@shikijs/types': 1.29.2
     dev: false
 
