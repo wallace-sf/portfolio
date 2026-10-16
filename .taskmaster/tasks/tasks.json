@@ -9168,8 +9168,9 @@
         "testStrategy": "Unit tests in `packages/ui/test/View/Markdown/headings.test.ts`: should return headings in document order with rendered IDs; should nest h3 under preceding h2. Pipeline tests in `packages/ui/test/View/Markdown/pipeline.test.ts`: should add slug IDs to h2 and h3; should suffix duplicate heading IDs with -1, -2; should not prefix with user-content- (verify slug runs after sanitize). Component tests for TableOfContents: nests h3 under h2; renders nothing when fewer than 3 headings; marks intersecting heading aria-current (stub IntersectionObserver). Post page integration test: TOC entries match body heading IDs; TOC is rendered when ≥ 3 headings present.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-10-16T04:17:59.558Z"
       },
       {
         "id": "4",
@@ -9201,9 +9202,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-16T03:53:34.760Z",
+      "lastModified": "2026-10-16T04:17:59.558Z",
       "taskCount": 5,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "blog-v2-phase-5a"
       ]
