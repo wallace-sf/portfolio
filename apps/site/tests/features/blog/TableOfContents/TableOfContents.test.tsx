@@ -87,6 +87,22 @@ describe('TableOfContents', () => {
     expect(current()).toEqual([]);
   });
 
+  it('should colour the current entry like its heading when it is an h2 or an h3', () => {
+    mountHeadings({ why: 900, left: 1400, right: 1900, usage: 2400 });
+    render(<TableOfContents headings={HEADINGS} label="On this page" />);
+    const link = (name: string) => screen.getByRole('link', { name });
+
+    scrollTo({ why: 0, left: 500, right: 1000, usage: 1500 });
+    expect(link('Why')).toHaveClass(
+      'text-brand-accent',
+      '[.light_&]:text-brand-primary',
+    );
+
+    scrollTo({ why: -500, left: 0, right: 500, usage: 1000 });
+    expect(link('The Left side')).toHaveClass('text-brand-primary');
+    expect(link('The Left side')).not.toHaveClass('text-brand-accent');
+  });
+
   it('should mark the heading an anchor jump lands on when it skips past the offset', () => {
     mountHeadings({ why: 900, left: 1400, right: 1900, usage: 2400 });
     render(<TableOfContents headings={HEADINGS} label="On this page" />);
