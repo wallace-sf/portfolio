@@ -1,5 +1,6 @@
 import { cache } from 'react';
 
+import { transformerNotationDiff } from '@shikijs/transformers';
 import type { Root } from 'hast';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
@@ -35,7 +36,12 @@ const processor = unified()
   .use(rehypeSanitize, sanitizeSchema)
   .use(rehypeSlug)
   .use(rehypeMermaid)
-  .use(rehypePrettyCode, { theme: 'github-dark', keepBackground: true });
+  .use(rehypePrettyCode, {
+    // Both palettes ship as CSS variables; globals.css picks one per theme.
+    theme: { dark: 'github-dark', light: 'github-light' },
+    keepBackground: true,
+    transformers: [transformerNotationDiff()],
+  });
 
 /**
  * Cached per request in Server Components, so a page that renders `Markdown`
