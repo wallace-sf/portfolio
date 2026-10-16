@@ -9180,8 +9180,9 @@
         "testStrategy": "Unit tests in `packages/ui/test/View/Markdown/pipeline.test.ts`: should emit both theme variables on tokens when fenced block is rendered; should mark diff lines when fence uses [!code ++] / [!code --]; should still turn mermaid fences into client island (unchanged). Manual browser testing (required in acceptance criteria): build site, verify code blocks use github-light under .light class and github-dark otherwise; toggle theme and verify live switch without reload; verify diff lines render with add/remove styling; verify {n} meta highlights lines; verify Mermaid diagrams unaffected; check inline code contrast in both themes. Run Rich Results test on a post page to validate JSON-LD. Test all scenarios from #1063 acceptance criteria.",
         "priority": "medium",
         "dependencies": [],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-10-16T18:01:00.478Z"
       },
       {
         "id": "5",
@@ -9202,9 +9203,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-16T04:17:59.558Z",
+      "lastModified": "2026-10-16T18:01:00.478Z",
       "taskCount": 5,
-      "completedCount": 3,
+      "completedCount": 4,
       "tags": [
         "blog-v2-phase-5a"
       ]
