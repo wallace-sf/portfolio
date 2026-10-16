@@ -43,11 +43,21 @@ const AUTHOR = {
   url: 'https://example.com',
 };
 
-async function renderPost(locale: string) {
+const BODY_WITH_SECTIONS = [
+  '## Why Either?',
+  'Text.',
+  '### The `Left` side',
+  'Text.',
+  '## Usage',
+  'Text.',
+].join('\n\n');
+
+async function renderPost(locale: string, content = 'A short body.') {
   posts = [
     blogPost('hello-blog', '2026-09-02T10:00:00.000Z')
       .withAuthor(AUTHOR)
       .withTags(['typescript', 'ddd'])
+      .withContent({ 'en-US': content, 'pt-BR': content, es: content })
       .now(),
   ];
   const params = { locale, year: '2026', month: '09', slug: 'hello-blog' };
@@ -91,5 +101,34 @@ describe('BlogPostPage article', () => {
       inLanguage: 'pt-BR',
       image: `${url}/opengraph-image`,
     });
+  });
+
+  it('should link every table-of-contents entry to a heading in the body', async () => {
+    const { container } = await renderPost('en-US', BODY_WITH_SECTIONS);
+
+    // Two placements: the inline block (below xl) and the xl rail.
+    const tocs = screen.getAllByRole('navigation', { name: 'On this page' });
+    const targetsOf = (toc: HTMLElement) =>
+      within(toc)
+        .getAllByRole('link')
+        .map((link) => link.getAttribute('href')?.slice(1));
+
+    expect(tocs).toHaveLength(2);
+    tocs.forEach((toc) =>
+      expect(targetsOf(toc)).toEqual(['why-either', 'the-left-side', 'usage']),
+    );
+    ['why-either', 'the-left-side', 'usage'].forEach((id) =>
+      expect(
+        container.querySelector(`.markdown-body [id="${id}"]`),
+      ).not.toBeNull(),
+    );
+  });
+
+  it('should not render a table of contents when the post has few headings', async () => {
+    await renderPost('en-US');
+
+    expect(
+      screen.queryByRole('navigation', { name: 'On this page' }),
+    ).not.toBeInTheDocument();
   });
 });

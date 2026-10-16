@@ -28,6 +28,18 @@
   color: rgb(var(--tw-brand-primary));
 }
 
+/* Heading anchors (#id from the TOC) land below the fixed mobile header; on
+   lg+ the navigation is a sidebar, so only breathing room is needed. */
+.markdown-body :is(h2, h3) {
+  scroll-margin-top: calc(var(--header-height-mobile) + 1rem);
+}
+
+@media (min-width: 1024px) {
+  .markdown-body :is(h2, h3) {
+    scroll-margin-top: 1.5rem;
+  }
+}
+
 .markdown-body a {
   color: rgb(var(--tw-brand-accent));
   text-decoration: underline;

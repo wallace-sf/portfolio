@@ -36,3 +36,5 @@ export async function Markdown({
 
   return <div className={classNames('markdown-body', className)}>{body}</div>;
 }
+
+export { markdownHeadings, type MarkdownHeading } from './headings';

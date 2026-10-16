@@ -107,4 +107,27 @@ describe('Markdown', () => {
       ).toBeInTheDocument(),
     );
   });
+
+  it('should give h2 and h3 slug ids when the content has headings', async () => {
+    await renderMarkdown(
+      ['## Why Either?', '', '### The `Left` side'].join('\n'),
+    );
+
+    expect(screen.getByRole('heading', { level: 2 })).toHaveAttribute(
+      'id',
+      'why-either',
+    );
+    expect(screen.getByRole('heading', { level: 3 })).toHaveAttribute(
+      'id',
+      'the-left-side',
+    );
+  });
+
+  it('should suffix the id when two headings share the same text', async () => {
+    await renderMarkdown(['## Usage', '', '## Usage'].join('\n'));
+
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map(({ id }) => id),
+    ).toEqual(['usage', 'usage-1']);
+  });
 });
