@@ -125,6 +125,16 @@ GitHub's stylesheet (`github-markdown-css`) plus design-token overrides in
 hand-written typography layer; a different style gets designed only when a real
 case needs it.
 
+**Heading anchors:** every `h2`–`h6` gets a slug `id` (`## Why Either?` →
+`#why-either`, duplicates suffixed `-1`, `-2`), with `scroll-margin-top` clearing
+the fixed mobile header. `markdownHeadings(content)` returns the `h2`/`h3` list
+(`{ id, text, depth }`) with the same ids, from the same pipeline run (React
+`cache()`); the blog's table of contents is built from it.
+
+```tsx
+const headings = await markdownHeadings(post.content); // Server Component
+```
+
 A Client Component cannot render it, so its Server Component parent renders it
 and passes the result down as `children`:
 
