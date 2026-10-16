@@ -1,6 +1,6 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
 import type { BlogPost } from '@repo/core/blog';
-import { screen, within } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import BlogPostPage from '~/app/[locale]/blog/[year]/[month]/[slug]/page';
@@ -122,6 +122,29 @@ describe('BlogPostPage article', () => {
         container.querySelector(`.markdown-body [id="${id}"]`),
       ).not.toBeNull(),
     );
+  });
+
+  it('should fill the reading progress bar once the post body is read', async () => {
+    vi.stubGlobal('requestAnimationFrame', (update: FrameRequestCallback) => {
+      update(0);
+      return 0;
+    });
+    const { container } = await renderPost('en-US');
+    const body = container.querySelector('.markdown-body')
+      ?.parentElement as HTMLElement;
+    const bar = container.querySelector<HTMLElement>(
+      '[aria-hidden="true"][style*="scaleX"]',
+    );
+
+    body.getBoundingClientRect = () =>
+      ({ top: -5000, height: 2000 }) as DOMRect;
+    act(() => {
+      window.dispatchEvent(new Event('scroll'));
+    });
+
+    expect(body.id).not.toBe('');
+    expect(bar?.style.transform).toBe('scaleX(1)');
+    vi.unstubAllGlobals();
   });
 
   it('should not render a table of contents when the post has few headings', async () => {

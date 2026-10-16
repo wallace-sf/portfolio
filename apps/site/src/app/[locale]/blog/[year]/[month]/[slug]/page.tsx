@@ -22,6 +22,7 @@ import { PostCover } from '~features/blog/PostCover';
 import { PostHeader } from '~features/blog/PostHeader';
 import { MIN_TOC_HEADINGS, PostToc } from '~features/blog/PostToc';
 import { PrevNextNav } from '~features/blog/PrevNextNav';
+import { ReadingProgress } from '~features/blog/ReadingProgress';
 
 import {
   type BlogPostRouteParams,
@@ -29,6 +30,9 @@ import {
 } from './static-params';
 
 export const dynamicParams = false;
+
+/** The element the reading progress bar measures: the post body only. */
+const POST_BODY_ID = 'post-body';
 
 export const generateStaticParams = blogPostStaticParams;
 
@@ -118,6 +122,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         hasToc && 'xl:grid xl:grid-cols-[minmax(0,1fr)_11rem] xl:gap-10',
       )}
     >
+      <ReadingProgress targetId={POST_BODY_ID} />
+
       <article className="mx-auto flex w-full max-w-3xl flex-col gap-8 py-4 lg:py-8">
         <JsonLd data={buildPostJsonLd(post, locale)} />
         <BlogBreadcrumbs locale={locale} target={post} />
@@ -141,7 +147,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         <Divider />
 
-        <Markdown content={post.content} />
+        <div id={POST_BODY_ID}>
+          <Markdown content={post.content} />
+        </div>
 
         <AuthorByline author={post.author} locale={locale} />
 
