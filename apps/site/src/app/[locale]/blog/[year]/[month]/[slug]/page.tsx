@@ -9,10 +9,13 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
+import { JsonLd } from '~components';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
+import { AuthorByline } from '~features/blog/AuthorByline';
 import { BlogBreadcrumbs } from '~features/blog/BlogBreadcrumbs';
+import { buildPostJsonLd } from '~features/blog/buildPostJsonLd';
 import { blogPostPath, publicationSegments } from '~features/blog/paths';
 import { PostCover } from '~features/blog/PostCover';
 import { PostHeader } from '~features/blog/PostHeader';
@@ -77,6 +80,10 @@ export async function generateMetadata({
       ...buildOpenGraph(locale, path, 'article'),
       title,
       description,
+      publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt,
+      authors: [post.author.url ?? post.author.name],
+      tags: post.tags,
     },
   };
 }
@@ -100,6 +107,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <article className="mx-auto flex max-w-3xl flex-col gap-8 py-4 lg:py-8">
+      <JsonLd data={buildPostJsonLd(post, locale)} />
       <BlogBreadcrumbs locale={locale} target={post} />
 
       {post.coverImage && <PostCover image={post.coverImage} />}
@@ -118,6 +126,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <Divider />
 
       <Markdown content={post.content} />
+
+      <AuthorByline author={post.author} locale={locale} />
 
       {(newer || older) && (
         <>
