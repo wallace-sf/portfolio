@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+
+import { useScrollFrame } from '~/hooks/useScrollFrame';
 
 /**
  * How far below the viewport top a heading counts as "reached": clears the
@@ -17,33 +19,19 @@ const reached = (id: string): boolean => {
 /**
  * The id of the last heading whose top has crossed `ACTIVE_OFFSET`, or
  * `undefined` above the first one. Recomputed from positions on scroll and
- * resize (passive, once per frame). An `IntersectionObserver` is not enough:
- * it only fires on intersection changes, so an anchor jump that carries a
- * heading from below the viewport straight past the offset never reports.
+ * resize (`useScrollFrame`). An `IntersectionObserver` is not enough: it only
+ * fires on intersection changes, so an anchor jump that carries a heading from
+ * below the viewport straight past the offset never reports.
  */
 export function useActiveHeading(ids: string[]): string | undefined {
   const [active, setActive] = useState<string>();
   const key = ids.join(' ');
 
-  useEffect(() => {
-    const headingIds = key.split(' ');
-    const update = () => setActive(headingIds.filter(reached).at(-1));
-    let frame = 0;
-    const schedule = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule, { passive: true });
-
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', schedule);
-    };
-  }, [key]);
+  const update = useCallback(
+    () => setActive(key.split(' ').filter(reached).at(-1)),
+    [key],
+  );
+  useScrollFrame(update);
 
   return active;
 }
