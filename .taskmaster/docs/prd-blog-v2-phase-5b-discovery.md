@@ -41,6 +41,12 @@ see PRD 5A §8).
   and a layout that doesn't depend on invisible spacer elements.
 - The four use cases named in Phase 0 §4: `GetBlogTags`, `ListBlogPostsByTag`,
   `ListRelatedBlogPosts`, `ListFeaturedBlogPosts`.
+- **Four new published posts** in the blog seed (R11). They are real articles,
+  not fixtures, because the seed writes to the production database. Their tags,
+  `featured` flags and headings are chosen so every feature above has data to
+  show: more than 8 tags, more featured posts than the band holds, a related-post
+  ranking with ties broken by shared-tag count, and a post with more related
+  candidates than the limit.
 
 **Out of scope**
 
@@ -53,11 +59,15 @@ see PRD 5A §8).
   kebab-case value, as they do today.
 - Tag links inside `PostCard`. The whole card is a link, and an `<a>` can't
   nest another `<a>` (§2).
-- Pagination. With 4 posts, every listing fits on one page. Revisit in 5C or
+- Pagination. With 8 posts, every listing fits on one page. Revisit in 5C or
   when the post count grows.
-- Any change to `packages/core`, `packages/infra`, the Prisma schema or the
-  seed. `featured` and `tags` already exist on `BlogPost` (PRD 1) and in the
-  seed (2 featured posts, 8 distinct tags).
+- Any change to `packages/core`, the Prisma schema or `packages/infra` code.
+  The only `packages/infra` change is seed **data** (R11). `featured` and `tags`
+  already exist on `BlogPost` (PRD 1).
+- **Backdated posts.** A post dated 2025 would give the archive a second year,
+  but it would tell readers something false. The new posts carry their real
+  publication dates, so the archive keeps one year. Multiple years are covered by
+  the use-case and component tests.
 
 ## 2. Design constraints
 
@@ -84,6 +94,12 @@ see PRD 5A §8).
 - **No nested links.** `PostCard` is a single `Link` wrapping the whole card.
   Its tag badges stay plain text. Tag links appear where a tag stands alone:
   the post header, trending tags, the tag index.
+- **Seed content is real content.** `db:seed:blog` upserts into the same
+  Supabase database production reads. New posts follow the existing seed
+  format (`index.ts` + `en-US.ts` / `pt-BR.ts` / `es.ts`, a fixed id in
+  `ID.blogPosts`), are written in English first and translated, and are reviewed
+  by the author in their PR before merge. Running the seed against production
+  is the author's call and happens only after that PR merges (§7).
 - **Files under 200 lines.** The listing page gains three sections, so each one
   is its own component (`FeaturedPosts`, `TrendingTags`, `ArchiveNav`). Test
   naming is `should <expected behavior> when <context>`. Page tests mock only
@@ -181,7 +197,7 @@ class ListFeaturedBlogPosts extends UseCase<
 Top to bottom:
 
 1. **Header**: title, subtitle, and a count badge with the published post total
-   ("4 posts").
+   ("8 posts").
 2. **Featured band** (`features/blog/FeaturedPosts`): a section headed
    "Featured", with the `ListFeaturedBlogPosts` posts as cards in two columns
    from `md`. Not rendered when there are no featured posts.
@@ -224,6 +240,30 @@ New `Blog.*` keys in `en-US`, `pt-BR` and `es`: `featured`, `allPosts`,
 (`{count, plural, one {# post} other {# posts}}`). New `Metadata.BlogTagsPage` and `Metadata.BlogTagPage`
 (`title`, `description`, with `{tag}`).
 
+### R11 — New seed posts (`packages/infra` seed data)
+
+Four new published posts, in the house style of the existing four (a practical
+pattern from this codebase, 40–90 lines of Markdown, code examples). Working
+titles; the final wording comes out of the content review:
+
+| #   | Working title                                  | Tags                                             | Featured | Covers                                                                                               |
+| --- | ---------------------------------------------- | ------------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------- |
+| A   | Testing use cases with in-memory repositories  | `testing`, `clean-architecture`, `typescript`    | no       | h3 headings under h2 (TOC nesting), a `[!code ++]` / `[!code --]` fence                              |
+| B   | Static blog routes with `generateStaticParams` | `nextjs`, `seo`, `react-server-components`       | no       | shares **2** tags with _Server Components as a Composition Root_, 1 with C: the shared-count ranking |
+| C   | A sanitized Markdown pipeline                  | `markdown`, `security`, `nextjs`                 | no       | a `{n}` line-highlight fence                                                                         |
+| D   | Enforcing the dependency rule in a monorepo    | `architecture`, `clean-architecture`, `monorepo` | **yes**  | 4 related candidates for a limit of 3; a 3rd featured post for a band of 2                           |
+
+With the existing posts this gives 8 posts, **13 tags** (5 new: `testing`,
+`seo`, `markdown`, `security`, `monorepo`), so trending tags are capped at 8 for
+real, and 3 featured posts for a band of 2. `publishedAt` is each post's real
+publication date in 2026-10, at or before the day the seed runs.
+
+- Ids `60000000-0000-4000-8000-00000000000{5..8}` in `ID.blogPosts`, the posts
+  registered in `seed-data/blog-posts/index.ts`. `seedBlogPosts.test.ts` already
+  asserts every `ID.blogPosts` entry is seeded.
+- Every post satisfies the domain: `PUBLISHED` with ≥ 1 tag, valid kebab-case
+  tags and slug.
+
 ## 4. Acceptance criteria
 
 - [ ] `GetBlogTags`, `ListBlogPostsByTag`, `ListRelatedBlogPosts` and
@@ -244,12 +284,15 @@ New `Blog.*` keys in `en-US`, `pt-BR` and `es`: `featured`, `allPosts`,
 - [ ] Prev/next shows arrows, titles and dates, carries `rel="prev"` /
       `rel="next"`, and keeps its sides without spacer elements.
 - [ ] New i18n keys exist in `en-US`, `pt-BR` and `es` (`messages.test.ts` green).
+- [ ] The four new posts (R11) are in the seed in all three locales, reviewed
+      by the author, and pass `seedBlogPosts.test.ts`.
 - [ ] No `'use client'` file imports `@repo/application`. No change to
-      `packages/core`, `packages/infra` or the seed. No file over 200 lines.
+      `packages/core` or `packages/infra` code (seed data only). No file over
+      200 lines.
 - [ ] `pnpm --filter @repo/application test`, `pnpm --filter site test`,
       `pnpm -w lint`, `pnpm -w types` green.
 - [ ] `pnpm --filter site build` prerenders every page, including the tag pages
-      (3 locales × (1 index + 8 tags) = 27 new pages with the current seed).
+      (3 locales × (1 index + 13 tags) = 42 with the R11 seed).
       Checked in the browser in both themes and two locales: the listing,
       `/blog/tags`, a tag page, a post's related posts and prev/next, and
       keyboard focus on every new link.
@@ -263,6 +306,7 @@ New `Blog.*` keys in `en-US`, `pt-BR` and `es`: `featured`, `allPosts`,
 - `apps/site/src/app/[locale]/blog/tags/page.tsx`
 - `apps/site/src/app/[locale]/blog/tags/[tag]/page.tsx`
 - `apps/site/src/features/blog/{FeaturedPosts,TrendingTags,ArchiveNav,RelatedPosts,TagLink}/index.tsx`
+- `packages/infra/prisma/seed-data/blog-posts/{<post-a>,<post-b>,<post-c>,<post-d>}/{index,en-US,pt-BR,es}.ts`
 - Tests:
   - `packages/application/test/blog/{GetBlogTags,ListBlogPostsByTag,ListRelatedBlogPosts,ListFeaturedBlogPosts,rank-related}.test.ts`
   - `apps/site/tests/app/[locale]/blog/tags/{page,[tag]/page}.test.tsx`
@@ -276,6 +320,7 @@ New `Blog.*` keys in `en-US`, `pt-BR` and `es`: `featured`, `allPosts`,
 - `apps/site/src/app/sitemap.ts`
 - `apps/site/src/features/blog/{paths.ts,buildBlogBreadcrumbs.ts,PostHeader/index.tsx,PrevNextNav/index.tsx}`
 - `apps/site/messages/{en-US,pt-BR,es}.json`
+- `packages/infra/prisma/{seeders.ts,seed-data/blog-posts/index.ts}`
 - Tests: `apps/site/tests/app/[locale]/blog/page.test.tsx`, the post page
   tests, `sitemap.test.ts`, `paths.test.ts`, `buildBlogBreadcrumbs.test.ts`,
   `PrevNextNav.test.tsx`, `PostHeader.test.tsx`.
@@ -318,12 +363,23 @@ New `Blog.*` keys in `en-US`, `pt-BR` and `es`: `featured`, `allPosts`,
   `pt-BR`: the listing (featured band, trending tags, archive links), `/blog/tags`,
   `/blog/tags/ddd` (3 posts), a post's tag links, "Further reading" and
   prev/next, and Tab through every new link to check the focus ring.
-- `curl /sitemap.xml` and confirm the 27 tag URLs.
+- `curl /sitemap.xml` and confirm the 42 tag URLs.
+- On post A: the TOC nests its h3s and the diff fence renders added/removed
+  lines. On post C: the highlighted lines. (These close the two PRD 5A checks
+  the original 4 posts couldn't exercise.)
 
 ## 7. Operational notes
 
-- No migration, no seed change, no new dependency.
-- 27 more static pages per build with the current seed (3 locales × 9).
+- No migration and no new dependency.
+- **Seeding production.** The new posts reach the site only after
+  `pnpm --filter @repo/infra db:seed:blog` runs against the production database
+  and the site is rebuilt (SSG reads the database at build). The author runs it,
+  or explicitly asks for it to be run, after the seed PR merges. It upserts by
+  id, so it is safe to re-run and never touches other posts.
+- Until the seed runs, production shows the 5B features over the current 4 posts.
+  Local browser checks need the same seed in whichever database `.env` points to.
+- With the R11 seed the build grows by 42 tag pages, 12 post pages and 3 month
+  archive pages (2026-10, one per locale).
 - Featured posts are chosen with the existing `featured` column. Until
   `apps/admin` exists, the seed is where an editor sets it.
 
@@ -332,7 +388,7 @@ New `Blog.*` keys in `en-US`, `pt-BR` and `es`: `featured`, `allPosts`,
 - **Featured posts also stay in "All posts".** The band is a highlight; the
   list below it is the complete chronological index. Removing featured posts
   from it would make a reader scan two places to find a post by date. The cost
-  is that, with today's 4 posts, 2 appear twice. If that feels repetitive once
+  is that the 2 band posts appear twice (2 of 8 with the R11 seed). If that feels repetitive once
   the page is built, hiding them from the list is a one-line change in the page.
 - **Ranking in `application`, not `core`.** "Related" is a curation heuristic
   (shared tag count, a limit of 3), not a business invariant, the same reasoning
@@ -353,7 +409,13 @@ New `Blog.*` keys in `en-US`, `pt-BR` and `es`: `featured`, `allPosts`,
 - **Share links are left out of 5B.** They're a post-page feature that the
   5A/5B/5C split didn't assign. They need no use case and no route, so they fit
   a small standalone issue after 5B.
+- **Real posts over fixtures.** The seed writes to production, so test-only
+  posts would be published under the author's name. Real articles exercise the
+  features and are worth having anyway. They come first in the slice order so
+  every later slice can be checked in the browser against real data.
 - **Slice order for `parse-prd`:**
+  (0) the four R11 posts (drafted, reviewed by the author, merged; the seed run
+  is the author's step) →
   (a) `GetBlogTags` + `ListBlogPostsByTag` + `BlogTagDTO` + tag paths +
   breadcrumbs tag target + `/blog/tags` and `/blog/tags/[tag]` pages + sitemap →
   (b) tag links on the post header + `TrendingTags` + listing post count +
