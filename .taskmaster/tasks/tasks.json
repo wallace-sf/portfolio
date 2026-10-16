@@ -9156,8 +9156,9 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-10-16T03:53:34.760Z"
       },
       {
         "id": "3",
@@ -9200,9 +9201,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-16T03:18:09.030Z",
+      "lastModified": "2026-10-16T03:53:34.760Z",
       "taskCount": 5,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "blog-v2-phase-5a"
       ]
