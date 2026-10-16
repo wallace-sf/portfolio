@@ -2,6 +2,7 @@ import { BlogPost } from '@repo/core/blog';
 import { Locale } from '@repo/core/shared';
 
 import { BlogPostSummaryDTO } from '../dtos/BlogPostSummaryDTO';
+import { readingMinutes } from './reading-time';
 
 /**
  * The listing-card view of a post, resolved to one locale. Shared by every use
@@ -16,6 +17,7 @@ export function toBlogPostSummaryDTO(
     title: post.title.get(locale),
     description: post.description.get(locale),
     publishedAt: post.publishedAt.value,
+    readingMinutes: readingMinutes(post.content.get(locale)),
     featured: post.featured,
     tags: post.tags.map((tag) => tag.value),
     author: {

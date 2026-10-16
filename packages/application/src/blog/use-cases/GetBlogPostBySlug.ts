@@ -14,6 +14,7 @@ import { ApplicationErrorCode } from '../../shared/ApplicationErrorCode';
 import { UseCase } from '../../shared/UseCase';
 import { BlogPostDetailDTO } from '../dtos/BlogPostDetailDTO';
 import { IBlogPostRepository } from '../ports';
+import { toBlogPostSummaryDTO } from './to-summary-dto';
 
 export type GetBlogPostBySlugInput = {
   slug: string;
@@ -56,31 +57,11 @@ export class GetBlogPostBySlug extends UseCase<
   }
 
   private toDTO(post: BlogPost, locale: Locale): BlogPostDetailDTO {
+    const summary = toBlogPostSummaryDTO(post, locale);
+
     return {
-      slug: post.slug.value,
-      title: post.title.get(locale),
-      description: post.description.get(locale),
-      publishedAt: post.publishedAt.value,
-      featured: post.featured,
-      tags: post.tags.map((tag) => tag.value),
-      author: {
-        name: post.author.name.value,
-        avatarUrl: post.author.avatarUrl.value,
-        url: post.author.url?.value,
-        bio: post.author.bio?.get(locale),
-      },
-      coverImage: post.coverImage
-        ? {
-            url: post.coverImage.url.value,
-            alt: post.coverImage.alt.get(locale),
-          }
-        : undefined,
-      thumbnailImage: post.thumbnailImage
-        ? {
-            url: post.thumbnailImage.url.value,
-            alt: post.thumbnailImage.alt.get(locale),
-          }
-        : undefined,
+      ...summary,
+      author: { ...summary.author, bio: post.author.bio?.get(locale) },
       content: post.content.get(locale),
       updatedAt: post.updatedAt?.value,
     };
