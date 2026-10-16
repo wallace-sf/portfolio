@@ -68,6 +68,31 @@ describe('generateMetadata', () => {
     });
   });
 
+  it('should expose the article dates, author and tags as OpenGraph article fields', async () => {
+    posts = [
+      blogPost('hello-blog', '2026-09-02T10:00:00.000Z')
+        .withPostUpdatedAt('2026-09-20T10:00:00.000Z')
+        .withAuthor({
+          name: 'Test Author',
+          avatarUrl: 'https://example.com/avatar.png',
+          url: 'https://example.com',
+        })
+        .withTags(['typescript', 'ddd'])
+        .now(),
+    ];
+
+    const metadata = await generateMetadata({
+      params: params('hello-blog', '2026', '09'),
+    });
+
+    expect(metadata.openGraph).toMatchObject({
+      publishedTime: '2026-09-02T10:00:00.000Z',
+      modifiedTime: '2026-09-20T10:00:00.000Z',
+      authors: ['https://example.com'],
+      tags: ['typescript', 'ddd'],
+    });
+  });
+
   it("should return an empty object when the post doesn't exist at that URL", async () => {
     posts = [blogPost('hello-blog', '2026-09-02T10:00:00.000Z').now()];
 
