@@ -1,27 +1,28 @@
 import { Badge } from '@repo/ui/View';
 
-import { formatPublishedAt } from '~features/blog/formatPublishedAt';
+import { PostMeta } from '~features/blog/PostMeta';
 
 export interface IPostHeaderProps {
   title: string;
   description: string;
   publishedAt: string;
+  updatedAt?: string;
+  readingMinutes: number;
+  authorName: string;
   tags: string[];
   locale: string;
 }
 
-export function PostHeader({
+/** Async only so the async `PostMeta` resolves wherever the header renders. */
+export async function PostHeader({
   title,
   description,
-  publishedAt,
   tags,
-  locale,
+  ...meta
 }: IPostHeaderProps) {
   return (
     <header className="flex flex-col gap-4">
-      <time dateTime={publishedAt} className="text-body-xs text-content-muted">
-        {formatPublishedAt(publishedAt, locale)}
-      </time>
+      <PostMeta {...meta} />
 
       <h1 className="text-heading-h2">{title}</h1>
 

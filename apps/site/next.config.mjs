@@ -28,6 +28,9 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'placehold.co' },
       { protocol: 'https', hostname: '*.supabase.co' },
+      // Author avatars (`https://github.com/<user>.png` redirects to the CDN).
+      { protocol: 'https', hostname: 'github.com' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
     ],
   },
 };

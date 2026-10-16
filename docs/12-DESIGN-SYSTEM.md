@@ -125,6 +125,16 @@ GitHub's stylesheet (`github-markdown-css`) plus design-token overrides in
 hand-written typography layer; a different style gets designed only when a real
 case needs it.
 
+**Heading anchors:** every `h2`–`h6` gets a slug `id` (`## Why Either?` →
+`#why-either`, duplicates suffixed `-1`, `-2`), with `scroll-margin-top` clearing
+the fixed mobile header. `markdownHeadings(content)` returns the `h2`/`h3` list
+(`{ id, text, depth }`) with the same ids, from the same pipeline run (React
+`cache()`); the blog's table of contents is built from it.
+
+```tsx
+const headings = await markdownHeadings(post.content); // Server Component
+```
+
 A Client Component cannot render it, so its Server Component parent renders it
 and passes the result down as `children`:
 
@@ -142,8 +152,27 @@ palette to `.light .markdown-body`, so it follows the site's theme toggle. The
 file is generated from the installed package (`pnpm --filter @repo/ui
 generate:markdown-theme`), and a test fails if it drifts after an upgrade.
 
+**Code blocks:** Shiki emits both `github-dark` and `github-light` as CSS
+variables (`--shiki-dark` / `--shiki-light`, plus `-bg` on the `<pre>`);
+`globals.css` shows dark by default and light under `.light`, so blocks follow
+the theme toggle with no reload. Authors can highlight lines and mark diffs:
+
+````markdown
+```ts {2,4-5}
+const a = 1;
+const b = 2;             // highlighted
+const old = 3;           // [!code --]
+const fresh = 4;         // [!code ++]
+```
+````
+
+`{…}` after the language lists line numbers or ranges to highlight.
+`// [!code ++]` / `// [!code --]` (any comment syntax) mark a line added or
+removed; the marker comment is removed from the output.
+
 **Pipeline:** `remark-parse → remark-gfm → remark-mark-highlight → remark-rehype →
-rehype-sanitize → mermaid → rehype-pretty-code`. Raw HTML is never rendered, and
+rehype-sanitize → rehype-slug → mermaid → rehype-pretty-code` (with
+`@shikijs/transformers`' `transformerNotationDiff`). Raw HTML is never rendered, and
 input is sanitized before the trusted transforms (whose inline styles the sanitizer
 would otherwise strip).
 

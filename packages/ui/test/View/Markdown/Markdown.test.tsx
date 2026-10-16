@@ -63,6 +63,52 @@ describe('Markdown', () => {
     expect(figure?.querySelector('span[style]')).not.toBeNull();
   });
 
+  it('should emit both the light and dark palettes when a fenced block is highlighted', async () => {
+    const { container } = await renderMarkdown(
+      ['```ts', 'const answer = 42;', '```'].join('\n'),
+    );
+
+    const pre = container.querySelector<HTMLElement>(
+      'figure[data-rehype-pretty-code-figure] pre',
+    );
+    const token = pre?.querySelector<HTMLElement>('[data-line] span[style]');
+    expect(pre?.style.getPropertyValue('--shiki-light-bg')).not.toBe('');
+    expect(pre?.style.getPropertyValue('--shiki-dark-bg')).not.toBe('');
+    expect(token?.style.getPropertyValue('--shiki-light')).not.toBe('');
+    expect(token?.style.getPropertyValue('--shiki-dark')).not.toBe('');
+  });
+
+  it('should mark added and removed lines when the fence uses diff notation', async () => {
+    const { container } = await renderMarkdown(
+      [
+        '```ts',
+        'const kept = 1;',
+        'const added = 2; // [!code ++]',
+        'const removed = 3; // [!code --]',
+        '```',
+      ].join('\n'),
+    );
+
+    const lines = [...container.querySelectorAll('[data-line]')];
+    expect(lines.map((line) => line.className)).toEqual([
+      '',
+      'diff add',
+      'diff remove',
+    ]);
+    expect(container.textContent).not.toContain('[!code');
+  });
+
+  it('should mark highlighted lines when the fence meta lists line numbers', async () => {
+    const { container } = await renderMarkdown(
+      ['```ts {2}', 'const a = 1;', 'const b = 2;', '```'].join('\n'),
+    );
+
+    const lines = [...container.querySelectorAll('[data-line]')];
+    expect(
+      lines.map((line) => line.hasAttribute('data-highlighted-line')),
+    ).toEqual([false, true]);
+  });
+
   it('should render a mermaid diagram instead of a highlighted block when the fence is mermaid', async () => {
     const render = vi.fn(async () => ({
       svg: '<svg data-testid="diagram"></svg>',
@@ -106,5 +152,28 @@ describe('Markdown', () => {
         screen.getByText('Use Either<L, R> when { errors } are values.'),
       ).toBeInTheDocument(),
     );
+  });
+
+  it('should give h2 and h3 slug ids when the content has headings', async () => {
+    await renderMarkdown(
+      ['## Why Either?', '', '### The `Left` side'].join('\n'),
+    );
+
+    expect(screen.getByRole('heading', { level: 2 })).toHaveAttribute(
+      'id',
+      'why-either',
+    );
+    expect(screen.getByRole('heading', { level: 3 })).toHaveAttribute(
+      'id',
+      'the-left-side',
+    );
+  });
+
+  it('should suffix the id when two headings share the same text', async () => {
+    await renderMarkdown(['## Usage', '', '## Usage'].join('\n'));
+
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map(({ id }) => id),
+    ).toEqual(['usage', 'usage-1']);
   });
 });

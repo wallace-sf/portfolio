@@ -1,3 +1,9 @@
+export { buildBlogPostingJsonLd } from './blogPosting';
+export type {
+  IBlogPostingAuthor,
+  IBlogPostingInput,
+  IBlogPostingNode,
+} from './blogPosting';
 export { buildBreadcrumbListJsonLd } from './breadcrumbs';
 export type {
   IBreadcrumbListElement,

@@ -1,3 +1,11 @@
 /* App-specific styles.
    Semantic color tokens and shared layout tokens (header heights) live in
    packages/tailwind-config/tailwind.css. */
+
+/* Smooth anchor jumps on pages with a table of contents (the post page sets
+   `data-toc`), unless the reader prefers reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has([data-toc]) {
+    scroll-behavior: smooth;
+  }
+}
