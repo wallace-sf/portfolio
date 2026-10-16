@@ -57,6 +57,7 @@ describe('ListBlogPosts', () => {
           title: 'Meu Primeiro Post',
           description: 'Uma descrição curta.',
           publishedAt: '2026-08-01T00:00:00.000Z',
+          readingMinutes: 1,
           featured: false,
           tags: ['nextjs', 'architecture'],
           author: {

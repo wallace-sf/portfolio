@@ -11,6 +11,8 @@ export type BlogPostSummaryDTO = {
   title: string;
   description: string;
   publishedAt: string;
+  /** Whole minutes to read the body in this locale (200 wpm, at least 1). */
+  readingMinutes: number;
   featured: boolean;
   tags: string[];
   author: BlogPostAuthorDTO;

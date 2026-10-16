@@ -32,7 +32,12 @@
     "breadcrumbHome": "Início",
     "archiveYearHeading": "Posts de {year}",
     "archiveMonthHeading": "Posts de {month} de {year}",
-    "archivePostCount": "{count, plural, one {# post} other {# posts}}"
+    "archivePostCount": "{count, plural, one {# post} other {# posts}}",
+    "readingTime": "{minutes} min de leitura",
+    "updatedOn": "Atualizado em {date}",
+    "byAuthor": "Por {name}",
+    "aboutAuthor": "Sobre o autor",
+    "tableOfContents": "Nesta página"
   },
   "Clipboard": {
     "copy": "Copiar para a área de transferência"

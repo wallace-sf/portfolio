@@ -32,7 +32,12 @@
     "breadcrumbHome": "Inicio",
     "archiveYearHeading": "Publicaciones de {year}",
     "archiveMonthHeading": "Publicaciones de {month} de {year}",
-    "archivePostCount": "{count, plural, one {# publicación} other {# publicaciones}}"
+    "archivePostCount": "{count, plural, one {# publicación} other {# publicaciones}}",
+    "readingTime": "{minutes} min de lectura",
+    "updatedOn": "Actualizado el {date}",
+    "byAuthor": "Por {name}",
+    "aboutAuthor": "Sobre el autor",
+    "tableOfContents": "En esta página"
   },
   "Clipboard": {
     "copy": "Copiar al portapapeles"

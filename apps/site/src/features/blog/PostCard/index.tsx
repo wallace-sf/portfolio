@@ -4,8 +4,8 @@ import { Badge } from '@repo/ui/View';
 import Image from 'next/image';
 
 import { Link } from '~/i18n/routing';
-import { formatPublishedAt } from '~features/blog/formatPublishedAt';
 import { blogPostPath } from '~features/blog/paths';
+import { PostMeta } from '~features/blog/PostMeta';
 
 export interface IPostCardProps {
   post: BlogPostSummaryDTO;
@@ -14,12 +14,21 @@ export interface IPostCardProps {
   headingLevel?: 'h2' | 'h3';
 }
 
-export function PostCard({
+/** Async only so the async `PostMeta` resolves wherever the card renders. */
+export async function PostCard({
   post,
   locale,
   headingLevel: Heading = 'h2',
 }: IPostCardProps) {
-  const { slug, title, description, publishedAt, tags, thumbnailImage } = post;
+  const {
+    slug,
+    title,
+    description,
+    publishedAt,
+    readingMinutes,
+    tags,
+    thumbnailImage,
+  } = post;
 
   return (
     <Link href={blogPostPath(publishedAt, slug)} className="group block">
@@ -37,12 +46,11 @@ export function PostCard({
         )}
 
         <div className="flex flex-col gap-2.5 p-5 sm:py-6">
-          <time
-            dateTime={publishedAt}
-            className="text-body-xs text-content-muted"
-          >
-            {formatPublishedAt(publishedAt, locale)}
-          </time>
+          <PostMeta
+            publishedAt={publishedAt}
+            readingMinutes={readingMinutes}
+            locale={locale}
+          />
 
           <Heading className="text-heading-h5 text-content-primary">
             {title}

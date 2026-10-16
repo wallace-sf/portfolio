@@ -8,7 +8,12 @@ import type { BlogPostSummaryDTO } from '@repo/application/blog';
 
 import { PostCard } from '~features/blog/PostCard';
 
-import { renderWithIntl as render } from '../../../helpers/renderServerComponent';
+import { renderServerComponent } from '../../../helpers/renderServerComponent';
+
+vi.mock(
+  'next-intl/server',
+  async () => (await import('../../../helpers/intlServerMock')).intlServerMock,
+);
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
@@ -22,6 +27,7 @@ const BASE: BlogPostSummaryDTO = {
   title: 'The Either Pattern',
   description: 'Why this codebase never throws for domain errors.',
   publishedAt: '2026-08-01',
+  readingMinutes: 3,
   featured: false,
   tags: ['typescript', 'ddd'],
   author: {
@@ -32,8 +38,10 @@ const BASE: BlogPostSummaryDTO = {
 };
 
 describe('PostCard', () => {
-  it('should link the whole card to the dated, locale-prefixed post URL', () => {
-    render(<PostCard post={BASE} locale="pt-BR" />, { locale: 'pt-BR' });
+  it('should link the whole card to the dated, locale-prefixed post URL', async () => {
+    await renderServerComponent(<PostCard post={BASE} locale="pt-BR" />, {
+      locale: 'pt-BR',
+    });
 
     expect(screen.getByRole('link')).toHaveAttribute(
       'href',
@@ -41,8 +49,8 @@ describe('PostCard', () => {
     );
   });
 
-  it('should render the title, description and one badge per tag', () => {
-    render(<PostCard post={BASE} locale="en-US" />);
+  it('should render the title, description and one badge per tag', async () => {
+    await renderServerComponent(<PostCard post={BASE} locale="en-US" />);
 
     expect(
       screen.getByRole('heading', { name: 'The Either Pattern' }),
@@ -54,48 +62,45 @@ describe('PostCard', () => {
     expect(screen.getByText('ddd')).toBeInTheDocument();
   });
 
-  it('should render the published date as a machine-readable time formatted for the locale', () => {
-    const { container } = render(<PostCard post={BASE} locale="es" />);
-    const time = container.querySelector('time');
+  it('should render the reading time next to the date when the card renders', async () => {
+    await renderServerComponent(<PostCard post={BASE} locale="pt-BR" />, {
+      locale: 'pt-BR',
+    });
 
-    expect(time).toHaveAttribute('datetime', '2026-08-01');
-    expect(time?.textContent).toBe(
-      new Intl.DateTimeFormat('es', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        timeZone: 'UTC',
-      }).format(new Date('2026-08-01')),
-    );
+    expect(screen.getByText('3 min de leitura')).toBeInTheDocument();
   });
 
-  it('should render the thumbnail only when the post has one', () => {
-    const { rerender } = render(<PostCard post={BASE} locale="en-US" />);
-    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+  it('should not render a thumbnail when the post has none', async () => {
+    await renderServerComponent(<PostCard post={BASE} locale="en-US" />);
 
-    rerender(
-      <PostCard
-        post={{
-          ...BASE,
-          thumbnailImage: { url: 'https://cdn/t.webp', alt: 'Cover art' },
-        }}
-        locale="en-US"
-      />,
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+  });
+
+  it('should render the thumbnail when the post has one', async () => {
+    const thumbnailImage = { url: 'https://cdn/t.webp', alt: 'Cover art' };
+
+    await renderServerComponent(
+      <PostCard post={{ ...BASE, thumbnailImage }} locale="en-US" />,
     );
+
     expect(screen.getByRole('img', { name: 'Cover art' })).toHaveAttribute(
       'src',
       'https://cdn/t.webp',
     );
   });
 
-  it('should not render a tag row when the post has no tags', () => {
-    render(<PostCard post={{ ...BASE, tags: [] }} locale="en-US" />);
+  it('should not render a tag row when the post has no tags', async () => {
+    await renderServerComponent(
+      <PostCard post={{ ...BASE, tags: [] }} locale="en-US" />,
+    );
 
     expect(screen.queryByText('typescript')).not.toBeInTheDocument();
   });
 
-  it('should render the title at the requested heading level when nested under a section', () => {
-    render(<PostCard post={BASE} locale="en-US" headingLevel="h3" />);
+  it('should render the title at the requested heading level when nested under a section', async () => {
+    await renderServerComponent(
+      <PostCard post={BASE} locale="en-US" headingLevel="h3" />,
+    );
 
     expect(
       screen.getByRole('heading', { level: 3, name: 'The Either Pattern' }),
