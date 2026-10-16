@@ -62,6 +62,7 @@
   "dependencies": {
     "@iconify/react": "^5.0.2",
     "@repo/utils": "workspace:*",
+    "@shikijs/transformers": "~1.29.2",
     "classnames": "^2.5.1",
     "github-markdown-css": "^5.9.0",
     "hast-util-to-jsx-runtime": "^2.3.6",
