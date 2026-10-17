@@ -5,6 +5,7 @@ import {
   GetBlogTags,
   ListBlogArchive,
   ListBlogPosts,
+  ListFeaturedBlogPosts,
 } from '@repo/application/blog';
 import type { DomainError, Either, Locale } from '@repo/core/shared';
 
@@ -19,6 +20,8 @@ import { getServerContainer } from '~/lib/server/container';
 export interface IBlogListing {
   /** Published, newest first. */
   posts: BlogPostSummaryDTO[];
+  /** Featured and published, newest first, capped for the band. */
+  featured: BlogPostSummaryDTO[];
   /** Most used first. */
   tags: BlogTagDTO[];
   /** Newest year first. */
@@ -40,14 +43,16 @@ export async function loadBlogListing(locale: string): Promise<IBlogListing> {
   const { blogPostRepository } = getServerContainer();
   const input = { locale: locale as Locale };
 
-  const [posts, tags, archive] = await Promise.all([
+  const [posts, featured, tags, archive] = await Promise.all([
     new ListBlogPosts(blogPostRepository).execute(input),
+    new ListFeaturedBlogPosts(blogPostRepository).execute(input),
     new GetBlogTags(blogPostRepository).execute(input),
     new ListBlogArchive(blogPostRepository).execute(input),
   ]);
 
   return {
     posts: valueOrEmpty(posts, 'posts'),
+    featured: valueOrEmpty(featured, 'featured posts'),
     tags: valueOrEmpty(tags, 'tags'),
     archive: valueOrEmpty(archive, 'archive'),
   };

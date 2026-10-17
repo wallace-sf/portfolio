@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { ArchiveNav } from '~features/blog/ArchiveNav';
+import { FeaturedPosts } from '~features/blog/FeaturedPosts';
 import { PostCard } from '~features/blog/PostCard';
 import { TrendingTags } from '~features/blog/TrendingTags';
 
@@ -45,7 +46,7 @@ export default async function BlogListingPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, { posts, tags, archive }] = await Promise.all([
+  const [t, { posts, featured, tags, archive }] = await Promise.all([
     getTranslations({ locale, namespace: 'Blog' }),
     loadBlogListing(locale),
   ]);
@@ -70,6 +71,8 @@ export default async function BlogListingPage({
         </p>
       ) : (
         <div className="flex flex-col gap-12">
+          <FeaturedPosts posts={featured} locale={locale} />
+
           <TrendingTags tags={tags} locale={locale} />
 
           <section
