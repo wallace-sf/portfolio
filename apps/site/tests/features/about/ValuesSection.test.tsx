@@ -3,6 +3,7 @@
  */
 import React from 'react';
 
+import { DomainError, left, right } from '@repo/core/shared';
 import { render, screen } from '@testing-library/react';
 
 import { renderServerComponent } from '../../helpers/renderServerComponent';
@@ -40,9 +41,6 @@ const PROFESSIONAL_VALUES = [
   { id: '2', icon: 'material-symbols:code', content: 'Clean code' },
 ];
 
-const right = (value: unknown) => ({ isRight: () => true, value });
-const left = () => ({ isRight: () => false });
-
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -78,7 +76,7 @@ describe('about/ValuesSection', () => {
   });
 
   it('should render no values when use case fails', async () => {
-    mockExecute.mockResolvedValue(left());
+    mockExecute.mockResolvedValue(left(new DomainError('FETCH_FAILED')));
 
     const { ValuesSection } = await import('~features/about/ValuesSection');
     render(await ValuesSection({ locale: 'en-US' }));

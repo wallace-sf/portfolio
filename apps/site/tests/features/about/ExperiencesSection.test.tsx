@@ -3,6 +3,7 @@
  */
 import React from 'react';
 
+import { DomainError, left, right } from '@repo/core/shared';
 import { render, screen } from '@testing-library/react';
 
 import { renderServerComponent } from '../../helpers/renderServerComponent';
@@ -65,9 +66,6 @@ const EXPERIENCES = [
   },
 ];
 
-const right = (value: unknown) => ({ isRight: () => true, value });
-const left = () => ({ isRight: () => false });
-
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -117,7 +115,7 @@ describe('about/ExperiencesSection', () => {
   });
 
   it('should render no cards when use case fails', async () => {
-    mockExecute.mockResolvedValue(left());
+    mockExecute.mockResolvedValue(left(new DomainError('FETCH_FAILED')));
 
     const { ExperiencesSection } =
       await import('~features/about/ExperiencesSection');
