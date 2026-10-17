@@ -35,3 +35,9 @@ export function blogArchivePath(year: number, month?: number): string {
     ? `/blog/${year}`
     : `/blog/${year}/${monthSegment(month)}`;
 }
+
+/** `/blog/tags` — the index of every tag. */
+export const blogTagsPath = (): string => '/blog/tags';
+
+/** `/blog/tags/{tag}`; tags are kebab-case, so they need no encoding. */
+export const blogTagPath = (tag: string): string => `${blogTagsPath()}/${tag}`;

@@ -17,11 +17,17 @@ vi.mock('~/lib/server/container', () => ({
   }),
 }));
 
-const post = (slug: string, publishedAt: string, status: BlogPostStatus) =>
+const post = (
+  slug: string,
+  publishedAt: string,
+  status: BlogPostStatus,
+  tags: string[] = ['nextjs'],
+) =>
   BlogPostBuilder.build()
     .withSlug(slug)
     .withPublishedAt(publishedAt)
     .withStatus(status)
+    .withTags(tags)
     .now();
 
 const blogUrls = async () =>
@@ -33,6 +39,11 @@ const archiveUrls = async () =>
   (await sitemap())
     .map(({ url }) => url)
     .filter((url) => /\/blog\/\d{4}(\/\d{2})?$/.test(url));
+
+const tagUrls = async () =>
+  (await sitemap())
+    .filter(({ url }) => url.includes('/blog/tags'))
+    .map(({ url, priority }) => ({ url, priority }));
 
 beforeEach(() => {
   posts = [];
@@ -87,5 +98,28 @@ describe('sitemap', () => {
       '/pt-BR/blog/2025/12',
     ]);
     expect(urls).toHaveLength(12);
+  });
+
+  it('should list the tag index and each published tag page in every locale', async () => {
+    posts = [
+      post(
+        'tagged-post',
+        '2026-09-02T10:00:00.000Z',
+        BlogPostStatus.PUBLISHED,
+        ['ddd', 'nextjs'],
+      ),
+      post('draft-post', '2026-09-03T10:00:00.000Z', BlogPostStatus.DRAFT, [
+        'drafts-only',
+      ]),
+    ];
+
+    const urls = await tagUrls();
+
+    expect(urls).toHaveLength(3 * 3);
+    expect(urls.every(({ priority }) => priority === 0.5)).toBe(true);
+    expect(urls.map(({ url }) => url.replace(/^.*\/blog/, ''))).toEqual(
+      expect.arrayContaining(['/tags', '/tags/ddd', '/tags/nextjs']),
+    );
+    expect(urls.some(({ url }) => url.endsWith('/drafts-only'))).toBe(false);
   });
 });

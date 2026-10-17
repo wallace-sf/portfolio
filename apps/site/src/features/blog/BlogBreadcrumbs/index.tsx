@@ -21,7 +21,11 @@ export async function BlogBreadcrumbs({
   const t = await getTranslations({ locale, namespace: 'Blog' });
   const { visible, jsonLd } = buildBlogBreadcrumbs({
     locale,
-    labels: { home: t('breadcrumbHome'), blog: t('title') },
+    labels: {
+      home: t('breadcrumbHome'),
+      blog: t('title'),
+      tags: t('tags'),
+    },
     target,
   });
   // A Server Component renders once — no re-render for a fresh object to defeat.

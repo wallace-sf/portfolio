@@ -4,7 +4,13 @@ import { env } from '~/config/env';
 import type { BreadcrumbItem } from '~features/shared/Breadcrumb';
 
 import { formatArchiveMonth } from './formatArchiveMonth';
-import { blogArchivePath, blogPostPath, publicationSegments } from './paths';
+import {
+  blogArchivePath,
+  blogPostPath,
+  blogTagPath,
+  blogTagsPath,
+  publicationSegments,
+} from './paths';
 
 /** An archive period: a year, or a month (1–12) of it. */
 export interface IBlogArchivePeriod {
@@ -19,18 +25,31 @@ export interface IBlogBreadcrumbPost {
   slug: string;
 }
 
+/** The tag index, or one tag's page when `tag` is set. */
+export interface IBlogBreadcrumbTags {
+  kind: 'tags';
+  tag?: string;
+}
+
 /**
  * The page the trail ends at. Shaped so the pages can pass their DTOs as-is:
- * a post detail, or an archive year / month.
+ * a post detail or an archive year / month. Tag pages, which have no DTO of
+ * their own, say so with `kind: 'tags'`.
  */
-export type BlogBreadcrumbsTarget = IBlogArchivePeriod | IBlogBreadcrumbPost;
+export type BlogBreadcrumbsTarget =
+  | IBlogArchivePeriod
+  | IBlogBreadcrumbPost
+  | IBlogBreadcrumbTags;
 
 const isPost = (target: BlogBreadcrumbsTarget): target is IBlogBreadcrumbPost =>
   'slug' in target;
 
+const isTags = (target: BlogBreadcrumbsTarget): target is IBlogBreadcrumbTags =>
+  'kind' in target && target.kind === 'tags';
+
 export interface IBlogBreadcrumbsParams {
   locale: string;
-  labels: { home: string; blog: string };
+  labels: { home: string; blog: string; tags: string };
   target: BlogBreadcrumbsTarget;
 }
 
@@ -61,6 +80,13 @@ function periodSteps(year: number, month: number | undefined, locale: string) {
   return [yearStep, monthStep];
 }
 
+function tagSteps(tagsLabel: string, tag: string | undefined): ITrailStep[] {
+  const indexStep: ITrailStep = { label: tagsLabel, path: blogTagsPath() };
+  if (tag === undefined) return [indexStep];
+
+  return [indexStep, { label: `#${tag}`, path: blogTagPath(tag) }];
+}
+
 function trailSteps({
   locale,
   labels,
@@ -70,6 +96,8 @@ function trailSteps({
     { label: labels.home, path: '/' },
     { label: labels.blog, path: '/blog' },
   ];
+
+  if (isTags(target)) return [...root, ...tagSteps(labels.tags, target.tag)];
 
   if (!isPost(target)) {
     return [...root, ...periodSteps(target.year, target.month, locale)];
@@ -87,7 +115,8 @@ function trailSteps({
 }
 
 /**
- * The blog breadcrumb trail — Home › Blog › yyyy › Month › post — built once
+ * The blog breadcrumb trail — Home › Blog › yyyy › Month › post, or
+ * Home › Blog › Tags › #tag — built once
  * and rendered twice: as the visible `Breadcrumb` and as `BreadcrumbList`
  * JSON-LD, so the two never disagree.
  */

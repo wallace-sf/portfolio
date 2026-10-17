@@ -37,7 +37,9 @@
     "updatedOn": "Updated {date}",
     "byAuthor": "By {name}",
     "aboutAuthor": "About the author",
-    "tableOfContents": "On this page"
+    "tableOfContents": "On this page",
+    "tags": "Tags",
+    "tagHeading": "#{tag}"
   },
   "Clipboard": {
     "copy": "Copy to clipboard"
@@ -187,6 +189,14 @@
       "monthTitle": "Posts from {month} {year}",
       "yearDescription": "Technical articles by Wallace Ferreira published in {year}.",
       "monthDescription": "Technical articles by Wallace Ferreira published in {month} {year}."
+    },
+    "BlogTagsPage": {
+      "title": "Tags",
+      "description": "Every topic Wallace Ferreira writes about, with how many posts cover each one."
+    },
+    "BlogTagPage": {
+      "title": "Posts tagged #{tag}",
+      "description": "Technical articles by Wallace Ferreira tagged #{tag}."
     },
     "ProjectsPage": {
       "title": "Projects",
