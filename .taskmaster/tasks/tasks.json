@@ -9301,7 +9301,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9403,7 +9403,8 @@
         ],
         "complexity": 7,
         "recommendedSubtasks": 8,
-        "expansionPrompt": "Split into: (1) Create BlogTagDTO interface in dtos/, (2) Implement GetBlogTags use case with tag counting and sorting logic, (3) Implement ListBlogPostsByTag use case with Tag.create() validation, (4) Add blogTagsPath() and blogTagPath() helpers to paths.ts, (5) Extend buildBlogBreadcrumbs.ts to handle tag target type, (6) Create /blog/tags/page.tsx with metadata and static params, (7) Create /blog/tags/[tag]/page.tsx with generateStaticParams and notFound(), (8) Update sitemap.ts to fetch tags and add 42 tag URLs. Each subtask should include corresponding unit/integration tests."
+        "expansionPrompt": "Split into: (1) Create BlogTagDTO interface in dtos/, (2) Implement GetBlogTags use case with tag counting and sorting logic, (3) Implement ListBlogPostsByTag use case with Tag.create() validation, (4) Add blogTagsPath() and blogTagPath() helpers to paths.ts, (5) Extend buildBlogBreadcrumbs.ts to handle tag target type, (6) Create /blog/tags/page.tsx with metadata and static params, (7) Create /blog/tags/[tag]/page.tsx with generateStaticParams and notFound(), (8) Update sitemap.ts to fetch tags and add 42 tag URLs. Each subtask should include corresponding unit/integration tests.",
+        "updatedAt": "2026-10-17T06:22:29.437Z"
       },
       {
         "id": "3",
@@ -9748,9 +9749,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-17T04:38:44.709Z",
+      "lastModified": "2026-10-17T06:22:29.438Z",
       "taskCount": 6,
-      "completedCount": 1,
+      "completedCount": 2,
       "tags": [
         "blog-v2-phase-5b"
       ]
