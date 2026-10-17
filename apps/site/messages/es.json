@@ -39,7 +39,11 @@
     "aboutAuthor": "Sobre el autor",
     "tableOfContents": "En esta página",
     "tags": "Etiquetas",
-    "tagHeading": "#{tag}"
+    "tagHeading": "#{tag}",
+    "allPosts": "Todos los posts",
+    "trendingTags": "Etiquetas populares",
+    "allTags": "Todas las etiquetas",
+    "archive": "Archivo"
   },
   "Clipboard": {
     "copy": "Copiar al portapapeles"

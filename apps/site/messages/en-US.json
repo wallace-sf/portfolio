@@ -39,7 +39,11 @@
     "aboutAuthor": "About the author",
     "tableOfContents": "On this page",
     "tags": "Tags",
-    "tagHeading": "#{tag}"
+    "tagHeading": "#{tag}",
+    "allPosts": "All posts",
+    "trendingTags": "Trending tags",
+    "allTags": "All tags",
+    "archive": "Archive"
   },
   "Clipboard": {
     "copy": "Copy to clipboard"
