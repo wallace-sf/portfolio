@@ -42,9 +42,9 @@ export const env = {
   },
 
   /**
-   * Whether blog entry points (side nav Blog item, RSS links) are shown. Only the
-   * literal `'false'` hides them, so local, tests and previews keep them visible;
-   * blog routes and feeds stay reachable by direct URL either way.
+   * Whether the side nav Blog item is shown. Only the literal `'false'` hides it,
+   * so local, tests and previews keep it visible; blog routes and the blog feed
+   * stay reachable by direct URL either way.
    */
   get blogNavEnabled() {
     return process.env.NEXT_PUBLIC_BLOG_NAV_ENABLED !== 'false';

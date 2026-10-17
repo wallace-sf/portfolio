@@ -143,14 +143,13 @@ describe('SideNavigation', () => {
     expect(screen.getByTestId('language-selector')).toBeInTheDocument();
   });
 
-  it('should hide the blog and rss items when the blog nav flag is off', async () => {
+  it('should hide only the blog item when the blog nav flag is off', async () => {
     flags.blogNavEnabled = false;
     await renderNav();
 
     expect(screen.queryByText('blog')).not.toBeInTheDocument();
-    expect(screen.queryByText('rss')).not.toBeInTheDocument();
     expect(screen.getByText('about')).toBeInTheDocument();
-    expect(screen.getByText('github')).toBeInTheDocument();
+    expect(screen.getByText('rss')).toBeInTheDocument();
   });
 
   it('should resolve route hrefs through the active locale', async () => {

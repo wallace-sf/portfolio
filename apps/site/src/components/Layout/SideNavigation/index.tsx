@@ -139,20 +139,18 @@ export const SideNavigation: FC = () => {
                 {t('github')}
               </Nav.Link>
             </li>
-            {env.blogNavEnabled && (
-              <li>
-                <Nav.Link
-                  component={NextLink}
-                  href={`/${locale}/feed.xml`}
-                  onNavigate={closeMenu}
-                  external
-                  icon="mdi:rss"
-                  iconClassName="text-content-primary"
-                >
-                  {t('rss')}
-                </Nav.Link>
-              </li>
-            )}
+            <li>
+              <Nav.Link
+                component={NextLink}
+                href={`/${locale}/feed.xml`}
+                onNavigate={closeMenu}
+                external
+                icon="mdi:rss"
+                iconClassName="text-content-primary"
+              >
+                {t('rss')}
+              </Nav.Link>
+            </li>
             <li>
               <ThemeToggle />
             </li>
