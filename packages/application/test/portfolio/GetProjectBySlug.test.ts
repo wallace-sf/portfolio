@@ -1,14 +1,12 @@
-import {
-  IProjectRepository,
-  ISkillRepository,
-  ProjectStatus,
-} from '@repo/core/portfolio';
+import { IProjectRepository, ISkillRepository } from '@repo/core/portfolio';
 import { DomainError, NotFoundError, ValidationError } from '@repo/core/shared';
 import { ProjectBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ProjectDetailDTO } from '~/portfolio/dtos/ProjectDetailDTO';
 import { GetProjectBySlug } from '~/portfolio/use-cases/GetProjectBySlug';
+
+import { projectWithAllFields } from './helpers/projectWithAllFields';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -39,29 +37,6 @@ function makeSkillRepository(
 }
 
 /** Every field the DTO maps, set explicitly — for the mapping tests. */
-function projectWithAllFields() {
-  return ProjectBuilder.build()
-    .withSlug('my-project')
-    .withCoverImage({
-      url: 'https://example.com/cover.jpg',
-      alt: { 'pt-BR': 'Capa do projeto', 'en-US': 'Project cover' },
-    })
-    .withThumbnailImage({
-      url: 'https://example.com/thumbnail.webp',
-      alt: { 'pt-BR': 'Thumbnail do projeto', 'en-US': 'Project thumbnail' },
-    })
-    .withTitle({ 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' })
-    .withCaption({ 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' })
-    .withContent({
-      'en-US': 'Detailed project content here.',
-      'pt-BR': 'Conteúdo detalhado do projeto aqui.',
-    })
-    .withSkills([])
-    .withPeriod({ start: '2023-01-01T00:00:00.000Z' })
-    .withFeatured(false)
-    .withStatus(ProjectStatus.PUBLISHED);
-}
-
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-import { BlogPostStatus, Tag } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus, Tag } from '@repo/core/blog';
 import { DomainError, ValidationError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -8,20 +8,7 @@ import { ApplicationErrorCode } from '~/shared/ApplicationErrorCode';
 
 import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
-const post = (
-  slug: string,
-  tags: string[],
-  publishedAt: string,
-  status: BlogPostStatus = BlogPostStatus.PUBLISHED,
-) =>
-  BlogPostBuilder.build()
-    .withSlug(slug)
-    .withTags(tags)
-    .withPublishedAt(publishedAt)
-    .withStatus(status)
-    .now();
-
-const useCaseOver = (posts: ReturnType<typeof post>[]) =>
+const useCaseOver = (posts: BlogPost[]) =>
   new ListBlogPostsByTag(
     makeBlogPostRepository({ findAll: vi.fn().mockResolvedValue(posts) }),
   );
@@ -29,15 +16,21 @@ const useCaseOver = (posts: ReturnType<typeof post>[]) =>
 describe('ListBlogPostsByTag', () => {
   it("should list the tag's published posts newest first when posts have mixed tags and statuses", async () => {
     const result = await useCaseOver([
-      post('older-ddd', ['ddd'], '2026-08-01T00:00:00.000Z'),
-      post('other-tag', ['nextjs'], '2026-09-01T00:00:00.000Z'),
-      post('newer-ddd', ['ddd', 'typescript'], '2026-10-01T00:00:00.000Z'),
-      post(
-        'draft-ddd',
-        ['ddd'],
-        '2026-10-05T00:00:00.000Z',
-        BlogPostStatus.DRAFT,
-      ),
+      BlogPostBuilder.published('older-ddd', '2026-08-01T00:00:00.000Z')
+        .withTags(['ddd'])
+        .now(),
+      BlogPostBuilder.published('other-tag', '2026-09-01T00:00:00.000Z')
+        .withTags(['nextjs'])
+        .now(),
+      BlogPostBuilder.published('newer-ddd', '2026-10-01T00:00:00.000Z')
+        .withTags(['ddd', 'typescript'])
+        .now(),
+      BlogPostBuilder.build()
+        .withSlug('draft-ddd')
+        .withPublishedAt('2026-10-05T00:00:00.000Z')
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags(['ddd'])
+        .now(),
     ]).execute({ tag: 'ddd', locale: 'pt-BR' });
 
     expect(result.isRight()).toBe(true);
@@ -50,7 +43,9 @@ describe('ListBlogPostsByTag', () => {
 
   it('should return an empty list when no published post has the tag', async () => {
     const result = await useCaseOver([
-      post('nextjs-post', ['nextjs'], '2026-08-01T00:00:00.000Z'),
+      BlogPostBuilder.published('nextjs-post', '2026-08-01T00:00:00.000Z')
+        .withTags(['nextjs'])
+        .now(),
     ]).execute({ tag: 'ddd', locale: 'en-US' });
 
     expect(result.isRight()).toBe(true);

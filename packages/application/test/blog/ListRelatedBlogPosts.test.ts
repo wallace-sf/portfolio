@@ -1,4 +1,4 @@
-import { BlogPostStatus } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 import { NotFoundError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -10,22 +10,7 @@ import {
 
 import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
-const post = (
-  slug: string,
-  tags: string[],
-  {
-    publishedAt = '2026-10-01T00:00:00.000Z',
-    status = BlogPostStatus.PUBLISHED,
-  } = {},
-) =>
-  BlogPostBuilder.build()
-    .withSlug(slug)
-    .withTags(tags)
-    .withPublishedAt(publishedAt)
-    .withStatus(status)
-    .now();
-
-const useCaseOver = (posts: ReturnType<typeof post>[]) =>
+const useCaseOver = (posts: BlogPost[]) =>
   new ListRelatedBlogPosts(
     makeBlogPostRepository({ findAll: vi.fn().mockResolvedValue(posts) }),
   );
@@ -36,18 +21,24 @@ const slugs = async (result: ReturnType<ListRelatedBlogPosts['execute']>) => {
   return resolved.isRight() ? resolved.value.map(({ slug }) => slug) : [];
 };
 
-const target = post('target', ['architecture', 'ddd']);
+const target = BlogPostBuilder.published('target')
+  .withTags(['architecture', 'ddd'])
+  .now();
 
 describe('ListRelatedBlogPosts', () => {
   it('should rank published posts by shared tags, then newest first', async () => {
     const useCase = useCaseOver([
       target,
-      post('one-older', ['ddd'], { publishedAt: '2026-08-01T00:00:00.000Z' }),
-      post('two-shared', ['architecture', 'ddd']),
-      post('one-newer', ['architecture'], {
-        publishedAt: '2026-09-01T00:00:00.000Z',
-      }),
-      post('unrelated', ['seo']),
+      BlogPostBuilder.published('one-older', '2026-08-01T00:00:00.000Z')
+        .withTags(['ddd'])
+        .now(),
+      BlogPostBuilder.published('two-shared')
+        .withTags(['architecture', 'ddd'])
+        .now(),
+      BlogPostBuilder.published('one-newer', '2026-09-01T00:00:00.000Z')
+        .withTags(['architecture'])
+        .now(),
+      BlogPostBuilder.published('unrelated').withTags(['seo']).now(),
     ]);
 
     expect(
@@ -58,7 +49,11 @@ describe('ListRelatedBlogPosts', () => {
   it('should skip unpublished candidates when they share tags', async () => {
     const useCase = useCaseOver([
       target,
-      post('draft', ['ddd'], { status: BlogPostStatus.DRAFT }),
+      BlogPostBuilder.build()
+        .withSlug('draft')
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags(['ddd'])
+        .now(),
     ]);
 
     expect(
@@ -70,7 +65,7 @@ describe('ListRelatedBlogPosts', () => {
     const useCase = useCaseOver([
       target,
       ...['post-a', 'post-b', 'post-c', 'post-d'].map((slug) =>
-        post(slug, ['ddd']),
+        BlogPostBuilder.published(slug).withTags(['ddd']).now(),
       ),
     ]);
 
@@ -82,8 +77,8 @@ describe('ListRelatedBlogPosts', () => {
   it('should honour a custom limit when one is given', async () => {
     const useCase = useCaseOver([
       target,
-      post('post-a', ['ddd']),
-      post('post-b', ['ddd']),
+      BlogPostBuilder.published('post-a').withTags(['ddd']).now(),
+      BlogPostBuilder.published('post-b').withTags(['ddd']).now(),
     ]);
 
     expect(
@@ -115,8 +110,12 @@ describe('ListRelatedBlogPosts', () => {
 
   it('should return NotFoundError when the slug is a DRAFT post', async () => {
     const useCase = useCaseOver([
-      post('draft', ['ddd'], { status: BlogPostStatus.DRAFT }),
-      post('other', ['ddd']),
+      BlogPostBuilder.build()
+        .withSlug('draft')
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags(['ddd'])
+        .now(),
+      BlogPostBuilder.published('other').withTags(['ddd']).now(),
     ]);
 
     const result = await useCase.execute({ slug: 'draft', locale: 'en-US' });
@@ -126,7 +125,9 @@ describe('ListRelatedBlogPosts', () => {
   });
 
   it('should return NotFoundError when the slug is not among the posts', async () => {
-    const useCase = useCaseOver([post('other', ['ddd'])]);
+    const useCase = useCaseOver([
+      BlogPostBuilder.published('other').withTags(['ddd']).now(),
+    ]);
 
     const result = await useCase.execute({ slug: 'missing', locale: 'en-US' });
 

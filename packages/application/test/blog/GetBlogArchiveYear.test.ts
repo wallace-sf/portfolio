@@ -12,25 +12,24 @@ import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 // Helpers
 // ---------------------------------------------------------------------------
 
-function post(
-  slug: string,
-  publishedAt: string,
-  status = BlogPostStatus.PUBLISHED,
-) {
-  return BlogPostBuilder.build()
-    .withSlug(slug)
-    .withStatus(status)
-    .withPublishedAt(publishedAt)
-    .now();
-}
-
 const POSTS = [
-  post('october-post', '2026-10-01T10:00:00.000Z'),
-  post('september-early', '2026-09-02T10:00:00.000Z'),
-  post('september-late', '2026-09-28T10:00:00.000Z'),
-  post('july-draft', '2026-07-10T10:00:00.000Z', BlogPostStatus.DRAFT),
-  post('last-year', '2025-12-24T10:00:00.000Z'),
-  post('old-draft', '2024-03-01T10:00:00.000Z', BlogPostStatus.DRAFT),
+  BlogPostBuilder.published('october-post', '2026-10-01T10:00:00.000Z').now(),
+  BlogPostBuilder.published(
+    'september-early',
+    '2026-09-02T10:00:00.000Z',
+  ).now(),
+  BlogPostBuilder.published('september-late', '2026-09-28T10:00:00.000Z').now(),
+  BlogPostBuilder.build()
+    .withSlug('july-draft')
+    .withPublishedAt('2026-07-10T10:00:00.000Z')
+    .withStatus(BlogPostStatus.DRAFT)
+    .now(),
+  BlogPostBuilder.published('last-year', '2025-12-24T10:00:00.000Z').now(),
+  BlogPostBuilder.build()
+    .withSlug('old-draft')
+    .withPublishedAt('2024-03-01T10:00:00.000Z')
+    .withStatus(BlogPostStatus.DRAFT)
+    .now(),
 ];
 
 const makeRepository = (overrides: Partial<IBlogPostRepository> = {}) =>
