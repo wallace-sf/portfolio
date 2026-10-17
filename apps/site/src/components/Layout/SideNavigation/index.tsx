@@ -73,7 +73,7 @@ export const SideNavigation: FC = () => {
                 href={projects.href}
                 active={projects.active}
                 onNavigate={closeMenu}
-                icon="material-symbols:deployed-code"
+                icon="material-symbols:code-blocks"
               >
                 {t('projects')}
               </Nav.Item>
@@ -84,29 +84,31 @@ export const SideNavigation: FC = () => {
                 href={about.href}
                 active={about.active}
                 onNavigate={closeMenu}
-                icon="material-symbols:person"
+                icon="material-symbols:waving-hand"
               >
                 {t('about')}
               </Nav.Item>
             </li>
-            <li>
-              <Nav.Item
-                component={NextLink}
-                href={blog.href}
-                active={blog.active}
-                onNavigate={closeMenu}
-                icon="material-symbols:article"
-              >
-                {t('blog')}
-              </Nav.Item>
-            </li>
+            {env.blogNavEnabled && (
+              <li>
+                <Nav.Item
+                  component={NextLink}
+                  href={blog.href}
+                  active={blog.active}
+                  onNavigate={closeMenu}
+                  icon="material-symbols:stylus-note"
+                >
+                  {t('blog')}
+                </Nav.Item>
+              </li>
+            )}
             <li>
               <Nav.Item
                 component={NextLink}
                 href={getResumeUrl(locale)}
                 onNavigate={closeMenu}
                 external
-                icon="material-symbols:description"
+                icon="material-symbols:contact-page"
               >
                 {t('resume')}
               </Nav.Item>

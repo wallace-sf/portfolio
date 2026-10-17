@@ -37,7 +37,14 @@
     "updatedOn": "Atualizado em {date}",
     "byAuthor": "Por {name}",
     "aboutAuthor": "Sobre o autor",
-    "tableOfContents": "Nesta página"
+    "tableOfContents": "Nesta página",
+    "tags": "Tags",
+    "tagHeading": "#{tag}",
+    "allPosts": "Todos os posts",
+    "trendingTags": "Tags em alta",
+    "allTags": "Todas as tags",
+    "archive": "Arquivo",
+    "featured": "Em destaque"
   },
   "Clipboard": {
     "copy": "Copiar para a área de transferência"
@@ -187,6 +194,14 @@
       "monthTitle": "Posts de {month} de {year}",
       "yearDescription": "Artigos técnicos de Wallace Ferreira publicados em {year}.",
       "monthDescription": "Artigos técnicos de Wallace Ferreira publicados em {month} de {year}."
+    },
+    "BlogTagsPage": {
+      "title": "Tags",
+      "description": "Todos os temas sobre os quais Wallace Ferreira escreve, com quantos posts cobrem cada um."
+    },
+    "BlogTagPage": {
+      "title": "Posts com a tag #{tag}",
+      "description": "Artigos técnicos de Wallace Ferreira com a tag #{tag}."
     },
     "ProjectsPage": {
       "title": "Projetos",

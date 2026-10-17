@@ -31,11 +31,17 @@ describe('PostHeader', () => {
     expect(screen.getByText('4 min read')).toBeInTheDocument();
   });
 
-  it('should render one badge per tag when the post has tags', async () => {
-    await renderServerComponent(PostHeader(BASE));
+  it('should link each tag to its tag page when the post has tags', async () => {
+    await renderServerComponent(PostHeader(BASE), { locale: 'en-US' });
 
-    expect(screen.getByText('typescript')).toBeInTheDocument();
-    expect(screen.getByText('ddd')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'typescript' })).toHaveAttribute(
+      'href',
+      '/en-US/blog/tags/typescript',
+    );
+    expect(screen.getByRole('link', { name: 'ddd' })).toHaveAttribute(
+      'href',
+      '/en-US/blog/tags/ddd',
+    );
   });
 
   it('should not render a tag row when there are no tags', async () => {

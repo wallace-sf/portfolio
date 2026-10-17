@@ -1,12 +1,18 @@
-import { ListBlogPosts } from '@repo/application/blog';
 import { type Locale, LOCALES } from '@repo/core/shared';
+import { Badge } from '@repo/ui/View';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
-import { getServerContainer } from '~/lib/server/container';
+import { ArchiveNav } from '~features/blog/ArchiveNav';
+import { FeaturedPosts } from '~features/blog/FeaturedPosts';
 import { PostCard } from '~features/blog/PostCard';
+import { TrendingTags } from '~features/blog/TrendingTags';
+
+import { loadBlogListing } from './listing';
+
+const ALL_POSTS_HEADING_ID = 'all-posts-heading';
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -40,38 +46,53 @@ export default async function BlogListingPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const t = await getTranslations({ locale, namespace: 'Blog' });
-
-  const result = await new ListBlogPosts(
-    getServerContainer().blogPostRepository,
-  ).execute({ locale: locale as Locale });
-
-  if (result.isLeft()) {
-    // eslint-disable-next-line no-console
-    console.error('[blog] Failed to list blog posts:', result.value);
-  }
-
-  const posts = result.isRight() ? result.value : [];
+  const [t, { posts, featured, tags, archive }] = await Promise.all([
+    getTranslations({ locale, namespace: 'Blog' }),
+    loadBlogListing(locale),
+  ]);
 
   return (
     <section className="mx-auto w-full max-w-3xl py-4 lg:py-8">
       <header className="mb-8 flex flex-col gap-3 lg:mb-12">
-        <h1 className="text-heading-h2">{t('title')}</h1>
+        <div className="flex flex-wrap items-center gap-4">
+          <h1 className="text-heading-h2">{t('title')}</h1>
+          {posts.length > 0 && (
+            <Badge.Text
+              label={t('archivePostCount', { count: posts.length })}
+            />
+          )}
+        </div>
         <p className="text-body-base text-content-secondary">{t('subtitle')}</p>
       </header>
 
       {posts.length === 0 ? (
-        <p className="py-16 text-center text-body-base text-content-muted">
+        <p className="text-body-base py-16 text-center text-content-muted">
           {t('empty')}
         </p>
       ) : (
-        <ul className="flex flex-col gap-5">
-          {posts.map((post) => (
-            <li key={post.slug}>
-              <PostCard post={post} locale={locale} />
-            </li>
-          ))}
-        </ul>
+        <div className="flex flex-col gap-12">
+          <FeaturedPosts posts={featured} locale={locale} />
+
+          <TrendingTags tags={tags} locale={locale} />
+
+          <section
+            aria-labelledby={ALL_POSTS_HEADING_ID}
+            className="flex flex-col gap-5"
+          >
+            <h2 id={ALL_POSTS_HEADING_ID} className="text-heading-h4">
+              {t('allPosts')}
+            </h2>
+            <ul className="flex flex-col gap-5">
+              {posts.map((post) => (
+                <li key={post.slug}>
+                  <PostCard post={post} locale={locale} headingLevel="h3" />
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <ArchiveNav years={archive} locale={locale} />
+        </div>
       )}
     </section>
   );

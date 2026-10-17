@@ -4,3 +4,6 @@ export * from './GetAdjacentBlogPosts';
 export * from './ListBlogArchive';
 export * from './GetBlogArchiveYear';
 export * from './GetBlogArchiveMonth';
+export * from './GetBlogTags';
+export * from './ListBlogPostsByTag';
+export * from './ListFeaturedBlogPosts';

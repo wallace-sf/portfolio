@@ -9301,7 +9301,7 @@
         "dependencies": [
           "1"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9403,7 +9403,8 @@
         ],
         "complexity": 7,
         "recommendedSubtasks": 8,
-        "expansionPrompt": "Split into: (1) Create BlogTagDTO interface in dtos/, (2) Implement GetBlogTags use case with tag counting and sorting logic, (3) Implement ListBlogPostsByTag use case with Tag.create() validation, (4) Add blogTagsPath() and blogTagPath() helpers to paths.ts, (5) Extend buildBlogBreadcrumbs.ts to handle tag target type, (6) Create /blog/tags/page.tsx with metadata and static params, (7) Create /blog/tags/[tag]/page.tsx with generateStaticParams and notFound(), (8) Update sitemap.ts to fetch tags and add 42 tag URLs. Each subtask should include corresponding unit/integration tests."
+        "expansionPrompt": "Split into: (1) Create BlogTagDTO interface in dtos/, (2) Implement GetBlogTags use case with tag counting and sorting logic, (3) Implement ListBlogPostsByTag use case with Tag.create() validation, (4) Add blogTagsPath() and blogTagPath() helpers to paths.ts, (5) Extend buildBlogBreadcrumbs.ts to handle tag target type, (6) Create /blog/tags/page.tsx with metadata and static params, (7) Create /blog/tags/[tag]/page.tsx with generateStaticParams and notFound(), (8) Update sitemap.ts to fetch tags and add 42 tag URLs. Each subtask should include corresponding unit/integration tests.",
+        "updatedAt": "2026-10-17T06:22:29.437Z"
       },
       {
         "id": "3",
@@ -9415,7 +9416,7 @@
         "dependencies": [
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9505,7 +9506,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 7,
-        "expansionPrompt": "Divide into: (1) Create TagLink component (props validation, count badge logic, hover/focus states), (2) Update PostHeader to use TagLink instead of Badge.Text, (3) Create TrendingTags component (slice(0,8), conditional rendering, 'All tags' link), (4) Create ArchiveNav component (year links, reduce months for count), (5) Update /blog/page.tsx to fetch Promise.all([ListBlogPosts, GetBlogTags, ListBlogArchive]) and restructure into 5 sections, (6) Add i18n keys (Blog.trendingTags, allTags, allPosts, archive), (7) Write component and integration tests for all new components and page reorganization."
+        "expansionPrompt": "Divide into: (1) Create TagLink component (props validation, count badge logic, hover/focus states), (2) Update PostHeader to use TagLink instead of Badge.Text, (3) Create TrendingTags component (slice(0,8), conditional rendering, 'All tags' link), (4) Create ArchiveNav component (year links, reduce months for count), (5) Update /blog/page.tsx to fetch Promise.all([ListBlogPosts, GetBlogTags, ListBlogArchive]) and restructure into 5 sections, (6) Add i18n keys (Blog.trendingTags, allTags, allPosts, archive), (7) Write component and integration tests for all new components and page reorganization.",
+        "updatedAt": "2026-10-17T06:54:58.965Z"
       },
       {
         "id": "4",
@@ -9517,7 +9519,7 @@
         "dependencies": [
           "3"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9569,7 +9571,8 @@
         ],
         "complexity": 4,
         "recommendedSubtasks": 4,
-        "expansionPrompt": "Break into: (1) Create ListFeaturedBlogPosts use case with DEFAULT_FEATURED_LIMIT constant, featured filter, and limit slice, (2) Write unit tests covering limit behavior, empty results, and repository errors, (3) Create FeaturedPosts component with conditional rendering and two-column grid (md:grid-cols-2), (4) Integrate into /blog/page.tsx between header and TrendingTags, verify featured posts also appear in 'All posts' section. Include component and page integration tests."
+        "expansionPrompt": "Break into: (1) Create ListFeaturedBlogPosts use case with DEFAULT_FEATURED_LIMIT constant, featured filter, and limit slice, (2) Write unit tests covering limit behavior, empty results, and repository errors, (3) Create FeaturedPosts component with conditional rendering and two-column grid (md:grid-cols-2), (4) Integrate into /blog/page.tsx between header and TrendingTags, verify featured posts also appear in 'All posts' section. Include component and page integration tests.",
+        "updatedAt": "2026-10-17T07:45:05.120Z"
       },
       {
         "id": "5",
@@ -9748,9 +9751,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-17T04:38:44.709Z",
+      "lastModified": "2026-10-17T07:45:05.120Z",
       "taskCount": 6,
-      "completedCount": 1,
+      "completedCount": 4,
       "tags": [
         "blog-v2-phase-5b"
       ]

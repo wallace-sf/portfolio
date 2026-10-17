@@ -1,6 +1,5 @@
-import { Badge } from '@repo/ui/View';
-
 import { PostMeta } from '~features/blog/PostMeta';
+import { TagLink } from '~features/blog/TagLink';
 
 export interface IPostHeaderProps {
   title: string;
@@ -29,11 +28,13 @@ export async function PostHeader({
       <p className="text-body-lg text-content-secondary">{description}</p>
 
       {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <ul className="flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <Badge.Text key={tag} label={tag} />
+            <li key={tag}>
+              <TagLink tag={tag} />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </header>
   );

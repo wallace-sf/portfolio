@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { env } from '~/config/env';
 import { buildBlogBreadcrumbs } from '~features/blog/buildBlogBreadcrumbs';
 
-const labels = { home: 'Home', blog: 'Blog' };
+const labels = { home: 'Home', blog: 'Blog', tags: 'Tags' };
 
 describe('buildBlogBreadcrumbs', () => {
   it('should build Home › Blog › Year › Month › Title when the page is a post', () => {
@@ -46,7 +46,7 @@ describe('buildBlogBreadcrumbs', () => {
   it('should end at a current Month with no href when the page is a month archive', () => {
     const { visible } = buildBlogBreadcrumbs({
       locale: 'pt-BR',
-      labels: { home: 'Início', blog: 'Blog' },
+      labels: { home: 'Início', blog: 'Blog', tags: 'Tags' },
       target: { year: 2026, month: 9 },
     });
 
@@ -75,7 +75,7 @@ describe('buildBlogBreadcrumbs', () => {
   it('should give every JSON-LD item an absolute locale-prefixed URL when building the trail', () => {
     const { jsonLd } = buildBlogBreadcrumbs({
       locale: 'es',
-      labels: { home: 'Inicio', blog: 'Blog' },
+      labels: { home: 'Inicio', blog: 'Blog', tags: 'Etiquetas' },
       target: {
         title: 'Hola',
         publishedAt: '2026-09-15T10:00:00.000Z',
@@ -91,5 +91,42 @@ describe('buildBlogBreadcrumbs', () => {
       { name: 'Septiembre', url: `${base}/blog/2026/09` },
       { name: 'Hola', url: `${base}/blog/2026/09/hola` },
     ]);
+  });
+
+  it('should end at a current Tags with no href when the page is the tag index', () => {
+    const { visible, jsonLd } = buildBlogBreadcrumbs({
+      locale: 'en-US',
+      labels,
+      target: { kind: 'tags' },
+    });
+
+    expect(visible).toEqual([
+      { label: 'Home', href: '/' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'Tags' },
+    ]);
+    expect(jsonLd.at(-1)).toEqual({
+      name: 'Tags',
+      url: `${env.siteUrl}/en-US/blog/tags`,
+    });
+  });
+
+  it('should build Home › Blog › Tags › #tag when the page is a tag page', () => {
+    const { visible, jsonLd } = buildBlogBreadcrumbs({
+      locale: 'pt-BR',
+      labels,
+      target: { kind: 'tags', tag: 'ddd' },
+    });
+
+    expect(visible).toEqual([
+      { label: 'Home', href: '/' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'Tags', href: '/blog/tags' },
+      { label: '#ddd' },
+    ]);
+    expect(jsonLd.at(-1)).toEqual({
+      name: '#ddd',
+      url: `${env.siteUrl}/pt-BR/blog/tags/ddd`,
+    });
   });
 });

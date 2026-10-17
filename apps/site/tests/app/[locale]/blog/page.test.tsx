@@ -44,10 +44,12 @@ const renderPage = (locale = 'en-US') =>
     { locale },
   );
 
+/** The post card links, in order: dated `/{locale}/blog/yyyy/MM/slug` hrefs. */
 const renderedCardLinks = () =>
-  within(screen.getByRole('list'))
+  screen
     .getAllByRole('link')
-    .map((link) => link.getAttribute('href'));
+    .map((link) => link.getAttribute('href'))
+    .filter((href) => /\/blog\/\d{4}\/\d{2}\/[a-z]/.test(href ?? ''));
 
 beforeEach(() => {
   failure = null;
@@ -72,7 +74,7 @@ describe('BlogListingPage', () => {
     await renderPage();
 
     expect(
-      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+      screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent),
     ).toEqual(['Title newest-post', 'Title older-post']);
     expect(screen.queryByText(/draft-post|archived-post/)).toBeNull();
   });
@@ -142,6 +144,88 @@ describe('BlogListingPage', () => {
     await renderPage();
 
     expect(screen.getByText('No posts published yet.')).toBeInTheDocument();
+  });
+});
+
+describe('BlogListingPage sections', () => {
+  beforeEach(() => {
+    posts = [
+      blogPost('ddd-post', '2026-09-28T10:00:00.000Z')
+        .withTags(['ddd', 'typescript'])
+        .withFeatured(true)
+        .now(),
+      blogPost('another-ddd', '2026-08-01T10:00:00.000Z')
+        .withTags(['ddd'])
+        .now(),
+      blogPost('last-year', '2025-12-24T10:00:00.000Z')
+        .withTags(['nextjs'])
+        .now(),
+    ];
+  });
+
+  it('should render the header count, featured, trending tags, all posts and archive, in that order', async () => {
+    await renderPage();
+
+    expect(screen.getByText('3 posts')).toBeInTheDocument();
+    expect(
+      screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
+    ).toEqual(['Featured', 'Trending tags', 'All posts', 'Archive']);
+  });
+
+  it('should show a featured post in the band and still in All posts', async () => {
+    await renderPage();
+
+    const band = screen.getByRole('region', { name: 'Featured' });
+    expect(within(band).getAllByRole('article')).toHaveLength(1);
+    expect(
+      within(band).getByRole('heading', { name: 'Title ddd-post' }),
+    ).toBeInTheDocument();
+
+    const allPosts = screen.getByRole('region', { name: 'All posts' });
+    expect(
+      within(allPosts).getByRole('heading', { name: 'Title ddd-post' }),
+    ).toBeInTheDocument();
+  });
+
+  it('should leave the featured band out when no post is featured', async () => {
+    posts = [
+      blogPost('plain-post', '2026-09-28T10:00:00.000Z').now(),
+      blogPost('another-plain', '2026-08-01T10:00:00.000Z').now(),
+    ];
+
+    await renderPage();
+
+    expect(screen.queryByRole('region', { name: 'Featured' })).toBeNull();
+  });
+
+  it('should link the trending tags, most used first, and the tag index', async () => {
+    await renderPage('pt-BR');
+
+    const trending = screen.getByRole('region', { name: 'Tags em alta' });
+    expect(
+      within(trending)
+        .getAllByRole('link')
+        .map((link) => [link.textContent, link.getAttribute('href')]),
+    ).toEqual([
+      ['ddd · 2', '/pt-BR/blog/tags/ddd'],
+      ['nextjs · 1', '/pt-BR/blog/tags/nextjs'],
+      ['typescript · 1', '/pt-BR/blog/tags/typescript'],
+      ['Todas as tags', '/pt-BR/blog/tags'],
+    ]);
+  });
+
+  it('should list every published post under All posts and link each archive year', async () => {
+    await renderPage();
+
+    const allPosts = screen.getByRole('region', { name: 'All posts' });
+    expect(within(allPosts).getAllByRole('article')).toHaveLength(3);
+
+    const archive = screen.getByRole('navigation', { name: 'Archive' });
+    expect(
+      within(archive)
+        .getAllByRole('link')
+        .map((link) => link.getAttribute('href')),
+    ).toEqual(['/en-US/blog/2026', '/en-US/blog/2025']);
   });
 });
 

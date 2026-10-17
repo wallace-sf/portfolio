@@ -1,10 +1,9 @@
 /**
  * @vitest-environment jsdom
  */
+import type { BlogPostSummaryDTO } from '@repo/application/blog';
 import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-
-import type { BlogPostSummaryDTO } from '@repo/application/blog';
 
 import { PostCard } from '~features/blog/PostCard';
 
@@ -16,9 +15,17 @@ vi.mock(
 );
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => (
+  default: ({
+    src,
+    alt,
+    sizes,
+  }: {
+    src: string;
+    alt: string;
+    sizes: string;
+  }) => (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} />
+    <img src={src} alt={alt} sizes={sizes} />
   ),
 }));
 
@@ -35,6 +42,11 @@ const BASE: BlogPostSummaryDTO = {
     avatarUrl: 'https://example.com/avatar.jpg',
     url: 'https://example.com',
   },
+};
+
+const WITH_THUMBNAIL: BlogPostSummaryDTO = {
+  ...BASE,
+  thumbnailImage: { url: 'https://cdn/t.webp', alt: 'Cover art' },
 };
 
 describe('PostCard', () => {
@@ -105,5 +117,24 @@ describe('PostCard', () => {
     expect(
       screen.getByRole('heading', { level: 3, name: 'The Either Pattern' }),
     ).toBeInTheDocument();
+  });
+
+  it('should size the thumbnail for a narrow column when the layout is stacked', async () => {
+    const { unmount } = await renderServerComponent(
+      <PostCard post={WITH_THUMBNAIL} locale="en-US" />,
+    );
+    expect(screen.getByRole('img')).toHaveAttribute(
+      'sizes',
+      '(min-width: 640px) 14rem, calc(100vw - 2rem)',
+    );
+    unmount();
+
+    await renderServerComponent(
+      <PostCard post={WITH_THUMBNAIL} locale="en-US" layout="stacked" />,
+    );
+    expect(screen.getByRole('img')).toHaveAttribute(
+      'sizes',
+      '(min-width: 768px) 24rem, calc(100vw - 2rem)',
+    );
   });
 });
