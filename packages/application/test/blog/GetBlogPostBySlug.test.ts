@@ -17,9 +17,6 @@ const AUTHOR = {
   url: 'https://example.com',
 };
 
-const published = () =>
-  BlogPostBuilder.build().withStatus(BlogPostStatus.PUBLISHED);
-
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -27,8 +24,7 @@ const published = () =>
 describe('GetBlogPostBySlug', () => {
   describe('execute()', () => {
     it('should return Right with BlogPostDetailDTO when the post is found', async () => {
-      const post = published()
-        .withSlug('my-first-post')
+      const post = BlogPostBuilder.published('my-first-post')
         .withTitle({
           'en-US': 'My First Post',
           'pt-BR': 'Meu Primeiro Post',
@@ -82,7 +78,7 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should include author bio resolved to the locale and updatedAt when present', async () => {
-      const post = published()
+      const post = BlogPostBuilder.published('my-first-post')
         .withAuthor({
           ...AUTHOR,
           bio: {

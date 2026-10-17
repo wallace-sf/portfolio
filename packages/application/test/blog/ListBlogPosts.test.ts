@@ -16,9 +16,6 @@ const AUTHOR = {
   url: 'https://example.com',
 };
 
-const published = () =>
-  BlogPostBuilder.build().withStatus(BlogPostStatus.PUBLISHED);
-
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -26,8 +23,7 @@ const published = () =>
 describe('ListBlogPosts', () => {
   describe('execute()', () => {
     it('should return Right with BlogPostSummaryDTO[] mapped to the requested locale', async () => {
-      const post = published()
-        .withSlug('my-first-post')
+      const post = BlogPostBuilder.published('my-first-post')
         .withTitle({
           'en-US': 'My First Post',
           'pt-BR': 'Meu Primeiro Post',
@@ -89,16 +85,13 @@ describe('ListBlogPosts', () => {
         findAll: vi
           .fn()
           .mockResolvedValue([
-            published()
-              .withSlug('older')
+            BlogPostBuilder.published('older')
               .withPublishedAt('2026-01-01T00:00:00.000Z')
               .now(),
-            published()
-              .withSlug('newest')
+            BlogPostBuilder.published('newest')
               .withPublishedAt('2026-12-01T00:00:00.000Z')
               .now(),
-            published()
-              .withSlug('middle')
+            BlogPostBuilder.published('middle')
               .withPublishedAt('2026-06-01T00:00:00.000Z')
               .now(),
           ]),
@@ -116,7 +109,7 @@ describe('ListBlogPosts', () => {
     });
 
     it('should include cover and thumbnail images with alt resolved to the locale', async () => {
-      const post = published()
+      const post = BlogPostBuilder.published('with-images')
         .withCoverImage({
           url: 'https://example.com/cover.png',
           alt: { 'en-US': 'Cover', 'pt-BR': 'Capa', es: 'Portada' },
@@ -150,7 +143,7 @@ describe('ListBlogPosts', () => {
         findAll: vi
           .fn()
           .mockResolvedValue([
-            published().withSlug('published').now(),
+            BlogPostBuilder.published('published').now(),
             BlogPostBuilder.build()
               .withSlug('draft')
               .withStatus(BlogPostStatus.DRAFT)
@@ -174,7 +167,9 @@ describe('ListBlogPosts', () => {
       const repo = makeBlogPostRepository({
         findAll: vi
           .fn()
-          .mockResolvedValue([published().withFeatured(true).now()]),
+          .mockResolvedValue([
+            BlogPostBuilder.published('featured-post').withFeatured(true).now(),
+          ]),
       });
 
       const result = await new ListBlogPosts(repo).execute({ locale: 'en-US' });

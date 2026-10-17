@@ -4,27 +4,21 @@ import { describe, expect, it } from 'vitest';
 
 import { rankRelated } from '~/blog/use-cases/rank-related';
 
-function makePost(
-  slug: string,
-  tags: string[],
-  publishedAt = '2026-10-01T00:00:00.000Z',
-): BlogPost {
-  return BlogPostBuilder.build()
-    .withSlug(slug)
-    .withTags(tags)
-    .withPublishedAt(publishedAt)
-    .now();
-}
-
 const slugsOf = (posts: BlogPost[]) => posts.map((post) => post.slug.value);
 
-const target = makePost('target', ['architecture', 'ddd', 'monorepo']);
+const target = BlogPostBuilder.published('target')
+  .withTags(['architecture', 'ddd', 'monorepo'])
+  .now();
 
 describe('rankRelated', () => {
   it('should rank posts sharing more tags first when overlaps differ', () => {
-    const one = makePost('one-shared', ['ddd']);
-    const three = makePost('three-shared', ['architecture', 'ddd', 'monorepo']);
-    const two = makePost('two-shared', ['architecture', 'monorepo']);
+    const one = BlogPostBuilder.published('one-shared').withTags(['ddd']).now();
+    const three = BlogPostBuilder.published('three-shared')
+      .withTags(['architecture', 'ddd', 'monorepo'])
+      .now();
+    const two = BlogPostBuilder.published('two-shared')
+      .withTags(['architecture', 'monorepo'])
+      .now();
 
     expect(slugsOf(rankRelated(target, [one, three, two], 3))).toEqual([
       'three-shared',
@@ -34,8 +28,12 @@ describe('rankRelated', () => {
   });
 
   it('should break ties newest first when posts share the same number of tags', () => {
-    const older = makePost('older', ['ddd'], '2026-08-01T00:00:00.000Z');
-    const newer = makePost('newer', ['monorepo'], '2026-09-01T00:00:00.000Z');
+    const older = BlogPostBuilder.published('older', '2026-08-01T00:00:00.000Z')
+      .withTags(['ddd'])
+      .now();
+    const newer = BlogPostBuilder.published('newer', '2026-09-01T00:00:00.000Z')
+      .withTags(['monorepo'])
+      .now();
 
     expect(slugsOf(rankRelated(target, [older, newer], 3))).toEqual([
       'newer',
@@ -44,20 +42,22 @@ describe('rankRelated', () => {
   });
 
   it('should exclude the target itself when it is among the candidates', () => {
-    const other = makePost('other', ['ddd']);
+    const other = BlogPostBuilder.published('other').withTags(['ddd']).now();
 
     expect(slugsOf(rankRelated(target, [target, other], 3))).toEqual(['other']);
   });
 
   it('should drop posts with no shared tag', () => {
-    const unrelated = makePost('unrelated', ['testing', 'seo']);
+    const unrelated = BlogPostBuilder.published('unrelated')
+      .withTags(['testing', 'seo'])
+      .now();
 
     expect(rankRelated(target, [unrelated], 3)).toEqual([]);
   });
 
   it('should cap the result at the limit when more posts are related', () => {
     const candidates = ['post-a', 'post-b', 'post-c', 'post-d'].map((slug) =>
-      makePost(slug, ['ddd']),
+      BlogPostBuilder.published(slug).withTags(['ddd']).now(),
     );
 
     expect(rankRelated(target, candidates, 3)).toHaveLength(3);
@@ -65,8 +65,12 @@ describe('rankRelated', () => {
 
   it('should not mutate the candidates array', () => {
     const candidates = [
-      makePost('post-a', ['ddd'], '2026-01-01T00:00:00.000Z'),
-      makePost('post-b', ['ddd', 'monorepo'], '2026-02-01T00:00:00.000Z'),
+      BlogPostBuilder.published('post-a', '2026-01-01T00:00:00.000Z')
+        .withTags(['ddd'])
+        .now(),
+      BlogPostBuilder.published('post-b', '2026-02-01T00:00:00.000Z')
+        .withTags(['ddd', 'monorepo'])
+        .now(),
     ];
     const snapshot = [...candidates];
 

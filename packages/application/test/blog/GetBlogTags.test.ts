@@ -1,4 +1,4 @@
-import { BlogPostStatus } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 import { DomainError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -8,12 +8,7 @@ import { ApplicationErrorCode } from '~/shared/ApplicationErrorCode';
 
 import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
-const postWithTags = (
-  tags: string[],
-  status: BlogPostStatus = BlogPostStatus.PUBLISHED,
-) => BlogPostBuilder.build().withStatus(status).withTags(tags).now();
-
-const execute = (posts: ReturnType<typeof postWithTags>[]) =>
+const execute = (posts: BlogPost[]) =>
   new GetBlogTags(
     makeBlogPostRepository({ findAll: vi.fn().mockResolvedValue(posts) }),
   ).execute({ locale: 'en-US' });
@@ -21,10 +16,22 @@ const execute = (posts: ReturnType<typeof postWithTags>[]) =>
 describe('GetBlogTags', () => {
   it('should count each tag over published posts only when drafts and archived posts share tags', async () => {
     const result = await execute([
-      postWithTags(['ddd', 'typescript']),
-      postWithTags(['ddd']),
-      postWithTags(['ddd', 'drafts-only'], BlogPostStatus.DRAFT),
-      postWithTags(['typescript'], BlogPostStatus.ARCHIVED),
+      BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.PUBLISHED)
+        .withTags(['ddd', 'typescript'])
+        .now(),
+      BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.PUBLISHED)
+        .withTags(['ddd'])
+        .now(),
+      BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags(['ddd', 'drafts-only'])
+        .now(),
+      BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.ARCHIVED)
+        .withTags(['typescript'])
+        .now(),
     ]);
 
     expect(result.isRight()).toBe(true);
@@ -37,9 +44,18 @@ describe('GetBlogTags', () => {
 
   it('should order by count descending, then by tag name when counts tie', async () => {
     const result = await execute([
-      postWithTags(['nextjs', 'seo']),
-      postWithTags(['nextjs', 'architecture']),
-      postWithTags(['monorepo']),
+      BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.PUBLISHED)
+        .withTags(['nextjs', 'seo'])
+        .now(),
+      BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.PUBLISHED)
+        .withTags(['nextjs', 'architecture'])
+        .now(),
+      BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.PUBLISHED)
+        .withTags(['monorepo'])
+        .now(),
     ]);
 
     expect(result.isRight()).toBe(true);
@@ -53,7 +69,12 @@ describe('GetBlogTags', () => {
   });
 
   it('should return an empty list when there are no published posts', async () => {
-    const result = await execute([postWithTags(['ddd'], BlogPostStatus.DRAFT)]);
+    const result = await execute([
+      BlogPostBuilder.build()
+        .withStatus(BlogPostStatus.DRAFT)
+        .withTags(['ddd'])
+        .now(),
+    ]);
 
     expect(result.isRight()).toBe(true);
     if (!result.isRight()) return;

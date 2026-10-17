@@ -1,19 +1,21 @@
-import { BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPostStatus } from '@repo/core/blog';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it } from 'vitest';
 
 import { publishedOnly } from '~/blog/use-cases/published-only';
 
-function makePost(slug: string, status: BlogPostStatus): BlogPost {
-  return BlogPostBuilder.build().withSlug(slug).withStatus(status).now();
-}
-
 describe('publishedOnly', () => {
   it('should keep PUBLISHED posts and drop DRAFT and ARCHIVED', () => {
     const posts = [
-      makePost('draft', BlogPostStatus.DRAFT),
-      makePost('published', BlogPostStatus.PUBLISHED),
-      makePost('archived', BlogPostStatus.ARCHIVED),
+      BlogPostBuilder.build()
+        .withSlug('draft')
+        .withStatus(BlogPostStatus.DRAFT)
+        .now(),
+      BlogPostBuilder.published('published').now(),
+      BlogPostBuilder.build()
+        .withSlug('archived')
+        .withStatus(BlogPostStatus.ARCHIVED)
+        .now(),
     ];
 
     const result = publishedOnly(posts);
@@ -23,8 +25,11 @@ describe('publishedOnly', () => {
 
   it('should not mutate the input array', () => {
     const input = [
-      makePost('published', BlogPostStatus.PUBLISHED),
-      makePost('draft', BlogPostStatus.DRAFT),
+      BlogPostBuilder.published('published').now(),
+      BlogPostBuilder.build()
+        .withSlug('draft')
+        .withStatus(BlogPostStatus.DRAFT)
+        .now(),
     ];
     const snapshot = [...input];
 
