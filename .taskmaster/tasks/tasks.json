@@ -9416,7 +9416,7 @@
         "dependencies": [
           "2"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9506,7 +9506,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 7,
-        "expansionPrompt": "Divide into: (1) Create TagLink component (props validation, count badge logic, hover/focus states), (2) Update PostHeader to use TagLink instead of Badge.Text, (3) Create TrendingTags component (slice(0,8), conditional rendering, 'All tags' link), (4) Create ArchiveNav component (year links, reduce months for count), (5) Update /blog/page.tsx to fetch Promise.all([ListBlogPosts, GetBlogTags, ListBlogArchive]) and restructure into 5 sections, (6) Add i18n keys (Blog.trendingTags, allTags, allPosts, archive), (7) Write component and integration tests for all new components and page reorganization."
+        "expansionPrompt": "Divide into: (1) Create TagLink component (props validation, count badge logic, hover/focus states), (2) Update PostHeader to use TagLink instead of Badge.Text, (3) Create TrendingTags component (slice(0,8), conditional rendering, 'All tags' link), (4) Create ArchiveNav component (year links, reduce months for count), (5) Update /blog/page.tsx to fetch Promise.all([ListBlogPosts, GetBlogTags, ListBlogArchive]) and restructure into 5 sections, (6) Add i18n keys (Blog.trendingTags, allTags, allPosts, archive), (7) Write component and integration tests for all new components and page reorganization.",
+        "updatedAt": "2026-10-17T06:54:58.965Z"
       },
       {
         "id": "4",
@@ -9749,9 +9750,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-17T06:22:29.438Z",
+      "lastModified": "2026-10-17T06:54:58.965Z",
       "taskCount": 6,
-      "completedCount": 2,
+      "completedCount": 3,
       "tags": [
         "blog-v2-phase-5b"
       ]
