@@ -73,7 +73,7 @@ export const SideNavigation: FC = () => {
                 href={projects.href}
                 active={projects.active}
                 onNavigate={closeMenu}
-                icon="material-symbols:deployed-code"
+                icon="material-symbols:code-blocks"
               >
                 {t('projects')}
               </Nav.Item>
@@ -84,7 +84,7 @@ export const SideNavigation: FC = () => {
                 href={about.href}
                 active={about.active}
                 onNavigate={closeMenu}
-                icon="material-symbols:person"
+                icon="material-symbols:waving-hand"
               >
                 {t('about')}
               </Nav.Item>
@@ -95,7 +95,7 @@ export const SideNavigation: FC = () => {
                 href={blog.href}
                 active={blog.active}
                 onNavigate={closeMenu}
-                icon="material-symbols:article"
+                icon="material-symbols:stylus-note"
               >
                 {t('blog')}
               </Nav.Item>
