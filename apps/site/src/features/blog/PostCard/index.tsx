@@ -1,6 +1,7 @@
 import type { BlogPostSummaryDTO } from '@repo/application/blog';
 import { screens } from '@repo/tailwind-config/screens';
 import { Badge } from '@repo/ui/View';
+import classNames from 'classnames';
 import Image from 'next/image';
 
 import { Link } from '~/i18n/routing';
@@ -12,14 +13,26 @@ export interface IPostCardProps {
   locale: string;
   /** `h3` when the card sits under a section heading (e.g. a month). */
   headingLevel?: 'h2' | 'h3';
+  /**
+   * `row` puts the thumbnail beside the text from `sm` (full-width lists);
+   * `stacked` keeps it on top at every width (narrow grid columns).
+   */
+  layout?: 'row' | 'stacked';
 }
+
+const THUMBNAIL_SIZES = {
+  row: `(min-width: ${screens.sm}) 14rem, calc(100vw - 2rem)`,
+  stacked: `(min-width: ${screens.md}) 24rem, calc(100vw - 2rem)`,
+} as const;
 
 /** Async only so the async `PostMeta` resolves wherever the card renders. */
 export async function PostCard({
   post,
   locale,
   headingLevel: Heading = 'h2',
+  layout = 'row',
 }: IPostCardProps) {
+  const isRow = layout === 'row';
   const {
     slug,
     title,
@@ -31,16 +44,26 @@ export async function PostCard({
   } = post;
 
   return (
-    <Link href={blogPostPath(publishedAt, slug)} className="group block">
-      <article className="flex flex-col overflow-hidden rounded-card bg-surface shadow-drop-sm transition-shadow group-hover:shadow-drop-md sm:flex-row">
+    <Link href={blogPostPath(publishedAt, slug)} className="group block h-full">
+      <article
+        className={classNames(
+          'flex h-full flex-col overflow-hidden rounded-card bg-surface shadow-drop-sm transition-shadow group-hover:shadow-drop-md',
+          isRow && 'sm:flex-row',
+        )}
+      >
         {thumbnailImage && (
-          <div className="relative aspect-[16/9] shrink-0 overflow-hidden bg-surface-sunken sm:aspect-auto sm:w-56">
+          <div
+            className={classNames(
+              'relative aspect-[16/9] shrink-0 overflow-hidden bg-surface-sunken',
+              isRow && 'sm:aspect-auto sm:w-56',
+            )}
+          >
             <Image
               src={thumbnailImage.url}
               alt={thumbnailImage.alt}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-              sizes={`(min-width: ${screens.sm}) 14rem, calc(100vw - 2rem)`}
+              sizes={THUMBNAIL_SIZES[layout]}
             />
           </div>
         )}

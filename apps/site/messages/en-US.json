@@ -43,7 +43,8 @@
     "allPosts": "All posts",
     "trendingTags": "Trending tags",
     "allTags": "All tags",
-    "archive": "Archive"
+    "archive": "Archive",
+    "featured": "Featured"
   },
   "Clipboard": {
     "copy": "Copy to clipboard"

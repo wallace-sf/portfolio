@@ -152,6 +152,7 @@ describe('BlogListingPage sections', () => {
     posts = [
       blogPost('ddd-post', '2026-09-28T10:00:00.000Z')
         .withTags(['ddd', 'typescript'])
+        .withFeatured(true)
         .now(),
       blogPost('another-ddd', '2026-08-01T10:00:00.000Z')
         .withTags(['ddd'])
@@ -162,13 +163,39 @@ describe('BlogListingPage sections', () => {
     ];
   });
 
-  it('should render the header count, trending tags, all posts and archive, in that order', async () => {
+  it('should render the header count, featured, trending tags, all posts and archive, in that order', async () => {
     await renderPage();
 
     expect(screen.getByText('3 posts')).toBeInTheDocument();
     expect(
       screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent),
-    ).toEqual(['Trending tags', 'All posts', 'Archive']);
+    ).toEqual(['Featured', 'Trending tags', 'All posts', 'Archive']);
+  });
+
+  it('should show a featured post in the band and still in All posts', async () => {
+    await renderPage();
+
+    const band = screen.getByRole('region', { name: 'Featured' });
+    expect(within(band).getAllByRole('article')).toHaveLength(1);
+    expect(
+      within(band).getByRole('heading', { name: 'Title ddd-post' }),
+    ).toBeInTheDocument();
+
+    const allPosts = screen.getByRole('region', { name: 'All posts' });
+    expect(
+      within(allPosts).getByRole('heading', { name: 'Title ddd-post' }),
+    ).toBeInTheDocument();
+  });
+
+  it('should leave the featured band out when no post is featured', async () => {
+    posts = [
+      blogPost('plain-post', '2026-09-28T10:00:00.000Z').now(),
+      blogPost('another-plain', '2026-08-01T10:00:00.000Z').now(),
+    ];
+
+    await renderPage();
+
+    expect(screen.queryByRole('region', { name: 'Featured' })).toBeNull();
   });
 
   it('should link the trending tags, most used first, and the tag index', async () => {
