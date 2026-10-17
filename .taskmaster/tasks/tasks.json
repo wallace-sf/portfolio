@@ -9135,7 +9135,7 @@
   "blog-v2-phase-5a": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Implement reading time calculation and DTO integration",
         "description": "Add readingMinutes computation function, extend BlogPostSummaryDTO with readingMinutes field, update toBlogPostSummaryDTO mapper, create PostMeta component for metadata display, and add i18n keys",
         "details": "Create `packages/application/src/blog/use-cases/reading-time.ts` with `readingMinutes(markdown: string): number` function that strips Markdown syntax noise (fence markers, backticks, link URLs, heading #s, emphasis) while keeping link text and code fence content. Count words and return `Math.max(1, Math.ceil(words / 200))` with 200 WPM as a named constant.\n\nExtend `BlogPostSummaryDTO` type in `packages/application/src/blog/dtos/BlogPostSummaryDTO.ts` to add `readingMinutes: number` field. Update `toBlogPostSummaryDTO` mapper in `packages/application/src/blog/use-cases/to-summary-dto.ts` to compute reading minutes from `post.content.get(locale)` and include it in the returned DTO.\n\nCreate `apps/site/src/features/blog/PostMeta/index.tsx` component that renders the metadata row: published date · \"Updated {date}\" (only when updatedAt differs from publishedAt calendar day) · reading time · tags. Use `<time dateTime>` for dates. Extract this from PostHeader to keep it under 200 lines.\n\nUpdate `apps/site/src/features/blog/PostHeader/index.tsx` to use the new PostMeta component. Update `apps/site/src/features/blog/PostCard/index.tsx` to display reading time next to the date.\n\nAdd i18n keys to `apps/site/messages/{en-US,pt-BR,es}.json` under the `Blog` namespace: `readingTime` (using ICU plural: `{minutes, plural, one {# min read} other {# min read}}`), `updatedOn` (`Updated {date}`), `byAuthor` (`By {name}`), `aboutAuthor`, `tableOfContents` (`On this page`).\n\nUpdate `apps/site/next.config.mjs` `images.remotePatterns` to add `{ protocol: 'https', hostname: 'github.com' }` and `{ protocol: 'https', hostname: 'avatars.githubusercontent.com' }` for author avatars.",
@@ -9147,7 +9147,7 @@
         "updatedAt": "2026-10-16T03:18:09.030Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Add author byline component and OpenGraph/JSON-LD SEO metadata",
         "description": "Create AuthorByline component for post page footer, implement BlogPosting JSON-LD builder in @repo/seo, and add article:* OpenGraph fields to post page metadata",
         "details": "Create `apps/site/src/features/blog/AuthorByline/index.tsx` component with props from BlogPostAuthorDTO. Render avatar (40px, rounded, using `next/image`), name as external link with `rel=\"author noopener\"` when `url` exists (plain text otherwise), and bio paragraph when present. Position before PrevNextNav in the post page article.\n\nCreate `packages/seo/src/blogPosting.ts` with `IBlogPostingInput` interface (url, headline, description, datePublished, dateModified?, author: {name, url?, image?}, image?, keywords: string[], inLanguage) and `buildBlogPostingJsonLd` function that returns a `BlogPosting` schema.org node. Set `@type: 'BlogPosting'`, `mainEntityOfPage: { '@type': 'WebPage', '@id': url }`, fall back dateModified to datePublished when absent, join keywords with ', ', omit image when absent. Export from `packages/seo/src/index.ts`.\n\nUpdate post page `generateMetadata` in `apps/site/src/app/[locale]/blog/[year]/[month]/[slug]/page.tsx` to add `openGraph.publishedTime`, `modifiedTime`, `authors: [author.url ?? author.name]`, and `tags` fields (Next.js auto-renders these as `article:*` meta tags).\n\nRender the BlogPosting JSON-LD node in the post page using the existing JsonLd component, positioned next to the BreadcrumbList node. The `image` field should use the cover image URL when present, otherwise fall back to the post's `opengraph-image` URL.",
@@ -9161,7 +9161,7 @@
         "updatedAt": "2026-10-16T03:53:34.760Z"
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Add heading IDs, extract headings utility, and implement table of contents with scrollspy",
         "description": "Integrate rehype-slug for stable heading IDs, create markdownHeadings extractor in @repo/ui, implement TableOfContents client component with scrollspy, and add two-column post layout",
         "details": "Add `rehype-slug` to `packages/ui/package.json` dependencies. Update `packages/ui/src/View/Markdown/pipeline.ts` to add `.use(rehypeSlug)` AFTER `rehypeSanitize` (as a trusted transform, so IDs don't get the `user-content-` clobber prefix). Wrap `markdownToHast` in React `cache()` so the post page's Markdown render and markdownHeadings calls share the same pipeline execution per content string.\n\nCreate `packages/ui/src/View/Markdown/headings.ts` with `MarkdownHeading` type (`{ id: string; text: string; depth: 2 | 3 }`) and async function `markdownHeadings(markdown: string): Promise<MarkdownHeading[]>`. Walk the HAST from `markdownToHast` and extract h2/h3 elements with their IDs (from rehype-slug) and text content (inline code/emphasis flattened). Export from `packages/ui/src/View/index.ts`.\n\nAdd `.markdown-body h2, h3 { scroll-margin-top: <sticky-header-height> }` to `packages/ui/globals.css` so anchor jumps don't hide headings under the sticky header.\n\nCreate `apps/site/src/features/blog/TableOfContents/index.tsx` as a `'use client'` component with props `{ headings: MarkdownHeading[]; label: string }`. Nest h3 entries under the preceding h2 (h3 with no preceding h2 goes top-level). Implement scrollspy using one `IntersectionObserver` over heading elements (with `rootMargin` to offset sticky header). Active item is the last heading whose top crossed the offset. Mark active entry with `aria-current=\"location\"`. Render as sticky rail at `xl` breakpoint and wider; below `xl`, render as `<details>` block (closed by default) between PostHeader and Markdown body. Use `<nav aria-label>` for accessibility. Only render when post has ≥ 3 h2/h3 headings.\n\nUpdate post page layout to use CSS Grid at `xl` breakpoint: article (max-w-3xl unchanged) + sticky TOC rail on right. Add `scroll-behavior: smooth` CSS (disabled under `prefers-reduced-motion`).\n\nCall `markdownHeadings(post.content)` in the post page and pass to TableOfContents. Use the i18n `tableOfContents` key for the label.",
@@ -9173,7 +9173,7 @@
         "updatedAt": "2026-10-16T04:17:59.558Z"
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Implement dual-theme code blocks with diff and highlight transformers",
         "description": "Configure rehype-pretty-code for dual github-light/github-dark themes, add transformerNotationDiff for [!code ++]/[!code --] support, implement theme-aware CSS for code blocks with diff/highlight styling, and document author syntax",
         "details": "Add `@shikijs/transformers` to `packages/ui/package.json` (pinned to same major.minor as installed `shiki`, currently 1.29.x).\n\nUpdate `packages/ui/src/View/Markdown/pipeline.ts` rehype-pretty-code options: `theme: { dark: 'github-dark', light: 'github-light' }`, `keepBackground: true`, `transformers: [transformerNotationDiff()]` from `@shikijs/transformers`. Import transformerNotationDiff at the top.\n\nAdd code-block CSS to `packages/ui/globals.css` (NOT in a Tailwind @apply block, as plain CSS):\n- Default (dark): token `color` and block `background-color` from `--shiki-dark` and `--shiki-dark-bg` variables\n- `.light [data-rehype-pretty-code-figure] ...` scope: switch to `--shiki-light` and `--shiki-light-bg` variables\n- `.diff.add` / `.diff.remove` lines: green/red tinted background with `+`/`−` gutter markers, derived from existing GitHub palette variables in `markdown-theme.css` (`--fgColor-success`, `--fgColor-danger`, `--borderColor-success-emphasis`, `--borderColor-danger-emphasis`, `--bgColor-danger-muted`). These already switch with the theme.\n- `[data-highlighted-line]`: subtle background with light and dark variants\n- Ensure rules do NOT match `[data-mermaid]` blocks (Mermaid keeps enforced dark surface)\n- Verify exact variable names emitted by the installed rehype-pretty-code version and record in a CSS comment\n- Re-check inline code (`:not(pre) > code`) styling against both block backgrounds to ensure contrast\n\nDocument author syntax in `packages/ui/README.md` (or the design-system doc from #1166/#1169): ` ```ts {2,4-5} `, `// [!code ++]`, `// [!code --]`.\n\nThis task absorbs and closes issue #1063.",
@@ -9185,7 +9185,7 @@
         "updatedAt": "2026-10-16T18:01:00.478Z"
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Add reading progress bar and complete post page integration",
         "description": "Implement ReadingProgress client island with scroll-based progress tracking, integrate all new components into the post page, update all tests, and verify full build/manual acceptance criteria",
         "details": "Create `apps/site/src/features/blog/ReadingProgress/index.tsx` as a `'use client'` component with props `{ targetId: string }`. Render a fixed 2-3px bar at viewport top using `bg-brand-primary` design token. Width represents the share of the article (not document) scrolled past: 0 above article, 100% at its end.\n\nImplement progress tracking with passive `scroll` + `resize` event listeners (rAF-throttled). Update progress via `transform: scaleX()` (not `width`) to avoid layout work. Set `aria-hidden=\"true\"` (browser scrollbar already conveys position). Disable transition under `prefers-reduced-motion`.\n\nIntegrate all new components into `apps/site/src/app/[locale]/blog/[year]/[month]/[slug]/page.tsx`:\n- Add ReadingProgress at the top level\n- Render AuthorByline after Markdown body and before PrevNextNav\n- Pass headings to TableOfContents (conditionally rendered when ≥ 3 headings)\n- Apply two-column grid layout at xl breakpoint\n- Ensure all new props (updatedAt, reading time, author bio) flow from BlogPostDetailDTO\n\nCreate comprehensive test suite:\n- `apps/site/tests/features/blog/ReadingProgress/*.test.tsx`: progress goes from 0 to 100% across article; is aria-hidden; has no animation under reduced motion (stub geometry)\n- Update post page integration test to verify: reading time displayed; byline present; TOC entries match body IDs; BlogPosting JSON-LD rendered; all new metadata present\n- Update PostHeader and PostCard tests to verify reading time and updated date display\n\nRun full test suite: `pnpm --filter @repo/application test`, `pnpm --filter @repo/ui test`, `pnpm --filter @repo/seo test`, `pnpm --filter @repo/site test`, `pnpm -w lint`, `pnpm -w types`.\n\nManual verification (required): `pnpm --filter @repo/site build` then `pnpm --filter @repo/site start`. Test in both themes and two locales (en-US, pt-BR): scroll a long post watching TOC highlight and progress bar; toggle theme on code block; check project page with code/Mermaid and /about page (verify unchanged in dark mode). Run Rich Results test on BlogPosting JSON-LD.\n\nVerify all acceptance criteria from PRD §4 are met. Confirm no file exceeds 200 lines. Ensure no changes to packages/core or packages/infra. Close issue #1063 in the PR description.",
@@ -9209,7 +9209,10 @@
       "completedCount": 5,
       "tags": [
         "blog-v2-phase-5a"
-      ]
+      ],
+      "created": "2026-10-17T16:55:25.918Z",
+      "description": "Tasks for blog-v2-phase-5a context",
+      "updated": "2026-10-17T16:55:25.918Z"
     }
   },
   "blog-v2-phase-5b": {
@@ -9584,7 +9587,7 @@
         "dependencies": [
           "4"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9659,7 +9662,8 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 6,
-        "expansionPrompt": "Divide into: (1) Create rank-related.ts pure function with Set-based tag matching, dual sorting (sharedCount DESC, publishedAt DESC), and limit slicing, (2) Write comprehensive unit tests for ranking logic including tie-breaking and edge cases, (3) Implement ListRelatedBlogPosts use case with Slug validation, NotFoundError handling, and rankRelated integration, (4) Create RelatedPosts component with compact link format (title + PostMeta), conditional rendering, (5) Update post page.tsx to add ListRelatedBlogPosts to Promise.all and insert section between AuthorByline and PrevNextNav, (6) Write component and page integration tests verifying ranking, limit=3, and empty state."
+        "expansionPrompt": "Divide into: (1) Create rank-related.ts pure function with Set-based tag matching, dual sorting (sharedCount DESC, publishedAt DESC), and limit slicing, (2) Write comprehensive unit tests for ranking logic including tie-breaking and edge cases, (3) Implement ListRelatedBlogPosts use case with Slug validation, NotFoundError handling, and rankRelated integration, (4) Create RelatedPosts component with compact link format (title + PostMeta), conditional rendering, (5) Update post page.tsx to add ListRelatedBlogPosts to Promise.all and insert section between AuthorByline and PrevNextNav, (6) Write component and page integration tests verifying ranking, limit=3, and empty state.",
+        "updatedAt": "2026-10-17T18:03:02.590Z"
       },
       {
         "id": "6",
@@ -9751,9 +9755,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-17T07:45:05.120Z",
+      "lastModified": "2026-10-17T18:03:02.591Z",
       "taskCount": 6,
-      "completedCount": 4,
+      "completedCount": 5,
       "tags": [
         "blog-v2-phase-5b"
       ]
