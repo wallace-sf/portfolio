@@ -89,17 +89,19 @@ export const SideNavigation: FC = () => {
                 {t('about')}
               </Nav.Item>
             </li>
-            <li>
-              <Nav.Item
-                component={NextLink}
-                href={blog.href}
-                active={blog.active}
-                onNavigate={closeMenu}
-                icon="material-symbols:stylus-note"
-              >
-                {t('blog')}
-              </Nav.Item>
-            </li>
+            {env.blogNavEnabled && (
+              <li>
+                <Nav.Item
+                  component={NextLink}
+                  href={blog.href}
+                  active={blog.active}
+                  onNavigate={closeMenu}
+                  icon="material-symbols:stylus-note"
+                >
+                  {t('blog')}
+                </Nav.Item>
+              </li>
+            )}
             <li>
               <Nav.Item
                 component={NextLink}
