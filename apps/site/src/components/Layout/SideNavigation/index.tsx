@@ -106,7 +106,7 @@ export const SideNavigation: FC = () => {
                 href={getResumeUrl(locale)}
                 onNavigate={closeMenu}
                 external
-                icon="material-symbols:description"
+                icon="material-symbols:contact-page"
               >
                 {t('resume')}
               </Nav.Item>
