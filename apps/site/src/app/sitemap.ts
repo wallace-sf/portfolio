@@ -1,4 +1,8 @@
-import { ListBlogArchive, ListBlogPosts } from '@repo/application/blog';
+import {
+  GetBlogTags,
+  ListBlogArchive,
+  ListBlogPosts,
+} from '@repo/application/blog';
 import { GetPublishedProjects } from '@repo/application/portfolio';
 import { LOCALES } from '@repo/core/shared';
 import type { MetadataRoute } from 'next';
@@ -6,7 +10,12 @@ import type { MetadataRoute } from 'next';
 import { env } from '~/config/env';
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { getServerContainer } from '~/lib/server/container';
-import { blogArchivePath, blogPostPath } from '~features/blog/paths';
+import {
+  blogArchivePath,
+  blogPostPath,
+  blogTagPath,
+  blogTagsPath,
+} from '~features/blog/paths';
 
 export const dynamic = 'force-static';
 
@@ -63,13 +72,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const archive = archiveResult.isRight() ? archiveResult.value : [];
 
-    const archivePaths = archive.flatMap(({ year, months }) => [
-      blogArchivePath(year),
-      ...months.map(({ month }) => blogArchivePath(year, month)),
-    ]);
+    const tagsResult = await new GetBlogTags(
+      getServerContainer().blogPostRepository,
+    ).execute({ locale: DEFAULT_LOCALE });
 
-    const archiveEntries: MetadataRoute.Sitemap = LOCALES.flatMap((locale) =>
-      archivePaths.map((path) => ({
+    const tags = tagsResult.isRight() ? tagsResult.value : [];
+
+    const indexPaths = [
+      ...archive.flatMap(({ year, months }) => [
+        blogArchivePath(year),
+        ...months.map(({ month }) => blogArchivePath(year, month)),
+      ]),
+      blogTagsPath(),
+      ...tags.map(({ tag }) => blogTagPath(tag)),
+    ];
+
+    const indexEntries: MetadataRoute.Sitemap = LOCALES.flatMap((locale) =>
+      indexPaths.map((path) => ({
         url: `${env.siteUrl}/${locale}${path}`,
         lastModified: BUILD_DATE,
         changeFrequency: 'monthly' as const,
@@ -81,7 +100,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...staticEntries,
       ...projectEntries,
       ...blogEntries,
-      ...archiveEntries,
+      ...indexEntries,
     ];
   } catch {
     return staticEntries;

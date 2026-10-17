@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   blogArchivePath,
   blogPostPath,
+  blogTagPath,
+  blogTagsPath,
   monthSegment,
   publicationSegments,
 } from '~features/blog/paths';
@@ -52,5 +54,19 @@ describe('blogArchivePath', () => {
 
   it('should build the month archive path with a zero-padded month when a month is given', () => {
     expect(blogArchivePath(2026, 9)).toBe('/blog/2026/09');
+  });
+});
+
+describe('blogTagsPath', () => {
+  it('should build the tag index path when called', () => {
+    expect(blogTagsPath()).toBe('/blog/tags');
+  });
+});
+
+describe('blogTagPath', () => {
+  it('should build a locale-agnostic tag page path when given a tag', () => {
+    expect(blogTagPath('clean-architecture')).toBe(
+      '/blog/tags/clean-architecture',
+    );
   });
 });
