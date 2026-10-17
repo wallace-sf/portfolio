@@ -41,6 +41,10 @@ vi.mock('@repo/utils', () => ({
 }));
 
 describe('ContactInfo', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('should render clipboard buttons with accessible aria-label', async () => {
     const { ContactInfo } = await import('~features/contact/ContactInfo');
     render(React.createElement(ContactInfo));
@@ -49,5 +53,21 @@ describe('ContactInfo', () => {
       name: 'Clipboard.copy',
     });
     expect(buttons).toHaveLength(2);
+  });
+
+  it('should render the rss link when the blog nav flag is unset', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BLOG_NAV_ENABLED', undefined);
+    const { ContactInfo } = await import('~features/contact/ContactInfo');
+    render(React.createElement(ContactInfo));
+
+    expect(screen.getByLabelText('ContactInfo.rss')).toBeInTheDocument();
+  });
+
+  it('should hide the rss link when the blog nav flag is "false"', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BLOG_NAV_ENABLED', 'false');
+    const { ContactInfo } = await import('~features/contact/ContactInfo');
+    render(React.createElement(ContactInfo));
+
+    expect(screen.queryByLabelText('ContactInfo.rss')).not.toBeInTheDocument();
   });
 });

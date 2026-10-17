@@ -12,6 +12,7 @@ import {
 } from '~/components/Layout/SideNavigation/context';
 
 const activePath = { current: '' };
+const flags = { blogNavEnabled: true };
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
@@ -29,6 +30,9 @@ vi.mock('~/config/env', () => ({
   env: {
     linkedinUrl: 'https://linkedin.com/in/x',
     githubUrl: 'https://github.com/x',
+    get blogNavEnabled() {
+      return flags.blogNavEnabled;
+    },
   },
 }));
 
@@ -117,6 +121,7 @@ vi.mock('@repo/ui/Control', () => {
 beforeEach(() => {
   vi.clearAllMocks();
   activePath.current = '';
+  flags.blogNavEnabled = true;
 });
 
 async function renderNav() {
@@ -136,6 +141,16 @@ describe('SideNavigation', () => {
     expect(screen.getByText('rss')).toBeInTheDocument();
     expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();
     expect(screen.getByTestId('language-selector')).toBeInTheDocument();
+  });
+
+  it('should hide the blog and rss items when the blog nav flag is off', async () => {
+    flags.blogNavEnabled = false;
+    await renderNav();
+
+    expect(screen.queryByText('blog')).not.toBeInTheDocument();
+    expect(screen.queryByText('rss')).not.toBeInTheDocument();
+    expect(screen.getByText('about')).toBeInTheDocument();
+    expect(screen.getByText('github')).toBeInTheDocument();
   });
 
   it('should resolve route hrefs through the active locale', async () => {

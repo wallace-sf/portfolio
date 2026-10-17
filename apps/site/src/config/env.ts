@@ -41,6 +41,15 @@ export const env = {
     return process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   },
 
+  /**
+   * Whether blog entry points (side nav Blog item, RSS links) are shown. Only the
+   * literal `'false'` hides them, so local, tests and previews keep them visible;
+   * blog routes and feeds stay reachable by direct URL either way.
+   */
+  get blogNavEnabled() {
+    return process.env.NEXT_PUBLIC_BLOG_NAV_ENABLED !== 'false';
+  },
+
   /** Resume file URL per locale, used by the side navigation's "Resume" link. */
   get resumeUrlByLocale(): Record<Locale, string> {
     return {

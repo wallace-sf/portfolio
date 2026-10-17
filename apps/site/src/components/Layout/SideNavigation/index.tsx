@@ -89,17 +89,19 @@ export const SideNavigation: FC = () => {
                 {t('about')}
               </Nav.Item>
             </li>
-            <li>
-              <Nav.Item
-                component={NextLink}
-                href={blog.href}
-                active={blog.active}
-                onNavigate={closeMenu}
-                icon="material-symbols:stylus-note"
-              >
-                {t('blog')}
-              </Nav.Item>
-            </li>
+            {env.blogNavEnabled && (
+              <li>
+                <Nav.Item
+                  component={NextLink}
+                  href={blog.href}
+                  active={blog.active}
+                  onNavigate={closeMenu}
+                  icon="material-symbols:stylus-note"
+                >
+                  {t('blog')}
+                </Nav.Item>
+              </li>
+            )}
             <li>
               <Nav.Item
                 component={NextLink}
@@ -137,18 +139,20 @@ export const SideNavigation: FC = () => {
                 {t('github')}
               </Nav.Link>
             </li>
-            <li>
-              <Nav.Link
-                component={NextLink}
-                href={`/${locale}/feed.xml`}
-                onNavigate={closeMenu}
-                external
-                icon="mdi:rss"
-                iconClassName="text-content-primary"
-              >
-                {t('rss')}
-              </Nav.Link>
-            </li>
+            {env.blogNavEnabled && (
+              <li>
+                <Nav.Link
+                  component={NextLink}
+                  href={`/${locale}/feed.xml`}
+                  onNavigate={closeMenu}
+                  external
+                  icon="mdi:rss"
+                  iconClassName="text-content-primary"
+                >
+                  {t('rss')}
+                </Nav.Link>
+              </li>
+            )}
             <li>
               <ThemeToggle />
             </li>

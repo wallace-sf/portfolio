@@ -91,6 +91,26 @@ describe('env', () => {
     });
   });
 
+  describe('blogNavEnabled', () => {
+    it('should be true when NEXT_PUBLIC_BLOG_NAV_ENABLED is unset', () => {
+      vi.stubEnv('NEXT_PUBLIC_BLOG_NAV_ENABLED', undefined);
+
+      expect(env.blogNavEnabled).toBe(true);
+    });
+
+    it('should be false when NEXT_PUBLIC_BLOG_NAV_ENABLED is "false"', () => {
+      vi.stubEnv('NEXT_PUBLIC_BLOG_NAV_ENABLED', 'false');
+
+      expect(env.blogNavEnabled).toBe(false);
+    });
+
+    it('should be true when NEXT_PUBLIC_BLOG_NAV_ENABLED is any other value', () => {
+      vi.stubEnv('NEXT_PUBLIC_BLOG_NAV_ENABLED', 'true');
+
+      expect(env.blogNavEnabled).toBe(true);
+    });
+  });
+
   describe('resumeUrlByLocale', () => {
     it('should map each supported locale to its resume URL env var', () => {
       vi.stubEnv(

@@ -107,14 +107,16 @@ export const ContactInfo: FC = () => {
           aria-label={t('github')}
           external
         />
-        <Nav.ShortLink
-          component={NextLink}
-          href={`/${locale}/feed.xml`}
-          icon="mdi:rss"
-          iconClassName="text-content-primary"
-          aria-label={t('rss')}
-          external
-        />
+        {env.blogNavEnabled && (
+          <Nav.ShortLink
+            component={NextLink}
+            href={`/${locale}/feed.xml`}
+            icon="mdi:rss"
+            iconClassName="text-content-primary"
+            aria-label={t('rss')}
+            external
+          />
+        )}
       </nav>
     </section>
   );
