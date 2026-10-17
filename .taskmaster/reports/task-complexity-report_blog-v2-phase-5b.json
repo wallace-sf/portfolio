@@ -1,0 +1,61 @@
+{
+	"meta": {
+		"generatedAt": "2026-10-16T20:27:13.462Z",
+		"tasksAnalyzed": 6,
+		"totalTasks": 6,
+		"analysisCount": 6,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": true
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Create four new seed blog posts (R11)",
+			"complexityScore": 3,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the seed post creation into: (1) Create Post A directory structure and content (testing-use-cases), (2) Create Post B with shared tags (static-blog-routes), (3) Create Post C with line highlights (sanitized-markdown), (4) Create Post D as featured with high tag overlap (enforcing-dependency-rule), (5) Update index.ts, ID constants, and verify seedBlogPosts.test.ts passes. Each post requires index.ts + 3 locale files following the existing pattern in one-validator-one-left/.",
+			"reasoning": "This is primarily content creation following a well-established pattern. The codebase shows clear examples (4 existing posts with identical structure). Each post needs 5 files (index.ts + 3 locales) plus updates to the central index. The complexity is moderate because: (1) Content must be technically accurate and reviewed, (2) Special Markdown features must be demonstrated (h3 nesting, diff fences, line highlights), (3) Tag distribution must be strategically chosen to test discovery features, (4) All content needs 3 locale translations. However, the structure is purely repetitive - no new abstractions or logic required."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Implement tag use cases, DTOs, routes, and sitemap (R1, R2, R5)",
+			"complexityScore": 7,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Split into: (1) Create BlogTagDTO interface in dtos/, (2) Implement GetBlogTags use case with tag counting and sorting logic, (3) Implement ListBlogPostsByTag use case with Tag.create() validation, (4) Add blogTagsPath() and blogTagPath() helpers to paths.ts, (5) Extend buildBlogBreadcrumbs.ts to handle tag target type, (6) Create /blog/tags/page.tsx with metadata and static params, (7) Create /blog/tags/[tag]/page.tsx with generateStaticParams and notFound(), (8) Update sitemap.ts to fetch tags and add 42 tag URLs. Each subtask should include corresponding unit/integration tests.",
+			"reasoning": "This is a high-complexity task spanning 3 layers (application, site, infrastructure). Based on the codebase analysis: (1) Two new use cases following the existing ListBlogPosts pattern (~40 lines each with error handling), (2) Tag aggregation logic (Map<string, number>) and dual sorting (count DESC, tag ASC), (3) Breadcrumb extension requires understanding the existing union type pattern, (4) Two new Next.js pages with metadata, static params (dynamicParams=false), and JSON-LD, (5) Sitemap integration following the existing archive pattern (lines 60-78), (6) Comprehensive testing across all layers. The 386 existing tests show high test coverage expectations. Estimated 8 new files + 6 modifications across packages."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Add tag links to post header, trending tags, post count badge, and archive nav to listing (R6, R7)",
+			"complexityScore": 6,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Divide into: (1) Create TagLink component (props validation, count badge logic, hover/focus states), (2) Update PostHeader to use TagLink instead of Badge.Text, (3) Create TrendingTags component (slice(0,8), conditional rendering, 'All tags' link), (4) Create ArchiveNav component (year links, reduce months for count), (5) Update /blog/page.tsx to fetch Promise.all([ListBlogPosts, GetBlogTags, ListBlogArchive]) and restructure into 5 sections, (6) Add i18n keys (Blog.trendingTags, allTags, allPosts, archive), (7) Write component and integration tests for all new components and page reorganization.",
+			"reasoning": "Medium-high complexity UI refactoring task. Analysis shows: (1) PostHeader is currently simple (40 lines, async for PostMeta), requires careful refactoring to use TagLink while maintaining accessibility, (2) Nested <Link> constraint in PostCard means tags stay plain there, (3) Three new components with conditional rendering logic, (4) Page.tsx reorganization from simple list to 5-section layout requires careful structure, (5) Promise.all pattern exists in sitemap.ts as reference, (6) Blog listing is currently minimal (79 lines), will likely approach 150+ with new sections, (7) i18n messages for 3 locales. Moderate complexity because patterns exist (PostCard shows badge rendering, PrevNextNav shows conditional layout), but integration touches multiple components and requires maintaining existing behavior."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Implement featured posts use case and FeaturedPosts component (R4, R7)",
+			"complexityScore": 4,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break into: (1) Create ListFeaturedBlogPosts use case with DEFAULT_FEATURED_LIMIT constant, featured filter, and limit slice, (2) Write unit tests covering limit behavior, empty results, and repository errors, (3) Create FeaturedPosts component with conditional rendering and two-column grid (md:grid-cols-2), (4) Integrate into /blog/page.tsx between header and TrendingTags, verify featured posts also appear in 'All posts' section. Include component and page integration tests.",
+			"reasoning": "Moderate-low complexity. This follows the well-established use case pattern: (1) Use case is similar to ListBlogPosts but adds .filter(p => p.featured) and .slice(0, limit) - straightforward ~45 lines, (2) BlogPostSummaryDTO already has featured flag (line 16), (3) Component is simple: conditional render, map to PostCard (which already exists and is well-tested), CSS Grid for layout, (4) Page integration adds one Promise.all fetch and one section. The ListBlogPosts test file (200 lines) provides clear template for testing featured flag filtering. No new domain logic, DTOs, or complex state - just filtering, limiting, and rendering existing data structures."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Implement related posts ranking, use case, and RelatedPosts component (R3, R8)",
+			"complexityScore": 6,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Divide into: (1) Create rank-related.ts pure function with Set-based tag matching, dual sorting (sharedCount DESC, publishedAt DESC), and limit slicing, (2) Write comprehensive unit tests for ranking logic including tie-breaking and edge cases, (3) Implement ListRelatedBlogPosts use case with Slug validation, NotFoundError handling, and rankRelated integration, (4) Create RelatedPosts component with compact link format (title + PostMeta), conditional rendering, (5) Update post page.tsx to add ListRelatedBlogPosts to Promise.all and insert section between AuthorByline and PrevNextNav, (6) Write component and page integration tests verifying ranking, limit=3, and empty state.",
+			"reasoning": "Medium-high complexity due to non-trivial ranking algorithm. Analysis reveals: (1) Ranking function requires Set intersection for shared tags, dual-level sorting (count then date), and self-exclusion - ~35-40 lines of logic, (2) BlogPostSequence.neighboursOf (lines 60-63 in GetAdjacentBlogPosts) shows precedent for domain-level post relationships, but ranking is more complex, (3) Use case must handle 3 error types (NotFoundError, ValidationError, DomainError) following GetAdjacentBlogPosts pattern, (4) Component uses PostMeta which is async, must maintain compact format distinct from PostCard, (5) Page insertion between existing sections requires careful positioning, (6) Testing must verify ranking correctness with controlled tag overlaps and dates - more complex than simple filtering. Estimated 3 new files, 2 modifications, ~150 lines of production code + tests."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Polish prev/next navigation and perform final integration checks (R9)",
+			"complexityScore": 5,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Split into: (1) Update PrevNextNav component to add arrow icons, display dates with formatDate(), add rel attributes, replace spacers with CSS Grid (grid-cols-2, col-start-2), (2) Add i18n keys for arrow labels and update component tests, (3) Run full build and verify 42 tag pages prerender correctly, (4) Execute full test suite (pnpm -w types, lint, @repo/application test, site test), (5) Perform manual browser verification of all Phase 5B features in both themes and en-US + pt-BR locales (checklist-driven), (6) Verify file size compliance (<200 lines), no forbidden imports, and document any architectural deviations.",
+			"reasoning": "Medium complexity integration and QA task. Current PrevNextNav is 58 lines with spacer spans (lines 38, 54); refactoring to CSS Grid is straightforward but must maintain responsive behavior and accessibility. Key complexity factors: (1) Component update requires icon integration (material-symbols), date formatting (formatDate exists per paths.ts), and grid layout without breaking mobile, (2) BlogPostLinkDTO already has publishedAt (line 81 in GetAdjacentBlogPosts), so no DTO change needed, (3) Build verification for 42 tag pages (3 locales × 14 pages) requires careful count, (4) Manual testing checklist is extensive - 8 feature areas × 2 themes × 2 locales = 32 verification points, (5) Final integration checks span multiple layers and must catch regressions. This is less about new features and more about refinement + comprehensive verification, hence moderate score despite breadth."
+		}
+	]
+}

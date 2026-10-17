@@ -1,5 +1,9 @@
+import { enforcingDependencyRuleInMonorepo } from './enforcing-dependency-rule-in-monorepo';
 import { oneValidatorOneLeft } from './one-validator-one-left';
+import { sanitizedMarkdownPipeline } from './sanitized-markdown-pipeline';
 import { serverComponentsAsCompositionRoot } from './server-components-as-composition-root';
+import { staticBlogRoutesWithGenerateStaticParams } from './static-blog-routes-with-generate-static-params';
+import { testingUseCasesWithInMemoryRepositories } from './testing-use-cases-with-in-memory-repositories';
 import { theEitherPatternInTypescript } from './the-either-pattern-in-typescript';
 import { valueObjectsVsPrimitives } from './value-objects-vs-primitives';
 
@@ -18,4 +22,8 @@ export const blogPosts: readonly BlogPostSeed[] = [
   serverComponentsAsCompositionRoot,
   theEitherPatternInTypescript,
   valueObjectsVsPrimitives,
+  testingUseCasesWithInMemoryRepositories,
+  staticBlogRoutesWithGenerateStaticParams,
+  sanitizedMarkdownPipeline,
+  enforcingDependencyRuleInMonorepo,
 ];
