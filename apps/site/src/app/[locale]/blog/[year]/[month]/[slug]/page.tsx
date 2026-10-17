@@ -2,6 +2,7 @@ import {
   type BlogPostDetailDTO,
   GetAdjacentBlogPosts,
   GetBlogPostBySlug,
+  ListRelatedBlogPosts,
 } from '@repo/application/blog';
 import { type Locale } from '@repo/core/shared';
 import { Divider, Markdown, markdownHeadings } from '@repo/ui/View';
@@ -10,10 +11,10 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-import { JsonLd } from '~components';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
+import { JsonLd } from '~components';
 import { AuthorByline } from '~features/blog/AuthorByline';
 import { BlogBreadcrumbs } from '~features/blog/BlogBreadcrumbs';
 import { buildPostJsonLd } from '~features/blog/buildPostJsonLd';
@@ -23,6 +24,7 @@ import { PostHeader } from '~features/blog/PostHeader';
 import { MIN_TOC_HEADINGS, PostToc } from '~features/blog/PostToc';
 import { PrevNextNav } from '~features/blog/PrevNextNav';
 import { ReadingProgress } from '~features/blog/ReadingProgress';
+import { RelatedPosts } from '~features/blog/RelatedPosts';
 
 import {
   type BlogPostRouteParams,
@@ -99,17 +101,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { locale, slug } = routeParams;
   setRequestLocale(locale);
 
-  const [post, navResult] = await Promise.all([
+  const { blogPostRepository } = getServerContainer();
+  const input = { slug, locale: locale as Locale };
+  const [post, navResult, relatedResult] = await Promise.all([
     findPostAt(routeParams),
-    new GetAdjacentBlogPosts(getServerContainer().blogPostRepository).execute({
-      slug,
-      locale: locale as Locale,
-    }),
+    new GetAdjacentBlogPosts(blogPostRepository).execute(input),
+    new ListRelatedBlogPosts(blogPostRepository).execute(input),
   ]);
 
   if (!post) notFound();
 
   const { newer, older } = navResult.isRight() ? navResult.value : {};
+  const related = relatedResult.isRight() ? relatedResult.value : [];
   const headings = await markdownHeadings(post.content);
   const hasToc = headings.length >= MIN_TOC_HEADINGS;
 
@@ -152,6 +155,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         <AuthorByline author={post.author} locale={locale} />
+
+        {related.length > 0 && (
+          <>
+            <Divider />
+            <RelatedPosts posts={related} locale={locale} />
+          </>
+        )}
 
         {(newer || older) && (
           <>

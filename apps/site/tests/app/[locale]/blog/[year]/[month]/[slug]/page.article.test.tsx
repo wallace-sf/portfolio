@@ -52,13 +52,18 @@ const BODY_WITH_SECTIONS = [
   'Text.',
 ].join('\n\n');
 
-async function renderPost(locale: string, content = 'A short body.') {
+async function renderPost(
+  locale: string,
+  content = 'A short body.',
+  others: BlogPost[] = [],
+) {
   posts = [
     blogPost('hello-blog', '2026-09-02T10:00:00.000Z')
       .withAuthor(AUTHOR)
       .withTags(['typescript', 'ddd'])
       .withContent({ 'en-US': content, 'pt-BR': content, es: content })
       .now(),
+    ...others,
   ];
   const params = { locale, year: '2026', month: '09', slug: 'hello-blog' };
 
@@ -145,6 +150,38 @@ describe('BlogPostPage article', () => {
     expect(body.id).not.toBe('');
     expect(bar?.style.transform).toBe('scaleX(1)');
     vi.unstubAllGlobals();
+  });
+
+  it('should list related posts between the author block and prev/next', async () => {
+    await renderPost('en-US', 'Body.', [
+      blogPost('shares-a-tag', '2026-08-01T10:00:00.000Z')
+        .withTags(['ddd'])
+        .now(),
+    ]);
+
+    const related = screen.getByRole('region', { name: 'Further reading' });
+    expect(
+      within(related).getByRole('link', { name: 'Title shares-a-tag' }),
+    ).toHaveAttribute('href', '/en-US/blog/2026/08/shares-a-tag');
+
+    const byline = screen.getByRole('region', { name: 'About the author' });
+    const prevNext = screen.getByRole('navigation', {
+      name: 'Post navigation',
+    });
+    const follows = (a: Node, b: Node) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(follows(byline, related)).toBe(true);
+    expect(follows(related, prevNext)).toBe(true);
+  });
+
+  it('should not render related posts when no other post shares a tag', async () => {
+    await renderPost('en-US', 'Body.', [
+      blogPost('unrelated', '2026-08-01T10:00:00.000Z').withTags(['seo']).now(),
+    ]);
+
+    expect(
+      screen.queryByRole('region', { name: 'Further reading' }),
+    ).not.toBeInTheDocument();
   });
 
   it('should not render a table of contents when the post has few headings', async () => {
