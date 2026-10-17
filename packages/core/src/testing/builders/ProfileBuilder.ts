@@ -3,6 +3,7 @@ import { IProfileStatProps } from '../../portfolio/entities/profile/model/Profil
 import { Data } from '../generators';
 import { unwrap } from '../unwrap';
 import { EntityBuilder } from './EntityBuilder';
+import { ProfileStatBuilder } from './ProfileStatBuilder';
 
 export class ProfileBuilder extends EntityBuilder<IProfileProps> {
   private constructor(props: IProfileProps) {
@@ -21,16 +22,7 @@ export class ProfileBuilder extends EntityBuilder<IProfileProps> {
         'pt-BR': 'Desenvolvedor apaixonado por DDD e Clean Architecture.',
       },
       photo: { url: Data.image.url(), alt: Data.image.alt() },
-      stats: [
-        {
-          label: {
-            'en-US': 'Years of experience',
-            'pt-BR': 'Anos de experiência',
-          },
-          value: '5+',
-          icon: 'briefcase',
-        },
-      ],
+      stats: [ProfileStatBuilder.build().toProps()],
     });
   }
 
