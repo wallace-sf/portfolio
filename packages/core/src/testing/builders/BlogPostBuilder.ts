@@ -45,6 +45,19 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
     });
   }
 
+  /**
+   * A published post — the shape most listing, ordering and discovery tests
+   * start from. Chain only what the scenario varies (`.withTags(...)`,
+   * `.withFeatured(true)`), then `.now()`.
+   */
+  static published(slug: string, publishedAt?: string): BlogPostBuilder {
+    const builder = BlogPostBuilder.build()
+      .withSlug(slug)
+      .withStatus(BlogPostStatus.PUBLISHED);
+
+    return publishedAt ? builder.withPublishedAt(publishedAt) : builder;
+  }
+
   static list(count: number): BlogPost[] {
     return [...Array(count)].map(() => BlogPostBuilder.build().now());
   }

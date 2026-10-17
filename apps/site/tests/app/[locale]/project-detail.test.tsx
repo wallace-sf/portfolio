@@ -3,6 +3,7 @@
  */
 import React from 'react';
 
+import { DomainError, left, right } from '@repo/core/shared';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('next-intl/server', () => ({
@@ -10,7 +11,8 @@ vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => key),
 }));
 
-vi.mock('@repo/core/shared', () => ({
+vi.mock('@repo/core/shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@repo/core/shared')>()),
   DEFAULT_LOCALE: 'en-US',
   LOCALES: ['en-US', 'pt-BR', 'es'],
 }));
@@ -68,13 +70,6 @@ const PROJECT = {
   relatedProjects: [],
 };
 
-const right = (value: unknown) => ({
-  isRight: () => true,
-  isLeft: () => false,
-  value,
-});
-const left = () => ({ isRight: () => false, isLeft: () => true });
-
 beforeEach(() => {
   vi.clearAllMocks();
   mockListExecute.mockResolvedValue(right([]));
@@ -97,7 +92,7 @@ describe('ProjectDetailPage', () => {
   });
 
   it('should call notFound when use case returns left', async () => {
-    mockExecute.mockResolvedValue(left());
+    mockExecute.mockResolvedValue(left(new DomainError('FETCH_FAILED')));
 
     const { notFound } = await import('next/navigation');
     const { default: Page } =

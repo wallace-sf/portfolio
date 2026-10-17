@@ -5,5 +5,7 @@
  * (enforced by ESLint `no-restricted-imports`). See docs/08-TESTING.md.
  */
 export * from './builders';
+export * from './entities';
 export * from './generators';
+export * from './guards';
 export * from './unwrap';

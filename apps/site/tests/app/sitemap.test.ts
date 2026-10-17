@@ -1,8 +1,9 @@
 import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
-import { BlogPostBuilder } from '@repo/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import sitemap from '~/app/sitemap';
+
+import { blogPost } from '../helpers/blogPosts';
 
 let posts: BlogPost[] = [];
 
@@ -16,19 +17,6 @@ vi.mock('~/lib/server/container', () => ({
     },
   }),
 }));
-
-const post = (
-  slug: string,
-  publishedAt: string,
-  status: BlogPostStatus,
-  tags: string[] = ['nextjs'],
-) =>
-  BlogPostBuilder.build()
-    .withSlug(slug)
-    .withPublishedAt(publishedAt)
-    .withStatus(status)
-    .withTags(tags)
-    .now();
 
 const blogUrls = async () =>
   (await sitemap())
@@ -51,9 +39,7 @@ beforeEach(() => {
 
 describe('sitemap', () => {
   it('should list every published post at its dated URL in every locale', async () => {
-    posts = [
-      post('hello-blog', '2026-09-02T10:00:00.000Z', BlogPostStatus.PUBLISHED),
-    ];
+    posts = [blogPost('hello-blog', '2026-09-02T10:00:00.000Z').now()];
 
     const urls = await blogUrls();
 
@@ -67,15 +53,19 @@ describe('sitemap', () => {
   });
 
   it('should leave out posts that are not published', async () => {
-    posts = [post('a-draft', '2026-09-02T10:00:00.000Z', BlogPostStatus.DRAFT)];
+    posts = [
+      blogPost(
+        'a-draft',
+        '2026-09-02T10:00:00.000Z',
+        BlogPostStatus.DRAFT,
+      ).now(),
+    ];
 
     expect(await blogUrls()).toEqual([]);
   });
 
   it('should not list the undated post URLs', async () => {
-    posts = [
-      post('hello-blog', '2026-09-02T10:00:00.000Z', BlogPostStatus.PUBLISHED),
-    ];
+    posts = [blogPost('hello-blog', '2026-09-02T10:00:00.000Z').now()];
 
     const urls = (await sitemap()).map(({ url }) => url);
 
@@ -84,9 +74,13 @@ describe('sitemap', () => {
 
   it('should list the year and month archives of published posts in every locale', async () => {
     posts = [
-      post('september', '2026-09-02T10:00:00.000Z', BlogPostStatus.PUBLISHED),
-      post('december', '2025-12-24T10:00:00.000Z', BlogPostStatus.PUBLISHED),
-      post('a-draft', '2024-03-01T10:00:00.000Z', BlogPostStatus.DRAFT),
+      blogPost('september', '2026-09-02T10:00:00.000Z').now(),
+      blogPost('december', '2025-12-24T10:00:00.000Z').now(),
+      blogPost(
+        'a-draft',
+        '2024-03-01T10:00:00.000Z',
+        BlogPostStatus.DRAFT,
+      ).now(),
     ];
 
     const urls = (await archiveUrls()).map((url) => new URL(url).pathname);
@@ -102,15 +96,12 @@ describe('sitemap', () => {
 
   it('should list the tag index and each published tag page in every locale', async () => {
     posts = [
-      post(
-        'tagged-post',
-        '2026-09-02T10:00:00.000Z',
-        BlogPostStatus.PUBLISHED,
-        ['ddd', 'nextjs'],
-      ),
-      post('draft-post', '2026-09-03T10:00:00.000Z', BlogPostStatus.DRAFT, [
-        'drafts-only',
-      ]),
+      blogPost('tagged-post', '2026-09-02T10:00:00.000Z')
+        .withTags(['ddd', 'nextjs'])
+        .now(),
+      blogPost('draft-post', '2026-09-03T10:00:00.000Z', BlogPostStatus.DRAFT)
+        .withTags(['drafts-only'])
+        .now(),
     ];
 
     const urls = await tagUrls();

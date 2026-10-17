@@ -36,14 +36,15 @@ const params = (locale = 'en-US') => Promise.resolve({ locale });
 const renderPage = (locale = 'en-US') =>
   renderServerComponent(BlogTagsPage({ params: params(locale) }), { locale });
 
-const tagged = (slug: string, tags: string[], status?: BlogPostStatus) =>
-  blogPost(slug, '2026-09-02T10:00:00.000Z', status).withTags(tags).now();
-
 beforeEach(() => {
   posts = [
-    tagged('first-post', ['ddd', 'typescript']),
-    tagged('second-post', ['ddd']),
-    tagged('draft-post', ['drafts-only'], BlogPostStatus.DRAFT),
+    blogPost('first-post', '2026-09-02T10:00:00.000Z')
+      .withTags(['ddd', 'typescript'])
+      .now(),
+    blogPost('second-post', '2026-09-02T10:00:00.000Z').withTags(['ddd']).now(),
+    blogPost('draft-post', '2026-09-02T10:00:00.000Z', BlogPostStatus.DRAFT)
+      .withTags(['drafts-only'])
+      .now(),
   ];
 });
 
@@ -66,7 +67,11 @@ describe('BlogTagsPage', () => {
   });
 
   it('should show the empty state when no post is published', async () => {
-    posts = [tagged('draft-post', ['ddd'], BlogPostStatus.DRAFT)];
+    posts = [
+      blogPost('draft-post', '2026-09-02T10:00:00.000Z', BlogPostStatus.DRAFT)
+        .withTags(['ddd'])
+        .now(),
+    ];
 
     await renderPage();
 
