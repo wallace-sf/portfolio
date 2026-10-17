@@ -9519,7 +9519,7 @@
         "dependencies": [
           "3"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9571,7 +9571,8 @@
         ],
         "complexity": 4,
         "recommendedSubtasks": 4,
-        "expansionPrompt": "Break into: (1) Create ListFeaturedBlogPosts use case with DEFAULT_FEATURED_LIMIT constant, featured filter, and limit slice, (2) Write unit tests covering limit behavior, empty results, and repository errors, (3) Create FeaturedPosts component with conditional rendering and two-column grid (md:grid-cols-2), (4) Integrate into /blog/page.tsx between header and TrendingTags, verify featured posts also appear in 'All posts' section. Include component and page integration tests."
+        "expansionPrompt": "Break into: (1) Create ListFeaturedBlogPosts use case with DEFAULT_FEATURED_LIMIT constant, featured filter, and limit slice, (2) Write unit tests covering limit behavior, empty results, and repository errors, (3) Create FeaturedPosts component with conditional rendering and two-column grid (md:grid-cols-2), (4) Integrate into /blog/page.tsx between header and TrendingTags, verify featured posts also appear in 'All posts' section. Include component and page integration tests.",
+        "updatedAt": "2026-10-17T07:45:05.120Z"
       },
       {
         "id": "5",
@@ -9750,9 +9751,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-17T06:54:58.965Z",
+      "lastModified": "2026-10-17T07:45:05.120Z",
       "taskCount": 6,
-      "completedCount": 3,
+      "completedCount": 4,
       "tags": [
         "blog-v2-phase-5b"
       ]
