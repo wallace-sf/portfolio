@@ -4,12 +4,11 @@ import { useEffect, useRef } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
+import { QUERY_PARAM } from './queryParam';
+
 export interface IQuerySyncProps {
   onQuery: (query: string) => void;
 }
-
-/** The `?q=` search param, read on the client. */
-export const QUERY_PARAM = 'q';
 
 /**
  * Reports `?q=` to the island **once, on mount**: a shared search link, or
@@ -30,16 +29,4 @@ export function QuerySync({ onQuery }: IQuerySyncProps) {
   }, [query, onQuery]);
 
   return null;
-}
-
-/**
- * Writes `query` to `?q=` (removed when empty) without a navigation:
- * `router.replace` would request the RSC payload on every keystroke, while
- * `replaceState` is picked up by `useSearchParams` with no server round trip.
- */
-export function writeQueryParam(query: string): void {
-  const url = new URL(window.location.href);
-  if (query) url.searchParams.set(QUERY_PARAM, query);
-  else url.searchParams.delete(QUERY_PARAM);
-  window.history.replaceState(null, '', url);
 }

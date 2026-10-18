@@ -17,7 +17,8 @@ import { rankPosts } from '~features/blog/search/rankPosts';
 import type { SearchablePost } from '~features/blog/search/types';
 
 import { type ISearchState, SearchContext } from './context';
-import { QuerySync, writeQueryParam } from './QuerySync';
+import { writeQueryParam } from './queryParam';
+import { QuerySync } from './QuerySync';
 import { SearchBox } from './SearchBox';
 import { useSearchIndex } from './useSearchIndex';
 

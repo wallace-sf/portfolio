@@ -1,6 +1,12 @@
 'use client';
 
-import { type ChangeEvent, type KeyboardEvent, useId } from 'react';
+import {
+  type ChangeEvent,
+  type FormEvent,
+  type KeyboardEvent,
+  useCallback,
+  useId,
+} from 'react';
 
 import { Icon } from '@repo/ui/Imagery';
 import { useTranslations } from 'next-intl';
@@ -12,21 +18,31 @@ export interface ISearchBoxProps {
   onFocus: () => void;
 }
 
+/** Results update as you type; there is nothing to submit. */
+const preventSubmit = (event: FormEvent<HTMLFormElement>) =>
+  event.preventDefault();
+
 /** The listing's search field: labelled, clearable, `Esc` clears. */
 export function SearchBox({ value, onChange, onFocus }: ISearchBoxProps) {
   const t = useTranslations('Blog');
   const inputId = useId();
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) =>
-    onChange(event.target.value);
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Escape') onChange('');
-  };
+  const handleChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => onChange(event.target.value),
+    [onChange],
+  );
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Escape') onChange('');
+    },
+    [onChange],
+  );
+  const clear = useCallback(() => onChange(''), [onChange]);
 
   return (
     <form
       role="search"
-      onSubmit={(event) => event.preventDefault()}
+      onSubmit={preventSubmit}
       className="relative flex items-center"
     >
       <label htmlFor={inputId} className="sr-only">
@@ -49,7 +65,7 @@ export function SearchBox({ value, onChange, onFocus }: ISearchBoxProps) {
       {value && (
         <button
           type="button"
-          onClick={() => onChange('')}
+          onClick={clear}
           aria-label={t('searchClear')}
           className="absolute right-2 rounded-full p-1 text-content-secondary hover:text-content-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
         >
