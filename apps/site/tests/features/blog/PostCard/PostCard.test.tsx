@@ -7,6 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { PostCard } from '~features/blog/PostCard';
 
+import { buildBlogPostSummaryDTO } from '../../../helpers/dtos/blogPostSummary';
 import { renderServerComponent } from '../../../helpers/renderServerComponent';
 
 vi.mock(
@@ -29,20 +30,13 @@ vi.mock('next/image', () => ({
   ),
 }));
 
-const BASE: BlogPostSummaryDTO = {
+const BASE = buildBlogPostSummaryDTO({
   slug: 'the-either-pattern',
   title: 'The Either Pattern',
   description: 'Why this codebase never throws for domain errors.',
   publishedAt: '2026-08-01',
-  readingMinutes: 3,
-  featured: false,
   tags: ['typescript', 'ddd'],
-  author: {
-    name: 'Test Author',
-    avatarUrl: 'https://example.com/avatar.jpg',
-    url: 'https://example.com',
-  },
-};
+});
 
 const WITH_THUMBNAIL: BlogPostSummaryDTO = {
   ...BASE,

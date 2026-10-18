@@ -1,4 +1,3 @@
-import { BlogPostStatus } from '@repo/core/blog';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -144,15 +143,8 @@ describe('ListBlogPosts', () => {
           .fn()
           .mockResolvedValue([
             BlogPostBuilder.published('published').now(),
-            BlogPostBuilder.build()
-              .withSlug('draft')
-              .withStatus(BlogPostStatus.DRAFT)
-              .withTags([])
-              .now(),
-            BlogPostBuilder.build()
-              .withSlug('archived')
-              .withStatus(BlogPostStatus.ARCHIVED)
-              .now(),
+            BlogPostBuilder.draft('draft').withTags([]).now(),
+            BlogPostBuilder.archived('archived').now(),
           ]),
       });
 

@@ -1,4 +1,4 @@
-import { BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPost } from '@repo/core/blog';
 import { DomainError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -34,10 +34,7 @@ describe('ListFeaturedBlogPosts', () => {
       BlogPostBuilder.published('newer-featured', '2026-09-01T00:00:00.000Z')
         .withFeatured(true)
         .now(),
-      BlogPostBuilder.build()
-        .withSlug('draft-featured')
-        .withPublishedAt('2026-10-05T00:00:00.000Z')
-        .withStatus(BlogPostStatus.DRAFT)
+      BlogPostBuilder.draft('draft-featured', '2026-10-05T00:00:00.000Z')
         .withFeatured(true)
         .now(),
     ]);

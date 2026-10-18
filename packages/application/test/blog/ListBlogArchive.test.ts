@@ -1,4 +1,4 @@
-import { BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPost } from '@repo/core/blog';
 import { BlogPostBuilder, unwrap } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -81,16 +81,8 @@ describe('ListBlogArchive', () => {
     it('should exclude DRAFT and ARCHIVED posts from groups and counts when listing', async () => {
       const archive = await archiveOf([
         BlogPostBuilder.published('live', '2026-09-02T10:00:00.000Z').now(),
-        BlogPostBuilder.build()
-          .withSlug('draft')
-          .withPublishedAt('2026-09-10T10:00:00.000Z')
-          .withStatus(BlogPostStatus.DRAFT)
-          .now(),
-        BlogPostBuilder.build()
-          .withSlug('archived')
-          .withPublishedAt('2025-01-10T10:00:00.000Z')
-          .withStatus(BlogPostStatus.ARCHIVED)
-          .now(),
+        BlogPostBuilder.draft('draft', '2026-09-10T10:00:00.000Z').now(),
+        BlogPostBuilder.archived('archived', '2025-01-10T10:00:00.000Z').now(),
       ]);
 
       expect(shapeOf(archive)).toEqual([[2026, [[9, ['live']]]]]);
@@ -130,11 +122,7 @@ describe('ListBlogArchive', () => {
 
     it('should return an empty array when there are no published posts', async () => {
       const archive = await archiveOf([
-        BlogPostBuilder.build()
-          .withSlug('draft')
-          .withPublishedAt('2026-09-10T10:00:00.000Z')
-          .withStatus(BlogPostStatus.DRAFT)
-          .now(),
+        BlogPostBuilder.draft('draft', '2026-09-10T10:00:00.000Z').now(),
       ]);
 
       expect(archive).toEqual([]);

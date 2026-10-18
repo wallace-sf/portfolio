@@ -1,12 +1,12 @@
 /**
  * @vitest-environment jsdom
  */
-import type { BlogPostSummaryDTO } from '@repo/application/blog';
 import { screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { FeaturedPosts } from '~features/blog/FeaturedPosts';
 
+import { buildBlogPostSummaryDTO } from '../../../helpers/dtos/blogPostSummary';
 import { renderServerComponent } from '../../../helpers/renderServerComponent';
 
 vi.mock(
@@ -14,20 +14,17 @@ vi.mock(
   async () => (await import('../../../helpers/intlServerMock')).intlServerMock,
 );
 
-const post = (slug: string, publishedAt: string): BlogPostSummaryDTO => ({
-  slug,
-  title: `Title ${slug}`,
-  description: `Description ${slug}`,
-  publishedAt,
-  readingMinutes: 2,
-  featured: true,
-  tags: ['ddd'],
-  author: { name: 'Test Author', avatarUrl: 'https://example.com/a.jpg' },
-});
-
 const posts = [
-  post('newest-pick', '2026-10-17T00:00:00.000Z'),
-  post('older-pick', '2026-08-08T00:00:00.000Z'),
+  buildBlogPostSummaryDTO({
+    slug: 'newest-pick',
+    publishedAt: '2026-10-17T00:00:00.000Z',
+    featured: true,
+  }),
+  buildBlogPostSummaryDTO({
+    slug: 'older-pick',
+    publishedAt: '2026-08-08T00:00:00.000Z',
+    featured: true,
+  }),
 ];
 
 describe('FeaturedPosts', () => {

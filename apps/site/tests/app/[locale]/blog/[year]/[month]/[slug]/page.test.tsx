@@ -1,11 +1,11 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
-import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { type BlogPost } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import BlogPostPage from '~/app/[locale]/blog/[year]/[month]/[slug]/page';
 
-import { blogPost } from '../../../../../../helpers/blogPosts';
 import { expectBreadcrumbTrail } from '../../../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../../../helpers/renderServerComponent';
 
@@ -69,7 +69,7 @@ beforeEach(() => {
 describe('BlogPostPage', () => {
   it('should render the header and Markdown body without navigation when the post is the only one', async () => {
     posts = [
-      blogPost('hello-blog', '2026-09-02T10:00:00.000Z')
+      BlogPostBuilder.published('hello-blog', '2026-09-02T10:00:00.000Z')
         .withContent({
           'en-US': 'Body of the post.',
           'pt-BR': 'Corpo do post.',
@@ -91,9 +91,9 @@ describe('BlogPostPage', () => {
 
   it('should link the newer and older posts with dated, locale-prefixed hrefs when the post is in the middle', async () => {
     posts = [
-      blogPost('oldest', '2026-08-08T10:00:00.000Z').now(),
-      blogPost('newest', '2026-10-01T10:00:00.000Z').now(),
-      blogPost('middle', '2026-09-15T10:00:00.000Z').now(),
+      BlogPostBuilder.published('oldest', '2026-08-08T10:00:00.000Z').now(),
+      BlogPostBuilder.published('newest', '2026-10-01T10:00:00.000Z').now(),
+      BlogPostBuilder.published('middle', '2026-09-15T10:00:00.000Z').now(),
     ];
 
     await renderPage('middle', '2026', '09', 'pt-BR');
@@ -110,9 +110,9 @@ describe('BlogPostPage', () => {
 
   it('should skip unpublished posts when choosing the newer and older links', async () => {
     posts = [
-      blogPost('older', '2026-09-01T10:00:00.000Z').now(),
-      blogPost('current', '2026-09-10T10:00:00.000Z').now(),
-      blogPost('draft', '2026-09-20T10:00:00.000Z', BlogPostStatus.DRAFT).now(),
+      BlogPostBuilder.published('older', '2026-09-01T10:00:00.000Z').now(),
+      BlogPostBuilder.published('current', '2026-09-10T10:00:00.000Z').now(),
+      BlogPostBuilder.draft('draft', '2026-09-20T10:00:00.000Z').now(),
     ];
 
     await renderPage('current', '2026', '09');
@@ -126,7 +126,9 @@ describe('BlogPostPage', () => {
   });
 
   it('should render the dated breadcrumb trail and its JSON-LD when the post is shown', async () => {
-    posts = [blogPost('hello-blog', '2026-09-02T10:00:00.000Z').now()];
+    posts = [
+      BlogPostBuilder.published('hello-blog', '2026-09-02T10:00:00.000Z').now(),
+    ];
 
     const { container } = await renderPage('hello-blog', '2026', '09', 'pt-BR');
 
@@ -145,7 +147,7 @@ describe('BlogPostPage', () => {
 
   it('should render the cover hero when the post has a cover image', async () => {
     posts = [
-      blogPost('with-cover', '2026-09-02T10:00:00.000Z')
+      BlogPostBuilder.published('with-cover', '2026-09-02T10:00:00.000Z')
         .withCoverImage({
           url: 'https://cdn/cover.webp',
           alt: { 'en-US': 'Cover', 'pt-BR': 'Capa', es: 'Portada' },
@@ -169,11 +171,7 @@ describe('BlogPostPage', () => {
 
   it('should call notFound when the post is not published', async () => {
     posts = [
-      blogPost(
-        'a-draft',
-        '2026-09-02T10:00:00.000Z',
-        BlogPostStatus.DRAFT,
-      ).now(),
+      BlogPostBuilder.draft('a-draft', '2026-09-02T10:00:00.000Z').now(),
     ];
 
     await expect(renderPage('a-draft', '2026', '09')).rejects.toThrow(
@@ -182,7 +180,9 @@ describe('BlogPostPage', () => {
   });
 
   it("should call notFound when the year or month don't match the publication date", async () => {
-    posts = [blogPost('hello-blog', '2026-09-02T10:00:00.000Z').now()];
+    posts = [
+      BlogPostBuilder.published('hello-blog', '2026-09-02T10:00:00.000Z').now(),
+    ];
 
     await expect(renderPage('hello-blog', '2026', '08')).rejects.toThrow(
       'NEXT_NOT_FOUND',

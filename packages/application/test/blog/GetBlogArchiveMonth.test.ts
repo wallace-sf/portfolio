@@ -1,4 +1,3 @@
-import { BlogPostStatus } from '@repo/core/blog';
 import { NotFoundError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -19,17 +18,9 @@ const POSTS = [
     '2026-09-02T10:00:00.000Z',
   ).now(),
   BlogPostBuilder.published('september-late', '2026-09-28T10:00:00.000Z').now(),
-  BlogPostBuilder.build()
-    .withSlug('july-draft')
-    .withPublishedAt('2026-07-10T10:00:00.000Z')
-    .withStatus(BlogPostStatus.DRAFT)
-    .now(),
+  BlogPostBuilder.draft('july-draft', '2026-07-10T10:00:00.000Z').now(),
   BlogPostBuilder.published('last-year', '2025-12-24T10:00:00.000Z').now(),
-  BlogPostBuilder.build()
-    .withSlug('old-draft')
-    .withPublishedAt('2024-03-01T10:00:00.000Z')
-    .withStatus(BlogPostStatus.DRAFT)
-    .now(),
+  BlogPostBuilder.draft('old-draft', '2024-03-01T10:00:00.000Z').now(),
 ];
 
 const makeRepository = (overrides: Partial<IBlogPostRepository> = {}) =>
