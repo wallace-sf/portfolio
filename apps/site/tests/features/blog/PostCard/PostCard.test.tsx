@@ -131,4 +131,23 @@ describe('PostCard', () => {
       '(min-width: 768px) 24rem, calc(100vw - 2rem)',
     );
   });
+
+  it('should render the excerpt after the description when one is given', async () => {
+    await renderServerComponent(
+      <PostCard
+        post={BASE}
+        locale="en-US"
+        excerpt={<p>…a marked passage…</p>}
+      />,
+    );
+
+    const description = screen.getByText(BASE.description);
+    const excerpt = screen.getByText('…a marked passage…');
+
+    expect(screen.getByRole('link')).toContainElement(excerpt);
+    expect(
+      description.compareDocumentPosition(excerpt) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
 });
