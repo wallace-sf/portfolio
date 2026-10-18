@@ -1,5 +1,8 @@
 const ELLIPSIS = '…';
 
+/** A cut right after these already reads as an ending: no `…` after it. */
+const SENTENCE_END = /[.!?…]$/;
+
 /** Words kept on each side of the match when no radius is given. */
 export const EXCERPT_RADIUS_WORDS = 12;
 
@@ -14,7 +17,8 @@ export interface IExcerpt {
 
 /**
  * About `radius` words either side of `[start, end)`, cut on word boundaries,
- * with an ellipsis on each side where the text was cut.
+ * with an ellipsis on each side where the text was cut, except after a cut
+ * that already ends a sentence (`errors.…` would read as a typo).
  */
 export function excerptAround(
   text: string,
@@ -40,10 +44,11 @@ export function excerptAround(
   const from = words[Math.max(0, firstHit - radius)]!.from;
   const to = words[Math.min(last, lastHit + radius)]!.to;
   const lead = from > 0 ? ELLIPSIS : '';
-  const tail = to < text.length ? ELLIPSIS : '';
+  const excerpt = text.slice(from, to);
+  const tail = to < text.length && !SENTENCE_END.test(excerpt) ? ELLIPSIS : '';
 
   return {
-    text: `${lead}${text.slice(from, to)}${tail}`,
+    text: `${lead}${excerpt}${tail}`,
     offset: from - lead.length,
   };
 }

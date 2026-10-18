@@ -29,6 +29,18 @@ describe('excerptAround', () => {
     expect(excerptAround(text, start, start + 2, 2).text).toBe('…w3 w4 w5');
   });
 
+  it('should not add a trailing ellipsis when the cut lands right after a sentence end', () => {
+    const text = 'Return a left. Then stop here and keep going for a while.';
+
+    expect(excerptAround(text, 9, 13, 0).text).toBe('…left.');
+  });
+
+  it('should keep the trailing ellipsis when the cut lands after a comma', () => {
+    const text = 'Return a left, then stop here and keep going.';
+
+    expect(excerptAround(text, 9, 13, 0).text).toBe('…left,…');
+  });
+
   it('should return the whole text without ellipses when it fits in the radius', () => {
     expect(excerptAround('short text here', 6, 10).text).toBe(
       'short text here',
