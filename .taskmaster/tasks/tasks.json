@@ -9675,7 +9675,7 @@
         "dependencies": [
           "5"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9750,14 +9750,15 @@
         ],
         "complexity": 5,
         "recommendedSubtasks": 6,
-        "expansionPrompt": "Split into: (1) Update PrevNextNav component to add arrow icons, display dates with formatDate(), add rel attributes, replace spacers with CSS Grid (grid-cols-2, col-start-2), (2) Add i18n keys for arrow labels and update component tests, (3) Run full build and verify 42 tag pages prerender correctly, (4) Execute full test suite (pnpm -w types, lint, @repo/application test, site test), (5) Perform manual browser verification of all Phase 5B features in both themes and en-US + pt-BR locales (checklist-driven), (6) Verify file size compliance (<200 lines), no forbidden imports, and document any architectural deviations."
+        "expansionPrompt": "Split into: (1) Update PrevNextNav component to add arrow icons, display dates with formatDate(), add rel attributes, replace spacers with CSS Grid (grid-cols-2, col-start-2), (2) Add i18n keys for arrow labels and update component tests, (3) Run full build and verify 42 tag pages prerender correctly, (4) Execute full test suite (pnpm -w types, lint, @repo/application test, site test), (5) Perform manual browser verification of all Phase 5B features in both themes and en-US + pt-BR locales (checklist-driven), (6) Verify file size compliance (<200 lines), no forbidden imports, and document any architectural deviations.",
+        "updatedAt": "2026-10-18T03:40:01.448Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-17T18:03:02.591Z",
+      "lastModified": "2026-10-18T03:40:01.448Z",
       "taskCount": 6,
-      "completedCount": 5,
+      "completedCount": 6,
       "tags": [
         "blog-v2-phase-5b"
       ]
