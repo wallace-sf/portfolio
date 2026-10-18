@@ -9774,7 +9774,7 @@
         "testStrategy": "Unit tests in `packages/application/test/blog/plain-text.test.ts`:\n- should drop fenced code blocks when body has fences\n- should keep link text and drop URL when body has links\n- should keep inline code text without backticks\n- should strip heading, list, quote, emphasis markers\n- should collapse whitespace\n\nUnit tests in `packages/application/test/blog/GetBlogSearchIndex.test.ts` using in-memory repository:\n- should list published posts only, newest first, in requested locale\n- should return FETCH_FAILED when repository throws\n- should call toPlainText on post content\n\nIntegration test in `apps/site/tests/app/[locale]/blog/search-index.json/route.test.ts`:\n- should return locale's entries as JSON with Content-Type header\n- should return 500 when use case fails",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9818,7 +9818,8 @@
             "status": "pending",
             "testStrategy": "Route tests in `apps/site/tests/app/[locale]/blog/search-index.json/route.test.ts`: (1) should generate static params for all LOCALES, (2) should return JSON response with correct Content-Type header, (3) should include all published posts as search entries, (4) should convert Markdown to plain text in entries, (5) should return 500 when use case fails, (6) should match BlogSearchEntryDTO shape (slug + text). Build verification: (1) Run `pnpm --filter site build`, (2) Verify 3 search-index.json files generated (one per locale: en, es, pt-BR), (3) Verify JSON is valid and matches expected shape, (4) Verify files are in correct output paths."
           }
-        ]
+        ],
+        "updatedAt": "2026-10-18T20:52:20.217Z"
       },
       {
         "id": 2,
