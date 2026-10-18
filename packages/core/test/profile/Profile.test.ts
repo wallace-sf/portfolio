@@ -2,27 +2,10 @@ import { LocalizedText, PersonName, ValidationError } from '~/index';
 import { Profile } from '~/portfolio/entities/profile/model/Profile';
 import { ProfileStat } from '~/portfolio/entities/profile/model/ProfileStat';
 
-import { Data } from '~/testing';
+import { Data, ProfileBuilder, ProfileStatBuilder } from '~/testing';
 
-const validStat = {
-  label: { 'en-US': 'Years of experience', 'pt-BR': 'Anos de experiência' },
-  value: '5+',
-  icon: 'briefcase',
-};
-
-const validProps = {
-  name: 'Wallace',
-  headline: { 'en-US': 'Software Engineer', 'pt-BR': 'Engenheiro de Software' },
-  bio: {
-    'en-US': 'Developer passionate about DDD and Clean Architecture.',
-    'pt-BR': 'Desenvolvedor apaixonado por DDD e Clean Architecture.',
-  },
-  photo: {
-    url: Data.image.url(),
-    alt: Data.image.alt(),
-  },
-  stats: [validStat],
-};
+const validStat = ProfileStatBuilder.build().toProps();
+const validProps = ProfileBuilder.build().withStats([validStat]).toProps();
 
 describe('Profile', () => {
   describe('when created from valid props', () => {
@@ -59,7 +42,9 @@ describe('Profile', () => {
       const result = Profile.create({ ...validProps, name: '' });
 
       expect(result.isLeft()).toBe(true);
-      expect((result.value as ValidationError).code).toBe(PersonName.ERROR_CODE);
+      expect((result.value as ValidationError).code).toBe(
+        PersonName.ERROR_CODE,
+      );
     });
 
     it('should return Left when headline en-US is empty', () => {

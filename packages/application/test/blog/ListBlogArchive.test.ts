@@ -1,5 +1,5 @@
-import { BlogPostStatus } from '@repo/core/blog';
-import { BlogPostBuilder } from '@repo/core/testing';
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder, unwrap } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ListBlogArchive } from '~/blog/use-cases/ListBlogArchive';
@@ -11,25 +11,11 @@ import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 // Helpers
 // ---------------------------------------------------------------------------
 
-function post(
-  slug: string,
-  publishedAt: string,
-  status = BlogPostStatus.PUBLISHED,
-) {
-  return BlogPostBuilder.build()
-    .withSlug(slug)
-    .withStatus(status)
-    .withPublishedAt(publishedAt)
-    .now();
-}
-
-async function archiveOf(posts: ReturnType<typeof post>[]) {
+async function archiveOf(posts: BlogPost[]) {
   const repo = makeBlogPostRepository({
     findAll: vi.fn().mockResolvedValue(posts),
   });
-  const result = await new ListBlogArchive(repo).execute({ locale: 'en-US' });
-  if (result.isLeft()) throw new Error('expected Right');
-  return result.value;
+  return unwrap(await new ListBlogArchive(repo).execute({ locale: 'en-US' }));
 }
 
 /** `[year, [month, [slugs]][]][]` — the archive shape without the noise. */
@@ -48,10 +34,19 @@ describe('ListBlogArchive', () => {
   describe('execute()', () => {
     it('should group posts by year and month, newest first, when posts span two years', async () => {
       const archive = await archiveOf([
-        post('old-post', '2025-11-20T10:00:00.000Z'),
-        post('september-early', '2026-09-02T10:00:00.000Z'),
-        post('august-post', '2026-08-15T10:00:00.000Z'),
-        post('september-late', '2026-09-28T10:00:00.000Z'),
+        BlogPostBuilder.published('old-post', '2025-11-20T10:00:00.000Z').now(),
+        BlogPostBuilder.published(
+          'september-early',
+          '2026-09-02T10:00:00.000Z',
+        ).now(),
+        BlogPostBuilder.published(
+          'august-post',
+          '2026-08-15T10:00:00.000Z',
+        ).now(),
+        BlogPostBuilder.published(
+          'september-late',
+          '2026-09-28T10:00:00.000Z',
+        ).now(),
       ]);
 
       expect(shapeOf(archive)).toEqual([
@@ -68,9 +63,9 @@ describe('ListBlogArchive', () => {
 
     it('should count posts per year and per month when grouping', async () => {
       const archive = await archiveOf([
-        post('post-a', '2026-09-02T10:00:00.000Z'),
-        post('post-b', '2026-09-28T10:00:00.000Z'),
-        post('post-c', '2026-08-15T10:00:00.000Z'),
+        BlogPostBuilder.published('post-a', '2026-09-02T10:00:00.000Z').now(),
+        BlogPostBuilder.published('post-b', '2026-09-28T10:00:00.000Z').now(),
+        BlogPostBuilder.published('post-c', '2026-08-15T10:00:00.000Z').now(),
       ]);
 
       expect(archive[0]).toMatchObject({
@@ -85,9 +80,17 @@ describe('ListBlogArchive', () => {
 
     it('should exclude DRAFT and ARCHIVED posts from groups and counts when listing', async () => {
       const archive = await archiveOf([
-        post('live', '2026-09-02T10:00:00.000Z'),
-        post('draft', '2026-09-10T10:00:00.000Z', BlogPostStatus.DRAFT),
-        post('archived', '2025-01-10T10:00:00.000Z', BlogPostStatus.ARCHIVED),
+        BlogPostBuilder.published('live', '2026-09-02T10:00:00.000Z').now(),
+        BlogPostBuilder.build()
+          .withSlug('draft')
+          .withPublishedAt('2026-09-10T10:00:00.000Z')
+          .withStatus(BlogPostStatus.DRAFT)
+          .now(),
+        BlogPostBuilder.build()
+          .withSlug('archived')
+          .withPublishedAt('2025-01-10T10:00:00.000Z')
+          .withStatus(BlogPostStatus.ARCHIVED)
+          .now(),
       ]);
 
       expect(shapeOf(archive)).toEqual([[2026, [[9, ['live']]]]]);
@@ -96,14 +99,22 @@ describe('ListBlogArchive', () => {
 
     it('should derive the period in UTC when publishedAt carries a negative offset', async () => {
       const archive = await archiveOf([
-        post('late-august-local', '2026-08-31T23:30:00-03:00'),
+        BlogPostBuilder.published(
+          'late-august-local',
+          '2026-08-31T23:30:00-03:00',
+        ).now(),
       ]);
 
       expect(shapeOf(archive)).toEqual([[2026, [[9, ['late-august-local']]]]]);
     });
 
     it('should map posts to the same summary DTO as ListBlogPosts when grouping', async () => {
-      const posts = [post('same-shape', '2026-09-02T10:00:00.000Z')];
+      const posts = [
+        BlogPostBuilder.published(
+          'same-shape',
+          '2026-09-02T10:00:00.000Z',
+        ).now(),
+      ];
       const repo = makeBlogPostRepository({
         findAll: vi.fn().mockResolvedValue(posts),
       });
@@ -119,7 +130,11 @@ describe('ListBlogArchive', () => {
 
     it('should return an empty array when there are no published posts', async () => {
       const archive = await archiveOf([
-        post('draft', '2026-09-10T10:00:00.000Z', BlogPostStatus.DRAFT),
+        BlogPostBuilder.build()
+          .withSlug('draft')
+          .withPublishedAt('2026-09-10T10:00:00.000Z')
+          .withStatus(BlogPostStatus.DRAFT)
+          .now(),
       ]);
 
       expect(archive).toEqual([]);

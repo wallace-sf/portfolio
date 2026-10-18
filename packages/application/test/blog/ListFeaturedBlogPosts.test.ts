@@ -1,4 +1,4 @@
-import { BlogPostStatus } from '@repo/core/blog';
+import { BlogPost, BlogPostStatus } from '@repo/core/blog';
 import { DomainError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -11,19 +11,7 @@ import { ApplicationErrorCode } from '~/shared/ApplicationErrorCode';
 
 import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
-const post = (
-  slug: string,
-  publishedAt: string,
-  { featured = true, status = BlogPostStatus.PUBLISHED } = {},
-) =>
-  BlogPostBuilder.build()
-    .withSlug(slug)
-    .withPublishedAt(publishedAt)
-    .withFeatured(featured)
-    .withStatus(status)
-    .now();
-
-const useCaseOver = (posts: ReturnType<typeof post>[]) =>
+const useCaseOver = (posts: BlogPost[]) =>
   new ListFeaturedBlogPosts(
     makeBlogPostRepository({ findAll: vi.fn().mockResolvedValue(posts) }),
   );
@@ -37,12 +25,21 @@ const slugs = async (result: ReturnType<ListFeaturedBlogPosts['execute']>) => {
 describe('ListFeaturedBlogPosts', () => {
   it('should list only featured published posts, newest first, when posts are mixed', async () => {
     const useCase = useCaseOver([
-      post('older-featured', '2026-08-01T00:00:00.000Z'),
-      post('not-featured', '2026-10-01T00:00:00.000Z', { featured: false }),
-      post('newer-featured', '2026-09-01T00:00:00.000Z'),
-      post('draft-featured', '2026-10-05T00:00:00.000Z', {
-        status: BlogPostStatus.DRAFT,
-      }),
+      BlogPostBuilder.published('older-featured', '2026-08-01T00:00:00.000Z')
+        .withFeatured(true)
+        .now(),
+      BlogPostBuilder.published('not-featured', '2026-10-01T00:00:00.000Z')
+        .withFeatured(false)
+        .now(),
+      BlogPostBuilder.published('newer-featured', '2026-09-01T00:00:00.000Z')
+        .withFeatured(true)
+        .now(),
+      BlogPostBuilder.build()
+        .withSlug('draft-featured')
+        .withPublishedAt('2026-10-05T00:00:00.000Z')
+        .withStatus(BlogPostStatus.DRAFT)
+        .withFeatured(true)
+        .now(),
     ]);
 
     expect(await slugs(useCase.execute({ locale: 'en-US' }))).toEqual([
@@ -53,9 +50,15 @@ describe('ListFeaturedBlogPosts', () => {
 
   it('should cap the list at the default limit when more posts are featured', async () => {
     const useCase = useCaseOver([
-      post('first', '2026-08-01T00:00:00.000Z'),
-      post('second', '2026-09-01T00:00:00.000Z'),
-      post('third', '2026-10-01T00:00:00.000Z'),
+      BlogPostBuilder.published('first', '2026-08-01T00:00:00.000Z')
+        .withFeatured(true)
+        .now(),
+      BlogPostBuilder.published('second', '2026-09-01T00:00:00.000Z')
+        .withFeatured(true)
+        .now(),
+      BlogPostBuilder.published('third', '2026-10-01T00:00:00.000Z')
+        .withFeatured(true)
+        .now(),
     ]);
 
     const result = await slugs(useCase.execute({ locale: 'en-US' }));
@@ -66,9 +69,15 @@ describe('ListFeaturedBlogPosts', () => {
 
   it('should honour a custom limit when one is given', async () => {
     const useCase = useCaseOver([
-      post('first', '2026-08-01T00:00:00.000Z'),
-      post('second', '2026-09-01T00:00:00.000Z'),
-      post('third', '2026-10-01T00:00:00.000Z'),
+      BlogPostBuilder.published('first', '2026-08-01T00:00:00.000Z')
+        .withFeatured(true)
+        .now(),
+      BlogPostBuilder.published('second', '2026-09-01T00:00:00.000Z')
+        .withFeatured(true)
+        .now(),
+      BlogPostBuilder.published('third', '2026-10-01T00:00:00.000Z')
+        .withFeatured(true)
+        .now(),
     ]);
 
     expect(await slugs(useCase.execute({ locale: 'pt-BR', limit: 3 }))).toEqual(
@@ -78,7 +87,9 @@ describe('ListFeaturedBlogPosts', () => {
 
   it('should return an empty list when no published post is featured', async () => {
     const useCase = useCaseOver([
-      post('plain', '2026-08-01T00:00:00.000Z', { featured: false }),
+      BlogPostBuilder.published('plain', '2026-08-01T00:00:00.000Z')
+        .withFeatured(false)
+        .now(),
     ]);
 
     expect(await slugs(useCase.execute({ locale: 'en-US' }))).toEqual([]);
