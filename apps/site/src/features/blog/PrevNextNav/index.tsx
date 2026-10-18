@@ -25,13 +25,17 @@ const DIRECTIONS = {
     rel: 'prev',
     icon: 'material-symbols:arrow-back',
     labelKey: 'newerPost',
+    // The arrow sits on the outer edge and, motion permitting, nudges outward
+    // on hover.
     className: 'sm:col-start-1',
+    arrowClassName: 'motion-safe:group-hover:-translate-x-1',
   },
   older: {
     rel: 'next',
     icon: 'material-symbols:arrow-forward',
     labelKey: 'olderPost',
-    className: 'items-end text-right sm:col-start-2',
+    className: 'flex-row-reverse text-right sm:col-start-2',
+    arrowClassName: 'motion-safe:group-hover:translate-x-1',
   },
 } as const;
 
@@ -42,33 +46,45 @@ interface IAdjacentLinkProps {
   locale: string;
 }
 
+/**
+ * Contrast (WCAG AA, small text): the label uses the brand accent in dark
+ * (10:1) and `brand-primary-hover` in light (7.8:1, plain `brand-primary` is
+ * 4.45:1); the date uses `content-secondary` (≥ 6.6:1). The `!` is needed
+ * because the `text-body-*` / `text-overline-*` typography utilities set
+ * their own color and weight after Tailwind's.
+ */
 function AdjacentLink({ post, direction, label, locale }: IAdjacentLinkProps) {
-  const { rel, icon, className } = DIRECTIONS[direction];
-  const arrow = <Icon icon={icon} className="text-base" />;
+  const { rel, icon, className, arrowClassName } = DIRECTIONS[direction];
 
   return (
     <Link
       href={blogPostPath(post.publishedAt, post.slug)}
       rel={rel}
       className={classNames(
-        'group flex flex-col gap-1 rounded-card bg-surface p-4 shadow-drop-sm transition-shadow hover:shadow-drop-md',
+        'group flex items-center gap-4 rounded-card border border-border-default bg-surface p-4 shadow-drop-sm transition-[border-color,box-shadow] hover:border-brand-primary hover:shadow-drop-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2',
         className,
       )}
     >
-      <span className="text-body-xs flex items-center gap-1 text-content-muted">
-        {direction === 'newer' && arrow}
-        {label}
-        {direction === 'older' && arrow}
-      </span>
-      <span className="text-body-sm font-bold text-content-primary">
-        {post.title}
-      </span>
-      <time
-        dateTime={post.publishedAt}
-        className="text-body-xs text-content-muted"
+      <span
+        className={classNames(
+          'flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-interactive text-content-primary motion-safe:transition-transform',
+          arrowClassName,
+        )}
       >
-        {formatPublishedAt(post.publishedAt, locale)}
-      </time>
+        <Icon icon={icon} className="text-xl" />
+      </span>
+      <span className="flex min-w-0 flex-col gap-1">
+        <span className="text-overline-sm !text-brand-accent [.light_&]:!text-brand-primary-hover">
+          {label}
+        </span>
+        <span className="text-body-base !font-bold">{post.title}</span>
+        <time
+          dateTime={post.publishedAt}
+          className="text-body-xs !text-content-secondary"
+        >
+          {formatPublishedAt(post.publishedAt, locale)}
+        </time>
+      </span>
     </Link>
   );
 }
