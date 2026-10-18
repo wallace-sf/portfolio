@@ -9941,7 +9941,7 @@
         "id": 4,
         "title": "Build search UI components (island, excerpt, query sync)",
         "description": "Create the BlogSearch client island, SearchExcerpt component for highlighting matches, QuerySync for ?q= handling, and integrate into the listing page with PostCard excerpt slot",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           3,
           1
@@ -10017,7 +10017,8 @@
             "status": "pending",
             "testStrategy": "This subtask IS the test strategy implementation. Acceptance:\n- All i18n keys present in 3 locales\n- BlogSearch integration tests cover: empty query, typing, results ranking, index fetch (focus + ?q=), Esc clear, ?q= sync, no-results message\n- SearchExcerpt tests cover: null rendering, highlight rendering, context integration\n- QuerySync tests cover: URL read, state push, Suspense\n- Page tests verify DTO→SearchablePost mapping and static generation\n- No @repo/application imports in client components (lint check)"
           }
-        ]
+        ],
+        "updatedAt": "2026-10-18T22:19:22.951Z"
       },
       {
         "id": 5,
