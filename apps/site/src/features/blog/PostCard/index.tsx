@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import type { BlogPostSummaryDTO } from '@repo/application/blog';
 import { screens } from '@repo/tailwind-config/screens';
 import { Badge } from '@repo/ui/View';
@@ -18,6 +20,11 @@ export interface IPostCardProps {
    * `stacked` keeps it on top at every width (narrow grid columns).
    */
   layout?: 'row' | 'stacked';
+  /**
+   * Rendered after the description: the listing's search passes a client
+   * `SearchExcerpt`, which shows the matched passage while a search is active.
+   */
+  excerpt?: ReactNode;
 }
 
 const THUMBNAIL_SIZES = {
@@ -31,6 +38,7 @@ export async function PostCard({
   locale,
   headingLevel: Heading = 'h2',
   layout = 'row',
+  excerpt,
 }: IPostCardProps) {
   const isRow = layout === 'row';
   const {
@@ -82,6 +90,8 @@ export async function PostCard({
           <p className="text-body-sm line-clamp-2 text-content-secondary">
             {description}
           </p>
+
+          {excerpt}
 
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-1">
