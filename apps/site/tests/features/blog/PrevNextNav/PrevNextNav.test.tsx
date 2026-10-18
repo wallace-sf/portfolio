@@ -89,11 +89,11 @@ describe('PrevNextNav', () => {
 
     const newer = linkTo('The Newest Post');
     const older = linkTo('The Oldest Post');
-    expect(newer).toHaveTextContent('Newer post');
+    expect(newer).toHaveTextContent('Newer');
     expect(
       newer.querySelector('[data-icon="material-symbols:arrow-back"]'),
     ).not.toBeNull();
-    expect(older).toHaveTextContent('Older post');
+    expect(older).toHaveTextContent('Older');
     expect(
       older.querySelector('[data-icon="material-symbols:arrow-forward"]'),
     ).not.toBeNull();
@@ -105,6 +105,6 @@ describe('PrevNextNav', () => {
     const nav = screen.getByRole('navigation');
     expect(nav.children).toHaveLength(1);
     expect(linkTo('The Oldest Post')).toHaveClass('sm:col-start-2');
-    expect(screen.queryByText('Newer post')).not.toBeInTheDocument();
+    expect(screen.queryByText('Newer')).not.toBeInTheDocument();
   });
 });
