@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   blogArchivePath,
   blogPostPath,
+  blogSearchIndexPath,
   blogTagPath,
   blogTagsPath,
   monthSegment,
@@ -68,5 +69,11 @@ describe('blogTagPath', () => {
     expect(blogTagPath('clean-architecture')).toBe(
       '/blog/tags/clean-architecture',
     );
+  });
+});
+
+describe('blogSearchIndexPath', () => {
+  it('should build the locale-agnostic search index path when called', () => {
+    expect(blogSearchIndexPath()).toBe('/blog/search-index.json');
   });
 });
