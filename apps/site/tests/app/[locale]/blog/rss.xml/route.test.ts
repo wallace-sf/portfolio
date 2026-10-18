@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
+import { BlogPostBuilder } from '@repo/core/testing';
 
 import { GET } from '~/app/[locale]/blog/rss.xml/route';
-
-import { blogPost } from '../../../../helpers/blogPosts';
 
 vi.mock('next-intl/server', () => ({
   getTranslations: async () => (key: string) =>
@@ -29,7 +28,9 @@ function makeRequest(locale: string): {
 
 describe('GET /[locale]/blog/rss.xml', () => {
   it('should return valid RSS 2.0 XML with an item per post', async () => {
-    findAll.mockResolvedValue([blogPost('hello', '2026-08-01').now()]);
+    findAll.mockResolvedValue([
+      BlogPostBuilder.published('hello', '2026-08-01').now(),
+    ]);
 
     const { request, context } = makeRequest('en-US');
     const response = await GET(request, context);
@@ -50,7 +51,9 @@ describe('GET /[locale]/blog/rss.xml', () => {
   });
 
   it('should only include posts for the requested locale', async () => {
-    findAll.mockResolvedValue([blogPost('only-en', '2026-08-01').now()]);
+    findAll.mockResolvedValue([
+      BlogPostBuilder.published('only-en', '2026-08-01').now(),
+    ]);
 
     const { request, context } = makeRequest('pt-BR');
     const response = await GET(request, context);
@@ -64,7 +67,7 @@ describe('GET /[locale]/blog/rss.xml', () => {
 
   it('should escape XML-unsafe characters in post fields', async () => {
     findAll.mockResolvedValue([
-      blogPost('amp-post', '2026-08-01')
+      BlogPostBuilder.published('amp-post', '2026-08-01')
         .withTitle({
           'en-US': 'A & B <Test>',
           'pt-BR': 'A & B <Test>',

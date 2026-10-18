@@ -2,8 +2,8 @@ import type { BlogPostSummaryDTO } from '@repo/application/blog';
 
 /**
  * A `BlogPostSummaryDTO` as a page hands it to a blog component. Title and
- * description name the slug (`Title <slug>`, like `blogPost()`); override only
- * what the scenario checks.
+ * description name the slug (`Title <slug>`, the en-US title of
+ * `BlogPostBuilder.published`); override only what the scenario checks.
  */
 export function buildBlogPostSummaryDTO(
   overrides: Partial<BlogPostSummaryDTO> = {},

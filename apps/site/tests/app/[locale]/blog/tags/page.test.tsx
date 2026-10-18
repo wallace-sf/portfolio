@@ -1,5 +1,6 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
-import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { type BlogPost } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,7 +9,6 @@ import BlogTagsPage, {
   generateStaticParams,
 } from '~/app/[locale]/blog/tags/page';
 
-import { blogPost } from '../../../../helpers/blogPosts';
 import { expectBreadcrumbTrail } from '../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../helpers/renderServerComponent';
 
@@ -38,11 +38,13 @@ const renderPage = (locale = 'en-US') =>
 
 beforeEach(() => {
   posts = [
-    blogPost('first-post', '2026-09-02T10:00:00.000Z')
+    BlogPostBuilder.published('first-post', '2026-09-02T10:00:00.000Z')
       .withTags(['ddd', 'typescript'])
       .now(),
-    blogPost('second-post', '2026-09-02T10:00:00.000Z').withTags(['ddd']).now(),
-    blogPost('draft-post', '2026-09-02T10:00:00.000Z', BlogPostStatus.DRAFT)
+    BlogPostBuilder.published('second-post', '2026-09-02T10:00:00.000Z')
+      .withTags(['ddd'])
+      .now(),
+    BlogPostBuilder.draft('draft-post', '2026-09-02T10:00:00.000Z')
       .withTags(['drafts-only'])
       .now(),
   ];
@@ -68,7 +70,7 @@ describe('BlogTagsPage', () => {
 
   it('should show the empty state when no post is published', async () => {
     posts = [
-      blogPost('draft-post', '2026-09-02T10:00:00.000Z', BlogPostStatus.DRAFT)
+      BlogPostBuilder.draft('draft-post', '2026-09-02T10:00:00.000Z')
         .withTags(['ddd'])
         .now(),
     ];

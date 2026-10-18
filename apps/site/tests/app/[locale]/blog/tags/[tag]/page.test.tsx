@@ -1,5 +1,6 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
-import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { type BlogPost } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -9,7 +10,6 @@ import BlogTagPage, {
   generateStaticParams,
 } from '~/app/[locale]/blog/tags/[tag]/page';
 
-import { blogPost } from '../../../../../helpers/blogPosts';
 import { expectBreadcrumbTrail } from '../../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../../helpers/renderServerComponent';
 
@@ -56,14 +56,16 @@ const renderPage = (tag: string, locale = 'en-US') =>
 
 beforeEach(() => {
   posts = [
-    blogPost('older-ddd', '2026-08-01T10:00:00.000Z').withTags(['ddd']).now(),
-    blogPost('newer-ddd', '2026-09-28T10:00:00.000Z')
+    BlogPostBuilder.published('older-ddd', '2026-08-01T10:00:00.000Z')
+      .withTags(['ddd'])
+      .now(),
+    BlogPostBuilder.published('newer-ddd', '2026-09-28T10:00:00.000Z')
       .withTags(['ddd', 'typescript'])
       .now(),
-    blogPost('nextjs-only', '2026-09-10T10:00:00.000Z')
+    BlogPostBuilder.published('nextjs-only', '2026-09-10T10:00:00.000Z')
       .withTags(['nextjs'])
       .now(),
-    blogPost('draft-ddd', '2026-09-20T10:00:00.000Z', BlogPostStatus.DRAFT)
+    BlogPostBuilder.draft('draft-ddd', '2026-09-20T10:00:00.000Z')
       .withTags(['ddd'])
       .now(),
   ];
@@ -100,7 +102,7 @@ describe('BlogTagPage', () => {
   it('should call notFound when the tag is unknown, only on drafts, or malformed', async () => {
     await expect(renderPage('unknown-tag')).rejects.toThrow('NEXT_NOT_FOUND');
     posts = [
-      blogPost('draft-only', '2026-09-20T10:00:00.000Z', BlogPostStatus.DRAFT)
+      BlogPostBuilder.draft('draft-only', '2026-09-20T10:00:00.000Z')
         .withTags(['secret'])
         .now(),
     ];

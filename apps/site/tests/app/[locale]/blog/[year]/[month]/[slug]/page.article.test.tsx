@@ -1,12 +1,12 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
 import type { BlogPost } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { act, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import BlogPostPage from '~/app/[locale]/blog/[year]/[month]/[slug]/page';
 import { env } from '~/config/env';
 
-import { blogPost } from '../../../../../../helpers/blogPosts';
 import { renderServerComponent } from '../../../../../../helpers/renderServerComponent';
 
 // The article-level parts of the post page: author block and `BlogPosting`
@@ -58,7 +58,7 @@ async function renderPost(
   others: BlogPost[] = [],
 ) {
   posts = [
-    blogPost('hello-blog', '2026-09-02T10:00:00.000Z')
+    BlogPostBuilder.published('hello-blog', '2026-09-02T10:00:00.000Z')
       .withAuthor(AUTHOR)
       .withTags(['typescript', 'ddd'])
       .withContent({ 'en-US': content, 'pt-BR': content, es: content })
@@ -154,7 +154,7 @@ describe('BlogPostPage article', () => {
 
   it('should list related posts between the author block and prev/next', async () => {
     await renderPost('en-US', 'Body.', [
-      blogPost('shares-a-tag', '2026-08-01T10:00:00.000Z')
+      BlogPostBuilder.published('shares-a-tag', '2026-08-01T10:00:00.000Z')
         .withTags(['ddd'])
         .now(),
     ]);
@@ -176,7 +176,9 @@ describe('BlogPostPage article', () => {
 
   it('should not render related posts when no other post shares a tag', async () => {
     await renderPost('en-US', 'Body.', [
-      blogPost('unrelated', '2026-08-01T10:00:00.000Z').withTags(['seo']).now(),
+      BlogPostBuilder.published('unrelated', '2026-08-01T10:00:00.000Z')
+        .withTags(['seo'])
+        .now(),
     ]);
 
     expect(

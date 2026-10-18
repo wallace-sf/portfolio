@@ -1,4 +1,5 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -7,8 +8,6 @@ import {
   parseMonthSegment,
   parseYearSegment,
 } from '~/app/[locale]/blog/[year]/archive';
-
-import { blogPost } from '../../../../helpers/blogPosts';
 
 const repository: IBlogPostRepository = {
   findAll: vi.fn(),
@@ -56,7 +55,7 @@ describe('parseMonthSegment', () => {
 describe('findArchiveYear / findArchiveMonth', () => {
   it('should return the period with its year when it has published posts', async () => {
     vi.mocked(repository.findAll).mockResolvedValue([
-      blogPost('hello-blog', '2026-09-02T10:00:00.000Z').now(),
+      BlogPostBuilder.published('hello-blog', '2026-09-02T10:00:00.000Z').now(),
     ]);
 
     expect((await findArchiveYear('en-US', '2026'))?.count).toBe(1);

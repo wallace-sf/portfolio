@@ -1,5 +1,6 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
-import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { type BlogPost } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -9,7 +10,6 @@ import BlogYearArchivePage, {
   generateStaticParams,
 } from '~/app/[locale]/blog/[year]/page';
 
-import { blogPost } from '../../../../helpers/blogPosts';
 import { expectBreadcrumbTrail } from '../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../helpers/renderServerComponent';
 
@@ -56,15 +56,17 @@ const renderPage = (year: string, locale = 'en-US') =>
 
 beforeEach(() => {
   posts = [
-    blogPost('october-post', '2026-10-01T10:00:00.000Z').now(),
-    blogPost('september-early', '2026-09-02T10:00:00.000Z').now(),
-    blogPost('september-late', '2026-09-28T10:00:00.000Z').now(),
-    blogPost(
-      'september-draft',
-      '2026-09-20T10:00:00.000Z',
-      BlogPostStatus.DRAFT,
+    BlogPostBuilder.published('october-post', '2026-10-01T10:00:00.000Z').now(),
+    BlogPostBuilder.published(
+      'september-early',
+      '2026-09-02T10:00:00.000Z',
     ).now(),
-    blogPost('last-year', '2025-12-24T10:00:00.000Z').now(),
+    BlogPostBuilder.published(
+      'september-late',
+      '2026-09-28T10:00:00.000Z',
+    ).now(),
+    BlogPostBuilder.draft('september-draft', '2026-09-20T10:00:00.000Z').now(),
+    BlogPostBuilder.published('last-year', '2025-12-24T10:00:00.000Z').now(),
   ];
 });
 
@@ -126,11 +128,7 @@ describe('BlogYearArchivePage', () => {
 
   it('should call notFound when the year has no published posts', async () => {
     posts = [
-      blogPost(
-        'a-draft',
-        '2024-05-01T10:00:00.000Z',
-        BlogPostStatus.DRAFT,
-      ).now(),
+      BlogPostBuilder.draft('a-draft', '2024-05-01T10:00:00.000Z').now(),
     ];
 
     await expect(renderPage('2024')).rejects.toThrow('NEXT_NOT_FOUND');

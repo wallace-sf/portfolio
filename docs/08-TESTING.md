@@ -43,7 +43,7 @@ packages/infra/test/factories/  → Prisma row / create-input factories
 packages/utils/test/node/       → Node-environment utils
 packages/utils/test/browser/    → Browser-environment utils
 apps/site/tests/                → Site application tests
-apps/site/tests/helpers/        → Site test helpers (render, intl, blogPost(), dtos/)
+apps/site/tests/helpers/        → Site test helpers (render, intl, dtos/)
 ```
 
 File naming: `*.test.ts` or `*.test.tsx`
@@ -145,12 +145,14 @@ const slug = unwrap(Slug.create('hello-world')); // throws if the fixture is inv
   test in `core` exercises `create()`. Each other test package has an
   `entity-builders.guard.test.ts` that runs `findDirectEntityCreates(testDir)`
   and expects no hits; a new test package adds the same guard.
-- **No per-file shorthands.** A preset used by more than one file is shared:
-  on the builder when it's a domain shape (`BlogPostBuilder.published(slug,
-  publishedAt?)`), or in the package's `test(s)/helpers/` when it carries a
-  package convention (the site's `blogPost()` adds per-locale titles). A
-  one-off scenario chains the builder inline. A `makePost(slug, date)` that
-  only wraps the builder is a copy waiting to drift.
+- **No per-file shorthands.** A preset used by more than one file lives on
+  the builder, e.g. `BlogPostBuilder.published | draft | archived(slug,
+  publishedAt?)`. Those name the title and description after the slug, per
+  locale (`Title <slug>`, `Title <slug> (pt)`, `Title <slug> (es)`), so a
+  test can tell posts and locales apart. A one-off scenario chains the
+  builder inline. A `makePost(slug, date)` that only wraps the builder is a
+  copy waiting to drift, and so is a package helper that only adds defaults
+  every package needs: fix the builder instead.
 - **DTO fixtures** (transport shapes a component or page receives) come from
   one factory per DTO in the app's `tests/helpers/dtos/`, named
   `buildXDTO(overrides)`, with deterministic defaults. Don't export an
@@ -162,6 +164,7 @@ const slug = unwrap(Slug.create('hello-world')); // throws if the fixture is inv
 // ✅ Good
 ProjectBuilder.build().withSlug('my-project').withSkills([])
 BlogPostBuilder.published('hello-world').withTags(['ddd']).now()
+BlogPostBuilder.draft('hidden-post', '2026-09-20T10:00:00.000Z').now()
 
 // ❌ Bad — random enum, hides the scenario
 ProjectBuilder.buildRandom()
