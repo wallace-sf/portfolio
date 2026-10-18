@@ -1,5 +1,5 @@
 import { BlogPost, BlogPostStatus } from '@repo/core/blog';
-import { BlogPostBuilder } from '@repo/core/testing';
+import { BlogPostBuilder, unwrap } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ListBlogArchive } from '~/blog/use-cases/ListBlogArchive';
@@ -15,9 +15,7 @@ async function archiveOf(posts: BlogPost[]) {
   const repo = makeBlogPostRepository({
     findAll: vi.fn().mockResolvedValue(posts),
   });
-  const result = await new ListBlogArchive(repo).execute({ locale: 'en-US' });
-  if (result.isLeft()) throw new Error('expected Right');
-  return result.value;
+  return unwrap(await new ListBlogArchive(repo).execute({ locale: 'en-US' }));
 }
 
 /** `[year, [month, [slugs]][]][]` — the archive shape without the noise. */
