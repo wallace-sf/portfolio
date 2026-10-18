@@ -1,4 +1,4 @@
-import { BlogPost, BlogPostStatus, Tag } from '@repo/core/blog';
+import { BlogPost, Tag } from '@repo/core/blog';
 import { DomainError, ValidationError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -25,10 +25,7 @@ describe('ListBlogPostsByTag', () => {
       BlogPostBuilder.published('newer-ddd', '2026-10-01T00:00:00.000Z')
         .withTags(['ddd', 'typescript'])
         .now(),
-      BlogPostBuilder.build()
-        .withSlug('draft-ddd')
-        .withPublishedAt('2026-10-05T00:00:00.000Z')
-        .withStatus(BlogPostStatus.DRAFT)
+      BlogPostBuilder.draft('draft-ddd', '2026-10-05T00:00:00.000Z')
         .withTags(['ddd'])
         .now(),
     ]).execute({ tag: 'ddd', locale: 'pt-BR' });

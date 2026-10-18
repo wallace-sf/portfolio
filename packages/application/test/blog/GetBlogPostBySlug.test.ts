@@ -1,4 +1,3 @@
-import { BlogPostStatus } from '@repo/core/blog';
 import { NotFoundError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -121,10 +120,7 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should return Left(NotFoundError) when the found post is DRAFT', async () => {
-      const post = BlogPostBuilder.build()
-        .withStatus(BlogPostStatus.DRAFT)
-        .withTags([])
-        .now();
+      const post = BlogPostBuilder.draft('my-first-post').withTags([]).now();
       const repo = makeBlogPostRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });
@@ -140,9 +136,7 @@ describe('GetBlogPostBySlug', () => {
     });
 
     it('should return Left(NotFoundError) when the found post is ARCHIVED', async () => {
-      const post = BlogPostBuilder.build()
-        .withStatus(BlogPostStatus.ARCHIVED)
-        .now();
+      const post = BlogPostBuilder.archived('my-first-post').now();
       const repo = makeBlogPostRepository({
         findBySlug: vi.fn().mockResolvedValue(post),
       });

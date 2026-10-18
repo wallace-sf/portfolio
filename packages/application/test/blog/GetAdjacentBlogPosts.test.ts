@@ -1,4 +1,4 @@
-import { BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPost } from '@repo/core/blog';
 import { NotFoundError } from '@repo/core/shared';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
@@ -7,24 +7,11 @@ import { GetAdjacentBlogPosts } from '~/blog/use-cases/GetAdjacentBlogPosts';
 
 import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
-// Titles differ per locale so the tests can tell which one was resolved.
-const titleOf = (slug: string) => ({
-  'en-US': `Title ${slug}`,
-  'pt-BR': `Título ${slug}`,
-  es: `Título ${slug}`,
-});
-
 // Returned deliberately out of order — the use case owns the ordering.
 const POSTS = [
-  BlogPostBuilder.published('middle', '2026-08-15T00:00:00.000Z')
-    .withTitle(titleOf('middle'))
-    .now(),
-  BlogPostBuilder.published('oldest', '2026-08-08T00:00:00.000Z')
-    .withTitle(titleOf('oldest'))
-    .now(),
-  BlogPostBuilder.published('newest', '2026-08-22T00:00:00.000Z')
-    .withTitle(titleOf('newest'))
-    .now(),
+  BlogPostBuilder.published('middle', '2026-08-15T00:00:00.000Z').now(),
+  BlogPostBuilder.published('oldest', '2026-08-08T00:00:00.000Z').now(),
+  BlogPostBuilder.published('newest', '2026-08-22T00:00:00.000Z').now(),
 ];
 
 const repositoryWith = (posts: BlogPost[]) =>
@@ -44,12 +31,12 @@ describe('GetAdjacentBlogPosts', () => {
     expect(result.value).toEqual({
       newer: {
         slug: 'newest',
-        title: 'Título newest',
+        title: 'Title newest (pt)',
         publishedAt: '2026-08-22T00:00:00.000Z',
       },
       older: {
         slug: 'oldest',
-        title: 'Título oldest',
+        title: 'Title oldest (pt)',
         publishedAt: '2026-08-08T00:00:00.000Z',
       },
     });
@@ -113,11 +100,7 @@ describe('GetAdjacentBlogPosts', () => {
         'older-published',
         '2026-08-01T00:00:00.000Z',
       ).now(),
-      BlogPostBuilder.build()
-        .withSlug('hidden-draft')
-        .withPublishedAt('2026-08-10T00:00:00.000Z')
-        .withStatus(BlogPostStatus.DRAFT)
-        .now(),
+      BlogPostBuilder.draft('hidden-draft', '2026-08-10T00:00:00.000Z').now(),
       BlogPostBuilder.published(
         'newer-published',
         '2026-08-20T00:00:00.000Z',
@@ -138,11 +121,7 @@ describe('GetAdjacentBlogPosts', () => {
   it('should return NotFoundError when the requested slug is a DRAFT post', async () => {
     const repo = repositoryWith([
       BlogPostBuilder.published('published', '2026-08-01T00:00:00.000Z').now(),
-      BlogPostBuilder.build()
-        .withSlug('secret')
-        .withPublishedAt('2026-08-10T00:00:00.000Z')
-        .withStatus(BlogPostStatus.DRAFT)
-        .now(),
+      BlogPostBuilder.draft('secret', '2026-08-10T00:00:00.000Z').now(),
     ]);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({

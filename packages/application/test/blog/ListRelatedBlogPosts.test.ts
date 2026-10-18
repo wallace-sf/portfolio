@@ -49,11 +49,7 @@ describe('ListRelatedBlogPosts', () => {
   it('should skip unpublished candidates when they share tags', async () => {
     const useCase = useCaseOver([
       target,
-      BlogPostBuilder.build()
-        .withSlug('draft')
-        .withStatus(BlogPostStatus.DRAFT)
-        .withTags(['ddd'])
-        .now(),
+      BlogPostBuilder.draft('draft').withTags(['ddd']).now(),
     ]);
 
     expect(
@@ -110,11 +106,7 @@ describe('ListRelatedBlogPosts', () => {
 
   it('should return NotFoundError when the slug is a DRAFT post', async () => {
     const useCase = useCaseOver([
-      BlogPostBuilder.build()
-        .withSlug('draft')
-        .withStatus(BlogPostStatus.DRAFT)
-        .withTags(['ddd'])
-        .now(),
+      BlogPostBuilder.draft('draft').withTags(['ddd']).now(),
       BlogPostBuilder.published('other').withTags(['ddd']).now(),
     ]);
 
