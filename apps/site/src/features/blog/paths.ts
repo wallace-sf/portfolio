@@ -41,3 +41,9 @@ export const blogTagsPath = (): string => '/blog/tags';
 
 /** `/blog/tags/{tag}`; tags are kebab-case, so they need no encoding. */
 export const blogTagPath = (tag: string): string => `${blogTagsPath()}/${tag}`;
+
+/**
+ * `/blog/search-index.json` — the listing's search index. `fetch()` doesn't
+ * add the locale like `Link` does, so callers prefix `/${locale}` themselves.
+ */
+export const blogSearchIndexPath = (): string => '/blog/search-index.json';
