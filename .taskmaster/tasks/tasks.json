@@ -9829,7 +9829,7 @@
         "testStrategy": "Unit tests in `packages/utils/test/node/text/foldForSearch.test.ts`:\n- should remove diacritics and lowercase Portuguese/Spanish text (validação → validacao)\n- should keep input length when character folds to more than one code unit\n- should handle Turkish İ edge case\n- should preserve index mapping (fold then substring matches original substring)\n\nUnit tests in `packages/utils/test/node/text/excerptAround.test.ts`:\n- should cut on word boundaries with ellipses when match is mid-text\n- should not add leading ellipsis when match is at start\n- should not add trailing ellipsis when match is at end\n- should report correct excerpt offset in original text\n- should handle radius parameter (test with different radii)",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9863,7 +9863,8 @@
             "status": "pending",
             "testStrategy": "Verification steps: (1) Run pnpm --filter @repo/utils test and confirm all foldForSearch and excerptAround tests pass (targeting 20+ total assertions across both utilities), (2) Create a temporary test file in packages/application that imports { foldForSearch, excerptAround } from '@repo/utils/text' and uses both functions to verify the export mapping works, (3) Run pnpm -w types to confirm TypeScript can resolve the ./text export types correctly, (4) Review test coverage report to ensure all code paths in both utilities are exercised (branches, edge cases, error conditions), (5) Manually verify index preservation by creating a test string with accents, folding it, finding a match in the folded version, and confirming the index maps back to the correct position in the original"
           }
-        ]
+        ],
+        "updatedAt": "2026-10-18T21:32:59.881Z"
       },
       {
         "id": 3,
