@@ -45,7 +45,12 @@
     "allTags": "Todas las etiquetas",
     "archive": "Archivo",
     "featured": "Destacados",
-    "furtherReading": "Lecturas relacionadas"
+    "furtherReading": "Lecturas relacionadas",
+    "searchLabel": "Buscar publicaciones",
+    "searchPlaceholder": "Buscar publicaciones…",
+    "searchClear": "Borrar búsqueda",
+    "searchResults": "{count, plural, =0 {Ninguna publicación coincide con} one {# publicación coincide con} other {# publicaciones coinciden con}} “{query}”",
+    "searchNoResults": "Prueba con otra palabra o explora las publicaciones por tema."
   },
   "Clipboard": {
     "copy": "Copiar al portapapeles"

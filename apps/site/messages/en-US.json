@@ -45,7 +45,12 @@
     "allTags": "All tags",
     "archive": "Archive",
     "featured": "Featured",
-    "furtherReading": "Further reading"
+    "furtherReading": "Further reading",
+    "searchLabel": "Search posts",
+    "searchPlaceholder": "Search posts…",
+    "searchClear": "Clear search",
+    "searchResults": "{count, plural, =0 {No posts match} one {# post matches} other {# posts match}} “{query}”",
+    "searchNoResults": "Try another word, or browse the posts by topic."
   },
   "Clipboard": {
     "copy": "Copy to clipboard"
