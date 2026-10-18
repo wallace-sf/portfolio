@@ -1,11 +1,11 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
 import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import BlogListingPage, { generateMetadata } from '~/app/[locale]/blog/page';
 
-import { blogPost } from '../../../helpers/blogPosts';
 import { renderServerComponent } from '../../../helpers/renderServerComponent';
 
 // Real components, real message catalogues and the real next-intl `Link`;
@@ -54,18 +54,10 @@ const renderedCardLinks = () =>
 beforeEach(() => {
   failure = null;
   posts = [
-    blogPost('older-post', '2026-08-01T10:00:00.000Z').now(),
-    blogPost(
-      'draft-post',
-      '2026-09-20T10:00:00.000Z',
-      BlogPostStatus.DRAFT,
-    ).now(),
-    blogPost('newest-post', '2026-09-28T10:00:00.000Z').now(),
-    blogPost(
-      'archived-post',
-      '2026-09-10T10:00:00.000Z',
-      BlogPostStatus.ARCHIVED,
-    ).now(),
+    BlogPostBuilder.published('older-post', '2026-08-01T10:00:00.000Z').now(),
+    BlogPostBuilder.draft('draft-post', '2026-09-20T10:00:00.000Z').now(),
+    BlogPostBuilder.published('newest-post', '2026-09-28T10:00:00.000Z').now(),
+    BlogPostBuilder.archived('archived-post', '2026-09-10T10:00:00.000Z').now(),
   ];
 });
 
@@ -90,7 +82,9 @@ describe('BlogListingPage', () => {
   });
 
   it('should format the published date for the active locale', async () => {
-    posts = [blogPost('only-post', '2026-08-01T10:00:00.000Z').now()];
+    posts = [
+      BlogPostBuilder.published('only-post', '2026-08-01T10:00:00.000Z').now(),
+    ];
 
     const { container } = await renderPage('es');
     const time = container.querySelector('time');
@@ -108,13 +102,16 @@ describe('BlogListingPage', () => {
 
   it('should render the thumbnail only for posts that have one', async () => {
     posts = [
-      blogPost('with-thumb', '2026-09-01T10:00:00.000Z')
+      BlogPostBuilder.published('with-thumb', '2026-09-01T10:00:00.000Z')
         .withThumbnailImage({
           url: 'https://cdn/thumb.webp',
           alt: { 'en-US': 'Thumb', 'pt-BR': 'Miniatura', es: 'Miniatura' },
         })
         .now(),
-      blogPost('without-thumb', '2026-08-01T10:00:00.000Z').now(),
+      BlogPostBuilder.published(
+        'without-thumb',
+        '2026-08-01T10:00:00.000Z',
+      ).now(),
     ];
 
     await renderPage();
@@ -150,14 +147,14 @@ describe('BlogListingPage', () => {
 describe('BlogListingPage sections', () => {
   beforeEach(() => {
     posts = [
-      blogPost('ddd-post', '2026-09-28T10:00:00.000Z')
+      BlogPostBuilder.published('ddd-post', '2026-09-28T10:00:00.000Z')
         .withTags(['ddd', 'typescript'])
         .withFeatured(true)
         .now(),
-      blogPost('another-ddd', '2026-08-01T10:00:00.000Z')
+      BlogPostBuilder.published('another-ddd', '2026-08-01T10:00:00.000Z')
         .withTags(['ddd'])
         .now(),
-      blogPost('last-year', '2025-12-24T10:00:00.000Z')
+      BlogPostBuilder.published('last-year', '2025-12-24T10:00:00.000Z')
         .withTags(['nextjs'])
         .now(),
     ];
@@ -189,8 +186,11 @@ describe('BlogListingPage sections', () => {
 
   it('should leave the featured band out when no post is featured', async () => {
     posts = [
-      blogPost('plain-post', '2026-09-28T10:00:00.000Z').now(),
-      blogPost('another-plain', '2026-08-01T10:00:00.000Z').now(),
+      BlogPostBuilder.published('plain-post', '2026-09-28T10:00:00.000Z').now(),
+      BlogPostBuilder.published(
+        'another-plain',
+        '2026-08-01T10:00:00.000Z',
+      ).now(),
     ];
 
     await renderPage();

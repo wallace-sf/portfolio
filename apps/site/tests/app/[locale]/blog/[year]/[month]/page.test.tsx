@@ -1,5 +1,6 @@
 import type { IBlogPostRepository } from '@repo/application/blog';
-import { type BlogPost, BlogPostStatus } from '@repo/core/blog';
+import { type BlogPost } from '@repo/core/blog';
+import { BlogPostBuilder } from '@repo/core/testing';
 import { screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -9,7 +10,6 @@ import BlogMonthArchivePage, {
   generateStaticParams,
 } from '~/app/[locale]/blog/[year]/[month]/page';
 
-import { blogPost } from '../../../../../helpers/blogPosts';
 import { expectBreadcrumbTrail } from '../../../../../helpers/breadcrumbs';
 import { renderServerComponent } from '../../../../../helpers/renderServerComponent';
 
@@ -57,14 +57,16 @@ const renderPage = (year: string, month: string, locale = 'en-US') =>
 
 beforeEach(() => {
   posts = [
-    blogPost('september-early', '2026-09-02T10:00:00.000Z').now(),
-    blogPost('september-late', '2026-09-28T10:00:00.000Z').now(),
-    blogPost(
-      'september-draft',
-      '2026-09-20T10:00:00.000Z',
-      BlogPostStatus.DRAFT,
+    BlogPostBuilder.published(
+      'september-early',
+      '2026-09-02T10:00:00.000Z',
     ).now(),
-    blogPost('august-post', '2026-08-15T10:00:00.000Z').now(),
+    BlogPostBuilder.published(
+      'september-late',
+      '2026-09-28T10:00:00.000Z',
+    ).now(),
+    BlogPostBuilder.draft('september-draft', '2026-09-20T10:00:00.000Z').now(),
+    BlogPostBuilder.published('august-post', '2026-08-15T10:00:00.000Z').now(),
   ];
 });
 

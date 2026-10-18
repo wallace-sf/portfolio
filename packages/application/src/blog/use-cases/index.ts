@@ -7,3 +7,4 @@ export * from './GetBlogArchiveMonth';
 export * from './GetBlogTags';
 export * from './ListBlogPostsByTag';
 export * from './ListFeaturedBlogPosts';
+export * from './ListRelatedBlogPosts';

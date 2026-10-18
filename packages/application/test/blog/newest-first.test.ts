@@ -1,21 +1,22 @@
-import { BlogPost } from '@repo/core/blog';
 import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it } from 'vitest';
 
 import { newestFirst } from '~/blog/use-cases/newest-first';
 
-function makePost(slug: string, publishedAt: string): BlogPost {
-  return BlogPostBuilder.build()
-    .withSlug(slug)
-    .withPublishedAt(publishedAt)
-    .now();
-}
-
 describe('newestFirst', () => {
   it('should order posts from most to least recently published', () => {
-    const older = makePost('older', '2026-01-01T00:00:00.000Z');
-    const newest = makePost('newest', '2026-12-01T00:00:00.000Z');
-    const middle = makePost('middle', '2026-06-01T00:00:00.000Z');
+    const older = BlogPostBuilder.published(
+      'older',
+      '2026-01-01T00:00:00.000Z',
+    ).now();
+    const newest = BlogPostBuilder.published(
+      'newest',
+      '2026-12-01T00:00:00.000Z',
+    ).now();
+    const middle = BlogPostBuilder.published(
+      'middle',
+      '2026-06-01T00:00:00.000Z',
+    ).now();
 
     const ordered = newestFirst([older, newest, middle]);
 
@@ -28,8 +29,8 @@ describe('newestFirst', () => {
 
   it('should not mutate the input array', () => {
     const input = [
-      makePost('post-a', '2026-01-01T00:00:00.000Z'),
-      makePost('post-b', '2026-02-01T00:00:00.000Z'),
+      BlogPostBuilder.published('post-a', '2026-01-01T00:00:00.000Z').now(),
+      BlogPostBuilder.published('post-b', '2026-02-01T00:00:00.000Z').now(),
     ];
     const snapshot = [...input];
 

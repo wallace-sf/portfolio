@@ -45,6 +45,49 @@ export class BlogPostBuilder extends EntityBuilder<IBlogPostProps> {
     });
   }
 
+  /**
+   * A published post — the shape most listing, ordering and discovery tests
+   * start from. Chain only what the scenario varies (`.withTags(...)`,
+   * `.withFeatured(true)`), then `.now()`.
+   */
+  static published(slug: string, publishedAt?: string): BlogPostBuilder {
+    return BlogPostBuilder.named(BlogPostStatus.PUBLISHED, slug, publishedAt);
+  }
+
+  /** A draft post, named like `published()`. */
+  static draft(slug: string, publishedAt?: string): BlogPostBuilder {
+    return BlogPostBuilder.named(BlogPostStatus.DRAFT, slug, publishedAt);
+  }
+
+  /** An archived post, named like `published()`. */
+  static archived(slug: string, publishedAt?: string): BlogPostBuilder {
+    return BlogPostBuilder.named(BlogPostStatus.ARCHIVED, slug, publishedAt);
+  }
+
+  /**
+   * Title and description name the slug, with a per-locale suffix so a test
+   * can tell posts apart and see which locale was rendered: `Title <slug>`
+   * (en-US), `Title <slug> (pt)`, `Title <slug> (es)`.
+   */
+  private static named(
+    status: BlogPostStatus,
+    slug: string,
+    publishedAt?: string,
+  ): BlogPostBuilder {
+    const localized = (prefix: string) => ({
+      'en-US': `${prefix} ${slug}`,
+      'pt-BR': `${prefix} ${slug} (pt)`,
+      es: `${prefix} ${slug} (es)`,
+    });
+    const builder = BlogPostBuilder.build()
+      .withSlug(slug)
+      .withTitle(localized('Title'))
+      .withDescription(localized('Description'))
+      .withStatus(status);
+
+    return publishedAt ? builder.withPublishedAt(publishedAt) : builder;
+  }
+
   static list(count: number): BlogPost[] {
     return [...Array(count)].map(() => BlogPostBuilder.build().now());
   }

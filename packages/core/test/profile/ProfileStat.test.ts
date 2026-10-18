@@ -1,11 +1,8 @@
 import { LocalizedText, Text, ValidationError } from '~/index';
 import { ProfileStat } from '~/portfolio/entities/profile/model/ProfileStat';
+import { ProfileStatBuilder } from '~/testing';
 
-const validProps = {
-  label: { 'en-US': 'Years of experience', 'pt-BR': 'Anos de experiência' },
-  value: '5+',
-  icon: 'briefcase',
-};
+const validProps = ProfileStatBuilder.build().toProps();
 
 describe('ProfileStat', () => {
   describe('when created from valid props', () => {

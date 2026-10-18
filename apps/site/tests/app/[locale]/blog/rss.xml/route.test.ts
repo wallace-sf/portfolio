@@ -1,6 +1,5 @@
-import { BlogPost, BlogPostStatus } from '@repo/core/blog';
-import { BlogPostBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
+import { BlogPostBuilder } from '@repo/core/testing';
 
 import { GET } from '~/app/[locale]/blog/rss.xml/route';
 
@@ -17,21 +16,6 @@ vi.mock('~/lib/server/container', () => ({
   }),
 }));
 
-function makePost(slug: string, title: string, publishedAt: string): BlogPost {
-  const localized = (value: string) => ({
-    'en-US': value,
-    'pt-BR': value,
-    es: value,
-  });
-  return BlogPostBuilder.build()
-    .withSlug(slug)
-    .withTitle(localized(title))
-    .withDescription(localized(`${title} description`))
-    .withPublishedAt(publishedAt)
-    .withStatus(BlogPostStatus.PUBLISHED)
-    .now();
-}
-
 function makeRequest(locale: string): {
   request: Request;
   context: { params: Promise<{ locale: string }> };
@@ -44,7 +28,9 @@ function makeRequest(locale: string): {
 
 describe('GET /[locale]/blog/rss.xml', () => {
   it('should return valid RSS 2.0 XML with an item per post', async () => {
-    findAll.mockResolvedValue([makePost('hello', 'Hello', '2026-08-01')]);
+    findAll.mockResolvedValue([
+      BlogPostBuilder.published('hello', '2026-08-01').now(),
+    ]);
 
     const { request, context } = makeRequest('en-US');
     const response = await GET(request, context);
@@ -54,7 +40,7 @@ describe('GET /[locale]/blog/rss.xml', () => {
       'application/xml; charset=utf-8',
     );
     expect(xml).toContain('<rss version="2.0"');
-    expect(xml).toContain('<title>Hello</title>');
+    expect(xml).toContain('<title>Title hello</title>');
     expect(xml).toContain(
       '<link>http://localhost:3000/en-US/blog/2026/08/hello</link>',
     );
@@ -65,7 +51,9 @@ describe('GET /[locale]/blog/rss.xml', () => {
   });
 
   it('should only include posts for the requested locale', async () => {
-    findAll.mockResolvedValue([makePost('only-en', 'Only EN', '2026-08-01')]);
+    findAll.mockResolvedValue([
+      BlogPostBuilder.published('only-en', '2026-08-01').now(),
+    ]);
 
     const { request, context } = makeRequest('pt-BR');
     const response = await GET(request, context);
@@ -79,7 +67,13 @@ describe('GET /[locale]/blog/rss.xml', () => {
 
   it('should escape XML-unsafe characters in post fields', async () => {
     findAll.mockResolvedValue([
-      makePost('amp-post', 'A & B <Test>', '2026-08-01'),
+      BlogPostBuilder.published('amp-post', '2026-08-01')
+        .withTitle({
+          'en-US': 'A & B <Test>',
+          'pt-BR': 'A & B <Test>',
+          es: 'A & B <Test>',
+        })
+        .now(),
     ]);
 
     const { request, context } = makeRequest('en-US');

@@ -26,8 +26,8 @@
     "title": "Blog",
     "subtitle": "Notas sobre TypeScript, DDD y el ecosistema Next.js — desde la trinchera de construir este proyecto.",
     "empty": "Aún no hay publicaciones.",
-    "newerPost": "Publicación más reciente",
-    "olderPost": "Publicación más antigua",
+    "newerPost": "Más reciente",
+    "olderPost": "Más antiguo",
     "postNavigation": "Navegación de publicaciones",
     "breadcrumbHome": "Inicio",
     "archiveYearHeading": "Publicaciones de {year}",
@@ -44,7 +44,8 @@
     "trendingTags": "Etiquetas populares",
     "allTags": "Todas las etiquetas",
     "archive": "Archivo",
-    "featured": "Destacados"
+    "featured": "Destacados",
+    "furtherReading": "Lecturas relacionadas"
   },
   "Clipboard": {
     "copy": "Copiar al portapapeles"

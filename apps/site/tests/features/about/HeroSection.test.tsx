@@ -3,7 +3,10 @@
  */
 import React from 'react';
 
+import { DomainError, left, right } from '@repo/core/shared';
 import { render, screen } from '@testing-library/react';
+
+import { buildProfileDTO } from '../../helpers/dtos/profile';
 
 vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => `t.${key}`),
@@ -14,13 +17,7 @@ vi.mock('~assets/images/hero-about.png', () => ({
 }));
 
 vi.mock('~features/shared/HeroBanner', () => ({
-  HeroBanner: ({
-    title,
-    caption,
-  }: {
-    title: string;
-    caption: string;
-  }) => (
+  HeroBanner: ({ title, caption }: { title: string; caption: string }) => (
     <div data-testid="hero-banner">
       <span data-testid="hero-title">{title}</span>
       <span data-testid="hero-caption">{caption}</span>
@@ -40,15 +37,7 @@ vi.mock('~/lib/server/container', () => ({
   }),
 }));
 
-const PROFILE = {
-  name: 'Wallace Ferreira',
-  headline: 'Frontend Engineer',
-  bio: 'Bio text.',
-  photo: { url: 'https://example.com/photo.jpg', alt: 'Profile photo' },
-};
-
-const right = (value: unknown) => ({ isRight: () => true, value });
-const left = () => ({ isRight: () => false });
+const PROFILE = buildProfileDTO();
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -70,7 +59,7 @@ describe('about/HeroSection', () => {
   });
 
   it('should render banner with i18n fallback when use case fails', async () => {
-    mockExecute.mockResolvedValue(left());
+    mockExecute.mockResolvedValue(left(new DomainError('FETCH_FAILED')));
 
     const { HeroSection } = await import('~features/about/HeroSection');
     render(await HeroSection({ locale: 'en-US' }));
@@ -85,6 +74,8 @@ describe('about/HeroSection', () => {
     mockExecute.mockRejectedValue(new Error('Unexpected error'));
 
     const { HeroSection } = await import('~features/about/HeroSection');
-    await expect(HeroSection({ locale: 'en-US' })).rejects.toThrow('Unexpected error');
+    await expect(HeroSection({ locale: 'en-US' })).rejects.toThrow(
+      'Unexpected error',
+    );
   });
 });
