@@ -71,3 +71,6 @@ packages/infra/backups/*.json
 
 # TypeScript incremental build
 *.tsbuildinfo
+
+# Superpowers brainstorming companion (local mockups)
+.superpowers/
