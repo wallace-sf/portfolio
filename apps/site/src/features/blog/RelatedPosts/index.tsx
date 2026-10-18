@@ -30,7 +30,7 @@ export async function RelatedPosts({ posts, locale }: IRelatedPostsProps) {
           <li key={post.slug} className="flex flex-col gap-1">
             <Link
               href={blogPostPath(post.publishedAt, post.slug)}
-              className="text-body-md font-bold text-content-primary hover:text-primary hover:underline"
+              className="text-body-sm rounded-sm !font-bold text-content-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
             >
               {post.title}
             </Link>

@@ -99,8 +99,8 @@ describe('BlogPostPage', () => {
     await renderPage('middle', '2026', '09', 'pt-BR');
 
     const nav = screen.getByRole('navigation', { name: 'Navegação de posts' });
-    const newer = within(nav).getByText('Post mais recente').closest('a');
-    const older = within(nav).getByText('Post mais antigo').closest('a');
+    const newer = within(nav).getByText('Mais recente').closest('a');
+    const older = within(nav).getByText('Mais antigo').closest('a');
 
     expect(newer).toHaveAttribute('href', '/pt-BR/blog/2026/10/newest');
     expect(newer).toHaveTextContent('Title newest (pt)');
@@ -118,8 +118,8 @@ describe('BlogPostPage', () => {
     await renderPage('current', '2026', '09');
 
     const nav = screen.getByRole('navigation', { name: 'Post navigation' });
-    expect(within(nav).queryByText('Newer post')).not.toBeInTheDocument();
-    expect(within(nav).getByText('Older post').closest('a')).toHaveAttribute(
+    expect(within(nav).queryByText('Newer')).not.toBeInTheDocument();
+    expect(within(nav).getByText('Older').closest('a')).toHaveAttribute(
       'href',
       '/en-US/blog/2026/09/older',
     );
