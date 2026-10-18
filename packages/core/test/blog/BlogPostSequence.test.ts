@@ -1,35 +1,21 @@
-import { BlogPost, BlogPostSequence, IBlogPostProps } from '~/index';
+import { BlogPostSequence } from '~/index';
 import { Slug } from '~/shared';
+import { BlogPostBuilder, unwrap } from '~/testing';
 
-const BASE: IBlogPostProps = {
-  slug: 'a-post',
-  title: { 'en-US': 'T', 'pt-BR': 'T', es: 'T' },
-  description: { 'en-US': 'D', 'pt-BR': 'D', es: 'D' },
-  content: { 'en-US': 'C', 'pt-BR': 'C', es: 'C' },
-  tags: ['nextjs'],
-  author: {
-    name: 'Wallace Ferreira',
-    avatarUrl:
-      'https://wozibwvcepmelpstznic.supabase.co/storage/v1/object/public/avatars/wallace.jpg',
-  },
-  publishedAt: '2026-08-01T00:00:00.000Z',
-};
+const slug = (value: string): Slug => unwrap(Slug.create(value));
 
-function makePost(slug: string, publishedAt: string): BlogPost {
-  const result = BlogPost.create({ ...BASE, slug, publishedAt });
-  if (result.isLeft()) throw result.value;
-  return result.value;
-}
-
-function slug(value: string): Slug {
-  const result = Slug.create(value);
-  if (result.isLeft()) throw result.value;
-  return result.value;
-}
-
-const older = makePost('older', '2026-08-08T00:00:00.000Z');
-const middle = makePost('middle', '2026-08-15T00:00:00.000Z');
-const newer = makePost('newer', '2026-08-22T00:00:00.000Z');
+const older = BlogPostBuilder.published(
+  'older',
+  '2026-08-08T00:00:00.000Z',
+).now();
+const middle = BlogPostBuilder.published(
+  'middle',
+  '2026-08-15T00:00:00.000Z',
+).now();
+const newer = BlogPostBuilder.published(
+  'newer',
+  '2026-08-22T00:00:00.000Z',
+).now();
 
 describe('BlogPostSequence', () => {
   describe('neighboursOf', () => {

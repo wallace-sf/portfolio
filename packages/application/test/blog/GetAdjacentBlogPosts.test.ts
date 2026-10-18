@@ -7,28 +7,24 @@ import { GetAdjacentBlogPosts } from '~/blog/use-cases/GetAdjacentBlogPosts';
 
 import { makeBlogPostRepository } from './helpers/makeBlogPostRepository';
 
-function makePost(
-  slug: string,
-  publishedAt: string,
-  status: BlogPostStatus = BlogPostStatus.PUBLISHED,
-): BlogPost {
-  return BlogPostBuilder.build()
-    .withSlug(slug)
-    .withPublishedAt(publishedAt)
-    .withStatus(status)
-    .withTitle({
-      'en-US': `Title ${slug}`,
-      'pt-BR': `Título ${slug}`,
-      es: `Título ${slug}`,
-    })
-    .now();
-}
+// Titles differ per locale so the tests can tell which one was resolved.
+const titleOf = (slug: string) => ({
+  'en-US': `Title ${slug}`,
+  'pt-BR': `Título ${slug}`,
+  es: `Título ${slug}`,
+});
 
 // Returned deliberately out of order — the use case owns the ordering.
 const POSTS = [
-  makePost('middle', '2026-08-15T00:00:00.000Z'),
-  makePost('oldest', '2026-08-08T00:00:00.000Z'),
-  makePost('newest', '2026-08-22T00:00:00.000Z'),
+  BlogPostBuilder.published('middle', '2026-08-15T00:00:00.000Z')
+    .withTitle(titleOf('middle'))
+    .now(),
+  BlogPostBuilder.published('oldest', '2026-08-08T00:00:00.000Z')
+    .withTitle(titleOf('oldest'))
+    .now(),
+  BlogPostBuilder.published('newest', '2026-08-22T00:00:00.000Z')
+    .withTitle(titleOf('newest'))
+    .now(),
 ];
 
 const repositoryWith = (posts: BlogPost[]) =>
@@ -96,7 +92,9 @@ describe('GetAdjacentBlogPosts', () => {
   });
 
   it('should return no neighbours when the post is the only one', async () => {
-    const repo = repositoryWith([makePost('lonely', '2026-08-01')]);
+    const repo = repositoryWith([
+      BlogPostBuilder.published('lonely', '2026-08-01').now(),
+    ]);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
       slug: 'lonely',
@@ -111,13 +109,19 @@ describe('GetAdjacentBlogPosts', () => {
 
   it('should skip a DRAFT post sitting between two published posts', async () => {
     const repo = repositoryWith([
-      makePost('older-published', '2026-08-01T00:00:00.000Z'),
-      makePost(
-        'hidden-draft',
-        '2026-08-10T00:00:00.000Z',
-        BlogPostStatus.DRAFT,
-      ),
-      makePost('newer-published', '2026-08-20T00:00:00.000Z'),
+      BlogPostBuilder.published(
+        'older-published',
+        '2026-08-01T00:00:00.000Z',
+      ).now(),
+      BlogPostBuilder.build()
+        .withSlug('hidden-draft')
+        .withPublishedAt('2026-08-10T00:00:00.000Z')
+        .withStatus(BlogPostStatus.DRAFT)
+        .now(),
+      BlogPostBuilder.published(
+        'newer-published',
+        '2026-08-20T00:00:00.000Z',
+      ).now(),
     ]);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({
@@ -133,8 +137,12 @@ describe('GetAdjacentBlogPosts', () => {
 
   it('should return NotFoundError when the requested slug is a DRAFT post', async () => {
     const repo = repositoryWith([
-      makePost('published', '2026-08-01T00:00:00.000Z'),
-      makePost('secret', '2026-08-10T00:00:00.000Z', BlogPostStatus.DRAFT),
+      BlogPostBuilder.published('published', '2026-08-01T00:00:00.000Z').now(),
+      BlogPostBuilder.build()
+        .withSlug('secret')
+        .withPublishedAt('2026-08-10T00:00:00.000Z')
+        .withStatus(BlogPostStatus.DRAFT)
+        .now(),
     ]);
 
     const result = await new GetAdjacentBlogPosts(repo).execute({

@@ -1,14 +1,12 @@
-import {
-  IProjectRepository,
-  ISkillRepository,
-  ProjectStatus,
-} from '@repo/core/portfolio';
+import { IProjectRepository, ISkillRepository } from '@repo/core/portfolio';
 import { DomainError } from '@repo/core/shared';
 import { ProjectBuilder } from '@repo/core/testing';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ProjectSummaryDTO } from '~/portfolio/dtos/ProjectSummaryDTO';
 import { GetFeaturedProjects } from '~/portfolio/use-cases/GetFeaturedProjects';
+
+import { projectWithAllFields } from './helpers/projectWithAllFields';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -39,29 +37,6 @@ function makeSkillRepository(
 }
 
 /** Every field the DTO maps, set explicitly — for the mapping tests. */
-function projectWithAllFields() {
-  return ProjectBuilder.build()
-    .withSlug('my-project')
-    .withCoverImage({
-      url: 'https://example.com/cover.jpg',
-      alt: { 'pt-BR': 'Capa do projeto', 'en-US': 'Project cover' },
-    })
-    .withThumbnailImage({
-      url: 'https://example.com/thumbnail.webp',
-      alt: { 'pt-BR': 'Thumbnail do projeto', 'en-US': 'Project thumbnail' },
-    })
-    .withTitle({ 'pt-BR': 'Título do Projeto', 'en-US': 'Project Title' })
-    .withCaption({ 'pt-BR': 'Legenda do projeto', 'en-US': 'Project caption' })
-    .withContent({
-      'en-US': 'Detailed project content here.',
-      'pt-BR': 'Conteúdo detalhado do projeto aqui.',
-    })
-    .withSkills([])
-    .withPeriod({ start: '2023-01-01T00:00:00.000Z' })
-    .withFeatured(true)
-    .withStatus(ProjectStatus.PUBLISHED);
-}
-
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -94,7 +69,7 @@ describe('GetFeaturedProjects', () => {
     });
 
     it('should map all DTO fields correctly for pt-BR locale', async () => {
-      const project = projectWithAllFields().now();
+      const project = projectWithAllFields().withFeatured(true).now();
       const repo = makeRepository({
         findFeatured: vi.fn().mockResolvedValue([project]),
       });
@@ -120,6 +95,7 @@ describe('GetFeaturedProjects', () => {
 
     it('should map localized fields using the requested locale', async () => {
       const project = projectWithAllFields()
+        .withFeatured(true)
         .withTheme({ 'pt-BR': 'Tema PT', 'en-US': 'Theme EN' })
         .now();
       const repo = makeRepository({
