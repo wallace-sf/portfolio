@@ -9870,7 +9870,7 @@
         "id": 3,
         "title": "Implement client-side search logic (matching, ranking, excerpting)",
         "description": "Build pure functions for query parsing, post ranking by field match, and body excerpt generation in apps/site/src/features/blog/search/",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           2
         ],
@@ -9935,7 +9935,8 @@
             "status": "pending",
             "testStrategy": "Verification via build output inspection: `pnpm --filter site build && grep -r 'BlogPostSummaryDTO' .next/static/` returns empty (DTO never in client bundle). Grep check `grep -r '@repo/application' apps/site/src/features/blog/search/` returns exit code 1 (no matches). Type-check passes `pnpm --filter site types` with no errors."
           }
-        ]
+        ],
+        "updatedAt": "2026-10-18T21:54:10.268Z"
       },
       {
         "id": 4,
