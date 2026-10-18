@@ -16,6 +16,13 @@ vi.mock(
   async () => (await import('../../../helpers/intlServerMock')).intlServerMock,
 );
 
+// The search island reads `?q=` once on mount; outside the App Router
+// `useSearchParams` has no context, so it gets an empty query here.
+vi.mock('next/navigation', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('next/navigation')>()),
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
     // eslint-disable-next-line @next/next/no-img-element

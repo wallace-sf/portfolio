@@ -9675,7 +9675,7 @@
         "dependencies": [
           "5"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -9750,17 +9750,328 @@
         ],
         "complexity": 5,
         "recommendedSubtasks": 6,
-        "expansionPrompt": "Split into: (1) Update PrevNextNav component to add arrow icons, display dates with formatDate(), add rel attributes, replace spacers with CSS Grid (grid-cols-2, col-start-2), (2) Add i18n keys for arrow labels and update component tests, (3) Run full build and verify 42 tag pages prerender correctly, (4) Execute full test suite (pnpm -w types, lint, @repo/application test, site test), (5) Perform manual browser verification of all Phase 5B features in both themes and en-US + pt-BR locales (checklist-driven), (6) Verify file size compliance (<200 lines), no forbidden imports, and document any architectural deviations."
+        "expansionPrompt": "Split into: (1) Update PrevNextNav component to add arrow icons, display dates with formatDate(), add rel attributes, replace spacers with CSS Grid (grid-cols-2, col-start-2), (2) Add i18n keys for arrow labels and update component tests, (3) Run full build and verify 42 tag pages prerender correctly, (4) Execute full test suite (pnpm -w types, lint, @repo/application test, site test), (5) Perform manual browser verification of all Phase 5B features in both themes and en-US + pt-BR locales (checklist-driven), (6) Verify file size compliance (<200 lines), no forbidden imports, and document any architectural deviations.",
+        "updatedAt": "2026-10-18T03:40:01.448Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-17T18:03:02.591Z",
+      "lastModified": "2026-10-18T03:40:01.448Z",
       "taskCount": 6,
-      "completedCount": 5,
+      "completedCount": 6,
       "tags": [
         "blog-v2-phase-5b"
       ]
+    }
+  },
+  "blog-v2-phase-5c": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Implement plain-text conversion and search index use case",
+        "description": "Build the backend foundation for search: a regex-based Markdown-to-plain-text converter and a GetBlogSearchIndex use case that returns { slug, text } entries for all published posts",
+        "details": "Create `packages/application/src/blog/use-cases/plain-text.ts` with a `toPlainText(markdown: string): string` function that:\n- Removes fenced code blocks entirely (```...```)\n- Strips HTML tags\n- Keeps link text but drops URLs ([text](url) → text)\n- Removes heading markers (#), list markers (-, *, +), blockquote markers (>)\n- Removes emphasis markers (*, _, **, __)\n- Keeps inline code text without backticks (`code` → code)\n- Removes table pipes and separator rows\n- Collapses whitespace to single spaces, trims output\n- Applies `normalize('NFC')` first for proper accent handling\n\nCreate `packages/application/src/blog/use-cases/GetBlogSearchIndex.ts`:\n- Extends `UseCase<{ locale: Locale }, BlogSearchEntryDTO[]>`\n- Uses `publishedOnly` and `newestFirst` filters like `ListBlogPosts`\n- For each post, calls `toPlainText(post.content.get(locale))`\n- Returns `left(DomainError(FETCH_FAILED))` on repository errors\n- Maps to `{ slug: string; text: string }[]`\n\nCreate `packages/application/src/blog/dtos/BlogSearchEntryDTO.ts`:\n- Export `type BlogSearchEntryDTO = { slug: string; text: string }`\n\nUpdate `packages/application/src/blog/use-cases/index.ts` to export `GetBlogSearchIndex`\nUpdate `packages/application/src/blog/dtos/index.ts` to export `BlogSearchEntryDTO`\n\nAdd `blogSearchIndexPath(): string` to `apps/site/src/features/blog/paths.ts` returning `'/blog/search-index.json'`\n\nCreate `apps/site/src/app/[locale]/blog/search-index.json/route.ts`:\n- `export const dynamic = 'force-static'`\n- `generateStaticParams()` returns LOCALES like rss.xml\n- `GET` handler instantiates `GetBlogSearchIndex`, executes with locale\n- On success: `return new Response(JSON.stringify(entries), { headers: { 'Content-Type': 'application/json' } })`\n- On failure: `return new Response('Failed to generate search index', { status: 500 })`\n- Follow rss.xml/route.ts as the architectural template",
+        "testStrategy": "Unit tests in `packages/application/test/blog/plain-text.test.ts`:\n- should drop fenced code blocks when body has fences\n- should keep link text and drop URL when body has links\n- should keep inline code text without backticks\n- should strip heading, list, quote, emphasis markers\n- should collapse whitespace\n\nUnit tests in `packages/application/test/blog/GetBlogSearchIndex.test.ts` using in-memory repository:\n- should list published posts only, newest first, in requested locale\n- should return FETCH_FAILED when repository throws\n- should call toPlainText on post content\n\nIntegration test in `apps/site/tests/app/[locale]/blog/search-index.json/route.test.ts`:\n- should return locale's entries as JSON with Content-Type header\n- should return 500 when use case fails",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create plain-text conversion utility with comprehensive Markdown stripping",
+            "description": "Implement the regex-based Markdown-to-plain-text converter that strips fenced code blocks, HTML tags, links, headings, lists, emphasis, inline code, tables, and normalizes whitespace while preserving accent handling",
+            "dependencies": [],
+            "details": "Create `packages/application/src/blog/use-cases/plain-text.ts` with a `toPlainText(markdown: string): string` function that applies the following transformations in order: (1) Apply `normalize('NFC')` first for proper accent handling, (2) Remove fenced code blocks entirely (```...```), (3) Strip HTML tags, (4) Keep link text but drop URLs ([text](url) → text), (5) Remove heading markers (#), list markers (-, *, +), blockquote markers (>), (6) Remove emphasis markers (*, _, **, __), (7) Keep inline code text without backticks (`code` → code), (8) Remove table pipes and separator rows, (9) Collapse whitespace to single spaces and trim output. Use regex patterns for each transformation and ensure the function is pure (no side effects). The output should be clean plain text suitable for full-text search indexing.",
+            "status": "pending",
+            "testStrategy": "Unit tests in `packages/application/test/blog/plain-text.test.ts`: (1) should drop fenced code blocks when body has fences, (2) should keep link text and drop URL when body has links, (3) should keep inline code text without backticks, (4) should strip heading, list, quote, emphasis markers, (5) should collapse multiple whitespace to single space, (6) should handle mixed Markdown constructs, (7) should apply NFC normalization, (8) should strip HTML tags, (9) should remove table syntax. Cover edge cases like nested constructs, empty input, whitespace-only input, and Unicode characters."
+          },
+          {
+            "id": 2,
+            "title": "Implement GetBlogSearchIndex use case following UseCase pattern",
+            "description": "Create the GetBlogSearchIndex use case that extends UseCase<{ locale: Locale }, BlogSearchEntryDTO[]>, uses publishedOnly and newestFirst filters, converts post content to plain text, and returns slug + text entries",
+            "dependencies": [
+              1
+            ],
+            "details": "Create `packages/application/src/blog/use-cases/GetBlogSearchIndex.ts` that: (1) Extends `UseCase<{ locale: Locale }, BlogSearchEntryDTO[]>` following the established pattern from ListBlogPosts.ts, (2) Injects `IBlogPostRepository` via constructor, (3) Uses `publishedOnly` and `newestFirst` filters like ListBlogPosts, (4) For each post, calls `toPlainText(post.content.get(locale))` to convert Markdown to searchable text, (5) Returns `left(DomainError(FETCH_FAILED))` on repository errors, (6) Maps successful results to `BlogSearchEntryDTO[]` with `{ slug: string; text: string }` shape, (7) Handles edge cases like missing content for locale. Follow the existing use case architecture: dependency injection, Either pattern for error handling, proper typing, and separation of concerns.",
+            "status": "pending",
+            "testStrategy": "Integration tests in `packages/application/test/blog/GetBlogSearchIndex.test.ts`: (1) should return search entries for all published posts in given locale, (2) should apply publishedOnly filter (exclude drafts), (3) should apply newestFirst ordering, (4) should convert Markdown content to plain text using toPlainText, (5) should return DomainError with FETCH_FAILED when repository fails, (6) should handle posts with missing content for locale, (7) should return empty array when no published posts exist. Use InMemoryBlogPostRepository for testing, seed with test data covering published/draft states and multiple locales."
+          },
+          {
+            "id": 3,
+            "title": "Create BlogSearchEntryDTO type and update barrel exports",
+            "description": "Define the BlogSearchEntryDTO type representing a searchable blog entry with slug and text fields, and update all necessary barrel export files",
+            "dependencies": [
+              2
+            ],
+            "details": "Create `packages/application/src/blog/dtos/BlogSearchEntryDTO.ts` with: `export type BlogSearchEntryDTO = { slug: string; text: string }`. This DTO represents a minimal searchable blog entry for the client-side search index. Update `packages/application/src/blog/dtos/index.ts` to export `BlogSearchEntryDTO` alongside existing DTOs (BlogPostSummaryDTO, BlogPostDetailDTO, etc.). Update `packages/application/src/blog/use-cases/index.ts` to export `GetBlogSearchIndex` alongside existing use cases (ListBlogPosts, GetBlogPostBySlug, etc.). Follow the existing barrel export pattern and maintain alphabetical ordering. Ensure TypeScript compilation succeeds after changes.",
+            "status": "pending",
+            "testStrategy": "Type-level verification via TypeScript compilation: (1) Verify BlogSearchEntryDTO is importable from @repo/application/blog/dtos, (2) Verify GetBlogSearchIndex is importable from @repo/application/blog/use-cases, (3) Run `pnpm --filter @repo/application types` to ensure no type errors, (4) Verify barrel exports maintain correct structure and ordering. No runtime tests needed for this pure type definition task, but the types will be validated by usage in subsequent tasks."
+          },
+          {
+            "id": 4,
+            "title": "Create /blog/search-index.json route handler following rss.xml template",
+            "description": "Implement the Next.js App Router API route that generates static search-index.json files per locale using GetBlogSearchIndex, following the architectural pattern established in rss.xml/route.ts",
+            "dependencies": [
+              3
+            ],
+            "details": "Add `blogSearchIndexPath(): string` to `apps/site/src/features/blog/paths.ts` returning `'/blog/search-index.json'`. Create `apps/site/src/app/[locale]/blog/search-index.json/route.ts` with: (1) `export const dynamic = 'force-static'` to ensure static generation, (2) `generateStaticParams()` that returns LOCALES array (same pattern as rss.xml), (3) `GET` handler that receives `{ params }` with locale, (4) Instantiate `GetBlogSearchIndex` use case with injected dependencies (follow DI pattern from site), (5) Execute use case with locale parameter, (6) On success: return `new Response(JSON.stringify(entries), { headers: { 'Content-Type': 'application/json' } })`, (7) On failure: return `new Response('Failed to generate search index', { status: 500 })`. Use `apps/site/src/app/[locale]/blog/rss.xml/route.ts` as the architectural reference for route structure, static params generation, use case instantiation, and error handling patterns.",
+            "status": "pending",
+            "testStrategy": "Route tests in `apps/site/tests/app/[locale]/blog/search-index.json/route.test.ts`: (1) should generate static params for all LOCALES, (2) should return JSON response with correct Content-Type header, (3) should include all published posts as search entries, (4) should convert Markdown to plain text in entries, (5) should return 500 when use case fails, (6) should match BlogSearchEntryDTO shape (slug + text). Build verification: (1) Run `pnpm --filter site build`, (2) Verify 3 search-index.json files generated (one per locale: en, es, pt-BR), (3) Verify JSON is valid and matches expected shape, (4) Verify files are in correct output paths."
+          }
+        ],
+        "updatedAt": "2026-10-18T20:52:20.217Z"
+      },
+      {
+        "id": 2,
+        "title": "Create generic text utilities for search",
+        "description": "Implement accent/case folding and excerpt extraction helpers in @repo/utils/text for reusable, domain-agnostic text processing",
+        "details": "Create `packages/utils/src/text/foldForSearch.ts`:\n```typescript\n/**\n * Lowercased, diacritics removed, same length as input.\n * Folds character-by-character so indices map 1:1 to original.\n * Characters whose normalized lowercase isn't exactly one code unit\n * (e.g. Turkish İ → two code units) keep their original form.\n */\nexport function foldForSearch(value: string): string {\n  const normalized = value.normalize('NFC');\n  let result = '';\n  for (const char of normalized) {\n    const folded = char.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');\n    // If folded length !== 1, keep original to preserve index mapping\n    result += folded.length === 1 ? folded : char;\n  }\n  return result;\n}\n```\n\nCreate `packages/utils/src/text/excerptAround.ts`:\n```typescript\nconst DEFAULT_RADIUS = 12; // ~12 words on each side\n\n/**\n * Extracts ~`radius` words either side of [start, end), cut on word boundaries.\n * Returns the excerpt text with leading/trailing ellipses when cut,\n * and the offset where the excerpt starts in the original text.\n */\nexport function excerptAround(\n  text: string,\n  start: number,\n  end: number,\n  radius: number = DEFAULT_RADIUS,\n): { text: string; offset: number } {\n  // Find word boundaries ~radius words before start and after end\n  // Add '…' prefix if not at text start, suffix if not at text end\n  // Return { text: excerptWithEllipses, offset: startIndexInOriginal }\n  // Implementation: split around [start, end], take radius words each side,\n  // rejoin with original [start, end] content, track offset\n}\n```\n\nCreate `packages/utils/src/text/index.ts` exporting both functions\n\nUpdate `packages/utils/package.json` to add:\n```json\n\"./text\": {\n  \"types\": \"./dist/types/text/index.d.ts\",\n  \"default\": \"./src/text/index.ts\"\n}\n```",
+        "testStrategy": "Unit tests in `packages/utils/test/node/text/foldForSearch.test.ts`:\n- should remove diacritics and lowercase Portuguese/Spanish text (validação → validacao)\n- should keep input length when character folds to more than one code unit\n- should handle Turkish İ edge case\n- should preserve index mapping (fold then substring matches original substring)\n\nUnit tests in `packages/utils/test/node/text/excerptAround.test.ts`:\n- should cut on word boundaries with ellipses when match is mid-text\n- should not add leading ellipsis when match is at start\n- should not add trailing ellipsis when match is at end\n- should report correct excerpt offset in original text\n- should handle radius parameter (test with different radii)",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement foldForSearch with Unicode normalization and index preservation",
+            "description": "Create packages/utils/src/text/foldForSearch.ts with character-by-character NFD diacritic removal, maintaining 1:1 index mapping to the original string, and handling edge cases like Turkish İ and multi-code-unit characters",
+            "dependencies": [],
+            "details": "Implement the foldForSearch function that: (1) Normalizes input to NFC for consistent Unicode representation, (2) Iterates character-by-character applying lowercase + NFD normalization + diacritic stripping (\\u0300-\\u036f range), (3) Preserves original character when folded result isn't exactly one code unit (handles Turkish İ → 'i\\u0307' edge case), (4) Returns a string with the same length as input where each index maps 1:1 to the original. The function must maintain exact character count so that match indices in the folded string can be directly applied to the original for highlighting. Edge cases to handle: Turkish İ (U+0130) lowercases to 'i' + combining dot (two code units), characters that decompose to multiple code units, already-lowercase ASCII (passthrough), empty strings, and strings with no diacritics.",
+            "status": "pending",
+            "testStrategy": "Unit tests in packages/utils/test/node/text/foldForSearch.test.ts covering: (1) Portuguese/Spanish diacritics removal (validação → validacao, José → jose, São → sao), (2) Case folding (UPPERCASE → uppercase, MiXeD → mixed), (3) Length preservation verification (input.length === output.length for all test cases), (4) Turkish İ edge case (İstanbul keeps İ or handles gracefully without breaking 1:1 mapping), (5) Multi-code-unit character handling, (6) Index mapping verification (match at index N in folded string corresponds to index N in original), (7) Empty string and single-character inputs, (8) Already-normalized ASCII strings (passthrough check), (9) Mixed content (accents + ASCII + numbers + punctuation)"
+          },
+          {
+            "id": 2,
+            "title": "Implement excerptAround with word-boundary detection and offset tracking",
+            "description": "Create packages/utils/src/text/excerptAround.ts that extracts approximately radius words on each side of a match range [start, end), cuts on word boundaries, adds ellipses when text is truncated, and returns both the excerpt text and its offset in the original string",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement excerptAround(text, start, end, radius = 12) that: (1) Finds word boundaries approximately radius words before start and after end (split on whitespace \\s+), (2) Extracts the substring from left boundary to right boundary, (3) Prepends '…' if left boundary > 0 (not at text start), (4) Appends '…' if right boundary < text.length (not at text end), (5) Returns { text: excerptWithEllipses, offset: leftBoundaryIndex }. Word boundary detection: split the text before start into words, take the last radius words, find where they start; split the text after end into words, take the first radius words, find where they end. Handle edge cases: start/end at text boundaries, radius larger than available words, start === end (zero-length match), overlapping or inverted ranges, multi-whitespace runs, leading/trailing whitespace in text. The offset must be the index in the original text where the excerpt (excluding leading ellipsis) begins, enabling callers to map match positions within the excerpt back to the original text.",
+            "status": "pending",
+            "testStrategy": "Unit tests in packages/utils/test/node/text/excerptAround.test.ts covering: (1) Mid-text match with radius words on both sides (verify ~radius words extracted, ellipses on both ends, correct offset), (2) Match at text start (no leading ellipsis, offset = 0), (3) Match at text end (no trailing ellipsis), (4) Match spanning entire text (no ellipses, offset = 0, text = original), (5) Radius larger than available words (gracefully use all available words), (6) Zero-length match (start === end, excerpt around that point), (7) Different radius values (6, 12, 20 words), (8) Text with irregular whitespace (multiple spaces, tabs, newlines), (9) Single-word text, (10) Offset calculation verification (excerpt.offset + match_position_in_excerpt === original_match_position), (11) Boundary conditions (start = 0, end = text.length)"
+          },
+          {
+            "id": 3,
+            "title": "Configure package exports and create comprehensive test coverage",
+            "description": "Update packages/utils/package.json to add the ./text export mapping, create packages/utils/src/text/index.ts barrel export, and implement full test suites for both foldForSearch and excerptAround covering all edge cases, accent handling, index preservation, and radius variations",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Update packages/utils/package.json exports section to add: '\"./text\": { \"types\": \"./dist/types/text/index.d.ts\", \"default\": \"./src/text/index.ts\" }' following the existing pattern from ./hooks and ./validator exports. Create packages/utils/src/text/index.ts that exports both foldForSearch and excerptAround. Implement comprehensive test coverage: (1) packages/utils/test/node/text/foldForSearch.test.ts with 9+ test cases covering Portuguese/Spanish accents (á, é, í, ó, ú, ã, õ, ç, ñ), length preservation, Turkish İ, index mapping, edge cases (empty, single char, ASCII-only, mixed content), (2) packages/utils/test/node/text/excerptAround.test.ts with 11+ test cases covering all word-boundary scenarios, ellipsis logic, offset tracking, radius variations, whitespace handling, boundary conditions. Follow existing test patterns from packages/utils/test/node/Validator.test.ts (describe blocks, should statements, edge case coverage). Verify all tests pass with pnpm --filter @repo/utils test and that the export is usable from other packages (import { foldForSearch, excerptAround } from '@repo/utils/text').",
+            "status": "pending",
+            "testStrategy": "Verification steps: (1) Run pnpm --filter @repo/utils test and confirm all foldForSearch and excerptAround tests pass (targeting 20+ total assertions across both utilities), (2) Create a temporary test file in packages/application that imports { foldForSearch, excerptAround } from '@repo/utils/text' and uses both functions to verify the export mapping works, (3) Run pnpm -w types to confirm TypeScript can resolve the ./text export types correctly, (4) Review test coverage report to ensure all code paths in both utilities are exercised (branches, edge cases, error conditions), (5) Manually verify index preservation by creating a test string with accents, folding it, finding a match in the folded version, and confirming the index maps back to the correct position in the original"
+          }
+        ],
+        "updatedAt": "2026-10-18T21:32:59.881Z"
+      },
+      {
+        "id": 3,
+        "title": "Implement client-side search logic (matching, ranking, excerpting)",
+        "description": "Build pure functions for query parsing, post ranking by field match, and body excerpt generation in apps/site/src/features/blog/search/",
+        "status": "done",
+        "dependencies": [
+          2
+        ],
+        "priority": "medium",
+        "details": "Create `apps/site/src/features/blog/search/types.ts`:\n```typescript\n/** Minimal searchable post shape; never import BlogPostSummaryDTO from @repo/application (browser bundle). */\nexport type SearchablePost = {\n  slug: string;\n  title: string;\n  description: string;\n  tags: string[];\n};\n```\n\nCreate `apps/site/src/features/blog/search/parseQuery.ts`:\n```typescript\nimport { foldForSearch } from '@repo/utils/text';\n\n/** Trims, normalizes, folds, splits on whitespace; drops terms < 2 chars. */\nexport function parseQuery(raw: string): string[] {\n  const normalized = raw.trim().normalize('NFC');\n  const folded = foldForSearch(normalized);\n  return folded.split(/\\s+/).filter(term => term.length >= 2);\n}\n```\n\nCreate `apps/site/src/features/blog/search/rankPosts.ts`:\n```typescript\nimport type { SearchablePost } from './types';\nimport { foldForSearch } from '@repo/utils/text';\n\ntype RankedPost = SearchablePost & { rank: number };\n\n/**\n * Matches when EVERY term is found in at least one field (AND across terms).\n * Rank: title (0) > tags (1) > description (2) > body (3).\n * Ties keep input order (newest first).\n * bodies may be empty (index not loaded); field-only matching still works.\n */\nexport function rankPosts(\n  posts: SearchablePost[],\n  bodies: Map<string, string>, // slug → plain text body\n  terms: string[],\n): RankedPost[] {\n  // For each post:\n  //   - Fold title, tags, description, body (if present)\n  //   - For each term, check if it appears in any field\n  //   - If all terms match, determine best field rank\n  //   - Return posts sorted by rank (0-3), stable (keep original order on ties)\n}\n```\n\nCreate `apps/site/src/features/blog/search/bodyExcerpt.ts`:\n```typescript\nimport { excerptAround, foldForSearch } from '@repo/utils/text';\n\n/** Returns excerpt around first body term match, with ranges for all term occurrences inside it. */\nexport function bodyExcerpt(\n  body: string,\n  terms: string[],\n): { text: string; matches: Array<{ start: number; end: number }> } | null {\n  const folded = foldForSearch(body);\n  // Find first occurrence of any term in folded body\n  // If none, return null\n  // Call excerptAround(body, firstStart, firstEnd)\n  // Find all term occurrences within the excerpt boundaries (adjust for offset)\n  // Return { text: excerpt.text, matches: [{ start, end }, ...] }\n}\n```\n\n**IMPORTANT:** The page (Server Component) is responsible for mapping `BlogPostSummaryDTO` from `@repo/application` to `SearchablePost` before passing to client components. Client components in `apps/site/src/features/blog/search/` and `BlogSearch`/`SearchExcerpt` must never import from `@repo/application` (browser bundle constraint).",
+        "testStrategy": "Unit tests in `apps/site/tests/features/blog/search/parseQuery.test.ts`:\n- should drop terms under 2 characters\n- should return no terms for blank input\n- should fold accents (validação → validacao in terms)\n- should split on whitespace\n\nUnit tests in `apps/site/tests/features/blog/search/rankPosts.test.ts`:\n- should rank title over tags over description over body\n- should require every term (AND logic)\n- should keep newest-first on ties\n- should match card fields only when bodies are empty\n- should handle multiple terms matching different fields\n\nUnit tests in `apps/site/tests/features/blog/search/bodyExcerpt.test.ts`:\n- should mark every term occurrence inside excerpt\n- should return null when body lacks every term\n- should return excerpt around first match\n- should handle multiple terms in one excerpt",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create SearchablePost type and parseQuery function",
+            "description": "Define the browser-safe SearchablePost type in types.ts and implement parseQuery to trim, normalize, fold, split on whitespace, and filter terms shorter than 2 characters",
+            "dependencies": [],
+            "details": "Create `apps/site/src/features/blog/search/types.ts` with the SearchablePost type containing slug, title, description, tags fields (no imports from @repo/application). Create `apps/site/src/features/blog/search/parseQuery.ts` that imports foldForSearch from @repo/utils/text, trims and normalizes the input with NFC, applies foldForSearch for case/accent-insensitive matching, splits on whitespace regex, and filters out terms with length < 2. Return the cleaned array of search terms.",
+            "status": "pending",
+            "testStrategy": "Unit tests in apps/site/tests/features/blog/search/parseQuery.test.ts covering: empty input returns empty array, single-character terms are dropped, whitespace splitting (tabs, newlines, multiple spaces), accent folding (validação → validacao), mixed-case normalization, terms exactly 2 chars are kept, trailing/leading whitespace handling"
+          },
+          {
+            "id": 2,
+            "title": "Implement rankPosts with AND-across-terms matching and field-priority ranking",
+            "description": "Build the core ranking algorithm that matches posts only when ALL terms appear in at least one field, assigns rank by best-matching field (title=0, tags=1, description=2, body=3), and preserves original order on ties",
+            "dependencies": [
+              1
+            ],
+            "details": "Create `apps/site/src/features/blog/search/rankPosts.ts` importing SearchablePost from ./types and foldForSearch from @repo/utils/text. For each post: fold title, description, all tags (join with space), and body (if present in bodies Map). For each term, check if it appears (.includes()) in any folded field. If not all terms match at least one field, exclude the post. For matching posts, determine the best (lowest) rank: iterate terms and find the highest-priority field that matched (title=0 beats tags=1, etc.). Return RankedPost[] sorted by rank ascending, with stable sort (original order preserved on ties). Handle missing bodies gracefully (posts without body can still match on title/tags/description).",
+            "status": "pending",
+            "testStrategy": "Unit tests in apps/site/tests/features/blog/search/rankPosts.test.ts covering: single term matching title vs description (rank 0 < 2), multiple terms AND logic (all must match), one term missing excludes post, ties preserve input order (newest first), empty bodies Map still ranks on fields, accent folding (café matches cafe), multi-word tags array, all four rank levels (0-3), no matches returns empty array"
+          },
+          {
+            "id": 3,
+            "title": "Implement bodyExcerpt with first-match detection and offset-adjusted highlighting",
+            "description": "Create the excerpt extraction function that finds the first term occurrence in the body, calls excerptAround to extract context, and maps all term positions within the excerpt adjusting for the excerpt's offset",
+            "dependencies": [
+              1
+            ],
+            "details": "Create `apps/site/src/features/blog/search/bodyExcerpt.ts` importing excerptAround and foldForSearch from @repo/utils/text. Fold the body with foldForSearch. Iterate terms and find the first occurrence (.indexOf()) in the folded body, tracking the earliest position and the matched term's length. If no term is found, return null. Call excerptAround(body, firstStart, firstEnd) to get { text, offset }. Within the excerpt boundaries (offset to offset+text.length), find all occurrences of all terms in the folded excerpt. For each match, record { start: offset + localStart, end: offset + localEnd } adjusting indices relative to the excerpt's offset. Return { text: excerpt.text, matches: Array<{start, end}> }.",
+            "status": "pending",
+            "testStrategy": "Unit tests in apps/site/tests/features/blog/search/bodyExcerpt.test.ts covering: single term match returns excerpt with one range, multiple term occurrences in excerpt returns multiple ranges, no match returns null, first term occurrence is used (not last), offset adjustment is correct (start/end relative to original body), accent folding (café in body matches cafe term), terms outside excerpt boundaries are excluded, empty body returns null"
+          },
+          {
+            "id": 4,
+            "title": "Create comprehensive unit tests for all search logic scenarios",
+            "description": "Write exhaustive test suites covering parseQuery, rankPosts, and bodyExcerpt with edge cases: multi-term AND logic, field priority ties, accent/case variations, empty bodies, no matches, excerpt boundary conditions",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Create test files apps/site/tests/features/blog/search/{parseQuery,rankPosts,bodyExcerpt}.test.ts. For parseQuery: empty input, single-char terms dropped, whitespace splitting, accent folding, NFC normalization. For rankPosts: all four rank levels (title/tags/description/body), AND-across-terms (all must match), one missing term excludes post, ties preserve input order, empty bodies Map (field-only matching), accent folding matches, multi-word tags, no matches returns empty. For bodyExcerpt: single/multiple term matches, first occurrence used, offset-adjusted ranges, terms outside excerpt excluded, no match returns null, accent folding, empty body returns null. Run `pnpm --filter site test` to verify all green.",
+            "status": "pending",
+            "testStrategy": "This subtask IS the test strategy. Acceptance: all test suites pass with 100% branch coverage for parseQuery, rankPosts, bodyExcerpt. Verify with `pnpm --filter site test -- --coverage` showing full coverage of matching logic, ranking branches, excerpt boundary cases."
+          },
+          {
+            "id": 5,
+            "title": "Enforce browser-bundle hygiene: no @repo/application imports in client search code",
+            "description": "Audit all files in apps/site/src/features/blog/search/ and search component files to ensure zero imports from @repo/application; only SearchablePost type is used, never BlogPostSummaryDTO",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Run `grep -r '@repo/application' apps/site/src/features/blog/search/` and verify output is empty. Check parseQuery.ts, rankPosts.ts, bodyExcerpt.ts, types.ts—none should import from @repo/application. Verify BlogSearch component (task 4) and SearchExcerpt (task 4) use SearchablePost, not BlogPostSummaryDTO. Confirm the page (Server Component) is responsible for mapping BlogPostSummaryDTO → SearchablePost before passing to client. Run `pnpm --filter site build` and inspect the client bundle to ensure @repo/application code is absent (only @repo/utils/text is in the bundle). Document the mapping responsibility in a comment at the top of types.ts.",
+            "status": "pending",
+            "testStrategy": "Verification via build output inspection: `pnpm --filter site build && grep -r 'BlogPostSummaryDTO' .next/static/` returns empty (DTO never in client bundle). Grep check `grep -r '@repo/application' apps/site/src/features/blog/search/` returns exit code 1 (no matches). Type-check passes `pnpm --filter site types` with no errors."
+          }
+        ],
+        "updatedAt": "2026-10-18T21:54:10.268Z"
+      },
+      {
+        "id": 4,
+        "title": "Build search UI components (island, excerpt, query sync)",
+        "description": "Create the BlogSearch client island, SearchExcerpt component for highlighting matches, QuerySync for ?q= handling, and integrate into the listing page with PostCard excerpt slot",
+        "status": "done",
+        "dependencies": [
+          3,
+          1
+        ],
+        "priority": "medium",
+        "details": "**Dependency rule correction (PRD 5C §2):** Client components in `apps/site/src/features/blog/search/` ship to the browser, so they must **not** `import type { BlogPostSummaryDTO }` from `@repo/application`. Use the local `SearchablePost` type from `apps/site/src/features/blog/search/types.ts` (defined in task 3) instead. The page (Server Component) maps `BlogPostSummaryDTO` to `SearchablePost`.\n\nUpdate `apps/site/src/features/blog/PostCard/index.tsx`:\n- Add optional `excerpt?: ReactNode` prop to `IPostCardProps`\n- Render `{excerpt}` after description inside card body `<div className=\"flex flex-col gap-2.5 p-5 sm:py-6\">` (currently around line 71)\n\nCreate `apps/site/src/features/blog/SearchExcerpt/index.tsx` (client component):\n```typescript\n'use client';\n// Reads query and index from BlogSearch context\n// If no query or no body match for this slug, renders null\n// Otherwise renders excerpt with <mark> around matched terms\n```\n\nCreate `apps/site/src/features/blog/BlogSearch/index.tsx` (client island):\n```typescript\n'use client';\nimport type { SearchablePost } from '../search/types'; // NOT BlogPostSummaryDTO\n// Props: { before: ReactNode, cards: Map<string, ReactNode>, after: ReactNode, posts: SearchablePost[], locale: string }\n// State: query, index (lazy loaded), indexStatus\n// Provides React context with { query, index, indexStatus }\n// Fetches /{locale}/blog/search-index.json on first focus or when ?q= is present on mount\n// Renders search box (form role=\"search\", input type=\"search\", clear button)\n// No query → {before} + \"All posts\" + cards in original order + {after}\n// Query → results count (aria-live=\"polite\") + ranked cards with excerpts\n// Uses window.history.replaceState for ?q= (not router.replace to avoid RSC requests)\n// Esc clears query\n// No matches → message + link to /blog/tags\n```\n\nCreate QuerySync component (inside BlogSearch/ or separate):\n- Tiny client component wrapped in <Suspense fallback={null}>\n- Reads ?q= with useSearchParams(), pushes into island state\n- Allows ?q= on load to start with a search\n\nUpdate `apps/site/src/app/[locale]/blog/page.tsx`:\n- Import BlogSearch island\n- Pre-render all PostCards with excerpt={<SearchExcerpt slug={slug} />}\n- Map `BlogPostSummaryDTO[]` to `SearchablePost[]` (extract { slug, title, description, tags })\n- Build cards Map<slug, ReactNode>\n- Wrap listing in <BlogSearch before={...} cards={cards} after={...} posts={searchablePosts} locale={locale} />\n- Keep generateStaticParams, do NOT read searchParams in page itself\n\nAdd i18n keys in `apps/site/messages/{en-US,pt-BR,es}.json` under `Blog.*`:\n- searchLabel, searchPlaceholder, searchClear\n- searchResults (ICU plural: \"{count, plural, one {# post matches} other {# posts match}} \\\"{ query}\\\"\")\n- searchNoResults",
+        "testStrategy": "Component tests in `apps/site/tests/features/blog/BlogSearch/*.test.tsx`:\n- should render listing children when query is empty\n- should show ranked results and count when typing\n- should fetch index once on first focus\n- should keep card-field results when fetch fails (console.error logged)\n- should clear on Esc\n- should update ?q= with replaceState\n- should show no-results message and tags link when no matches\n- should be labelled and keyboard-operable\n- should accept SearchablePost[] (not BlogPostSummaryDTO[])\n\nComponent tests for SearchExcerpt:\n- should render null when no query\n- should render null when no body match\n- should render excerpt with <mark> when body matches\n\nIntegration test in `apps/site/tests/app/[locale]/blog/page.test.tsx`:\n- prerendered output includes full listing\n- search box is present and labelled\n- PostCard excerpt slot doesn't break existing cards\n\nManual browser testing (described in test plan §6)",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Update PostCard to accept optional excerpt ReactNode prop",
+            "description": "Add optional `excerpt?: ReactNode` prop to `IPostCardProps` interface and render it in the card body after description",
+            "dependencies": [],
+            "details": "Update `apps/site/src/features/blog/PostCard/index.tsx`:\n- Add `excerpt?: ReactNode` to `IPostCardProps` interface\n- In the card body `<div className=\"flex flex-col gap-2.5 p-5 sm:py-6\">` (currently around line 71), add `{excerpt}` after the description element\n- Ensure excerpt renders conditionally (only when provided)\n- Maintain existing styling and layout\n- No visual changes when excerpt is not provided",
+            "status": "pending",
+            "testStrategy": "Update `apps/site/tests/features/blog/PostCard.test.tsx`:\n- should render excerpt when provided\n- should not render excerpt slot when undefined\n- should maintain existing layout when excerpt absent"
+          },
+          {
+            "id": 2,
+            "title": "Create SearchExcerpt client component with context-based highlighting",
+            "description": "Build SearchExcerpt component that reads query and index from BlogSearch context and renders excerpts with <mark> highlights for matched terms",
+            "dependencies": [],
+            "details": "Create `apps/site/src/features/blog/SearchExcerpt/index.tsx`:\n- Mark as `'use client'`\n- Import `SearchablePost` type from `../search/types` (NOT BlogPostSummaryDTO from @repo/application)\n- Accept `{ slug: string }` prop\n- Use React context to read `{ query, index, indexStatus }` from BlogSearch\n- Return null if no query, index not ready, or no body match for slug\n- When body match exists, call `excerptAround(body, terms, 150)` from @repo/utils/text\n- Wrap matched terms in `<mark>` tags for highlighting\n- Render excerpt in semantic HTML (e.g., `<p className=\"text-sm text-muted-foreground\">...</p>`)",
+            "status": "pending",
+            "testStrategy": "Component tests in `apps/site/tests/features/blog/SearchExcerpt.test.tsx`:\n- should render null when query is empty\n- should render null when index not loaded\n- should render null when slug has no body match\n- should render excerpt with <mark> when body matches\n- should use excerptAround with 150 char context"
+          },
+          {
+            "id": 3,
+            "title": "Create BlogSearch island with query state, lazy index loading, and context",
+            "description": "Build the main BlogSearch client island that manages search state, lazy-loads the index, provides React context, and handles conditional rendering of original listing vs search results",
+            "dependencies": [
+              2
+            ],
+            "details": "Create `apps/site/src/features/blog/BlogSearch/index.tsx`:\n- Mark as `'use client'`\n- Import `SearchablePost` from `../search/types` (NOT @repo/application)\n- Props: `{ before: ReactNode, cards: Map<string, ReactNode>, after: ReactNode, posts: SearchablePost[], locale: string }`\n- State: `query` (string), `index` (Map<slug, body>), `indexStatus` ('idle'|'loading'|'ready'|'error')\n- Create React context providing `{ query, index, indexStatus }`\n- Fetch `/{locale}/blog/search-index.json` on first input focus OR when ?q= present on mount (once only)\n- Render search form (role=\"search\", input type=\"search\", clear button)\n- Use window.history.replaceState (NOT router.replace) to sync ?q= param\n- No query → render {before} + \"All posts\" heading + cards in original order + {after}\n- Query → render results count (aria-live=\"polite\") + ranked cards using rankPosts from search/rankPosts.ts\n- Keyboard: Esc clears query\n- No matches → message + link to /blog/tags\n- Wrap children in context provider",
+            "status": "pending",
+            "testStrategy": "Component tests in `apps/site/tests/features/blog/BlogSearch/BlogSearch.test.tsx`:\n- should render listing when query empty\n- should fetch index on first focus\n- should fetch index when ?q= present on mount\n- should not refetch index on subsequent focus\n- should show ranked results when typing\n- should update ?q= param via replaceState\n- should clear query on Esc\n- should show no-results message and tags link when no matches"
+          },
+          {
+            "id": 4,
+            "title": "Implement QuerySync component for ?q= URL parameter handling",
+            "description": "Create QuerySync component that reads ?q= from URL on mount and syncs it to BlogSearch island state, wrapped in Suspense boundary",
+            "dependencies": [
+              3
+            ],
+            "details": "Create `apps/site/src/features/blog/BlogSearch/QuerySync.tsx`:\n- Mark as `'use client'`\n- Use `useSearchParams()` from next/navigation to read ?q= parameter\n- Use BlogSearch context to access query setter\n- On mount, if ?q= exists, push value into island query state\n- Component returns null (no rendering)\n- Keep component tiny and focused on single responsibility\n\nUsage in BlogSearch/index.tsx:\n- Import QuerySync\n- Render wrapped in `<Suspense fallback={null}><QuerySync /></Suspense>`\n- Position before main search UI",
+            "status": "pending",
+            "testStrategy": "Component tests in `apps/site/tests/features/blog/BlogSearch/QuerySync.test.tsx`:\n- should read ?q= from URL on mount\n- should push query to island state when ?q= present\n- should not error when ?q= absent\n- should work inside Suspense boundary"
+          },
+          {
+            "id": 5,
+            "title": "Update blog listing page to integrate BlogSearch island",
+            "description": "Modify apps/site/src/app/[locale]/blog/page.tsx to map DTOs to SearchablePost, pre-render all PostCards with SearchExcerpt, build cards Map, and wrap in BlogSearch island",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Update `apps/site/src/app/[locale]/blog/page.tsx`:\n- Import BlogSearch island, SearchExcerpt component\n- Import `SearchablePost` type from features/blog/search/types\n- After fetching `BlogPostSummaryDTO[]` from use case, map to `SearchablePost[]`: extract only { slug, title, description, tags }\n- Pre-render all PostCards with `excerpt={<SearchExcerpt slug={post.slug} />}` prop\n- Build `cards` as `Map<string, ReactNode>` mapping slug → rendered PostCard\n- Wrap listing section in `<BlogSearch before={...} cards={cards} after={...} posts={searchablePosts} locale={locale} />`\n- Keep existing generateStaticParams\n- Do NOT read searchParams in page component (remains Server Component, fully static)\n- Preserve existing before/after content (hero, featured posts, pagination)",
+            "status": "pending",
+            "testStrategy": "Integration tests in `apps/site/tests/app/[locale]/blog/page.test.tsx`:\n- should map BlogPostSummaryDTO to SearchablePost correctly\n- should pre-render all cards with SearchExcerpt\n- should build cards Map with correct slug keys\n- should pass searchablePosts to BlogSearch island\n- should remain static (generateStaticParams works)"
+          },
+          {
+            "id": 6,
+            "title": "Add i18n keys and create comprehensive component/integration tests",
+            "description": "Add all required i18n keys for search UI in all three locales (en-US, pt-BR, es) and create full test coverage for components and integration scenarios",
+            "dependencies": [
+              3,
+              4,
+              5
+            ],
+            "details": "Add i18n keys in `apps/site/messages/{en-US,pt-BR,es}.json` under `Blog.*`:\n- `searchLabel`: \"Search posts\" / \"Buscar posts\" / \"Buscar publicaciones\"\n- `searchPlaceholder`: \"Type to search...\" / \"Digite para buscar...\" / \"Escribe para buscar...\"\n- `searchClear`: \"Clear search\" / \"Limpar busca\" / \"Limpiar búsqueda\"\n- `searchResults`: ICU plural format \"{count, plural, one {# post matches} other {# posts match}} \\\"{query}\\\"\"\n- `searchNoResults`: \"No posts match \\\"{ query}\\\". Try browsing by tags.\" with variations\n\nCreate comprehensive test suites:\n- `apps/site/tests/features/blog/BlogSearch/integration.test.tsx`: Full user flows (typing, clearing, ?q= navigation, keyboard, no results)\n- Verify browser bundle hygiene: BlogSearch and SearchExcerpt must NOT import @repo/application\n- Test i18n key interpolation for all locales\n- Test SearchablePost vs BlogPostSummaryDTO type safety at page boundary\n- Add accessibility tests (aria-live, role=\"search\", keyboard navigation)",
+            "status": "pending",
+            "testStrategy": "This subtask IS the test strategy implementation. Acceptance:\n- All i18n keys present in 3 locales\n- BlogSearch integration tests cover: empty query, typing, results ranking, index fetch (focus + ?q=), Esc clear, ?q= sync, no-results message\n- SearchExcerpt tests cover: null rendering, highlight rendering, context integration\n- QuerySync tests cover: URL read, state push, Suspense\n- Page tests verify DTO→SearchablePost mapping and static generation\n- No @repo/application imports in client components (lint check)"
+          }
+        ],
+        "updatedAt": "2026-10-18T22:19:22.951Z"
+      },
+      {
+        "id": 5,
+        "title": "Final integration, build verification, and cross-locale manual testing",
+        "description": "Verify the complete search flow works end-to-end: static build produces search-index.json per locale, search UI degrades gracefully, and all tests pass across the monorepo",
+        "details": "Run full monorepo checks:\n- `pnpm --filter @repo/application test` (plain-text + GetBlogSearchIndex tests green)\n- `pnpm --filter @repo/utils test` (foldForSearch + excerptAround tests green)\n- `pnpm --filter site test` (search logic + component + route tests green)\n- `pnpm -w lint` (no violations)\n- `pnpm -w types` (no errors)\n\nVerify build output:\n- `pnpm --filter site build`\n- Confirm listing page is still static (not dynamic)\n- Confirm 3 `search-index.json` files generated (one per locale: en-US, pt-BR, es)\n- Inspect one index file: verify { slug, text }[] structure, no Markdown syntax, no fenced code\n\nManual browser testing (`next start` after build, both light/dark themes, en-US + pt-BR):\n1. Search a title word → immediate results, no excerpt\n2. Search a tag → results with tag badge visible\n3. Search a body-only word → results with excerpt + <mark> highlights\n4. Search an accented word without accents (e.g. \"validacao\" finds \"validação\") → matches\n5. Two-word query → only posts with both words\n6. No-results query → message + link to /blog/tags\n7. Open a result, go back → query still in ?q=, results still shown\n8. Esc key → clears search, restores full listing\n9. Clear button → same as Esc\n10. Tab through search box and results → focus ring visible\n11. Network tab → search-index.json fetched only after focus (or on ?q= load)\n12. Mobile viewport (narrow) → search box + results + cards readable\n13. No JavaScript → box renders, page usable (search does nothing but listing works)\n14. Failed index fetch (simulate in DevTools) → field-only results still work, error logged to console\n\nVerify no regressions:\n- PostCard renders unchanged on other pages (featured, tags, archive)\n- No 'use client' file imports @repo/application (grep check)\n- No file over 200 lines\n- All i18n keys present in all locales (messages.test.ts green)\n- No change to packages/core or packages/infra\n- No new npm dependencies\n\nDocument any edge cases found during manual testing and file follow-up issues if needed (e.g. excerpt cut-off on very long posts, performance with 50+ posts).",
+        "testStrategy": "This is the final integration and QA task. Acceptance criteria (PRD §4):\n- [ ] GetBlogSearchIndex exists, exported, tested\n- [ ] /{locale}/blog/search-index.json prerendered per locale\n- [ ] Typing on /blog replaces sections with results; clearing restores listing; ?q= survives back navigation\n- [ ] Matching is case/accent-insensitive; body matches show excerpts with <mark>\n- [ ] Index fetched only on focus or when ?q= present\n- [ ] Results count announced (aria-live); box labelled; keyboard-operable; Esc clears\n- [ ] PostCard unchanged elsewhere\n- [ ] i18n keys in all locales\n- [ ] No 'use client' importing @repo/application; no core/infra changes; no new deps; no 200+ line files\n- [ ] All package tests green, lint green, types green\n- [ ] Build succeeds, listing still static, 3 search-index.json files present\n- [ ] Browser checks in both themes, two locales, all manual scenarios pass",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Run full monorepo checks and verify build output",
+            "description": "Execute all automated test suites, linters, and type checks across @repo/application, @repo/utils, and apps/site. Run production build and verify static output, search-index.json generation (3 files per locale), and JSON structure correctness.",
+            "dependencies": [],
+            "details": "Run the following commands and verify all pass:\n- `pnpm --filter @repo/application test` → all plain-text conversion and GetBlogSearchIndex tests green\n- `pnpm --filter @repo/utils test` → foldForSearch and excerptAround tests green\n- `pnpm --filter site test` → search logic, component, and route tests green\n- `pnpm -w lint` → no ESLint violations\n- `pnpm -w types` → no TypeScript errors\n\nBuild verification:\n- `pnpm --filter site build` → build succeeds\n- Confirm apps/site/src/app/[locale]/blog/page.tsx is still static (not marked dynamic)\n- Confirm 3 search-index.json files generated: apps/site/public/en-US/blog/search-index.json, apps/site/public/pt-BR/blog/search-index.json, apps/site/public/es/blog/search-index.json\n- Inspect one index file (e.g. en-US): verify array of { slug: string, text: string } objects, no Markdown syntax (no #, *, `, ```), no fenced code blocks, text is plain prose\n\nAll checks must pass before proceeding to manual testing.",
+            "status": "pending",
+            "testStrategy": "Automated test suites provide coverage: @repo/application has 15 blog tests including GetBlogSearchIndex and plain-text conversion, @repo/utils has 20+ tests including foldForSearch/excerptAround, apps/site has 60+ component tests covering BlogSearch island, SearchExcerpt, QuerySync, and route handler. Build output verification is manual inspection of JSON files and Next.js build logs for static/dynamic marking."
+          },
+          {
+            "id": 2,
+            "title": "Execute comprehensive manual browser testing across themes and locales",
+            "description": "Run `pnpm --filter site dev` (or `next start` after build) and manually test all 14 search scenarios in both light/dark themes and two locales (en-US, pt-BR) to verify end-to-end functionality, accessibility, and graceful degradation.",
+            "dependencies": [
+              1
+            ],
+            "details": "Start dev server: `pnpm --filter site dev` (or `pnpm --filter site build && pnpm --filter site start` for production build testing).\n\nTest matrix: 2 themes (light/dark) × 2 locales (en-US, pt-BR) × 14 scenarios:\n\n1. **Title search**: Type a word from a post title → immediate results, no excerpt shown\n2. **Tag search**: Type a tag word → results with tag badge visible in PostCard\n3. **Body-only search**: Type a word only in post body → results with excerpt + <mark> highlights around match\n4. **Accent-insensitive**: Type \"validacao\" → finds posts with \"validação\" (Portuguese accent folding)\n5. **Multi-word AND**: Type two words → only posts containing both words appear\n6. **No results**: Type gibberish → \"No posts found\" message + link to /blog/tags\n7. **Back navigation**: Open a result, click back → ?q= still in URL, results still shown\n8. **Esc key**: Press Esc while search is active → clears query, restores full listing\n9. **Clear button**: Click X button → same as Esc (clears query, restores listing)\n10. **Keyboard navigation**: Tab through search box and result cards → focus ring visible on all interactive elements\n11. **Lazy index fetch**: Open Network tab, navigate to /blog → search-index.json NOT fetched until search box focus (or ?q= present on page load)\n12. **Mobile viewport**: Set viewport to 375px width → search box, results, and PostCard readable and usable\n13. **No JavaScript**: Disable JS in DevTools → search box renders, listing page usable (search does nothing but static listing works)\n14. **Failed index fetch**: Simulate network error in DevTools (block search-index.json) → search still works on card fields (title, tags), error logged to console, no crash\n\nDocument any edge cases found (e.g. excerpt cut-off on very long posts, performance degradation with 50+ posts).",
+            "status": "pending",
+            "testStrategy": "Manual exploratory testing following the 14-scenario checklist. Each scenario has clear pass/fail criteria from PRD §4. Test both locales to verify i18n messages (\"No posts found\", \"Search posts\") are present. Test both themes to verify SearchExcerpt <mark> highlights work with CSS variables (--search-highlight-bg, --search-highlight-text). Document any failures or edge cases in task notes for follow-up issues."
+          },
+          {
+            "id": 3,
+            "title": "Verify no regressions and document edge cases",
+            "description": "Run automated regression checks to ensure no unintended changes to PostCard usage, dependency boundaries, file sizes, i18n keys, or monorepo packages. Document any edge cases discovered during manual testing and file follow-up GitHub issues if needed.",
+            "dependencies": [
+              2
+            ],
+            "details": "Regression checks (all must pass):\n\n1. **PostCard unchanged elsewhere**: Verify PostCard renders correctly on other pages (featured section, tags page, archive) with no layout or styling regressions. Inspect visually or run existing component tests.\n\n2. **No 'use client' importing @repo/application**: Run `grep -r \"from '@repo/application'\" apps/site/src/**/*` and filter for 'use client' files → must return zero matches. Client components must not import domain/application layers (they ship to browser).\n\n3. **No file over 200 lines**: Run `find apps/site/src packages/application/src packages/utils/src -name '*.ts' -o -name '*.tsx' | xargs wc -l | awk '$1 > 200'` → must return zero files (excluding test files).\n\n4. **All i18n keys present**: Verify `pnpm --filter site test` includes messages.test.ts passing (all locale files have complete translations for search-related keys: searchPosts, noPostsFound, resultsCount, etc.).\n\n5. **No changes to packages/core or packages/infra**: Run `git diff --stat master -- packages/core packages/infra` → must show no changes (search feature is application + utils + site only).\n\n6. **No new npm dependencies**: Run `git diff master -- package.json pnpm-lock.yaml apps/*/package.json packages/*/package.json` → must show no new dependencies in package.json files (feature uses only existing libs).\n\nEdge case documentation:\n- Review manual testing notes from subtask 2\n- Identify any edge cases (e.g. excerpt cut-off on very long posts, performance with 50+ posts, unusual Markdown edge cases in plain-text conversion)\n- File follow-up GitHub issues for non-blocking issues using `gh issue create` with appropriate labels (e.g. `type: enhancement`, `layer: application`, `context: blog`)\n- Update task notes with issue numbers and status",
+            "status": "pending",
+            "testStrategy": "Automated regression checks are mechanical (grep, wc, git diff, test suite). Edge case documentation is based on findings from subtask 2 manual testing. Any follow-up issues filed are tagged for future sprints and do not block this task's completion. Acceptance: all 6 regression checks pass, any edge cases documented with issue numbers."
+          }
+        ],
+        "updatedAt": "2026-10-18T22:43:38.557Z"
+      }
+    ],
+    "metadata": {
+      "created": "2026-10-18T20:24:35.961Z",
+      "updated": "2026-10-18T20:24:35.961Z",
+      "description": "Tasks for blog-v2-phase-5c context"
     }
   }
 }

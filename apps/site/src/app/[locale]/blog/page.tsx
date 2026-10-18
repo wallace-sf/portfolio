@@ -6,13 +6,13 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { ArchiveNav } from '~features/blog/ArchiveNav';
+import { BlogSearch } from '~features/blog/BlogSearch';
 import { FeaturedPosts } from '~features/blog/FeaturedPosts';
 import { PostCard } from '~features/blog/PostCard';
+import { SearchExcerpt } from '~features/blog/SearchExcerpt';
 import { TrendingTags } from '~features/blog/TrendingTags';
 
 import { loadBlogListing } from './listing';
-
-const ALL_POSTS_HEADING_ID = 'all-posts-heading';
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -70,29 +70,35 @@ export default async function BlogListingPage({
           {t('empty')}
         </p>
       ) : (
-        <div className="flex flex-col gap-12">
-          <FeaturedPosts posts={featured} locale={locale} />
-
-          <TrendingTags tags={tags} locale={locale} />
-
-          <section
-            aria-labelledby={ALL_POSTS_HEADING_ID}
-            className="flex flex-col gap-5"
-          >
-            <h2 id={ALL_POSTS_HEADING_ID} className="text-heading-h4">
-              {t('allPosts')}
-            </h2>
-            <ul className="flex flex-col gap-5">
-              {posts.map((post) => (
-                <li key={post.slug}>
-                  <PostCard post={post} locale={locale} headingLevel="h3" />
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <ArchiveNav years={archive} locale={locale} />
-        </div>
+        <BlogSearch
+          locale={locale}
+          // Only what the search matches on: client code never sees the DTO.
+          posts={posts.map(({ slug, title, description, tags }) => ({
+            slug,
+            title,
+            description,
+            tags,
+          }))}
+          cards={Object.fromEntries(
+            posts.map((post) => [
+              post.slug,
+              <PostCard
+                key={post.slug}
+                post={post}
+                locale={locale}
+                headingLevel="h3"
+                excerpt={<SearchExcerpt slug={post.slug} />}
+              />,
+            ]),
+          )}
+          before={
+            <>
+              <FeaturedPosts posts={featured} locale={locale} />
+              <TrendingTags tags={tags} locale={locale} />
+            </>
+          }
+          after={<ArchiveNav years={archive} locale={locale} />}
+        />
       )}
     </section>
   );

@@ -1,13 +1,7 @@
 import { createTranslator } from 'next-intl';
 import { vi } from 'vitest';
 
-import enUS from '~/../messages/en-US.json';
-import es from '~/../messages/es.json';
-import ptBR from '~/../messages/pt-BR.json';
-
-const CATALOGUES = { 'en-US': enUS, 'pt-BR': ptBR, es } as const;
-
-type CatalogueLocale = keyof typeof CATALOGUES;
+import { type CatalogueLocale, CATALOGUES } from './messages';
 
 /**
  * A `next-intl/server` stand-in backed by the real message catalogues, so page
