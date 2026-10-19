@@ -9218,7 +9218,7 @@
   "blog-v2-phase-5b": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Create four new seed blog posts (R11)",
         "description": "Draft and add four real blog posts to the seed data with tags, featured flags, and content that exercises all Phase 5B features (trending tags, featured band, related posts ranking, tag pages).",
         "details": "Create four new blog posts in packages/infra/prisma/seed-data/blog-posts/:\n\n1. **testing-use-cases-with-in-memory-repositories** (Post A):\n   - Tags: `testing`, `clean-architecture`, `typescript`\n   - Featured: false\n   - ID: `60000000-0000-4000-8000-000000000005`\n   - Content: 40-90 lines of Markdown covering testing patterns, include h3 headings under h2 for TOC nesting, use `[!code ++]` and `[!code --]` fences\n\n2. **static-blog-routes-with-generate-static-params** (Post B):\n   - Tags: `nextjs`, `seo`, `react-server-components`\n   - Featured: false\n   - ID: `60000000-0000-4000-8000-000000000006`\n   - Content: Shares 2 tags with existing 'Server Components as Composition Root' post, 1 tag with Post C to test shared-count ranking\n\n3. **sanitized-markdown-pipeline** (Post C):\n   - Tags: `markdown`, `security`, `nextjs`\n   - Featured: false\n   - ID: `60000000-0000-4000-8000-000000000007`\n   - Content: Include a code fence with `{n}` line-highlight syntax\n\n4. **enforcing-dependency-rule-in-monorepo** (Post D):\n   - Tags: `architecture`, `clean-architecture`, `monorepo`\n   - Featured: **true**\n   - ID: `60000000-0000-4000-8000-000000000008`\n   - Content: Should have 4 related candidates when limit is 3; makes the 3rd featured post when band limit is 2\n\nEach post:\n- Follow the existing seed structure: `index.ts` + `en-US.ts` / `pt-BR.ts` / `es.ts`\n- Register IDs in `ID.blogPosts` constant\n- Update `blogPosts` array in `packages/infra/prisma/seed-data/blog-posts/index.ts`\n- Set `publishedAt` to real 2026-10 dates at or before execution\n- Status: `PUBLISHED`\n- Valid kebab-case slugs and tags\n- Content reviewed by author before merge\n\nThis brings total to 8 posts and 13 tags (5 new: `testing`, `seo`, `markdown`, `security`, `monorepo`).",
@@ -9295,7 +9295,7 @@
         "updatedAt": "2026-10-17T04:38:44.709Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Implement tag use cases, DTOs, routes, and sitemap (R1, R2, R5)",
         "description": "Create GetBlogTags and ListBlogPostsByTag use cases with BlogTagDTO, add tag path helpers, extend breadcrumbs for tags, create /blog/tags index and /blog/tags/[tag] pages with metadata and JSON-LD, and add tag URLs to sitemap.",
         "details": "**Application layer** (packages/application/src/blog/):\n\n1. **BlogTagDTO.ts**:\n```ts\nexport interface BlogTagDTO {\n  tag: string;\n  count: number;\n}\n```\n\n2. **GetBlogTags.ts**:\n```ts\nclass GetBlogTags extends UseCase<{ locale: Locale }, BlogTagDTO[]> {\n  async execute({ locale }): Promise<Either<DomainError, BlogTagDTO[]>> {\n    // Fetch all posts via repository\n    // Filter with publishedOnly()\n    // Count tags: Map<string, number>\n    // Sort by count DESC, tag ASC\n    // Return BlogTagDTO[]\n    // Handle repository errors → left(DomainError(FETCH_FAILED))\n  }\n}\n```\n\n3. **ListBlogPostsByTag.ts**:\n```ts\nclass ListBlogPostsByTag extends UseCase<\n  { tag: string; locale: Locale },\n  BlogPostSummaryDTO[],\n  ValidationError | DomainError\n> {\n  async execute({ tag, locale }): Promise<Either<ValidationError | DomainError, BlogPostSummaryDTO[]>> {\n    // Validate tag with Tag.create() → left(ValidationError) if invalid\n    // Fetch all posts, publishedOnly(), filter by tag, newestFirst()\n    // Map to toBlogPostSummaryDTO()\n    // Return [] if no posts (page handles notFound())\n  }\n}\n```\n\n4. Export from `dtos/index.ts` and `use-cases/index.ts`\n\n**Site layer** (apps/site/):\n\n5. **features/blog/paths.ts**:\n```ts\nexport const blogTagsPath = () => '/blog/tags';\nexport const blogTagPath = (tag: string) => `/blog/tags/${tag}`;\n```\n\n6. **features/blog/buildBlogBreadcrumbs.ts**:\n- Extend `BlogBreadcrumbsTarget` union: `| { tag: string }`\n- Add tag case in `trailSteps()`: Home › Blog › Tags › #tag\n\n7. **app/[locale]/blog/tags/page.tsx**:\n```ts\n// Static params: LOCALES\n// Fetch GetBlogTags\n// Metadata: title \"Tags\", buildAlternates, buildOpenGraph\n// Breadcrumbs: Home › Blog › Tags (visible + JSON-LD)\n// Render: h1 \"Tags\", map tags to Link(blogTagPath(tag)) + count badge\n```\n\n8. **app/[locale]/blog/tags/[tag]/page.tsx**:\n```ts\n// generateStaticParams: LOCALES × GetBlogTags tags\n// dynamicParams = false\n// Fetch ListBlogPostsByTag, notFound() if left or []\n// Metadata: title \"Posts tagged #{tag}\", i18n description, buildAlternates, buildOpenGraph\n// Breadcrumbs: Home › Blog › Tags › #tag\n// Render: h1 \"#{tag}\", count badge, map posts to PostCard\n```\n\n9. **app/sitemap.ts**:\n- Fetch GetBlogTags\n- Add `/blog/tags` (3 locales) and each tag page (3 locales × 13 tags = 39) to sitemap\n- Priority: 0.5\n\n10. **i18n messages** (en-US/pt-BR/es.json):\n- `Blog.tags`, `Blog.tagHeading`, `Metadata.BlogTagsPage.{title,description}`, `Metadata.BlogTagPage.{title,description}`",
@@ -9410,7 +9410,7 @@
         "updatedAt": "2026-10-17T06:22:29.437Z"
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Add tag links to post header, trending tags, post count badge, and archive nav to listing (R6, R7)",
         "description": "Make post header tags clickable, create TrendingTags component showing top 8 tags with counts and 'All tags' link, add total post count badge to listing header, create ArchiveNav component with year links and counts, and reorganize listing page into sections.",
         "details": "**Site components** (apps/site/src/features/blog/):\n\n1. **TagLink/index.tsx** (new):\n```tsx\n// Renders a tag as a Link to blogTagPath(tag)\n// Props: { tag: string; showCount?: boolean; count?: number }\n// Style: badge look (existing), visible hover/focus state\n// Count badge: reuse archivePostCount i18n plural\n```\n\n2. **PostHeader/index.tsx** (update):\n```tsx\n// Replace plain tag badges with TagLink components\n// Map tags to <TagLink tag={tag} /> with no count\n// Preserve existing badge visual style\n```\n\n3. **TrendingTags/index.tsx** (new):\n```tsx\n// Props: { tags: BlogTagDTO[]; labels: { trending: string; allTags: string } }\n// Render nothing if tags.length === 0\n// <section aria-labelledby=\"trending-tags\">\n//   <h2 id=\"trending-tags\">{labels.trending}</h2>\n//   {tags.slice(0, 8).map(t => <TagLink tag={t.tag} count={t.count} showCount />)}\n//   <Link href={blogTagsPath()}>{labels.allTags}</Link>\n// </section>\n```\n\n4. **ArchiveNav/index.tsx** (new):\n```tsx\n// Props: { archive: BlogArchiveDTO[]; labels: { archive: string } }\n// <section aria-labelledby=\"archive\">\n//   <h2 id=\"archive\">{labels.archive}</h2>\n//   {archive.map(({ year, months }) => {\n//     const count = months.reduce((sum, m) => sum + m.postCount, 0);\n//     return <Link href={blogArchivePath(year)}>{year} ({count})</Link>;\n//   })}\n// </section>\n```\n\n5. **app/[locale]/blog/page.tsx** (update):\n```tsx\n// Fetch in Promise.all: ListBlogPosts, GetBlogTags, ListBlogArchive\n// Add count badge to header: \"{posts.length} {t('Blog.postCount')}\"\n// Sections in order:\n//   1. Header (title, subtitle, count badge)\n//   2. FeaturedPosts (slice 4, implemented next)\n//   3. TrendingTags (first 8 tags, \"All tags\" link)\n//   4. <section aria-labelledby=\"all-posts\"><h2>All posts</h2>{/* existing list */}</section>\n//   5. ArchiveNav\n```\n\n6. **i18n messages**:\n- `Blog.trendingTags`, `Blog.allTags`, `Blog.allPosts`, `Blog.archive`\n- Reuse existing `Blog.archivePostCount` for count badges\n\n**PostCard constraint**: Tags stay plain text (no links) because the whole card is a `<Link>` (no nested `<a>`).",
@@ -9513,7 +9513,7 @@
         "updatedAt": "2026-10-17T06:54:58.965Z"
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Implement featured posts use case and FeaturedPosts component (R4, R7)",
         "description": "Create ListFeaturedBlogPosts use case with a default limit of 2, create FeaturedPosts component rendering featured posts in a two-column grid, and integrate it into the listing page between header and trending tags.",
         "details": "**Application layer** (packages/application/src/blog/):\n\n1. **ListFeaturedBlogPosts.ts**:\n```ts\nconst DEFAULT_FEATURED_LIMIT = 2; // Named constant\n\nclass ListFeaturedBlogPosts extends UseCase<\n  { locale: Locale; limit?: number },\n  BlogPostSummaryDTO[]\n> {\n  async execute({ locale, limit = DEFAULT_FEATURED_LIMIT }): Promise<Either<DomainError, BlogPostSummaryDTO[]>> {\n    // Fetch all posts via repository\n    // Filter: publishedOnly() then .filter(p => p.featured)\n    // Sort: newestFirst()\n    // Slice: .slice(0, limit)\n    // Map: toBlogPostSummaryDTO()\n    // Handle repository errors → left(DomainError(FETCH_FAILED))\n  }\n}\n```\n\n2. Export from `use-cases/index.ts`\n\n**Site layer** (apps/site/):\n\n3. **features/blog/FeaturedPosts/index.tsx**:\n```tsx\n// Props: { posts: BlogPostSummaryDTO[]; label: string }\n// Render nothing if posts.length === 0\n// <section aria-labelledby=\"featured-posts\">\n//   <h2 id=\"featured-posts\">{label}</h2>\n//   <div className=\"grid md:grid-cols-2 gap-6\">\n//     {posts.map(post => <PostCard key={post.slug} post={post} />)}\n//   </div>\n// </section>\n```\n\n4. **app/[locale]/blog/page.tsx** (update):\n```tsx\n// Add ListFeaturedBlogPosts to Promise.all fetch (limit=2)\n// Insert FeaturedPosts section between header and TrendingTags:\n//   1. Header (title, subtitle, count badge)\n//   2. <FeaturedPosts posts={featured} label={t('Blog.featured')} />\n//   3. TrendingTags\n//   4. All posts section (includes featured posts too)\n//   5. ArchiveNav\n```\n\n5. **i18n messages**:\n- `Blog.featured` (en-US: \"Featured\", pt-BR: \"Em Destaque\", es: \"Destacados\")\n\n**Design note**: Featured posts appear in BOTH the band and the \"All posts\" list, keeping the list as the complete chronological index.",
@@ -9578,7 +9578,7 @@
         "updatedAt": "2026-10-17T07:45:05.120Z"
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Implement related posts ranking, use case, and RelatedPosts component (R3, R8)",
         "description": "Create rank-related ranking function, ListRelatedBlogPosts use case with default limit of 3, create RelatedPosts component, and integrate 'Further reading' section on post pages between author byline and prev/next nav.",
         "details": "**Application layer** (packages/application/src/blog/):\n\n1. **rank-related.ts** (pure function):\n```ts\nconst DEFAULT_RELATED_LIMIT = 3; // Named constant\n\n/**\n * Ranks posts by shared tags, newest first, excluding the post itself.\n * @param target - The post to find related posts for\n * @param candidates - All published posts\n * @param limit - Max posts to return (default 3)\n * @returns Posts with ≥1 shared tag, ranked by shared count DESC then publishedAt DESC\n */\nexport function rankRelated(\n  target: BlogPost,\n  candidates: BlogPost[],\n  limit = DEFAULT_RELATED_LIMIT\n): BlogPost[] {\n  const targetTags = new Set(target.tags.map(t => t.value));\n  \n  // Filter: exclude self, ≥1 shared tag\n  const related = candidates\n    .filter(p => p.slug.value !== target.slug.value)\n    .map(p => ({\n      post: p,\n      sharedCount: p.tags.filter(t => targetTags.has(t.value)).length,\n    }))\n    .filter(({ sharedCount }) => sharedCount > 0);\n  \n  // Sort: sharedCount DESC, then publishedAt DESC (newest first)\n  related.sort((a, b) => {\n    if (a.sharedCount !== b.sharedCount) return b.sharedCount - a.sharedCount;\n    return BlogPost.compareByPublication(b.post, a.post);\n  });\n  \n  return related.slice(0, limit).map(({ post }) => post);\n}\n```\n\n2. **ListRelatedBlogPosts.ts**:\n```ts\nclass ListRelatedBlogPosts extends UseCase<\n  { slug: string; locale: Locale; limit?: number },\n  BlogPostSummaryDTO[],\n  NotFoundError | ValidationError | DomainError\n> {\n  async execute({ slug, locale, limit }): Promise<Either<...>> {\n    // Validate slug with Slug.create() → left(ValidationError)\n    // Fetch all posts\n    // Find target post by slug, unpublished/unknown → left(NotFoundError)\n    // Filter publishedOnly()\n    // Rank with rankRelated(target, published, limit)\n    // Map toBlogPostSummaryDTO()\n    // Return [] if no shared tags (section not rendered)\n  }\n}\n```\n\n3. Export from `use-cases/index.ts`\n\n**Site layer** (apps/site/):\n\n4. **features/blog/RelatedPosts/index.tsx**:\n```tsx\n// Props: { posts: BlogPostSummaryDTO[]; label: string }\n// Render nothing if posts.length === 0\n// <section aria-labelledby=\"related-posts\">\n//   <h2 id=\"related-posts\">{label}</h2>\n//   <ul>\n//     {posts.map(post => (\n//       <li key={post.slug}>\n//         <Link href={blogPostPath(post.publishedAt, post.slug)}>\n//           <h3>{post.title}</h3>\n//           <PostMeta publishedAt={post.publishedAt} readingMinutes={post.readingMinutes} compact />\n//         </Link>\n//       </li>\n//     ))}\n//   </ul>\n// </section>\n// Compact link format: title + date + reading time, like PostMeta\n```\n\n5. **app/[locale]/blog/[year]/[month]/[slug]/page.tsx** (update):\n```tsx\n// Add ListRelatedBlogPosts to existing Promise.all (with slug, locale)\n// Insert <RelatedPosts posts={related} label={t('Blog.furtherReading')} />\n// Position: after AuthorByline, before PrevNextNav\n```\n\n6. **i18n messages**:\n- `Blog.furtherReading` (en-US: \"Further reading\", pt-BR: \"Leitura adicional\", es: \"Lectura adicional\")",
@@ -9666,7 +9666,7 @@
         "updatedAt": "2026-10-17T18:03:02.590Z"
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Polish prev/next navigation and perform final integration checks (R9)",
         "description": "Update PrevNextNav to show direction arrows, target post dates, rel attributes, and use CSS Grid instead of spacer elements. Run full build, verify all 42 tag pages prerender, and manually verify all Phase 5B features in both themes and two locales.",
         "details": "**Site layer** (apps/site/):\n\n1. **features/blog/PrevNextNav/index.tsx** (update):\n```tsx\n// Props: { newer?: BlogPostLinkDTO; older?: BlogPostLinkDTO; labels: { newer: string; older: string } }\n// Each link shows:\n//   - Arrow icon: material-symbols:arrow-back (newer), arrow-forward (older)\n//   - Label: \"Newer\" / \"Older\"\n//   - Target post title\n//   - Target post date: <time dateTime={publishedAt}>{formatDate(publishedAt, locale)}</time>\n// Attributes:\n//   - Newer: rel=\"prev\"\n//   - Older: rel=\"next\"\n// Layout:\n//   - Remove hidden <span> spacers\n//   - CSS Grid: `grid grid-cols-1 sm:grid-cols-2 gap-4`\n//   - Older link: `sm:col-start-2` (right column when alone)\n// BlogPostLinkDTO already has publishedAt, no DTO change needed\n```\n\n2. **Integration and manual verification**:\n\n**Build verification**:\n```bash\npnpm --filter site build\n# Verify output:\n# - 42 tag pages: 3 locales × (1 /blog/tags + 13 /blog/tags/{tag}) = 42\n# - 12 post pages: 3 locales × 4 new posts = 12\n# - 3 new archive pages: 3 locales × 1 month (2026-10) = 3\n# - No build errors, all pages prerendered\n```\n\n**Type and lint checks**:\n```bash\npnpm -w types   # TypeScript strict mode, no errors\npnpm -w lint    # ESLint clean\npnpm --filter @repo/application test  # All use case tests pass\npnpm --filter site test                # All site tests pass\n```\n\n**Manual browser checks** (both light/dark themes, en-US + pt-BR):\n\n1. **Listing page** (`/blog`):\n   - Header shows \"8 posts\"\n   - Featured section: 2 posts in two columns (Post D + another featured)\n   - Trending tags: 8 tags with counts + \"All tags\" link\n   - \"All posts\": all 8 posts including featured ones\n   - Archive nav: \"2026 (8 posts)\"\n\n2. **Tag index** (`/blog/tags`):\n   - Lists 13 tags with counts\n   - Breadcrumbs: Home › Blog › Tags\n\n3. **Tag page** (`/blog/tags/clean-architecture`):\n   - Heading \"#clean-architecture\", count badge\n   - Lists posts with that tag\n   - Breadcrumbs: Home › Blog › Tags › #clean-architecture\n   - Metadata: title, description, canonical, hreflang\n\n4. **Post page** (Post D):\n   - Tag links in header → tag pages\n   - \"Further reading\": 3 related posts (compact format: title, date, reading time)\n   - Prev/next: arrows, labels, titles, dates, rel attributes\n   - Layout: lone \"older\" link stays on right\n\n5. **Post A special checks**:\n   - TOC nests h3 headings under h2\n   - Diff fence: `[!code ++]` / `[!code --]` renders added/removed lines\n\n6. **Post C special checks**:\n   - Line highlights: `{n}` syntax highlights specified lines\n\n7. **Keyboard navigation**:\n   - Tab through all new links: tag links, trending tags, archive nav, related posts, prev/next\n   - Verify focus rings visible on every interactive element\n\n8. **Sitemap**:\n```bash\ncurl http://localhost:3000/sitemap.xml | grep '/tags'\n# Verify 42 tag URLs (3 locales × 14 tag pages)\n```\n\n**File size compliance**:\n- Verify no file exceeds 200 lines (use `wc -l` on new files)\n\n**No forbidden imports**:\n- Grep for `'use client'` files importing `@repo/application` → should be 0\n- Verify no changes to `packages/core` code or Prisma schema (only seed data)",
@@ -9761,7 +9761,10 @@
       "completedCount": 6,
       "tags": [
         "blog-v2-phase-5b"
-      ]
+      ],
+      "created": "2026-10-19T04:31:28.024Z",
+      "description": "Tasks for blog-v2-phase-5b context",
+      "updated": "2026-10-19T04:31:28.024Z"
     }
   },
   "blog-v2-phase-5c": {
@@ -10072,6 +10075,31 @@
       "created": "2026-10-18T20:24:35.961Z",
       "updated": "2026-10-18T20:24:35.961Z",
       "description": "Tasks for blog-v2-phase-5c context"
+    }
+  },
+  "blog-launch": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Publish first real post: Studio Mir digital experience",
+        "description": "Seed the Studio Mir article (pt-BR original + en-US/es translations) with optimized figures uploaded to Supabase storage",
+        "details": "",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2026-10-19T04:41:55.109Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-10-19T04:41:55.109Z",
+      "taskCount": 1,
+      "completedCount": 1,
+      "tags": [
+        "blog-launch"
+      ]
     }
   }
 }
