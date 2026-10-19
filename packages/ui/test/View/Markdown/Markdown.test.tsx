@@ -138,6 +138,14 @@ describe('Markdown', () => {
     expect(screen.getByText('After')).toBeInTheDocument();
   });
 
+  it('should lazy-load and async-decode images when the content has an image', async () => {
+    await renderMarkdown('![A figure](https://example.com/figure.webp)');
+
+    const image = screen.getByRole('img', { name: 'A figure' });
+    expect(image).toHaveAttribute('loading', 'lazy');
+    expect(image).toHaveAttribute('decoding', 'async');
+  });
+
   it('should drop the href when a link uses the javascript: protocol', async () => {
     await renderMarkdown('[click me](javascript:alert(1))');
 
