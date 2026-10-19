@@ -10090,13 +10090,25 @@
         "priority": "high",
         "subtasks": [],
         "updatedAt": "2026-10-19T04:41:55.109Z"
+      },
+      {
+        "id": "2",
+        "title": "Lazy-load and async-decode Markdown images",
+        "description": "Add loading=lazy and decoding=async to every Markdown img via a post-sanitize rehype plugin",
+        "details": "",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2026-10-19T04:46:35.460Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-19T04:41:55.109Z",
-      "taskCount": 1,
-      "completedCount": 1,
+      "lastModified": "2026-10-19T04:46:35.460Z",
+      "taskCount": 2,
+      "completedCount": 2,
       "tags": [
         "blog-launch"
       ]
