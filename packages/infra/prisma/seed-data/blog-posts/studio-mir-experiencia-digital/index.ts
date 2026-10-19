@@ -34,9 +34,9 @@ export const studioMirExperienciaDigital: BlogPostSeed = {
   thumbnailImage: {
     url: FIGURE.thumbnail,
     alt: loc(
-      "Thumbnails from Studio Mir's portfolio",
-      'Miniaturas do portfólio do Studio Mir',
-      'Miniaturas del portafolio de Studio Mir',
+      "A 7952 × 5304 image shown at 566 × 283, over Studio Mir's blurred portfolio",
+      'Uma imagem de 7952 × 5304 exibida em 566 × 283, sobre o portfólio desfocado do Studio Mir',
+      'Una imagen de 7952 × 5304 mostrada en 566 × 283, sobre el portafolio desenfocado de Studio Mir',
     ),
   },
 };

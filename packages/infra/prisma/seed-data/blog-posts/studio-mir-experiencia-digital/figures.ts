@@ -4,7 +4,7 @@ const BASE =
 /** Public URLs of the post's images in Supabase storage, shared by every locale. */
 export const FIGURE = {
   cover: `${BASE}/cover.webp`,
-  thumbnail: `${BASE}/thumbnail.webp`,
+  thumbnail: `${BASE}/thumbnail-v3.webp`,
   homeLoad: `${BASE}/fig-1-home-load.gif`,
   oversizedImage: `${BASE}/fig-2-oversized-image.webp`,
   portfolioGrid: `${BASE}/fig-3-portfolio-grid.webp`,
