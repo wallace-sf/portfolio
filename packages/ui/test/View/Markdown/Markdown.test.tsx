@@ -177,6 +177,33 @@ describe('Markdown', () => {
     );
   });
 
+  it('should link each h2 and h3 to its own id when the content has headings', async () => {
+    await renderMarkdown(
+      ['## Why Either?', '', '### The `Left` side'].join('\n'),
+    );
+
+    expect(screen.getByRole('link', { name: 'Why Either?' })).toHaveAttribute(
+      'href',
+      '#why-either',
+    );
+    expect(screen.getByRole('link', { name: 'The Left side' })).toHaveAttribute(
+      'href',
+      '#the-left-side',
+    );
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Why Either?' }),
+    ).toBeInTheDocument();
+  });
+
+  it('should not link headings deeper than h3 when the content has them', async () => {
+    await renderMarkdown('#### Fine print');
+
+    expect(
+      screen.getByRole('heading', { level: 4, name: 'Fine print' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+  });
+
   it('should suffix the id when two headings share the same text', async () => {
     await renderMarkdown(['## Usage', '', '## Usage'].join('\n'));
 

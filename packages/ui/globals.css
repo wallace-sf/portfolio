@@ -3,6 +3,7 @@
    (generated: pnpm --filter @repo/ui generate:markdown-theme). */
 @import 'github-markdown-css/github-markdown.css';
 @import './markdown-theme.css';
+@import './markdown-headings.css';
 
 /* Override github-markdown colors to use the design system tokens */
 .markdown-body {
@@ -18,26 +19,6 @@
 
 .markdown-body ol {
   list-style-type: decimal;
-}
-
-.markdown-body h2 {
-  color: rgb(var(--tw-brand-accent));
-}
-
-.markdown-body h3 {
-  color: rgb(var(--tw-brand-primary));
-}
-
-/* Heading anchors (#id from the TOC) land below the fixed mobile header; on
-   lg+ the navigation is a sidebar, so only breathing room is needed. */
-.markdown-body :is(h2, h3) {
-  scroll-margin-top: calc(var(--header-height-mobile) + 1rem);
-}
-
-@media (min-width: 1024px) {
-  .markdown-body :is(h2, h3) {
-    scroll-margin-top: 1.5rem;
-  }
 }
 
 .markdown-body a {
@@ -58,14 +39,6 @@
 }
 
 /* Light mode overrides */
-.light .markdown-body h2 {
-  color: rgb(var(--tw-brand-primary));
-}
-
-.light .markdown-body h3 {
-  color: rgb(var(--tw-brand-primary));
-}
-
 .light .markdown-body a {
   color: rgb(var(--tw-brand-primary));
   text-decoration-color: rgb(var(--tw-brand-primary) / 0.4);

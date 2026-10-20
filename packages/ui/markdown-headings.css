@@ -1,0 +1,57 @@
+/* Markdown h2/h3: design-token colours, scroll offset for #id targets, and the
+   self-link that rehypeHeadingAnchors wraps around each heading's text. */
+.markdown-body h2 {
+  color: rgb(var(--tw-brand-accent));
+}
+
+.markdown-body h3 {
+  color: rgb(var(--tw-brand-primary));
+}
+
+.light .markdown-body h2 {
+  color: rgb(var(--tw-brand-primary));
+}
+
+.light .markdown-body h3 {
+  color: rgb(var(--tw-brand-primary));
+}
+
+/* Heading anchors (#id from the TOC) land below the fixed mobile header; on
+   lg+ the navigation is a sidebar, so only breathing room is needed. */
+.markdown-body :is(h2, h3) {
+  scroll-margin-top: calc(var(--header-height-mobile) + 1rem);
+}
+
+@media (min-width: 1024px) {
+  .markdown-body :is(h2, h3) {
+    scroll-margin-top: 1.5rem;
+  }
+}
+
+/* The self-link reads as the heading, not as a body link (the selector
+   outranks `.light .markdown-body a`). A trailing "#" hints at it on hover and
+   focus, always on touch screens; `/ ''` keeps it out of the accessible name
+   (the plain `content` is the fallback where alt text is unsupported). */
+.markdown-body :is(h2, h3) > a.heading-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.markdown-body :is(h2, h3) > a.heading-anchor::after {
+  content: '#';
+  content: '#' / '';
+  margin-inline-start: 0.375em;
+  color: rgb(var(--tw-content-muted));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.markdown-body :is(h2, h3) > a.heading-anchor:is(:hover, :focus-visible)::after {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .markdown-body :is(h2, h3) > a.heading-anchor::after {
+    opacity: 0.6;
+  }
+}

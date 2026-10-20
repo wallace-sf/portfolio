@@ -39,6 +39,7 @@
   "files": [
     "dist/",
     "globals.css",
+    "markdown-headings.css",
     "markdown-theme.css"
   ],
   "scripts": {
