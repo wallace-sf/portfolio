@@ -2,153 +2,73 @@ import { FIGURE } from './figures';
 
 export const content = `## Todo empezó con Devil May Cry
 
-Siempre he sido fan de *Devil May Cry*.
+Hola a todos. Esta es la primera publicación de este blog recién creado. La idea es compartir aquí experiencias de mi día a día profesional, esas cosas que se me quedan en la cabeza pero que no le cuento a nadie. Este blog va a ser la forma en que esos pensamientos y reflexiones salgan al mundo.
 
-Para quien no la conozca, es una franquicia de videojuegos de Capcom conocida por su combate frenético, sus personajes memorables y una identidad visual muy particular. Cuando Netflix lanzó una adaptación animada, naturalmente me interesó.
+Siempre fui fan de *Devil May Cry* y jugué los tres primeros juegos de la saga en la PlayStation 2 (lamentablemente no tuve la PlayStation 3 ni las consolas siguientes para jugar los demás). Para quien no la conozca, es una saga de juegos de Capcom conocida por su combate frenético, sus personajes memorables y una identidad visual muy particular. Cuando Netflix lanzó una adaptación animada, me interesó de inmediato, sobre todo porque ya había visto el anime de Madhouse de 2007.
 
-Después de verla, la curiosidad me llevó a investigar quién estaba detrás de la producción.
+Después de verla, la curiosidad me llevó a investigar quién estaba detrás de la producción. Así llegué a **Studio Mir**, un estudio de animación surcoreano responsable de trabajos como *The Legend of Korra*, *The Witcher: Nightmare of the Wolf* y *X-Men '97*.
 
-Así llegué a **Studio Mir**, un estudio de animación surcoreano responsable de trabajos como *The Legend of Korra*, *The Witcher: Nightmare of the Wolf* y *X-Men '97*.
+Mi objetivo era simple: conocer mejor el estudio y descubrir qué otras animaciones de calidad habían hecho. Era muy posible que ya hubiera visto alguna sin saberlo, y eso fue lo que pasó: *The Legend of Korra* es suya. No estaba buscando problemas técnicos ni pensaba evaluar el sitio web. Solo quería conocer el trabajo de una empresa que había despertado mi admiración.
 
-Mi objetivo era sencillo: conocer mejor el estudio, descubrir otras producciones y explorar su portafolio.
+Pero, al entrar en el sitio, algo me llamó la atención y, por ser ingeniero de software, ya no pude concentrarme en lo demás. Algunas imágenes tardaban bastante en cargar, otras no parecían respetar sus proporciones y la presentación del portafolio, aunque visualmente interesante, me pareció limitada.
 
-No estaba buscando problemas técnicos. Tampoco pretendía evaluar el sitio web.
-
-Solo quería conocer el trabajo de una empresa que se había ganado mi admiración.
-
-Pero, al entrar en el sitio, algo me llamó la atención.
-
-Algunas imágenes tardaban bastante en cargar. Otras no parecían respetar adecuadamente sus proporciones. La presentación del portafolio, aunque visualmente interesante, también me pareció limitada.
-
-Como desarrollador de software, mi primera reacción fue intentar entender qué estaba pasando.
-
-¿Serían imágenes demasiado grandes? ¿Problemas de infraestructura? ¿Alguna decisión de implementación?
-
-Sin embargo, tras unos instantes, empezó a surgir una pregunta más interesante.
+Mi primera reacción fue intentar entender qué estaba pasando. ¿Serían imágenes demasiado grandes? ¿Problemas de infraestructura? ¿Alguna decisión de implementación? Cuando entiendes del tema, te quedas cuestionando los detalles (¿un hábito bueno o malo?). Sin embargo, después de unos instantes, surgió una pregunta más interesante:
 
 **¿Cuánto puede perjudicar una mala experiencia digital la forma en que percibimos a una empresa, incluso cuando su trabajo es excepcional?**
 
 ## La primera impresión también forma parte de la experiencia
 
-Imagina descubrir un estudio de animación después de ver una producción que te gustó mucho.
+Imagina descubrir un estudio de animación después de ver una producción que te gustó mucho. Buscas el nombre de la empresa, encuentras su sitio web y entras esperando conocer otros trabajos. Pero, antes de ver cualquier contenido, tienes que esperar, y seguir esperando. Algo así me pasó cuando visité el sitio de Studio Mir.
 
-Buscas el nombre de la empresa, encuentras su sitio web y abres la página esperando conocer otros trabajos.
+Antes de investigar a fondo, eché un vistazo rápido a los sitios de competidores de Studio Mir, como Madhouse y MAPPA. Son dos estudios de primer nivel, responsables de animes famosos como *Death Note*, *One Punch Man*, *Attack on Titan* y *Jujutsu Kaisen*. Los dos presentaban sus trabajos de forma coherente y organizada (aunque noté algunos problemas de rendimiento en el sitio de MAPPA), algo que no encontré en Studio Mir.
 
-Pero, antes de encontrar cualquier contenido, tienes que esperar.
+Para entender mejor lo que pasaba, hice una investigación con herramientas de auditoría y grabaciones automatizadas del navegador. En una de las grabaciones, hecha el 18 de octubre de 2026 desde Brasil, la página de inicio permaneció completamente en blanco durante unos **14,3 segundos en escritorio**. En una ejecución móvil, fueron **7,9 segundos**.
 
-Y seguir esperando.
+Estos números no representan necesariamente la experiencia de todos los visitantes. Fueron observaciones puntuales, con la caché vacía y sin limitación artificial de red, y otras condiciones de conexión, ubicación e infraestructura pueden dar resultados diferentes. Aun así, las grabaciones muestran una experiencia muy lejana a lo que se espera de un portafolio visual.
 
-Algo parecido me pasó cuando visité el sitio de Studio Mir.
-
-Para entender mejor el comportamiento, decidí hacer una investigación con herramientas de auditoría y grabaciones automatizadas del navegador.
-
-En una de las grabaciones, realizada el 18 de octubre de 2026 desde Brasil, la página de inicio se quedó completamente en blanco durante aproximadamente **14,3 segundos en escritorio**. En una ejecución móvil, fueron **7,9 segundos**.
-
-Estas cifras no representan necesariamente la experiencia de todos los visitantes. Fueron observaciones puntuales, con caché vacía y sin limitación artificial de red. Otras condiciones de conexión, ubicación e infraestructura pueden producir resultados diferentes.
-
-Aun así, las grabaciones documentan una experiencia bastante alejada de lo que se espera al visitar un portafolio visual.
-
-![Grabación de la carga de la página de inicio de Studio Mir en escritorio: la página permanece en blanco durante varios segundos antes de mostrar contenido](${FIGURE.homeLoad})
+![Grabación de la carga de la página de inicio de Studio Mir en escritorio: la página permanece en blanco durante varios segundos antes de mostrar el contenido](${FIGURE.homeLoad})
 
 *Grabación del 18/10/2026, realizada desde Brasil, a velocidad real. El GIF muestra un fragmento de la navegación original; el cronómetro indica el tiempo transcurrido desde el inicio del acceso.*
 
-Hay una diferencia entre saber que una página es lenta y vivir esa lentitud.
+Hay una diferencia entre saber que una página es lenta y vivir esa lentitud. Para quien desarrolla software, unos segundos pueden ser solo una métrica más. Para quien navega, son segundos en los que no pasa nada: no aparece ningún trabajo ni se muestra ninguna información. Y el visitante no debería tener que entender los motivos técnicos para ver el contenido que vino a buscar.
 
-Para quien desarrolla software, unos segundos pueden parecer solo una métrica más.
+## El peso de las imágenes
 
-Para quien navega, son segundos en los que no pasa nada.
+Quizá lo más curioso de la investigación sea que uno de los mayores problemas involucra justamente las imágenes. En un estudio de animación, el contenido visual es parte central de lo que ofrece la empresa: las imágenes presentan personajes, estilos y producciones, y es a través de ellas que el visitante reconoce la calidad del trabajo. Cuando esos archivos no se entregan de forma adecuada, acaban estorbando la experiencia que deberían enriquecer.
 
-No aparece ningún trabajo. No se presenta ninguna información. No se cumple ninguna expectativa.
+El ejemplo más claro fue una imagen JPEG de unos **12,6 MB**, de 7952 × 5304 píxeles, usada en un área de solo 566 × 283 píxeles. Son más de 42 millones de píxeles para llenar un espacio pequeño de la interfaz. También encontré miniaturas del portafolio con archivos de casi 4 MB cada una.
 
-Y el visitante no debería necesitar entender los motivos técnicos para poder explorar el contenido que buscaba.
-
-## La paradoja de las imágenes
-
-Quizá el aspecto más curioso de esta investigación es que uno de los mayores problemas encontrados tiene que ver precisamente con las imágenes.
-
-En un estudio de animación, el contenido visual no es solo un elemento decorativo. Es una parte esencial de lo que la empresa ofrece.
-
-Las imágenes presentan personajes, estilos artísticos, producciones y capacidades creativas. Son ellas las que permiten al visitante reconocer la calidad del trabajo.
-
-Pero, cuando estos recursos no se entregan adecuadamente, pueden acabar perjudicando la misma experiencia que deberían enriquecer.
-
-Durante la auditoría, encontramos un ejemplo significativo.
-
-Una imagen JPEG de aproximadamente **12,6 MB**, con una resolución de 7952 × 5304 píxeles, se usaba en un área visual de apenas 566 × 283 píxeles.
-
-Para ponerlo en perspectiva, hablamos de una imagen con más de 42 millones de píxeles ocupando un espacio relativamente pequeño de la interfaz.
-
-También encontramos miniaturas del portafolio con archivos cercanos a 4 MB cada una.
-
-No se trata de defender imágenes de baja calidad. Especialmente en un portafolio artístico, preservar la fidelidad visual es importante.
-
-La cuestión es que calidad y eficiencia no tienen por qué ser objetivos opuestos.
-
-Las imágenes pueden redimensionarse, comprimirse y entregarse en formatos adecuados, teniendo en cuenta distintos dispositivos y resoluciones.
-
-El navegador no necesita descargar la misma imagen gigantesca para mostrarla en una pequeña zona de la pantalla.
-
-![Página de inicio de Studio Mir con el área de 566 × 283 píxeles resaltada, todavía cargándose parcialmente, donde se muestra la imagen original de 7952 × 5304 píxeles y 12,6 MB](${FIGURE.oversizedImage})
+![Página de inicio de Studio Mir con el área de 566 × 283 píxeles resaltada, todavía parcialmente cargada, donde se muestra la imagen original de 7952 × 5304 píxeles y 12,6 MB](${FIGURE.oversizedImage})
 
 *Ejemplo observado en la auditoría del 18/10/2026. La imagen original tenía 7952 × 5304 píxeles y aproximadamente 12,6 MB, aunque se mostraba en una región de 566 × 283 píxeles.*
 
-Este problema ilustra algo mayor.
+En un portafolio artístico, preservar la fidelidad visual es importante, y nadie está pidiendo imágenes de baja calidad. Calidad y eficiencia pueden ir de la mano: las imágenes pueden redimensionarse, comprimirse y entregarse en formatos y resoluciones adecuados a cada dispositivo. El navegador no necesita descargar la misma imagen gigantesca para mostrarla en una pequeña área de la pantalla.
 
-Una decisión aparentemente técnica, como la forma de entregar una imagen, puede influir directamente en el acceso de las personas al contenido de una empresa.
+Una decisión aparentemente técnica, como la forma de entregar una imagen, puede afectar directamente el acceso de las personas al contenido de una empresa. Y cuando ese contenido es justamente lo que demuestra la calidad del negocio, el efecto es aún mayor.
 
-Y, cuando ese contenido es precisamente lo que demuestra la calidad del negocio, esa relación se vuelve todavía más relevante.
+## Un portafolio difícil de explorar y de compartir
 
-## Un portafolio no es solo una galería
-
-Hay otro aspecto que considero importante.
-
-Cuando por fin conseguimos ver los trabajos de Studio Mir, encontramos un portafolio visualmente sólido.
-
-Son producciones reconocidas, personajes familiares y proyectos que ayudan a demostrar la relevancia del estudio en la industria de la animación.
-
-La organización en cuadrícula funciona bien visualmente, y las imágenes consiguen transmitir la diversidad de los trabajos.
-
-Pero un portafolio profesional tiene que hacer más que mostrar imágenes bonitas.
-
-También tiene que ayudar a las personas a entender, descubrir y compartir el trabajo.
-
-Durante el análisis, encontramos 25 elementos en el portafolio. Los títulos aparecían al pasar el cursor del ratón sobre las imágenes.
-
-En dispositivos móviles, donde esa interacción no existe de la misma manera, los títulos no estaban disponibles en la cuadrícula.
-
-También observamos que los proyectos no tenían direcciones individuales que se pudieran compartir directamente.
-
-Imagina encontrar una producción interesante y querer enviársela a un colega.
-
-En lugar de compartir un enlace específico de ese proyecto, tienes que dirigir a la persona al portafolio y esperar que encuentre el mismo contenido.
-
-Puede parecer un detalle menor.
-
-Pero es justamente a través de estas interacciones que un portafolio deja de ser solo una colección de trabajos y pasa a funcionar como una herramienta de comunicación.
+Cuando el portafolio por fin aparece, es visualmente fuerte. Son producciones reconocidas y personajes conocidos que muestran la relevancia del estudio en la industria de la animación, y la cuadrícula transmite bien la variedad de sus trabajos.
 
 ![Cuadrícula del portafolio de Studio Mir con miniaturas de producciones como Devil May Cry, X-Men '97, The Witcher: Nightmare of the Wolf y Dota: Dragon's Blood](${FIGURE.portfolioGrid})
 
-*El portafolio reúne producciones reconocidas internacionalmente y presenta una organización visual atractiva.*
+*El portafolio reúne producciones reconocidas internacionalmente en una cuadrícula visualmente atractiva.*
+
+Pero un portafolio profesional también necesita ayudar a las personas a entender, descubrir y compartir el trabajo. En el sitio de MAPPA, por ejemplo, las producciones están organizadas por año, de la más reciente a la más antigua, y eso, junto con una buena presentación artística, me dio ganas de ir recorriendo año por año para conocerlo todo. No sentí eso en el portafolio de Studio Mir.
+
+El portafolio tenía 25 elementos, y los títulos solo aparecían al pasar el cursor sobre las imágenes. En celulares, donde esa interacción no funciona igual, los títulos no estaban disponibles en la cuadrícula.
 
 ![Comparación lado a lado: en escritorio, el título del proyecto aparece sobre la miniatura al pasar el cursor; en móvil, la misma miniatura se muestra sin título](${FIGURE.titlesDesktopVsMobile})
 
-*En la versión de escritorio, los títulos aparecen al pasar el cursor sobre las imágenes. La navegación móvil presenta limitaciones en ese descubrimiento.*
+*En escritorio, el título aparece al pasar el cursor sobre la imagen; en móvil, la misma miniatura se muestra sin título.*
 
-Para una empresa creativa, presentar su trabajo es parte del proceso de demostrar sus capacidades.
+Los proyectos tampoco tenían direcciones propias para compartir. Imagina encontrar una producción interesante y querer enviársela a un colega: en lugar de un enlace a ese proyecto, tienes que enviar el enlace del portafolio y esperar que la otra persona encuentre el mismo contenido. Parece un detalle, pero son interacciones así las que convierten un portafolio en una herramienta de comunicación.
 
-Un posible cliente puede querer entender la experiencia del estudio con cierto tipo de producción.
-
-Un profesional interesado en trabajar en la empresa puede querer conocer sus proyectos anteriores.
-
-Un fan puede simplemente querer descubrir otras animaciones hechas por el mismo equipo.
-
-Son públicos distintos, con objetivos distintos, pero todos dependen de la capacidad del sitio web para comunicar información con claridad.
+Para una empresa creativa, presentar su trabajo es parte de demostrar lo que sabe hacer. Un posible cliente puede querer entender la experiencia del estudio con cierto tipo de producción, alguien interesado en trabajar allí puede querer conocer sus proyectos anteriores, y un fan puede simplemente querer descubrir otras animaciones del mismo equipo (mi caso). Son públicos con objetivos distintos, pero todos dependen de que el sitio comunique esa información con claridad.
 
 ## El costo que no aparece en Lighthouse
 
-Como parte de la investigación, realizamos 18 auditorías con Lighthouse, una herramienta que evalúa distintos aspectos de la calidad de las páginas web.
-
-Los resultados de rendimiento fueron los siguientes:
+Como parte de la investigación, ejecuté 18 auditorías con Lighthouse, una herramienta que evalúa distintos aspectos de la calidad de las páginas web. Los resultados de rendimiento fueron estos:
 
 | Página | Escritorio | Móvil |
 |---|---:|---:|
@@ -158,106 +78,48 @@ Los resultados de rendimiento fueron los siguientes:
 
 *Medianas de tres ejecuciones por entorno, realizadas el 18/10/2026. Las pruebas usaron las condiciones simuladas de Lighthouse. Hubo carga incompleta en 15 de las 18 ejecuciones; por lo tanto, estos resultados deben interpretarse con cautela y no representan datos de usuarios reales.*
 
-Las cifras ayudan a entender que existen oportunidades técnicas de mejora.
-
-Pero creo que la reflexión más importante no está en las puntuaciones.
-
-Lighthouse puede señalar problemas de carga, pero no puede responder directamente preguntas como:
+Los números muestran que hay oportunidades técnicas de mejora, pero creo que la reflexión más importante no está en las notas. Lighthouse señala problemas de carga, pero no responde preguntas como:
 
 - ¿Un visitante dejó de explorar el portafolio porque la experiencia le pareció lenta?
 - ¿Un posible socio encontró fácilmente las producciones relevantes para su proyecto?
-- ¿Un profesional interesado en el estudio pudo entender sus capacidades?
-- ¿La presentación digital reforzó la calidad artística percibida en las animaciones?
+- ¿Un profesional interesado en el estudio logró comprender sus capacidades?
+- ¿La presentación digital reforzó la calidad artística que se percibe en las animaciones?
 
-Estas preguntas involucran comportamiento, expectativas, confianza y objetivos de negocio.
+Estas preguntas involucran comportamiento, expectativas, confianza y objetivos de negocio. Para responderlas con seguridad harían falta datos que no son públicos, como análisis del comportamiento de los visitantes, investigaciones con usuarios e información comercial, cosas que solo tiene el estudio. Por eso, no sería correcto afirmar que Studio Mir perdió clientes o contratos por culpa de su sitio web.
 
-Para responderlas de forma concluyente, necesitaríamos datos que no están disponibles públicamente, como análisis del comportamiento de los visitantes, investigaciones con usuarios e información comercial de la empresa.
+Lo que sí se puede hacer es identificar posibles puntos de fricción y pensar en cómo interfieren en la forma en que el estudio comunica su valor. Una experiencia digital merece atención incluso sin una pérdida económica comprobada, porque es una oportunidad de fortalecer la marca, facilitar el descubrimiento de los trabajos y respetar el tiempo de quien visita.
 
-Por lo tanto, no sería correcto afirmar que Studio Mir perdió clientes o contratos por culpa de su sitio web.
+## Mejorar sin rehacerlo todo
 
-Pero sí podemos identificar posibles puntos de fricción y reflexionar sobre cómo interfieren en la comunicación de valor.
+Ante problemas así, sería tentador proponer reconstruir el sitio desde cero, con una interfaz moderna, nuevas animaciones, otra arquitectura y tecnologías más recientes. Pero ¿eso resolvería el problema principal?
 
-**Una experiencia digital no necesita ser la causa de una pérdida económica comprobada para merecer atención.**
+La investigación sugiere que buena parte de las dificultades podría resolverse sin tocar la identidad visual del sitio. La carga de las imágenes mejoraría con formatos más eficientes, varias resoluciones y carga bajo demanda. La entrega de los recursos se beneficiaría de una mejor configuración de caché y de conexiones. Y la navegación podría tener títulos más accesibles y un enlace propio para cada proyecto.
 
-También puede representar una oportunidad para fortalecer la presentación de una marca, facilitar el descubrimiento de sus productos y respetar el tiempo de sus visitantes.
-
-## La solución no tiene por qué empezar con un rediseño
-
-Ante problemas como estos, sería tentador proponer una reconstrucción completa del sitio web.
-
-Una interfaz moderna, nuevas animaciones, otra arquitectura, tecnologías más recientes.
-
-Pero ¿eso resolvería el problema principal?
-
-La investigación sugiere que una parte importante de las dificultades encontradas podría abordarse sin necesidad de modificar la identidad visual del sitio.
-
-La carga de las imágenes podría mejorar mediante formatos más eficientes, distintas resoluciones y estrategias adecuadas de carga diferida.
-
-La entrega de recursos podría beneficiarse de una mejor configuración de caché y conexiones.
-
-La navegación podría ofrecer títulos más accesibles y enlaces específicos para los proyectos.
-
-Son mejoras que parten de problemas concretos, no simplemente del deseo de usar tecnologías más nuevas.
-
-Y esa distinción importa.
-
-Una decisión de ingeniería no debería evaluarse solo por la elegancia de su implementación, sino también por el problema que resuelve y el valor que entrega.
-
-El mejor camino no siempre es reconstruirlo todo.
-
-A veces, es hacer que lo que ya existe funcione mejor para las personas.
+Son mejoras que parten de problemas concretos, y no de las ganas de usar tecnologías más nuevas. Una decisión de ingeniería debería evaluarse por el problema que resuelve y por el valor que entrega, además de por la elegancia de su implementación. No siempre el mejor camino es reconstruirlo todo; a veces, es lograr que lo que ya existe funcione mejor para las personas.
 
 ## Más allá del código
 
-Esta experiencia me hizo pensar en un cambio de perspectiva que considero importante en mi trayectoria como ingeniero de software.
+Esta experiencia me hizo pensar en un cambio de perspectiva importante en mi trayectoria como ingeniero de software. A lo largo de la carrera, es natural dedicar mucho tiempo a lenguajes, frameworks, arquitecturas y buenas prácticas, y ese conocimiento es fundamental. Pero desarrollar software también exige entender por qué estamos construyendo una solución, quién se beneficiará de ella y qué resultados esperamos.
 
-A lo largo de la carrera, es natural dedicar mucho tiempo a aprender lenguajes, frameworks, arquitecturas y buenas prácticas.
+Esto tiene mucho que ver con mis últimos dos años de carrera, cuando dejé de prestar tanta atención a frameworks y tecnologías y empecé a fijarme más en cómo optimizar la experiencia de los productos en los que trabajo.
 
-Son conocimientos fundamentales.
-
-Pero hay una dimensión del desarrollo de software que va más allá de la implementación.
-
-Necesitamos entender por qué estamos construyendo determinada solución, a quién beneficiará y qué resultados esperamos producir.
-
-En el caso de Studio Mir, mi curiosidad empezó con algunas imágenes que tardaban en cargar.
-
-La investigación reveló cuestiones de rendimiento, presentación visual y organización del portafolio.
-
-Pero la reflexión que permaneció fue otra.
-
-Hablamos de un estudio cuyo trabajo es capaz de impresionar a personas de todo el mundo. Sus producciones demuestran creatividad, talento y capacidad técnica.
-
-Su sitio web es una oportunidad para acercar todavía más a las personas a ese trabajo.
-
-Y, para ello, la experiencia digital tiene que tratarse como parte de la comunicación de la empresa, no solo como una preocupación de quien escribe el código.
+En el caso de Studio Mir, mi curiosidad empezó con algunas imágenes que tardaban en cargar, y la investigación reveló problemas de rendimiento, de presentación visual y de organización del portafolio. Pero la reflexión que me quedó fue otra. El trabajo de este estudio impresiona a personas de todo el mundo, y su sitio web es una oportunidad de acercar aún más a la gente a ese trabajo. Para eso, la experiencia digital tiene que tratarse como parte de la comunicación de la empresa, y no solo como una preocupación de quien escribe el código.
 
 ## Consideraciones finales
 
-Cuando entré en el sitio de Studio Mir, no esperaba encontrar un tema sobre el que escribir.
+Cuando entré en el sitio de Studio Mir, no esperaba encontrar un tema sobre el cual escribir. Solo quería hojear las otras animaciones del estudio. Terminé encontrando una oportunidad de reflexionar sobre algo cada vez más relevante para mí en el desarrollo de software: la relación entre las decisiones técnicas, la experiencia de las personas y el valor de negocio.
 
-Solo quería saber más sobre los artistas y profesionales responsables de una animación basada en uno de mis videojuegos favoritos.
+El trabajo de Studio Mir sigue siendo admirable, a pesar de las limitaciones de su sitio, y quizá sea justamente por admirar ese trabajo que la experiencia me llamó tanto la atención. Al final, la pregunta que me quedó es cómo garantizar que la tecnología ayude a una empresa a comunicar la calidad que ya tiene. Hacer la página más rápida es solo una parte de eso.
 
-Acabé encontrando una oportunidad para reflexionar sobre algo que considero cada vez más relevante en el desarrollo de software: la relación entre las decisiones técnicas, la experiencia humana y el valor de negocio.
-
-El trabajo de Studio Mir sigue siendo admirable, independientemente de las limitaciones encontradas en su sitio web.
-
-Y quizá sea justamente por admirar ese trabajo que la experiencia me llamó tanto la atención.
-
-Al final, la pregunta que quedó no es solo cómo hacer una página más rápida.
-
-Es cómo garantizar que la tecnología ayude a una empresa a comunicar la calidad que ya tiene.
-
-**Porque, a veces, la mejor contribución de la ingeniería de software no es crear algo nuevo, sino eliminar los obstáculos entre las personas y aquello que vinieron a encontrar.**
+A veces, la mejor contribución de la ingeniería de software es quitar de en medio lo que separa a las personas de aquello que vinieron a encontrar.
 
 ---
 
 ### Sobre la investigación
 
-Este análisis se realizó con herramientas de automatización del navegador, grabación de pantalla y Lighthouse, utilizando páginas públicas de Studio Mir el 18 de octubre de 2026.
+Hice este análisis el 18 de octubre de 2026, en páginas públicas de Studio Mir, con herramientas de automatización del navegador, grabación de pantalla y Lighthouse. Fueron 18 auditorías sintéticas, además de capturas de navegación, inventario de recursos y análisis de la estructura del portafolio.
 
-Se realizaron 18 auditorías sintéticas, además de capturas de navegación, un inventario de recursos y un análisis de la estructura del portafolio.
-
-Las observaciones reflejan las condiciones y el periodo de las pruebas. No se obtuvieron datos de usuarios reales (CrUX), y no se estableció ninguna conclusión sobre pérdidas económicas o comerciales.
+Las observaciones reflejan las condiciones y el periodo de las pruebas. No obtuve datos de usuarios reales (CrUX) ni saqué ninguna conclusión sobre pérdidas económicas o comerciales.
 
 *Studio Mir, Devil May Cry y los demás nombres y obras mencionados pertenecen a sus respectivos titulares. Este artículo es un análisis independiente y no tiene ningún vínculo con el estudio.*
 
