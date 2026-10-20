@@ -10174,13 +10174,25 @@
         "priority": "medium",
         "subtasks": [],
         "updatedAt": "2026-10-20T06:38:44.320Z"
+      },
+      {
+        "id": "9",
+        "title": "Revise the Studio Mir post: author edits, denser paragraphs, humanized prose",
+        "description": "Apply the author's Google Docs revision to the Studio Mir post, merge one-sentence paragraphs, remove AI writing patterns (humanizer), and stop the two portfolio figures from appearing back to back.",
+        "details": "pt-BR first, reviewed by the author on the dev server; en-US and es translated from the final pt-BR. Also fix the thumbnail alt, which still describes thumbnail-v3.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2026-10-20T23:32:49.122Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-20T06:38:44.321Z",
-      "taskCount": 8,
-      "completedCount": 8,
+      "lastModified": "2026-10-20T23:32:49.123Z",
+      "taskCount": 9,
+      "completedCount": 9,
       "tags": [
         "blog-launch"
       ]
