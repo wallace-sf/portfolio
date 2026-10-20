@@ -10,20 +10,35 @@ import { buildPrismaBlogPost } from '../factories/prisma-blog-post.factory';
 const LOCALES = ['en-US', 'pt-BR', 'es'] as const;
 
 type UpsertArgs = Prisma.BlogPostUpsertArgs;
+type DeleteManyArgs = Prisma.BlogPostDeleteManyArgs;
 
-async function runSeed(): Promise<UpsertArgs[]> {
-  const calls: UpsertArgs[] = [];
+interface SeedCalls {
+  upserts: UpsertArgs[];
+  deletes: DeleteManyArgs[];
+}
+
+async function runSeedCalls(): Promise<SeedCalls> {
+  const upserts: UpsertArgs[] = [];
+  const deletes: DeleteManyArgs[] = [];
   const db = {
     blogPost: {
+      deleteMany: vi.fn(async (args: DeleteManyArgs) => {
+        deletes.push(args);
+        return { count: 0 };
+      }),
       upsert: vi.fn(async (args: UpsertArgs) => {
-        calls.push(args);
+        upserts.push(args);
       }),
     },
   } as unknown as PrismaClient;
 
   vi.spyOn(console, 'log').mockImplementation(() => undefined);
   await seedBlogPosts(db);
-  return calls;
+  return { upserts, deletes };
+}
+
+async function runSeed(): Promise<UpsertArgs[]> {
+  return (await runSeedCalls()).upserts;
 }
 
 function localized(value: unknown): Record<string, string> {
@@ -57,22 +72,25 @@ describe('seedBlogPosts', () => {
     }
   });
 
-  it('should seed cover and thumbnail only for posts that have them when run', async () => {
+  it('should prune every blog post outside the seed list when run', async () => {
+    const { deletes } = await runSeedCalls();
+
+    expect(deletes).toEqual([
+      { where: { id: { notIn: Object.values(ID.blogPosts) } } },
+    ]);
+  });
+
+  it('should seed cover and thumbnail images when the post has them', async () => {
     const calls = await runSeed();
     const bySlug = new Map(calls.map(({ create }) => [create.slug, create]));
 
-    const either = bySlug.get('the-either-pattern-in-typescript');
-    expect(either?.coverImageUrl).toMatch(
-      /\/blog\/the-either-pattern-in-typescript\/cover\.webp$/,
+    const studioMir = bySlug.get('studio-mir-experiencia-digital');
+    expect(studioMir?.coverImageUrl).toMatch(
+      /\/blog\/studio-mir-experiencia-digital\/cover\.webp$/,
     );
-    expect(either?.thumbnailImageUrl).toMatch(
-      /\/blog\/the-either-pattern-in-typescript\/thumbnail\.webp$/,
+    expect(studioMir?.thumbnailImageUrl).toMatch(
+      /\/blog\/studio-mir-experiencia-digital\/thumbnail-v3\.webp$/,
     );
-
-    const withoutImages = bySlug.get('one-validator-one-left');
-    expect(withoutImages?.coverImageUrl).toBeNull();
-    expect(withoutImages?.thumbnailImageUrl).toBeNull();
-    expect(withoutImages?.coverImageAlt).toBe(Prisma.JsonNull);
   });
 
   it('should seed the full article body in every locale when content is migrated', async () => {

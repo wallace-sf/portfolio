@@ -61,14 +61,6 @@ export const ID = {
     communication: '50000000-0000-4000-8000-000000000004',
   },
   blogPosts: {
-    oneValidatorOneLeft: '60000000-0000-4000-8000-000000000001',
-    serverComponentsAsCompositionRoot: '60000000-0000-4000-8000-000000000002',
-    theEitherPatternInTypescript: '60000000-0000-4000-8000-000000000003',
-    valueObjectsVsPrimitives: '60000000-0000-4000-8000-000000000004',
-    testingUseCasesWithInMemoryRepositories: '60000000-0000-4000-8000-000000000005',
-    staticBlogRoutesWithGenerateStaticParams: '60000000-0000-4000-8000-000000000006',
-    sanitizedMarkdownPipeline: '60000000-0000-4000-8000-000000000007',
-    enforcingDependencyRuleInMonorepo: '60000000-0000-4000-8000-000000000008',
     studioMirExperienciaDigital: '60000000-0000-4000-8000-000000000009',
   },
 };
