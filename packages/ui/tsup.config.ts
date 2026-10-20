@@ -25,7 +25,10 @@ export default defineConfig([
     // Client islands imported by Server Components: esbuild drops module
     // directives when bundling, so the boundary is restored with a banner.
     ...shared,
-    entry: { 'View/MermaidBlock/index': 'src/View/Markdown/MermaidBlock.tsx' },
+    entry: {
+      'View/MermaidBlock/index': 'src/View/Markdown/MermaidBlock.tsx',
+      'View/ZoomableImage/index': 'src/View/ZoomableImage/index.tsx',
+    },
     banner: { js: "'use client';" },
   },
 ]);

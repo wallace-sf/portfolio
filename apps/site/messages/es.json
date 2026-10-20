@@ -63,6 +63,10 @@
   "Share": {
     "copyLink": "Copiar enlace"
   },
+  "ImageZoom": {
+    "zoom": "Ampliar imagen",
+    "close": "Cerrar"
+  },
   "Home": {
     "projects_title": "Proyectos",
     "view_all_projects": "Ver todos los proyectos",
