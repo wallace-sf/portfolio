@@ -3,6 +3,12 @@ import { Prisma, type PrismaClient } from '@prisma/client';
 import { BLOG_POST_AUTHOR, blogPosts } from './index';
 
 export async function seedBlogPosts(db: PrismaClient): Promise<void> {
+  // The seed is the source of truth: posts no longer listed (e.g. retired
+  // placeholders) are removed so a re-seed also prunes them.
+  const { count } = await db.blogPost.deleteMany({
+    where: { id: { notIn: blogPosts.map((post) => post.id) } },
+  });
+
   for (const post of blogPosts) {
     const data = {
       slug: post.slug,
@@ -28,5 +34,7 @@ export async function seedBlogPosts(db: PrismaClient): Promise<void> {
     });
   }
 
-  console.log(`✔ ${blogPosts.length} blog posts seeded`);
+  console.log(
+    `✔ ${blogPosts.length} blog posts seeded, ${count} stale removed`,
+  );
 }
