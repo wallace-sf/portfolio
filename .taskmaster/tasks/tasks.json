@@ -10162,13 +10162,25 @@
         "priority": "medium",
         "subtasks": [],
         "updatedAt": "2026-10-20T05:50:35.532Z"
+      },
+      {
+        "id": "8",
+        "title": "Sharp thumbnail for the Studio Mir post",
+        "description": "Replace the blurred thumbnail with a text overlay (thumbnail-v3) by a sharp crop of the Studio Mir portfolio grid (thumbnail-v4).",
+        "details": "864x576 WebP cropped from fig-3-portfolio-grid, centred on X-Men '97; uploaded next to the other figures in the portfolio-images bucket; figures.ts points to thumbnail-v4.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2026-10-20T06:38:44.320Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-20T05:50:35.532Z",
-      "taskCount": 7,
-      "completedCount": 7,
+      "lastModified": "2026-10-20T06:38:44.321Z",
+      "taskCount": 8,
+      "completedCount": 8,
       "tags": [
         "blog-launch"
       ]
