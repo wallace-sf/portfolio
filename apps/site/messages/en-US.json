@@ -39,7 +39,7 @@
     "aboutAuthor": "About the author",
     "tableOfContents": "On this page",
     "tags": "Tags",
-    "tagHeading": "#{tag}",
+    "tag": "Tag",
     "allPosts": "All posts",
     "trendingTags": "Trending tags",
     "allTags": "All tags",

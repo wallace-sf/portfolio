@@ -1,3 +1,6 @@
+import { Icon } from '@repo/ui/Imagery';
+import { getTranslations } from 'next-intl/server';
+
 import { PostMeta } from '~features/blog/PostMeta';
 import { TagLink } from '~features/blog/TagLink';
 
@@ -12,13 +15,15 @@ export interface IPostHeaderProps {
   locale: string;
 }
 
-/** Async only so the async `PostMeta` resolves wherever the header renders. */
+/** The post's title block: metadata line, title, description and tags. */
 export async function PostHeader({
   title,
   description,
   tags,
   ...meta
 }: IPostHeaderProps) {
+  const t = await getTranslations({ locale: meta.locale, namespace: 'Blog' });
+
   return (
     <header className="flex flex-col gap-4">
       <PostMeta {...meta} />
@@ -28,13 +33,19 @@ export async function PostHeader({
       <p className="text-body-lg text-content-secondary">{description}</p>
 
       {tags.length > 0 && (
-        <ul className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <li key={tag}>
-              <TagLink tag={tag} />
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center gap-2">
+          <Icon
+            icon="mdi:tag-multiple-outline"
+            className="shrink-0 text-xl text-content-muted"
+          />
+          <ul aria-label={t('tags')} className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <li key={tag}>
+                <TagLink tag={tag} />
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </header>
   );

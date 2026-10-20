@@ -39,7 +39,7 @@
     "aboutAuthor": "Sobre o autor",
     "tableOfContents": "Nesta página",
     "tags": "Tags",
-    "tagHeading": "#{tag}",
+    "tag": "Tag",
     "allPosts": "Todos os posts",
     "trendingTags": "Tags em alta",
     "allTags": "Todas as tags",

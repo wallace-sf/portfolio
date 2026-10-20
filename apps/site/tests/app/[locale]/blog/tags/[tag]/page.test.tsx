@@ -15,6 +15,10 @@ import { renderServerComponent } from '../../../../../helpers/renderServerCompon
 
 // Real components, real message catalogues; only boundaries are mocked.
 
+vi.mock('@repo/ui/Imagery', () => ({
+  Icon: () => <span data-testid="icon" />,
+}));
+
 vi.mock(
   'next-intl/server',
   async () =>
@@ -72,11 +76,11 @@ beforeEach(() => {
 });
 
 describe('BlogTagPage', () => {
-  it("should list the tag's published posts newest first under a #tag heading with their count", async () => {
+  it("should list the tag's published posts newest first under a tag heading with their count", async () => {
     await renderPage('ddd');
 
     expect(
-      screen.getByRole('heading', { level: 1, name: '#ddd' }),
+      screen.getByRole('heading', { level: 1, name: 'Tag ddd' }),
     ).toBeInTheDocument();
     expect(screen.getByText('2 posts')).toBeInTheDocument();
     expect(

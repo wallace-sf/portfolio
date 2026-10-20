@@ -1,4 +1,5 @@
 import { type Locale } from '@repo/core/shared';
+import { Icon } from '@repo/ui/Imagery';
 import { Badge } from '@repo/ui/View';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -68,7 +69,16 @@ export default async function BlogTagPage({ params }: BlogTagPageProps) {
       <BlogBreadcrumbs locale={locale} target={breadcrumbTarget} />
 
       <header className="mb-8 mt-6 flex flex-wrap items-center gap-4 lg:mb-12">
-        <h1 className="text-heading-h2">{t('tagHeading', { tag })}</h1>
+        <h1 className="flex items-center gap-3 text-heading-h2">
+          <Icon
+            icon="mdi:tag-outline"
+            className="shrink-0 text-content-muted"
+          />
+          <span>
+            <span className="sr-only">{t('tag')} </span>
+            {tag}
+          </span>
+        </h1>
         <Badge.Text label={t('archivePostCount', { count: posts.length })} />
       </header>
 
