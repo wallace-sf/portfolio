@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AuthorByline } from '~features/blog/AuthorByline';
 
@@ -26,7 +26,19 @@ const AUTHOR = {
   url: 'https://example.com',
 };
 
+const LINKEDIN = 'https://www.linkedin.com/in/test-author';
+const EMAIL = 'author@example.com';
+
 describe('AuthorByline', () => {
+  beforeEach(() => {
+    vi.stubEnv('NEXT_PUBLIC_LINKEDIN_URL', undefined);
+    vi.stubEnv('NEXT_PUBLIC_CONTACT_EMAIL', undefined);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('should link the author name to their page when the author has a url', async () => {
     await renderServerComponent(
       AuthorByline({ author: AUTHOR, locale: 'en-US' }),
@@ -57,5 +69,46 @@ describe('AuthorByline', () => {
     expect(
       screen.getByRole('region', { name: 'Sobre o autor' }),
     ).toBeInTheDocument();
+  });
+
+  it('should invite the reader to talk on LinkedIn or by email when both are configured', async () => {
+    vi.stubEnv('NEXT_PUBLIC_LINKEDIN_URL', LINKEDIN);
+    vi.stubEnv('NEXT_PUBLIC_CONTACT_EMAIL', EMAIL);
+
+    await renderServerComponent(
+      AuthorByline({ author: AUTHOR, locale: 'pt-BR' }),
+    );
+
+    const linkedin = screen.getByRole('link', { name: 'LinkedIn' });
+    expect(linkedin).toHaveAttribute('href', LINKEDIN);
+    expect(linkedin).toHaveAttribute('target', '_blank');
+    expect(screen.getByRole('link', { name: 'e-mail' })).toHaveAttribute(
+      'href',
+      `mailto:${EMAIL}`,
+    );
+  });
+
+  it('should only offer email when LinkedIn is not configured', async () => {
+    vi.stubEnv('NEXT_PUBLIC_CONTACT_EMAIL', EMAIL);
+
+    await renderServerComponent(
+      AuthorByline({ author: AUTHOR, locale: 'en-US' }),
+    );
+
+    expect(screen.getByRole('link', { name: 'email' })).toHaveAttribute(
+      'href',
+      `mailto:${EMAIL}`,
+    );
+    expect(
+      screen.queryByRole('link', { name: 'LinkedIn' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('should not render the invite when no contact channel is configured', async () => {
+    await renderServerComponent(
+      AuthorByline({ author: AUTHOR, locale: 'en-US' }),
+    );
+
+    expect(screen.queryByText(/Want to talk/)).not.toBeInTheDocument();
   });
 });
