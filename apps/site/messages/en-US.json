@@ -63,6 +63,10 @@
   "Share": {
     "copyLink": "Copy link"
   },
+  "ImageZoom": {
+    "zoom": "Open larger view",
+    "close": "Close"
+  },
   "Home": {
     "projects_title": "Projects",
     "view_all_projects": "View all projects",

@@ -11,6 +11,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
+import { imageZoomLabels } from '~/i18n/imageZoomLabels';
 import { buildAlternates } from '~/lib/seo/alternates';
 import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
@@ -104,10 +105,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const { blogPostRepository } = getServerContainer();
   const input = { slug, locale: locale as Locale };
-  const [post, navResult, relatedResult] = await Promise.all([
+  const [post, navResult, relatedResult, imageLabels] = await Promise.all([
     findPostAt(routeParams),
     new GetAdjacentBlogPosts(blogPostRepository).execute(input),
     new ListRelatedBlogPosts(blogPostRepository).execute(input),
+    imageZoomLabels(locale),
   ]);
 
   if (!post) notFound();
@@ -158,7 +160,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <Divider />
 
         <div id={POST_BODY_ID}>
-          <Markdown content={post.content} />
+          <Markdown content={post.content} imageLabels={imageLabels} />
         </div>
 
         <AuthorByline author={post.author} locale={locale} />
