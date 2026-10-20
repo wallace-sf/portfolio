@@ -39,7 +39,7 @@
     "aboutAuthor": "Sobre el autor",
     "tableOfContents": "En esta página",
     "tags": "Etiquetas",
-    "tagHeading": "#{tag}",
+    "tag": "Etiqueta",
     "allPosts": "Todos los posts",
     "trendingTags": "Etiquetas populares",
     "allTags": "Todas las etiquetas",
