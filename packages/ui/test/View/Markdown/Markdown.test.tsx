@@ -138,12 +138,42 @@ describe('Markdown', () => {
     expect(screen.getByText('After')).toBeInTheDocument();
   });
 
-  it('should lazy-load and async-decode images when the content has an image', async () => {
+  it('should render a lazy, zoomable image when the content has an image', async () => {
     await renderMarkdown('![A figure](https://example.com/figure.webp)');
 
     const image = screen.getByRole('img', { name: 'A figure' });
     expect(image).toHaveAttribute('loading', 'lazy');
     expect(image).toHaveAttribute('decoding', 'async');
+    expect(image.closest('button')).toHaveAccessibleName(
+      'A figure Open larger view',
+    );
+  });
+
+  it('should use the given labels for the zoom hint when imageLabels is set', async () => {
+    render(
+      <>
+        {await Markdown({
+          content: '![Uma figura](https://example.com/figure.webp)',
+          imageLabels: { zoom: 'Ampliar imagem', close: 'Fechar' },
+        })}
+      </>,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Uma figura Ampliar imagem' }),
+    ).toBeInTheDocument();
+  });
+
+  it('should keep a linked image a plain link when the image is inside a link', async () => {
+    await renderMarkdown(
+      '[![A badge](https://example.com/badge.svg)](https://example.com)',
+    );
+
+    expect(screen.getByRole('link', { name: 'A badge' })).toHaveAttribute(
+      'href',
+      'https://example.com',
+    );
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('should drop the href when a link uses the javascript: protocol', async () => {
