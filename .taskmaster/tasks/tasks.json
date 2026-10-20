@@ -10150,13 +10150,25 @@
         "priority": "medium",
         "subtasks": [],
         "updatedAt": "2026-10-20T05:04:18.940Z"
+      },
+      {
+        "id": "7",
+        "title": "Tag icon before post tags and on the tag page heading",
+        "description": "Show a tags icon before the tag list on the post page and a tag icon in front of the tag page heading (replacing the '#'), like Loiane Groner's blog.",
+        "details": "PostHeader: decorative mdi:tag-multiple-outline before the <ul>, which gets aria-label Tags. Tag page H1: mdi:tag-outline + sr-only 'Tag' + tag name; replace Blog.tagHeading with Blog.tag in pt-BR/en-US/es.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2026-10-20T05:50:35.532Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-20T05:04:18.940Z",
-      "taskCount": 6,
-      "completedCount": 6,
+      "lastModified": "2026-10-20T05:50:35.532Z",
+      "taskCount": 7,
+      "completedCount": 7,
       "tags": [
         "blog-launch"
       ]
