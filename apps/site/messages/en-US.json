@@ -53,7 +53,8 @@
     "searchNoResults": "Try another word, or browse the posts by topic.",
     "sharePost": "Share",
     "copyPostLink": "Copy post link",
-    "shareOnLinkedIn": "Share on LinkedIn",
+    "shareOn": "Share on {network}",
+    "shareNative": "More sharing options",
     "letsTalk": "{channels, select, both {Want to talk about this post? Find me on <linkedin>LinkedIn</linkedin> or by <email>email</email>.} linkedin {Want to talk about this post? Find me on <linkedin>LinkedIn</linkedin>.} other {Want to talk about this post? Write me an <email>email</email>.}}"
   },
   "Clipboard": {

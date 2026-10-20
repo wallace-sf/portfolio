@@ -147,6 +147,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         <PostShare
           path={blogPostPath(post.publishedAt, post.slug)}
+          title={post.title}
           locale={locale}
         />
 

@@ -53,7 +53,8 @@
     "searchNoResults": "Prueba con otra palabra o explora las publicaciones por tema.",
     "sharePost": "Compartir",
     "copyPostLink": "Copiar enlace del post",
-    "shareOnLinkedIn": "Compartir en LinkedIn",
+    "shareOn": "Compartir en {network}",
+    "shareNative": "Más opciones para compartir",
     "letsTalk": "{channels, select, both {¿Quieres conversar sobre este post? Encuéntrame en <linkedin>LinkedIn</linkedin> o por <email>correo</email>.} linkedin {¿Quieres conversar sobre este post? Encuéntrame en <linkedin>LinkedIn</linkedin>.} other {¿Quieres conversar sobre este post? Escríbeme un <email>correo</email>.}}"
   },
   "Clipboard": {
