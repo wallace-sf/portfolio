@@ -10080,7 +10080,7 @@
   "blog-launch": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Publish first real post: Studio Mir digital experience",
         "description": "Seed the Studio Mir article (pt-BR original + en-US/es translations) with optimized figures uploaded to Supabase storage",
         "details": "",
@@ -10092,7 +10092,7 @@
         "updatedAt": "2026-10-19T04:41:55.109Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Lazy-load and async-decode Markdown images",
         "description": "Add loading=lazy and decoding=async to every Markdown img via a post-sanitize rehype plugin",
         "details": "",
@@ -10104,7 +10104,7 @@
         "updatedAt": "2026-10-19T04:46:35.460Z"
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Remove the dummy blog posts",
         "description": "Delete the 8 placeholder seed posts and make the blog seed prune every post not in the seed list, so only the Studio Mir post remains in dev and prod.",
         "details": "Remove the 8 dummy seed modules and their IDs; seedBlogPosts deletes rows whose id is not in blogPosts before upserting; update seed and middleware tests.",
@@ -10114,6 +10114,39 @@
         "priority": "high",
         "subtasks": [],
         "updatedAt": "2026-10-20T01:02:09.247Z"
+      },
+      {
+        "id": 4,
+        "title": "Post sharing, section deep links and contact invite",
+        "description": "Add copy-link + LinkedIn share to the post header, a copyable anchor link on every h2/h3, and a 'let's talk' invite (LinkedIn/email) in the author byline.",
+        "details": "Generalize features/shared/ShareButton to take a path (projects + blog). Add rehype-autolink-headings (or a small own plugin) after rehypeSlug in packages/ui Markdown pipeline. Extend AuthorByline with a contact invite. i18n in pt-BR/en-US/es.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Zoomable figures in blog posts",
+        "description": "Let readers open any Markdown image in an accessible full-size viewer (lightbox) to examine screenshots and metrics.",
+        "details": "Small client island in packages/ui Markdown (same pattern as MermaidBlock): wrap img via components map; native <dialog>, Esc/click-outside close, focus restore, alt as caption, respects reduced motion. Keep lazy-load hints.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Add a References section to the Studio Mir post",
+        "description": "Add a References section with the sources behind the investigation (the analyzed site, Lighthouse docs, web.dev image guidance) in pt-BR, en-US and es.",
+        "details": "Content-only change in packages/infra/prisma/seed-data/blog-posts/studio-mir-experiencia-digital/{pt-BR,en-US,es}.ts; bump updatedAt; re-run blog seed in dev and prod.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -10123,7 +10156,10 @@
       "completedCount": 3,
       "tags": [
         "blog-launch"
-      ]
+      ],
+      "created": "2026-10-20T01:40:47.987Z",
+      "description": "Tasks for blog-launch context",
+      "updated": "2026-10-20T01:41:26.268Z"
     }
   }
 }
