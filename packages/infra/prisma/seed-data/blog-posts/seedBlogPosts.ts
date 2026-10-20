@@ -18,6 +18,9 @@ export async function seedBlogPosts(db: PrismaClient): Promise<void> {
       tags: post.tags,
       author: BLOG_POST_AUTHOR,
       publishedAt: post.publishedAt,
+      // Explicit, so `@updatedAt` tracks editorial revisions instead of being
+      // bumped by every re-seed.
+      updatedAt: post.updatedAt ?? post.publishedAt,
       status: 'PUBLISHED' as const,
       featured: post.featured,
       // Explicit nulls so a re-seed also clears images removed from the source.

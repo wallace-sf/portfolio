@@ -22,6 +22,8 @@ export const studioMirExperienciaDigital: BlogPostSeed = {
   content: loc(enUS, ptBR, es),
   tags: ['performance', 'ux', 'case-study'],
   publishedAt: new Date('2026-10-19T00:00:00Z'),
+  // Added the References section.
+  updatedAt: new Date('2026-10-20T00:00:00Z'),
   featured: true,
   coverImage: {
     url: FIGURE.cover,
