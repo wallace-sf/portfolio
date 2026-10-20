@@ -22,7 +22,7 @@ export const studioMirExperienciaDigital: BlogPostSeed = {
   content: loc(enUS, ptBR, es),
   tags: ['performance', 'ux', 'case-study'],
   publishedAt: new Date('2026-10-19T00:00:00Z'),
-  // Added the References section.
+  // Author revision: personal passages, denser paragraphs, humanized prose.
   updatedAt: new Date('2026-10-20T00:00:00Z'),
   featured: true,
   coverImage: {
@@ -36,9 +36,9 @@ export const studioMirExperienciaDigital: BlogPostSeed = {
   thumbnailImage: {
     url: FIGURE.thumbnail,
     alt: loc(
-      "A 7952 × 5304 image shown at 566 × 283, over Studio Mir's blurred portfolio",
-      'Uma imagem de 7952 × 5304 exibida em 566 × 283, sobre o portfólio desfocado do Studio Mir',
-      'Una imagen de 7952 × 5304 mostrada en 566 × 283, sobre el portafolio desenfocado de Studio Mir',
+      "Studio Mir's portfolio grid, with X-Men '97 in the centre",
+      "Grade do portfólio do Studio Mir, com X-Men '97 no centro",
+      "Cuadrícula del portafolio de Studio Mir, con X-Men '97 en el centro",
     ),
   },
 };
