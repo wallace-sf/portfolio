@@ -10102,13 +10102,25 @@
         "priority": "medium",
         "subtasks": [],
         "updatedAt": "2026-10-19T04:46:35.460Z"
+      },
+      {
+        "id": "3",
+        "title": "Remove the dummy blog posts",
+        "description": "Delete the 8 placeholder seed posts and make the blog seed prune every post not in the seed list, so only the Studio Mir post remains in dev and prod.",
+        "details": "Remove the 8 dummy seed modules and their IDs; seedBlogPosts deletes rows whose id is not in blogPosts before upserting; update seed and middleware tests.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2026-10-20T01:02:09.247Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-19T04:46:35.460Z",
-      "taskCount": 2,
-      "completedCount": 2,
+      "lastModified": "2026-10-20T01:02:09.248Z",
+      "taskCount": 3,
+      "completedCount": 3,
       "tags": [
         "blog-launch"
       ]
