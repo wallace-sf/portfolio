@@ -64,7 +64,8 @@ export const ProjectCard: FC<IProjectCardProps> = ({
       </div>
 
       <ShareButton
-        slug={slug}
+        path={`/projects/${slug}`}
+        label={t('share_button_label')}
         className={classNames(
           'absolute top-5 right-5 z-10',
           !compact && 'lg:top-3 lg:right-3',

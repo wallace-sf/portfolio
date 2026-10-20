@@ -50,10 +50,22 @@
     "searchPlaceholder": "Buscar publicaciones…",
     "searchClear": "Borrar búsqueda",
     "searchResults": "{count, plural, =0 {Ninguna publicación coincide con} one {# publicación coincide con} other {# publicaciones coinciden con}} “{query}”",
-    "searchNoResults": "Prueba con otra palabra o explora las publicaciones por tema."
+    "searchNoResults": "Prueba con otra palabra o explora las publicaciones por tema.",
+    "sharePost": "Compartir",
+    "copyPostLink": "Copiar enlace del post",
+    "shareOn": "Compartir en {network}",
+    "shareNative": "Más opciones para compartir",
+    "letsTalk": "{channels, select, both {¿Quieres conversar sobre este post? Encuéntrame en <linkedin>LinkedIn</linkedin> o por <email>correo</email>.} linkedin {¿Quieres conversar sobre este post? Encuéntrame en <linkedin>LinkedIn</linkedin>.} other {¿Quieres conversar sobre este post? Escríbeme un <email>correo</email>.}}"
   },
   "Clipboard": {
     "copy": "Copiar al portapapeles"
+  },
+  "Share": {
+    "copyLink": "Copiar enlace"
+  },
+  "ImageZoom": {
+    "zoom": "Ampliar imagen",
+    "close": "Cerrar"
   },
   "Home": {
     "projects_title": "Proyectos",
@@ -64,7 +76,6 @@
   },
   "ProjectCard": {
     "view_project": "Ver proyecto",
-    "share_tooltip": "Copiar enlace",
     "share_button_label": "Compartir enlace del proyecto",
     "image_alt": "Imagen del proyecto"
   },

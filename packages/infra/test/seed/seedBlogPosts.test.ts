@@ -93,6 +93,29 @@ describe('seedBlogPosts', () => {
     );
   });
 
+  it('should write the editorial updatedAt on create and update when the post has a revision date', async () => {
+    const calls = await runSeed();
+    const studioMir = calls.find(
+      ({ create }) => create.slug === 'studio-mir-experiencia-digital',
+    );
+
+    expect(studioMir?.create.updatedAt).toEqual(
+      new Date('2026-10-20T00:00:00Z'),
+    );
+    expect(studioMir?.update.updatedAt).toEqual(studioMir?.create.updatedAt);
+  });
+
+  it('should never date an update before the publication when seeding', async () => {
+    const calls = await runSeed();
+
+    for (const { create } of calls) {
+      expect(
+        new Date(create.updatedAt as Date).getTime(),
+        create.slug,
+      ).toBeGreaterThanOrEqual(new Date(create.publishedAt).getTime());
+    }
+  });
+
   it('should seed the full article body in every locale when content is migrated', async () => {
     const calls = await runSeed();
 

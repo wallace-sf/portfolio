@@ -2,15 +2,34 @@ import type { BlogPostAuthorDTO } from '@repo/application/blog';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 
+import { env } from '~/config/env';
+
 export interface IAuthorBylineProps {
   author: BlogPostAuthorDTO;
   locale: string;
 }
 
-/** The "About the author" block at the end of a post. */
+const CONTACT_LINK =
+  'text-brand-accent [.light_&]:text-brand-primary underline underline-offset-2';
+
+type Channels = 'both' | 'linkedin' | 'email';
+
+/** Which contact channels are configured, or `undefined` when none is. */
+function contactChannels(
+  linkedinUrl?: string,
+  email?: string,
+): Channels | undefined {
+  if (linkedinUrl && email) return 'both';
+  if (linkedinUrl) return 'linkedin';
+  return email ? 'email' : undefined;
+}
+
+/** The "About the author" block at the end of a post, with a contact invite. */
 export async function AuthorByline({ author, locale }: IAuthorBylineProps) {
   const t = await getTranslations({ locale, namespace: 'Blog' });
   const { name, avatarUrl, url, bio } = author;
+  const { linkedinUrl, contactEmail } = env;
+  const channels = contactChannels(linkedinUrl, contactEmail);
 
   return (
     <section
@@ -37,6 +56,28 @@ export async function AuthorByline({ author, locale }: IAuthorBylineProps) {
           )}
         </p>
         {bio && <p className="text-body-sm text-content-secondary">{bio}</p>}
+        {channels && (
+          <p className="text-body-sm text-content-secondary">
+            {t.rich('letsTalk', {
+              channels,
+              linkedin: (chunks) => (
+                <a
+                  href={linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={CONTACT_LINK}
+                >
+                  {chunks}
+                </a>
+              ),
+              email: (chunks) => (
+                <a href={`mailto:${contactEmail}`} className={CONTACT_LINK}>
+                  {chunks}
+                </a>
+              ),
+            })}
+          </p>
+        )}
       </div>
     </section>
   );

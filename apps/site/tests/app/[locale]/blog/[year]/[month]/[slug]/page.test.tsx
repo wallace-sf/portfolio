@@ -89,6 +89,24 @@ describe('BlogPostPage', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('should make body images zoomable with localized labels when the post has figures', async () => {
+    posts = [
+      BlogPostBuilder.published('figures', '2026-09-02T10:00:00.000Z')
+        .withContent({
+          'en-US': '![A chart](https://example.com/chart.webp)',
+          'pt-BR': '![Um gráfico](https://example.com/chart.webp)',
+          es: '![Un gráfico](https://example.com/chart.webp)',
+        })
+        .now(),
+    ];
+
+    await renderPage('figures', '2026', '09', 'pt-BR');
+
+    expect(
+      screen.getByRole('button', { name: 'Um gráfico Ampliar imagem' }),
+    ).toHaveAttribute('aria-haspopup', 'dialog');
+  });
+
   it('should link the newer and older posts with dated, locale-prefixed hrefs when the post is in the middle', async () => {
     posts = [
       BlogPostBuilder.published('oldest', '2026-08-08T10:00:00.000Z').now(),

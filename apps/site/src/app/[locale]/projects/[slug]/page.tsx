@@ -8,6 +8,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
+import { imageZoomLabels } from '~/i18n/imageZoomLabels';
 import { DEFAULT_LOCALE } from '~/i18n/routing';
 import { buildOgImageUrl } from '~/lib/og';
 import { buildAlternates } from '~/lib/seo/alternates';
@@ -92,6 +93,7 @@ export default async function ProjectDetailPage({
   if (result.isLeft()) notFound();
 
   const t = await getTranslations({ locale, namespace: 'SideNavigation' });
+  const imageLabels = await imageZoomLabels(locale);
   const { content, ...project } = result.value;
   const { title, caption, coverImage } = project;
   const projectJsonLd = buildProjectJsonLd({
@@ -108,7 +110,7 @@ export default async function ProjectDetailPage({
     <>
       <JsonLd data={projectJsonLd} />
       <ProjectDetail {...project}>
-        {content && <Markdown content={content} />}
+        {content && <Markdown content={content} imageLabels={imageLabels} />}
       </ProjectDetail>
     </>
   );

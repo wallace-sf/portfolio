@@ -50,10 +50,22 @@
     "searchPlaceholder": "Search posts…",
     "searchClear": "Clear search",
     "searchResults": "{count, plural, =0 {No posts match} one {# post matches} other {# posts match}} “{query}”",
-    "searchNoResults": "Try another word, or browse the posts by topic."
+    "searchNoResults": "Try another word, or browse the posts by topic.",
+    "sharePost": "Share",
+    "copyPostLink": "Copy post link",
+    "shareOn": "Share on {network}",
+    "shareNative": "More sharing options",
+    "letsTalk": "{channels, select, both {Want to talk about this post? Find me on <linkedin>LinkedIn</linkedin> or by <email>email</email>.} linkedin {Want to talk about this post? Find me on <linkedin>LinkedIn</linkedin>.} other {Want to talk about this post? Write me an <email>email</email>.}}"
   },
   "Clipboard": {
     "copy": "Copy to clipboard"
+  },
+  "Share": {
+    "copyLink": "Copy link"
+  },
+  "ImageZoom": {
+    "zoom": "Open larger view",
+    "close": "Close"
   },
   "Home": {
     "projects_title": "Projects",
@@ -64,7 +76,6 @@
   },
   "ProjectCard": {
     "view_project": "View Project",
-    "share_tooltip": "Copy link",
     "share_button_label": "Share project link",
     "image_alt": "Project image"
   },

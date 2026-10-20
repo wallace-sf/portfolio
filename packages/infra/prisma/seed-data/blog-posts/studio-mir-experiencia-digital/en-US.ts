@@ -260,4 +260,15 @@ We ran 18 synthetic audits, along with navigation captures, an asset inventory a
 The observations reflect the conditions and period of the tests. No real-user data (CrUX) was collected, and no conclusion about financial or commercial losses was drawn.
 
 *Studio Mir, Devil May Cry and the other names and works mentioned belong to their respective owners. This article is an independent analysis and has no affiliation with the studio.*
+
+## References
+
+- [Studio Mir](https://www.studiomir.co.kr/en/): the studio's official website, analyzed in this investigation.
+- [Introduction to Lighthouse](https://developer.chrome.com/docs/lighthouse/overview): what the tool measures and how to run it.
+- [Lighthouse performance scoring](https://developer.chrome.com/docs/lighthouse/performance/performance-scoring): how the 0–100 scores in the table above are calculated.
+- [Properly size images](https://developer.chrome.com/docs/lighthouse/performance/uses-responsive-images): the audit that flags images larger than the area they are displayed in.
+- [Serve images in modern formats](https://developer.chrome.com/docs/lighthouse/performance/uses-webp-images): WebP and AVIF as lighter alternatives to JPEG.
+- [Browser-level image lazy loading for the web](https://web.dev/articles/browser-level-image-lazy-loading): loading images on demand with the \`loading\` attribute.
+- [Why lab and field data can be different](https://web.dev/articles/lab-and-field-data-differences): why synthetic audits don't replace real-user data.
+- [Overview of CrUX](https://developer.chrome.com/docs/crux): the Chrome UX Report, the public source of field data mentioned in the methodology note.
 `;

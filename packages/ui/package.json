@@ -31,6 +31,11 @@
       "types": "./dist/types/View/Markdown/MermaidBlock.d.ts",
       "import": "./dist/View/MermaidBlock/index.mjs",
       "require": "./dist/View/MermaidBlock/index.js"
+    },
+    "./View/ZoomableImage": {
+      "types": "./dist/types/View/ZoomableImage/index.d.ts",
+      "import": "./dist/View/ZoomableImage/index.mjs",
+      "require": "./dist/View/ZoomableImage/index.js"
     }
   },
   "os": [
@@ -39,7 +44,9 @@
   "files": [
     "dist/",
     "globals.css",
-    "markdown-theme.css"
+    "markdown-headings.css",
+    "markdown-theme.css",
+    "zoomable-image.css"
   ],
   "scripts": {
     "build": "tsup",
