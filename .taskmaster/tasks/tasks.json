@@ -10133,10 +10133,11 @@
         "description": "Let readers open any Markdown image in an accessible full-size viewer (lightbox) to examine screenshots and metrics.",
         "details": "Small client island in packages/ui Markdown (same pattern as MermaidBlock): wrap img via components map; native <dialog>, Esc/click-outside close, focus restore, alt as caption, respects reduced motion. Keep lazy-load hints.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-10-20T04:04:13.379Z"
       },
       {
         "id": "6",
@@ -10152,9 +10153,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-20T03:08:15.156Z",
+      "lastModified": "2026-10-20T04:04:13.379Z",
       "taskCount": 6,
-      "completedCount": 4,
+      "completedCount": 5,
       "tags": [
         "blog-launch"
       ]
