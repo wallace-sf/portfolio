@@ -20,6 +20,8 @@ export interface BlogPostSeed {
   content: LocalizedString;
   tags: string[];
   publishedAt: Date;
+  /** Last editorial revision (shown as "Updated …"); defaults to `publishedAt`. */
+  updatedAt?: Date;
   featured: boolean;
   coverImage?: BlogPostSeedImage;
   thumbnailImage?: BlogPostSeedImage;

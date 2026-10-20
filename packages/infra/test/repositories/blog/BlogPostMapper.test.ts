@@ -29,6 +29,7 @@ describe('BlogPostMapper', () => {
           es: 'Miniatura',
         },
         publishedAt: new Date('2026-08-01T00:00:00Z'),
+        updatedAt: new Date('2026-08-15T00:00:00Z'),
       });
 
       const post = BlogPostMapper.toDomain(row);
@@ -41,8 +42,11 @@ describe('BlogPostMapper', () => {
       expect(post.content.get('en-US')).toContain('Test content');
       expect(post.tags.map((t) => t.value)).toEqual(['nextjs', 'architecture']);
       expect(post.author.name.value).toBe('Test Author');
-      expect(post.author.avatarUrl.value).toBe('https://example.com/avatar.jpg');
+      expect(post.author.avatarUrl.value).toBe(
+        'https://example.com/avatar.jpg',
+      );
       expect(post.publishedAt.value).toBe('2026-08-01T00:00:00.000Z');
+      expect(post.updatedAt?.value).toBe('2026-08-15T00:00:00.000Z');
       expect(post.status).toBe(BlogPostStatus.PUBLISHED);
       expect(post.coverImage?.url.value).toContain('cover.webp');
       expect(post.coverImage?.alt.get('pt-BR')).toBe('Capa');

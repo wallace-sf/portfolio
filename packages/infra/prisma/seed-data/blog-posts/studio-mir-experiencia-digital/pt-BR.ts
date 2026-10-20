@@ -260,4 +260,15 @@ Foram realizadas 18 auditorias sintéticas, além de capturas de navegação, in
 As observações refletem as condições e o período dos testes. Não foram obtidos dados de usuários reais (CrUX), e nenhuma conclusão sobre perdas financeiras ou comerciais foi estabelecida.
 
 *Studio Mir, Devil May Cry e os demais nomes e obras mencionados pertencem aos respectivos titulares. Este artigo é uma análise independente e não possui vínculo com o estúdio.*
+
+## Referências
+
+- [Studio Mir](https://www.studiomir.co.kr/en/): site oficial do estúdio, analisado nesta investigação (em inglês).
+- [Introdução ao Lighthouse](https://developer.chrome.com/docs/lighthouse/overview?hl=pt-br): o que a ferramenta mede e como executá-la.
+- [Pontuação de desempenho do Lighthouse](https://developer.chrome.com/docs/lighthouse/performance/performance-scoring?hl=pt-br): como as notas de 0 a 100 da tabela acima são calculadas.
+- [Dimensionar as imagens corretamente](https://developer.chrome.com/docs/lighthouse/performance/uses-responsive-images?hl=pt-br): a auditoria que aponta imagens maiores do que a área em que são exibidas.
+- [Veicular imagens em formatos modernos](https://developer.chrome.com/docs/lighthouse/performance/uses-webp-images?hl=pt-br): WebP e AVIF como alternativas mais leves ao JPEG.
+- [Carregamento lento de imagens no navegador para a Web](https://web.dev/articles/browser-level-image-lazy-loading?hl=pt-br): carregar imagens sob demanda com o atributo \`loading\`.
+- [Por que os dados de laboratório e de campo podem ser diferentes](https://web.dev/articles/lab-and-field-data-differences?hl=pt-br): por que auditorias sintéticas não substituem dados de usuários reais.
+- [Visão geral do CrUX](https://developer.chrome.com/docs/crux?hl=pt-br): o Chrome UX Report, fonte pública de dados de campo citada na nota metodológica.
 `;

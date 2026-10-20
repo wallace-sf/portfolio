@@ -23,6 +23,7 @@ export class BlogPostMapper {
       tags: raw.tags,
       author: raw.author as unknown as IAuthorProps,
       publishedAt: raw.publishedAt.toISOString(),
+      updatedAt: raw.updatedAt.toISOString(),
       status: raw.status as BlogPostStatus,
       featured: raw.featured,
       coverImage:
