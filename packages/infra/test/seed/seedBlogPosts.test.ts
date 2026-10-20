@@ -89,7 +89,7 @@ describe('seedBlogPosts', () => {
       /\/blog\/studio-mir-experiencia-digital\/cover\.webp$/,
     );
     expect(studioMir?.thumbnailImageUrl).toMatch(
-      /\/blog\/studio-mir-experiencia-digital\/thumbnail-v3\.webp$/,
+      /\/blog\/studio-mir-experiencia-digital\/thumbnail-v4\.webp$/,
     );
   });
 
