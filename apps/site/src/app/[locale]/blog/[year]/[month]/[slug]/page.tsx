@@ -21,6 +21,7 @@ import { buildPostJsonLd } from '~features/blog/buildPostJsonLd';
 import { blogPostPath, publicationSegments } from '~features/blog/paths';
 import { PostCover } from '~features/blog/PostCover';
 import { PostHeader } from '~features/blog/PostHeader';
+import { PostShare } from '~features/blog/PostShare';
 import { MIN_TOC_HEADINGS, PostToc } from '~features/blog/PostToc';
 import { PrevNextNav } from '~features/blog/PrevNextNav';
 import { ReadingProgress } from '~features/blog/ReadingProgress';
@@ -141,6 +142,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           readingMinutes={post.readingMinutes}
           authorName={post.author.name}
           tags={post.tags}
+          locale={locale}
+        />
+
+        <PostShare
+          path={blogPostPath(post.publishedAt, post.slug)}
           locale={locale}
         />
 
