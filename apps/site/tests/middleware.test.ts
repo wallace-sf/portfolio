@@ -35,7 +35,7 @@ describe('middleware', () => {
     const regex = new RegExp(`^${negLookaheadPattern}$`);
 
     expect(regex.test('/blog')).toBe(true);
-    expect(regex.test('/blog/studio-mir-experiencia-digital')).toBe(true);
+    expect(regex.test('/blog/studio-mir-digital-experience')).toBe(true);
   });
 
   it('should still exclude infra paths from the matcher', async () => {

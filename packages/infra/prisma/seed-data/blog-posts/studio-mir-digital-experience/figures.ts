@@ -1,3 +1,5 @@
+// The storage folder keeps the post's original (pt-BR) slug; the images were
+// uploaded before the slug changed, and the path is not user-facing.
 const BASE =
   'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/blog/studio-mir-experiencia-digital';
 
