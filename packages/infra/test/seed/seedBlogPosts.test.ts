@@ -84,7 +84,7 @@ describe('seedBlogPosts', () => {
     const calls = await runSeed();
     const bySlug = new Map(calls.map(({ create }) => [create.slug, create]));
 
-    const studioMir = bySlug.get('studio-mir-experiencia-digital');
+    const studioMir = bySlug.get('studio-mir-digital-experience');
     expect(studioMir?.coverImageUrl).toMatch(
       /\/blog\/studio-mir-experiencia-digital\/cover\.webp$/,
     );
@@ -96,7 +96,7 @@ describe('seedBlogPosts', () => {
   it('should write the editorial updatedAt on create and update when the post has a revision date', async () => {
     const calls = await runSeed();
     const studioMir = calls.find(
-      ({ create }) => create.slug === 'studio-mir-experiencia-digital',
+      ({ create }) => create.slug === 'studio-mir-digital-experience',
     );
 
     expect(studioMir?.create.updatedAt).toEqual(

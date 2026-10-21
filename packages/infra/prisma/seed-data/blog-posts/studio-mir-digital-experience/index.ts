@@ -6,9 +6,9 @@ import { FIGURE } from './figures';
 
 import type { BlogPostSeed } from '../types';
 
-export const studioMirExperienciaDigital: BlogPostSeed = {
-  id: ID.blogPosts.studioMirExperienciaDigital,
-  slug: 'studio-mir-experiencia-digital',
+export const studioMirDigitalExperience: BlogPostSeed = {
+  id: ID.blogPosts.studioMirDigitalExperience,
+  slug: 'studio-mir-digital-experience',
   title: loc(
     "When the work is extraordinary, but the digital experience doesn't keep up",
     'Quando o trabalho é extraordinário, mas a experiência digital não acompanha',
