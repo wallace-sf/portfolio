@@ -10186,13 +10186,25 @@
         "priority": "medium",
         "subtasks": [],
         "updatedAt": "2026-10-20T23:32:49.122Z"
+      },
+      {
+        "id": 10,
+        "title": "Use an English slug for the Studio Mir post",
+        "description": "Rename the Studio Mir post slug from studio-mir-experiencia-digital to studio-mir-digital-experience; the slug is shared by every locale. Issue #1282.",
+        "details": "Keep the post id (seed upserts by id) and the Supabase storage folder. No redirect: the post was never promoted.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2026-10-21T05:51:49.995Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-20T23:32:49.123Z",
-      "taskCount": 9,
-      "completedCount": 9,
+      "lastModified": "2026-10-21T05:51:49.996Z",
+      "taskCount": 10,
+      "completedCount": 10,
       "tags": [
         "blog-launch"
       ]

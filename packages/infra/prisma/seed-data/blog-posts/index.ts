@@ -1,4 +1,4 @@
-import { studioMirExperienciaDigital } from './studio-mir-experiencia-digital';
+import { studioMirDigitalExperience } from './studio-mir-digital-experience';
 
 import type { BlogPostSeed, BlogPostSeedAuthor } from './types';
 
@@ -10,4 +10,4 @@ export const BLOG_POST_AUTHOR: BlogPostSeedAuthor = {
   url: 'https://wallace-ferreira.dev',
 };
 
-export const blogPosts: readonly BlogPostSeed[] = [studioMirExperienciaDigital];
+export const blogPosts: readonly BlogPostSeed[] = [studioMirDigitalExperience];
