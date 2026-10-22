@@ -53,6 +53,7 @@ export const ID = {
     wesf: '40000000-0000-4000-8000-000000000002',
     galaxies: '40000000-0000-4000-8000-000000000003',
     fdte_previous: '40000000-0000-4000-8000-000000000004',
+    stefanini: '40000000-0000-4000-8000-000000000005',
   },
   professionalValues: {
     quality: '50000000-0000-4000-8000-000000000001',
@@ -223,6 +224,18 @@ export async function seedSkills(db: PrismaClient): Promise<void> {
   console.log(`✔ ${skills.length} skills seeded`);
 }
 
+const PROFILE_HEADLINE = loc(
+  'Fullstack Engineer · React & Next.js · Node.js · TypeScript',
+  'Engenheiro Fullstack · React & Next.js · Node.js · TypeScript',
+  'Ingeniero Fullstack · React & Next.js · Node.js · TypeScript',
+);
+
+const PROFILE_BIO = loc(
+  "I'm a Fullstack Engineer with over 6 years of experience specialized in React, Next.js, TypeScript, Node.js, and front-end architecture, focused on building maintainable, accessible, and production-ready web applications — especially projects involving complex UI state, design systems, API integrations, and clear architectural boundaries.\n\nOver the past few years, I've worked on B2B platforms, embeddable widgets, Shopify apps, AI-powered interfaces, dynamic survey builders, and real-time workflow integrations. My work includes a B2B e-commerce platform with ~2,000 SKUs, an AI chatbot widget connected to a network of 800+ golf course clients, a survey builder rewrite delivered in three weeks, and a public technical portfolio with ~100 test files, 88 WCAG issues resolved, three-language internationalization, technical SEO, and Clean Architecture/DDD concepts.\n\nPassionate about product-oriented environments, I focus on architecture, UX, and quality to deliver impactful results.\n\nI'm currently a Senior Fullstack Developer at Stefanini, on a Miami-based team building investment products for Brazilian clients in the United States, working with TypeScript, React, and Node.js.",
+  'Sou Engenheiro Fullstack com mais de 6 anos de experiência especializado em React, Next.js, TypeScript, Node.js e arquitetura frontend, focado em construir aplicações web sustentáveis, acessíveis e prontas para produção — especialmente projetos que envolvem estado de UI complexo, design systems, integrações de API e limites arquiteturais claros.\n\nNos últimos anos, trabalhei com plataformas B2B, widgets incorporáveis, apps Shopify, interfaces com IA, construtores de pesquisas dinâmicos e integrações de workflow em tempo real. Meu trabalho inclui uma plataforma B2B de e-commerce com ~2.000 SKUs, um widget de chatbot de IA conectado a uma rede de mais de 800 clientes de campos de golfe, a reescrita de um survey builder entregue em três semanas, e um portfólio técnico público com ~100 arquivos de teste, 88 problemas de WCAG resolvidos, internacionalização em três idiomas, SEO técnico e conceitos de Clean Architecture/DDD.\n\nApaixonado por ambientes orientados a produto, foco em arquitetura, UX e qualidade para entregar resultados de impacto.\n\nAtualmente sou Desenvolvedor Fullstack Sênior na Stefanini, em um time baseado em Miami que constrói produtos de investimento para clientes brasileiros nos Estados Unidos, trabalhando com TypeScript, React e Node.js.',
+  'Soy Ingeniero Fullstack con más de 6 años de experiencia especializado en React, Next.js, TypeScript, Node.js y arquitectura frontend, enfocado en construir aplicaciones web mantenibles, accesibles y listas para producción — especialmente proyectos que involucran estado de UI complejo, design systems, integraciones de API y límites arquitectónicos claros.\n\nEn los últimos años, trabajé en plataformas B2B, widgets embebibles, apps de Shopify, interfaces con IA, constructores de encuestas dinámicos e integraciones de flujo de trabajo en tiempo real. Mi trabajo incluye una plataforma B2B de e-commerce con ~2.000 SKUs, un widget de chatbot de IA conectado a una red de más de 800 clientes de campos de golf, la reescritura de un survey builder entregada en tres semanas, y un portafolio técnico público con ~100 archivos de prueba, 88 problemas de WCAG resueltos, internacionalización en tres idiomas, SEO técnico y conceptos de Clean Architecture/DDD.\n\nApasionado por los entornos orientados al producto, me enfoco en arquitectura, UX y calidad para entregar resultados de impacto.\n\nActualmente soy Desarrollador Fullstack Senior en Stefanini, en un equipo con sede en Miami que construye productos de inversión para clientes brasileños en Estados Unidos, trabajando con TypeScript, React y Node.js.',
+);
+
 export async function seedProfile(db: PrismaClient): Promise<void> {
   await db.profile.upsert({
     where: { id: ID.profile },
@@ -230,16 +243,8 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
       name: 'Wallace Ferreira',
       photoUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/profile/images/hero-landing-page.webp',
-      headline: loc(
-        'Frontend Engineer · React & Next.js · TypeScript',
-        'Engenheiro Frontend · React & Next.js · TypeScript',
-        'Ingeniero Frontend · React & Next.js · TypeScript',
-      ),
-      bio: loc(
-        "I'm a Frontend Engineer with over 6 years of experience specialized in React, Next.js, TypeScript, and front-end architecture, focused on building maintainable, accessible, and production-ready web applications — especially projects involving complex UI state, design systems, API integrations, and clear architectural boundaries.\n\nOver the past few years, I've worked on B2B platforms, embeddable widgets, Shopify apps, AI-powered interfaces, dynamic survey builders, and real-time workflow integrations. My work includes a B2B e-commerce platform with ~2,000 SKUs, an AI chatbot widget connected to a network of 800+ golf course clients, a survey builder rewrite delivered in three weeks, and a public technical portfolio with ~100 test files, 88 WCAG issues resolved, three-language internationalization, technical SEO, and Clean Architecture/DDD concepts.\n\nPassionate about product-oriented environments, I focus on architecture, UX, and quality to deliver impactful results.\n\nCurrently seeking international Front-end Engineering opportunities where I can contribute with React/Next.js, TypeScript, architecture, product thinking, and high-quality execution — especially with remote teams building reliable, scalable, and user-focused web products.",
-        'Sou Engenheiro Frontend com mais de 6 anos de experiência especializado em React, Next.js, TypeScript e arquitetura frontend, focado em construir aplicações web sustentáveis, acessíveis e prontas para produção — especialmente projetos que envolvem estado de UI complexo, design systems, integrações de API e limites arquiteturais claros.\n\nNos últimos anos, trabalhei com plataformas B2B, widgets incorporáveis, apps Shopify, interfaces com IA, construtores de pesquisas dinâmicos e integrações de workflow em tempo real. Meu trabalho inclui uma plataforma B2B de e-commerce com ~2.000 SKUs, um widget de chatbot de IA conectado a uma rede de mais de 800 clientes de campos de golfe, a reescrita de um survey builder entregue em três semanas, e um portfólio técnico público com ~100 arquivos de teste, 88 problemas de WCAG resolvidos, internacionalização em três idiomas, SEO técnico e conceitos de Clean Architecture/DDD.\n\nApaixonado por ambientes orientados a produto, foco em arquitetura, UX e qualidade para entregar resultados de impacto.\n\nAtualmente em busca de oportunidades internacionais como Engenheiro Frontend, onde possa contribuir com React/Next.js, TypeScript, arquitetura, visão de produto e execução de alta qualidade — especialmente em times remotos construindo produtos web confiáveis, escaláveis e centrados no usuário.',
-        'Soy Ingeniero Frontend con más de 6 años de experiencia especializado en React, Next.js, TypeScript y arquitectura frontend, enfocado en construir aplicaciones web mantenibles, accesibles y listas para producción — especialmente proyectos que involucran estado de UI complejo, design systems, integraciones de API y límites arquitectónicos claros.\n\nEn los últimos años, trabajé en plataformas B2B, widgets embebibles, apps de Shopify, interfaces con IA, constructores de encuestas dinámicos e integraciones de flujo de trabajo en tiempo real. Mi trabajo incluye una plataforma B2B de e-commerce con ~2.000 SKUs, un widget de chatbot de IA conectado a una red de más de 800 clientes de campos de golf, la reescritura de un survey builder entregada en tres semanas, y un portafolio técnico público con ~100 archivos de prueba, 88 problemas de WCAG resueltos, internacionalización en tres idiomas, SEO técnico y conceptos de Clean Architecture/DDD.\n\nApasionado por los entornos orientados al producto, me enfoco en arquitectura, UX y calidad para entregar resultados de impacto.\n\nActualmente en búsqueda de oportunidades internacionales como Ingeniero Frontend, donde pueda contribuir con React/Next.js, TypeScript, arquitectura, visión de producto y ejecución de alta calidad — especialmente en equipos remotos que construyen productos web confiables, escalables y centrados en el usuario.',
-      ),
+      headline: PROFILE_HEADLINE,
+      bio: PROFILE_BIO,
       photoAlt: loc('Professional Picture 1 of Wallace Ferreira', 'Foto profissional 1 de Wallace Ferreira', 'Foto profesional 1 de Wallace Ferreira'),
       stats: {
         deleteMany: {},
@@ -295,16 +300,8 @@ export async function seedProfile(db: PrismaClient): Promise<void> {
     create: {
       id: ID.profile,
       name: 'Wallace Ferreira',
-      headline: loc(
-        'Frontend Engineer · React & Next.js · TypeScript',
-        'Engenheiro Frontend · React & Next.js · TypeScript',
-        'Ingeniero Frontend · React & Next.js · TypeScript',
-      ),
-      bio: loc(
-        "I'm a Frontend Engineer with over 6 years of experience specialized in React, Next.js, TypeScript, and front-end architecture, focused on building maintainable, accessible, and production-ready web applications — especially projects involving complex UI state, design systems, API integrations, and clear architectural boundaries.\n\nOver the past few years, I've worked on B2B platforms, embeddable widgets, Shopify apps, AI-powered interfaces, dynamic survey builders, and real-time workflow integrations. My work includes a B2B e-commerce platform with ~2,000 SKUs, an AI chatbot widget connected to a network of 800+ golf course clients, a survey builder rewrite delivered in three weeks, and a public technical portfolio with ~100 test files, 88 WCAG issues resolved, three-language internationalization, technical SEO, and Clean Architecture/DDD concepts.\n\nPassionate about product-oriented environments, I focus on architecture, UX, and quality to deliver impactful results.\n\nCurrently seeking international Front-end Engineering opportunities where I can contribute with React/Next.js, TypeScript, architecture, product thinking, and high-quality execution — especially with remote teams building reliable, scalable, and user-focused web products.",
-        'Sou Engenheiro Frontend com mais de 6 anos de experiência especializado em React, Next.js, TypeScript e arquitetura frontend, focado em construir aplicações web sustentáveis, acessíveis e prontas para produção — especialmente projetos que envolvem estado de UI complexo, design systems, integrações de API e limites arquiteturais claros.\n\nNos últimos anos, trabalhei com plataformas B2B, widgets incorporáveis, apps Shopify, interfaces com IA, construtores de pesquisas dinâmicos e integrações de workflow em tempo real. Meu trabalho inclui uma plataforma B2B de e-commerce com ~2.000 SKUs, um widget de chatbot de IA conectado a uma rede de mais de 800 clientes de campos de golfe, a reescrita de um survey builder entregue em três semanas, e um portfólio técnico público com ~100 arquivos de teste, 88 problemas de WCAG resolvidos, internacionalização em três idiomas, SEO técnico e conceitos de Clean Architecture/DDD.\n\nApaixonado por ambientes orientados a produto, foco em arquitetura, UX e qualidade para entregar resultados de impacto.\n\nAtualmente em busca de oportunidades internacionais como Engenheiro Frontend, onde possa contribuir com React/Next.js, TypeScript, arquitetura, visão de produto e execução de alta qualidade — especialmente em times remotos construindo produtos web confiáveis, escaláveis e centrados no usuário.',
-        'Soy Ingeniero Frontend con más de 6 años de experiencia especializado en React, Next.js, TypeScript y arquitectura frontend, enfocado en construir aplicaciones web mantenibles, accesibles y listas para producción — especialmente proyectos que involucran estado de UI complejo, design systems, integraciones de API y límites arquitectónicos claros.\n\nEn los últimos años, trabajé en plataformas B2B, widgets embebibles, apps de Shopify, interfaces con IA, constructores de encuestas dinámicos e integraciones de flujo de trabajo en tiempo real. Mi trabajo incluye una plataforma B2B de e-commerce con ~2.000 SKUs, un widget de chatbot de IA conectado a una red de más de 800 clientes de campos de golf, la reescritura de un survey builder entregada en tres semanas, y un portafolio técnico público con ~100 archivos de prueba, 88 problemas de WCAG resueltos, internacionalización en tres idiomas, SEO técnico y conceptos de Clean Architecture/DDD.\n\nApasionado por los entornos orientados al producto, me enfoco en arquitectura, UX y calidad para entregar resultados de impacto.\n\nActualmente en búsqueda de oportunidades internacionales como Ingeniero Frontend, donde pueda contribuir con React/Next.js, TypeScript, arquitectura, visión de producto y ejecución de alta calidad — especialmente en equipos remotos que construyen productos web confiables, escalables y centrados en el usuario.',
-      ),
+      headline: PROFILE_HEADLINE,
+      bio: PROFILE_BIO,
       photoUrl:
         'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/profile/images/hero-landing-page.webp',
       photoAlt: loc('Professional Picture 1 of Wallace Ferreira', 'Foto profissional 1 de Wallace Ferreira', 'Foto profesional 1 de Wallace Ferreira'),
@@ -1680,6 +1677,29 @@ Construida y ==publicada en npm== como el único punto de integración MQTT para
 
 export async function seedExperiences(db: PrismaClient): Promise<void> {
   const experiences = [
+    {
+      id: ID.experiences.stefanini,
+      company: loc('Stefanini', 'Stefanini'),
+      position: loc('Senior Fullstack Developer', 'Senior Fullstack Developer'),
+      location: loc(
+        'São Paulo, Brazil',
+        'São Paulo, Brasil',
+        'São Paulo, Brasil',
+      ),
+      description: loc(
+        'Fullstack developer on a Miami-based team serving a major Brazilian bank, building investment products for Brazilian clients in the United States.',
+        'Desenvolvedor fullstack em uma célula de um grande banco brasileiro sediada em Miami, construindo produtos de investimento para clientes brasileiros nos Estados Unidos.',
+        'Desarrollador fullstack en una célula de un gran banco brasileño con sede en Miami, construyendo productos de inversión para clientes brasileños en Estados Unidos.',
+      ),
+      logoUrl:
+        'https://daxmkexweadrkobbnuxj.supabase.co/storage/v1/object/public/portfolio-images/site/experiences/stefanini_logo.webp',
+      logoAlt: loc('Stefanini logo', 'Logo da Stefanini', 'Logo de Stefanini'),
+      employmentType: 'FULL_TIME' as const,
+      locationType: 'REMOTE' as const,
+      startAt: new Date('2026-09-14'),
+      endAt: null,
+      skillIds: [ID.skills.typescript, ID.skills.react, ID.skills.nodejs],
+    },
     {
       id: ID.experiences.fdte_current,
       company: loc(
