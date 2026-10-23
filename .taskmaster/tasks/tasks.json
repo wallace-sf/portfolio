@@ -10080,7 +10080,7 @@
   "blog-launch": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Publish first real post: Studio Mir digital experience",
         "description": "Seed the Studio Mir article (pt-BR original + en-US/es translations) with optimized figures uploaded to Supabase storage",
         "details": "",
@@ -10092,7 +10092,7 @@
         "updatedAt": "2026-10-19T04:41:55.109Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Lazy-load and async-decode Markdown images",
         "description": "Add loading=lazy and decoding=async to every Markdown img via a post-sanitize rehype plugin",
         "details": "",
@@ -10104,7 +10104,7 @@
         "updatedAt": "2026-10-19T04:46:35.460Z"
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Remove the dummy blog posts",
         "description": "Delete the 8 placeholder seed posts and make the blog seed prune every post not in the seed list, so only the Studio Mir post remains in dev and prod.",
         "details": "Remove the 8 dummy seed modules and their IDs; seedBlogPosts deletes rows whose id is not in blogPosts before upserting; update seed and middleware tests.",
@@ -10116,7 +10116,7 @@
         "updatedAt": "2026-10-20T01:02:09.247Z"
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Post sharing, section deep links and contact invite",
         "description": "Add copy-link + LinkedIn share to the post header, a copyable anchor link on every h2/h3, and a 'let's talk' invite (LinkedIn/email) in the author byline.",
         "details": "Generalize features/shared/ShareButton to take a path (projects + blog). Add rehype-autolink-headings (or a small own plugin) after rehypeSlug in packages/ui Markdown pipeline. Extend AuthorByline with a contact invite. i18n in pt-BR/en-US/es.",
@@ -10128,7 +10128,7 @@
         "updatedAt": "2026-10-20T03:08:15.156Z"
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Zoomable figures in blog posts",
         "description": "Let readers open any Markdown image in an accessible full-size viewer (lightbox) to examine screenshots and metrics.",
         "details": "Small client island in packages/ui Markdown (same pattern as MermaidBlock): wrap img via components map; native <dialog>, Esc/click-outside close, focus restore, alt as caption, respects reduced motion. Keep lazy-load hints.",
@@ -10140,7 +10140,7 @@
         "updatedAt": "2026-10-20T04:04:13.379Z"
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Add a References section to the Studio Mir post",
         "description": "Add a References section with the sources behind the investigation (the analyzed site, Lighthouse docs, web.dev image guidance) in pt-BR, en-US and es.",
         "details": "Content-only change in packages/infra/prisma/seed-data/blog-posts/studio-mir-experiencia-digital/{pt-BR,en-US,es}.ts; bump updatedAt; re-run blog seed in dev and prod.",
@@ -10152,7 +10152,7 @@
         "updatedAt": "2026-10-20T05:04:18.940Z"
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "Tag icon before post tags and on the tag page heading",
         "description": "Show a tags icon before the tag list on the post page and a tag icon in front of the tag page heading (replacing the '#'), like Loiane Groner's blog.",
         "details": "PostHeader: decorative mdi:tag-multiple-outline before the <ul>, which gets aria-label Tags. Tag page H1: mdi:tag-outline + sr-only 'Tag' + tag name; replace Blog.tagHeading with Blog.tag in pt-BR/en-US/es.",
@@ -10164,7 +10164,7 @@
         "updatedAt": "2026-10-20T05:50:35.532Z"
       },
       {
-        "id": "8",
+        "id": 8,
         "title": "Sharp thumbnail for the Studio Mir post",
         "description": "Replace the blurred thumbnail with a text overlay (thumbnail-v3) by a sharp crop of the Studio Mir portfolio grid (thumbnail-v4).",
         "details": "864x576 WebP cropped from fig-3-portfolio-grid, centred on X-Men '97; uploaded next to the other figures in the portfolio-images bucket; figures.ts points to thumbnail-v4.",
@@ -10176,7 +10176,7 @@
         "updatedAt": "2026-10-20T06:38:44.320Z"
       },
       {
-        "id": "9",
+        "id": 9,
         "title": "Revise the Studio Mir post: author edits, denser paragraphs, humanized prose",
         "description": "Apply the author's Google Docs revision to the Studio Mir post, merge one-sentence paragraphs, remove AI writing patterns (humanizer), and stop the two portfolio figures from appearing back to back.",
         "details": "pt-BR first, reviewed by the author on the dev server; en-US and es translated from the final pt-BR. Also fix the thumbnail alt, which still describes thumbnail-v3.",
@@ -10207,6 +10207,34 @@
       "completedCount": 10,
       "tags": [
         "blog-launch"
+      ],
+      "created": "2026-10-22T23:41:11.745Z",
+      "description": "Tasks for blog-launch context",
+      "updated": "2026-10-22T23:41:11.745Z"
+    }
+  },
+  "career-update": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Add Stefanini experience and refresh profile bio (#1286)",
+        "description": "Seed the new Stefanini position (Senior Fullstack Developer, since 2026-09-14) and update profile headline/bio to Fullstack in all locales.",
+        "details": "GitHub issue #1286. Update packages/infra/prisma/seeders.ts: new ID.experiences.stefanini, experience entry with context-only description, logo in Supabase Storage, skills TS/React/Node. Update headline and bio; drop 'seeking opportunities' paragraph. Test: tsc, seed dev DB, verify About page in browser.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2026-10-22T23:53:12.550Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-10-22T23:53:12.550Z",
+      "taskCount": 1,
+      "completedCount": 1,
+      "tags": [
+        "career-update"
       ]
     }
   }
