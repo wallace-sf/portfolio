@@ -9,8 +9,8 @@ export interface IPostMetaProps {
   readingMinutes: number;
   locale: string;
   updatedAt?: string;
-  /** Credited as "By {name}" when present (the post header, not cards). */
-  authorName?: string;
+  /** Prefixes the date with "Published on" (the post header, not cards). */
+  labelled?: boolean;
 }
 
 /** `YYYY-MM-DD` of an ISO timestamp in UTC — the day dates are formatted in. */
@@ -21,29 +21,27 @@ const updatedLater = (publishedAt: string, updatedAt?: string): boolean =>
   updatedAt !== undefined && utcDay(updatedAt) > utcDay(publishedAt);
 
 /**
- * The post's metadata line: published date · "Updated …" (only when updated on
- * a later day) · "By {author}" (when given) · reading time.
+ * The post's metadata line: published date (optionally labelled) · "Updated …"
+ * (only when updated on a later day) · reading time.
  */
 export async function PostMeta({
   publishedAt,
   readingMinutes,
   locale,
   updatedAt,
-  authorName,
+  labelled = false,
 }: IPostMetaProps) {
   const t = await getTranslations({ locale, namespace: 'Blog' });
+  const published = formatPublishedAt(publishedAt, locale);
 
   const items: ReactNode[] = [
     <time key="published" dateTime={publishedAt}>
-      {formatPublishedAt(publishedAt, locale)}
+      {labelled ? t('publishedOn', { date: published }) : published}
     </time>,
     updatedLater(publishedAt, updatedAt) && updatedAt && (
       <time key="updated" dateTime={updatedAt}>
         {t('updatedOn', { date: formatPublishedAt(updatedAt, locale) })}
       </time>
-    ),
-    authorName && (
-      <span key="author">{t('byAuthor', { name: authorName })}</span>
     ),
     <span key="reading">{t('readingTime', { minutes: readingMinutes })}</span>,
   ].filter(Boolean);

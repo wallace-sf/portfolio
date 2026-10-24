@@ -52,17 +52,21 @@ describe('PostMeta', () => {
     expect(screen.queryByText(/Updated/)).not.toBeInTheDocument();
   });
 
-  it('should credit the author when given an author name', async () => {
+  it('should label the published date when labelled', async () => {
     await renderServerComponent(
-      PostMeta({ ...BASE, authorName: 'Wallace Silva', locale: 'pt-BR' }),
+      PostMeta({ ...BASE, labelled: true, locale: 'pt-BR' }),
     );
 
-    expect(screen.getByText('Por Wallace Silva')).toBeInTheDocument();
+    expect(
+      screen.getByText('Publicado em 1 de agosto de 2026'),
+    ).toBeInTheDocument();
   });
 
-  it('should not credit anyone when no author name is given', async () => {
-    await renderServerComponent(PostMeta(BASE));
+  it('should render the bare published date when not labelled', async () => {
+    const { container } = await renderServerComponent(PostMeta(BASE));
 
-    expect(screen.queryByText(/^By /)).not.toBeInTheDocument();
+    expect(container.querySelector('time')).toHaveTextContent(
+      /^August 1, 2026$/,
+    );
   });
 });
