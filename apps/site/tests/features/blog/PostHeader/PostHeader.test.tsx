@@ -17,22 +17,43 @@ vi.mock('@repo/ui/Imagery', () => ({
   Icon: () => <span data-testid="icon" />,
 }));
 
+vi.mock('next/image', () => ({
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} />
+  ),
+}));
+
 const BASE = {
   title: 'The Either Pattern',
   description: 'Why this codebase never throws for domain errors.',
   publishedAt: '2026-08-01',
   readingMinutes: 4,
-  authorName: 'Test Author',
+  author: {
+    name: 'Test Author',
+    avatarUrl: 'https://example.com/avatar.png',
+  },
   tags: ['typescript', 'ddd'],
   locale: 'en-US',
 };
 
 describe('PostHeader', () => {
-  it('should render the metadata line with the author and reading time', async () => {
+  it('should render a labelled published date and reading time', async () => {
     await renderServerComponent(PostHeader(BASE));
 
-    expect(screen.getByText('By Test Author')).toBeInTheDocument();
+    expect(screen.getByText('Published on August 1, 2026')).toBeInTheDocument();
     expect(screen.getByText('4 min read')).toBeInTheDocument();
+  });
+
+  it('should present the author with their avatar', async () => {
+    const { container } = await renderServerComponent(PostHeader(BASE));
+
+    expect(screen.getByText('Test Author')).toBeInTheDocument();
+    expect(container.querySelector('img')).toHaveAttribute(
+      'src',
+      'https://example.com/avatar.png',
+    );
+    expect(screen.queryByText(/^By /)).not.toBeInTheDocument();
   });
 
   it('should link each tag to its tag page when the post has tags', async () => {
