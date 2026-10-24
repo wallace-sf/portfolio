@@ -142,7 +142,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           publishedAt={post.publishedAt}
           updatedAt={post.updatedAt}
           readingMinutes={post.readingMinutes}
-          authorName={post.author.name}
+          author={post.author}
           tags={post.tags}
           locale={locale}
         />

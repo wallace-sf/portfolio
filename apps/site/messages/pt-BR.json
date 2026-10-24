@@ -35,7 +35,7 @@
     "archivePostCount": "{count, plural, one {# post} other {# posts}}",
     "readingTime": "{minutes} min de leitura",
     "updatedOn": "Atualizado em {date}",
-    "byAuthor": "Por {name}",
+    "publishedOn": "Publicado em {date}",
     "aboutAuthor": "Sobre o autor",
     "tableOfContents": "Nesta página",
     "tags": "Tags",

@@ -1,6 +1,8 @@
+import type { BlogPostAuthorDTO } from '@repo/application/blog';
 import { Icon } from '@repo/ui/Imagery';
 import { getTranslations } from 'next-intl/server';
 
+import { PostAuthor } from '~features/blog/PostAuthor';
 import { PostMeta } from '~features/blog/PostMeta';
 import { TagLink } from '~features/blog/TagLink';
 
@@ -10,15 +12,19 @@ export interface IPostHeaderProps {
   publishedAt: string;
   updatedAt?: string;
   readingMinutes: number;
-  authorName: string;
+  author: BlogPostAuthorDTO;
   tags: string[];
   locale: string;
 }
 
-/** The post's title block: metadata line, title, description and tags. */
+/**
+ * The post's title block: labelled metadata line, title, description, author
+ * chip and tags.
+ */
 export async function PostHeader({
   title,
   description,
+  author,
   tags,
   ...meta
 }: IPostHeaderProps) {
@@ -26,11 +32,13 @@ export async function PostHeader({
 
   return (
     <header className="flex flex-col gap-4">
-      <PostMeta {...meta} />
+      <PostMeta {...meta} labelled />
 
       <h1 className="text-heading-h2">{title}</h1>
 
       <p className="text-body-lg text-content-secondary">{description}</p>
+
+      <PostAuthor author={author} />
 
       {tags.length > 0 && (
         <div className="flex items-center gap-2">

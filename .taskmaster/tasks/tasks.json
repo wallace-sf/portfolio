@@ -10226,15 +10226,52 @@
         "priority": "medium",
         "subtasks": [],
         "updatedAt": "2026-10-22T23:53:12.550Z"
+      },
+      {
+        "id": "2",
+        "title": "Clearer icons for the profile stat cards (#1290)",
+        "description": "Replace the four ProfileStat icons in the seed with ones that represent each stat: briefcase-clock, rocket-launch, layers-triple, map-marker-multiple.",
+        "details": "GitHub issue #1290. Update both the update and create branches of the profile upsert in packages/infra/prisma/seeders.ts, then re-seed. Test: seed runs cleanly; About page shows the new icons in all three locales.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": [],
+        "updatedAt": "2026-10-24T02:47:10.899Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-22T23:53:12.550Z",
+      "lastModified": "2026-10-24T02:47:10.899Z",
+      "taskCount": 2,
+      "completedCount": 2,
+      "tags": [
+        "career-update"
+      ]
+    }
+  },
+  "blog-polish": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Author avatar and labelled publish date in the post header",
+        "description": "Presentation-only: 'Published on {date}' meta line, author chip (avatar + name) below description. GitHub #1294.",
+        "details": "See issue #1294 for acceptance criteria and files. Tests: PostAuthor, PostMeta label, PostHeader; manual check in 3 locales.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": [],
+        "updatedAt": "2026-10-24T04:12:47.131Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-10-24T04:12:47.132Z",
       "taskCount": 1,
       "completedCount": 1,
       "tags": [
-        "career-update"
+        "blog-polish"
       ]
     }
   }
