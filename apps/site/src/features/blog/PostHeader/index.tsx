@@ -15,6 +15,8 @@ export interface IPostHeaderProps {
   author: BlogPostAuthorDTO;
   tags: string[];
   locale: string;
+  /** Id of the `<h1>`, so it can take focus (e.g. from the back-to-top button). */
+  titleId?: string;
 }
 
 /**
@@ -26,6 +28,7 @@ export async function PostHeader({
   description,
   author,
   tags,
+  titleId,
   ...meta
 }: IPostHeaderProps) {
   const t = await getTranslations({ locale: meta.locale, namespace: 'Blog' });
@@ -34,7 +37,13 @@ export async function PostHeader({
     <header className="flex flex-col gap-4">
       <PostMeta {...meta} labelled />
 
-      <h1 className="text-heading-h2">{title}</h1>
+      <h1
+        id={titleId}
+        tabIndex={titleId ? -1 : undefined}
+        className="text-heading-h2 focus:outline-none"
+      >
+        {title}
+      </h1>
 
       <p className="text-body-lg text-content-secondary">{description}</p>
 
