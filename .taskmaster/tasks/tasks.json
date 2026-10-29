@@ -10263,13 +10263,25 @@
         "priority": "low",
         "subtasks": [],
         "updatedAt": "2026-10-24T04:12:47.131Z"
+      },
+      {
+        "id": "2",
+        "title": "Accessible back-to-top button on the post page",
+        "description": "Floating back-to-top button on blog posts: shows after ~2 viewports, scrolls to top respecting reduced motion, moves focus to the post title. GitHub issue #1298.",
+        "details": "See issue #1298 for design decisions and acceptance criteria.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": [],
+        "updatedAt": "2026-10-29T03:42:48.012Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-10-24T04:12:47.132Z",
-      "taskCount": 1,
-      "completedCount": 1,
+      "lastModified": "2026-10-29T03:42:48.012Z",
+      "taskCount": 2,
+      "completedCount": 2,
       "tags": [
         "blog-polish"
       ]
