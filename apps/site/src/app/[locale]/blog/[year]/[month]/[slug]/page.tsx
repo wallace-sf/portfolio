@@ -8,7 +8,7 @@ import { type Locale } from '@repo/core/shared';
 import { Divider, Markdown, markdownHeadings } from '@repo/ui/View';
 import classNames from 'classnames';
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import { imageZoomLabels } from '~/i18n/imageZoomLabels';
@@ -17,6 +17,7 @@ import { buildOpenGraph } from '~/lib/seo/openGraph';
 import { getServerContainer } from '~/lib/server/container';
 import { JsonLd } from '~components';
 import { AuthorByline } from '~features/blog/AuthorByline';
+import { BackToTop } from '~features/blog/BackToTop';
 import { BlogBreadcrumbs } from '~features/blog/BlogBreadcrumbs';
 import { buildPostJsonLd } from '~features/blog/buildPostJsonLd';
 import { blogPostPath, publicationSegments } from '~features/blog/paths';
@@ -37,6 +38,9 @@ export const dynamicParams = false;
 
 /** The element the reading progress bar measures: the post body only. */
 const POST_BODY_ID = 'post-body';
+
+/** The post title, focused by the back-to-top button. */
+const POST_TITLE_ID = 'post-title';
 
 export const generateStaticParams = blogPostStaticParams;
 
@@ -105,11 +109,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const { blogPostRepository } = getServerContainer();
   const input = { slug, locale: locale as Locale };
-  const [post, navResult, relatedResult, imageLabels] = await Promise.all([
+  const [post, navResult, relatedResult, imageLabels, t] = await Promise.all([
     findPostAt(routeParams),
     new GetAdjacentBlogPosts(blogPostRepository).execute(input),
     new ListRelatedBlogPosts(blogPostRepository).execute(input),
     imageZoomLabels(locale),
+    getTranslations({ locale, namespace: 'Blog' }),
   ]);
 
   if (!post) notFound();
@@ -129,6 +134,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       )}
     >
       <ReadingProgress targetId={POST_BODY_ID} />
+      <BackToTop label={t('backToTop')} focusTargetId={POST_TITLE_ID} />
 
       <article className="mx-auto flex w-full max-w-3xl flex-col gap-8 py-4 lg:py-8">
         <JsonLd data={buildPostJsonLd(post, locale)} />
@@ -145,6 +151,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           author={post.author}
           tags={post.tags}
           locale={locale}
+          titleId={POST_TITLE_ID}
         />
 
         <PostShare

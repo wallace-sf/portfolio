@@ -55,6 +55,7 @@
     "copyPostLink": "Copiar enlace del post",
     "shareOn": "Compartir en {network}",
     "shareNative": "Más opciones para compartir",
+    "backToTop": "Volver arriba",
     "letsTalk": "{channels, select, both {¿Quieres conversar sobre este post? Encuéntrame en <linkedin>LinkedIn</linkedin> o por <email>correo</email>.} linkedin {¿Quieres conversar sobre este post? Encuéntrame en <linkedin>LinkedIn</linkedin>.} other {¿Quieres conversar sobre este post? Escríbeme un <email>correo</email>.}}"
   },
   "Clipboard": {

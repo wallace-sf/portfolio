@@ -84,4 +84,12 @@ describe('PostHeader', () => {
     expect(screen.queryByText('typescript')).not.toBeInTheDocument();
     expect(screen.queryByRole('list')).not.toBeInTheDocument();
   });
+
+  it('should make the title programmatically focusable when it has an id', async () => {
+    await renderServerComponent(PostHeader({ ...BASE, titleId: 'post-title' }));
+
+    const title = screen.getByRole('heading', { level: 1 });
+    expect(title).toHaveAttribute('id', 'post-title');
+    expect(title).toHaveAttribute('tabindex', '-1');
+  });
 });
