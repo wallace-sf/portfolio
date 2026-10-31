@@ -29,8 +29,8 @@
   --tw-shadow-drop-up: none;
 
   /* Layout tokens — consumed by apps/site's SiteHeader / SideNav chrome */
-  --header-height-desktop: 104px;
-  --header-height-mobile: 68px;
+  --topbar-height-desktop: 104px;
+  --topbar-height-mobile: 68px;
 }
 
 .light {
