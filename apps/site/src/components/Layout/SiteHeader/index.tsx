@@ -27,7 +27,7 @@ export const SiteHeader: FC<SiteHeaderProps> = ({
   const t = useTranslations('Header');
 
   return (
-    <header className="flex h-header-mobile w-full items-center justify-between bg-surface px-4 py-3 shadow-drop-md transition-all duration-300 ease-linear lg:h-header-desktop lg:w-60 lg:items-end lg:justify-center lg:bg-surface-sunken lg:p-0 lg:shadow-none">
+    <header className="flex h-topbar-mobile w-full items-center justify-between bg-surface px-4 py-3 shadow-drop-md transition-all duration-300 ease-linear lg:h-topbar-desktop lg:w-60 lg:items-end lg:justify-center lg:bg-surface-sunken lg:p-0 lg:shadow-none">
       <NextLink href={`/${locale}`} aria-label={t('logo_alt')}>
         <SiteLogo className="h-11 w-[66px] lg:h-[66px] lg:w-[99px]" />
       </NextLink>
