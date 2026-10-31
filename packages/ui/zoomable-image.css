@@ -1,9 +1,16 @@
-/* ZoomableImage: the inline trigger reads as the plain Markdown image, and the
-   viewer is a full-viewport <dialog> that paints its own dimmed background —
-   its empty area is the backdrop (a click there closes it). */
-.zoomable-image-trigger {
+/* ZoomableImage: the inline image reads as the plain Markdown image, with a
+   transparent trigger laid over it; the viewer is a full-viewport <dialog> that
+   paints its own dimmed background — its empty area is the backdrop (a click
+   there closes it). */
+.zoomable-image {
+  position: relative;
   display: inline-block;
   max-width: 100%;
+}
+
+.zoomable-image-trigger {
+  position: absolute;
+  inset: 0;
   padding: 0;
   border: 0;
   background: none;

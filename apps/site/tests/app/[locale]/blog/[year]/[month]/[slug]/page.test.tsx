@@ -102,8 +102,9 @@ describe('BlogPostPage', () => {
 
     await renderPage('figures', '2026', '09', 'pt-BR');
 
+    expect(screen.getByRole('img', { name: 'Um gráfico' })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Um gráfico Ampliar imagem' }),
+      screen.getByRole('button', { name: 'Ampliar imagem' }),
     ).toHaveAttribute('aria-haspopup', 'dialog');
   });
 

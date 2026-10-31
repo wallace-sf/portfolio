@@ -29,7 +29,7 @@ export interface IZoomableImageProps {
  * A Markdown image that opens full size in a native modal `<dialog>` (focus
  * trap, Esc and backdrop for free). The dialog is portalled to `<body>` —
  * the image sits inside a `<p>`, where a `<dialog>` is invalid — so it only
- * exists after mount. Closing returns focus to the inline image.
+ * exists after mount. Closing returns focus to the zoom trigger.
  */
 export const ZoomableImage = ({
   src,
@@ -58,13 +58,11 @@ export const ZoomableImage = ({
 
   return (
     <>
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-haspopup="dialog"
-        onClick={open}
-        className="zoomable-image-trigger"
-      >
+      {/* The trigger overlays the image instead of wrapping it: browser reader
+          modes (e.g. Firefox's Readability) drop <button>s with their content,
+          which would take the image with them. `title` sits on the wrapper so
+          its tooltip still shows over the trigger. */}
+      <span title={title} className="zoomable-image">
         <img
           src={src}
           alt={alt}
@@ -72,8 +70,16 @@ export const ZoomableImage = ({
           loading={loading}
           decoding={decoding}
         />
-        <span className="sr-only">{labels.zoom}</span>
-      </button>
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-haspopup="dialog"
+          onClick={open}
+          className="zoomable-image-trigger"
+        >
+          <span className="sr-only">{labels.zoom}</span>
+        </button>
+      </span>
 
       {mounted &&
         createPortal(

@@ -1,3 +1,4 @@
+import { Readability } from '@mozilla/readability';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { ZoomableImage } from '~/View/ZoomableImage';
@@ -32,7 +33,7 @@ describe('ZoomableImage', () => {
     expect(dialog()).not.toHaveAttribute('open');
   });
 
-  it('should name the trigger after the image and the zoom hint when labels are given', () => {
+  it('should name the trigger after the zoom hint when labels are given', () => {
     render(
       <ZoomableImage
         {...IMAGE}
@@ -41,8 +42,34 @@ describe('ZoomableImage', () => {
     );
 
     expect(
-      screen.getByRole('button', { name: 'Lighthouse report Ampliar imagem' }),
+      screen.getByRole('button', { name: 'Ampliar imagem' }),
     ).toHaveAttribute('aria-haspopup', 'dialog');
+  });
+
+  it('should keep the image when a browser reader mode extracts the article', () => {
+    const paragraph =
+      'A paragraph long enough for the reader mode to treat this as an article. '.repeat(
+        8,
+      );
+    render(
+      <article>
+        <h1>Post title</h1>
+        <p>{paragraph}</p>
+        <p>
+          <ZoomableImage {...IMAGE} />
+        </p>
+        <p>{paragraph}</p>
+      </article>,
+    );
+
+    // Readability (Firefox Reader View) mutates the document it parses.
+    const extracted = new Readability(
+      document.cloneNode(true) as Document,
+    ).parse();
+    const content = document.createElement('div');
+    content.innerHTML = extracted?.content ?? '';
+
+    expect(content.querySelector('img')).toHaveAttribute('alt', IMAGE.alt);
   });
 
   it('should open the full-size image with the alt text as caption when the image is clicked', () => {
