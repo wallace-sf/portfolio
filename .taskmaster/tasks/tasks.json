@@ -10275,6 +10275,18 @@
         "priority": "low",
         "subtasks": [],
         "updatedAt": "2026-10-29T03:42:48.012Z"
+      },
+      {
+        "id": "3",
+        "title": "Keep post images in the browser's reader mode",
+        "description": "ZoomableImage nests the <img> inside the zoom <button>; Readability (Firefox Reader View) strips buttons with their children, so post images vanish in reader mode. Make the image a sibling of an overlaid trigger. Issue #1302.",
+        "details": "Restructure packages/ui ZoomableImage: relative wrapper with <img> + overlaid <button> (inset 0). Trigger name = zoom hint. Regression test with @mozilla/readability. Verify: unit tests, Readability extraction test, manual Firefox Reader View check.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": [],
+        "updatedAt": "2026-10-31T01:29:18.520Z"
       }
     ],
     "metadata": {
