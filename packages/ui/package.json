@@ -87,6 +87,7 @@
     "usehooks-ts": "^3.1.1"
   },
   "devDependencies": {
+    "@mozilla/readability": "^0.6.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",

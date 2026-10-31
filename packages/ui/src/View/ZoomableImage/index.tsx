@@ -1,15 +1,10 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type MouseEvent,
-} from 'react';
+import { useCallback, useEffect, useRef, type MouseEvent } from 'react';
 
 import { Icon } from '@iconify/react';
 import { createPortal } from 'react-dom';
+import { useBoolean } from 'usehooks-ts';
 
 import {
   DEFAULT_ZOOMABLE_IMAGE_LABELS,
@@ -28,8 +23,10 @@ export interface IZoomableImageProps {
 /**
  * A Markdown image that opens full size in a native modal `<dialog>` (focus
  * trap, Esc and backdrop for free). The dialog is portalled to `<body>` —
- * the image sits inside a `<p>`, where a `<dialog>` is invalid — so it only
- * exists after mount. Closing returns focus to the inline image.
+ * the image sits inside a `<p>`, where a `<dialog>` is invalid — and only
+ * exists while zoomed: a closed one would still be in the DOM, and browser
+ * reader modes, blind to its UA `display: none`, score its caption as page
+ * text and pick the wrong container. Closing returns focus to the trigger.
  */
 export const ZoomableImage = ({
   src,
@@ -41,13 +38,18 @@ export const ZoomableImage = ({
 }: IZoomableImageProps) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [mounted, setMounted] = useState(false);
+  const { value: zoomed, setTrue: zoom, setFalse: unzoom } = useBoolean(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    if (zoomed) dialogRef.current?.showModal();
+  }, [zoomed]);
 
-  const open = useCallback(() => dialogRef.current?.showModal(), []);
+  // Every way out (Esc, close button, backdrop) fires the dialog's `close`.
   const close = useCallback(() => dialogRef.current?.close(), []);
-  const restoreFocus = useCallback(() => triggerRef.current?.focus(), []);
+  const onClosed = useCallback(() => {
+    unzoom();
+    triggerRef.current?.focus();
+  }, [unzoom]);
   // The <dialog> box itself is the backdrop: the figure fills its content.
   const closeOnBackdrop = useCallback(
     (event: MouseEvent<HTMLDialogElement>) => {
@@ -58,13 +60,11 @@ export const ZoomableImage = ({
 
   return (
     <>
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-haspopup="dialog"
-        onClick={open}
-        className="zoomable-image-trigger"
-      >
+      {/* The trigger overlays the image instead of wrapping it: browser reader
+          modes (e.g. Firefox's Readability) drop <button>s with their content,
+          which would take the image with them. `title` sits on the wrapper so
+          its tooltip still shows over the trigger. */}
+      <span title={title} className="zoomable-image">
         <img
           src={src}
           alt={alt}
@@ -72,10 +72,18 @@ export const ZoomableImage = ({
           loading={loading}
           decoding={decoding}
         />
-        <span className="sr-only">{labels.zoom}</span>
-      </button>
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-haspopup="dialog"
+          onClick={zoom}
+          className="zoomable-image-trigger"
+        >
+          <span className="sr-only">{labels.zoom}</span>
+        </button>
+      </span>
 
-      {mounted &&
+      {zoomed &&
         createPortal(
           // Backdrop click is a pointer shortcut; Esc (native) is the keyboard one.
           // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
@@ -83,7 +91,7 @@ export const ZoomableImage = ({
             ref={dialogRef}
             aria-label={alt || undefined}
             onClick={closeOnBackdrop}
-            onClose={restoreFocus}
+            onClose={onClosed}
             className="zoomable-image-dialog"
           >
             <button

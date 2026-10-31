@@ -19,7 +19,7 @@
 /* Heading anchors (#id from the TOC) land below the fixed mobile header; on
    lg+ the navigation is a sidebar, so only breathing room is needed. */
 .markdown-body :is(h2, h3) {
-  scroll-margin-top: calc(var(--header-height-mobile) + 1rem);
+  scroll-margin-top: calc(var(--topbar-height-mobile) + 1rem);
 }
 
 @media (min-width: 1024px) {

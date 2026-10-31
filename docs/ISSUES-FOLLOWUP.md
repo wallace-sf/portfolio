@@ -36,7 +36,7 @@ tracked here for later follow-up.
 
 ### [#664](https://github.com/wallace-sf/portfolio/issues/664) — Define semantic spacing tokens for section layout
 - **Evidence:** No semantic spacing tokens in `apps/site/tailwind.config.ts`
-  (only `header-desktop/mobile`). Ad hoc `py-8 lg:py-20` still in
+  (only `topbar-desktop/mobile`). Ad hoc `py-8 lg:py-20` still in
   `apps/site/src/features/projects/ProjectsSection/index.tsx:8`; `my-6`/`my-8`
   still in `HomeProjectsSection.tsx:21` and `HeroSection/index.tsx:50`.
 

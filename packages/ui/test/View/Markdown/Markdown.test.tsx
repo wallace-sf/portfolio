@@ -144,9 +144,9 @@ describe('Markdown', () => {
     const image = screen.getByRole('img', { name: 'A figure' });
     expect(image).toHaveAttribute('loading', 'lazy');
     expect(image).toHaveAttribute('decoding', 'async');
-    expect(image.closest('button')).toHaveAccessibleName(
-      'A figure Open larger view',
-    );
+    expect(
+      screen.getByRole('button', { name: 'Open larger view' }),
+    ).toHaveAttribute('aria-haspopup', 'dialog');
   });
 
   it('should use the given labels for the zoom hint when imageLabels is set', async () => {
@@ -160,7 +160,7 @@ describe('Markdown', () => {
     );
 
     expect(
-      screen.getByRole('button', { name: 'Uma figura Ampliar imagem' }),
+      screen.getByRole('button', { name: 'Ampliar imagem' }),
     ).toBeInTheDocument();
   });
 
