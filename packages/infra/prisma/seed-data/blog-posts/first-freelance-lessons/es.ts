@@ -1,3 +1,5 @@
+import { FIGURE } from './figures';
+
 export const content = `Cuando acepté mi primer freelance, tenía aproximadamente un año y medio de experiencia profesional como desarrollador de software.
 
 Ya había construido pequeñas aplicaciones full stack para aprender, pero sentía que faltaba algo en mi trayectoria: la experiencia de entregar un producto completo a un cliente real.
@@ -142,7 +144,11 @@ Es importante destacar que no se trata de un contrato universal ni de un modelo 
 
 Su objetivo es servir como referencia inicial para desarrolladores que todavía no tienen experiencia negociando proyectos independientes.
 
-**[Insertar aquí el modelo de propuesta comercial para consulta.]**
+![Las cuatro páginas del ejemplo de propuesta comercial para un MVP: visión general y alcance, elementos fuera del alcance y responsabilidades del cliente, cronograma e inversión, y términos generales y firmas](${FIGURE.proposalPages})
+
+*Las cuatro páginas del ejemplo: alcance, exclusiones, servicios opcionales, responsabilidades del cliente, enfoque técnico, cronograma, hitos de pago, premisas y términos generales. El cliente, los valores y las fechas son ficticios.*
+
+**[Abrir el ejemplo de propuesta comercial (PDF, en inglés, 4 páginas)](${FIGURE.proposalPdf})**
 
 Tampoco hace falta seguir el ejemplo al pie de la letra. Cada proyecto tiene características propias y puede requerir acuerdos técnicos, comerciales y jurídicos diferentes.
 

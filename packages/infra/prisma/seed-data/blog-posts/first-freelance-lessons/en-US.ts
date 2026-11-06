@@ -1,3 +1,5 @@
+import { FIGURE } from './figures';
+
 export const content = `When I took on my first freelance project, I had roughly a year and a half of professional experience as a software developer.
 
 I had already built small full-stack applications to learn, but I felt something was missing from my path: the experience of delivering a complete product to a real client.
@@ -142,7 +144,11 @@ It's worth stressing that this isn't a universal contract, nor a template capabl
 
 Its purpose is to serve as a starting point for developers who don't yet have experience negotiating independent projects.
 
-**[Insert the sample commercial proposal here.]**
+![The four pages of the sample commercial proposal for an MVP: overview and scope, out-of-scope items and client responsibilities, timeline and investment, and general terms and signatures](${FIGURE.proposalPages})
+
+*The four pages of the sample: scope, exclusions, optional add-ons, client responsibilities, technical approach, timeline, payment milestones, assumptions and general terms. The client, values and dates are fictional.*
+
+**[Open the sample commercial proposal (PDF, 4 pages)](${FIGURE.proposalPdf})**
 
 The example doesn't need to be followed to the letter, either. Every project has its own characteristics and may call for different technical, commercial and legal agreements.
 
