@@ -10348,13 +10348,27 @@
         "priority": "high",
         "subtasks": [],
         "updatedAt": "2026-11-06T04:25:53.194Z"
+      },
+      {
+        "id": "5",
+        "title": "Translate the commercial proposal templates and link them in the post",
+        "description": "Translate the consolidated pt-BR proposal template (DOCX + PDF) into en-US and es, fix the section 10 numbering, and link each locale's PDF and editable DOCX from the freelance post as a didactic, annotated, fictional template.",
+        "details": "python-docx via uv for run-preserving translation; LibreOffice headless for PDFs (Inter installed in ~/.local/share/fonts). en/es: values in USD (3,600 = 1,440/1,080/1,080); LGPD generalized to applicable data protection law (LGPD, GDPR). Per-locale 4x2 preview strip. 9 files in portfolio-images/blog/first-freelance-lessons/ (uploaded by the author).",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          "4"
+        ],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2026-11-06T17:54:32.596Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-06T04:25:53.194Z",
-      "taskCount": 4,
-      "completedCount": 3,
+      "lastModified": "2026-11-06T17:54:32.597Z",
+      "taskCount": 5,
+      "completedCount": 4,
       "tags": [
         "blog-post-first-freelance"
       ]
