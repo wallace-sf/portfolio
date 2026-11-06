@@ -10334,13 +10334,27 @@
         ],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": "4",
+        "title": "Revise the freelance post: denser paragraphs, humanized prose",
+        "description": "Merge one-sentence paragraphs and remove AI writing patterns (humanizer) from the freelance post, keeping every fact; pt-BR first, reviewed by the author, then en-US/es re-translated.",
+        "details": "Voice sample: revised Studio Mir pt-BR (3-5 sentence paragraphs, conversational connectors, parenthetical asides, few bold lines). Patterns from github.com/blader/humanizer: not-X-but-Y, one-line closers, forced triads, bold as decoration. No fact, date or number added or dropped.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          "2"
+        ],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2026-11-06T04:25:53.194Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-06T02:12:48.916Z",
-      "taskCount": 3,
-      "completedCount": 2,
+      "lastModified": "2026-11-06T04:25:53.194Z",
+      "taskCount": 4,
+      "completedCount": 3,
       "tags": [
         "blog-post-first-freelance"
       ]
