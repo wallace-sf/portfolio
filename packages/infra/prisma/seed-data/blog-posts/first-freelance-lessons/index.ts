@@ -27,17 +27,17 @@ export const firstFreelanceLessons: BlogPostSeed = {
   coverImage: {
     url: FIGURE.cover,
     alt: loc(
-      'Illustration of a commercial proposal with a checklist and a payment bar split into 40%, 30% and 30% milestones',
-      'Ilustração de uma proposta comercial com uma lista de verificação e uma barra de pagamento dividida em marcos de 40%, 30% e 30%',
-      'Ilustración de una propuesta comercial con una lista de verificación y una barra de pago dividida en hitos del 40 %, 30 % y 30 %',
+      'Cover reading "More Than a Proposal: Lessons in software freelancing" beside a commercial proposal listing scope, expectations and delivery, with milestones for planning, development and delivery',
+      'Capa com o título em inglês "More Than a Proposal: Lessons in software freelancing" ao lado de uma proposta comercial com escopo, expectativas e entrega, e marcos de planejamento, desenvolvimento e entrega',
+      'Portada con el título en inglés "More Than a Proposal: Lessons in software freelancing" junto a una propuesta comercial con alcance, expectativas y entrega, e hitos de planificación, desarrollo y entrega',
     ),
   },
   thumbnailImage: {
     url: FIGURE.thumbnail,
     alt: loc(
-      'Commercial proposal with a checklist and 40/30/30 payment milestones',
-      'Proposta comercial com lista de verificação e marcos de pagamento 40/30/30',
-      'Propuesta comercial con lista de verificación e hitos de pago 40/30/30',
+      '"More Than a Proposal: Lessons from my first freelance" beside a project proposal with scope, timeline and payment checked',
+      'Título em inglês "More Than a Proposal: Lessons from my first freelance" ao lado de uma proposta com escopo, cronograma e pagamento marcados',
+      'Título en inglés "More Than a Proposal: Lessons from my first freelance" junto a una propuesta con alcance, cronograma y pago marcados',
     ),
   },
 };

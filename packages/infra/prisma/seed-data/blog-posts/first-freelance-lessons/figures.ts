@@ -3,8 +3,8 @@ const BASE =
 
 /** Public URLs of the post's images in Supabase storage, shared by every locale. */
 export const FIGURE = {
-  cover: `${BASE}/cover.webp`,
-  thumbnail: `${BASE}/thumbnail.webp`,
+  cover: `${BASE}/cover-v2.webp`,
+  thumbnail: `${BASE}/thumbnail-v2.webp`,
 };
 
 /** The fictional commercial proposal template, in each locale's language. */
