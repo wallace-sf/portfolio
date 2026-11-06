@@ -10296,48 +10296,54 @@
   "blog-post-first-freelance": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Publish draft post: first freelance lessons",
         "description": "Seed the 'Meu primeiro freelance como desenvolvedor' post (pt-BR draft + en-US/es translations) with a typographic cover and thumbnail, featured alongside the Studio Mir post, so the author can review it visually.",
         "details": "Module packages/infra/prisma/seed-data/blog-posts/first-freelance-lessons/ (pt-BR, en-US, es, figures, index). Slug first-freelance-lessons, ID blogPosts.firstFreelanceLessons, tags career/freelance/lessons-learned, publishedAt 2026-11-05 (provisional), featured true. Images in portfolio-images/blog/first-freelance-lessons/. PR stays draft until the final revision. Test: existing infra/site tests, db:seed:blog on portfolio-dev, browser check in all locales and both card slots.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-06T02:12:48.874Z"
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Sample commercial proposal download in the post",
         "description": "Replace the proposal placeholder with a link to the sample MVP proposal PDF hosted in Supabase storage.",
         "details": "Upload the PDF to portfolio-images/blog/first-freelance-lessons/; link it from the 'Como minha proposta comercial evoluiu' section in all locales. The PDF is a draft and English-only. Test: link opens the PDF in every locale.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
-          1
+          "1"
         ],
         "priority": "medium",
-        "subtasks": []
+        "subtasks": [],
+        "updatedAt": "2026-11-06T02:12:48.916Z"
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Final revision and publish: first freelance post",
         "description": "Apply the author's final text and proposal, re-sync translations, set the final publish date and merge.",
         "details": "Test: existing tests, seed, browser check; db:seed:blog on prod after merge.",
         "testStrategy": "",
         "status": "pending",
         "dependencies": [
-          1,
-          2
+          "1",
+          "2"
         ],
         "priority": "medium",
         "subtasks": []
       }
     ],
     "metadata": {
-      "created": "2026-11-05T23:59:32.726Z",
-      "updated": "2026-11-06T00:00:15.787Z",
-      "description": "First freelance lessons blog post"
+      "version": "1.0.0",
+      "lastModified": "2026-11-06T02:12:48.916Z",
+      "taskCount": 3,
+      "completedCount": 2,
+      "tags": [
+        "blog-post-first-freelance"
+      ]
     }
   }
 }
