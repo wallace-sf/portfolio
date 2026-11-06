@@ -1,4 +1,6 @@
-import { FIGURE } from './figures';
+import { PROPOSAL } from './figures';
+
+const P = PROPOSAL['en-US'];
 
 export const content = `When I took on my first freelance project, I had about a year and a half of professional experience as a software developer. I had already built small full-stack applications to learn, but I felt one experience was missing from my path: delivering a complete product to a real client. I wanted to understand the business problem, negotiate directly with the client, make the technical decisions and take responsibility for the delivery. In other words, I wanted to find out what it was like to be my own boss.
 
@@ -60,15 +62,16 @@ These practices don't eliminate risk, but they make expectations clearer and the
 
 ## How my commercial proposal evolved
 
-Recently, I turned some of these lessons into a fictional sample commercial proposal for developing an MVP. The document covers scope, exclusions, responsibilities, assumptions, timelines, payment terms and changes.
+Recently, I turned some of these lessons into a commercial proposal template for developing an MVP. It's teaching material and entirely fictional: the client, values and timelines are made up, and the document is annotated, with notes explaining why each clause exists and a final page with a checklist for adapting it to your project. It covers scope, exclusions, responsibilities, milestones and acceptance criteria, payment, scope changes, warranty, support and handoff.
 
-![The four pages of the sample commercial proposal for an MVP: overview and scope, out-of-scope items and client responsibilities, timeline and investment, and general terms and signatures](${FIGURE.proposalPages})
+![The eight pages of the commercial proposal template: cover, scope, exclusions and responsibilities, plan and acceptance criteria, investment and changes, data and support, closing and signatures, and the adaptation guide](${P.preview})
 
-*The four pages of the sample: scope, exclusions, optional add-ons, client responsibilities, technical approach, timeline, payment milestones, assumptions and general terms. The client, values and dates are fictional.*
+*The eight pages of the template. The educational notes comment on the clauses, and the last page has the adaptation checklist and the risks the template aims to prevent.*
 
-**[Open the sample commercial proposal (PDF, 4 pages)](${FIGURE.proposalPdf})**
+- [Open the template as a PDF (8 pages)](${P.pdf})
+- [Download the editable version (DOCX)](${P.docx})
 
-It isn't a universal contract: every project has its own particularities and may call for different technical, commercial and legal agreements.
+Use the template as a starting point for your own proposal, not as a ready-made contract. Every project has its own particularities and may call for different technical, commercial and legal agreements, and the document itself recommends a legal review when there are material commitments or sensitive data.
 
 ## A first freelance project demands concessions, but they need limits
 

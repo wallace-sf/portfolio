@@ -1,4 +1,6 @@
-import { FIGURE } from './figures';
+import { PROPOSAL } from './figures';
+
+const P = PROPOSAL['pt-BR'];
 
 export const content = `Quando aceitei meu primeiro freelance, eu tinha cerca de um ano e meio de experiência profissional como desenvolvedor de software. Já tinha construído pequenas aplicações full stack para aprender, mas sentia falta de uma experiência na minha trajetória: entregar um produto completo para um cliente real. Queria entender o problema de negócio, negociar direto com o contratante, tomar as decisões técnicas e assumir a responsabilidade pela entrega. Em outras palavras, queria experimentar o que era ser meu próprio chefe.
 
@@ -60,15 +62,16 @@ Essas práticas não eliminam os riscos, mas deixam as expectativas mais claras 
 
 ## Como minha proposta comercial evoluiu
 
-Recentemente, transformei parte desses aprendizados em um exemplo fictício de proposta comercial para o desenvolvimento de um MVP. O documento trata de escopo, exclusões, responsabilidades, premissas, prazos, condições de pagamento e mudanças.
+Recentemente, transformei parte desses aprendizados em um modelo de proposta comercial para o desenvolvimento de um MVP. É um material didático e fictício: o cliente, os valores e os prazos são inventados, e o documento vem comentado, com notas que explicam por que cada cláusula existe e uma página final com um checklist para adaptá-lo ao seu projeto. Ele trata de escopo, exclusões, responsabilidades, marcos e critérios de aceite, pagamento, mudanças de escopo, garantia, suporte e handoff.
 
-![As quatro páginas do exemplo de proposta comercial para um MVP: visão geral e escopo, itens fora do escopo e responsabilidades do cliente, cronograma e investimento, e termos gerais e assinaturas](${FIGURE.proposalPages})
+![As oito páginas do modelo de proposta comercial: capa, escopo, exclusões e responsabilidades, plano e critérios de aceite, investimento e mudanças, dados e suporte, encerramento e assinaturas, e o guia de adaptação](${P.preview})
 
-*As quatro páginas do exemplo: escopo, exclusões, serviços opcionais, responsabilidades do cliente, abordagem técnica, cronograma, marcos de pagamento, premissas e termos gerais. O cliente, os valores e as datas são fictícios.*
+*As oito páginas do modelo. As notas educativas comentam as cláusulas, e a última página traz o checklist de adaptação e os riscos que o modelo procura evitar.*
 
-**[Abrir o exemplo de proposta comercial (PDF, em inglês, 4 páginas)](${FIGURE.proposalPdf})**
+- [Abrir o modelo em PDF (8 páginas)](${P.pdf})
+- [Baixar a versão editável (DOCX)](${P.docx})
 
-Ele não é um contrato universal: cada projeto tem suas particularidades e pode exigir acordos técnicos, comerciais e jurídicos diferentes.
+Use o modelo como ponto de partida para montar a sua proposta, e não como um contrato pronto. Cada projeto tem suas particularidades e pode exigir acordos técnicos, comerciais e jurídicos diferentes, e o próprio documento recomenda uma revisão jurídica quando houver compromissos relevantes ou dados sensíveis.
 
 ## O primeiro freelance exige concessões, mas elas precisam ter limites
 
