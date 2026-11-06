@@ -63,6 +63,7 @@ export const ID = {
   },
   blogPosts: {
     studioMirDigitalExperience: '60000000-0000-4000-8000-000000000009',
+    firstFreelanceLessons: '60000000-0000-4000-8000-000000000010',
   },
 };
 
