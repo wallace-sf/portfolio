@@ -1,3 +1,4 @@
+import { firstFreelanceLessons } from './first-freelance-lessons';
 import { studioMirDigitalExperience } from './studio-mir-digital-experience';
 
 import type { BlogPostSeed, BlogPostSeedAuthor } from './types';
@@ -10,4 +11,7 @@ export const BLOG_POST_AUTHOR: BlogPostSeedAuthor = {
   url: 'https://wallace-ferreira.dev',
 };
 
-export const blogPosts: readonly BlogPostSeed[] = [studioMirDigitalExperience];
+export const blogPosts: readonly BlogPostSeed[] = [
+  studioMirDigitalExperience,
+  firstFreelanceLessons,
+];
