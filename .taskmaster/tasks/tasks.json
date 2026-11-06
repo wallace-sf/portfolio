@@ -10369,13 +10369,25 @@
         "priority": "high",
         "subtasks": [],
         "updatedAt": "2026-11-06T17:54:32.596Z"
+      },
+      {
+        "id": "6",
+        "title": "New cover and thumbnail for the freelance post",
+        "description": "Replace the provisional typographic cover and thumbnail with the author's new artwork: cover-v2.webp (1200x630) and thumbnail-v2.webp (1200x675, 16:9 like the card), versioned names to dodge the CDN cache; update figures.ts and the cover/thumbnail alt texts in three locales.",
+        "details": "",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2026-11-06T19:14:23.277Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-11-06T18:35:33.011Z",
-      "taskCount": 5,
-      "completedCount": 5,
+      "lastModified": "2026-11-06T19:14:23.277Z",
+      "taskCount": 6,
+      "completedCount": 6,
       "tags": [
         "blog-post-first-freelance"
       ]
